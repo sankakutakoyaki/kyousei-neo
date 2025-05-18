@@ -1,0 +1,88 @@
+@charset "UTF-8";
+
+/******************************************************************************************************* スマホ表示のみ */
+
+@media screen and (max-width:560px) {
+    :root {
+        font-size: 16px;
+    }
+
+    *.pc-style {
+        display: none !important;
+    }
+
+    *.pc-style * {
+        display: none !important;
+    }
+
+    /* サイドバーがある時の処理 */
+    .normal-content:has(.normal-sidebar) {
+        grid-template-columns: 1fr;
+    }
+
+    /* サイドバーは消す */
+    .normal-sidebar {
+        display: none;
+    }
+
+    .hamburger-btn-open {
+        top: .6rem;
+        left: 1rem;
+    }
+
+    .hamburger-btn-close {
+        top: 1.5rem;
+        right: .8rem;
+    }
+
+    .hamburger-btn-open:hover,
+    .hamburger-btn-close:hover {
+        filter: brightness(.5) invert(.5);
+    }
+
+    .hamburger-btn-open img {
+        height: 2rem;
+        width: 2rem;
+        filter: brightness(0) invert(1);
+    }
+
+    .hamburger-btn-close img {
+        height: 1rem;
+        width: 1rem;
+    }
+
+    #hamburger-area {
+        position: fixed;
+        top: 0;
+        left: 0;
+        transition: .4s;
+        z-index: 200;
+        width: 100%;
+        height: 100%;
+        padding-top: 4.5rem;
+        background-color: var(--white);
+    }
+
+    #hamburger-area.hamburger-close {
+        left: -100%;
+    }
+    
+    #hamburger-area.hamburger-open {
+        left: 0;
+    }
+
+    .hamburger-content {
+        width: 100%;
+    }
+
+    .hamburger-item {
+        display: flex;
+        padding: 1rem 4rem;
+        align-items: center;
+        font-size: 1.2rem;
+        &>img {
+            width: 4rem;
+            padding-right: 1rem;
+        }
+    }
+}

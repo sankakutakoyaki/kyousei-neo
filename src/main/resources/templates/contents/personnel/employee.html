@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- 本体 -->
+    <div class="normal-content" th:fragment="bodyFragment">
+        <!-- ハンバーガー -->
+        <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+        <!-- サイドバー -->
+        <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
+        <!-- ボディ -->
+        <div class="normal-body">
+            <div class="tab-area">
+                <ul class="tab-menu">
+                    <li class="tab-menu-item is-active" data-tab="01">社員</li>
+                    <li class="tab-menu-item" data-tab="02">アルバイト</li>
+                    <li class="tab-menu-item" data-tab="03">請負</li>
+                </ul>
+                <div class="tab-panel is-show" data-panel="01">
+                    <div class="table-area">
+                        <!-- ヘッダー -->
+                        <header th:replace="~{fragments/personnel/employee :: headerFragment('search-box-01')}"></header>
+                        <!-- コンテンツ -->
+                        <main th:replace="~{fragments/personnel/employee :: mainFragment('table-01', 'table-01-content')}"></main>
+                        <!-- フッター -->
+                        <footer id="footer-01" class="pc-style" th:insert="~{fragments/personnel/employee :: footerFragment()}"></footer>
+                    </div>
+                </div>
+                <div class="tab-panel" data-panel="02">
+                    <div class="table-area">
+                        <!-- ヘッダー -->
+                        <header th:replace="~{fragments/personnel/employee :: headerFragment('search-box-02')}"></header>
+                        <!-- コンテンツ -->
+                        <main th:replace="~{fragments/personnel/employee :: mainFragment('table-02', 'table-02-content')}"></main>
+                        <!-- フッター -->
+                        <footer id="footer-02" class="pc-style" th:insert="~{fragments/personnel/employee :: footerFragment()}"></footer>
+                    </div>
+                </div>
+                <div class="tab-panel" data-panel="03">
+                    <div class="table-area">
+                        <!-- ヘッダー -->
+                        <header th:replace="~{fragments/personnel/employee :: headerFragment('search-box-03')}"></header>
+                        <!-- コンテンツ -->
+                        <main th:replace="~{fragments/personnel/employee :: mainFragment('table-03', 'table-03-content')}"></main>
+                        <!-- フッター -->
+                        <footer id="footer-03" class="pc-style" th:insert="~{fragments/personnel/employee :: footerFragment()}"></footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="form-dialog-area">
+            <!-- フォーム画面をここに記入する -->
+             <div id="form-dialog-01" class="form-dialog none">
+                <div class="dialog-header"><span></span>
+                    <div class="img-btn" onclick="closeFormDialog('form-dialog-01', event)"><img title="閉じる" src="/icons/close-s.png"></div>
+                </div>
+                <form id="form-01" class="dialog-content">
+                    <input name="employee-id" type="hidden" value="">
+                    <input name="category" type="hidden" value="">
+                    <input name="version" type="hidden" value="">
+                    <div class="flex-area">
+                        <div class="form-parts">
+                            <label>アカウント</label>
+                            <input tabindex="1" name="account" class="normal-input" type="text" value="" placeholder="example@kyouseibin.com" onfocus="this.select();">
+                        </div>
+                        <div class="form-parts">
+                            <label>コード</label>
+                            <input tabindex="2" name="code" class="normal-input" type="text" inputmode="numeric" pattern="\d*" value="" placeholder="000" onfocus="this.select();">
+                        </div>
+                    </div>
+                    <div class="flex-area">
+                        <div class="form-parts">
+                            <label>会社名</label>
+                            <select tabindex="3" name="company" class="normal-select"></select>
+                        </div>
+                        <div class="form-parts">
+                            <label>営業所・支店</label>
+                            <select tabindex="4" name="office" class="normal-select"></select>
+                        </div>
+                    </div>
+                    <div class="flex-area">
+                        <div class="form-parts">
+                            <label>氏名</label>
+                            <div class="flex-area">
+                                <input tabindex="5" name="last-name" class="normal-input" type="text" value="" placeholder="姓" onfocus="this.select();">
+                                <input tabindex="6" name="first-name" class="normal-input" type="text" value="" placeholder="名" onfocus="this.select();">
+                            </div>
+                        </div>
+                        <div class="form-parts">
+                            <label>かな</label>
+                            <div class="flex-area">
+                                <input tabindex="7" name="last-name-kana" class="normal-input" type="text" value="" placeholder="せい" onfocus="this.select();">
+                                <input tabindex="8" name="first-name-kana" class="normal-input" type="text" value="" placeholder="めい" onfocus="this.select();">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-area">
+                        <div class="form-parts">
+                            <label>携帯番号</label>
+                            <input tabindex="9" name="phone-number" class="normal-input" type="text" inputmode="numeric" pattern="\\d{3}-\\d{4}-\\d{4}" value="" placeholder="012-3456-7890" onfocus="this.select();">
+                        </div> 
+                        <div class="form-parts">
+                            <label>メールアドレス</label>
+                            <input tabindex="10" name="email" class="normal-input" type="email" value="" placeholder="例）example@kyouseibin.com" onfocus="this.select();">
+                        </div>
+                    </div>
+                    <div class="flex-area">
+                        <div class="form-parts">
+                            <label>郵便番号</label>
+                            <input tabindex="11" id="employee-postal-code" name="postal-code" class="normal-input" type="text" inputmode="numeric" pattern="\\d{3}-?\\d{4}" value="" placeholder="012-3456" onfocus="this.select();">
+                            <img title="検索" src="/icons/search.png" onclick="getAddress('Enter', 'employee-postal-code', 'employee-full-address')">
+                        </div>
+                        <div class="form-parts">
+                            <label>住所</label>
+                            <input tabindex="12" id="employee-full-address" name="full-address" class="normal-input" type="text" value="" placeholder="例）大阪府高槻市柱本5丁目7番10号" onfocus="this.select();">
+                        </div>
+                    </div>
+                    <div class="flex-area">
+                        <div class="form-parts">
+                            <label>生年月日</label>
+                            <input tabindex="13" name="birthday" class="normal-input" type="date" value="" onfocus="this.select();">
+                        </div>
+                        <div class="form-parts">
+                            <label>性別</label>
+                            <select tabindex="14" name="gender" class="normal-select"></select>
+                        </div>
+                        <div class="form-parts">
+                            <label>血液型</label>
+                            <select tabindex="15" name="blood-type" class="normal-select"></select>
+                        </div>
+                    </div>
+                    <div class="flex-area">
+                        <div class="form-parts">
+                            <label>緊急連絡先</label>
+                            <div class="flex-area">
+                                <input tabindex="16" name="emergency-contact" class="normal-input" type="text" value="" placeholder="例）実家・妻" onfocus="this.select();">
+                                <input tabindex="17" name="emergency-contact-number" class="normal-input" type="text" inputmode="numeric" pattern="\\d{2,4}-\\d{2,4}-\\d{3,4}" value="" placeholder="012-3456-7890" onfocus="this.select();">
+                            </div>
+                        </div>
+                        <div class="form-parts">
+                            <label>入社日</label>
+                            <input tabindex="18" name="date-of-hire" class="normal-input" type="date" value="" onfocus="this.select();">
+                        </div>
+                    </div>
+                </form>
+                <div class="dialog-footer">
+                    <button class="normal-btn frameless" type="button" onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
+                    <button tabindex="19" class="normal-btn ok" type="button" onclick="execSave()"><span>保存</span></button>
+                </div>
+            </div>
+        </div>
+        <div id="msg-dialog-area">
+            <div th:replace="~{fragments/dialog :: messageFragment}"></div>
+        </div>
+        <script th:src="@{/js/table.js}"></script>
+        <script th:src="@{/js/info.js}"></script>
+        <script th:src="@{/js/file.js}"></script>
+        <script th:src="@{/js/enterfocus.js}"></script>
+        <script type="text/JavaScript" th:inline="JavaScript">
+            const token = /*[[${_csrf.token}]]*/;
+            const user = /*[[${user}]]*/;
+            const formEntity = /*[[${formEntity}]]*/;
+            const categoryEmployeeCode = /*[[${categoryEmployeeCode}]]*/;
+            const categoryParttimeCode = /*[[${categoryParttimeCode}]]*/;
+            const categoryConstructCode = /*[[${categoryConstructCode}]]*/;
+            const companyComboList = /*[[${companyComboList}]]*/;
+            const officeList = /*[[${officeList}]]*/;
+            const employeeCategoryComboList = /*[[${employeeCategoryComboList}]]*/;
+            const genderComboList = /*[[${genderComboList}]]*/;
+            const bloodTypeComboList = /*[[${bloodTypeComboList}]]*/;
+            let origin = /*[[${origin}]]*/; // 初期リスト記憶用
+
+/******************************************************************************************************* 入力画面 */
+
+            // リスト画面の本体部分を作成する
+            function createTableContent(tableId, list) {
+                const tbl = document.getElementById(tableId);
+                list.forEach(function (item) {
+                    let newRow = tbl.insertRow();
+                    // ID（Post送信用）
+                    newRow.setAttribute('name', 'data-row');
+                    newRow.setAttribute('data-id', item.employee_id);
+                    // シングルクリック時の処理
+                    newRow.onclick = function (e) {
+                        if (!e.currentTarget.classList.contains('selected')){
+                            // すべての行の選択状態を解除する
+                            detachmentSelectClassToAllRow(tbl, false);
+                            // 選択した行にセレクトクラスを付与する
+                            const result = addSelectClassToRow(e.currentTarget);
+                        } else {
+                            // 選択済みの要素をクリックした時の処理
+                            const clickedTd = e.target.closest("td");
+                            // 取得したTDの処理
+                        }
+                    }
+                    // ダブルクリック時の処理
+                    newRow.ondblclick = function (e) { 
+                        // チェックボックスの動作を停止させる
+                        e.preventDefault();
+                        // 選択済みの場合
+                        if (!e.currentTarget.classList.contains('selected')){
+                            // すべての行の選択状態を解除する
+                            detachmentSelectClassToAllRow(tableId, false);
+                            // 選択した行にセレクトクラスを付与する
+                            const result = addSelectClassToRow(e.currentTarget);
+                        }
+                        
+                        // フォーム入力画面を表示する
+                        switch (tableId) {
+                            case "table-01-content":
+                                execEdit(item.employee_id, this);
+                                break;
+                            case "table-02-content":
+                                execEdit(item.employee_id, this);
+                                break;
+                            case "table-03-content":
+                                execEdit(item.employee_id, this);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+                    switch (tableId) {
+                        case "table-01-content":
+                            createTableRow(newRow, item, "01");
+                            break;
+                        case "table-02-content":
+                            createTableRow(newRow, item, "02");
+                            break;
+                        case "table-03-content":
+                            createTableRow(newRow, item, "03");
+                            break;
+                        default:
+                            break;
+                    }
+
+                });
+            }
+
+            // テーブル行を作成する
+            function createTableRow(newRow, item, tab) {
+                // 選択用チェックボックス
+                newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
+                // ID
+                newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.employee_id + ', this)">' + String(item.employee_id).padStart(4, '0') + '</td>');
+                // コード
+                newRow.insertAdjacentHTML('beforeend', '<td name="code-cell" class="text-center">' + (item.code == 0 ? "": item.code) + '</td>');
+                // 名前
+                newRow.insertAdjacentHTML('beforeend', '<td name="name-cell"><span class="kana">' + item.full_name_kana + '</span><br><span>' + item.full_name + '</span></td>');
+                // 携帯番号
+                newRow.insertAdjacentHTML('beforeend', '<td name="phone-cell"><span>' + (item.phone_number ?? "登録なし") + '</span></td>');
+                // 会社名
+                newRow.insertAdjacentHTML('beforeend', '<td name="company-cell"><span>' + (item.company_name ?? "登録なし") + '</span></td>');
+                // 営業所名
+                newRow.insertAdjacentHTML('beforeend', '<td name="office-cell"><span>' + (item.office_name ?? "登録なし") + '</span></td>');
+                // // 雇用形態
+                // newRow.insertAdjacentHTML('beforeend', '<td name="category-cell"><span>' + (item.category_name ?? "登録なし") + '</span></td>');
+            }
+
+/******************************************************************************************************* 入力画面 */
+
+            // 従業員登録画面を開く
+            async function execEdit(id, self) {
+                const panel = self.closest('.tab-panel');
+                const tab = panel.dataset.panel;
+
+                // スピナー表示
+                startProcessing();
+
+                // 入力フォームダイアログを開く
+                openFormDialog("form-dialog-01");
+
+                // フォーム画面を取得
+                const form = document.getElementById('form-dialog-01');              
+
+                let entity = {};
+                if (id > 0) {
+                    // 選択されたIDのエンティティを取得
+                    const data = "id=" + encodeURIComponent(parseInt(id));
+                    const resultResponse = await postFetch('/employee/get/id', data, token, 'application/x-www-form-urlencoded');
+                    const result = await resultResponse.json();
+                    if (result.employee_id == 0) {
+                        openMsgDialog("msg-dialog", "データがありません", "red");
+                        return;
+                    }
+                    entity = structuredClone(result);
+                } else {
+                    entity = structuredClone(formEntity);
+                    switch (tab) {
+                        case "01":
+                            entity.category = categoryEmployeeCode;
+                            break;
+                        case "02":
+                            entity.category = categoryParttimeCode;
+                            break;
+                        case "03":
+                            entity.category = categoryConstructCode;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                form.querySelector('[name="employee-id"]').value = entity.employee_id;
+                if (entity.code == 0) {
+                    form.querySelector('[name="code"]').value = "";
+                } else {
+                    form.querySelector('[name="code"]').value = entity.code;
+                }
+                form.querySelector('[name="category"]').value = entity.category;
+                form.querySelector('[name="account"]').value = entity.account;
+                form.querySelector('[name="last-name"]').value = entity.last_name;
+                form.querySelector('[name="first-name"]').value = entity.first_name;
+                form.querySelector('[name="last-name-kana"]').value = entity.last_name_kana;
+                form.querySelector('[name="first-name-kana"]').value = entity.first_name_kana;
+                form.querySelector('[name="phone-number"]').value = entity.phone_number;
+                form.querySelector('[name="postal-code"]').value = entity.postal_code;
+                form.querySelector('[name="full-address"]').value = entity.full_address;
+                form.querySelector('[name="email"]').value = entity.email;
+                if (entity.birthday == "9999-12-31") {
+                    form.querySelector('[name="birthday"]').value = null;
+                } else {
+                    form.querySelector('[name="birthday"]').value = entity.birthday;
+                }
+                form.querySelector('[name="emergency-contact"]').value = entity.emergency_contact;
+                form.querySelector('[name="emergency-contact-number"]').value = entity.emergency_contact_number;
+                if (entity.date_of_hire == "9999-12-31") {
+                    form.querySelector('[name="date-of-hire"]').value = "";
+                } else {
+                    form.querySelector('[name="date-of-hire"]').value = entity.date_of_hire;
+                }
+                form.querySelector('[name="version"]').value = entity.version;
+
+                // 会社名コンボボックス
+                const companyArea = form.querySelector('select[name="company"]');
+                createComboBox(companyArea, companyComboList);
+                setComboboxSelected(companyArea, entity.company_id);
+                companyArea.onchange = function() { createOfficeComboBox(this) };
+                if (tab == "01" || tab == "02") {
+                    companyArea.style.pointerEvents = 'none';
+                } else {
+                    companyArea.style.pointerEvents = '';
+                }
+                // 営業所名コンボボックス
+                createOfficeComboBox(companyArea);
+                const officeArea = form.querySelector('select[name="office"]');
+                setComboboxSelected(officeArea, entity.office_id);
+                // 性別コンボボックス
+                const genderArea = form.querySelector('select[name="gender"]');
+                createComboBox(genderArea, genderComboList);
+                setComboboxSelected(genderArea, entity.gender);
+                // 血液型コンボボックス
+                const bloodTypeArea = form.querySelector('select[name="blood-type"]');
+                createComboBox(bloodTypeArea, bloodTypeComboList);
+                setComboboxSelected(bloodTypeArea, entity.blood_type);
+
+                // スピナー消去
+                processingEnd();
+            }
+
+            // 選択した会社の支店をコンボボックスに登録する
+            function createOfficeComboBox(self) {
+                const selectId = self.value;
+                const comboList = officeList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.office_name}));
+                const area = self.closest('.dialog-content');
+                const officeArea = area.querySelector('select[name="office"]');
+                createComboBox(officeArea, comboList, "");
+            }
+
+/******************************************************************************************************* 保存 */
+
+        // 保存処理
+        async function execSave() {
+            const form = document.getElementById('form-01');
+            // エラーチェック
+            if (formDataCheck(form) == false) {
+                return;
+            } else {
+                const formData = new FormData(form);
+                const formdata = structuredClone(formEntity);
+                formdata.employee_id = formData.get('employee-id');
+                if (formData.get('code') == "") {
+                    formdata.code = 0;
+                } else {
+                    formdata.code = formData.get('code');
+                }
+                formdata.category = Number(formData.get('category'));
+                formdata.account = formData.get('account').trim();
+                formdata.company_id = formData.get('company');
+                formdata.office_id = formData.get('office');
+                formdata.last_name = formData.get('last-name').trim();
+                formdata.first_name = formData.get('first-name').trim();
+                formdata.last_name_kana = formData.get('last-name-kana').trim();
+                formdata.first_name_kana = formData.get('first-name-kana').trim();
+                formdata.phone_number = formData.get('phone-number').trim();
+                formdata.postal_code = formData.get('postal-code').trim();
+                formdata.full_address = formData.get('full-address').trim();
+                formdata.email = formData.get('email').trim();
+                formdata.gender= formData.get('gender');
+                formdata.blood_type = formData.get('blood-type');
+                if (formData.get('birthday') == "") {
+                    formdata.birthday = "9999-12-31";
+                } else {
+                    formdata.birthday = formData.get('birthday');
+                }
+                formdata.emergency_contact = formData.get('emergency-contact').trim();
+                formdata.emergency_contact_number = formData.get('emergency-contact-number').trim();
+                if (formData.get('date-of-hire') == "") {
+                    formdata.date_of_hire = "9999-12-31";
+                } else {
+                    formdata.date_of_hire = formData.get('date-of-hire');
+                }
+                formdata.version = formData.get('version');
+
+                formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
+
+                // 保存処理
+                const result = await saveFormData(formdata, "/employee/save");
+                if (result > 0) {
+                    let tableId;
+                    switch (formdata.category) {
+                        case categoryEmployeeCode:
+                            tableId = "table-01-content";
+                            break;
+                        case categoryParttimeCode:
+                            tableId = "table-02-content";
+                            break;
+                        case categoryConstructCode:
+                            tableId = "table-03-content";
+                            break;
+                        default:
+                            break;
+                    }
+                    // 画面更新
+                    await execUpdate();
+                    // 追加・変更行に移動
+                    scrollIntoTableList(tableId, result);
+                }
+                // ダイアログを閉じる
+                closeFormDialog('form-dialog-01');
+            }
+        }
+
+        // 入力チェック
+        function formDataCheck(area) {
+            let msg = "";
+            // アカウントが入力されていないとFalseを返す
+            const account = area.querySelector('input[name="account"]');
+            if (account != null && account.value == "") msg += '\nアカウントが入力されていません';
+            // 姓が入力されていないとFalseを返す
+            const name = area.querySelector('input[name="last-name"]');
+            if (name != null && name.value == "") msg += '\n姓が入力されていません';
+            // 電話番号チェック
+            const phone = area.querySelector('input[name="phone-number"]');
+            if (!checkPhoneNumber(phone)) msg += '\n電話番号に誤りがあります';
+            // 電話番号チェック
+            const postal = area.querySelector('input[name="postal-code"]');
+            if (!checkPostalCode(postal)) msg += '\n郵便番号に誤りがあります';
+            // メールアドレスチェック
+            const email = area.querySelector('input[name="email"]');
+            if (!checkMailAddress(email)) msg += '\nメールアドレスに誤りがあります';
+            // エラーが一つ以上あればエラーメッセージダイアログを表示する
+            if (msg != "") {
+                openMsgDialog("msg-dialog", msg, "red");
+                return false;
+            }
+            return true;
+        }
+
+/******************************************************************************************************* 削除 */
+
+        async function execDelete(self) {
+            const panel = self.closest('.tab-panel');
+            const tab = panel.dataset.panel;
+            let result;
+            switch (tab) {
+                case "01":
+                    result = await deleteTablelsit('table-01-content', '/employee/delete');
+                    if (result == true) { execUpdate(); }
+                    break;
+                case "02":
+                    result = await deleteTablelsit('table-02-content', '/employee/delete');
+                    if (result == true) { execUpdate(); }
+                    break;
+                case "03":
+                    result = await deleteTablelsit('table-03-content', '/employee/delete');
+                    if (result == true) { execUpdate(); }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+/******************************************************************************************************* ダウンロード */
+
+        async function execDownloadCsv(self) {
+            const panel = self.closest('.tab-panel');
+            const tab = panel.dataset.panel;
+            let result;
+            switch (tab) {
+                case "01":
+                    result = await downloadCsv('table-01-content', '/employee/download/csv');
+                    break;
+                case "02":
+                    result = await downloadCsv('table-02-content', '/employee/download/csv');
+                    break;
+                case "03":
+                    result = await downloadCsv('table-03-content', '/employee/download/csv');
+                    break;
+                default:
+                    break;
+            }
+        }
+
+/******************************************************************************************************* 画面更新 */
+
+        async function execUpdate() {
+            // const panel = self.closest('.tab-panel');
+            // const tab = panel.dataset.panel;
+            // let tableId, footerId, searchId, category;
+            // switch (tab) {
+            //     case "01":
+            //         tableId = 'table-01-content', footerId = 'footer-01', searchId = 'search-box-01', category = categoryEmployeeCode;
+            //         break;
+            //     case "02":
+            //         tableId = 'table-02-content', footerId = 'footer-02', searchId = 'search-box-02', category = categoryParttimeCode;
+            //         break;
+            //     case "03":
+            //         tableId = 'table-03-content', footerId = 'footer-03', searchId = 'search-box-03', category = categoryConstructCode;
+            //         break;
+            //     default:
+            //         break;
+            // }
+
+            // リスト取得
+            // const data = "category=" + encodeURIComponent(category);
+            // const resultResponse = await postFetch('/employee/get/list/category', data, token, 'application/x-www-form-urlencoded');
+            const resultResponse = await fetch('/employee/get/list');
+            origin = await resultResponse.json();
+
+            // 画面更新
+            const list01 = origin.filter(function(value) { return value.category == categoryEmployeeCode });
+            updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
+            const list02 = origin.filter(function(value) { return value.category == categoryParttimeCode });
+            updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
+            const list03 = origin.filter(function(value) { return value.category == categoryConstructCode });
+            updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
+
+            // // 画面更新
+            // updateTableDisplay(tableId, footerId, searchId, true);
+        }
+
+/******************************************************************************************************* 画面更新 */
+
+        // テーブルリスト画面を更新する
+        function updateTableDisplay(tableId, footerId, searchId, list) {
+            // リスト作成
+            // const tbl = document.getElementById(tableId);
+            // if (tbl != null) {
+                // フィルター処理
+                const result = filterDisplay(searchId, list);
+                // リスト画面を初期化
+                deleteElements(tableId);
+                // リスト作成
+                createTableContent(tableId, result);
+                // フッター作成
+                createTableFooter(footerId, list);
+                // チェックボタン押下時の処理を登録する
+                registCheckButtonClicked(tableId);
+                // テーブルのソートをリセットする
+                resetSortable(tableId);
+                // // スクロール時のページトップボタン処理を登録する
+                // setPageTopButton(tableId);
+                // テーブルにスクロールバーが表示されたときの処理を登録する
+                document.querySelectorAll('.scroll-area').forEach(el => {
+                    toggleScrollbar(el);
+                });
+            // }
+        }
+
+/******************************************************************************************************* 初期化時 */
+
+            // ページ読み込み後の処理
+            window.addEventListener("load", () => {
+                // スピナー表示
+                startProcessing();
+
+                // 検索ボックス入力時の処理
+                document.getElementById('search-box-01').addEventListener('search', function(e) {
+                    const list = origin.filter(function(value) { return value.category == categoryEmployeeCode });
+                    updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+                }, false);
+                document.getElementById('search-box-02').addEventListener('search', function(e) {
+                    const list = origin.filter(function(value) { return value.category == categoryParttimeCode });
+                    updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
+                }, false);
+                document.getElementById('search-box-03').addEventListener('search', function(e) {
+                    const list = origin.filter(function(value) { return value.category == categoryConstructCode });
+                    updateTableDisplay("table-03-content", "footer-03", "search-box-03", list);
+                }, false);
+
+                // 郵便番号入力ボックスでエンターキーが押された時の処理を登録
+                document.getElementById('employee-postal-code').addEventListener('keydown', function (e) {
+                    getAddress(e, 'employee-postal-code', 'employee-full-address');                                                                                                                                                                                                                                                                                                                                                       ;
+                });
+
+                // エンターフォーカス処理をイベントリスナーに登録する
+                setEnterFocus("form-01");
+
+                // 画面更新
+                const list01 = origin.filter(function(value) { return value.category == categoryEmployeeCode });
+                updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
+                // テーブルをソート可能にする
+                makeSortable("table-01-content");
+                // スクロール時のページトップボタン処理を登録する
+                setPageTopButton("table-01-content");
+                const list02 = origin.filter(function(value) { return value.category == categoryParttimeCode });
+                updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
+                // テーブルをソート可能にする
+                makeSortable("table-02-content");
+                // スクロール時のページトップボタン処理を登録する
+                setPageTopButton("table-02-content");
+                const list03 = origin.filter(function(value) { return value.category == categoryConstructCode });
+                updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
+                // テーブルをソート可能にする
+                makeSortable("table-03-content");
+                // スクロール時のページトップボタン処理を登録する
+                setPageTopButton("table-03-content");
+
+                // タブメニュー処理
+                const tabMenus = document.querySelectorAll('.tab-menu-item');
+                // イベント付加
+                tabMenus.forEach((tabMenu) => {
+                    tabMenu.addEventListener('click', tabSwitch);
+                })
+
+                // スピナー消去
+                processingEnd();
+            });
+        </script>
+    </div>
+
+</body>

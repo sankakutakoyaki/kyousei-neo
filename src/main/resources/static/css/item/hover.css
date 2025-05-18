@@ -1,0 +1,76 @@
+@charset "UTF-8";
+
+/******************************************************************************************************* PCとスマホのホバーした時の処理 */
+
+@media (hover: hover) {
+    .normal-btn:hover {
+        background-color: var(--btn-hover-bg);
+    }
+
+    .normal-btn.ok:hover {
+        background-color: var(--btn-hover-bg-ok);
+    }
+
+    .normal-btn.yes:hover {
+        background-color: var(--btn-hover-bg-yes);
+    }
+    
+    .img-btn:hover>img {
+        background-color: var(--btn-hover-bg);
+    }
+    
+    /* テーブル行をホバーしたらチェックセルを表示する */
+    .normal-table tr:hover :is(th, td)[name="chk-cell"]>input {
+        display: block;
+    }
+
+    .link-cell:hover {
+        text-decoration: underline;
+        cursor: var(--cursor);
+    }
+}
+
+@media (hover: none) {
+    .img-btn:hover>img {
+        background-color: transparent;
+    }
+
+    /* テーブル行のチェックセルは普段非表示 */
+    .normal-table tr :is(th, td)[name="chk-cell"]>input {
+        display: block;
+        cursor: var(--cursor);
+    }
+    
+    /* .dialog-header>.img-btn:hover img {
+        background-color: transparent;
+    } */
+}
+/* @media (hover: hover) { */
+
+    /* ホバ-した時は色を変える */
+    /* .normal-table tr[name="data-row"]:hover {
+        background-color: var(--row-hover-bg);
+    } */
+    /* ホバ-した時は下の行の線を消す */
+    /* .normal-table tr[name="data-row"]:hover+tr[name="data-row"] {
+        border: 0;
+    } */
+    /* .normal-table tr[name="data-row"]:hover+tr[name="data-row"]:last-child {
+        border-bottom: 1px solid var(--line);
+        border-image: linear-gradient(to right, transparent 5%, lightgrey 5%, lightgrey 95%, transparent 95%) 1;
+    } */
+    /* .normal-table tr :is(th, td)[name="chk-cell"]:hover>input {
+        display: block;
+    } */
+    /* .normal-table td span.link-cell:hover {
+        text-decoration: underline solid var(--black);
+        cursor: var(--cursor);
+    } */
+/* } */
+/* @media (hover: none) { */
+    /* 普段は非表示 */
+    .normal-table tr :is(th, td)[name="chk-cell"]>input {
+        display: block;
+        cursor: var(--cursor);
+    }
+/* } */

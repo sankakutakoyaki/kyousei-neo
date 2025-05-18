@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- 標準メッセージ -->
+    <div th:fragment="messageFragment" th:remove="tag">
+        <div id="msg-dialog" class="msg-dialog none">
+            <div class="dialog-header">
+                <span>確認</span>
+                <div class="img-btn" onclick="closeMsgDialog('msg-dialog', event)">
+                    <img title="閉じる" src="/icons/close-s.png">
+                </div>
+            </div>
+            <span class="msg-dialog-content"></span>
+            <form class="dialog-footer">
+                <button name="focus-btn" class="normal-btn ok" type="button" onclick="closeMsgDialog('msg-dialog', event)">了解</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

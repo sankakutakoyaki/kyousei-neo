@@ -1,0 +1,104 @@
+@charset "UTF-8";
+
+/******************************************************************************************************* 基本 */
+
+.dialog {
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    margin: auto;
+    background-color: var(--dialog-bg);
+    overflow: auto;
+    transition: .4s;
+}
+
+.dialog.trans {
+    background-color: transparent;
+}
+
+.dialog-header {
+    display: flex;
+    height: fit-content;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: var(--theme-orange);
+    border-radius: .5rem .5rem 0 0;
+}
+
+.dialog-header.red {
+    background-color: var(--red);
+    color: var(--white);
+}
+
+.dialog-header.blue {
+    background-color: var(--theme-blue);
+    color: var(--white);
+}
+
+.dialog-header.yellow {
+    background-color: var(--yellow);
+    color: var(--black);
+}
+
+.dialog-header>.img-btn {
+    width: 1.5rem;
+}
+
+.dialog-content {
+    display: grid;
+    gap: .5rem;
+    overflow: auto;
+    padding: 2rem;
+    justify-items: start;
+}
+
+.dialog-footer {
+    display: flex;
+    width: 100%;
+    column-gap: .5rem;
+    padding: 1rem 2rem;
+    border-radius: 0 0 .5rem .5rem;
+    justify-content: right;
+    border-top: 1px solid var(--br);
+}
+
+.dialog-footer>button {
+    width: fit-content;
+    min-width: 5rem;
+    /* padding: 0 1rem; */
+}
+
+/******************************************************************************************************* 入力フォーム */
+
+.msg-dialog,
+.form-dialog {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    position: fixed;
+    z-index: 100;
+    width: fit-content;
+    height: fit-content;
+    inset: 0;
+    margin: auto;
+    background-color: var(--bg);
+    max-height: 90%;
+    border-radius: .5rem;
+    border: .5px solid var(--shadow);
+    box-shadow: 0 0 8px var(--shadow);
+    overflow: hidden;
+}
+
+.msg-dialog-content {
+    display: grid;
+    /* max-height: 90%; */
+    min-width: 15rem;
+    min-height: 8rem;
+    overflow: auto;
+    padding: 2rem 3rem;
+    justify-items: center;
+    align-items: center;
+    white-space: pre-line;
+}

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div class="header-menu" th:fragment="headerFragment">
+        <div class="logo-btn pc-style" th:onclick="moveLinkPage('/')"><span>Kyosei</span></div>
+        <div class="sp-style">
+            <button id="menu-open" class="hamburger-btn-open"><img th:src="@{/icons/hamburger.png}"></button>
+        </div>
+        <div class="header-title pc-style" th:insert="~{fragments/menu :: homeFragment}">
+        </div>
+        <div class="user-btn">
+            <span class="pc-style" sec:authentication="name"></span>
+            <form class="logout-btn" th:action="@{/logout}" th:method="post">
+                <button type="submit"><img th:src="@{/icons/logout.png}"></button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

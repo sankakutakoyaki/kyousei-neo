@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,viewport-fit=cover">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}"></title>
+    <link th:href="@{kyousei.png}" rel="icon" type="image/x-icon" />
+    <link th:href="@{/css/default.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{__${insertCss}__}" rel="stylesheet" type="text/css">
+    <link th:href="@{/manifest.json}" rel="manifest" crossorigin="use-credentials">
+    <script src="js/default.js" defer></script>
+    <script src="js/dialog.js" defer></script>
+    <script src="js/form.js" defer></script>
+</head>
+
+<body>
+
+    <div id="wrp" class="normal-main">
+        <div th:replace="~{__${headerFragmentName}__}"></div>
+        <div th:replace="~{__${bodyFragmentName}__}"></div>
+    </div>
+
+</body>
+
+</html>

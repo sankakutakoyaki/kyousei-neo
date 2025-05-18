@@ -1,0 +1,82 @@
+@charset "UTF-8";
+
+/******************************************************************************************************* 基本のリスト */
+
+.normal-list {
+    padding: 1.2rem;
+    min-height: 8rem;
+}
+
+.normal-list>li {
+    min-height: 2.5rem;
+    padding: 0 1rem;
+    border-radius: .2rem;
+    cursor: var(--cursor);
+    align-content: center;
+}
+
+.normal-list>li.selected {
+    background-color: var(--row-selected);
+}
+
+/******************************************************************************************************* ドラッグ&ドロップのリスト */
+
+#file-input {
+    display: none;
+}
+
+#file-list {
+    position: relative;
+    border: 2px dashed #ccc;
+    border-radius: .5rem;
+    padding: 1.2rem;
+    min-height: 8rem;
+    color: #999;
+    list-style: none;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+#file-list.dragover {
+    background-color: #f0f8ff;
+    border-color: #007BFF;
+}
+
+#file-list.placeholder::before {
+    content: attr(data-placeholder);
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    pointer-events: none;
+}
+
+#file-list li {
+    min-height: 2.5rem;
+    align-content: center;
+    position: relative;
+}
+
+li:hover .remove-btn {
+    display: inline; /* ホバー時のみ表示 */
+}
+
+.remove-btn {
+    position: absolute;
+    /* margin-left: .2rem; */
+    top: 50%;
+    right: .5rem;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #888;
+    cursor: pointer;
+    display: none; /* デフォルトは非表示 */
+}
+
+/******************************************************************************************************* リストが空の時 */
+
+.placeholder-div:empty::before {
+    content: attr(data-placeholder);
+    color: #aaa;
+}

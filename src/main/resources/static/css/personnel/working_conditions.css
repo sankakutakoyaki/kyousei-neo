@@ -1,0 +1,49 @@
+@charset "UTF-8";
+
+.tab-area {
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+.tab-panel header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 2rem;
+}
+
+:is(#table-01, #table-02) tr {
+    grid-template-columns: 3rem 5rem 12rem 10rem 6rem 1fr;
+    text-align: center;
+}
+
+.normal-table td[data-state="true"] {
+    color: red;
+}
+
+.tab-panel .table-area {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    margin-top: 2rem;
+    overflow: hidden;
+    max-width: 50rem;;
+}
+
+#form-dialog-01 {
+    & .dialog-content {
+        & >.flex-area:nth-of-type(1) {
+            display: grid;
+            grid-template-columns: 1fr;
+            height: 3rem;
+            font-size: 1.2rem;
+            margin-bottom: .5rem;
+        }
+        & >.flex-area:nth-of-type(2) {
+            display: grid;
+            grid-template-columns: 8rem 8rem;
+        }
+        & >.flex-area:nth-of-type(3) {
+            display: grid;
+            grid-template-columns: 7rem 7rem 6rem 6rem;
+        }
+    }
+}

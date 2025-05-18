@@ -1,0 +1,181 @@
+@charset "UTF-8";
+
+/******************************************************************************************************* 基本のボタン */
+
+.normal-btn {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    /* height: 2.5rem; */
+    min-width: 5rem;
+    border-radius: .3rem;
+    transition: 0.1s;
+    cursor: var(--cursor);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border: 1px solid var(--btn-br);
+    background-color: var(--btn-bg);
+    padding: .5rem 1rem;
+}
+
+.normal-btn.ok {
+    background-color: var(--btn-bg-ok);
+    color: var(--white);
+}
+
+.normal-btn.yes {
+    background-color: var(--btn-bg-yes);
+    color: var(--white);
+}
+
+.normal-btn.frameless {
+    border: 0;
+}
+
+/******************************************************************************************************* アカウント名 */
+
+.user-btn {
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: end;
+    justify-content: end;
+}
+
+.user-btn span {
+    display: inline-block;
+    margin-bottom: .3rem;
+    color: var(--white);
+    user-select: none;
+    font-size: .9rem;
+}
+
+/******************************************************************************************************* ヘッダーロゴ */
+
+.logo-btn {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--white);
+    margin-right: 2rem;
+    cursor: var(--cursor);
+}
+
+/******************************************************************************************************* ログアウトボタン */
+
+.logout-btn {
+    display: flex;
+    align-items: end;
+    margin-left: .5rem;
+    width: 100%;
+    height: 100%;
+}
+
+.logout-btn>button {
+    background-color: transparent;
+    border: 0;
+    width: fit-content;
+    height: fit-content;
+    cursor: var(--cursor);
+}
+
+.logout-btn>button>img {
+    width: 2rem;
+    height: 2rem;
+    filter: brightness(0) invert(1);
+}
+
+/******************************************************************************************************* 画像のみのボタン */
+
+.img-btn {
+    background-color: transparent;
+    border: 0;
+    cursor: var(--cursor);
+    align-self: center;
+    text-align: center;
+}
+
+.img-btn>img {
+    padding: .2rem;
+    width: 90%;
+    border-radius: .5rem;
+}
+
+.img-btn>span {
+    font-size: .7rem;
+    white-space: nowrap;
+}
+
+.kebab-btns .img-btn {
+    width: 2.5rem;
+}
+
+/******************************************************************************************************* ページトップボタン */
+
+.page-top {
+    /* buttonタグのリセットCSS */
+    border: none;
+    outline: none;
+    padding: 0;
+    appearance: none;
+    /*--影の複数指定--*/
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transition: background-color 1s;
+    /* ボタンの装飾 */
+    position: absolute;
+    right: 2rem;
+    bottom: 4rem;
+    z-index: 100;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--theme-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s ease;
+    opacity: 0;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+/* 矢印のスタイル */
+.page-top::before {
+    content: "";
+    width: 12px;
+    height: 12px;
+    margin-bottom: -6px;
+    border-top: solid 3px var(--white);
+    border-right: solid 3px var(--white);
+    transform: rotate(-45deg);
+}
+
+/******************************************************************************************************* カメラ */
+
+#interactive,
+#interactive>video,
+#interactive>canvas {
+    width: 100vw;
+}
+
+.drawingBuffer {
+    position: absolute;
+    left: 0;
+}
+
+.camera-area>.img-btn.close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: transparent;
+    width: 4rem;
+    filter: brightness(.3) invert(.7);
+}
+
+.form-parts div[name="camera-btn"] {
+    position: absolute;
+    right: .4rem;
+    bottom: .1rem;
+    width: 2rem;
+}
+
+.form-parts div[name="camera-btn"]>img {
+    padding: 0;
+}

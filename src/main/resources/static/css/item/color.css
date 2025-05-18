@@ -1,0 +1,41 @@
+@charset "UTF-8";
+
+:root {
+    /* basic */
+    --theme-blue: darkblue;
+    --theme-orange: orange;
+    --black: black;
+    --red: red;
+    --blue: blue;
+    --green: green;
+    --white: white;
+    --yellow: rgb(220, 200, 20);
+    --light-yellow: rgb(253, 242, 181);
+
+    --bg: white;
+    --br: darkgrey;
+
+    /* table */
+    --row-hover-bg: rgb(183, 205, 245);
+    --row-selected: lightblue;  
+
+    /* button */
+    --btn-br: lightgrey;
+    --btn-bg: white;
+    /* --btn-bg-ok: rgb(20, 100, 255); */
+    --btn-bg-ok: #007BFF;
+    --btn-bg-yes: rgb(0, 135, 100);
+    --btn-hover-bg: lightgrey;
+    --btn-hover-bg-ok: rgb(110, 175, 255);
+    --btn-hover-bg-yes: rgb(115, 175, 160);
+
+    /* check-button */
+    --chk-bg: blue;
+
+    /*  */
+    --dialog-bg: rgba(0, 0, 0, 0.5);
+    --sidebar-bg: white;
+    --shadow: grey;
+    --line: #ddd;
+
+}

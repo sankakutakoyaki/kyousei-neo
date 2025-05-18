@@ -1,0 +1,42 @@
+@charset "UTF-8";
+
+/******************************************************************************************************* PC表示のみ */
+
+@media screen and (min-width:561px) {
+    *.sp-style {
+        display: none !important;
+    }
+
+    *.sp-style * {
+        display: none !important;
+    }
+
+    /* サイドバーがある時の処理 */
+    .normal-content:has(.normal-sidebar) {
+        grid-template-columns: auto 1fr;
+    }
+
+    /* ハンバーガー部分は消す */
+    #hamburger-area,
+    .hamburger-btn-open,
+    .hamburger-btn-close {
+        display: none;
+    }
+
+    .kebab-btns {
+        display: flex;
+        height: 4rem;
+        column-gap: .5rem;
+        padding: .5rem;
+    }
+
+    /* 選択されたら色を変える */
+    .normal-table tr[name="data-row"].selected {
+        background-color: var(--row-selected);
+    }
+
+    /* 選択されたら下の行の上線を消す */
+    .normal-table tr[name="data-row"].selected+tr[name="data-row"] {
+        border-top: 0;
+    }
+}

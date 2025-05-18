@@ -1,0 +1,149 @@
+@charset "UTF-8";
+
+/******************************************************************************************************* 基本設定 normal */
+
+.normal-table {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+.normal-table tr {
+    display: grid;
+    align-items: center;
+    user-select: none;
+    height: 4rem;
+    background-color: var(--white);
+    border-radius: .5rem;
+    padding: 0 2rem;
+}
+
+/* チェックセルがある場合は左側のマージンを消す */
+.normal-table tr:has([name="chk-cell"]) {
+    padding-left: 0;
+}
+
+/* スクロールバーが表示された時 */
+.normal-table.has-scrollbar tr:has(th) {
+    padding-right: 3rem; /* スクロールバーの幅に応じて調整 */
+}
+
+/* ヘッダーを浮かせる */
+.normal-table tr[name="table-header"] {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    margin-bottom: 1rem;
+    box-shadow: 0 .3rem .4rem -.2rem var(--shadow);
+    border-radius: 0 0 .5rem .5rem;
+    text-align: left;
+}
+
+.normal-table tr :is(th, td) {
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+    padding: 0 .5rem;
+}
+
+.normal-table td .kana {
+    font-size: .6rem;
+}
+
+.normal-table .scroll-area {
+    overflow: auto;
+}
+
+/******************************************************************************************************* 基本設定 table */
+
+.table-area main {
+    margin-top: 1rem;
+    /* height: 100%; */
+    overflow: auto;
+}
+
+.table-area footer {
+    height: 3rem;
+    padding-right: 2rem;
+    justify-self: end;
+    align-content: center;
+}
+
+/******************************************************************************************************* 行設定 */
+
+/* 下線 */
+.normal-table tr[name="data-row"]:not(:nth-child(1)) {
+    border-top: 1px solid var(--line);
+    border-image: linear-gradient(to right, transparent 2%, lightgrey 2%, lightgrey 98%, transparent 98%) 1;
+    margin-top: 2px;
+}
+/* 最後の行には下線を引く */
+.normal-table tr[name="data-row"]:last-child {
+    border-bottom: 1px solid var(--line);
+    border-image: linear-gradient(to right, transparent 2%, lightgrey 2%, lightgrey 98%, transparent 98%) 1;
+}
+
+/******************************************************************************************************* チェックセル */
+
+.normal-table tr :is(th, td)[name="chk-cell"] {
+    display: grid;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 普段は非表示 */
+.normal-table tr :is(th, td)[name="chk-cell"]>input {
+    display: none;
+    cursor: var(--cursor);
+}
+
+/* 選択したら表示する */
+.normal-table tr :is(th, td)[name="chk-cell"]>input:checked {
+    display: block;
+}
+
+/******************************************************************************************************* ソート */
+
+/* ソート用の矢印スタイル（クリック可能） */
+.sort-arrow {
+    position: absolute;
+    cursor: pointer;
+    user-select: none;
+    margin-left: 5px;
+}
+
+/* 矢印の絶対位置の設定 */
+th .sort-arrow {
+    position: absolute;
+    right: -1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid black;
+    opacity: 0;
+}
+
+/* 昇順ソート時の矢印の表示（CSSでは内容を変更できないため、この部分はJSで制御する） */
+th.sorted-asc .sort-arrow {
+    transform: rotate(180deg) translateY(4px);
+    opacity: 1;
+}
+
+/* 降順ソート時の矢印の表示 */
+th.sorted-desc .sort-arrow {
+    opacity: 1;
+}
+
+th.sorted-asc>span,
+th.sorted-desc>span {
+    position: relative;
+}
