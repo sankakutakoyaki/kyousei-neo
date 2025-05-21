@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.entity.data.SimpleData;
@@ -21,10 +22,22 @@ import com.kyouseipro.neo.interfaceis.IEntity;
 @Service
 public class SqlRepositry {
 
-    static String driverName = ResourceBundle.getBundle("application").getString("spring.datasource.driver-class-name");
-    static String url = ResourceBundle.getBundle("application").getString("spring.datasource.url");
-    static String userName = ResourceBundle.getBundle("application").getString("spring.datasource.username");
-    static String password = ResourceBundle.getBundle("application").getString("spring.datasource.password");
+    // static String driverName = ResourceBundle.getBundle("application").getString("spring.datasource.driver-class-name");
+    // static String url = ResourceBundle.getBundle("application").getString("spring.datasource.url");
+    // static String userName = ResourceBundle.getBundle("application").getString("spring.datasource.username");
+    // static String password = ResourceBundle.getBundle("application").getString("spring.datasource.password");
+
+    @Value("${spring.datasource.driver-class-name}")
+    private static String driverName;
+
+    @Value("${spring.datasource.url}")
+    private static String url;
+
+    @Value("${spring.datasource.username}")
+    private static String userName;
+
+    @Value("${spring.datasource.password}")
+    private static String password;
 
     public static boolean execSql(Predicate<Statement> execQuery) {
         Connection conn = null;
