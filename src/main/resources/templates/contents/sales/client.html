@@ -83,7 +83,7 @@
         </div>
         <div id="form-dialog-area">
             <!-- フォーム画面をここに記入する -->
-             <div id="form-dialog-01" class="form-dialog none">
+            <div id="form-dialog-01" class="form-dialog none">
                 <div class="dialog-header"><span></span>
                     <div class="img-btn" onclick="closeFormDialog('form-dialog-01', event)"><img title="閉じる" src="/icons/close-s.png"></div>
                 </div>
@@ -360,10 +360,10 @@
                 let dialogId;
                 switch (tab) {
                     case "06":
-                        dialogId = "form-dialog-01";
+                        dialogId = "form-dialog-02";
                         break;
-                
                     default:
+                        dialogId = "form-dialog-01";
                         break;
                 }
                 // 入力フォームダイアログを開く
@@ -503,8 +503,8 @@
 
             // 保存処理
             async function execSave(self) {
-                const panel = self.closest('.tab-panel');
-                const tab = panel.dataset.panel;
+                const panel = document.querySelector('.is-active');
+                const tab = panel.dataset.tab;
 
                 let formId;
                 switch (tab) {
@@ -521,8 +521,7 @@
                 if (formDataCheck(form) == false) {
                     return;
                 } else {
-                    const panel = document.querySelector('.is-active');
-                    const tab = panel.dataset.tab;
+
                     const formData = new FormData(form);
                     let formdata;
                     let url;
@@ -617,22 +616,34 @@
                 if (name != null && name.value == "") msg += '\n名称が入力されていません';
                 // 電話番号チェック
                 const tel = area.querySelector('input[name="tel-number"]');
-                if (!checkPhoneNumber(tel)) msg += '\n電話番号に誤りがあります';
+                if (tel != null) {
+                    if (!checkPhoneNumber(tel)) msg += '\n電話番号に誤りがあります';
+                }                
                 // 携帯番号チェック
                 const phone = area.querySelector('input[name="phone-number"]');
-                if (!checkPhoneNumber(phone)) msg += '\n携帯番号に誤りがあります';
+                if (phone != null) {
+                    if (!checkPhoneNumber(phone)) msg += '\n携帯番号に誤りがあります';
+                }                
                 // ファックス番号チェック
                 const fax = area.querySelector('input[name="fax-number"]');
-                if (!checkPhoneNumber(fax)) msg += '\nFAX番号に誤りがあります';
+                if (fax != null) {
+                    if (!checkPhoneNumber(fax)) msg += '\nFAX番号に誤りがあります';
+                }                
                 // 郵便番号チェック
                 const postal = area.querySelector('input[name="postal-code"]');
-                if (!checkPostalCode(postal)) msg += '\n郵便番号に誤りがあります';
+                if (postal != null) {
+                    if (!checkPostalCode(postal)) msg += '\n郵便番号に誤りがあります';
+                }                
                 // メールアドレスチェック
                 const email = area.querySelector('input[name="email"]');
-                if (!checkMailAddress(email)) msg += '\nメールアドレスに誤りがあります';
-                // メールアドレスチェック
+                if (email != null) {
+                    if (!checkMailAddress(email)) msg += '\nメールアドレスに誤りがあります';
+                }                
+                // webアドレスチェック
                 const web = area.querySelector('input[name="web-address"]');
-                if (!checkWebAddress(web)) msg += '\nWEBアドレスに誤りがあります';
+                if (web != null) {
+                    if (!checkWebAddress(web)) msg += '\nWEBアドレスに誤りがあります';
+                }                
                 // エラーが一つ以上あればエラーメッセージダイアログを表示する
                 if (msg != "") {
                     openMsgDialog("msg-dialog", msg, "red");
@@ -716,8 +727,24 @@
             async function execUpdate() {
                 startProcessing();
 
+                const panel = document.querySelector('.is-active');
+                const tab = panel.dataset.tab;
+
+                switch (tab) {
+                    case value:
+                        
+                        break;
+                
+                    default:
+                        break;
+                }
+                
                 let resultResponse = await fetch('/client/get/list');
                 companyOrigin = await resultResponse.json();
+                resultResponse = await fetch('/client/office/get/list');
+                officeOrigin = await resultResponse.json();
+                resultResponse = await fetch('/company/staff/get/list');
+                staffOrigin = await resultResponse.json();
 
                 // 画面更新
                 const list01 = companyOrigin.filter(function(value) { return value.category == categoryPartnerCode });
@@ -734,10 +761,17 @@
                 
                 resultResponse = await fetch('/client/get/combo');
                 companyComboList = await resultResponse.json();
+
                 const company01Area = document.getElementById('name-box-01');
                 createComboBoxWithTop(company01Area, companyComboList, '');
-                const company02Area = document.getElementById('name-box-01');
+
+                const company02Area = document.getElementById('name-box-02');
                 createComboBoxWithTop(company02Area, companyComboList, '');
+
+                resultResponse = await fetch('/office/get/combo');
+                officeComboList = await resultResponse.json();
+                const officeArea = document.getElementById('name-box-03');
+                createComboBoxWithTop(officeArea, officeComboList, '');
 
                 updateOfficeTableDisplay("05");
                 updateOfficeTableDisplay("06");
@@ -787,14 +821,17 @@
                         code = document.getElementById('code-box-01');
                         name = document.getElementById('name-box-01'); // 会社選択セレクトボックス
                         code.value = name.value == 0 ? "": name.value;
+                        const resultResponse = await fetch('/client/office/get/list');
+                        officeOrigin = await resultResponse.json();
                         const list = officeOrigin.filter(function(value) { return value.company_id == code.value });
                         createDisplay("table-05-content", "footer-05", list);
+                        createOfficeComboBox();
                         break;
                     case "06":
                         code = document.getElementById('code-box-02');
                         name = document.getElementById('name-box-02'); // 会社選択セレクトボックス
                         code.value = name.value == 0 ? "": name.value;
-                        createOfficeComboBox(name);
+                        updateStaffTableDisplay()
                         break;
                     default:
                         return;
@@ -811,8 +848,8 @@
                 const name = document.getElementById('name-box-02'); // 会社選択セレクトボックス
                 const name2 = document.getElementById('name-box-03'); // 支店選択セレクトボックス
                 if (name.value < 1) return;
-                // const resultResponse = await fetch('/client/office/staff/get/list');
-                // const result = await resultResponse.json();
+                const resultResponse = await fetch('/company/staff/get/list');
+                staffOrigin = await resultResponse.json();
                 let list = staffOrigin.filter(function(value) { return value.company_id == name.value });
                 if (name2.value > 0) {
                     list = list.filter(function(value) { return value.office_id == name2.value });
@@ -821,8 +858,9 @@
             }
 
             // 選択した会社の支店をコンボボックスに登録する
-            function createOfficeComboBox(self) {console.log(self);
-                const selectId = self.value;
+            function createOfficeComboBox() {
+                const name = document.getElementById('name-box-02');
+                const selectId = name.value;
                 const comboList = officeComboList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.office_name}));
                 const officeArea = document.getElementById('name-box-03');
                 createComboBoxWithTop(officeArea, comboList, "");
@@ -903,7 +941,7 @@
                         companyArea.focus();
                     }
                 });
-                document.getElementById('code-box-01').addEventListener('blur', function (e) {console.log("test")
+                document.getElementById('code-box-01').addEventListener('blur', function (e) {
                     updateOfficeTableDisplay("05");
                 });
                 document.getElementById('code-box-02').addEventListener('keydown', function (e) {

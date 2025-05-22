@@ -189,6 +189,26 @@ public class CompanyController {
     }
 
     /**
+     * すべてのスタッフ情報を取得する
+     * @return
+     */
+    @GetMapping("/company/staff/get/list")
+	@ResponseBody
+    public List<IEntity> getStaffList() {
+        return staffService.getStaffList();
+    }
+
+    /**
+     * すべてのコンボボックス用支店情報を取得する
+     * @return
+     */
+    @GetMapping("/office/get/combo")
+	@ResponseBody
+    public List<IEntity> getOfficeCombo() {
+        return comboBoxService.getOffice();
+    }
+
+    /**
      * カテゴリー別の支店情報を取得する
      * @return
      */
