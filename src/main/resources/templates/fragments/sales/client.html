@@ -81,6 +81,58 @@
         </div>
     </header>
 
+    <header class="flex-area pc-style" th:fragment="headerStaffFragment(code, name, name2)">
+        <div id="code-area" class="flex-area">
+            <div class="form-parts">
+                <label>ID</label>
+                <input th:id="${code}" class="normal-input" type="text" value="">
+            </div>
+            <div class="form-parts">
+                <label>会社名</label>
+                <select th:id="${name}" class="normal-select"></select>
+            </div>
+            <div class="form-parts">
+                <label>支店</label>
+                <select th:id="${name2}" class="normal-select"></select>
+            </div>
+        </div>
+        <div class="kebab-btns">
+            <!-- 新規作成ボタン -->
+            <div class="img-btn" onclick="execEdit(0, this)">
+                <img title="作成・登録" src="/icons/add.png">
+                <span>新規</span>
+            </div>
+            <!-- 削除ボタン -->
+            <div class="img-btn" onclick="execDelete(this)">
+                <img title="削除" src="/icons/dust.png">
+                <span>削除</span>
+            </div>
+            <!-- ダウンロードボタン -->
+            <div class="img-btn" onclick="execDownloadCsv(this)">
+                <img title="ダウンロード" src="/icons/download.png">
+                <span>取得</span>
+            </div>
+            <!-- 更新ボタン -->
+            <div class="img-btn" onclick="execUpdate(this)">
+                <img title="更新" src="/icons/update.png">
+                <span>更新</span>
+            </div>
+        </div>
+    </header>
+    <main th:fragment="mainStaffFragment(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table">
+            <tr id="row-0" name="table-header" class="pc-style">
+                <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
+                <th><span>ID<span class="sort-arrow"></span></span></th>
+                <th><span>担当者名<span class="sort-arrow"></span></span></th>
+                <th><span>会社名<span class="sort-arrow"></span></span></th>
+                <th><span>支店名<span class="sort-arrow"></span></span></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
     <footer th:fragment="footerFragment()" th:remove="tag">
         <span>0件 : 0000/00/00 00:00 現在</span>
     </footer>

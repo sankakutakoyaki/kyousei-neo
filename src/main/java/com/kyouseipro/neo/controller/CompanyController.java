@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.corporation.OfficeEntity;
+import com.kyouseipro.neo.entity.corporation.StaffEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.person.EmployeeEntity;
 import com.kyouseipro.neo.interfaceis.IEntity;
@@ -23,6 +24,7 @@ import com.kyouseipro.neo.service.ComboBoxService;
 import com.kyouseipro.neo.service.DatabaseService;
 import com.kyouseipro.neo.service.cient.CompanyService;
 import com.kyouseipro.neo.service.cient.OfficeService;
+import com.kyouseipro.neo.service.cient.StaffService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class CompanyController {
     private final EmployeeService employeeService;
     private final CompanyService companyService;
     private final OfficeService officeService;
+    private final StaffService staffService;
     private final ComboBoxService comboBoxService;
     private final DatabaseService databaseService;
     /**
@@ -59,6 +62,7 @@ public class CompanyController {
         // 初期化されたエンティティ
         mv.addObject("companyEntity", new CompanyEntity());
         mv.addObject("officeEntity", new OfficeEntity());
+        mv.addObject("staffEntity", new StaffEntity());
 
         // 初期表示用Clientリスト取得
         List<IEntity> companyOrigin = companyService.getClientList();
@@ -66,10 +70,15 @@ public class CompanyController {
         // 初期表示用Officeリスト取得
         List<IEntity> officeOrigin = officeService.getOfficeList();
         mv.addObject("officeOrigin", officeOrigin);
+        // 初期表示用Staffリスト取得
+        List<IEntity> staffOrigin = staffService.getStaffList();
+        mv.addObject("staffOrigin", staffOrigin);
 
         // コンボボックスアイテム取得
         List<IEntity> companyComboList = comboBoxService.getClient();
         mv.addObject("companyComboList", companyComboList);
+        List<IEntity> officeComboList = comboBoxService.getOffice();
+        mv.addObject("officeComboList", officeComboList);
 
         // 保存用コード
         mv.addObject("categoryPartnerCode", Enums.clientCategory.PARTNER.getNum());

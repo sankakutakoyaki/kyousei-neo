@@ -14,6 +14,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
 
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.component.UploadConfig;
@@ -35,6 +36,7 @@ import lombok.RequiredArgsConstructor;
  * - サムネイル生成（リサイズ）
  * </p>
  */
+@Service
 @RequiredArgsConstructor
 public class FileService {
     private final SqlRepository sqlRepository;
