@@ -18,9 +18,13 @@ import com.kyouseipro.neo.service.personnel.EmployeeService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @Controller
+@RequiredArgsConstructor
 public class IndexController {
+	private final EmployeeService employeeService;
+    private final DatabaseService databaseService;
 	/**
 	 * スタートページ
 	 * @param mv
@@ -37,11 +41,11 @@ public class IndexController {
         mv.addObject("bodyFragmentName", "contents/index/home :: bodyFragment");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) EmployeeService.getEmployeeByAccount(userName);
+		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
 		mv.addObject("entity", entity);
 		mv.addObject("user_name", entity.getAccount());
 
-		DatabaseService.saveHistory(userName, "", "ログイン", 200, "ログインしました。");
+		databaseService.saveHistory(userName, "", "ログイン", 200, "ログインしました。");
 		
         return mv;
     }
@@ -61,7 +65,7 @@ public class IndexController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		DatabaseService.saveHistory(userName, "", "ログアウト", 200, "ログアウトしました。");
+		databaseService.saveHistory(userName, "", "ログアウト", 200, "ログアウトしました。");
     }
 
 	/**
@@ -81,10 +85,10 @@ public class IndexController {
         mv.addObject("insertCss", "/css/sales/sales.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) EmployeeService.getEmployeeByAccount(userName);
+		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
 		mv.addObject("entity", entity);
 
-		DatabaseService.saveHistory(userName, "sales", "閲覧", 200, "");
+		databaseService.saveHistory(userName, "sales", "閲覧", 200, "");
 		
         return mv;
     }
@@ -106,10 +110,10 @@ public class IndexController {
         mv.addObject("insertCss", "/css/personnel.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) EmployeeService.getEmployeeByAccount(userName);
+		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
 		mv.addObject("entity", entity);
 
-		DatabaseService.saveHistory(userName, "personnel", "閲覧", 200, "");
+		databaseService.saveHistory(userName, "personnel", "閲覧", 200, "");
 		
         return mv;
     }

@@ -25,8 +25,16 @@ import com.kyouseipro.neo.service.cient.CompanyService;
 import com.kyouseipro.neo.service.cient.OfficeService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
+import lombok.RequiredArgsConstructor;
+
 @Controller
+@RequiredArgsConstructor
 public class CompanyController {
+    private final EmployeeService employeeService;
+    private final CompanyService companyService;
+    private final OfficeService officeService;
+    private final ComboBoxService comboBoxService;
+    private final DatabaseService databaseService;
     /**
 	 * 従業員
 	 * @param mv
@@ -45,7 +53,7 @@ public class CompanyController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = (EmployeeEntity) EmployeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期化されたエンティティ
@@ -53,14 +61,14 @@ public class CompanyController {
         mv.addObject("officeEntity", new OfficeEntity());
 
         // 初期表示用Clientリスト取得
-        List<IEntity> companyOrigin = CompanyService.getClientList();
+        List<IEntity> companyOrigin = companyService.getClientList();
         mv.addObject("companyOrigin", companyOrigin);
         // 初期表示用Officeリスト取得
-        List<IEntity> officeOrigin = OfficeService.getOfficeList();
+        List<IEntity> officeOrigin = officeService.getOfficeList();
         mv.addObject("officeOrigin", officeOrigin);
 
         // コンボボックスアイテム取得
-        List<IEntity> companyComboList = ComboBoxService.getClient();
+        List<IEntity> companyComboList = comboBoxService.getClient();
         mv.addObject("companyComboList", companyComboList);
 
         // 保存用コード
@@ -70,7 +78,7 @@ public class CompanyController {
         mv.addObject("categoryServiceCode", Enums.clientCategory.SERVICE.getNum());
 
         // 履歴保存
-        DatabaseService.saveHistory(userName, "companies", "閲覧", 200, "");
+        databaseService.saveHistory(userName, "companies", "閲覧", 200, "");
 		
         return mv;
     }
@@ -83,7 +91,7 @@ public class CompanyController {
     @PostMapping("/company/get/id")
 	@ResponseBody
     public IEntity getCompanyById(@RequestParam int id) {
-        return CompanyService.getCompanyById(id);
+        return companyService.getCompanyById(id);
     }
 
     /**
@@ -93,7 +101,7 @@ public class CompanyController {
     @GetMapping("/client/get/list")
 	@ResponseBody
     public List<IEntity> getCompanyList() {
-        return CompanyService.getCompanyList();
+        return companyService.getCompanyList();
     }
 
     /**
@@ -103,7 +111,7 @@ public class CompanyController {
     @GetMapping("/client/get/combo")
 	@ResponseBody
     public List<IEntity> getCompanyCombo() {
-        return ComboBoxService.getClient();
+        return comboBoxService.getClient();
     }
 
     /**
@@ -113,7 +121,7 @@ public class CompanyController {
     @PostMapping("/company/get/list/category")
 	@ResponseBody
     public List<IEntity> getCompanyListByCategory(@RequestParam int category) {
-        return CompanyService.getCompanyListByCategory(category);
+        return companyService.getCompanyListByCategory(category);
     }
 
     /**
@@ -124,7 +132,7 @@ public class CompanyController {
     @PostMapping("/company/save")
 	@ResponseBody
     public IEntity saveCompany(@RequestBody CompanyEntity entity) {
-        return CompanyService.saveCompany(entity);
+        return companyService.saveCompany(entity);
     }
 
     /**
@@ -136,7 +144,7 @@ public class CompanyController {
 	@ResponseBody
     public IEntity deleteCompanyByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        return CompanyService.deleteCompanyByIds(ids, userName);
+        return companyService.deleteCompanyByIds(ids, userName);
     }
 
     /**
@@ -147,7 +155,7 @@ public class CompanyController {
     @PostMapping("/company/download/csv")
 	@ResponseBody
     public String downloadCsvCompanyByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
-        return CompanyService.downloadCsvCompanyByIds(ids);
+        return companyService.downloadCsvCompanyByIds(ids);
     }
 
     /**
@@ -158,7 +166,7 @@ public class CompanyController {
     @PostMapping("/company/office/get/id")
 	@ResponseBody
     public IEntity getOfficeById(@RequestParam int id) {
-        return OfficeService.getOfficeById(id);
+        return officeService.getOfficeById(id);
     }
 
     /**
@@ -168,7 +176,7 @@ public class CompanyController {
     @GetMapping("/client/office/get/list")
 	@ResponseBody
     public List<IEntity> getOfficeList() {
-        return OfficeService.getOfficeList();
+        return officeService.getOfficeList();
     }
 
     /**
@@ -178,7 +186,7 @@ public class CompanyController {
     @PostMapping("/office/get/list/category")
 	@ResponseBody
     public List<IEntity> getOfficeListByCategory(@RequestParam int category) {
-        return OfficeService.getOfficeListByCategory(category);
+        return officeService.getOfficeListByCategory(category);
     }
 
     /**
@@ -189,7 +197,7 @@ public class CompanyController {
     @PostMapping("/office/save")
 	@ResponseBody
     public IEntity saveOffice(@RequestBody OfficeEntity entity) {
-        return OfficeService.saveOffice(entity);
+        return officeService.saveOffice(entity);
     }
 
     /**
@@ -201,7 +209,7 @@ public class CompanyController {
 	@ResponseBody
     public IEntity deleteOfficeByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        return OfficeService.deleteOfficeByIds(ids, userName);
+        return officeService.deleteOfficeByIds(ids, userName);
     }
 
     /**
@@ -212,6 +220,6 @@ public class CompanyController {
     @PostMapping("/office/download/csv")
 	@ResponseBody
     public String downloadCsvOfficeByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
-        return OfficeService.downloadCsvOfficeByIds(ids);
+        return officeService.downloadCsvOfficeByIds(ids);
     }
 }

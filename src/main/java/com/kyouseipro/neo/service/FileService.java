@@ -20,7 +20,9 @@ import com.kyouseipro.neo.component.UploadConfig;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.interfaceis.IEntity;
 import com.kyouseipro.neo.interfaceis.IFileUpload;
-import com.kyouseipro.neo.repository.SqlRepositry;
+import com.kyouseipro.neo.repository.SqlRepository;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * ファイル操作ユーティリティクラス（Java 標準ライブラリのみ使用）。
@@ -33,7 +35,9 @@ import com.kyouseipro.neo.repository.SqlRepositry;
  * - サムネイル生成（リサイズ）
  * </p>
  */
+@RequiredArgsConstructor
 public class FileService {
+    private final SqlRepository sqlRepository;
 
     /** 許可された拡張子のリスト（必要に応じて変更可） */
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "pdf", "gif", "zip");
@@ -46,7 +50,7 @@ public class FileService {
      *
      * @param directoryPath 作成するディレクトリのパス
      */
-    public static void ensureDirectoryExists(String directoryPath) {
+    public void ensureDirectoryExists(String directoryPath) {
         File dir = new File(directoryPath);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -60,7 +64,7 @@ public class FileService {
      * @param originalFilename 元のファイル名
      * @return 重複を避けたファイル名
      */
-    public static String getUniqueFilename(String directory, String originalFilename) {
+    public String getUniqueFilename(String directory, String originalFilename) {
         ensureDirectoryExists(directory);
 
         File file = new File(directory + originalFilename);
@@ -92,7 +96,7 @@ public class FileService {
      * @param filename 対象ファイル名
      * @return 許可されていれば true、それ以外は false
      */
-    public static boolean isAllowedExtension(String filename) {
+    public boolean isAllowedExtension(String filename) {
         int dotIndex = filename.lastIndexOf('.');
         if (dotIndex == -1) return false;
 
@@ -106,7 +110,7 @@ public class FileService {
      * @param fileSize ファイルサイズ（バイト）
      * @return 許容範囲内なら true、それ以外は false
      */
-    public static boolean isFileSizeAllowed(long fileSize) {
+    public boolean isFileSizeAllowed(long fileSize) {
         return fileSize <= MAX_FILE_SIZE;
     }
 
@@ -117,7 +121,7 @@ public class FileService {
      * @param targetDirectory 展開先ディレクトリのパス（末尾にスラッシュが必要）
      * @throws IOException 展開エラー（不正なZIPやアクセス権など）
      */
-    public static void extractZipFile(String zipFilePath, String targetDirectory) throws IOException {
+    public void extractZipFile(String zipFilePath, String targetDirectory) throws IOException {
         ensureDirectoryExists(targetDirectory);
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFilePath))) {
             ZipEntry entry;
@@ -160,7 +164,7 @@ public class FileService {
      * @param height          リサイズ後の高さ（ピクセル）
      * @throws IOException 入出力エラーや画像処理エラー
      */
-    public static void createThumbnail(String inputImagePath, String outputImagePath, int width, int height) throws IOException {
+    public void createThumbnail(String inputImagePath, String outputImagePath, int width, int height) throws IOException {
         BufferedImage originalImage = ImageIO.read(new File(inputImagePath));
         if (originalImage == null) {
             throw new IOException("画像を読み込めませんでした: " + inputImagePath);
@@ -181,7 +185,7 @@ public class FileService {
      * @param filename 対象のファイル名
      * @return 拡張子（例: jpg, png）
      */
-    private static String getExtension(String filename) {
+    private String getExtension(String filename) {
         int dot = filename.lastIndexOf('.');
         return (dot != -1) ? filename.substring(dot + 1).toLowerCase() : "";
     }
@@ -193,7 +197,7 @@ public class FileService {
      * @param entity
      * @return
      */
-    public static IEntity fileUpload(MultipartFile[] files, String folderName, IFileUpload entity) {
+    public IEntity fileUpload(MultipartFile[] files, String folderName, IFileUpload entity) {
         if (files.length == 0) {
             SimpleData simpleData = new SimpleData();
             simpleData.setText("ファイルが空です");
@@ -254,7 +258,7 @@ public class FileService {
         // SQL保存処理
         SimpleData result = new SimpleData();
         if (!sb.toString().isEmpty()) {
-            result = (SimpleData) SqlRepositry.excuteSqlString(sb.toString());
+            result = (SimpleData) sqlRepository.excuteSqlString(sb.toString());
             resultStr.append(result.getText());
             result.setText(resultStr.toString());
         } else {
@@ -269,7 +273,7 @@ public class FileService {
      * @param url 削除するファイルのパス
      * @return
      */
-    public static IEntity deleteFile(String url) {
+    public IEntity deleteFile(String url) {
         SimpleData result = new SimpleData();
         try {
             Path filePath = Paths.get(url);

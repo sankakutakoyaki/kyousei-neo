@@ -12,14 +12,15 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.data.SqlData;
 import com.kyouseipro.neo.interfaceis.IEntity;
 
-@Service
-public class SqlRepositry {
+@Repository
+public class SqlRepository {
 
     // static String driverName = ResourceBundle.getBundle("application").getString("spring.datasource.driver-class-name");
     // static String url = ResourceBundle.getBundle("application").getString("spring.datasource.url");
@@ -27,18 +28,18 @@ public class SqlRepositry {
     // static String password = ResourceBundle.getBundle("application").getString("spring.datasource.password");
 
     @Value("${spring.datasource.driver-class-name}")
-    private static String driverName;
+    private String driverName;
 
     @Value("${spring.datasource.url}")
-    private static String url;
+    private String url;
 
     @Value("${spring.datasource.username}")
-    private static String userName;
+    private String userName;
 
     @Value("${spring.datasource.password}")
-    private static String password;
+    private String password;
 
-    public static boolean execSql(Predicate<Statement> execQuery) {
+    public boolean execSql(Predicate<Statement> execQuery) {
         Connection conn = null;
         Statement stmt = null;
 
@@ -77,7 +78,7 @@ public class SqlRepositry {
      * @param data
      * @return 見つからない場合はNULLを返す
      */
-    public static IEntity getEntity(SqlData data) {
+    public IEntity getEntity(SqlData data) {
         try {
             Class<?> c = Class.forName(data.getClassPath());
 
@@ -118,7 +119,7 @@ public class SqlRepositry {
      * @param str
      * @return コードとメッセージを返す
      */
-    public static SimpleData excuteSqlString(String str) {
+    public SimpleData excuteSqlString(String str) {
         SimpleData simpleData = new SimpleData();
         execSql(s -> {
             try {
@@ -143,7 +144,7 @@ public class SqlRepositry {
      * @param data
      * @return リストを返す
      */
-    public static List<IEntity> getEntityList(SqlData data) {
+    public List<IEntity> getEntityList(SqlData data) {
         List<IEntity> list = new ArrayList<>();
         execSql(s -> {
             try {

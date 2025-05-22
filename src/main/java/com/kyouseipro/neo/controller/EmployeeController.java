@@ -21,8 +21,14 @@ import com.kyouseipro.neo.service.ComboBoxService;
 import com.kyouseipro.neo.service.DatabaseService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
+import lombok.RequiredArgsConstructor;
+
 @Controller
+@RequiredArgsConstructor
 public class EmployeeController {
+    private final EmployeeService employeeService;
+    private final ComboBoxService comboBoxService;
+    private final DatabaseService databaseService;
     /**
 	 * 従業員
 	 * @param mv
@@ -41,30 +47,30 @@ public class EmployeeController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = (EmployeeEntity) EmployeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new EmployeeEntity());
 
         // 初期表示用従業員リスト取得
-        List<IEntity> origin = EmployeeService.getEmployeeList();
+        List<IEntity> origin = employeeService.getEmployeeList();
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得
-        List<IEntity> companyComboList = ComboBoxService.getCompany();
+        List<IEntity> companyComboList = comboBoxService.getCompany();
         mv.addObject("companyComboList", companyComboList);
-        List<IEntity> officeList = ComboBoxService.getOffice();
+        List<IEntity> officeList = comboBoxService.getOffice();
         mv.addObject("officeList", officeList);
-        List<IEntity> employeeCategoryComboList = ComboBoxService.getEmployeeCategory();
+        List<IEntity> employeeCategoryComboList = comboBoxService.getEmployeeCategory();
         mv.addObject("employeeCategoryComboList", employeeCategoryComboList);
-        List<IEntity> genderComboList = ComboBoxService.getGender();
+        List<IEntity> genderComboList = comboBoxService.getGender();
         mv.addObject("genderComboList", genderComboList);
-        List<IEntity> bloodTypeComboList = ComboBoxService.getBloodType();
+        List<IEntity> bloodTypeComboList = comboBoxService.getBloodType();
         mv.addObject("bloodTypeComboList", bloodTypeComboList);
-        List<IEntity> paymentMethodComboList = ComboBoxService.getPaymentMethod();
+        List<IEntity> paymentMethodComboList = comboBoxService.getPaymentMethod();
         mv.addObject("paymentMethodComboList", paymentMethodComboList);
-        List<IEntity> payTypeComboList = ComboBoxService.getPayType();
+        List<IEntity> payTypeComboList = comboBoxService.getPayType();
         mv.addObject("payTypeComboList", payTypeComboList);
 
         // 保存用コード
@@ -73,7 +79,7 @@ public class EmployeeController {
         mv.addObject("categoryConstructCode", Enums.employeeCategory.CONSTRUCT.getNum());
 
         // 履歴保存
-        DatabaseService.saveHistory(userName, "employee", "閲覧", 200, "");
+        databaseService.saveHistory(userName, "employee", "閲覧", 200, "");
 		
         return mv;
     }
@@ -86,7 +92,7 @@ public class EmployeeController {
     @PostMapping("/employee/get/id")
 	@ResponseBody
     public IEntity getEmployeeById(@RequestParam int id) {
-        return EmployeeService.getEmployeeById(id);
+        return employeeService.getEmployeeById(id);
     }
 
     /**
@@ -96,7 +102,7 @@ public class EmployeeController {
     @GetMapping("/employee/get/list")
 	@ResponseBody
     public List<IEntity> getEmployeeList() {
-        return EmployeeService.getEmployeeList();
+        return employeeService.getEmployeeList();
     }
 
     /**
@@ -106,7 +112,7 @@ public class EmployeeController {
     @PostMapping("/employee/get/list/category")
 	@ResponseBody
     public List<IEntity> getEmployeeListByCategory(@RequestParam int category) {
-        return EmployeeService.getEmployeeListByCategory(category);
+        return employeeService.getEmployeeListByCategory(category);
     }
 
     /**
@@ -117,7 +123,7 @@ public class EmployeeController {
     @PostMapping("/employee/save")
 	@ResponseBody
     public IEntity saveEmployee(@RequestBody EmployeeEntity entity) {
-        return EmployeeService.saveEmployee(entity);
+        return employeeService.saveEmployee(entity);
     }
 
     /**
@@ -129,7 +135,7 @@ public class EmployeeController {
 	@ResponseBody
     public IEntity deleteEmployeeByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        return EmployeeService.deleteEmployeeByIds(ids, userName);
+        return employeeService.deleteEmployeeByIds(ids, userName);
     }
 
     /**
@@ -140,6 +146,6 @@ public class EmployeeController {
     @PostMapping("/employee/download/csv")
 	@ResponseBody
     public String downloadCsvEmployeeByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
-        return EmployeeService.downloadCsvEmployeeByIds(ids);
+        return employeeService.downloadCsvEmployeeByIds(ids);
     }
 }

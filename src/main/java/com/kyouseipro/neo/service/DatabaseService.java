@@ -4,10 +4,14 @@ import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.record.HistoryEntity;
-import com.kyouseipro.neo.repository.SqlRepositry;
+import com.kyouseipro.neo.repository.SqlRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class DatabaseService { 
+    private final SqlRepository sqlRepository;
     /**
      * 作業履歴を保存する
      * @param user_name
@@ -17,7 +21,7 @@ public class DatabaseService {
      * @param result_message
      * @return
      */
-    public static SimpleData saveHistory(String user_name, String table_name, String action, int result_code, String result_message) {
+    public SimpleData saveHistory(String user_name, String table_name, String action, int result_code, String result_message) {
         HistoryEntity historyEntity = new HistoryEntity();
         historyEntity.setUser_name(user_name);
         historyEntity.setTable_name(table_name);
@@ -25,6 +29,6 @@ public class DatabaseService {
         historyEntity.setResult_code(result_code);
         historyEntity.setResult_message(result_message);
         String sqlString = historyEntity.getInsertString();
-        return SqlRepositry.excuteSqlString(sqlString);
+        return sqlRepository.excuteSqlString(sqlString);
     }
 }

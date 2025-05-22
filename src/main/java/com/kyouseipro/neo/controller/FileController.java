@@ -25,11 +25,14 @@ import com.kyouseipro.neo.component.UploadConfig;
 import com.kyouseipro.neo.entity.data.SqlData;
 import com.kyouseipro.neo.entity.master.AddressEntity;
 import com.kyouseipro.neo.interfaceis.IEntity;
-import com.kyouseipro.neo.repository.SqlRepositry;
+import com.kyouseipro.neo.repository.SqlRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Controller
+@RequiredArgsConstructor
 public class FileController {
-
+    private final SqlRepository sqlRepository;
     /**
      * 郵便番号から住所を取得する
      * @param postal_code
@@ -41,7 +44,7 @@ public class FileController {
         StringBuilder sb = new StringBuilder("SELECT * From address WHERE postal_code = '" + postal_code + "';");
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new AddressEntity());
-        return SqlRepositry.getEntity(sqlData);
+        return sqlRepository.getEntity(sqlData);
     }
 
     /**

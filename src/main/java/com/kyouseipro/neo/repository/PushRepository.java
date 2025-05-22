@@ -9,8 +9,13 @@ import com.kyouseipro.neo.entity.data.SqlData;
 import com.kyouseipro.neo.entity.data.SubscriptionRequest;
 import com.kyouseipro.neo.interfaceis.IEntity;
 
+import lombok.Data;
+
 @Repository
+@Data
 public class PushRepository {
+    private final SqlRepository sqlRepositry;
+
     /**
      * エンドポイントが一致するSubscriptionを取得する
      * @param endpoint
@@ -20,7 +25,7 @@ public class PushRepository {
         String sqlStr = SubscriptionRequest.getSelectString() + " WHERE endpoint = '" + endpoint + "'";
         SqlData sqlData = new SqlData();
         sqlData.setData(sqlStr, new SubscriptionRequest());
-        SubscriptionRequest entity = (SubscriptionRequest)SqlRepositry.getEntity(sqlData);
+        SubscriptionRequest entity = (SubscriptionRequest)sqlRepositry.getEntity(sqlData);
         if (entity.getSubscription_id() == 0) {
             return null;
         } else {
@@ -38,9 +43,9 @@ public class PushRepository {
         sqlStr += "DECLARE @NEW_ID int; SET @NEW_ID = @@IDENTITY;SELECT @NEW_ID as number, '' as text;";
         SqlData sqlData = new SqlData();
         sqlData.setData(sqlStr, new SubscriptionRequest());
-        SubscriptionRequest entity = (SubscriptionRequest)SqlRepositry.getEntity(sqlData);
+        SubscriptionRequest entity = (SubscriptionRequest)sqlRepositry.getEntity(sqlData);
         if (entity.getSubscription_id() == 0) {
-            SimpleData result = (SimpleData)SqlRepositry.excuteSqlString(subscription.getInsertString());
+            SimpleData result = (SimpleData)sqlRepositry.excuteSqlString(subscription.getInsertString());
             if (result.getNumber() > 0) {
                 return true;
             }
@@ -55,7 +60,7 @@ public class PushRepository {
     public List<IEntity> getList() {
         SqlData sqlData = new SqlData();
         sqlData.setData(SubscriptionRequest.getSelectString(), new SubscriptionRequest());
-        return SqlRepositry.getEntityList(sqlData);
+        return sqlRepositry.getEntityList(sqlData);
     }
 
     /**
@@ -66,7 +71,7 @@ public class PushRepository {
     public boolean deleteByEndpoint(String endpoint){
         String sqlStr = "DELETE FROM subscriptions WHERE endpoint = '" + endpoint + "';";
         sqlStr += "DECLARE @NEW_ID int; SET @NEW_ID = @@IDENTITY;SELECT @NEW_ID as number, '' as text;";
-        SimpleData result = (SimpleData)SqlRepositry.excuteSqlString(sqlStr);
+        SimpleData result = (SimpleData)sqlRepositry.excuteSqlString(sqlStr);
         if (result.getNumber() == 0) {
             return false;
         } else {

@@ -26,8 +26,16 @@ import com.kyouseipro.neo.service.FileService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 import com.kyouseipro.neo.service.personnel.QualificationsService;
 
+import lombok.RequiredArgsConstructor;
+
 @Controller
+@RequiredArgsConstructor
 public class QualificationsController {
+    private final EmployeeService employeeService;
+    private final ComboBoxService comboBoxService;
+    private final DatabaseService databaseService;
+    private final QualificationsService qualificationsService;
+    private final FileService fileService;
     /**
 	 * 従業員
 	 * @param mv
@@ -46,22 +54,22 @@ public class QualificationsController {
         // mv.addObject("uploadFilePath", UploadConfig.getUploadDir());
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = (EmployeeEntity) EmployeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new QualificationsEntity());
 
         // 初期表示用資格情報リスト取得
-        List<IEntity> origin = QualificationsService.getQualificationsList();
+        List<IEntity> origin = qualificationsService.getQualificationsList();
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得
-        List<IEntity> qualificationComboList = ComboBoxService.getQualificationMaster();
+        List<IEntity> qualificationComboList = comboBoxService.getQualificationMaster();
         mv.addObject("qualificationComboList", qualificationComboList);
 
         // 履歴保存
-        DatabaseService.saveHistory(userName, "qualifications", "閲覧", 200, "");
+        databaseService.saveHistory(userName, "qualifications", "閲覧", 200, "");
 		
         return mv;
     }
@@ -74,7 +82,7 @@ public class QualificationsController {
     @PostMapping("/qualifications/get/employeeid")
 	@ResponseBody
     public List<IEntity> getQualificationsById(@RequestParam int id) {
-        return QualificationsService.getQualificationsByEmployeeId(id);
+        return qualificationsService.getQualificationsByEmployeeId(id);
     }
 
     /**
@@ -85,7 +93,7 @@ public class QualificationsController {
     @PostMapping("/qualifications/get/files")
 	@ResponseBody
     public List<IEntity> getQualificationsFilesById(@RequestParam int id) {
-        return QualificationsService.getQualificationsFilesById(id);
+        return qualificationsService.getQualificationsFilesById(id);
     }
 
     /**
@@ -96,9 +104,9 @@ public class QualificationsController {
     @PostMapping("/qualifications/delete/files")
 	@ResponseBody
     public IEntity deleteQualificationsFilesByUrl(@RequestParam String url) {
-        SimpleData result = (SimpleData) FileService.deleteFile(UploadConfig.getUploadDir() + url);
+        SimpleData result = (SimpleData) fileService.deleteFile(UploadConfig.getUploadDir() + url);
         if (result.getNumber() > 0) {
-            return QualificationsService.deleteQualificationsFilesByUrl(UploadConfig.getUploadDir() + url);
+            return qualificationsService.deleteQualificationsFilesByUrl(UploadConfig.getUploadDir() + url);
         } else {
             SimpleData simpleData = new SimpleData();
             simpleData.setNumber(0);
@@ -119,8 +127,8 @@ public class QualificationsController {
         QualificationFilesEntity entity = new QualificationFilesEntity();
         entity.setQualifications_id(id);
 
-        FileService.fileUpload(files, folderName, entity);
-        return QualificationsService.getQualificationsFilesById(id);
+        fileService.fileUpload(files, folderName, entity);
+        return qualificationsService.getQualificationsFilesById(id);
         // return result;
     }
 
@@ -131,7 +139,7 @@ public class QualificationsController {
     @GetMapping("/qualifications/get/all")
 	@ResponseBody
     public List<IEntity> getQualificationsList() {
-        return QualificationsService.getQualificationsList();
+        return qualificationsService.getQualificationsList();
     }
 
     /**
@@ -142,7 +150,7 @@ public class QualificationsController {
     @PostMapping("/qualifications/save")
 	@ResponseBody
     public IEntity saveQualifications(@RequestBody QualificationsEntity entity) {
-        return QualificationsService.saveQualifications(entity);
+        return qualificationsService.saveQualifications(entity);
     }
 
     /**
@@ -154,6 +162,6 @@ public class QualificationsController {
     @ResponseBody
     public IEntity deleteQualificationsByIds(@RequestParam int id, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        return QualificationsService.deleteQualificationsById(id, userName);
+        return qualificationsService.deleteQualificationsById(id, userName);
     }
 }

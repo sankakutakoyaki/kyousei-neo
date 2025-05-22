@@ -23,8 +23,15 @@ import com.kyouseipro.neo.service.DatabaseService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 import com.kyouseipro.neo.service.personnel.WorkingConditionsService;
 
+import lombok.RequiredArgsConstructor;
+
 @Controller
+@RequiredArgsConstructor
 public class WorkingConditionsController {
+    private final EmployeeService employeeService;
+    private final ComboBoxService comboBoxService;
+    private final DatabaseService databaseService;
+    private final WorkingConditionsService workingConditionsService;
     /**
 	 * 従業員
 	 * @param mv
@@ -43,20 +50,20 @@ public class WorkingConditionsController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = (EmployeeEntity) EmployeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new WorkingConditionsEntity());
 
         // 初期表示用従業員リスト取得
-        List<IEntity> origin = WorkingConditionsService.getWorkingConditionsList();
+        List<IEntity> origin = workingConditionsService.getWorkingConditionsList();
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得
-        List<IEntity> paymentMethodComboList = ComboBoxService.getPaymentMethod();
+        List<IEntity> paymentMethodComboList = comboBoxService.getPaymentMethod();
         mv.addObject("paymentMethodComboList", paymentMethodComboList);
-        List<IEntity> payTypeComboList = ComboBoxService.getPayType();
+        List<IEntity> payTypeComboList = comboBoxService.getPayType();
         mv.addObject("payTypeComboList", payTypeComboList);
 
         // 保存用コード
@@ -64,7 +71,7 @@ public class WorkingConditionsController {
         mv.addObject("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getNum());
 
         // 履歴保存
-        DatabaseService.saveHistory(userName, "working_conditions", "閲覧", 200, "");
+        databaseService.saveHistory(userName, "working_conditions", "閲覧", 200, "");
 		
         return mv;
     }
@@ -77,7 +84,7 @@ public class WorkingConditionsController {
     @PostMapping("/working_conditions/get/id")
 	@ResponseBody
     public IEntity getWorkingConditionsById(@RequestParam int id) {
-        return WorkingConditionsService.getWorkingConditionsById(id);
+        return workingConditionsService.getWorkingConditionsById(id);
     }
 
     /**
@@ -87,7 +94,7 @@ public class WorkingConditionsController {
     @GetMapping("/working_conditions/get/list")
 	@ResponseBody
     public List<IEntity> getWorkingConditionsList() {
-        return WorkingConditionsService.getWorkingConditionsList();
+        return workingConditionsService.getWorkingConditionsList();
     }
 
     /**
@@ -97,7 +104,7 @@ public class WorkingConditionsController {
     @PostMapping("/working_conditions/get/list/category")
 	@ResponseBody
     public List<IEntity> getWorkingConditionsListByCategory(@RequestParam int category) {
-        return WorkingConditionsService.getWorkingConditionsListByCategory(category);
+        return workingConditionsService.getWorkingConditionsListByCategory(category);
     }
 
     /**
@@ -108,7 +115,7 @@ public class WorkingConditionsController {
     @PostMapping("/working_conditions/save")
 	@ResponseBody
     public IEntity saveWorkingConditions(@RequestBody WorkingConditionsEntity entity) {
-        return WorkingConditionsService.saveWorkingConditions(entity);
+        return workingConditionsService.saveWorkingConditions(entity);
     }
 
     /**
@@ -120,7 +127,7 @@ public class WorkingConditionsController {
 	@ResponseBody
     public IEntity deleteWorkingConditionsByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        return WorkingConditionsService.deleteWorkingConditionsByIds(ids, userName);
+        return workingConditionsService.deleteWorkingConditionsByIds(ids, userName);
     }
 
     /**
@@ -131,6 +138,6 @@ public class WorkingConditionsController {
     @PostMapping("/working_conditions/download/csv")
 	@ResponseBody
     public String downloadCsvWorkingConditionsByIds(@RequestBody List<SimpleData> ids) {
-        return WorkingConditionsService.downloadCsvWorkingConditionsByIds(ids);
+        return workingConditionsService.downloadCsvWorkingConditionsByIds(ids);
     }
 }
