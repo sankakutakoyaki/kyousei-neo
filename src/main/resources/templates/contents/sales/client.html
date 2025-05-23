@@ -195,6 +195,7 @@
             const user = /*[[${user}]]*/;
             const companyEntity = /*[[${companyEntity}]]*/;
             const officeEntity = /*[[${officeEntity}]]*/;
+            const staffEntity = /*[[${staffEntity}]]*/;
             const categoryPartnerCode = /*[[${categoryPartnerCode}]]*/;
             const categoryShipperCode = /*[[${categoryShipperCode}]]*/;
             const categorySupplierCode = /*[[${categorySupplierCode}]]*/;
@@ -262,55 +263,8 @@
                                 execEdit(item.company_id, this);
                                 break;
                         }
-                        // switch (tableId) {
-                        //     case "table-01-content":
-                        //         execEdit(item.company_id, this);
-                        //         break;
-                        //     case "table-02-content":
-                        //         execEdit(item.company_id, this);
-                        //         break;
-                        //     case "table-03-content":
-                        //         execEdit(item.company_id, this);
-                        //         break;
-                        //     case "table-04-content":
-                        //         execEdit(item.company_id, this);
-                        //         break;
-                        //     case "table-05-content":
-                        //         execEdit(item.office_id, this);
-                        //         break;
-                        //     default:
-                        //         break;
-                        // }
                     }
                     createTableRow(newRow, item, tab);
-                    // switch (tab) {
-                    //     case "05":
-                    //         createTableRowByOffice(newRow, item, tab);
-                    //         break;
-                    //     default:
-                    //         createTableRowByCompany(newRow, item, tab);
-                    //         break;
-                    // }
-                    // switch (tableId) {
-                    //     case "table-01-content":
-                    //         createTableRowByCompany(newRow, item, "01");
-                    //         break;
-                    //     case "table-02-content":
-                    //         createTableRowByCompany(newRow, item, "02");
-                    //         break;
-                    //     case "table-03-content":
-                    //         createTableRowByCompany(newRow, item, "03");
-                    //         break;
-                    //     case "table-04-content":
-                    //         createTableRowByCompany(newRow, item, "04");
-                    //         break;
-                    //     case "table-05-content":
-                    //         createTableRowByOffice(newRow, item, "05");
-                    //         break;
-                    //     default:
-                    //         break;
-                    // }
-
                 });
             }
 
@@ -466,22 +420,15 @@
                 }
 
                 form.querySelector('[name="company-id"]').value = entity.company_id;
-                switch (tab) {
-                    case "05":
-                        form.querySelector('[name="office-id"]').value = entity.office_id;
-                        break;
-                    case "06":
-                        form.querySelector('[name="staff-id"]').value = entity.staff_id;
-                        form.querySelector('[name="office-id"]').value = entity.office_id;
-                        form.querySelector('[name="phone-number"]').value = entity.phone_number;
-                        break;
-                    default:
-                        form.querySelector('[name="category"]').value = entity.category;
-                        break;
-                }
+                form.querySelector('[name="name"]').value = entity.name;
+                form.querySelector('[name="name-kana"]').value = entity.name_kana;
+                form.querySelector('[name="email"]').value = entity.email;
+                form.querySelector('[name="version"]').value = entity.version;
 
                 switch (tab) {
                     case "06":
+                        form.querySelector('[name="staff-id"]').value = entity.staff_id;
+                        form.querySelector('[name="office-id"]').value = entity.office_id;
                         form.querySelector('[name="phone-number"]').value = entity.phone_number;
                         break;
                     default:
@@ -490,13 +437,16 @@
                         form.querySelector('[name="postal-code"]').value = entity.postal_code;
                         form.querySelector('[name="full-address"]').value = entity.full_address;
                         form.querySelector('[name="web-address"]').value = entity.web_address;
+                        switch (tab) {
+                            case "05":
+                                form.querySelector('[name="office-id"]').value = entity.office_id;
+                                break;
+                            default:
+                                form.querySelector('[name="category"]').value = entity.category;
+                                break;
+                        }
                         break;
                 }
-
-                form.querySelector('[name="name"]').value = entity.name;
-                form.querySelector('[name="name-kana"]').value = entity.name_kana;
-                form.querySelector('[name="email"]').value = entity.email;
-                form.querySelector('[name="version"]').value = entity.version;
             }
 
 /******************************************************************************************************* 保存 */
@@ -526,34 +476,27 @@
                     let formdata;
                     let url;
                     switch (tab) {
-                        case "05":
-                            formdata = structuredClone(officeEntity);
-                            formdata.office_id = Number(formData.get('office-id'));
-                            url = "/office/save";
-                            break;
                         case "06":
                             formdata = structuredClone(staffEntity);
                             formdata.staff_id = Number(formData.get('staff-id'));
                             formdata.office_id = Number(formData.get('office-id'));
+                            formdata.phone_number = formData.get('phone-number').trim();
                             url = "/staff/save";
                             break;
                         default:
-                            formdata = structuredClone(companyEntity);
-                            formdata.category = Number(formData.get('category'));
-                            url = "/company/save";
-                            break;
-                    }
-
-                    switch (tab) {
-                        case "06":
-                            formdata.phone_number = formData.get('phone-number').trim();
-                            break;
-                        default:
+                            if (tab == "05") {
+                                formdata = structuredClone(officeEntity);
+                                formdata.office_id = Number(formData.get('office-id'));
+                            } else {
+                                formdata = structuredClone(companyEntity);
+                                formdata.category = Number(formData.get('category'));
+                            }
                             formdata.tel_number = formData.get('tel-number').trim();
                             formdata.fax_number = formData.get('fax-number').trim();
                             formdata.postal_code = formData.get('postal-code').trim();
                             formdata.full_address = formData.get('full-address').trim();
-                            formdata.web_address = formData.get('web-address');                            
+                            formdata.web_address = formData.get('web-address');     
+                            url = "/company/save";
                             break;
                     }
 
@@ -568,26 +511,6 @@
                     // 保存処理
                     const result = await saveFormData(formdata, url);
                     if (result > 0) {
-                        // let tableId;
-                        // switch (tab) {
-                        //     case "01":
-                        //         tableId = "table-01-content";
-                        //         break;
-                        //     case "02":
-                        //         tableId = "table-02-content";
-                        //         break;
-                        //     case "03":
-                        //         tableId = "table-03-content";
-                        //         break;
-                        //     case "04":
-                        //         tableId = "table-04-content";
-                        //         break;
-                        //     case "05":
-                        //         tableId = "table-05-content";
-                        //         break;
-                        //     default:
-                        //         break;
-                        // }
                         const tableId = "table-" + tab + "-content";
                         // 画面更新
                         await execUpdate();
@@ -659,22 +582,6 @@
                 const tab = panel.dataset.panel;
                 let result;
                 switch (tab) {
-                    // case "01":
-                    //     result = await deleteTablelist('table-01-content', '/company/delete');
-                    //     if (result == true) { execUpdate(); }
-                    //     break;
-                    // case "02":
-                    //     result = await deleteTablelist('table-02-content', '/company/delete');
-                    //     if (result == true) { execUpdate(); }
-                    //     break;
-                    // case "03":
-                    //     result = await deleteTablelist('table-03-content', '/company/delete');
-                    //     if (result == true) { execUpdate(); }
-                    //     break;
-                    // case "04":
-                    //     result = await deleteTablelist('table-04-content', '/company/delete');
-                    //     if (result == true) { execUpdate(); }
-                    //     break;
                     case "05":
                         result = await deleteTablelist('table-05-content', '/office/delete');
                         if (result == true) { execUpdate(); }
@@ -698,23 +605,11 @@
                 const tab = panel.dataset.panel;
                 let result;
                 switch (tab) {
-                    // case "01":
-                    //     result = await downloadCsv('table-01-content', '/company/download/csv');
-                    //     break;
-                    // case "02":
-                    //     result = await downloadCsv('table-02-content', '/company/download/csv');
-                    //     break;
-                    // case "03":
-                    //     result = await downloadCsv('table-03-content', '/company/download/csv');
-                    //     break;
-                    // case "04":
-                    //     result = await downloadCsv('table-04-content', '/company/download/csv');
-                    //     break;
                     case "05":
-                        result = await downloadCsv('table-5-content', '/office/download/csv');
+                        result = await downloadCsv('table-05-content', '/office/download/csv');
                         break;
                     case "06":
-                        result = await downloadCsv('table-6-content', '/staff/download/csv');
+                        result = await downloadCsv('table-06-content', '/staff/download/csv');
                         break;
                     default:
                         result = await downloadCsv('table-' + tab + '-content', '/company/download/csv');
@@ -730,35 +625,54 @@
                 const panel = document.querySelector('.is-active');
                 const tab = panel.dataset.tab;
 
+                let resultResponse;
+
                 switch (tab) {
-                    case value:
-                        
+                    case "01":
+                        await updateCompanyOrigin();
+                        const list01 = companyOrigin.filter(function(value) { return value.category == categoryPartnerCode });
+                        updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
+                        updateCompanyOrigin();
                         break;
-                
+                    case "02":
+                        await updateCompanyOrigin();
+                        const list02 = companyOrigin.filter(function(value) { return value.category == categoryShipperCode });
+                        updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
+                        updateCompanyOrigin();
+                        break
+                    case "03":
+                        await updateCompanyOrigin();
+                        const list03 = companyOrigin.filter(function(value) { return value.category == categorySupplierCode });
+                        updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
+                        updateCompanyOrigin();
+                        break;
+                    case "04":
+                        await updateCompanyOrigin();
+                        const list04 = companyOrigin.filter(function(value) { return value.category == categoryServiceCode });
+                        updateTableDisplay("table-04-content", "footer-04", "search-box-04", list04);
+                        updateCompanyOrigin();
+                        break;
+                    case "05":
+                        await updateOfficeOrigin();
+                        updateOfficeTableDisplay("05");
+                        break;
+                    case "06":
+                        await updateStaffOrign();
+                        updateOfficeTableDisplay("06");
+
+                        break;
                     default:
                         break;
                 }
-                
+
+                processingEnd();
+            }
+
+            // company-tab 更新処理
+            async function updateCompanyOrigin() {
                 let resultResponse = await fetch('/client/get/list');
                 companyOrigin = await resultResponse.json();
-                resultResponse = await fetch('/client/office/get/list');
-                officeOrigin = await resultResponse.json();
-                resultResponse = await fetch('/company/staff/get/list');
-                staffOrigin = await resultResponse.json();
 
-                // 画面更新
-                const list01 = companyOrigin.filter(function(value) { return value.category == categoryPartnerCode });
-                updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
-
-                const list02 = companyOrigin.filter(function(value) { return value.category == categoryShipperCode });
-                updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
-
-                const list03 = companyOrigin.filter(function(value) { return value.category == categorySupplierCode });
-                updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
-
-                const list04 = companyOrigin.filter(function(value) { return value.category == categoryServiceCode });
-                updateTableDisplay("table-04-content", "footer-04", "search-box-04", list04);
-                
                 resultResponse = await fetch('/client/get/combo');
                 companyComboList = await resultResponse.json();
 
@@ -767,16 +681,24 @@
 
                 const company02Area = document.getElementById('name-box-02');
                 createComboBoxWithTop(company02Area, companyComboList, '');
+            }
 
+            // office-tab 更新処理
+            async function updateOfficeOrigin() {
+                let resultResponse = await fetch('/client/office/get/list');
+                officeOrigin = await resultResponse.json();
+                
                 resultResponse = await fetch('/office/get/combo');
                 officeComboList = await resultResponse.json();
+
                 const officeArea = document.getElementById('name-box-03');
                 createComboBoxWithTop(officeArea, officeComboList, '');
+            }
 
-                updateOfficeTableDisplay("05");
-                updateOfficeTableDisplay("06");
-
-                processingEnd();
+            // staff-tab 更新処理
+            async function updateStaffOrign() {
+                const resultResponse = await fetch('/company/staff/get/list');
+                staffOrigin = await resultResponse.json();
             }
 
     /******************************************************************************************************* 画面更新 */
@@ -836,12 +758,6 @@
                     default:
                         return;
                 }
-
-                // code.value = name.value == 0 ? "": name.value;
-                // // const resultResponse = await fetch('/client/office/get/list');
-                // // const result = await resultResponse.json();
-                // const list = officeOrigin.filter(function(value) { return value.company_id == code.value });
-                // createDisplay(content, footer, list);
             }
 
             async function updateStaffTableDisplay() {
@@ -901,6 +817,7 @@
 
                 // エンターフォーカス処理をイベントリスナーに登録する
                 setEnterFocus("form-01");
+                setEnterFocus("form-02");
 
                 // 画面更新
                 const list01 = companyOrigin.filter(function(value) { return value.category == categoryPartnerCode });

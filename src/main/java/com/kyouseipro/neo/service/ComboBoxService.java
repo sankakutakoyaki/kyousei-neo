@@ -99,7 +99,7 @@ public class ComboBoxService {
      */
     public List<IEntity> getCompany() {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT company_id as number, name as text FROM companies WHERE NOT (state = " + Enums.state.DELETE.getNum() + ");");
+        sb.append("SELECT company_id as number, name as text FROM companies WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") ORDER BY name_kana;");
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new SimpleData());
         return sqlRepository.getEntityList(sqlData);
@@ -111,7 +111,7 @@ public class ComboBoxService {
      */
     public List<IEntity> getClient() {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT company_id as number, name as text FROM companies WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") AND NOT (category = 0);");
+        sb.append("SELECT company_id as number, name as text FROM companies WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") AND NOT (category = 0) ORDER BY name_kana;");
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new SimpleData());
         return sqlRepository.getEntityList(sqlData);
@@ -123,7 +123,7 @@ public class ComboBoxService {
      */
     public List<IEntity> getOffice() {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT company_id, office_id, name as office_name FROM offices WHERE NOT (state = " + Enums.state.DELETE.getNum() + ");");
+        sb.append("SELECT company_id, office_id, name as office_name FROM offices WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") ORDER BY name_kana;");
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new OfficeComboEntity());
         return sqlRepository.getEntityList(sqlData);
@@ -135,7 +135,7 @@ public class ComboBoxService {
      */
     public List<IEntity> getQualificationMaster() {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = " + Enums.state.DELETE.getNum() + ");");
+        sb.append("SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") ORDER BY name_kana;");
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new SimpleData());
         return sqlRepository.getEntityList(sqlData);
