@@ -76,7 +76,7 @@
                         <!-- コンテンツ -->
                         <main th:replace="~{fragments/sales/client :: mainStaffFragment('table-06', 'table-06-content')}"></main>
                         <!-- フッター -->
-                        <footer id="footer-05" class="pc-style" th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
+                        <footer id="footer-06" class="pc-style" th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
                     </div>
                 </div>
             </div>
@@ -149,6 +149,7 @@
                     <div class="img-btn" onclick="closeFormDialog('form-dialog-02', event)"><img title="閉じる" src="/icons/close-s.png"></div>
                 </div>
                 <form id="form-02" class="dialog-content">
+                    <input name="staff-id" type="hidden" value="">
                     <input name="company-id" type="hidden" value="">
                     <input name="office-id" type="hidden" value="">
                     <input name="version" type="hidden" value="">
@@ -311,20 +312,22 @@
                 const panel = self.closest('.tab-panel');
                 const tab = panel.dataset.panel;
 
-                let dialogId;
+                let form = {};
                 switch (tab) {
                     case "06":
-                        dialogId = "form-dialog-02";
+                        openFormDialog("form-dialog-02");
+                        form = document.getElementById("form-02");
                         break;
                     default:
-                        dialogId = "form-dialog-01";
+                        openFormDialog("form-dialog-01");
+                        form = document.getElementById("form-01");
                         break;
                 }
-                // 入力フォームダイアログを開く
-                openFormDialog(dialogId);
+                // // 入力フォームダイアログを開く
+                // openFormDialog(dialogId);
 
-                // フォーム画面を取得
-                const form = document.getElementById(dialogId);              
+                // // フォーム画面を取得
+                // const form = document.getElementById(formId);              
 
                 let entity = {};
                 if (id > 0) {
@@ -333,10 +336,10 @@
                     let url;
                     switch (tab) {
                         case "05":
-                            url = "/company/office/get/id";
+                            url = "/office/get/id";
                             break;
                         case "06":
-                            url = "/company/office/staff/get/id";
+                            url = "/staff/get/id";
                             break;
                         default:
                             url = "/company/get/id";
@@ -487,16 +490,17 @@
                             if (tab == "05") {
                                 formdata = structuredClone(officeEntity);
                                 formdata.office_id = Number(formData.get('office-id'));
+                                url = "/office/save";
                             } else {
                                 formdata = structuredClone(companyEntity);
                                 formdata.category = Number(formData.get('category'));
+                                url = "/company/save";
                             }
                             formdata.tel_number = formData.get('tel-number').trim();
                             formdata.fax_number = formData.get('fax-number').trim();
                             formdata.postal_code = formData.get('postal-code').trim();
                             formdata.full_address = formData.get('full-address').trim();
-                            formdata.web_address = formData.get('web-address');     
-                            url = "/company/save";
+                            formdata.web_address = formData.get('web-address');
                             break;
                     }
 
@@ -653,12 +657,13 @@
                         updateCompanyOrigin();
                         break;
                     case "05":
-                        await updateOfficeOrigin();
+                        // await updateOfficeOrigin();
                         updateOfficeTableDisplay("05");
                         break;
                     case "06":
-                        await updateStaffOrign();
+                        // await updateStaffOrign();
                         updateOfficeTableDisplay("06");
+                        // updateStaffTableDisplay();
 
                         break;
                     default:
@@ -683,23 +688,23 @@
                 createComboBoxWithTop(company02Area, companyComboList, '');
             }
 
-            // office-tab 更新処理
-            async function updateOfficeOrigin() {
-                let resultResponse = await fetch('/client/office/get/list');
-                officeOrigin = await resultResponse.json();
+            // // office-tab 更新処理
+            // async function updateOfficeOrigin() {
+            //     let resultResponse = await fetch('/client/office/get/list');
+            //     officeOrigin = await resultResponse.json();
                 
-                resultResponse = await fetch('/office/get/combo');
-                officeComboList = await resultResponse.json();
+            //     resultResponse = await fetch('/office/get/combo');
+            //     officeComboList = await resultResponse.json();
 
-                const officeArea = document.getElementById('name-box-03');
-                createComboBoxWithTop(officeArea, officeComboList, '');
-            }
+            //     const officeArea = document.getElementById('name-box-03');
+            //     createComboBoxWithTop(officeArea, officeComboList, '');
+            // }
 
-            // staff-tab 更新処理
-            async function updateStaffOrign() {
-                const resultResponse = await fetch('/company/staff/get/list');
-                staffOrigin = await resultResponse.json();
-            }
+            // // staff-tab 更新処理
+            // async function updateStaffOrign() {
+            //     const resultResponse = await fetch('/staff/get/list');
+            //     staffOrigin = await resultResponse.json();
+            // }
 
     /******************************************************************************************************* 画面更新 */
 
@@ -743,8 +748,8 @@
                         code = document.getElementById('code-box-01');
                         name = document.getElementById('name-box-01'); // 会社選択セレクトボックス
                         code.value = name.value == 0 ? "": name.value;
-                        const resultResponse = await fetch('/client/office/get/list');
-                        officeOrigin = await resultResponse.json();
+                        // const resultResponse = await fetch('/client/office/get/list');
+                        // officeOrigin = await resultResponse.json();
                         const list = officeOrigin.filter(function(value) { return value.company_id == code.value });
                         createDisplay("table-05-content", "footer-05", list);
                         createOfficeComboBox();
@@ -753,7 +758,8 @@
                         code = document.getElementById('code-box-02');
                         name = document.getElementById('name-box-02'); // 会社選択セレクトボックス
                         code.value = name.value == 0 ? "": name.value;
-                        updateStaffTableDisplay()
+                        // updateStaffTableDisplay();
+                        createOfficeComboBox();
                         break;
                     default:
                         return;
@@ -761,17 +767,51 @@
             }
 
             async function updateStaffTableDisplay() {
-                const name = document.getElementById('name-box-02'); // 会社選択セレクトボックス
+                // let code;
+                // let name;
+                // switch (tab) {
+                //     case "05":
+                //         code = document.getElementById('code-box-01');
+                //         name = document.getElementById('name-box-01'); // 会社選択セレクトボックス
+                //         code.value = name.value == 0 ? "": name.value;
+                //         // const resultResponse = await fetch('/client/office/get/list');
+                //         // officeOrigin = await resultResponse.json();
+                //         const list = officeOrigin.filter(function(value) { return value.company_id == code.value });
+                //         createDisplay("table-05-content", "footer-05", list);
+                //         createOfficeComboBox();
+                //         break;
+                //     case "06":
+                        // const code = document.getElementById('code-box-02');
+                        const name = document.getElementById('name-box-02'); // 会社選択セレクトボックス
+                        // code.value = name.value == 0 ? "": name.value;
+                        // updateStaffTableDisplay()
                 const name2 = document.getElementById('name-box-03'); // 支店選択セレクトボックス
                 if (name.value < 1) return;
-                const resultResponse = await fetch('/company/staff/get/list');
+                const resultResponse = await fetch('staff/get/list');
                 staffOrigin = await resultResponse.json();
                 let list = staffOrigin.filter(function(value) { return value.company_id == name.value });
                 if (name2.value > 0) {
                     list = list.filter(function(value) { return value.office_id == name2.value });
                 }
                 createDisplay("table-06-content", "footer-06", list);
+                //         break;
+                //     default:
+                //         return;
+                // }
             }
+
+            // async function updateStaffTableDisplay() {
+            //     const name = document.getElementById('name-box-02'); // 会社選択セレクトボックス
+            //     const name2 = document.getElementById('name-box-03'); // 支店選択セレクトボックス
+            //     if (name.value < 1) return;
+            //     const resultResponse = await fetch('/company/staff/get/list');
+            //     staffOrigin = await resultResponse.json();
+            //     let list = staffOrigin.filter(function(value) { return value.company_id == name.value });
+            //     if (name2.value > 0) {
+            //         list = list.filter(function(value) { return value.office_id == name2.value });
+            //     }
+            //     createDisplay("table-06-content", "footer-06", list);
+            // }
 
             // 選択した会社の支店をコンボボックスに登録する
             function createOfficeComboBox() {
@@ -881,6 +921,7 @@
                 const company02Area = document.getElementById('name-box-02');
                 createComboBoxWithTop(company02Area, companyComboList, '');
                 company02Area.onchange = async function() {
+                    updateOfficeTableDisplay("06");
                     createOfficeComboBox(this);
                 };
 

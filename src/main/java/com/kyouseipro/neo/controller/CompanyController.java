@@ -172,7 +172,7 @@ public class CompanyController {
      * @param ID
      * @return 
      */
-    @PostMapping("/company/office/get/id")
+    @PostMapping("/office/get/id")
 	@ResponseBody
     public IEntity getOfficeById(@RequestParam int id) {
         return officeService.getOfficeById(id);
@@ -186,16 +186,6 @@ public class CompanyController {
 	@ResponseBody
     public List<IEntity> getOfficeList() {
         return officeService.getOfficeList();
-    }
-
-    /**
-     * すべてのスタッフ情報を取得する
-     * @return
-     */
-    @GetMapping("/company/staff/get/list")
-	@ResponseBody
-    public List<IEntity> getStaffList() {
-        return staffService.getStaffList();
     }
 
     /**
@@ -250,5 +240,49 @@ public class CompanyController {
 	@ResponseBody
     public String downloadCsvOfficeByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         return officeService.downloadCsvOfficeByIds(ids);
+    }
+
+    /**
+     * すべてのスタッフ情報を取得する
+     * @return
+     */
+    @GetMapping("/staff/get/list")
+	@ResponseBody
+    public List<IEntity> getStaffList() {
+        return staffService.getStaffList();
+    }
+
+    /**
+     * スタッフ情報を保存する
+     * @param 
+     * @return 
+     */
+    @PostMapping("/staff/save")
+	@ResponseBody
+    public IEntity saveStaff(@RequestBody StaffEntity entity) {
+        return staffService.saveStaff(entity);
+    }
+
+    /**
+     * IDリストのスタッフ情報を削除する
+     * @param IDS
+     * @return 
+     */
+    @PostMapping("/staff/delete")
+	@ResponseBody
+    public IEntity deleteStaffByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+        String userName = principal.getAttribute("preferred_username");
+        return staffService.deleteStaffByIds(ids, userName);
+    }
+
+    /**
+     * IDリストからCSV用データを取得する
+     * @param IDS
+     * @return 
+     */
+    @PostMapping("/staff/download/csv")
+	@ResponseBody
+    public String downloadCsvStaffByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+        return staffService.downloadCsvStaffByIds(ids);
     }
 }

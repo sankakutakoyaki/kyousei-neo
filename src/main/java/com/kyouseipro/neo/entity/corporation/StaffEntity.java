@@ -49,8 +49,7 @@ public class StaffEntity implements IEntity {
         StringBuilder sb = new StringBuilder();
         sb.append(logTable());
         sb.append("INSERT INTO staffs (");
-        sb.append("staff_id");
-        sb.append(", company_id");
+        sb.append("company_id");
         sb.append(", office_id");
         sb.append(", name");
         sb.append(", name_kana");
@@ -59,8 +58,7 @@ public class StaffEntity implements IEntity {
         sb.append(") ");
         sb.append(logString("作成"));
         sb.append(" VALUES (");
-        sb.append(this.getStaff_id());
-        sb.append(", " + this.getCompany_id());
+        sb.append(this.getCompany_id());
         sb.append(", " + this.getOffice_id());
         sb.append(", '" + this.getName() + "'");
         sb.append(", '" + this.getName_kana() + "'");
@@ -83,8 +81,7 @@ public class StaffEntity implements IEntity {
         StringBuilder sb = new StringBuilder();
         sb.append(logTable());
         sb.append("UPDATE staffs SET");
-        sb.append(" staff_id = " + this.getStaff_id());
-        sb.append(", company_id = " + this.getCompany_id());
+        sb.append(" company_id = " + this.getCompany_id());
         sb.append(", office_id = " + this.getOffice_id());
         sb.append(", name = '" + this.getName() + "'");
         sb.append(", name_kana = '" + this.getName_kana() + "'");
