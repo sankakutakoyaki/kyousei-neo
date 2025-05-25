@@ -207,6 +207,12 @@
             let companyComboList = /*[[${companyComboList}]]*/;
             let officeComboList = /*[[${officeComboList}]]*/;
 
+            const code01 = document.getElementById('code-box-01'); // Tab5の会社コードボックス
+            const code02 = document.getElementById('code-box-02'); // Tab6の会社コードボックス
+            const name01 = document.getElementById('name-box-01'); // Tab5の会社選択セレクトボックス
+            const name02 = document.getElementById('name-box-02'); // Tab6の会社選択セレクトボックス
+            const name03 = document.getElementById('name-box-03'); // 支店選択セレクトボックス
+
 /******************************************************************************************************* 入力画面 */
 
             // リスト画面の本体部分を作成する
@@ -397,8 +403,9 @@
                             break;
                         case "05":
                             entity = structuredClone(officeEntity);
-                            const id = document.getElementById('code-box-01');
-                            if (id.value == "") {
+                            // const id = document.getElementById('code-box-01');
+                            // if (id.value == "") {
+                            if (code01.value == "") {
                                 // ダイアログを閉じる
                                 closeFormDialog('form-dialog-01');
                                 return;
@@ -407,15 +414,22 @@
                             break;
                         case "06":
                             entity = structuredClone(staffEntity);
-                            const companyId = document.getElementById('name-box-02');
-                            const officeId = document.getElementById('name-box-03');
-                            if (companyId.value < 1) {
+                            // const companyId = document.getElementById('name-box-02');
+                            // const officeId = document.getElementById('name-box-03');
+                            // if (companyId.value < 1) {
+                            //     // ダイアログを閉じる
+                            //     closeFormDialog('form-dialog-02');
+                            //     return;
+                            // }
+                            // entity.company_id = companyId.value;
+                            // entity.office_id = officeId.value;
+                            if (name02.value < 1) {
                                 // ダイアログを閉じる
                                 closeFormDialog('form-dialog-02');
                                 return;
                             }
-                            entity.company_id = companyId.value;
-                            entity.office_id = officeId.value;
+                            entity.company_id = name02.value;
+                            entity.office_id = name03.value;
                             break;
                         default:
                             break;
@@ -657,14 +671,10 @@
                         updateCompanyOrigin();
                         break;
                     case "05":
-                        // await updateOfficeOrigin();
                         updateOfficeTableDisplay("05");
                         break;
                     case "06":
-                        // await updateStaffOrign();
                         updateOfficeTableDisplay("06");
-                        // updateStaffTableDisplay();
-
                         break;
                     default:
                         break;
@@ -681,30 +691,14 @@
                 resultResponse = await fetch('/client/get/combo');
                 companyComboList = await resultResponse.json();
 
-                const company01Area = document.getElementById('name-box-01');
-                createComboBoxWithTop(company01Area, companyComboList, '');
+                // const company01Area = document.getElementById('name-box-01');
+                // createComboBoxWithTop(company01Area, companyComboList, '');
+                createComboBoxWithTop(name01, companyComboList, '');
 
-                const company02Area = document.getElementById('name-box-02');
-                createComboBoxWithTop(company02Area, companyComboList, '');
+                // const company02Area = document.getElementById('name-box-02');
+                // createComboBoxWithTop(company02Area, companyComboList, '');
+                createComboBoxWithTop(name02, companyComboList, '');
             }
-
-            // // office-tab 更新処理
-            // async function updateOfficeOrigin() {
-            //     let resultResponse = await fetch('/client/office/get/list');
-            //     officeOrigin = await resultResponse.json();
-                
-            //     resultResponse = await fetch('/office/get/combo');
-            //     officeComboList = await resultResponse.json();
-
-            //     const officeArea = document.getElementById('name-box-03');
-            //     createComboBoxWithTop(officeArea, officeComboList, '');
-            // }
-
-            // // staff-tab 更新処理
-            // async function updateStaffOrign() {
-            //     const resultResponse = await fetch('/staff/get/list');
-            //     staffOrigin = await resultResponse.json();
-            // }
 
     /******************************************************************************************************* 画面更新 */
 
@@ -741,24 +735,22 @@
             }
 
             async function updateOfficeTableDisplay(tab) {
-                let code;
-                let name;
+                // let code;
+                // let name;
                 switch (tab) {
                     case "05":
-                        code = document.getElementById('code-box-01');
-                        name = document.getElementById('name-box-01'); // 会社選択セレクトボックス
-                        code.value = name.value == 0 ? "": name.value;
-                        // const resultResponse = await fetch('/client/office/get/list');
-                        // officeOrigin = await resultResponse.json();
-                        const list = officeOrigin.filter(function(value) { return value.company_id == code.value });
+                        // code = document.getElementById('code-box-01');
+                        // name = document.getElementById('name-box-01'); // 会社選択セレクトボックス
+                        code01.value = name01.value == 0 ? "": name01.value;
+                        const list = officeOrigin.filter(function(value) { return value.company_id == code01.value });
                         createDisplay("table-05-content", "footer-05", list);
                         createOfficeComboBox();
                         break;
                     case "06":
-                        code = document.getElementById('code-box-02');
-                        name = document.getElementById('name-box-02'); // 会社選択セレクトボックス
-                        code.value = name.value == 0 ? "": name.value;
-                        // updateStaffTableDisplay();
+                        // code = document.getElementById('code-box-02');
+                        // name = document.getElementById('name-box-02'); // 会社選択セレクトボックス
+                        code02.value = name02.value == 0 ? "": name02.value;
+                        updateStaffTableDisplay();
                         createOfficeComboBox();
                         break;
                     default:
@@ -767,60 +759,30 @@
             }
 
             async function updateStaffTableDisplay() {
-                // let code;
-                // let name;
-                // switch (tab) {
-                //     case "05":
-                //         code = document.getElementById('code-box-01');
-                //         name = document.getElementById('name-box-01'); // 会社選択セレクトボックス
-                //         code.value = name.value == 0 ? "": name.value;
-                //         // const resultResponse = await fetch('/client/office/get/list');
-                //         // officeOrigin = await resultResponse.json();
-                //         const list = officeOrigin.filter(function(value) { return value.company_id == code.value });
-                //         createDisplay("table-05-content", "footer-05", list);
-                //         createOfficeComboBox();
-                //         break;
-                //     case "06":
-                        // const code = document.getElementById('code-box-02');
-                        const name = document.getElementById('name-box-02'); // 会社選択セレクトボックス
-                        // code.value = name.value == 0 ? "": name.value;
-                        // updateStaffTableDisplay()
-                const name2 = document.getElementById('name-box-03'); // 支店選択セレクトボックス
-                if (name.value < 1) return;
+                // const name = document.getElementById('name-box-02'); // 会社選択セレクトボックス
+                // const name2 = document.getElementById('name-box-03'); // 支店選択セレクトボックス
+                if (name02.value < 1) return;
                 const resultResponse = await fetch('staff/get/list');
                 staffOrigin = await resultResponse.json();
-                let list = staffOrigin.filter(function(value) { return value.company_id == name.value });
-                if (name2.value > 0) {
-                    list = list.filter(function(value) { return value.office_id == name2.value });
+                let list = staffOrigin.filter(function(value) { return value.company_id == name02.value });
+                if (name03.value > 0) {
+                    list = list.filter(function(value) { return value.office_id == name03.value });
                 }
                 createDisplay("table-06-content", "footer-06", list);
-                //         break;
-                //     default:
-                //         return;
-                // }
             }
-
-            // async function updateStaffTableDisplay() {
-            //     const name = document.getElementById('name-box-02'); // 会社選択セレクトボックス
-            //     const name2 = document.getElementById('name-box-03'); // 支店選択セレクトボックス
-            //     if (name.value < 1) return;
-            //     const resultResponse = await fetch('/company/staff/get/list');
-            //     staffOrigin = await resultResponse.json();
-            //     let list = staffOrigin.filter(function(value) { return value.company_id == name.value });
-            //     if (name2.value > 0) {
-            //         list = list.filter(function(value) { return value.office_id == name2.value });
-            //     }
-            //     createDisplay("table-06-content", "footer-06", list);
-            // }
 
             // 選択した会社の支店をコンボボックスに登録する
             function createOfficeComboBox() {
-                const name = document.getElementById('name-box-02');
-                const selectId = name.value;
+                // const name = document.getElementById('name-box-02');
+                const selectId = name02.value;
                 const comboList = officeComboList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.office_name}));
-                const officeArea = document.getElementById('name-box-03');
-                createComboBoxWithTop(officeArea, comboList, "");
-                officeArea.onchange = async function() {
+                // const officeArea = document.getElementById('name-box-03');
+                // createComboBoxWithTop(officeArea, comboList, "");
+                // officeArea.onchange = async function() {
+                //     updateStaffTableDisplay();
+                // };
+                createComboBoxWithTop(name03, comboList, "");
+                name03.onchange = async function() {
                     updateStaffTableDisplay();
                 };
             }
@@ -891,40 +853,57 @@
                 initialTableDisplay("table-05-content", "footer-05");
 
                 // 会社IDボックス
-                document.getElementById('code-box-01').addEventListener('keydown', function (e) {
+                // document.getElementById('code-box-01').addEventListener('keydown', function (e) {
+                code01.addEventListener('keydown', function (e) {
                     if ((e && e.key === "Enter") || e === "Enter") {
-                        const companyArea = document.getElementById('name-box-01');
-                        setComboboxSelected(companyArea, this.value);
-                        companyArea.focus();
+                        // const companyArea = document.getElementById('name-box-01');
+                        // setComboboxSelected(companyArea, this.value);
+                        // companyArea.focus();
+                        setComboboxSelected(name01, this.value);
+                        name01.focus();
                     }
                 });
-                document.getElementById('code-box-01').addEventListener('blur', function (e) {
+                // document.getElementById('code-box-01').addEventListener('blur', function (e) {
+                code01.addEventListener('blur', function (e) {
                     updateOfficeTableDisplay("05");
                 });
-                document.getElementById('code-box-02').addEventListener('keydown', function (e) {
+                // document.getElementById('code-box-02').addEventListener('keydown', function (e) {
+                code02.addEventListener('keydown', function (e) {
                     if ((e && e.key === "Enter") || e === "Enter") {
-                        const companyArea = document.getElementById('name-box-02');
-                        setComboboxSelected(companyArea, this.value);
-                        companyArea.focus();
+                        // const companyArea = document.getElementById('name-box-02');
+                        // setComboboxSelected(companyArea, this.value);
+                        // companyArea.focus();
+                        setComboboxSelected(name02, this.value);
+                        name02.focus();
                     }
                 });
-                document.getElementById('code-box-02').addEventListener('blur', function (e) {
+                // document.getElementById('code-box-02').addEventListener('blur', function (e) {
+                code02.addEventListener('blur', function (e) {
                     updateOfficeTableDisplay("06");
                     createOfficeComboBox(this);
                 });
 
                 // 会社名コンボボックス
-                const company01Area = document.getElementById('name-box-01');
-                createComboBoxWithTop(company01Area, companyComboList, '');
-                company01Area.onchange = async function() {
+                createComboBoxWithTop(name01, companyComboList, "");
+                name01.onchange = async function() {
                     updateOfficeTableDisplay("05");
                 };
-                const company02Area = document.getElementById('name-box-02');
-                createComboBoxWithTop(company02Area, companyComboList, '');
-                company02Area.onchange = async function() {
+                createComboBoxWithTop(name02,companyComboList, "");
+                name02.onchange = async function() {
                     updateOfficeTableDisplay("06");
                     createOfficeComboBox(this);
                 };
+                // const company01Area = document.getElementById('name-box-01');
+                // createComboBoxWithTop(company01Area, companyComboList, '');
+                // company01Area.onchange = async function() {
+                //     updateOfficeTableDisplay("05");
+                // };
+                // const company02Area = document.getElementById('name-box-02');
+                // createComboBoxWithTop(company02Area, companyComboList, '');
+                // company02Area.onchange = async function() {
+                //     updateOfficeTableDisplay("06");
+                //     createOfficeComboBox(this);
+                // };
 
                 // タブメニュー処理
                 const tabMenus = document.querySelectorAll('.tab-menu-item');
