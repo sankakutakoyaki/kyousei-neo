@@ -61,7 +61,7 @@ public class QualificationsController {
         mv.addObject("formEntity", new QualificationsEntity());
 
         // 初期表示用資格情報リスト取得
-        List<IEntity> origin = qualificationsService.getQualificationsList();
+        List<IEntity> origin = qualificationsService.getEmployeeQualificationsList();
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得
@@ -136,10 +136,10 @@ public class QualificationsController {
      * すべての資格情報を取得する
      * @return
      */
-    @GetMapping("/qualifications/get/all")
+    @GetMapping("/qualifications/employee/get/all")
 	@ResponseBody
-    public List<IEntity> getQualificationsList() {
-        return qualificationsService.getQualificationsList();
+    public List<IEntity> getEmployeeQualificationsList() {
+        return qualificationsService.getEmployeeQualificationsList();
     }
 
     /**

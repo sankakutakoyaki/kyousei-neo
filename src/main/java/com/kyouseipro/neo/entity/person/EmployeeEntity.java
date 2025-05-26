@@ -8,6 +8,7 @@ import java.util.List;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.record.HistoryEntity;
 import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.service.DatabaseService;
 
 import lombok.Data;
 
@@ -106,12 +107,13 @@ public class EmployeeEntity implements IEntity {
         // 変更履歴
         sb.append("INSERT INTO employees_log SELECT * FROM @EmployeeTable;");
         // SimpleData
-        sb.append("IF @NEW_ID > 0 BEGIN ");
-        sb.append(HistoryEntity.insertString(user_name, "employees", "作成成功", "@NEW_ID", ""));
-        sb.append("SELECT @NEW_ID as number, '作成しました' as text; END");
-        sb.append(" ELSE BEGIN ");
-        sb.append(HistoryEntity.insertString(user_name, "employees", "作成失敗", "@NEW_ID", ""));
-        sb.append("SELECT 0 as number, '作成できませんでした' as text; END;");
+        sb.append(DatabaseService.getInsertLogTableString(this.getUser_name(), "employees", "作成"));
+        // sb.append("IF @NEW_ID > 0 BEGIN ");
+        // sb.append(HistoryEntity.insertString(user_name, "employees", "作成成功", "@NEW_ID", ""));
+        // sb.append("SELECT @NEW_ID as number, '作成しました' as text; END");
+        // sb.append(" ELSE BEGIN ");
+        // sb.append(HistoryEntity.insertString(user_name, "employees", "作成失敗", "@NEW_ID", ""));
+        // sb.append("SELECT 0 as number, '作成できませんでした' as text; END;");
         return sb.toString();
     }
 
@@ -150,12 +152,13 @@ public class EmployeeEntity implements IEntity {
         // 変更履歴
         sb.append("INSERT INTO employees_log SELECT * FROM @EmployeeTable;");
         // SimpleData
-        sb.append("IF @ROW_COUNT > 0 BEGIN ");
-        sb.append(HistoryEntity.insertString(user_name, "employees", "変更成功", "@ROW_COUNT", ""));
-        sb.append("SELECT 200 as number, '変更しました' as text; END");
-        sb.append(" ELSE BEGIN ");
-        sb.append(HistoryEntity.insertString(user_name, "employees", "変更失敗", "@ROW_COUNT", ""));
-        sb.append("SELECT 0 as number, '変更できませんでした' as text; END;");
+        sb.append(DatabaseService.getUpdateLogTableString(this.getUser_name(), "employees", "変更"));
+        // sb.append("IF @ROW_COUNT > 0 BEGIN ");
+        // sb.append(HistoryEntity.insertString(user_name, "employees", "変更成功", "@ROW_COUNT", ""));
+        // sb.append("SELECT 200 as number, '変更しました' as text; END");
+        // sb.append(" ELSE BEGIN ");
+        // sb.append(HistoryEntity.insertString(user_name, "employees", "変更失敗", "@ROW_COUNT", ""));
+        // sb.append("SELECT 0 as number, '変更できませんでした' as text; END;");
         return sb.toString();
     }
 

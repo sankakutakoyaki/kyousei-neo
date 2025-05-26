@@ -110,9 +110,9 @@
                 // 選択用チェックボックス
                 newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
                 // ID
-                newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.employee_id + ', this)">' + String(item.employee_id).padStart(4, '0') + '</td>');
+                newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.owner_id + ', this)">' + String(item.owner_id).padStart(4, '0') + '</td>');
                 // 名前
-                newRow.insertAdjacentHTML('beforeend', '<td name="name-cell"><span class="kana">' + item.employee_name_kana + '</span><br><span>' + item.employee_name + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td name="name-cell"><span class="kana">' + item.owner_name_kana + '</span><br><span>' + item.owner_name + '</span></td>');
                 // 資格名
                 newRow.insertAdjacentHTML('beforeend', '<td name="qualification-name-cell"><span>' + (item.qualification_name ?? "登録なし") + '</span></td>');
                 // 取得状況
@@ -151,7 +151,7 @@
                     const formData = new FormData(form);
                     const formdata = structuredClone(formEntity);
                     const id = document.getElementById('code-box-01');
-                    formdata.employee_id = id.value;
+                    formdata.owner_id = id.value;
                     formdata.qualifications_id = Number(fileId01.value);
                     formdata.qualification_master_id = formData.get('qualification-combo');
                     formdata.number = formData.get('number').trim();
@@ -238,7 +238,7 @@
 
                     // 最終的なCSV文字列を作成
                     const csvString = csvLines.map(line => line.join(",")).join("\n");
-console.log(csvString)
+
                     // 文字列データが返却されなければ、エラーメッセージを表示
                     if (csvString == null || csvString == "") {
                         openMsgDialog("msg-dialog", "取得できませんでした", "red");
@@ -255,7 +255,7 @@ console.log(csvString)
 
             async function execUpdate() {
                 // リスト取得
-                const resultResponse = await fetch('/qualifications/get/all');
+                const resultResponse = await fetch('/qualifications/employee/get/all');
                 origin = await resultResponse.json();
 
                 // 画面更新
@@ -380,7 +380,7 @@ console.log(csvString)
                     const tab = panel.dataset.panel;
 
                     if (result.length > 0) {
-                        name.value = result[0].employee_name;
+                        name.value = result[0].owner_name;
 
                         switch (tab) {
                             case "03":

@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QualificationsService {
     private final SqlRepository sqlRepository;
+
     /**
      * IDからQualificationsを取得
      * @param account
@@ -26,10 +27,28 @@ public class QualificationsService {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT q.qualifications_id, q.qualification_master_id, q.number, q.version, q.state");
         sb.append(", COALESCE(q.acquisition_date, '9999-12-31') as acquisition_date, COALESCE(q.expiry_date, '9999-12-31') as expiry_date");
-        sb.append(", e.employee_id, e.full_name as employee_name, qm.name as qualification_name FROM employees e");
-        sb.append(" LEFT OUTER JOIN qualifications q ON q.employee_id = e.employee_id AND NOT (q.state = " + Enums.state.DELETE.getNum() + ")");
+        sb.append(", e.employee_id, e.full_name as owner_name, qm.name as qualification_name FROM employees e");
+        sb.append(" LEFT OUTER JOIN qualifications q ON q.owner_id = e.employee_id AND NOT (q.state = " + Enums.state.DELETE.getNum() + ")");
         sb.append(" LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = " + Enums.state.DELETE.getNum() + ")");
         sb.append(" WHERE e.employee_id = " + id + " AND NOT (e.state = " + Enums.state.DELETE.getNum() + ");");
+        SqlData sqlData = new SqlData();
+        sqlData.setData(sb.toString(), new QualificationsEntity());
+        return sqlRepository.getEntityList(sqlData);
+    }
+
+    /**
+     * IDからQualificationsを取得
+     * @param account
+     * @return
+     */
+    public List<IEntity> getQualificationsByCompanyId(int id) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT q.qualifications_id, q.qualification_master_id, q.number, q.version, q.state");
+        sb.append(", COALESCE(q.acquisition_date, '9999-12-31') as acquisition_date, COALESCE(q.expiry_date, '9999-12-31') as expiry_date");
+        sb.append(", c.company_id, c.name as owner_name, qm.name as qualification_name FROM companies c");
+        sb.append(" LEFT OUTER JOIN qualifications q ON q.owner_id = c.company_id AND NOT (q.state = " + Enums.state.DELETE.getNum() + ")");
+        sb.append(" LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = " + Enums.state.DELETE.getNum() + ")");
+        sb.append(" WHERE c.company_id = " + id + " AND NOT (c.state = " + Enums.state.DELETE.getNum() + ");");
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new QualificationsEntity());
         return sqlRepository.getEntityList(sqlData);
@@ -52,9 +71,9 @@ public class QualificationsService {
      * すべてのQualificationsを取得
      * @return
      */
-    public List<IEntity> getQualificationsList() {
+    public List<IEntity> getEmployeeQualificationsList() {
         StringBuilder sb = new StringBuilder();
-        sb.append(QualificationsEntity.selectStringByStatus());
+        sb.append(QualificationsEntity.selectEmployeeStringByStatus());
         // sb.append(" WHERE NOT (e.state = " + Enums.state.DELETE.getNum() + ");");
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new QualificationsEntity());
