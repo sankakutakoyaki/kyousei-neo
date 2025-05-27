@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- 本体 -->
+    <div class="normal-content" th:fragment="bodyFragment">
+            <!-- ハンバーガー -->
+        <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+        <!-- サイドバー -->
+        <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
+        <!-- ボディ -->
+        <div class="normal-body">
+            <div class="tab-area">
+                <ul class="tab-menu">
+                    <li class="tab-menu-item is-active" data-tab="01">打刻</li>
+                    <li class="tab-menu-item" data-tab="02"></li>
+                    <li class="tab-menu-item" data-tab="03"></li>
+                </ul>
+                <div class="tab-panel is-show" data-panel="01">
+                    <div class="table-area">
+                        <!-- ヘッダー -->
+                        <header th:replace="~{fragments/personnel/timeworks :: headerFragment()}"></header>
+                        <!-- コンテンツ -->
+                        <main th:replace="~{fragments/personnel/timeworks :: mainFragment('table-01', 'table-01-content')}"></main>
+                        <!-- フッター -->
+                        <footer id="footer-01" class="pc-style" th:insert="~{fragments/personnel/timeworks :: footerFragment()}"></footer>
+                    </div>
+                </div>
+                <div class="tab-panel" data-panel="02">
+
+                </div>
+                <div class="tab-panel" data-panel="03">
+
+                </div>
+            </div>
+        </div>
+        <div id="form-dialog-area">
+            <!-- フォーム画面をここに記入する -->
+        </div>
+        <div id="msg-dialog-area">
+            <div th:replace="~{fragments/dialog :: messageFragment}"></div>
+        </div>
+        <script th:src="@{/js/table.js}"></script>
+        <script th:src="@{/js/info.js}"></script>
+        <script type="text/JavaScript" th:inline="JavaScript">
+        const token = /*[[${_csrf.token}]]*/;
+        let entity = {};
+        const username = /*[[${username}]]*/;
+        const code = document.getElementById('code');
+        const name = document.getElementById('name');
+        const startBtn = document.querySelector('button[name="start-btn"]');
+        const endBtn = document.querySelector('button[name="end-btn"]');
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 時計作成
+        function clock() {
+            // 現在の日時・時刻の情報を取得
+            const d = new Date();    
+            // 年を取得
+            let year = d.getFullYear();
+            // 月を取得
+            let month = d.getMonth() + 1;
+            // 日を取得
+            let date = d.getDate();
+            // 曜日を取得
+            let dayNum = d.getDay();
+            const weekday = ["(日)", "(月)", "(火)", "(水)", "(木)", "(金)", "(土)"];
+            let day = weekday[dayNum];
+            // 時を取得
+            let hour = d.getHours();
+            // 分を取得
+            let min = d.getMinutes();
+            // 秒を取得
+            let sec = d.getSeconds();
+
+            // 1桁の場合は0を足して2桁に
+            month = month < 10 ? "0" + month : month;
+            date = date < 10 ? "0" + date : date;
+            hour = hour < 10 ? "0" + hour : hour;
+            min = min < 10 ? "0" + min : min;
+            sec = sec < 10 ? "0" + sec : sec;
+
+            // 日付・時刻の文字列を作成
+            let today = `${year}年${month}月${date}日 ${day}`;
+            let time = `${hour}:${min}:${sec}`;
+
+            // 文字列を出力
+            document.querySelector(".clock-date").innerText = today;
+            document.querySelector(".clock-time").innerText = time;
+        };
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 更新処理
+        async function updateDisplay() {
+            startProcessing();
+
+            // リストデータ取得
+            const getResponse = await fetch('/timeworks/get/today');
+            const list01 = await getResponse.json();
+            
+            // 画面更新
+            await updateTableDisplay("table-01-content", "footer-01", list01);
+            
+            if (code == null || name == null) return;
+            code.value = "";
+            name.value = "";
+            code.focus();
+
+            processingEnd();
+        }
+
+        // テーブルリスト画面を更新する
+        function updateTableDisplay(tableId, footerId, list) {
+            // リスト画面を初期化
+            deleteElements(tableId);
+            // リスト作成
+            createTableContent(tableId, list);
+            // フッター作成
+            createTableFooter(footerId, list);
+            // テーブルのソートをリセットする
+            resetSortable(tableId);
+            // テーブルにスクロールバーが表示されたときの処理を登録する
+            document.querySelectorAll('.scroll-area').forEach(el => {
+                toggleScrollbar(el);
+            });
+        }
+
+        // コードから[timeworks]を取得して、名前を表示
+        async function searchForNameByCode(e) {
+            e.preventDefault();
+            if (code == null || name == null) return;
+            if (code.value == "" || isNaN(code.value)) {
+                name.value = "";
+                return;
+            }
+
+            // [id=code]に入力されたコードから[timeworks]を取得して[id=name]に入力する
+            const data = "code=" + encodeURIComponent(parseInt(code.value));
+            const url = '/timeworks/get/today/code';
+            const contentType = 'application/x-www-form-urlencoded';
+            // [timeworks]を取得
+            const result = await postFetch(url, data, token, contentType);
+            entity = await result.json();
+            if (entity != null && entity.employee_id > 0) {
+                name.value = entity.full_name;
+                checkTimeWorksStartSaved(entity);
+                return;
+            } else {
+                code.value = ""
+                name.value = "";
+                messageDialog("コードが登録されていません", 'エラー', 'red');
+                return;
+            }
+        }
+        // コード入力ボックスからフォーカスが外れた時の処理
+        function execCodeBlur(e) {
+            if (e.target.value == "") {
+                name.value = "";
+                return;
+            }
+            searchForNameByCode(e);
+        }
+        // コード入力ボックスでエンターを押した時の処理
+        function execCodeChanged(e) {
+            if (e == null) return;
+            // ボックスが空白なら処理しない
+            if (e.target.value == "") {
+                name.value = "";
+                return;
+            }
+            if(e.key === 'Enter'){
+                e.preventDefault();
+                searchForNameByCode(e);
+            }
+        }
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 出勤退勤確認
+        function checkTimeWorksStartSaved(entity) {
+            if (entity != null) {
+                if (entity.comp_start_time != null) {
+                    endBtn.focus();
+                } else {
+                    startBtn.focus();
+                }
+            }
+        }
+
+// -------------------------------------------------------------------------------------------------------------------------------------- リスト画面作成
+        // function createTable(list) {
+        function createTableContent(tbl, list) {
+            list.forEach(function (item) {
+                let newRow = tbl.insertRow();
+                // ID（Post送信用）
+                newRow.setAttribute('name', 'data-row');
+                newRow.setAttribute('data-id', item.timeworks_id);
+                // 調整用セル
+                newRow.insertCell();
+                // 担当者名
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.full_name + '</span></td>');
+                // 出勤時刻
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.start_time ?? "") + '</span></td>');
+                // 退勤時刻
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.end_time ?? "") + '</span></td>');
+                // 営業所
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.office_name ?? "") + '</span></td>');
+            });
+        };
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 初期化時の処理
+        window.addEventListener("load", async () => {
+            // 1秒ごとにclock関数を呼び出す
+            setInterval(clock, 1000);
+            // コード入力ボックスでエンターキーが押された時の処理を登録
+            document.getElementById('code').addEventListener('keydown', function (e) { execCodeChanged(e); });
+            // コード入力ボックスのフォーカスが外れた時の処理を登録
+            document.getElementById('code').addEventListener('blur', function (e) { execCodeBlur(e); });
+
+            await updateDisplay();
+        });
+
+    </script>
+
+</body>
+
+</html>

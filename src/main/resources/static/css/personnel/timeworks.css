@@ -1,0 +1,90 @@
+@charset "UTF-8";
+
+.clock {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--black);
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+/* 日付のスタイル */
+.clock-date {
+    font-size: 1.5rem;
+}
+
+/* 時間のスタイル */
+.clock-time {
+    font-size: 4rem;
+}
+
+.timeworks-container {            
+    display: grid;
+    grid-template-columns: 20rem 1fr;
+    grid-template-rows: 1fr auto;
+    width: 100%;
+    height: 100%;
+    padding: 1rem 3rem;
+}
+
+.timeworks-content {
+    row-gap: 1rem;
+    grid-template-rows: auto auto auto auto 1fr;
+}
+
+.table-container.timeworks {
+    grid-template-rows: 1fr auto;
+    padding: 0 2rem;
+    width: 40rem;
+}
+
+.normal-table.timeworks tr {
+    grid-template-columns: 2rem 10rem 5rem 5rem 8rem;
+}
+
+.normal-table.timeworks tbody tr[name="data-row"] {
+    height: 2.5rem;
+    border: 0;
+}
+
+.normal-table.timeworks tbody tr[name="data-row"].selected {
+    background-color: transparent;
+}
+
+.normal-table.timeworks tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child {
+    border: 0;
+}
+
+.input-area.code-box .img-btn {
+    position: absolute;
+    width: 2.5rem;
+    bottom: 0;
+    right: 0;
+}
+
+@media screen and (max-width:1240px) {
+}
+
+@media screen and (max-width:560px) {
+    .timeworks-container {
+        display: block;
+        width: 100%;
+        padding: 0;
+    }
+    .normal-table.timeworks tr {
+        grid-template-columns: 1fr;
+    }
+    .normal-table.timeworks tr th {
+        display: none;
+    }
+    .input-area.code-box {
+        grid-template-columns: 35% 65%;
+    }
+    .input-area.time-btn {
+        grid-template-columns: 1fr 1fr;
+    }
+    .input-area.code-box .img-btn {
+        bottom: .5rem;
+        right: 0;
+    }
+}

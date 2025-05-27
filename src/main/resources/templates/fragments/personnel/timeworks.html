@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <header class="flex-area pc-style" th:fragment="headerFragment()">
+        <div class="clock">
+            <div>
+                <span class="clock-date">0000年00月00日（日）</span>
+            </div>
+            <div>
+                <span class="clock-time">00:00:00</span>
+            </div>
+        </div>
+        <div class="input-area code-box">
+            <div class="form-parts">
+                <label>コード</label>
+                <input autofocus id="code" class="normal-input" type="text" inputmode="numeric" pattern="\d*" value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>従業員名</label>
+                <input id="name" class="normal-input" type="text" disabled>
+            </div>
+        </div>    
+        <div class="input-area time-btn">  
+            <button name="start-btn" class="large-btn" type="button" onclick="execTimeWorks('start')"><span>出勤</span></button>
+            <button name="end-btn" class="large-btn" type="button" onclick="execTimeWorks('end')"><span>退勤</span></button>
+        </div>
+    </header>
+
+    <main th:fragment="mainFragment(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table">
+            <tr id="row-0" name="table-header" class="pc-style">
+                <th><span>氏名<span class="sort-arrow"></span></span></th>
+                <th><span>出勤<span class="sort-arrow"></span></span></th>
+                <th><span>退勤<span class="sort-arrow"></span></span></th>
+                <th><span>営業所<span class="sort-arrow"></span></span></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+    <footer th:fragment="footerFragment()" th:remove="tag">
+        <span>0件 : 0000/00/00 00:00 現在</span>
+    </footer>
+</body>
+
+</html>
