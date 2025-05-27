@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,16 +16,16 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.component.UploadConfig;
+import com.kyouseipro.neo.entity.common.QualificationFilesEntity;
+import com.kyouseipro.neo.entity.common.QualificationsEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.person.EmployeeEntity;
-import com.kyouseipro.neo.entity.person.QualificationFilesEntity;
-import com.kyouseipro.neo.entity.person.QualificationsEntity;
 import com.kyouseipro.neo.interfaceis.IEntity;
 import com.kyouseipro.neo.service.ComboBoxService;
 import com.kyouseipro.neo.service.DatabaseService;
 import com.kyouseipro.neo.service.FileService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
-import com.kyouseipro.neo.service.personnel.QualificationsService;
+import com.kyouseipro.neo.service.common.QualificationsService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -41,17 +42,17 @@ public class QualificationsController {
 	 * @param mv
 	 * @return
 	 */
-	@GetMapping("/qualifications")
+	@GetMapping("/qualifications/{type}")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getQualifications(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getQualifications(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
+
 		mv.setViewName("layouts/main");
         mv.addObject("title", "資格");
         mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
-        mv.addObject("bodyFragmentName", "contents/personnel/qualifications :: bodyFragment");
-        mv.addObject("insertCss", "/css/personnel/qualifications.css");
-        // mv.addObject("uploadFilePath", UploadConfig.getUploadDir());
+        mv.addObject("bodyFragmentName", "contents/common/qualifications :: bodyFragment");
+        mv.addObject("insertCss", "/css/common/qualifications.css");
+
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
 		EmployeeEntity user = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
@@ -60,13 +61,28 @@ public class QualificationsController {
         // 初期化されたエンティティ
         mv.addObject("formEntity", new QualificationsEntity());
 
-        // 初期表示用資格情報リスト取得
-        List<IEntity> origin = qualificationsService.getEmployeeQualificationsList();
-        mv.addObject("origin", origin);
-
-        // コンボボックスアイテム取得
-        List<IEntity> qualificationComboList = comboBoxService.getQualificationMaster();
-        mv.addObject("qualificationComboList", qualificationComboList);
+        switch (type.toLowerCase()) {
+            case "employee":
+                mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
+                // 初期表示用資格情報リスト取得
+                List<IEntity> qualificationsOrigin = qualificationsService.getEmployeeQualificationsList();
+                mv.addObject("origin", qualificationsOrigin);
+                // コンボボックスアイテム取得
+                List<IEntity> qualificationComboList = comboBoxService.getQualificationMaster();
+                mv.addObject("qualificationComboList", qualificationComboList);
+                break;
+            case "company":
+                mv.addObject("sidebarFragmentName", "fragments/menu :: salesFragment");
+                // 初期表示用資格情報リスト取得
+                List<IEntity> licensesOrigin = qualificationsService.getCompanyQualificationsList();
+                mv.addObject("origin", licensesOrigin);
+                // コンボボックスアイテム取得
+                List<IEntity> licenseComboList = comboBoxService.getLicenseMaster();
+                mv.addObject("qualificationComboList", licenseComboList);
+                break;
+            default:
+                break;
+        }
 
         // 履歴保存
         databaseService.saveHistory(userName, "qualifications", "閲覧", 200, "");
@@ -79,10 +95,21 @@ public class QualificationsController {
      * @param ID
      * @return 
      */
-    @PostMapping("/qualifications/get/employeeid")
+    @PostMapping("/qualifications/get/id/employee")
 	@ResponseBody
-    public List<IEntity> getQualificationsById(@RequestParam int id) {
+    public List<IEntity> getQualificationsByEmployeeId(@RequestParam int id) {
         return qualificationsService.getQualificationsByEmployeeId(id);
+    }
+
+    /**
+     * IDから資格情報を取得する
+     * @param ID
+     * @return 
+     */
+    @PostMapping("/qualifications/get/id/company")
+	@ResponseBody
+    public List<IEntity> getQualificationsByCompnayId(@RequestParam int id) {
+        return qualificationsService.getQualificationsByCompanyId(id);
     }
 
     /**
@@ -136,10 +163,20 @@ public class QualificationsController {
      * すべての資格情報を取得する
      * @return
      */
-    @GetMapping("/qualifications/employee/get/all")
+    @GetMapping("/qualifications/get/all/employee")
 	@ResponseBody
     public List<IEntity> getEmployeeQualificationsList() {
         return qualificationsService.getEmployeeQualificationsList();
+    }
+
+    /**
+     * すべての資格情報を取得する
+     * @return
+     */
+    @GetMapping("/qualifications/get/all/company")
+	@ResponseBody
+    public List<IEntity> getCompanyQualificationsList() {
+        return qualificationsService.getCompanyQualificationsList();
     }
 
     /**

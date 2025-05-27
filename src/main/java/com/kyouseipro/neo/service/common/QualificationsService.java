@@ -1,13 +1,13 @@
-package com.kyouseipro.neo.service.personnel;
+package com.kyouseipro.neo.service.common;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.common.QualificationFilesEntity;
+import com.kyouseipro.neo.entity.common.QualificationsEntity;
 import com.kyouseipro.neo.entity.data.SqlData;
-import com.kyouseipro.neo.entity.person.QualificationFilesEntity;
-import com.kyouseipro.neo.entity.person.QualificationsEntity;
 import com.kyouseipro.neo.interfaceis.IEntity;
 import com.kyouseipro.neo.repository.SqlRepository;
 
@@ -68,13 +68,24 @@ public class QualificationsService {
     }
 
     /**
-     * すべてのQualificationsを取得
+     * すべてのQualifications(Employee)を取得
      * @return
      */
     public List<IEntity> getEmployeeQualificationsList() {
         StringBuilder sb = new StringBuilder();
         sb.append(QualificationsEntity.selectEmployeeStringByStatus());
-        // sb.append(" WHERE NOT (e.state = " + Enums.state.DELETE.getNum() + ");");
+        SqlData sqlData = new SqlData();
+        sqlData.setData(sb.toString(), new QualificationsEntity());
+        return sqlRepository.getEntityList(sqlData);
+    }
+
+    /**
+     * すべてのQualifications(Company)を取得
+     * @return
+     */
+    public List<IEntity> getCompanyQualificationsList() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(QualificationsEntity.selectCompanyStringByStatus());
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new QualificationsEntity());
         return sqlRepository.getEntityList(sqlData);

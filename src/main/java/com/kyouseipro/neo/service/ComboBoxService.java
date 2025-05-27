@@ -135,7 +135,19 @@ public class ComboBoxService {
      */
     public List<IEntity> getQualificationMaster() {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") ORDER BY name_kana;");
+        sb.append("SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") ORDER BY code;");
+        SqlData sqlData = new SqlData();
+        sqlData.setData(sb.toString(), new SimpleData());
+        return sqlRepository.getEntityList(sqlData);
+    }
+
+    /**
+     * すべての許可証リスト
+     * @return
+     */
+    public List<IEntity> getLicenseMaster() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") AND category_name = '許可' ORDER BY code;");
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new SimpleData());
         return sqlRepository.getEntityList(sqlData);

@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.entity.person;
+package com.kyouseipro.neo.entity.common;
 
 import java.sql.ResultSet;
 import java.time.LocalDate;
@@ -72,8 +72,8 @@ public class QualificationsEntity implements IEntity {
         sb.append("SELECT q.qualifications_id, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.is_enabled");
         sb.append(", q.version, q.state");
         sb.append(", c.name as owner_name, qm.name as qualification_name FROM qualifications q");
-        sb.append(" LEFT OUTER JOIN companies c ON c.company_id = q.owner_id AND NOT (c.state = " + Enums.state.DELETE.getNum() + ")");
-        sb.append(" LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = " + Enums.state.DELETE.getNum() + ")");
+        sb.append(" LEFT OUTER JOIN companies c ON c.company_id = q.owner_id AND NOT (c.state = " + Enums.state.DELETE.getNum() + ") AND category = " + Enums.clientCategory.PARTNER.getNum());
+        sb.append(" LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = " + Enums.state.DELETE.getNum() + ") AND qm.category_name = '許可'");
         return sb.toString();
     }
 
@@ -83,7 +83,7 @@ public class QualificationsEntity implements IEntity {
      */
     public static String selectEmployeeStringByStatus() {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT e.employee_id, e.full_name as owner_name, e.full_name_kana as owner_name_kana, qm.name as qualification_name");
+        sb.append("SELECT e.employee_id as owner_id, e.full_name as owner_name, e.full_name_kana as owner_name_kana, qm.name as qualification_name");
         sb.append(", q.qualifications_id, qm.qualification_master_id, q.number, q.is_enabled, q.version, q.state");
         sb.append(", COALESCE(q.acquisition_date, '9999-12-31') as acquisition_date, COALESCE(q.expiry_date, '9999-12-31') as expiry_date");
         sb.append(", CASE WHEN q.owner_id IS NOT NULL THEN '取得済み' ELSE '未取得' END AS status FROM employees e");
@@ -101,14 +101,14 @@ public class QualificationsEntity implements IEntity {
      */
     public static String selectCompanyStringByStatus() {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT c.company_id, c.name as owner_name, c.name_kana as owner_name_kana, qm.name as qualification_name");
+        sb.append("SELECT c.company_id as owner_id, c.name as owner_name, c.name_kana as owner_name_kana, qm.name as qualification_name");
         sb.append(", q.qualifications_id, qm.qualification_master_id, q.number, q.is_enabled, q.version, q.state");
         sb.append(", COALESCE(q.acquisition_date, '9999-12-31') as acquisition_date, COALESCE(q.expiry_date, '9999-12-31') as expiry_date");
         sb.append(", CASE WHEN q.owner_id IS NOT NULL THEN '取得済み' ELSE '未取得' END AS status FROM companies c");
         sb.append(" CROSS JOIN qualification_master qm");
         sb.append(" LEFT JOIN qualifications q ON q.owner_id = c.company_id AND q.qualification_master_id = qm.qualification_master_id");
         sb.append(" AND NOT (q.state = " + Enums.state.DELETE.getNum() + ")");
-        sb.append(" WHERE NOT (e.state = " + Enums.state.DELETE.getNum() + ")");
+        sb.append(" WHERE NOT (c.state = " + Enums.state.DELETE.getNum() + ") AND c.category = " + Enums.clientCategory.PARTNER.getNum() + " AND qm.category_name = '許可'");
         sb.append(" ORDER BY qm.qualification_master_id, c.company_id");
         return sb.toString();
     }

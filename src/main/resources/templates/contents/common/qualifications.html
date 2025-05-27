@@ -13,34 +13,33 @@
             <div class="tab-area">
                 <ul class="tab-menu">
                     <li class="tab-menu-item is-active" data-tab="01">取得一覧</li>
-                    <!-- <li class="tab-menu-item" data-tab="02">資格別</li> -->
                     <li class="tab-menu-item" data-tab="03">資格登録</li>
                     <li class="tab-menu-item" data-tab="04">PDF登録</li>
                 </ul>
                 <div class="tab-panel is-show" data-panel="01">
                     <div class="table-area">
                         <!-- ヘッダー -->
-                        <header th:replace="~{fragments/personnel/qualifications :: headerFragment('search-box-01')}"></header>
+                        <header th:replace="~{fragments/common/qualifications :: headerFragment('search-box-01')}"></header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/personnel/qualifications :: mainFragment()}"></main>
+                        <main th:replace="~{fragments/common/qualifications :: mainFragment()}"></main>
                         <!-- フッター -->
-                        <footer id="footer-01" class="pc-style" th:insert="~{fragments/personnel/qualifications :: footerFragment()}"></footer>
+                        <footer id="footer-01" class="pc-style" th:insert="~{fragments/common/qualifications :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="03">
                     <div class="qualification-area">
                         <!-- ヘッダー -->
-                        <header th:replace="~{fragments/personnel/qualifications :: headerEmployeeFragment('code-box-01', 'name-box-01')}"></header>
+                        <header th:replace="~{fragments/common/qualifications :: headerOwnerFragment('code-box-01', 'name-box-01')}"></header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/personnel/qualifications :: mainRegistFragment()}"></main>
+                        <main th:replace="~{fragments/common/qualifications :: mainRegistFragment()}"></main>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="04">
                     <div class="qualification-area">
                         <!-- ヘッダー -->
-                        <header th:replace="~{fragments/personnel/qualifications :: headerEmployeeFragment('code-box-02', 'name-box-02')}"></header>
+                        <header th:replace="~{fragments/common/qualifications :: headerOwnerFragment('code-box-02', 'name-box-02')}"></header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/personnel/qualifications :: mainPdfFragment()}"></main>
+                        <main th:replace="~{fragments/common/qualifications :: mainPdfFragment()}"></main>
                     </div>
                 </div>
 
@@ -60,16 +59,10 @@
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
             const user = /*[[${user}]]*/;
+            const url = /*[[${url}]]*/;
             const formEntity = /*[[${formEntity}]]*/;
             let origin = /*[[${origin}]]*/; // 初期リスト記憶用
-            // let list = [];
             const qualificationComboList = /*[[${qualificationComboList}]]*/;
-            // const qualificationComboList = [
-            //     {"number":1, "text":"普通自動車第一種運転免許"},
-            //     {"number":2, "text":"第二種電気工事士"},
-            //     {"number":3, "text":"給水装置工事主任技術者"}
-            // ];
-
             const fileInput = document.getElementById('file-input');
             const fileList = document.getElementById('file-list');            
             const qualificationList01 = document.getElementById('qualification-list-01');
@@ -255,7 +248,7 @@
 
             async function execUpdate() {
                 // リスト取得
-                const resultResponse = await fetch('/qualifications/employee/get/all');
+                const resultResponse = await fetch('/qualifications/get/all/' + url);
                 origin = await resultResponse.json();
 
                 // 画面更新
@@ -374,7 +367,7 @@
                     startProcessing();
 
                     const data = "id=" + encodeURIComponent(parseInt(code.value));
-                    const resultResponse = await postFetch('/qualifications/get/employeeid', data, token, 'application/x-www-form-urlencoded');
+                    const resultResponse = await postFetch('/qualifications/get/id/' + url, data, token, 'application/x-www-form-urlencoded');
                     const result = await resultResponse.json();
                     const panel = code.closest('.tab-panel');
                     const tab = panel.dataset.panel;
@@ -553,7 +546,7 @@
                 if (qualification.value === "0") {
                     // 0 の場合は全件表示
                     searchList = list;
-                } else {console.log(origin);console.log(qualification.value)
+                } else {
                     searchList = list.filter(value => value.qualification_master_id === Number(qualification.value));
                 }
                 return searchList;
@@ -632,7 +625,7 @@
                 })
 
                 // スピナー消去
-                processingEnd();console.log(origin)
+                processingEnd();
             });
         </script>
     </div>

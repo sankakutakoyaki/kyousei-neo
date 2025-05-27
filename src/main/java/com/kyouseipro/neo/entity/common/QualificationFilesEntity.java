@@ -1,9 +1,8 @@
-package com.kyouseipro.neo.entity.person;
+package com.kyouseipro.neo.entity.common;
 
 import java.sql.ResultSet;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.entity.record.HistoryEntity;
 import com.kyouseipro.neo.interfaceis.IEntity;
 import com.kyouseipro.neo.interfaceis.IFileUpload;
 import com.kyouseipro.neo.service.DatabaseService;

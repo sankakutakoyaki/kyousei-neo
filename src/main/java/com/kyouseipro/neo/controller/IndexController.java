@@ -107,7 +107,7 @@ public class IndexController {
         mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
 		mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
         mv.addObject("bodyFragmentName", "contents/index/personnel :: bodyFragment");
-        mv.addObject("insertCss", "/css/personnel.css");
+        mv.addObject("insertCss", "/css/personnel/personnel.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
 		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
