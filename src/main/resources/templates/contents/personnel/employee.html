@@ -476,15 +476,15 @@
             let result;
             switch (tab) {
                 case "01":
-                    result = await deleteTablelsit('table-01-content', '/employee/delete');
+                    result = await deleteTablelist('table-01-content', '/employee/delete', user.user_name);
                     if (result == true) { execUpdate(); }
                     break;
                 case "02":
-                    result = await deleteTablelsit('table-02-content', '/employee/delete');
+                    result = await deleteTablelist('table-02-content', '/employee/delete', user.user_name);
                     if (result == true) { execUpdate(); }
                     break;
                 case "03":
-                    result = await deleteTablelsit('table-03-content', '/employee/delete');
+                    result = await deleteTablelist('table-03-content', '/employee/delete', user.user_name);
                     if (result == true) { execUpdate(); }
                     break;
                 default:

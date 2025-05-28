@@ -114,7 +114,7 @@ public class WorkingConditionsService {
      * @param ids
      * @return
      */
-    public String downloadCsvWorkingConditionsByIds(List<SimpleData> list) {
+    public String downloadCsvWorkingConditionsByIds(List<SimpleData> list, String userName) {
         String ids = Utilities.createSequenceByIds(list);
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT * FROM working_conditions WHERE working_conditions_id IN(" + ids + ") AND NOT ( state = " + Enums.state.DELETE.getNum() + " );");

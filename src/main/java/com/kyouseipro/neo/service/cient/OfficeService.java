@@ -113,7 +113,7 @@ public class OfficeService {
      * @param ids
      * @return
      */
-    public String downloadCsvOfficeByIds(List<SimpleData> list) {
+    public String downloadCsvOfficeByIds(List<SimpleData> list, String userName) {
         String ids = Utilities.createSequenceByIds(list);
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT * FROM offices WHERE office_id IN(" + ids + ") AND NOT ( state = " + Enums.state.DELETE.getNum() + " );");

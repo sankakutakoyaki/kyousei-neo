@@ -111,7 +111,7 @@ public class CompanyService {
      * @param ids
      * @return
      */
-    public String downloadCsvCompanyByIds(List<SimpleData> list) {
+    public String downloadCsvCompanyByIds(List<SimpleData> list, String userName) {
         String ids = Utilities.createSequenceByIds(list);
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT * FROM companies WHERE company_id IN(" + ids + ") AND NOT ( state = " + Enums.state.DELETE.getNum() + " );");

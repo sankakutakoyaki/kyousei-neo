@@ -154,10 +154,20 @@ async function saveFormData(formData, url) {
     // スピナー表示
     startProcessing();
 
-    // 保存処理
-    const data = JSON.stringify(formData);
-    const resultResponse = await postFetch(url, data, token, 'application/json');
-    const result = await resultResponse.json();
+    const response = await fetch(url, {
+        headers: {  // リクエストヘッダを追加
+            'X-CSRF-TOKEN': token,
+        },
+        method: "POST",
+        body: formData,
+    });
+
+    const result = await response.json();
+
+    // // 保存処理
+    // const data = JSON.stringify(formData);
+    // const resultResponse = await postFetch(url, data, token, 'application/json');
+    // const result = await resultResponse.json();
 
     // スピナー消去
     processingEnd();          

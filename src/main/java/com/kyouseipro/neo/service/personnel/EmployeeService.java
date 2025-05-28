@@ -111,7 +111,7 @@ public class EmployeeService {
      * @param ids
      * @return
      */
-    public String downloadCsvEmployeeByIds(List<SimpleData> list) {
+    public String downloadCsvEmployeeByIds(List<SimpleData> list, String userName) {
         String ids = Utilities.createSequenceByIds(list);
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT * FROM employees WHERE employee_id IN(" + ids + ") AND NOT ( state = " + Enums.state.DELETE.getNum() + " );");

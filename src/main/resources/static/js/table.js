@@ -299,7 +299,7 @@ function getAllSelectedIds(tableId) {
             checked_data.push({ 'number': num });
         }
     }
-    return checked_data;
+    return JSON.stringify(checked_data);
 }
 
 /**
@@ -390,23 +390,28 @@ async function downloadCsv(tableId, url) {
  * @param {*} tableId 
  * @param {*} url 
  */
-async function deleteTablelist(tableId, url) {
+async function deleteTablelist(tableId, url, userName) {
     // 選択された要素を取得する
-    const ids = getAllSelectedIds(tableId);
+    const ids = getAllSelectedIds(tableId);console.log(ids)
     if (ids.length == 0) {
         // 選択された要素がなければメッセージを表示して終了
         openMsgDialog("msg-dialog", "選択されていません", "red");
     } else {
-        // スピナー表示
-        startProcessing();
+        // // スピナー表示
+        // startProcessing();
 
-        // 削除処理
-        const data = JSON.stringify(ids);
-        const resultResponse = await postFetch(url, data, token, 'application/json');
-        const result = await resultResponse.json();
+        const formData = new FormData();
+        formData.append('ids', ids);
+        formData.append("userName", userName);
 
-        // スピナー消去
-        processingEnd();
+        const result = await saveFormData(formData, url)
+        // // 削除処理
+        // const data = JSON.stringify(ids);
+        // const resultResponse = await postFetch(url, data, token, 'application/json');
+        // const result = await resultResponse.json();
+
+        // // スピナー消去
+        // processingEnd();
 
         if (result.number > 0) {
             return true;
