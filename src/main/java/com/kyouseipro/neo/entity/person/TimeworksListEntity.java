@@ -12,7 +12,6 @@ import lombok.Data;
 
 @Data
 public class TimeworksListEntity implements IEntity {
-
     private int timeworks_id;
     private int employee_id;
     private int category;

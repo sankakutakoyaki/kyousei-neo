@@ -8,7 +8,6 @@ import lombok.Data;
 
 @Data
 public class CompanyListEntity implements IEntity {
-
     private int company_id;
     private int category;
     private String name;

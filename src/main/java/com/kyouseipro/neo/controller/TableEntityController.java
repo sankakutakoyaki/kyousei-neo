@@ -1,7 +1,9 @@
 package com.kyouseipro.neo.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kyouseipro.neo.entity.common.QualificationsEntity;
 import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.corporation.OfficeEntity;
 import com.kyouseipro.neo.entity.corporation.StaffEntity;
@@ -23,7 +27,9 @@ import com.kyouseipro.neo.service.ComboBoxService;
 import com.kyouseipro.neo.service.cient.CompanyService;
 import com.kyouseipro.neo.service.cient.OfficeService;
 import com.kyouseipro.neo.service.cient.StaffService;
+import com.kyouseipro.neo.service.common.QualificationsService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
+import com.kyouseipro.neo.service.personnel.TimeworksService;
 import com.kyouseipro.neo.service.personnel.WorkingConditionsService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,6 +43,11 @@ public class TableEntityController {
     private final StaffService staffService;
     private final WorkingConditionsService workingConditionsService;
     private final ComboBoxService comboBoxService;
+    private final QualificationsService qualificationsService;
+    private final TimeworksService timeworksService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * IDからEntityを取得する
@@ -111,20 +122,22 @@ public class TableEntityController {
      */
     @PostMapping("/{type}/save")
 	@ResponseBody
-    public IEntity saveEntity(@RequestBody IEntity entity, @PathVariable String type) {
+    public IEntity saveEntity(@RequestBody Map<String, Object> data, @PathVariable String type) {
         switch (type.toLowerCase()) {
             case "employee":
-                return employeeService.saveEmployee((EmployeeEntity)entity);
+                return employeeService.saveEmployee(objectMapper.convertValue(data, EmployeeEntity.class));
             case "company":
-                return companyService.saveCompany((CompanyEntity)entity);
+                return companyService.saveCompany(objectMapper.convertValue(data, CompanyEntity.class));
             case "office":
-                return officeService.saveOffice((OfficeEntity)entity);
+                return officeService.saveOffice(objectMapper.convertValue(data, OfficeEntity.class));
             case "staff":
-                return staffService.saveStaff((StaffEntity)entity);
+                return staffService.saveStaff(objectMapper.convertValue(data, StaffEntity.class));
             case "working_conditions":
-                return workingConditionsService.saveWorkingConditions((WorkingConditionsEntity)entity);
+                return workingConditionsService.saveWorkingConditions(objectMapper.convertValue(data, WorkingConditionsEntity.class));
+            case "qualifications":
+                return qualificationsService.saveQualifications(objectMapper.convertValue(data, QualificationsEntity.class));
             default:
-                return null;
+                throw new IllegalArgumentException("Unknown type: " + type);
         }
     }
 
@@ -148,6 +161,23 @@ public class TableEntityController {
                 return staffService.deleteStaffByIds(ids, userName);
             case "working_conditions":
                 return workingConditionsService.deleteWorkingConditionsByIds(ids, userName);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * 指定したIDのEntityを削除する
+     * @param ID
+     * @return 
+     */
+    @PostMapping("/{type}/delete/id")
+    @ResponseBody
+    public IEntity deleteEntityById(@RequestParam int id, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
+        String userName = principal.getAttribute("preferred_username");
+        switch (type.toLowerCase()) {
+            case "qualifications":
+                return qualificationsService.deleteQualificationsById(id, userName);
             default:
                 return null;
         }
@@ -194,5 +224,56 @@ public class TableEntityController {
                 break;
         }
         return comboBoxService.getClient();
+    }
+
+    /**
+     * IDから資格情報を取得する
+     * @param ID
+     * @return 
+     */
+    @PostMapping("/qualifications/get/id/{type}")
+	@ResponseBody
+    public List<IEntity> getQualificationsById(@RequestParam int id, @PathVariable String type) {
+        switch (type.toLowerCase()) {
+            case "employee":
+                return qualificationsService.getQualificationsByEmployeeId(id);
+            case "company":
+                return qualificationsService.getQualificationsByCompanyId(id);
+            default:
+                return null;
+        }
+        
+    }
+
+    /**
+     * すべての資格情報を取得する
+     * @return
+     */
+    @GetMapping("/qualifications/get/all/{type}")
+	@ResponseBody
+    public List<IEntity> getQualificationsList(@PathVariable String type) {
+        switch (type.toLowerCase()) {
+            case "employee":
+                return qualificationsService.getEmployeeQualificationsList();
+            case "company":
+                return qualificationsService.getCompanyQualificationsList();
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * 今日のEntityListを取得
+     * @return
+     */
+    @GetMapping("/{type}/get/today")
+    @ResponseBody
+    public List<IEntity> getTodaysAttendanceDataForAllEmployees(@PathVariable String type) {
+        switch (type.toLowerCase()) {
+            case "timeworks":
+                return timeworksService.getListOfAllEmployeesToday();
+            default:
+                return null;
+        }
     }
 }

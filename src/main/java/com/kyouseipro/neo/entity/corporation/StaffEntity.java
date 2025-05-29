@@ -11,7 +11,6 @@ import lombok.Data;
 
 @Data
 public class StaffEntity implements IEntity {
-    
     private int staff_id;
     private int company_id;
     private int office_id;

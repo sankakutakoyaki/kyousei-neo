@@ -20,12 +20,6 @@ import com.kyouseipro.neo.interfaceis.IEntity;
 
 @Repository
 public class SqlRepository {
-
-    // static String driverName = ResourceBundle.getBundle("application").getString("spring.datasource.driver-class-name");
-    // static String url = ResourceBundle.getBundle("application").getString("spring.datasource.url");
-    // static String userName = ResourceBundle.getBundle("application").getString("spring.datasource.username");
-    // static String password = ResourceBundle.getBundle("application").getString("spring.datasource.password");
-
     @Value("${spring.datasource.driver-class-name}")
     private String driverName;
 
@@ -170,29 +164,4 @@ public class SqlRepository {
         });
         return list;
     }
-
-    // /**
-    //  * SQL文から数値を取得する
-    //  * @param str
-    //  * @return コードとメッセージを返す
-    //  */
-    // public static SimpleData getId(String str) {
-    //     SimpleData simpleData = new SimpleData();
-    //     execSql(s -> {
-    //         try {
-    //             ResultSet rs = s.executeQuery(str);
-    //             if (rs.next()){
-    //                 simpleData.setNumber(rs.getInt("number"));
-    //                 simpleData.setText(rs.getString("text"));
-    //             }
-    //             return true;
-    //         } catch (SQLException e) {
-    //             System.out.println(e);
-    //             simpleData.setNumber(0);
-    //             simpleData.setText(e.getMessage());
-    //             return false;
-    //         }
-    //     });
-    //     return simpleData;    
-    // }
 }

@@ -11,7 +11,6 @@ import lombok.Data;
 
 @Data
 public class OfficeEntity implements IEntity {
-    
     private int office_id;
     private int company_id;
     private String company_name;

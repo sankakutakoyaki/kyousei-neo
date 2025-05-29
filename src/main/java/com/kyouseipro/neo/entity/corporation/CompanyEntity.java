@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.kyouseipro.neo.entity.record.HistoryEntity;
 import com.kyouseipro.neo.interfaceis.IEntity;
 import com.kyouseipro.neo.service.DatabaseService;
 
@@ -12,7 +11,6 @@ import lombok.Data;
 
 @Data
 public class CompanyEntity implements IEntity {
-    
     private int company_id;
     private int category;
     private String name;

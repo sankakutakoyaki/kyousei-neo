@@ -8,7 +8,6 @@ import lombok.Data;
 
 @Data
 public class OfficeComboEntity implements IEntity {
-    
     private int office_id;
     private int company_id;
     private String office_name;

@@ -527,7 +527,8 @@
                     formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
 
                     // 保存処理
-                    const result = await saveFormData(formdata, url);
+                    // const result = await saveFormData(formdata, url);
+                    const result = await postFetch(url, JSON.stringify(formdata), token, "application/json");
                     if (result > 0) {
                         const tableId = "table-" + tab + "-content";
                         // 画面更新

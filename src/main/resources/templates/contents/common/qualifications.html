@@ -163,7 +163,8 @@
                     formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
 
                     // 保存処理
-                    const result = await saveFormData(formdata, "/qualifications/save");
+                    // const result = await saveFormData(formdata, "/qualifications/save");
+                    const result = await postFetch("/qualifications/save", JSON.stringify(formdata), token, "application/json");
                     if (result > 0) {
                         updatePanels();
                     }
@@ -297,7 +298,7 @@
                     formData.append("id", parseInt(id.value));
                 }
 
-                const response = await fetch("/qualifications/file/upload", {
+                const response = await fetch("/file/upload/qualifications", {
                     headers: {  // リクエストヘッダを追加
                         'X-CSRF-TOKEN': token,
                     },
@@ -366,11 +367,13 @@
                     
                     startProcessing();
 
-                    const data = "id=" + encodeURIComponent(parseInt(code.value));
-                    const resultResponse = await postFetch('/qualifications/get/id/' + url, data, token, 'application/x-www-form-urlencoded');
-                    const result = await resultResponse.json();
                     const panel = code.closest('.tab-panel');
                     const tab = panel.dataset.panel;
+
+                    const data = "id=" + encodeURIComponent(parseInt(code.value));
+                    const resultResponse = await postFetch('/qualifications/get/id/', data, token, 'application/x-www-form-urlencoded');
+                    const result = await resultResponse.json();
+
 
                     if (result.length > 0) {
                         name.value = result[0].owner_name;
@@ -384,15 +387,15 @@
                                     const removeBtn = createRemoveBtn();
                                     removeBtn.addEventListener('click', async (e) => {
                                         e.stopPropagation(); // liの他のイベントが誤動作しないように
-                                        const data = "id=" + encodeURIComponent(parseInt(item.qualifications_id));
-                                        const resultResponse = await postFetch('/qualifications/delete/id', data, token, 'application/x-www-form-urlencoded');
-                                        const result = await resultResponse.json();
-                                        if (result.number > 0) {
+                                        const data2 = "id=" + encodeURIComponent(parseInt(item.qualifications_id));
+                                        const resultResponse2 = await postFetch('/qualifications/delete/id', data2, token, 'application/x-www-form-urlencoded');
+                                        const result2 = await resultResponse2.json();
+                                        if (result2.number > 0) {
                                             // li.remove();
-                                            openMsgDialog("msg-dialog", result.text, "blue");
+                                            openMsgDialog("msg-dialog", result2.text, "blue");
                                             updatePanels();
                                         } else {
-                                            openMsgDialog("msg-dialog", result.text, "red");
+                                            openMsgDialog("msg-dialog", result2.text, "red");
                                         }
                                     });
 
@@ -469,7 +472,7 @@
                 
                 const folderName = id;
                 const data = "id=" + encodeURIComponent(parseInt(id));
-                const resultResponse = await postFetch('/qualifications/get/files', data, token, 'application/x-www-form-urlencoded');
+                const resultResponse = await postFetch('/files/get/qualifications', data, token, 'application/x-www-form-urlencoded');
                 const result = await resultResponse.json();
 
                 if (result.length > 0) {
@@ -489,7 +492,7 @@
 
                 const li = createListItem("/files/qualification/" + path, fileName);
 
-                const removeBtn = setFileRemoveEventListner(createRemoveBtn(), li, path, '/qualifications/delete/files');
+                const removeBtn = setFileRemoveEventListner(createRemoveBtn(), li, path, '/files/delete/qualifications');
                 li.appendChild(removeBtn);
 
                 fileList.appendChild(li);

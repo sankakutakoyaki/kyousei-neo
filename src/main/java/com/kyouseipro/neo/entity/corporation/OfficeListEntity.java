@@ -9,7 +9,6 @@ import lombok.Data;
 
 @Data
 public class OfficeListEntity implements IEntity {
-
     private int office_id;
     private int company_id;
     private int category;

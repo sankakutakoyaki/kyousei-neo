@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.entity.record.HistoryEntity;
 import com.kyouseipro.neo.interfaceis.IEntity;
 import com.kyouseipro.neo.service.DatabaseService;
 

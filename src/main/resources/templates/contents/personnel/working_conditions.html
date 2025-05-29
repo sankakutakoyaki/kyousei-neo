@@ -286,7 +286,8 @@
                 formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
 
                 // 保存処理
-                const result = await saveFormData(formdata, "/working_conditions/save");
+                // const result = await saveFormData(formdata, "/working_conditions/save");
+                const result = await postFetch("/working_conditions/save", JSON.stringify(formdata), token, "application/json");
                 if (result > 0) {
                     let tableId;
                     switch (formdata.category) {
