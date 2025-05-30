@@ -3,12 +3,12 @@ package com.kyouseipro.neo.entity.person;
 import java.sql.ResultSet;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
 @Data
-public class EmployeeListEntity implements IEntity {
+public class EmployeeListEntity implements Entity {
     private int employee_id;
     private int code;
     private String company_name;

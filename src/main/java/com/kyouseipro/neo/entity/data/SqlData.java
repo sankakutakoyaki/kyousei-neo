@@ -1,6 +1,6 @@
 package com.kyouseipro.neo.entity.data;
 
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
@@ -14,7 +14,7 @@ public class SqlData {
      * 主エンティティのパスを取得してセットする
      * @param entity
      */
-    public void setPath(IEntity entity) {
+    public void setPath(Entity entity) {
         if (entity == null) return;
         this.classPath = entity.getClass().getName();
     }
@@ -24,7 +24,7 @@ public class SqlData {
      * @param sqlString
      * @param entity
      */
-    public void setData(String sqlString, IEntity entity) {
+    public void setData(String sqlString, Entity entity) {
         setSqlString(sqlString);
         setPath(entity);
     }

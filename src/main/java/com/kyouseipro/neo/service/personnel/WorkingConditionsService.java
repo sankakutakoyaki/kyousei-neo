@@ -12,7 +12,7 @@ import com.kyouseipro.neo.entity.person.EmployeeEntity;
 import com.kyouseipro.neo.entity.person.WorkingConditionsEntity;
 import com.kyouseipro.neo.entity.person.WorkingConditionsListEntity;
 import com.kyouseipro.neo.entity.record.HistoryEntity;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class WorkingConditionsService {
      * @param account
      * @return
      */
-    public IEntity getWorkingConditionsById(int id) {
+    public Entity getWorkingConditionsById(int id) {
         StringBuilder sb = new StringBuilder();
         sb.append(WorkingConditionsEntity.selectString());
         sb.append(" WHERE e.employee_id = " + id + " AND NOT (e.state = " + Enums.state.DELETE.getNum() + ");");
@@ -40,7 +40,7 @@ public class WorkingConditionsService {
      * @param account
      * @return
      */
-    public IEntity getWorkingConditionsByAccount(String account) {
+    public Entity getWorkingConditionsByAccount(String account) {
         StringBuilder sb = new StringBuilder();
         sb.append(WorkingConditionsEntity.selectString());
         sb.append(" WHERE e.account = '" + account + "' AND NOT (e.state = " + Enums.state.DELETE.getNum() + ");");
@@ -53,7 +53,7 @@ public class WorkingConditionsService {
      * すべてのWorkingConditonsを取得
      * @return
      */
-    public List<IEntity> getWorkingConditionsList() {
+    public List<Entity> getWorkingConditionsList() {
         StringBuilder sb = new StringBuilder();
         sb.append(WorkingConditionsListEntity.selectString());
         sb.append(" WHERE NOT (e.state = " + Enums.state.DELETE.getNum() + ");");
@@ -66,7 +66,7 @@ public class WorkingConditionsService {
      * カテゴリー別のWorkingConditionsを取得
      * @return
      */
-    public List<IEntity> getWorkingConditionsListByCategory(int category) {
+    public List<Entity> getWorkingConditionsListByCategory(int category) {
         StringBuilder sb = new StringBuilder();
         sb.append(WorkingConditionsListEntity.selectString());
         sb.append(" WHERE e.category = " + category + " AND NOT (e.state = " + Enums.state.DELETE.getNum() + ");");
@@ -80,7 +80,7 @@ public class WorkingConditionsService {
      * @param working_conditions
      * @return
      */
-    public IEntity saveWorkingConditions(WorkingConditionsEntity entity) {
+    public Entity saveWorkingConditions(WorkingConditionsEntity entity) {
         StringBuilder sb = new StringBuilder();
         if (entity.getWorking_conditions_id() > 0) {
             sb.append(entity.getUpdateString());
@@ -95,7 +95,7 @@ public class WorkingConditionsService {
      * @param ids
      * @return
      */
-    public IEntity deleteWorkingConditionsByIds(List<SimpleData> list, String userName) {
+    public Entity deleteWorkingConditionsByIds(List<SimpleData> list, String userName) {
         String ids = Utilities.createSequenceByIds(list);
         StringBuilder sb = new StringBuilder();
         sb.append("UPDATE working_conditions SET state = " + Enums.state.DELETE.getNum() + " WHERE working_conditions_id IN(" + ids + ");");
@@ -120,7 +120,7 @@ public class WorkingConditionsService {
         sb.append("SELECT * FROM working_conditions WHERE working_conditions_id IN(" + ids + ") AND NOT ( state = " + Enums.state.DELETE.getNum() + " );");
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new WorkingConditionsEntity());
-        List<IEntity> entities = sqlRepository.getEntityList(sqlData);
+        List<Entity> entities = sqlRepository.getEntityList(sqlData);
         return WorkingConditionsEntity.getCsvString(entities);
     }
 }

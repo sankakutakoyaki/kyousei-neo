@@ -2,12 +2,12 @@ package com.kyouseipro.neo.entity.data;
 
 import java.sql.ResultSet;
 
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
 @Data
-public class SimpleData implements IEntity {
+public class SimpleData implements Entity {
         
     private int number;
     private String text;

@@ -371,6 +371,7 @@
                     const tab = panel.dataset.panel;
 
                     const data = "id=" + encodeURIComponent(parseInt(code.value));
+                    const data = JSON.stringify({ id: parseInt(code.value) });
                     const resultResponse = await postFetch('/qualifications/get/id/', data, token, 'application/x-www-form-urlencoded');
                     const result = await resultResponse.json();
 

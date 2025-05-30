@@ -6,12 +6,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
 @Data
-public class TimeworksListEntity implements IEntity {
+public class TimeworksListEntity implements Entity {
     private int timeworks_id;
     private int employee_id;
     private int category;

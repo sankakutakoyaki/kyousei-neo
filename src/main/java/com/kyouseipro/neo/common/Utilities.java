@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.interfaceis.IEnum;
+import com.kyouseipro.neo.interfaceis.CodeEnum;
 
 public class Utilities {
     /**
@@ -16,9 +16,9 @@ public class Utilities {
      * @return
      */
     @SuppressWarnings("rawtypes")
-    public static <E extends Enum & IEnum> E enumValueOf(Class<E> target, int num) {
+    public static <E extends Enum & CodeEnum> E enumValueOf(Class<E> target, int num) {
         return Arrays.stream(target.getEnumConstants())
-                .filter(data -> data.getNum() == num)
+                .filter(data -> data.getCode() == num)
                 .findFirst()
                 .orElse(null);
     }

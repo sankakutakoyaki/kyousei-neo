@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.kyouseipro.neo.entity.data.SqlData;
 import com.kyouseipro.neo.entity.person.EmployeeListEntity;
 import com.kyouseipro.neo.entity.person.TimeworksListEntity;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class TimeworksService {
      * 全従業員の今日の勤怠データリスト取得
      * @return List<IEntity>
      */
-    public List<IEntity> getListOfAllEmployeesToday() {
+    public List<Entity> getListOfAllEmployeesToday() {
        StringBuilder sb = new StringBuilder();
         TimeworksListEntity entity = new TimeworksListEntity();
         sb.append(entity.getSelectString());

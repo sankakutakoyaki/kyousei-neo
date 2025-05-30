@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.controller;
+package com.kyouseipro.neo.controller.page;
 
 import java.io.IOException;
 import java.net.URLEncoder;

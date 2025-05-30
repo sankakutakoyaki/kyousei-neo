@@ -3,14 +3,14 @@ package com.kyouseipro.neo.entity.common;
 import java.sql.ResultSet;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.interfaceis.IEntity;
-import com.kyouseipro.neo.interfaceis.IFileUpload;
+import com.kyouseipro.neo.interfaceis.Entity;
+import com.kyouseipro.neo.interfaceis.FileUpload;
 import com.kyouseipro.neo.service.DatabaseService;
 
 import lombok.Data;
 
 @Data
-public class QualificationFilesEntity implements IEntity, IFileUpload {
+public class QualificationFilesEntity implements Entity, FileUpload {
     private int qualifications_files_id;
     private int qualifications_id;
     private String file_name;

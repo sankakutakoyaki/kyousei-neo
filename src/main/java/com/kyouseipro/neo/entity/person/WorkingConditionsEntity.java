@@ -6,13 +6,13 @@ import java.time.LocalTime;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.service.DatabaseService;
 
 import lombok.Data;
 
 @Data
-public class WorkingConditionsEntity implements IEntity {
+public class WorkingConditionsEntity implements Entity {
     private int working_conditions_id;
     private int employee_id;
     private String office_name;
@@ -174,7 +174,7 @@ public class WorkingConditionsEntity implements IEntity {
         return sb.toString();
     }
 
-    public static String getCsvString(List<IEntity> items) {
+    public static String getCsvString(List<Entity> items) {
         StringBuilder sb = new StringBuilder();
         sb.append("ID,");
         sb.append("コード,");
@@ -188,7 +188,7 @@ public class WorkingConditionsEntity implements IEntity {
         sb.append("基本始業時刻,");
         sb.append("基本就業時刻,");
         sb.append("\n");
-        for (IEntity item : items) {
+        for (Entity item : items) {
             WorkingConditionsEntity entity = (WorkingConditionsEntity) item;
             sb.append(String.valueOf(entity.getEmployee_id()) + ",");
             sb.append(String.valueOf(entity.getCode()) + ",");

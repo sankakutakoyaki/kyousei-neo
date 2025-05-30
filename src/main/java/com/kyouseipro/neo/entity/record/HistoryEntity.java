@@ -3,12 +3,12 @@ package com.kyouseipro.neo.entity.record;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
 @Data
-public class HistoryEntity implements IEntity {
+public class HistoryEntity implements Entity {
     protected int history_id;
     protected LocalDateTime execution_date;
     protected String user_name;

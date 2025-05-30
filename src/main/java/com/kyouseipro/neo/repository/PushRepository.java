@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.data.SqlData;
 import com.kyouseipro.neo.entity.data.SubscriptionRequest;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
@@ -57,7 +57,7 @@ public class PushRepository {
      * 登録してあるすべてのSubscriptionを取得する
      * @return
      */
-    public List<IEntity> getList() {
+    public List<Entity> getList() {
         SqlData sqlData = new SqlData();
         sqlData.setData(SubscriptionRequest.getSelectString(), new SubscriptionRequest());
         return sqlRepositry.getEntityList(sqlData);

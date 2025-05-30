@@ -2,12 +2,12 @@ package com.kyouseipro.neo.entity.corporation;
 
 import java.sql.ResultSet;
 
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
 @Data
-public class CompanyListEntity implements IEntity {
+public class CompanyListEntity implements Entity {
     private int company_id;
     private int category;
     private String name;

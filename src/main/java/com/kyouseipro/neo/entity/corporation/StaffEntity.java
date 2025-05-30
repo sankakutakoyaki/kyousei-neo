@@ -4,13 +4,13 @@ import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.service.DatabaseService;
 
 import lombok.Data;
 
 @Data
-public class StaffEntity implements IEntity {
+public class StaffEntity implements Entity {
     private int staff_id;
     private int company_id;
     private int office_id;
@@ -152,7 +152,7 @@ public class StaffEntity implements IEntity {
         return sb.toString();
     }
 
-    public static String getCsvString(List<IEntity> items) {
+    public static String getCsvString(List<Entity> items) {
         StringBuilder sb = new StringBuilder();
         sb.append("ID,");
         sb.append("担当者名,");
@@ -162,7 +162,7 @@ public class StaffEntity implements IEntity {
         sb.append("携帯番号,");
         sb.append("メールアドレス,");
         sb.append("\n");
-        for (IEntity item : items) {
+        for (Entity item : items) {
             StaffEntity entity = (StaffEntity) item;
             sb.append(String.valueOf(entity.getStaff_id()) + ",");
             sb.append(entity.getName() + ",");

@@ -1,42 +1,12 @@
-package com.kyouseipro.neo.controller;
+package com.kyouseipro.neo.controller.api;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kyouseipro.neo.entity.common.QualificationsEntity;
-import com.kyouseipro.neo.entity.corporation.CompanyEntity;
-import com.kyouseipro.neo.entity.corporation.OfficeEntity;
-import com.kyouseipro.neo.entity.corporation.StaffEntity;
-import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.person.EmployeeEntity;
-import com.kyouseipro.neo.entity.person.WorkingConditionsEntity;
-import com.kyouseipro.neo.interfaceis.IEntity;
-import com.kyouseipro.neo.service.ComboBoxService;
-import com.kyouseipro.neo.service.cient.CompanyService;
-import com.kyouseipro.neo.service.cient.OfficeService;
-import com.kyouseipro.neo.service.cient.StaffService;
-import com.kyouseipro.neo.service.common.QualificationsService;
-import com.kyouseipro.neo.service.personnel.EmployeeService;
-import com.kyouseipro.neo.service.personnel.TimeworksService;
-import com.kyouseipro.neo.service.personnel.WorkingConditionsService;
 
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class TableEntityController {
+public class WorkingConditionsApiController {
     private final EmployeeService employeeService;
     private final CompanyService companyService;
     private final OfficeService officeService;
@@ -56,7 +26,7 @@ public class TableEntityController {
      */
     @PostMapping("/{type}/get/id")
 	@ResponseBody
-    public IEntity getEntityById(@RequestParam int id, @PathVariable String type) {
+    public Entity getEntityById(@RequestParam int id, @PathVariable String type) {
         switch (type.toLowerCase()) {
             case "employee":
                 return employeeService.getEmployeeById(id);
@@ -77,7 +47,7 @@ public class TableEntityController {
      */
     @GetMapping("/{type}/get/list")
 	@ResponseBody
-    public List<IEntity> getEntityList(@PathVariable String type) {
+    public List<Entity> getEntityList(@PathVariable String type) {
         switch (type.toLowerCase()) {
             case "employee":
                 return employeeService.getEmployeeList();
@@ -100,7 +70,7 @@ public class TableEntityController {
      */
     @PostMapping("/{type}/get/list/category")
 	@ResponseBody
-    public List<IEntity> getEntityListByCategory(@RequestParam int category, @PathVariable String type) {
+    public List<Entity> getEntityListByCategory(@RequestParam int category, @PathVariable String type) {
         switch (type.toLowerCase()) {
             case "employee":
                 return employeeService.getEmployeeListByCategory(category);
@@ -122,7 +92,7 @@ public class TableEntityController {
      */
     @PostMapping("/{type}/save")
 	@ResponseBody
-    public IEntity saveEntity(@RequestBody Map<String, Object> data, @PathVariable String type) {
+    public Entity saveEntity(@RequestBody Map<String, Object> data, @PathVariable String type) {
         switch (type.toLowerCase()) {
             case "employee":
                 return employeeService.saveEmployee(objectMapper.convertValue(data, EmployeeEntity.class));
@@ -148,7 +118,7 @@ public class TableEntityController {
      */
     @PostMapping("/{type}/delete")
 	@ResponseBody
-    public IEntity deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
+    public Entity deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
         String userName = principal.getAttribute("preferred_username");
         switch (type.toLowerCase()) {
             case "employee":
@@ -173,7 +143,7 @@ public class TableEntityController {
      */
     @PostMapping("/{type}/delete/id")
     @ResponseBody
-    public IEntity deleteEntityById(@RequestParam int id, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
+    public Entity deleteEntityById(@RequestParam int id, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
         String userName = principal.getAttribute("preferred_username");
         switch (type.toLowerCase()) {
             case "qualifications":
@@ -214,7 +184,7 @@ public class TableEntityController {
      */
     @GetMapping("/{type}/get/combo")
 	@ResponseBody
-    public List<IEntity> getCompanyCombo(@PathVariable String type) {
+    public List<Entity> getCompanyCombo(@PathVariable String type) {
         switch (type.toLowerCase()) {
             case "client":
                 return comboBoxService.getClient();
@@ -233,7 +203,7 @@ public class TableEntityController {
      */
     @PostMapping("/qualifications/get/id/{type}")
 	@ResponseBody
-    public List<IEntity> getQualificationsById(@RequestParam int id, @PathVariable String type) {
+    public List<Entity> getQualificationsById(@RequestParam int id, @PathVariable String type) {
         switch (type.toLowerCase()) {
             case "employee":
                 return qualificationsService.getQualificationsByEmployeeId(id);
@@ -251,7 +221,7 @@ public class TableEntityController {
      */
     @GetMapping("/qualifications/get/all/{type}")
 	@ResponseBody
-    public List<IEntity> getQualificationsList(@PathVariable String type) {
+    public List<Entity> getQualificationsList(@PathVariable String type) {
         switch (type.toLowerCase()) {
             case "employee":
                 return qualificationsService.getEmployeeQualificationsList();
@@ -268,7 +238,7 @@ public class TableEntityController {
      */
     @GetMapping("/{type}/get/today")
     @ResponseBody
-    public List<IEntity> getTodaysAttendanceDataForAllEmployees(@PathVariable String type) {
+    public List<Entity> getTodaysAttendanceDataForAllEmployees(@PathVariable String type) {
         switch (type.toLowerCase()) {
             case "timeworks":
                 return timeworksService.getListOfAllEmployeesToday();

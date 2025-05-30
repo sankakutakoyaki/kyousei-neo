@@ -4,12 +4,12 @@ import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
 @Data
-public class EmployeeFullEntity implements IEntity {
+public class EmployeeFullEntity implements Entity {
     private int employee_id;
     private int working_conditions_id;
     private int company_id;

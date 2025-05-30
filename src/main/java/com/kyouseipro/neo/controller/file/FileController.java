@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.controller;
+package com.kyouseipro.neo.controller.file;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import com.kyouseipro.neo.entity.common.QualificationFilesEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.data.SqlData;
 import com.kyouseipro.neo.entity.master.AddressEntity;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.repository.SqlRepository;
 import com.kyouseipro.neo.service.FileService;
 import com.kyouseipro.neo.service.common.QualificationsService;
@@ -49,7 +49,7 @@ public class FileController {
      */
     @PostMapping("/address/get/postalcode")
 	@ResponseBody
-    public IEntity getAddressFromPostalCode(@RequestParam String postal_code) {
+    public Entity getAddressFromPostalCode(@RequestParam String postal_code) {
         StringBuilder sb = new StringBuilder("SELECT * From address WHERE postal_code = '" + postal_code + "';");
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new AddressEntity());
@@ -93,7 +93,7 @@ public class FileController {
      */
     @PostMapping("/files/get/qualifications")
 	@ResponseBody
-    public List<IEntity> getQualificationsFilesById(@RequestParam int id) {
+    public List<Entity> getQualificationsFilesById(@RequestParam int id) {
         return qualificationsService.getQualificationsFilesById(id);
     }
 
@@ -104,7 +104,7 @@ public class FileController {
      */
     @PostMapping("/files/delete/qualifications")
 	@ResponseBody
-    public IEntity deleteQualificationsFilesByUrl(@RequestParam String url) {
+    public Entity deleteQualificationsFilesByUrl(@RequestParam String url) {
         SimpleData result = (SimpleData) fileService.deleteFile(UploadConfig.getUploadDir() + url);
         if (result.getNumber() > 0) {
             return qualificationsService.deleteQualificationsFilesByUrl(UploadConfig.getUploadDir() + url);
@@ -124,7 +124,7 @@ public class FileController {
      */
     @PostMapping("/file/upload/qualifications")
     @ResponseBody
-    public List<IEntity> fileUpload(@RequestParam("files") MultipartFile[] files, @RequestParam("folder_name") String folderName, @RequestParam("id") int id) {
+    public List<Entity> fileUpload(@RequestParam("files") MultipartFile[] files, @RequestParam("folder_name") String folderName, @RequestParam("id") int id) {
         QualificationFilesEntity entity = new QualificationFilesEntity();
         entity.setQualifications_id(id);
 

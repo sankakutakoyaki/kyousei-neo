@@ -19,8 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.component.UploadConfig;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.interfaceis.IEntity;
-import com.kyouseipro.neo.interfaceis.IFileUpload;
+import com.kyouseipro.neo.interfaceis.Entity;
+import com.kyouseipro.neo.interfaceis.FileUpload;
 import com.kyouseipro.neo.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -199,7 +199,7 @@ public class FileService {
      * @param entity
      * @return
      */
-    public IEntity fileUpload(MultipartFile[] files, String folderName, IFileUpload entity) {
+    public Entity fileUpload(MultipartFile[] files, String folderName, FileUpload entity) {
         if (files.length == 0) {
             SimpleData simpleData = new SimpleData();
             simpleData.setText("ファイルが空です");
@@ -275,7 +275,7 @@ public class FileService {
      * @param url 削除するファイルのパス
      * @return
      */
-    public IEntity deleteFile(String url) {
+    public Entity deleteFile(String url) {
         SimpleData result = new SimpleData();
         try {
             Path filePath = Paths.get(url);

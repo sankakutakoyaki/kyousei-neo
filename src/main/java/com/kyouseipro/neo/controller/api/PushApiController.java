@@ -1,9 +1,9 @@
-package com.kyouseipro.neo.controller;
+package com.kyouseipro.neo.controller.api;
 
 import org.springframework.web.bind.annotation.*;
 
 import com.kyouseipro.neo.entity.data.SubscriptionRequest;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.repository.PushRepository;
 import com.kyouseipro.neo.service.WebPushService;
 
@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/push")
-public class PushController {
+public class PushApiController {
 
     private final PushRepository pushRepository;
     private final WebPushService webPushService;
@@ -34,8 +34,8 @@ public class PushController {
     public void sendPush(@RequestParam String message, @RequestParam String csrftoken) throws Exception {
 
         Security.addProvider(new BouncyCastleProvider());
-        List<IEntity> list = pushRepository.getList();
-        for (IEntity entity : list) {
+        List<Entity> list = pushRepository.getList();
+        for (Entity entity : list) {
             SubscriptionRequest subscriptionRequest = (SubscriptionRequest)entity;
 
             try {

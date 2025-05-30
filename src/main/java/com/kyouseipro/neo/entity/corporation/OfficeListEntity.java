@@ -3,12 +3,12 @@ package com.kyouseipro.neo.entity.corporation;
 import java.sql.ResultSet;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
 @Data
-public class OfficeListEntity implements IEntity {
+public class OfficeListEntity implements Entity {
     private int office_id;
     private int company_id;
     private int category;

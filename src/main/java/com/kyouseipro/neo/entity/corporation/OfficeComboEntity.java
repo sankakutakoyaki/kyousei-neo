@@ -2,12 +2,12 @@ package com.kyouseipro.neo.entity.corporation;
 
 import java.sql.ResultSet;
 
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
 @Data
-public class OfficeComboEntity implements IEntity {
+public class OfficeComboEntity implements Entity {
     private int office_id;
     private int company_id;
     private String office_name;

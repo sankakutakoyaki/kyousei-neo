@@ -11,7 +11,7 @@ import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.data.SqlData;
 import com.kyouseipro.neo.entity.record.HistoryEntity;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class CompanyService {
      * @param account
      * @return
      */
-    public IEntity getCompanyById(int id) {
+    public Entity getCompanyById(int id) {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT * FROM companies WHERE company_id = " + id + " AND NOT (state = " + Enums.state.DELETE.getNum() + ");");
         SqlData sqlData = new SqlData();
@@ -37,7 +37,7 @@ public class CompanyService {
      * すべてのCompanyを取得
      * @return
      */
-    public List<IEntity> getCompanyList() {
+    public List<Entity> getCompanyList() {
         StringBuilder sb = new StringBuilder();
         sb.append(CompanyListEntity.selectString());
         sb.append(" WHERE NOT (state = " + Enums.state.DELETE.getNum() + ");");
@@ -50,7 +50,7 @@ public class CompanyService {
      * すべてのClientを取得
      * @return
      */
-    public List<IEntity> getClientList() {
+    public List<Entity> getClientList() {
         StringBuilder sb = new StringBuilder();
         sb.append(CompanyListEntity.selectString());
         sb.append(" WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") AND NOT (category = 0);");
@@ -63,7 +63,7 @@ public class CompanyService {
      * カテゴリー別のCompanyを取得
      * @return
      */
-    public List<IEntity> getCompanyListByCategory(int category) {
+    public List<Entity> getCompanyListByCategory(int category) {
         StringBuilder sb = new StringBuilder();
         sb.append(CompanyListEntity.selectString());
         sb.append(" WHERE category = " + category + " AND NOT (state = " + Enums.state.DELETE.getNum() + ");");
@@ -77,7 +77,7 @@ public class CompanyService {
      * @param company
      * @return
      */
-    public IEntity saveCompany(CompanyEntity entity) {
+    public Entity saveCompany(CompanyEntity entity) {
         StringBuilder sb = new StringBuilder();
         if (entity.getCompany_id() > 0) {
             sb.append(entity.getUpdateString());
@@ -92,7 +92,7 @@ public class CompanyService {
      * @param ids
      * @return
      */
-    public IEntity deleteCompanyByIds(List<SimpleData> list, String userName) {
+    public Entity deleteCompanyByIds(List<SimpleData> list, String userName) {
         String ids = Utilities.createSequenceByIds(list);
         StringBuilder sb = new StringBuilder();
         sb.append("UPDATE companies SET state = " + Enums.state.DELETE.getNum() + " WHERE company_id IN(" + ids + ");");
@@ -117,7 +117,7 @@ public class CompanyService {
         sb.append("SELECT * FROM companies WHERE company_id IN(" + ids + ") AND NOT ( state = " + Enums.state.DELETE.getNum() + " );");
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new CompanyEntity());
-        List<IEntity> entities = sqlRepository.getEntityList(sqlData);
+        List<Entity> entities = sqlRepository.getEntityList(sqlData);
         return CompanyEntity.getCsvString(entities);
     }
 }

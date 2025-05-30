@@ -2,12 +2,12 @@ package com.kyouseipro.neo.entity.master;
 
 import java.sql.ResultSet;
 
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
 @Data
-public class QualificationMasterEntity implements IEntity {
+public class QualificationMasterEntity implements Entity {
 
     private int qualification_master_id;
     private int code;

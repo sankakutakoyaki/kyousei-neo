@@ -11,7 +11,7 @@ import com.kyouseipro.neo.entity.data.SqlData;
 import com.kyouseipro.neo.entity.person.EmployeeEntity;
 import com.kyouseipro.neo.entity.person.EmployeeListEntity;
 import com.kyouseipro.neo.entity.record.HistoryEntity;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class EmployeeService {
      * @param account
      * @return
      */
-    public IEntity getEmployeeById(int id) {
+    public Entity getEmployeeById(int id) {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT * FROM employees WHERE employee_id = " + id + " AND NOT (state = " + Enums.state.DELETE.getNum() + ");");
         SqlData sqlData = new SqlData();
@@ -38,7 +38,7 @@ public class EmployeeService {
      * @param account
      * @return
      */
-    public IEntity getEmployeeByAccount(String account) {
+    public Entity getEmployeeByAccount(String account) {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT * FROM employees WHERE account = '" + account + "' AND NOT (state = " + Enums.state.DELETE.getNum() + ");");
         SqlData sqlData = new SqlData();
@@ -50,7 +50,7 @@ public class EmployeeService {
      * すべてのEmployeeを取得
      * @return
      */
-    public List<IEntity> getEmployeeList() {
+    public List<Entity> getEmployeeList() {
         StringBuilder sb = new StringBuilder();
         sb.append(EmployeeListEntity.selectString());
         sb.append(" WHERE NOT (e.state = " + Enums.state.DELETE.getNum() + ");");
@@ -63,7 +63,7 @@ public class EmployeeService {
      * カテゴリー別のEmployeeを取得
      * @return
      */
-    public List<IEntity> getEmployeeListByCategory(int category) {
+    public List<Entity> getEmployeeListByCategory(int category) {
         StringBuilder sb = new StringBuilder();
         sb.append(EmployeeListEntity.selectString());
         sb.append(" WHERE e.category = " + category + " AND NOT (e.state = " + Enums.state.DELETE.getNum() + ");");
@@ -77,7 +77,7 @@ public class EmployeeService {
      * @param employee
      * @return
      */
-    public IEntity saveEmployee(EmployeeEntity entity) {
+    public Entity saveEmployee(EmployeeEntity entity) {
         StringBuilder sb = new StringBuilder();
         if (entity.getEmployee_id() > 0) {
             sb.append(entity.getUpdateString());
@@ -92,7 +92,7 @@ public class EmployeeService {
      * @param ids
      * @return
      */
-    public IEntity deleteEmployeeByIds(List<SimpleData> list, String userName) {
+    public Entity deleteEmployeeByIds(List<SimpleData> list, String userName) {
         String ids = Utilities.createSequenceByIds(list);
         StringBuilder sb = new StringBuilder();
         sb.append("UPDATE employees SET state = " + Enums.state.DELETE.getNum() + " WHERE employee_id IN(" + ids + ");");
@@ -117,7 +117,7 @@ public class EmployeeService {
         sb.append("SELECT * FROM employees WHERE employee_id IN(" + ids + ") AND NOT ( state = " + Enums.state.DELETE.getNum() + " );");
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new EmployeeEntity());
-        List<IEntity> entities = sqlRepository.getEntityList(sqlData);
+        List<Entity> entities = sqlRepository.getEntityList(sqlData);
         return EmployeeEntity.getCsvString(entities);
     }
 }

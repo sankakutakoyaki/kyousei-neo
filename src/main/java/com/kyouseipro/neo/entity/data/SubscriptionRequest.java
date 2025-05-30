@@ -2,12 +2,12 @@ package com.kyouseipro.neo.entity.data;
 
 import java.sql.ResultSet;
 
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
 @Data
-public class SubscriptionRequest implements IEntity {
+public class SubscriptionRequest implements Entity {
     private int subscription_id;
     private String endpoint;
     private String p256dh;

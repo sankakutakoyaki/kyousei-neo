@@ -2,12 +2,12 @@ package com.kyouseipro.neo.entity.master;
 
 import java.sql.ResultSet;
 
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
 @Data
-public class AddressEntity implements IEntity {
+public class AddressEntity implements Entity {
 
     private int address_id;
     private int address_code;

@@ -5,12 +5,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.kyouseipro.neo.entity.record.HistoryEntity;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
 @Data
-public class OfficeEntity implements IEntity {
+public class OfficeEntity implements Entity {
     private int office_id;
     private int company_id;
     private String company_name;
@@ -86,6 +86,7 @@ public class OfficeEntity implements IEntity {
         sb.append("SELECT 0 as number, '作成できませんでした' as text; END;");
         return sb.toString();
     }
+    
     public String getUpdateString() {
         StringBuilder sb = new StringBuilder();
         sb.append(logTable());
@@ -167,7 +168,7 @@ public class OfficeEntity implements IEntity {
         return sb.toString();
     }
 
-    public static String getCsvString(List<IEntity> items) {
+    public static String getCsvString(List<Entity> items) {
         StringBuilder sb = new StringBuilder();
         sb.append("ID,");
         sb.append("会社名,");
@@ -180,7 +181,7 @@ public class OfficeEntity implements IEntity {
         sb.append("メールアドレス,");
         sb.append("WEBアドレス,");
         sb.append("\n");
-        for (IEntity item : items) {
+        for (Entity item : items) {
             OfficeEntity entity = (OfficeEntity) item;
             sb.append(String.valueOf(entity.getOffice_id()) + ",");
             sb.append(entity.getCompany_name() + ",");

@@ -5,13 +5,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.service.DatabaseService;
 
 import lombok.Data;
 
 @Data
-public class QualificationsEntity implements IEntity {
+public class QualificationsEntity implements Entity {
     private int qualifications_id;
     private int owner_id;
     private String owner_name;

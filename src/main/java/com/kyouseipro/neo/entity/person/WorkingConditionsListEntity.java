@@ -3,12 +3,12 @@ package com.kyouseipro.neo.entity.person;
 import java.sql.ResultSet;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
 @Data
-public class WorkingConditionsListEntity implements IEntity {
+public class WorkingConditionsListEntity implements Entity {
     private int working_conditions_id;
     private int employee_id;
     private int category;

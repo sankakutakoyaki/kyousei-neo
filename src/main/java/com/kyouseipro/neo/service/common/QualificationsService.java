@@ -8,7 +8,7 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.common.QualificationFilesEntity;
 import com.kyouseipro.neo.entity.common.QualificationsEntity;
 import com.kyouseipro.neo.entity.data.SqlData;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class QualificationsService {
      * @param account
      * @return
      */
-    public List<IEntity> getQualificationsByEmployeeId(int id) {
+    public List<Entity> getQualificationsByEmployeeId(int id) {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT q.qualifications_id, q.qualification_master_id, q.number, q.version, q.state");
         sb.append(", COALESCE(q.acquisition_date, '9999-12-31') as acquisition_date, COALESCE(q.expiry_date, '9999-12-31') as expiry_date");
@@ -41,7 +41,7 @@ public class QualificationsService {
      * @param account
      * @return
      */
-    public List<IEntity> getQualificationsByCompanyId(int id) {
+    public List<Entity> getQualificationsByCompanyId(int id) {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT q.qualifications_id, q.qualification_master_id, q.number, q.version, q.state");
         sb.append(", COALESCE(q.acquisition_date, '9999-12-31') as acquisition_date, COALESCE(q.expiry_date, '9999-12-31') as expiry_date");
@@ -59,7 +59,7 @@ public class QualificationsService {
      * @param account
      * @return
      */
-    public List<IEntity> getQualificationsFilesById(int id) {
+    public List<Entity> getQualificationsFilesById(int id) {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT * FROM qualifications_files WHERE qualifications_id = " + id + " AND NOT (state = " + Enums.state.DELETE.getNum() + ");");
         SqlData sqlData = new SqlData();
@@ -71,7 +71,7 @@ public class QualificationsService {
      * すべてのQualifications(Employee)を取得
      * @return
      */
-    public List<IEntity> getEmployeeQualificationsList() {
+    public List<Entity> getEmployeeQualificationsList() {
         StringBuilder sb = new StringBuilder();
         sb.append(QualificationsEntity.selectEmployeeStringByStatus());
         SqlData sqlData = new SqlData();
@@ -83,7 +83,7 @@ public class QualificationsService {
      * すべてのQualifications(Company)を取得
      * @return
      */
-    public List<IEntity> getCompanyQualificationsList() {
+    public List<Entity> getCompanyQualificationsList() {
         StringBuilder sb = new StringBuilder();
         sb.append(QualificationsEntity.selectCompanyStringByStatus());
         SqlData sqlData = new SqlData();
@@ -96,7 +96,7 @@ public class QualificationsService {
      * @param employee
      * @return
      */
-    public IEntity saveQualifications(QualificationsEntity entity) {
+    public Entity saveQualifications(QualificationsEntity entity) {
         StringBuilder sb = new StringBuilder();
         if (entity.getQualifications_id() > 0) {
             sb.append(entity.getUpdateString());
@@ -111,7 +111,7 @@ public class QualificationsService {
      * @param id
      * @return
      */
-    public IEntity deleteQualificationsById(int id, String user_name) {
+    public Entity deleteQualificationsById(int id, String user_name) {
         QualificationsEntity entity = new QualificationsEntity();
         StringBuilder sb = new StringBuilder();
         sb.append(entity.getDeleteStringById(id, user_name));
@@ -123,7 +123,7 @@ public class QualificationsService {
      * @param ids
      * @return
      */
-    public IEntity deleteQualificationsFilesByUrl(String url) {
+    public Entity deleteQualificationsFilesByUrl(String url) {
         QualificationFilesEntity entity = new QualificationFilesEntity();
         StringBuilder sb = new StringBuilder();
         sb.append(entity.getDeleteString(url));

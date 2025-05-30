@@ -11,7 +11,7 @@ import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.data.SqlData;
 import com.kyouseipro.neo.entity.record.HistoryEntity;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class OfficeService {
      * @param account
      * @return
      */
-    public IEntity getOfficeById(int id) {
+    public Entity getOfficeById(int id) {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT o.*, c.name as company_name FROM offices o");
         sb.append(" INNER JOIN companies c ON c.company_id = o.company_id AND NOT (c.state = "  + Enums.state.DELETE.getNum() + ")");
@@ -39,7 +39,7 @@ public class OfficeService {
      * すべてのOfficeを取得
      * @return
      */
-    public List<IEntity> getOfficeList() {
+    public List<Entity> getOfficeList() {
         StringBuilder sb = new StringBuilder();
         sb.append(OfficeListEntity.selectString());
         sb.append(" WHERE NOT (o.state = " + Enums.state.DELETE.getNum() + ");");
@@ -52,7 +52,7 @@ public class OfficeService {
      * すべてのClientOfficeを取得
      * @return
      */
-    public List<IEntity> getClientList() {
+    public List<Entity> getClientList() {
         StringBuilder sb = new StringBuilder();
         sb.append(OfficeListEntity.selectString());
         sb.append(" WHERE NOT (o.state = " + Enums.state.DELETE.getNum() + ") AND NOT (c.category = 0);");
@@ -65,7 +65,7 @@ public class OfficeService {
      * カテゴリー別のOfficeを取得
      * @return
      */
-    public List<IEntity> getOfficeListByCategory(int category) {
+    public List<Entity> getOfficeListByCategory(int category) {
         StringBuilder sb = new StringBuilder();
         sb.append(OfficeListEntity.selectString());
         sb.append(" WHERE category = " + category + " AND NOT (state = " + Enums.state.DELETE.getNum() + ");");
@@ -79,7 +79,7 @@ public class OfficeService {
      * @param company
      * @return
      */
-    public IEntity saveOffice(OfficeEntity entity) {
+    public Entity saveOffice(OfficeEntity entity) {
         StringBuilder sb = new StringBuilder();
         if (entity.getOffice_id() > 0) {
             sb.append(entity.getUpdateString());
@@ -94,7 +94,7 @@ public class OfficeService {
      * @param ids
      * @return
      */
-    public IEntity deleteOfficeByIds(List<SimpleData> list, String userName) {
+    public Entity deleteOfficeByIds(List<SimpleData> list, String userName) {
         String ids = Utilities.createSequenceByIds(list);
         StringBuilder sb = new StringBuilder();
         sb.append("UPDATE offices SET state = " + Enums.state.DELETE.getNum() + " WHERE company_id IN(" + ids + ");");
@@ -119,7 +119,7 @@ public class OfficeService {
         sb.append("SELECT * FROM offices WHERE office_id IN(" + ids + ") AND NOT ( state = " + Enums.state.DELETE.getNum() + " );");
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new OfficeEntity());
-        List<IEntity> entities = sqlRepository.getEntityList(sqlData);
+        List<Entity> entities = sqlRepository.getEntityList(sqlData);
         return OfficeEntity.getCsvString(entities);
     }
 }

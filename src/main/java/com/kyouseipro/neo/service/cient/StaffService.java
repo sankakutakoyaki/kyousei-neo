@@ -10,7 +10,7 @@ import com.kyouseipro.neo.entity.corporation.StaffEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.data.SqlData;
 import com.kyouseipro.neo.entity.record.HistoryEntity;
-import com.kyouseipro.neo.interfaceis.IEntity;
+import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class StaffService {
      * @param account
      * @return
      */
-    public IEntity getStaffById(int id) {
+    public Entity getStaffById(int id) {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT s.*, c.name as company_name, o.name as office_name FROM staffs s");
         sb.append(" INNER JOIN companies c ON c.company_id = s.company_id AND NOT (c.state = "  + Enums.state.DELETE.getNum() + ")");
@@ -39,7 +39,7 @@ public class StaffService {
      * すべてのStaffを取得
      * @return
      */
-    public List<IEntity> getStaffList() {
+    public List<Entity> getStaffList() {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT s.*, c.name as company_name, o.name as office_name FROM staffs s");
         sb.append(" INNER JOIN companies c ON c.company_id = s.company_id AND NOT (c.state = "  + Enums.state.DELETE.getNum() + ")");
@@ -55,7 +55,7 @@ public class StaffService {
      * @param staff
      * @return
      */
-    public IEntity saveStaff(StaffEntity entity) {
+    public Entity saveStaff(StaffEntity entity) {
         StringBuilder sb = new StringBuilder();
         if (entity.getStaff_id() > 0) {
             sb.append(entity.getUpdateString());
@@ -70,7 +70,7 @@ public class StaffService {
      * @param ids
      * @return
      */
-    public IEntity deleteStaffByIds(List<SimpleData> list, String userName) {
+    public Entity deleteStaffByIds(List<SimpleData> list, String userName) {
         String ids = Utilities.createSequenceByIds(list);
         StringBuilder sb = new StringBuilder();
         sb.append("UPDATE staffs SET state = " + Enums.state.DELETE.getNum() + " WHERE staff_id IN(" + ids + ");");
@@ -95,7 +95,7 @@ public class StaffService {
         sb.append("SELECT * FROM staffs WHERE staff_id IN(" + ids + ") AND NOT ( state = " + Enums.state.DELETE.getNum() + " );");
         SqlData sqlData = new SqlData();
         sqlData.setData(sb.toString(), new StaffEntity());
-        List<IEntity> entities = sqlRepository.getEntityList(sqlData);
+        List<Entity> entities = sqlRepository.getEntityList(sqlData);
         return StaffEntity.getCsvString(entities);
     }
 }
