@@ -43,8 +43,8 @@ public class WorkingConditionsListEntity implements Entity {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT e.employee_id, e.full_name, e.full_name_kana, e.category, e.state, w.working_conditions_id");
         sb.append(", ISNULL(NULLIF(o.name, ''), '登録なし') as office_name FROM employees e");
-        sb.append(" LEFT OUTER JOIN working_conditions w ON w.employee_id = e.employee_id AND NOT (w.state = " + Enums.state.DELETE.getNum() + ")");
-        sb.append(" LEFT OUTER JOIN offices o ON o.office_id = e.office_id AND NOT (o.state = " + Enums.state.DELETE.getNum() + ")");
+        sb.append(" LEFT OUTER JOIN working_conditions w ON w.employee_id = e.employee_id AND NOT (w.state = " + Enums.state.DELETE.getCode() + ")");
+        sb.append(" LEFT OUTER JOIN offices o ON o.office_id = e.office_id AND NOT (o.state = " + Enums.state.DELETE.getCode() + ")");
         return sb.toString();
     }
 }

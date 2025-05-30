@@ -58,8 +58,8 @@ public class QualificationsEntity implements Entity {
         sb.append("SELECT q.qualifications_id, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.is_enabled");
         sb.append(", q.version, q.state");
         sb.append(", e.full_name as owner_name, qm.name as qualification_name FROM qualifications q");
-        sb.append(" LEFT OUTER JOIN employees e ON e.employee_id = q.owner_id AND NOT (e.state = " + Enums.state.DELETE.getNum() + ")");
-        sb.append(" LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = " + Enums.state.DELETE.getNum() + ")");
+        sb.append(" LEFT OUTER JOIN employees e ON e.employee_id = q.owner_id AND NOT (e.state = " + Enums.state.DELETE.getCode() + ")");
+        sb.append(" LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = " + Enums.state.DELETE.getCode() + ")");
         return sb.toString();
     }
 
@@ -72,8 +72,8 @@ public class QualificationsEntity implements Entity {
         sb.append("SELECT q.qualifications_id, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.is_enabled");
         sb.append(", q.version, q.state");
         sb.append(", c.name as owner_name, qm.name as qualification_name FROM qualifications q");
-        sb.append(" LEFT OUTER JOIN companies c ON c.company_id = q.owner_id AND NOT (c.state = " + Enums.state.DELETE.getNum() + ") AND category = " + Enums.clientCategory.PARTNER.getNum());
-        sb.append(" LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = " + Enums.state.DELETE.getNum() + ") AND qm.category_name = '許可'");
+        sb.append(" LEFT OUTER JOIN companies c ON c.company_id = q.owner_id AND NOT (c.state = " + Enums.state.DELETE.getCode() + ") AND category = " + Enums.clientCategory.PARTNER.getCode());
+        sb.append(" LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = " + Enums.state.DELETE.getCode() + ") AND qm.category_name = '許可'");
         return sb.toString();
     }
 
@@ -89,8 +89,8 @@ public class QualificationsEntity implements Entity {
         sb.append(", CASE WHEN q.owner_id IS NOT NULL THEN '取得済み' ELSE '未取得' END AS status FROM employees e");
         sb.append(" CROSS JOIN qualification_master qm");
         sb.append(" LEFT JOIN qualifications q ON q.owner_id = e.employee_id AND q.qualification_master_id = qm.qualification_master_id");
-        sb.append(" AND NOT (q.state = " + Enums.state.DELETE.getNum() + ")");
-        sb.append(" WHERE NOT (e.state = " + Enums.state.DELETE.getNum() + ")");
+        sb.append(" AND NOT (q.state = " + Enums.state.DELETE.getCode() + ")");
+        sb.append(" WHERE NOT (e.state = " + Enums.state.DELETE.getCode() + ")");
         sb.append(" ORDER BY qm.qualification_master_id, e.employee_id");
         return sb.toString();
     }
@@ -107,140 +107,9 @@ public class QualificationsEntity implements Entity {
         sb.append(", CASE WHEN q.owner_id IS NOT NULL THEN '取得済み' ELSE '未取得' END AS status FROM companies c");
         sb.append(" CROSS JOIN qualification_master qm");
         sb.append(" LEFT JOIN qualifications q ON q.owner_id = c.company_id AND q.qualification_master_id = qm.qualification_master_id");
-        sb.append(" AND NOT (q.state = " + Enums.state.DELETE.getNum() + ")");
-        sb.append(" WHERE NOT (c.state = " + Enums.state.DELETE.getNum() + ") AND c.category = " + Enums.clientCategory.PARTNER.getNum() + " AND qm.category_name = '許可'");
+        sb.append(" AND NOT (q.state = " + Enums.state.DELETE.getCode() + ")");
+        sb.append(" WHERE NOT (c.state = " + Enums.state.DELETE.getCode() + ") AND c.category = " + Enums.clientCategory.PARTNER.getCode() + " AND qm.category_name = '許可'");
         sb.append(" ORDER BY qm.qualification_master_id, c.company_id");
-        return sb.toString();
-    }
-
-    public String getInsertString() {
-        StringBuilder sb = new StringBuilder();
-        StringBuilder sb2 = new StringBuilder();
-        if (this.getAcquisition_date() == null) {
-            this.setAcquisition_date(LocalDate.of(9999, 12, 31));
-        }
-        if (this.getExpiry_date() == null) {
-            this.setExpiry_date(LocalDate.of(9999, 12, 31));
-        }
-        sb.append(logTable());
-        sb.append("INSERT INTO qualifications (");
-        sb.append("owner_id");                  sb2.append(this.getOwner_id());
-        sb.append(", qualification_master_id"); sb2.append(", " + this.getQualification_master_id());
-        sb.append(", number");                  sb2.append(", '" + this.getNumber() + "'");
-        sb.append(", acquisition_date");        sb2.append(", '" + this.getAcquisition_date() + "'");
-        sb.append(", expiry_date");             sb2.append(", '" + this.getExpiry_date() + "'");
-        sb.append(")");                         sb2.append(");");
-        sb.append(logString("新規"));
-        sb.append(" VALUES (");sb.append(sb2.toString());
-        sb.append("DECLARE @NEW_ID int;SET @NEW_ID = @@IDENTITY;");
-        // 変更履歴
-        sb.append("INSERT INTO qualifications_log SELECT * FROM @QualificationsTable;");
-        // SimpleData
-        sb.append(DatabaseService.getInsertLogTableString(this.getUser_name(), "qualifications", "作成"));
-        // sb.append("IF @NEW_ID > 0 BEGIN ");
-        // sb.append(HistoryEntity.insertString(user_name, "qualifications", "作成成功", "@NEW_ID", ""));
-        // sb.append("SELECT @NEW_ID as number, '作成しました' as text; END");
-        // sb.append(" ELSE BEGIN ");
-        // sb.append(HistoryEntity.insertString(user_name, "qualifications", "作成失敗", "@NEW_ID", ""));
-        // sb.append("SELECT 0 as number, '作成できませんでした' as text; END;");
-        return sb.toString();
-    }
-
-    public String getUpdateString() {
-        StringBuilder sb = new StringBuilder();
-        if (this.getAcquisition_date() == null) {
-            this.setAcquisition_date(LocalDate.of(9999, 12, 31));
-        }
-        if (this.getExpiry_date() == null) {
-            this.setExpiry_date(LocalDate.of(9999, 12, 31));
-        }
-        sb.append(logTable());
-        sb.append("UPDATE qualifications SET");
-        sb.append(" owner_id = " + this.getOwner_id());
-        sb.append(", qualification_master_id = " + this.getQualification_master_id());
-        sb.append(", number = '" + this.getNumber() + "'");
-        sb.append(", acquisition_date = '" + this.getAcquisition_date() + "'");
-        sb.append(", expiry_date = '" + this.getExpiry_date() + "'");
-        sb.append(", update_date = '" + LocalDateTime.now() + "'");
-        int ver = this.getVersion() + 1;
-        sb.append(", version = " + ver);
-        sb.append(logString("更新"));
-        sb.append(" WHERE qualifications_id = " + this.getQualifications_id()+ " AND version = " + this.getVersion() + ";");
-        sb.append("DECLARE @ROW_COUNT int;SET @ROW_COUNT = @@ROWCOUNT;");
-        // 変更履歴
-        sb.append("INSERT INTO qualifications_log SELECT * FROM @QualificationsTable;");
-        // SimpleData
-        sb.append(DatabaseService.getUpdateLogTableString(this.getUser_name(), "qualifications", "変更"));
-        // sb.append("IF @ROW_COUNT > 0 BEGIN ");
-        // sb.append(HistoryEntity.insertString(user_name, "qualifications", "変更成功", "@ROW_COUNT", ""));
-        // sb.append("SELECT 200 as number, '変更しました' as text; END");
-        // sb.append(" ELSE BEGIN ");
-        // sb.append(HistoryEntity.insertString(user_name, "qualifications", "変更失敗", "@ROW_COUNT", ""));
-        // sb.append("SELECT 0 as number, '変更できませんでした' as text; END;");
-        return sb.toString();
-    }
-
-    public String getDeleteStringById(int id, String user_name) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(logTable());
-        sb.append("UPDATE qualifications SET");
-        sb.append(" update_date = '" + LocalDateTime.now() + "'");
-        sb.append(", state = " + Enums.state.DELETE.getNum());
-        sb.append(logString("削除"));
-        sb.append(" WHERE qualifications_id = " + id + " AND NOT (state = " + Enums.state.DELETE.getNum() + ");");
-        sb.append("DECLARE @ROW_COUNT int;SET @ROW_COUNT = @@ROWCOUNT;");
-        // 変更履歴
-        sb.append("INSERT INTO qualifications_log SELECT * FROM @QualificationsTable;");
-        // SimpleData
-        sb.append(DatabaseService.getUpdateLogTableString(this.getUser_name(), "qualifications", "削除"));
-        // sb.append("IF @ROW_COUNT > 0 BEGIN ");
-        // sb.append(HistoryEntity.insertString(user_name, "qualifications", "削除成功", "@ROW_COUNT", ""));
-        // sb.append("SELECT 200 as number, '削除しました' as text; END");
-        // sb.append(" ELSE BEGIN ");
-        // sb.append(HistoryEntity.insertString(user_name, "qualifications", "削除失敗", "@ROW_COUNT", ""));
-        // sb.append("SELECT 0 as number, '削除できませんでした' as text; END;");
-        return sb.toString();
-    }
-
-    public String logTable() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("DECLARE @QualificationsTable TABLE (");
-        sb.append("editor NVARCHAR(255)");
-        sb.append(", process NVARCHAR(50)");
-        sb.append(", log_regist_date DATETIME2(7)");
-        sb.append(", qualifications_id INT");
-        sb.append(", owner_id INT");
-        sb.append(", qualification_master_id INT");
-        sb.append(", number NVARCHAR(255)");
-        sb.append(", acquisition_date DATE");
-        sb.append(", expiry_date DATE");
-        sb.append(", regist_date DATE");
-        sb.append(", update_date DATE");
-        sb.append(", version INT");
-        sb.append(", state INT");
-        sb.append(");");
-        return sb.toString();
-    }
-
-    public String logString(String process) {
-        StringBuilder sb = new StringBuilder();
-        StringBuilder sb2 = new StringBuilder();
-        sb.append(" OUTPUT");
-        sb.append("'" + this.getUser_name() + "'");         sb2.append("editor");
-        sb.append(", '" + process + "'");                   sb2.append(", process");
-        sb.append(", CURRENT_TIMESTAMP");                   sb2.append(", log_regist_date");
-        sb.append(", INSERTED.qualifications_id");          sb2.append(", qualifications_id");
-        sb.append(", INSERTED.owner_id");                   sb2.append(", owner_id");
-        sb.append(", INSERTED.qualification_master_id");    sb2.append(", qualification_master_id");
-        sb.append(", INSERTED.number");                     sb2.append(", number");
-        sb.append(", INSERTED.acquisition_date");           sb2.append(", acquisition_date");
-        sb.append(", INSERTED.expiry_date");                sb2.append(", expiry_date");
-        sb.append(", INSERTED.regist_date");                sb2.append(", regist_date");
-        sb.append(", INSERTED.update_date");                sb2.append(", update_date");
-        sb.append(", INSERTED.version");                    sb2.append(", version");
-        sb.append(", INSERTED.state");                      sb2.append(", state");
-        sb.append(" INTO @QualificationsTable (");          sb2.append(")");
-        sb.append(sb2.toString());
         return sb.toString();
     }
 
@@ -258,7 +127,7 @@ public class QualificationsEntity implements Entity {
     //         sb.append(entity.getowner_id() + ",");
     //         sb.append(entity.getowner_name() + ",");
     //         sb.append(entity.getQualification_name() + ",");
-    //         sb.append(entity.getNumber() + ",");
+    //         sb.append(entity.getCodeber() + ",");
     //         sb.append(entity.getAcquisition_date() + ",");
     //         sb.append(entity.getExpiry_date() + ",");
     //         sb.append("\n"); // 改行を追加

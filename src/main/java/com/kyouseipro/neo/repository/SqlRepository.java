@@ -34,35 +34,65 @@ public class SqlRepository {
     @Value("${spring.datasource.password}")
     private String password;
 
-    public boolean execSql(Function<Connection, Boolean> execQuery) {
+    public <T> T execSql(Function<Connection, T> execQuery) {
         Connection conn = null;
         try {
             Class.forName(driverName);
             conn = DriverManager.getConnection(url, userName, password);
             conn.setAutoCommit(false);
 
-            boolean result = execQuery.apply(conn);
+            T result = execQuery.apply(conn);
 
             conn.commit();
             return result;
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
             if (conn != null) {
                 try {
                     conn.rollback();
                 } catch (SQLException ignore) {}
             }
-            return false;
+            return null;  // 例外時はnullなど適宜返す
         } finally {
             if (conn != null) {
                 try {
                     conn.close();
                 } catch (SQLException e) {
-                    System.out.println(e);
+                    e.printStackTrace();
                 }
             }
         }
     }
+
+    // public boolean execSql(Function<Connection, Boolean> execQuery) {
+    //     Connection conn = null;
+    //     try {
+    //         Class.forName(driverName);
+    //         conn = DriverManager.getConnection(url, userName, password);
+    //         conn.setAutoCommit(false);
+
+    //         boolean result = execQuery.apply(conn);
+
+    //         conn.commit();
+    //         return result;
+    //     } catch (Exception e) {
+    //         System.out.println(e);
+    //         if (conn != null) {
+    //             try {
+    //                 conn.rollback();
+    //             } catch (SQLException ignore) {}
+    //         }
+    //         return false;
+    //     } finally {
+    //         if (conn != null) {
+    //             try {
+    //                 conn.close();
+    //             } catch (SQLException e) {
+    //                 System.out.println(e);
+    //             }
+    //         }
+    //     }
+    // }
 
     public Entity getEntity(SqlData data) {
         try {

@@ -6,6 +6,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -199,22 +201,20 @@ public class FileService {
      * @param entity
      * @return
      */
-    public Entity fileUpload(MultipartFile[] files, String folderName, FileUpload entity) {
+    public Entity fileUpload(MultipartFile[] files, String folderName, FileUpload fileUploadEntity) {
         if (files.length == 0) {
             SimpleData simpleData = new SimpleData();
             simpleData.setText("ファイルが空です");
             return simpleData;
         }
 
-        // アップロード先ディレクトリの作成
         File uploadDir = new File(UploadConfig.getUploadDir() + folderName);
         if (!uploadDir.exists()) {
             uploadDir.mkdirs();
         }
 
         StringBuilder resultStr = new StringBuilder();
-        StringBuilder sb = new StringBuilder();
-
+        StringBuilder sqlBuilder = new StringBuilder();
         Pattern invalidChars = Pattern.compile("[/\\\\:*?\"<>`]");
 
         for (MultipartFile file : files) {
@@ -226,10 +226,8 @@ public class FileService {
                         continue;
                     }
 
-                    // スペースをアンダースコアに
                     originalFilename = originalFilename.replaceAll(" ", "_");
 
-                    // 拡張子を保持したままUUIDファイル名に変換
                     String extension = "";
                     int dotIndex = originalFilename.lastIndexOf(".");
                     if (dotIndex != -1) {
@@ -237,19 +235,17 @@ public class FileService {
                     }
 
                     String safeFilename = UUID.randomUUID().toString() + extension;
-
-                    // 保存先ファイル
                     File dest = new File(uploadDir, safeFilename);
                     file.transferTo(dest);
 
                     resultStr.append("成功: ").append(safeFilename).append("\n");
 
-                    // エンティティに元の名前と保存名をセット
-                    entity.setFileName(originalFilename); // 元のファイル名
-                    entity.setInternalName(safeFilename);
-                    entity.setFolderName(dest.getAbsolutePath()); // 保存ファイルパス
+                    // エンティティに設定
+                    fileUploadEntity.setFileName(originalFilename);
+                    fileUploadEntity.setInternalName(safeFilename);
+                    fileUploadEntity.setFolderName(dest.getAbsolutePath());
 
-                    sb.append(entity.getInsertString());
+                    sqlBuilder.append(fileUploadEntity.getInsertString());
 
                 } catch (IOException e) {
                     resultStr.append("失敗: ").append(file.getOriginalFilename()).append(" - ").append(e.getMessage()).append("\n");
@@ -257,18 +253,34 @@ public class FileService {
             }
         }
 
-        // SQL保存処理
         SimpleData result = new SimpleData();
-        if (!sb.toString().isEmpty()) {
-            result = (SimpleData) sqlRepository.excuteSqlString(sb.toString());
-            resultStr.append(result.getText());
-            result.setText(resultStr.toString());
+        if (sqlBuilder.length() > 0) {
+            String sql = sqlBuilder.toString();
+
+            result = sqlRepository.execSql(conn -> {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(sql);
+                    SimpleData data = new SimpleData();
+                    data.setNumber(1);
+                    data.setText(resultStr.toString());  // ファイルごとの結果も含める
+                    return data;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    SimpleData error = new SimpleData();
+                    error.setNumber(0);
+                    error.setText("SQLエラー: " + e.getMessage());
+                    return error;
+                }
+            });
+            result.setText(resultStr.toString() + result.getText());
         } else {
             result.setText(resultStr.toString());
         }
 
         return result;
     }
+
+
 
     /**
      * ファイル削除用エンドポイント
@@ -288,4 +300,19 @@ public class FileService {
             return result;
         }
     }
+
+    public String toCsvField(Object value) {
+        if (value == null) {
+            return ",";
+        }
+        String str = String.valueOf(value);
+        boolean needsQuote = str.contains(",") || str.contains("\"") || str.contains("\n") || str.contains("\r");
+        if (needsQuote) {
+            str = str.replace("\"", "\"\""); // ダブルクォートのエスケープ
+            return "\"" + str + "\",";
+        } else {
+            return str + ",";
+        }
+    }
+
 }
