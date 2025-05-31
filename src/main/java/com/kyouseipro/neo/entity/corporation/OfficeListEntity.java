@@ -35,7 +35,7 @@ public class OfficeListEntity implements Entity {
     public static String selectString() {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT o.*, c.category FROM offices o");
-        sb.append(" INNER JOIN companies c ON c.company_id = o.company_id AND NOT (c.state = " + Enums.state.DELETE.getNum() + ")");
+        sb.append(" INNER JOIN companies c ON c.company_id = o.company_id AND NOT (c.state = " + Enums.state.DELETE.getCode() + ")");
         return sb.toString();
     }
 }

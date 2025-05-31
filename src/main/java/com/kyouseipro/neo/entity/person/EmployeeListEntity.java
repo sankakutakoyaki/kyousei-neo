@@ -34,7 +34,7 @@ public class EmployeeListEntity implements Entity {
             this.phone_number = phone.isEmpty() ? null: phone;
             int category = rs.getInt("category");
             this.category = category;
-            this.category_name = category == 0 ? null: Enums.employeeCategory.getStrByNum(category);
+            this.category_name = category == 0 ? null: Enums.employeeCategory.getDescriptionByNum(category);
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -49,8 +49,8 @@ public class EmployeeListEntity implements Entity {
         sb.append("SELECT e.employee_id, e.code, e.full_name, e.full_name_kana, e.category, e.phone_number");
         sb.append(", COALESCE(c.name, '') as company_name, COALESCE(o.name, '') as office_name FROM employees e");
         // sb.append(", COALESCE(c.name_kana, '') as company_name_kana, COALESCE(o.name_kana, '') as office_name_kana FROM employees e");
-        sb.append(" LEFT OUTER JOIN companies c ON c.company_id = e.company_id AND NOT (c.state = " + Enums.state.DELETE.getNum() + ")");
-        sb.append(" LEFT OUTER JOIN offices o ON o.office_id = e.office_id AND NOT (o.state = " + Enums.state.DELETE.getNum() + ")");
+        sb.append(" LEFT OUTER JOIN companies c ON c.company_id = e.company_id AND NOT (c.state = " + Enums.state.DELETE.getCode() + ")");
+        sb.append(" LEFT OUTER JOIN offices o ON o.office_id = e.office_id AND NOT (o.state = " + Enums.state.DELETE.getCode() + ")");
         return sb.toString();
     }
 }

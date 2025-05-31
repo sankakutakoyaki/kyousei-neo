@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.corporation.OfficeEntity;
 import com.kyouseipro.neo.entity.corporation.OfficeEntity;
 import com.kyouseipro.neo.entity.corporation.OfficeEntity;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OfficeRepository {
     private final SqlRepository sqlRepository;
+    private final GenericRepository genericRepository;
 
     public Integer insertOffice(OfficeEntity office, String editor) {
         String sql =
@@ -115,47 +118,24 @@ public class OfficeRepository {
     }
 
     // office_idによる取得
-    public OfficeEntity findById(int office_id) {
-        String sql = "SELECT * FROM offices WHERE office_id = ?";
-
-        return sqlRepository.execSql(conn -> {
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, office_id);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        OfficeEntity office = new OfficeEntity();
-                        office.setEntity(rs);
-                        return office;
-                    }
-                }
-                return null;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+    public OfficeEntity findById(int officeId) {
+        return genericRepository.findOne(
+        "SELECT * FROM offices WHERE office_id = ? AND NOT (state = ?)",
+            ps -> {
+                ps.setInt(1, officeId); // 1番目の ?
+                ps.setInt(2, Enums.state.DELETE.getCode());     // 2番目の ?
+            },
+            OfficeEntity::new // Supplier<T>
+        );
     }
 
     // 全件取得の例（必要に応じて）
     public List<OfficeEntity> findAll() {
-        String sql = "SELECT * FROM offices";
-
-        return sqlRepository.execSql(conn -> {
-            List<OfficeEntity> list = new ArrayList<>();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql);
-                 ResultSet rs = pstmt.executeQuery()) {
-
-                while (rs.next()) {
-                    OfficeEntity office = new OfficeEntity();
-                    office.setEntity(rs);
-                    list.add(office);
-                }
-                return list;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+        return genericRepository.findAll(
+            "SELECT * FROM offices WHERE NOT (state = ?)",
+            ps -> ps.setInt(1, Enums.state.DELETE.getCode()),
+            OfficeEntity::new
+        );
     }
 }
 

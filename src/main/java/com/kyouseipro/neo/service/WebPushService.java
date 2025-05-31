@@ -35,35 +35,35 @@ public class WebPushService {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    /**
-     * メッセージを送信する
-     * @param subscription
-     * @param message
-     * @throws Exception
-     */
-    public void sendPushNotification(SubscriptionRequest subscription, String message) throws Exception {
-        Notification notification = new Notification(
-            subscription.getEndpoint(),
-            subscription.getP256dh(),
-            subscription.getAuth(),
-            message.getBytes()
-        );
+    // /**
+    //  * メッセージを送信する
+    //  * @param subscription
+    //  * @param message
+    //  * @throws Exception
+    //  */
+    // public void sendPushNotification(SubscriptionRequest subscription, String message) throws Exception {
+    //     Notification notification = new Notification(
+    //         subscription.getEndpoint(),
+    //         subscription.getP256dh(),
+    //         subscription.getAuth(),
+    //         message.getBytes()
+    //     );
 
-        PushService pushService = new PushService();
-        pushService.setPublicKey(publicKey);
-        pushService.setPrivateKey(privateKey);
-        pushService.setSubject(subject);
+    //     PushService pushService = new PushService();
+    //     pushService.setPublicKey(publicKey);
+    //     pushService.setPrivateKey(privateKey);
+    //     pushService.setSubject(subject);
 
-        HttpResponse response = pushService.send(notification);
+    //     HttpResponse response = pushService.send(notification);
 
-        int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode != 201) {
-            throw new RuntimeException("Push通知の送信に失敗しました。status=" + statusCode);
-        }
-        if (statusCode == 410 || statusCode == 404) {
-            // 無効な subscription を削除
-            pushRepository.deleteByEndpoint(subscription.getEndpoint());
-            System.out.println("無効なエンドポイントだったため、削除しました。");
-        }
-    }
+    //     int statusCode = response.getStatusLine().getStatusCode();
+    //     if (statusCode != 201) {
+    //         throw new RuntimeException("Push通知の送信に失敗しました。status=" + statusCode);
+    //     }
+    //     if (statusCode == 410 || statusCode == 404) {
+    //         // 無効な subscription を削除
+    //         pushRepository.deleteByEndpoint(subscription.getEndpoint());
+    //         System.out.println("無効なエンドポイントだったため、削除しました。");
+    //     }
+    // }
 }

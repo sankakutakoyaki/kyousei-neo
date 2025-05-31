@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class CompanyService {
-    private final SqlRepository sqlRepository;
     private final CompanyRepository companyRepository;
 
     /**
@@ -42,13 +41,12 @@ public class CompanyService {
      * @param editor
      * @return
     */
-    public CompanyEntity saveCompany(CompanyEntity entity, String editor) {
+    public Integer saveCompany(CompanyEntity entity, String editor) {
         if (entity.getCompany_id() > 0) {
-            companyRepository.updateCompany(entity, editor);
+            return companyRepository.updateCompany(entity, editor);
         } else {
-            companyRepository.insertCompany(entity, editor);
+            return companyRepository.insertCompany(entity, editor);
         }
-        return entity;
     }
 
     // /**

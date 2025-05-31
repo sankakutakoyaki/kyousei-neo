@@ -6,18 +6,20 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.common.QualificationsEntity;
+import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 
 import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
 public class QualificationsRepository {
-
     private final SqlRepository sqlRepository;
+    private final GenericRepository genericRepository;
 
     // INSERT
-    public Integer insert(QualificationsEntity q, String editor) {
+    public Integer insertQualifications(QualificationsEntity q, String editor) {
         String sql =
             "DECLARE @Inserted TABLE (qualifications_id INT);" +
             "INSERT INTO qualifications (owner_id, qualification_master_id, number, acquisition_date, expiry_date, version, state) " +
@@ -59,7 +61,7 @@ public class QualificationsRepository {
     }
 
     // UPDATE
-    public Integer update(QualificationsEntity q, String editor) {
+    public Integer updateQualifications(QualificationsEntity q, String editor) {
         String sql =
             "DECLARE @Updated TABLE (qualifications_id INT);" +
             "UPDATE qualifications SET owner_id=?, qualification_master_id=?, number=?, acquisition_date=?, expiry_date=?, version=?, state=? " +
@@ -103,47 +105,24 @@ public class QualificationsRepository {
     }
 
     // IDによる検索
-    public QualificationsEntity findById(int id) {
-        String sql = "SELECT * FROM qualifications WHERE qualifications_id = ?";
-
-        return sqlRepository.execSql(conn -> {
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, id);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        QualificationsEntity q = new QualificationsEntity();
-                        q.setEntity(rs);
-                        return q;
-                    }
-                }
-                return null;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+    public QualificationsEntity findById(int qualificationId) {
+        return genericRepository.findOne(
+        "SELECT * FROM qualifications WHERE qualifiations_id = ? AND NOT (state = ?)",
+            ps -> {
+                ps.setInt(1, qualificationId); // 1番目の ?
+                ps.setInt(2, Enums.state.DELETE.getCode());     // 2番目の ?
+            },
+            QualificationsEntity::new // Supplier<T>
+        );
     }
 
     // 全件取得
     public List<QualificationsEntity> findAll() {
-        String sql = "SELECT * FROM qualifications";
-
-        return sqlRepository.execSql(conn -> {
-            List<QualificationsEntity> list = new ArrayList<>();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql);
-                 ResultSet rs = pstmt.executeQuery()) {
-
-                while (rs.next()) {
-                    QualificationsEntity q = new QualificationsEntity();
-                    q.setEntity(rs);
-                    list.add(q);
-                }
-                return list;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+        return genericRepository.findAll(
+            "SELECT * FROM qualifications WHERE NOT (state = ?)",
+            ps -> ps.setInt(1, Enums.state.DELETE.getCode()),
+            QualificationsEntity::new
+        );
     }
 }
 

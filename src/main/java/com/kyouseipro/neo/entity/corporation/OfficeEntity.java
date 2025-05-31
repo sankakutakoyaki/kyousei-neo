@@ -1,10 +1,7 @@
 package com.kyouseipro.neo.entity.corporation;
 
 import java.sql.ResultSet;
-import java.time.LocalDateTime;
-import java.util.List;
 
-import com.kyouseipro.neo.entity.record.HistoryEntity;
 import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;

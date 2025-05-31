@@ -1,13 +1,9 @@
 package com.kyouseipro.neo.entity.person;
 
 import java.sql.ResultSet;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 
-import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.service.DatabaseService;
 
 import lombok.Data;
 

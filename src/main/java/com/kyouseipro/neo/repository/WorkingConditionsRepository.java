@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.person.WorkingConditionsEntity;
 
 import lombok.RequiredArgsConstructor;
@@ -13,11 +15,11 @@ import lombok.RequiredArgsConstructor;
 @Repository
 @RequiredArgsConstructor
 public class WorkingConditionsRepository {
-
     private final SqlRepository sqlRepository;
+    private final GenericRepository genericRepository;
 
     // INSERT
-    public Integer insert(WorkingConditionsEntity w, String editor) {
+    public Integer insertWorkingConditions(WorkingConditionsEntity w, String editor) {
         String sql =
             "DECLARE @Inserted TABLE (working_conditions_id INT);" +
             "INSERT INTO working_conditions (employee_id, code, category, payment_method, pay_type, base_salary, trans_cost, basic_start_time, basic_end_time, version, state) " +
@@ -59,7 +61,7 @@ public class WorkingConditionsRepository {
     }
 
     // UPDATE
-    public Integer update(WorkingConditionsEntity w, String editor) {
+    public Integer updateWorkingConditions(WorkingConditionsEntity w, String editor) {
         String sql =
             "DECLARE @Updated TABLE (working_conditions_id INT);" +
             "UPDATE working_conditions SET employee_id=?, code=?, category=?, payment_method=?, pay_type=?, base_salary=?, trans_cost=?, basic_start_time=?, basic_end_time=?, version=?, state=? " +
@@ -103,48 +105,24 @@ public class WorkingConditionsRepository {
     }
 
     // IDで検索
-    public WorkingConditionsEntity findById(int id) {
-        String sql = "SELECT * FROM working_conditions WHERE working_conditions_id = ?";
-
-        return sqlRepository.execSql(conn -> {
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, id);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        WorkingConditionsEntity w = new WorkingConditionsEntity();
-                        w.setEntity(rs);
-                        return w;
-                    }
-                }
-                return null;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+    public WorkingConditionsEntity findById(int workingConditionsId) {
+        return genericRepository.findOne(
+        "SELECT * FROM working_conditions WHERE working_conditions_id = ? AND NOT (state = ?)",
+            ps -> {
+                ps.setInt(1, workingConditionsId); // 1番目の ?
+                ps.setInt(2, Enums.state.DELETE.getCode());     // 2番目の ?
+            },
+            WorkingConditionsEntity::new // Supplier<T>
+        );
     }
 
     // 全件取得
     public List<WorkingConditionsEntity> findAll() {
-        String sql = "SELECT * FROM working_conditions";
-
-        return sqlRepository.execSql(conn -> {
-            List<WorkingConditionsEntity> list = new ArrayList<>();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql);
-                 ResultSet rs = pstmt.executeQuery()) {
-
-                while (rs.next()) {
-                    WorkingConditionsEntity w = new WorkingConditionsEntity();
-                    w.setEntity(rs);
-                    list.add(w);
-                }
-
-                return list;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+        return genericRepository.findAll(
+            "SELECT * FROM working_conditions WHERE NOT (state = ?)",
+            ps -> ps.setInt(1, Enums.state.DELETE.getCode()),
+            WorkingConditionsEntity::new
+        );
     }
 }
 

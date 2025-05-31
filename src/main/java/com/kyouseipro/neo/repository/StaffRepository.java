@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.corporation.StaffEntity;
 
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StaffRepository {
     private final SqlRepository sqlRepository;
+    private final GenericRepository genericRepository;
 
     // 新規登録
     public Integer insertStaff(StaffEntity staff, String editor) {
@@ -106,47 +109,24 @@ public class StaffRepository {
     }
 
     // staff_idによる取得
-    public StaffEntity findById(int staff_id) {
-        String sql = "SELECT * FROM staffs WHERE staff_id = ?";
-
-        return sqlRepository.execSql(conn -> {
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, staff_id);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        StaffEntity staff = new StaffEntity();
-                        staff.setEntity(rs);
-                        return staff;
-                    }
-                }
-                return null;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+    public StaffEntity findById(int staffId) {
+        return genericRepository.findOne(
+        "SELECT * FROM staffs WHERE staff_id = ? AND NOT (state = ?)",
+            ps -> {
+                ps.setInt(1, staffId); // 1番目の ?
+                ps.setInt(2, Enums.state.DELETE.getCode());     // 2番目の ?
+            },
+            StaffEntity::new // Supplier<T>
+        );
     }
 
     // 全件取得の例（必要に応じて）
     public List<StaffEntity> findAll() {
-        String sql = "SELECT * FROM staffs";
-
-        return sqlRepository.execSql(conn -> {
-            List<StaffEntity> list = new ArrayList<>();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql);
-                 ResultSet rs = pstmt.executeQuery()) {
-
-                while (rs.next()) {
-                    StaffEntity staff = new StaffEntity();
-                    staff.setEntity(rs);
-                    list.add(staff);
-                }
-                return list;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+        return genericRepository.findAll(
+            "SELECT * FROM staffs WHERE NOT (state = ?)",
+            ps -> ps.setInt(1, Enums.state.DELETE.getCode()),
+            StaffEntity::new
+        );
     }
 }
 

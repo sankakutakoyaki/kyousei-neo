@@ -8,7 +8,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.corporation.CompanyEntity;
+import com.kyouseipro.neo.entity.corporation.OfficeEntity;
+import com.kyouseipro.neo.entity.person.EmployeeEntity;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CompanyRepository {
     private final SqlRepository sqlRepository;
+    private final GenericRepository genericRepository;
 
     public Integer insertCompany(CompanyEntity company, String editor) {
         String sql = 
@@ -112,47 +116,24 @@ public class CompanyRepository {
         });
     }
 
-    // company_idによる取得
-    public CompanyEntity findById(int company_id) {
-        String sql = "SELECT * FROM companies WHERE company_id = ?";
-
-        return sqlRepository.execSql(conn -> {
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, company_id);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        CompanyEntity company = new CompanyEntity();
-                        company.setEntity(rs);
-                        return company;
-                    }
-                }
-                return null;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+    // IDによる取得
+    public CompanyEntity findById(int companyId) {
+        return genericRepository.findOne(
+        "SELECT * FROM companies WHERE company_id = ? AND NOT (state = ?)",
+            ps -> {
+                ps.setInt(1, companyId); // 1番目の ?
+                ps.setInt(2, Enums.state.DELETE.getCode());     // 2番目の ?
+            },
+            CompanyEntity::new // Supplier<T>
+        );
     }
 
-    // 全件取得の例（必要に応じて）
+    // 全件取得
     public List<CompanyEntity> findAll() {
-        String sql = "SELECT * FROM companys";
-
-        return sqlRepository.execSql(conn -> {
-            List<CompanyEntity> list = new ArrayList<>();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql);
-                 ResultSet rs = pstmt.executeQuery()) {
-
-                while (rs.next()) {
-                    CompanyEntity company = new CompanyEntity();
-                    company.setEntity(rs);
-                    list.add(company);
-                }
-                return list;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+        return genericRepository.findAll(
+            "SELECT * FROM companies WHERE NOT (state = ?)",
+            ps -> ps.setInt(1, Enums.state.DELETE.getCode()),
+            CompanyEntity::new
+        );
     }
 }

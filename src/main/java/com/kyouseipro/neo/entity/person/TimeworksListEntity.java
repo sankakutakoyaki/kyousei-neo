@@ -48,7 +48,7 @@ public class TimeworksListEntity implements Entity {
         sb.append(" INNER JOIN employees e ON e.employee_id = t.employee_id");
         sb.append(" LEFT OUTER JOIN companies c ON c.company_id = e.company_id");
         sb.append(" LEFT OUTER JOIN offices o ON o.office_id = e.office_id");
-        sb.append(" WHERE NOT (t.state = " + Enums.state.DELETE.getNum() + ")");
+        sb.append(" WHERE NOT (t.state = " + Enums.state.DELETE.getCode() + ")");
         return sb.toString();
     }
 }

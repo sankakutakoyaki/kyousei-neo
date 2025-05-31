@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.person.EmployeeEntity;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EmployeeRepository {
     private final SqlRepository sqlRepository;
+    private final GenericRepository genericRepository;
 
     public Integer insertEmployee(EmployeeEntity employee, String editor) {
         String sql = 
@@ -172,46 +175,23 @@ public class EmployeeRepository {
     }
 
     // employe_idによる取得
-    public EmployeeEntity findById(int employe_id) {
-        String sql = "SELECT * FROM employees WHERE employe_id = ?";
-
-        return sqlRepository.execSql(conn -> {
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, employe_id);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        EmployeeEntity employe = new EmployeeEntity();
-                        employe.setEntity(rs);
-                        return employe;
-                    }
-                }
-                return null;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+    public EmployeeEntity findById(int employeeId) {
+        return genericRepository.findOne(
+        "SELECT * FROM employees WHERE employee_id = ? AND NOT (state = ?)",
+            ps -> {
+                ps.setInt(1, employeeId); // 1番目の ?
+                ps.setInt(2, Enums.state.DELETE.getCode());     // 2番目の ?
+            },
+            EmployeeEntity::new // Supplier<T>
+        );
     }
 
     // 全件取得の例（必要に応じて）
     public List<EmployeeEntity> findAll() {
-        String sql = "SELECT * FROM employees";
-
-        return sqlRepository.execSql(conn -> {
-            List<EmployeeEntity> list = new ArrayList<>();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql);
-                 ResultSet rs = pstmt.executeQuery()) {
-
-                while (rs.next()) {
-                    EmployeeEntity employe = new EmployeeEntity();
-                    employe.setEntity(rs);
-                    list.add(employe);
-                }
-                return list;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+        return genericRepository.findAll(
+            "SELECT * FROM employees WHERE NOT (state = ?)",
+            ps -> ps.setInt(1, Enums.state.DELETE.getCode()),
+            EmployeeEntity::new
+        );
     }
 }

@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ComboBoxService {
-    private final SqlRepository sqlRepository;
     /**
      * 性別のリスト
      * @return
@@ -26,8 +25,8 @@ public class ComboBoxService {
         List<Entity> list = new ArrayList<>();
         for(Enums.gender ent: Enums.gender.values()) {
             SimpleData simpleData = new SimpleData();
-            simpleData.setNumber(ent.getNum());
-            simpleData.setText(ent.getStr());
+            simpleData.setNumber(ent.getCode());
+            simpleData.setText(ent.getDescription());
             list.add(simpleData);
         }
         return list;
@@ -41,8 +40,8 @@ public class ComboBoxService {
         List<Entity> list = new ArrayList<>();
         for(Enums.bloodType ent: Enums.bloodType.values()) {
             SimpleData simpleData = new SimpleData();
-            simpleData.setNumber(ent.getNum());
-            simpleData.setText(ent.getStr());
+            simpleData.setNumber(ent.getCode());
+            simpleData.setText(ent.getDescription());
             list.add(simpleData);
         }
         return list;
@@ -56,8 +55,8 @@ public class ComboBoxService {
         List<Entity> list = new ArrayList<>();
         for(Enums.employeeCategory ent: Enums.employeeCategory.values()) {
             SimpleData simpleData = new SimpleData();
-            simpleData.setNumber(ent.getNum());
-            simpleData.setText(ent.getStr());
+            simpleData.setNumber(ent.getCode());
+            simpleData.setText(ent.getDescription());
             list.add(simpleData);
         }
         return list;
@@ -71,8 +70,8 @@ public class ComboBoxService {
         List<Entity> list = new ArrayList<>();
         for(Enums.paymentMethod ent: Enums.paymentMethod.values()) {
             SimpleData simpleData = new SimpleData();
-            simpleData.setNumber(ent.getNum());
-            simpleData.setText(ent.getStr());
+            simpleData.setNumber(ent.getCode());
+            simpleData.setText(ent.getDescription());
             list.add(simpleData);
         }
         return list;
@@ -86,70 +85,70 @@ public class ComboBoxService {
         List<Entity> list = new ArrayList<>();
         for(Enums.payType ent: Enums.payType.values()) {
             SimpleData simpleData = new SimpleData();
-            simpleData.setNumber(ent.getNum());
-            simpleData.setText(ent.getStr());
+            simpleData.setNumber(ent.getCode());
+            simpleData.setText(ent.getDescription());
             list.add(simpleData);
         }
         return list;
     }
 
-    /**
-     * すべての会社リスト
-     * @return
-     */
-    public List<Entity> getCompany() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT company_id as number, name as text FROM companies WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") ORDER BY name_kana;");
-        SqlData sqlData = new SqlData();
-        sqlData.setData(sb.toString(), new SimpleData());
-        return sqlRepository.getEntityList(sqlData);
-    }
+    // /**
+    //  * すべての会社リスト
+    //  * @return
+    //  */
+    // public List<Entity> getCompany() {
+    //     StringBuilder sb = new StringBuilder();
+    //     sb.append("SELECT company_id as number, name as text FROM companies WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") ORDER BY name_kana;");
+    //     SqlData sqlData = new SqlData();
+    //     sqlData.setData(sb.toString(), new SimpleData());
+    //     return sqlRepository.getEntityList(sqlData);
+    // }
 
-    /**
-     * すべての会社リスト
-     * @return
-     */
-    public List<Entity> getClient() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT company_id as number, name as text FROM companies WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") AND NOT (category = 0) ORDER BY name_kana;");
-        SqlData sqlData = new SqlData();
-        sqlData.setData(sb.toString(), new SimpleData());
-        return sqlRepository.getEntityList(sqlData);
-    }
+    // /**
+    //  * すべての会社リスト
+    //  * @return
+    //  */
+    // public List<Entity> getClient() {
+    //     StringBuilder sb = new StringBuilder();
+    //     sb.append("SELECT company_id as number, name as text FROM companies WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") AND NOT (category = 0) ORDER BY name_kana;");
+    //     SqlData sqlData = new SqlData();
+    //     sqlData.setData(sb.toString(), new SimpleData());
+    //     return sqlRepository.getEntityList(sqlData);
+    // }
 
-    /**
-     * すべての営業所リスト
-     * @return
-     */
-    public List<Entity> getOffice() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT company_id, office_id, name as office_name FROM offices WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") ORDER BY name_kana;");
-        SqlData sqlData = new SqlData();
-        sqlData.setData(sb.toString(), new OfficeComboEntity());
-        return sqlRepository.getEntityList(sqlData);
-    }
+    // /**
+    //  * すべての営業所リスト
+    //  * @return
+    //  */
+    // public List<Entity> getOffice() {
+    //     StringBuilder sb = new StringBuilder();
+    //     sb.append("SELECT company_id, office_id, name as office_name FROM offices WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") ORDER BY name_kana;");
+    //     SqlData sqlData = new SqlData();
+    //     sqlData.setData(sb.toString(), new OfficeComboEntity());
+    //     return sqlRepository.getEntityList(sqlData);
+    // }
 
-    /**
-     * すべての資格リスト
-     * @return
-     */
-    public List<Entity> getQualificationMaster() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") ORDER BY code;");
-        SqlData sqlData = new SqlData();
-        sqlData.setData(sb.toString(), new SimpleData());
-        return sqlRepository.getEntityList(sqlData);
-    }
+    // /**
+    //  * すべての資格リスト
+    //  * @return
+    //  */
+    // public List<Entity> getQualificationMaster() {
+    //     StringBuilder sb = new StringBuilder();
+    //     sb.append("SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") ORDER BY code;");
+    //     SqlData sqlData = new SqlData();
+    //     sqlData.setData(sb.toString(), new SimpleData());
+    //     return sqlRepository.getEntityList(sqlData);
+    // }
 
-    /**
-     * すべての許可証リスト
-     * @return
-     */
-    public List<Entity> getLicenseMaster() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") AND category_name = '許可' ORDER BY code;");
-        SqlData sqlData = new SqlData();
-        sqlData.setData(sb.toString(), new SimpleData());
-        return sqlRepository.getEntityList(sqlData);
-    }
+    // /**
+    //  * すべての許可証リスト
+    //  * @return
+    //  */
+    // public List<Entity> getLicenseMaster() {
+    //     StringBuilder sb = new StringBuilder();
+    //     sb.append("SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") AND category_name = '許可' ORDER BY code;");
+    //     SqlData sqlData = new SqlData();
+    //     sqlData.setData(sb.toString(), new SimpleData());
+    //     return sqlRepository.getEntityList(sqlData);
+    // }
 }
