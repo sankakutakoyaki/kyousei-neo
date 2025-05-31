@@ -4,5 +4,5 @@ public interface FileUpload {
     void setFileName(String file_name);
     void setInternalName(String internal_name);
     void setFolderName(String folder_name);
-    String getInsertString();
+    // Integer insertFilesTable();
 }

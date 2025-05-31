@@ -63,18 +63,19 @@ public class EmployeeService {
     //     return sqlRepository.getEntity(sqlData);
     // }
 
-    // /**
-    //  * アカウントからEmployeeを取得
-    //  * @param account
-    //  * @return
-    //  */
-    // public Entity getEmployeeByAccount(String account) {
-    //     StringBuilder sb = new StringBuilder();
-    //     sb.append("SELECT * FROM employees WHERE account = '" + account + "' AND NOT (state = " + Enums.state.DELETE.getNum() + ");");
-    //     SqlData sqlData = new SqlData();
-    //     sqlData.setData(sb.toString(), new EmployeeEntity());
-    //     return sqlRepository.getEntity(sqlData);
-    // }
+    /**
+     * アカウントからEmployeeを取得
+     * @param account
+     * @return
+     */
+    public EmployeeEntity getEmployeeByAccount(String account) {
+        return employeeRepository.findByAccount(account);
+        // StringBuilder sb = new StringBuilder();
+        // sb.append("SELECT * FROM employees WHERE account = '" + account + "' AND NOT (state = " + Enums.state.DELETE.getNum() + ");");
+        // SqlData sqlData = new SqlData();
+        // sqlData.setData(sb.toString(), new EmployeeEntity());
+        // return sqlRepository.getEntity(sqlData);
+    }
 
     // /**
     //  * すべてのEmployeeを取得

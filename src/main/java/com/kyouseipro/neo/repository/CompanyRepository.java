@@ -136,4 +136,16 @@ public class CompanyRepository {
             CompanyEntity::new
         );
     }
+
+    // 全件取得
+    public List<CompanyEntity> findAllClient() {
+        return genericRepository.findAll(
+            "SELECT * FROM companies WHERE NOT (category = ?) AND NOT (state = ?)",
+            ps -> {
+                ps.setInt(1, 0); // 1番目の ?
+                ps.setInt(2, Enums.state.DELETE.getCode());     // 2番目の ?
+            },
+            CompanyEntity::new
+        );
+    }
 }

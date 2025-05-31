@@ -186,6 +186,17 @@ public class EmployeeRepository {
         );
     }
 
+    public EmployeeEntity findByAccount(String account) {
+        return genericRepository.findOne(
+        "SELECT * FROM employees WHERE account = ? AND NOT (state = ?)",
+            ps -> {
+                ps.setString(1, account); // 1番目の ?
+                ps.setInt(2, Enums.state.DELETE.getCode());     // 2番目の ?
+            },
+            EmployeeEntity::new // Supplier<T>
+        );
+    }
+
     // 全件取得の例（必要に応じて）
     public List<EmployeeEntity> findAll() {
         return genericRepository.findAll(

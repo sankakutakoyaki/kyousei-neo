@@ -53,7 +53,7 @@ public class CompanyPageController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期化されたエンティティ
@@ -62,13 +62,13 @@ public class CompanyPageController {
         mv.addObject("staffEntity", new StaffEntity());
 
         // 初期表示用Clientリスト取得
-        List<Entity> companyOrigin = companyService.getClientList();
+        List<CompanyEntity> companyOrigin = companyService.getClientList();
         mv.addObject("companyOrigin", companyOrigin);
         // 初期表示用Officeリスト取得
-        List<Entity> officeOrigin = officeService.getOfficeList();
+        List<OfficeEntity> officeOrigin = officeService.getClientList();
         mv.addObject("officeOrigin", officeOrigin);
         // 初期表示用Staffリスト取得
-        List<Entity> staffOrigin = staffService.getStaffList();
+        List<StaffEntity> staffOrigin = staffService.getStaffList();
         mv.addObject("staffOrigin", staffOrigin);
 
         // コンボボックスアイテム取得

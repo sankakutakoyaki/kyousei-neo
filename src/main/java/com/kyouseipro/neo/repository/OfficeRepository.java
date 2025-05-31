@@ -137,5 +137,20 @@ public class OfficeRepository {
             OfficeEntity::new
         );
     }
+
+    // 全件取得の例（必要に応じて）
+    public List<OfficeEntity> findAllClient() {
+        return genericRepository.findAll(
+            "SELECT o.*, c.name as company_name, c.name_kana as company_name_kana FROM offices o" + 
+            " INNER JOIN companies c ON c.company_id = o.company_id" + 
+            " WHERE NOT (c.category = ?) AND NOT (c.state = ?) AND NOT (o.state = ?)",
+            ps -> {
+                ps.setInt(1, 0); // 1番目の ?
+                ps.setInt(2, Enums.state.DELETE.getCode());     // 2番目の ?
+                ps.setInt(3, Enums.state.DELETE.getCode());     // 3番目の ?
+            },
+            OfficeEntity::new
+        );
+    }
 }
 

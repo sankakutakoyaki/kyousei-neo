@@ -42,94 +42,94 @@ public class FileController {
     private final FileService fileService;
     private final QualificationsService qualificationsService;
 
-    /**
-     * 郵便番号から住所を取得する
-     * @param postal_code
-     * @return AddressEntity
-     */
-    @PostMapping("/address/get/postalcode")
-	@ResponseBody
-    public Entity getAddressFromPostalCode(@RequestParam String postal_code) {
-        StringBuilder sb = new StringBuilder("SELECT * From address WHERE postal_code = '" + postal_code + "';");
-        SqlData sqlData = new SqlData();
-        sqlData.setData(sb.toString(), new AddressEntity());
-        return sqlRepository.getEntity(sqlData);
-    }
+    // /**
+    //  * 郵便番号から住所を取得する
+    //  * @param postal_code
+    //  * @return AddressEntity
+    //  */
+    // @PostMapping("/address/get/postalcode")
+	// @ResponseBody
+    // public Entity getAddressFromPostalCode(@RequestParam String postal_code) {
+    //     StringBuilder sb = new StringBuilder("SELECT * From address WHERE postal_code = '" + postal_code + "';");
+    //     SqlData sqlData = new SqlData();
+    //     sqlData.setData(sb.toString(), new AddressEntity());
+    //     return sqlRepository.getEntity(sqlData);
+    // }
 
-    /**
-     * ファイルを別タブで開く
-     * @param category
-     * @param folder
-     * @param filename
-     * @return
-     * @throws IOException
-     */
-    @GetMapping("/files/{category}/{folder}/{filename}")
-    public ResponseEntity<Resource> getFile(@PathVariable String category, @PathVariable String folder, @PathVariable String filename) throws IOException {
-        // 実際の保存ディレクトリ（必要に応じて調整）
-        Path filePath = Paths.get(UploadConfig.getUploadDir(), category, folder, filename);
-        if (!Files.exists(filePath)) {
-            throw new FileNotFoundException("ファイルが見つかりません: " + filePath);
-        }
+    // /**
+    //  * ファイルを別タブで開く
+    //  * @param category
+    //  * @param folder
+    //  * @param filename
+    //  * @return
+    //  * @throws IOException
+    //  */
+    // @GetMapping("/files/{category}/{folder}/{filename}")
+    // public ResponseEntity<Resource> getFile(@PathVariable String category, @PathVariable String folder, @PathVariable String filename) throws IOException {
+    //     // 実際の保存ディレクトリ（必要に応じて調整）
+    //     Path filePath = Paths.get(UploadConfig.getUploadDir(), category, folder, filename);
+    //     if (!Files.exists(filePath)) {
+    //         throw new FileNotFoundException("ファイルが見つかりません: " + filePath);
+    //     }
 
-        UrlResource resource = new UrlResource(filePath.toUri());
+    //     UrlResource resource = new UrlResource(filePath.toUri());
 
-        // MIMEタイプの判定（PDFなど）
-        MediaType mediaType = MediaTypeFactory.getMediaType(resource)
-            .orElse(MediaType.APPLICATION_OCTET_STREAM);
+    //     // MIMEタイプの判定（PDFなど）
+    //     MediaType mediaType = MediaTypeFactory.getMediaType(resource)
+    //         .orElse(MediaType.APPLICATION_OCTET_STREAM);
 
-        // Content-Disposition ヘッダー（inline 表示用）
-        return ResponseEntity.ok()
-            .contentType(mediaType)
-            .header(HttpHeaders.CONTENT_DISPOSITION,
-                "inline; filename=\"" + URLEncoder.encode(resource.getFilename(), StandardCharsets.UTF_8).replace("+", "%20") + "\"")
-            .body(resource);
-    }
+    //     // Content-Disposition ヘッダー（inline 表示用）
+    //     return ResponseEntity.ok()
+    //         .contentType(mediaType)
+    //         .header(HttpHeaders.CONTENT_DISPOSITION,
+    //             "inline; filename=\"" + URLEncoder.encode(resource.getFilename(), StandardCharsets.UTF_8).replace("+", "%20") + "\"")
+    //         .body(resource);
+    // }
 
-    /**
-     * IDから資格のファイルを取得する
-     * @param ID
-     * @return 
-     */
-    @PostMapping("/files/get/qualifications")
-	@ResponseBody
-    public List<Entity> getQualificationsFilesById(@RequestParam int id) {
-        return qualificationsService.getQualificationsFilesById(id);
-    }
+    // /**
+    //  * IDから資格のファイルを取得する
+    //  * @param ID
+    //  * @return 
+    //  */
+    // @PostMapping("/files/get/qualifications")
+	// @ResponseBody
+    // public List<Entity> getQualificationsFilesById(@RequestParam int id) {
+    //     return qualificationsService.getQualificationsFilesById(id);
+    // }
 
-    /**
-     * URLから資格のファイルを削除する
-     * @param ID
-     * @return 
-     */
-    @PostMapping("/files/delete/qualifications")
-	@ResponseBody
-    public Entity deleteQualificationsFilesByUrl(@RequestParam String url) {
-        SimpleData result = (SimpleData) fileService.deleteFile(UploadConfig.getUploadDir() + url);
-        if (result.getNumber() > 0) {
-            return qualificationsService.deleteQualificationsFilesByUrl(UploadConfig.getUploadDir() + url);
-        } else {
-            SimpleData simpleData = new SimpleData();
-            simpleData.setNumber(0);
-            return simpleData;
-        }
-    }
+    // /**
+    //  * URLから資格のファイルを削除する
+    //  * @param ID
+    //  * @return 
+    //  */
+    // @PostMapping("/files/delete/qualifications")
+	// @ResponseBody
+    // public Entity deleteQualificationsFilesByUrl(@RequestParam String url) {
+    //     SimpleData result = (SimpleData) fileService.deleteFile(UploadConfig.getUploadDir() + url);
+    //     if (result.getNumber() > 0) {
+    //         return qualificationsService.deleteQualificationsFilesByUrl(UploadConfig.getUploadDir() + url);
+    //     } else {
+    //         SimpleData simpleData = new SimpleData();
+    //         simpleData.setNumber(0);
+    //         return simpleData;
+    //     }
+    // }
 
-    /**
-     * 資格情報のPDFファイルをアップロードする
-     * @param files
-     * @param folderName
-     * @param id
-     * @return
-     */
-    @PostMapping("/file/upload/qualifications")
-    @ResponseBody
-    public List<Entity> fileUpload(@RequestParam("files") MultipartFile[] files, @RequestParam("folder_name") String folderName, @RequestParam("id") int id) {
-        QualificationFilesEntity entity = new QualificationFilesEntity();
-        entity.setQualifications_id(id);
+    // /**
+    //  * 資格情報のPDFファイルをアップロードする
+    //  * @param files
+    //  * @param folderName
+    //  * @param id
+    //  * @return
+    //  */
+    // @PostMapping("/file/upload/qualifications")
+    // @ResponseBody
+    // public List<Entity> fileUpload(@RequestParam("files") MultipartFile[] files, @RequestParam("folder_name") String folderName, @RequestParam("id") int id) {
+    //     QualificationFilesEntity entity = new QualificationFilesEntity();
+    //     entity.setQualifications_id(id);
 
-        fileService.fileUpload(files, folderName, entity);
-        return qualificationsService.getQualificationsFilesById(id);
-        // return result;
-    }
+    //     fileService.fileUpload(files, folderName, entity);
+    //     return qualificationsService.getQualificationsFilesById(id);
+    //     // return result;
+    // }
 }

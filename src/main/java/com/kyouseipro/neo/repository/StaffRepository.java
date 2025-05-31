@@ -123,8 +123,15 @@ public class StaffRepository {
     // 全件取得の例（必要に応じて）
     public List<StaffEntity> findAll() {
         return genericRepository.findAll(
-            "SELECT * FROM staffs WHERE NOT (state = ?)",
-            ps -> ps.setInt(1, Enums.state.DELETE.getCode()),
+            "SELECT s.*, c.name as company_name, o.name as office_name FROM staffs s" + 
+            " INNER LEFT OUTER JOIN companies c ON c.company_id = s.company_id" + 
+            " INNER LEFT OUTER JOIN offices o ON o.office_id = s.office_id" + 
+            " WHERE NOT (c.category = 0) AND NOT (s.state = ?) AND NOT (c.state = ?) AND NOT (o.state = ?)",
+            ps -> {
+                ps.setInt(1, Enums.state.DELETE.getCode());     // 1番目の ?
+                ps.setInt(2, Enums.state.DELETE.getCode());     // 2番目の ?
+                ps.setInt(3, Enums.state.DELETE.getCode());     // 3番目の ?
+            },
             StaffEntity::new
         );
     }

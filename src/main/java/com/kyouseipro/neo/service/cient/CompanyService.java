@@ -75,18 +75,19 @@ public class CompanyService {
     //     return sqlRepository.getEntityList(sqlData);
     // }
 
-    // /**
-    //  * すべてのClientを取得
-    //  * @return
-    //  */
-    // public List<Entity> getClientList() {
-    //     StringBuilder sb = new StringBuilder();
-    //     sb.append(CompanyListEntity.selectString());
-    //     sb.append(" WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") AND NOT (category = 0);");
-    //     SqlData sqlData = new SqlData();
-    //     sqlData.setData(sb.toString(), new CompanyListEntity());
-    //     return sqlRepository.getEntityList(sqlData);
-    // }
+    /**
+     * すべてのClientを取得
+     * @return
+     */
+    public List<CompanyEntity> getClientList() {
+        return companyRepository.findAllClient();
+        // StringBuilder sb = new StringBuilder();
+        // sb.append(CompanyListEntity.selectString());
+        // sb.append(" WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") AND NOT (category = 0);");
+        // SqlData sqlData = new SqlData();
+        // sqlData.setData(sb.toString(), new CompanyListEntity());
+        // return sqlRepository.getEntityList(sqlData);
+    }
 
     // /**
     //  * カテゴリー別のCompanyを取得

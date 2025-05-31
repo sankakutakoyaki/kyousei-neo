@@ -78,18 +78,19 @@ public class OfficeService {
     //     return sqlRepository.getEntityList(sqlData);
     // }
 
-    // /**
-    //  * すべてのClientOfficeを取得
-    //  * @return
-    //  */
-    // public List<Entity> getClientList() {
-    //     StringBuilder sb = new StringBuilder();
-    //     sb.append(OfficeListEntity.selectString());
-    //     sb.append(" WHERE NOT (o.state = " + Enums.state.DELETE.getNum() + ") AND NOT (c.category = 0);");
-    //     SqlData sqlData = new SqlData();
-    //     sqlData.setData(sb.toString(), new OfficeListEntity());
-    //     return sqlRepository.getEntityList(sqlData);
-    // }
+    /**
+     * すべてのClientOfficeを取得
+     * @return
+     */
+    public List<OfficeEntity> getClientList() {
+        return officeRepository.findAllClient();
+        // StringBuilder sb = new StringBuilder();
+        // sb.append(OfficeListEntity.selectString());
+        // sb.append(" WHERE NOT (o.state = " + Enums.state.DELETE.getNum() + ") AND NOT (c.category = 0);");
+        // SqlData sqlData = new SqlData();
+        // sqlData.setData(sb.toString(), new OfficeListEntity());
+        // return sqlRepository.getEntityList(sqlData);
+    }
 
     // /**
     //  * カテゴリー別のOfficeを取得
