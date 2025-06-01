@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.kyouseipro.neo.entity.person.EmployeeEntity;
+import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.DatabaseService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 

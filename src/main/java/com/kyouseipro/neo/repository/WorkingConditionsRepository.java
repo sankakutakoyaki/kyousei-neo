@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.corporation.CompanyEntity;
-import com.kyouseipro.neo.entity.person.WorkingConditionsEntity;
+import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
+import com.kyouseipro.neo.query.parameter.WorkingConditionsParameterBinder;
+import com.kyouseipro.neo.query.sql.WorkingConditionsSqlBuilder;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,90 +22,28 @@ public class WorkingConditionsRepository {
 
     // INSERT
     public Integer insertWorkingConditions(WorkingConditionsEntity w, String editor) {
-        String sql =
-            "DECLARE @Inserted TABLE (working_conditions_id INT);" +
-            "INSERT INTO working_conditions (employee_id, code, category, payment_method, pay_type, base_salary, trans_cost, basic_start_time, basic_end_time, version, state) " +
-            "OUTPUT INSERTED.working_conditions_id INTO @Inserted " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);" +
-            "INSERT INTO working_conditions_log (working_conditions_id, editor, process, log_date, employee_id, code, category, payment_method, pay_type, base_salary, trans_cost, basic_start_time, basic_end_time, version, state) " +
-            "SELECT w.working_conditions_id, ?, 'INSERT', CURRENT_TIMESTAMP, w.employee_id, w.code, w.category, w.payment_method, w.pay_type, w.base_salary, w.trans_cost, w.basic_start_time, w.basic_end_time, w.version, w.state " +
-            "FROM working_conditions w INNER JOIN @Inserted i ON w.working_conditions_id = i.working_conditions_id;" +
-            "SELECT working_conditions_id FROM @Inserted;";
+        String sql = WorkingConditionsSqlBuilder.buildInsertSql();
 
-        return sqlRepository.execSql(conn -> {
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, w.getEmployee_id());
-                pstmt.setInt(2, w.getCode());
-                pstmt.setInt(3, w.getCategory());
-                pstmt.setInt(4, w.getPayment_method());
-                pstmt.setInt(5, w.getPay_type());
-                pstmt.setInt(6, w.getBase_salary());
-                pstmt.setInt(7, w.getTrans_cost());
-                pstmt.setTime(8, Time.valueOf(w.getBasic_start_time()));
-                pstmt.setTime(9, Time.valueOf(w.getBasic_end_time()));
-                pstmt.setInt(10, w.getVersion());
-                pstmt.setInt(11, w.getState());
-
-                pstmt.setString(12, editor);
-
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getInt("working_conditions_id");
-                    }
-                }
-
-                return null;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+        return sqlRepository.execute(
+            sql,
+            (pstmt, entity) -> WorkingConditionsParameterBinder.bindInsertParameters(pstmt, entity, editor),
+            rs -> rs.next() ? rs.getInt("working_conditions_id") : null,
+            w
+        );
     }
 
     // UPDATE
     public Integer updateWorkingConditions(WorkingConditionsEntity w, String editor) {
-        String sql =
-            "DECLARE @Updated TABLE (working_conditions_id INT);" +
-            "UPDATE working_conditions SET employee_id=?, code=?, category=?, payment_method=?, pay_type=?, base_salary=?, trans_cost=?, basic_start_time=?, basic_end_time=?, version=?, state=? " +
-            "OUTPUT INSERTED.working_conditions_id INTO @Updated " +
-            "WHERE working_conditions_id=?;" +
-            "INSERT INTO working_conditions_log (working_conditions_id, editor, process, log_date, employee_id, code, category, payment_method, pay_type, base_salary, trans_cost, basic_start_time, basic_end_time, version, state) " +
-            "SELECT w.working_conditions_id, ?, 'UPDATE', CURRENT_TIMESTAMP, w.employee_id, w.code, w.category, w.payment_method, w.pay_type, w.base_salary, w.trans_cost, w.basic_start_time, w.basic_end_time, w.version, w.state " +
-            "FROM working_conditions w INNER JOIN @Updated u ON w.working_conditions_id = u.working_conditions_id;" +
-            "SELECT working_conditions_id FROM @Updated;";
+        String sql = WorkingConditionsSqlBuilder.buildUpdateSql();
 
-        return sqlRepository.execSql(conn -> {
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, w.getEmployee_id());
-                pstmt.setInt(2, w.getCode());
-                pstmt.setInt(3, w.getCategory());
-                pstmt.setInt(4, w.getPayment_method());
-                pstmt.setInt(5, w.getPay_type());
-                pstmt.setInt(6, w.getBase_salary());
-                pstmt.setInt(7, w.getTrans_cost());
-                pstmt.setTime(8, Time.valueOf(w.getBasic_start_time()));
-                pstmt.setTime(9, Time.valueOf(w.getBasic_end_time()));
-                pstmt.setInt(10, w.getVersion());
-                pstmt.setInt(11, w.getState());
-
-                pstmt.setInt(12, w.getWorking_conditions_id());
-
-                pstmt.setString(13, editor);
-
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getInt("working_conditions_id");
-                    }
-                }
-
-                return null;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+        return sqlRepository.execute(
+            sql,
+            (pstmt, entity) -> WorkingConditionsParameterBinder.bindUpdateParameters(pstmt, entity, editor),
+            rs -> rs.next() ? rs.getInt("working_conditions_id") : null,
+            w
+        );
     }
-
+    
     // IDで検索
     public WorkingConditionsEntity findById(int workingConditionsId) {
         return genericRepository.findOne(

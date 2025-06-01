@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.entity.data.SqlData;
-import com.kyouseipro.neo.entity.person.EmployeeListEntity;
-import com.kyouseipro.neo.entity.person.TimeworksListEntity;
+import com.kyouseipro.neo.entity.personnel.EmployeeListEntity;
+import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
 import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.repository.SqlRepository;
 

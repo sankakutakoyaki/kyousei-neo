@@ -14,13 +14,13 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.corporation.OfficeEntity;
 import com.kyouseipro.neo.entity.corporation.StaffEntity;
-import com.kyouseipro.neo.entity.person.EmployeeEntity;
+import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.service.ComboBoxService;
 import com.kyouseipro.neo.service.DatabaseService;
-import com.kyouseipro.neo.service.cient.CompanyService;
-import com.kyouseipro.neo.service.cient.OfficeService;
-import com.kyouseipro.neo.service.cient.StaffService;
+import com.kyouseipro.neo.service.company.CompanyService;
+import com.kyouseipro.neo.service.company.OfficeService;
+import com.kyouseipro.neo.service.company.StaffService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
 import lombok.RequiredArgsConstructor;

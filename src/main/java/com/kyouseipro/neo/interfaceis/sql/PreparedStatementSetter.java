@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.interfaceis;
+package com.kyouseipro.neo.interfaceis.sql;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

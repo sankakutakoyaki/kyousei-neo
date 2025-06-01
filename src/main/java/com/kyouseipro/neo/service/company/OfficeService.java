@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.service.cient;
+package com.kyouseipro.neo.service.company;
 
 import java.util.List;
 

@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Repository;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.data.SqlData;
 import com.kyouseipro.neo.interfaceis.Entity;
+import com.kyouseipro.neo.interfaceis.sql.SqlParameterBinder;
+import com.kyouseipro.neo.interfaceis.sql.SqlResultExtractor;
 
 @Repository
 public class SqlRepository {
@@ -63,6 +66,56 @@ public class SqlRepository {
             }
         }
     }
+
+    public <T, R> R execute(
+        String sql,
+        SqlParameterBinder<T> binder,
+        SqlResultExtractor<R> extractor,
+        T entity
+    ) {
+        try (Connection conn = DriverManager.getConnection(url, userName, password);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            binder.bind(pstmt, entity);
+
+            boolean hasResultSet = pstmt.execute();
+            if (hasResultSet) {
+                try (ResultSet rs = pstmt.getResultSet()) {
+                    return extractor.extract(rs);
+                }
+            }
+            return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public <T, P> T findOne(
+        String sql,
+        BiConsumer<PreparedStatement, P> paramSetter,
+        Function<ResultSet, T> resultMapper,
+        P param
+    ) {
+        try (Connection conn = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // 正しく paramSetter を使う
+            paramSetter.accept(pstmt, param);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return resultMapper.apply(rs);
+                }
+            }
+            return null;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     // public boolean execSql(Function<Connection, Boolean> execQuery) {
     //     Connection conn = null;

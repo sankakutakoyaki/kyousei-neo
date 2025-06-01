@@ -42,4 +42,10 @@ public class CompanyEntity implements Entity {
             System.out.println(e);
         }
     }
+
+    public static CompanyEntity from(ResultSet rs) {
+        CompanyEntity entity = new CompanyEntity();
+        entity.setEntity(rs);
+        return entity;
+    }
 }

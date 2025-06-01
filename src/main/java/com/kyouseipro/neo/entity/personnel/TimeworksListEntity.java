@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.entity.person;
+package com.kyouseipro.neo.entity.personnel;
 
 import java.sql.ResultSet;
 import java.time.LocalDate;

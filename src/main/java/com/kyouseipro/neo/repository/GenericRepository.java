@@ -1,14 +1,18 @@
 package com.kyouseipro.neo.repository;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.interfaceis.PreparedStatementSetter;
+import com.kyouseipro.neo.interfaceis.sql.PreparedStatementSetter;
 
 public class GenericRepository {
     private final SqlRepository sqlRepository;
