@@ -9,10 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.component.UploadConfig;
-import com.kyouseipro.neo.entity.common.QualificationFilesEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.repository.QualificationFilesRepository;
+import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
+import com.kyouseipro.neo.repository.qualification.QualificationFilesRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class FileUploadService {
     private final QualificationFilesRepository qualificationFilesRepository;
 
-    public Entity fileUpload(MultipartFile[] files, String folderName, int qualificationsId, String editor) {
+    public SimpleData fileUpload(MultipartFile[] files, String folderName, int qualificationsId, String editor) {
         if (files.length == 0) {
             SimpleData simpleData = new SimpleData();
             simpleData.setText("ファイルが空です");

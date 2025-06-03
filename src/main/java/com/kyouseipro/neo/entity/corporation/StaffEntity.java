@@ -1,16 +1,9 @@
 package com.kyouseipro.neo.entity.corporation;
 
-import java.sql.ResultSet;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.service.DatabaseService;
-
 import lombok.Data;
 
 @Data
-public class StaffEntity implements Entity {
+public class StaffEntity {
     private int staff_id;
     private int company_id;
     private int office_id;
@@ -23,26 +16,26 @@ public class StaffEntity implements Entity {
     private int version;
     private int state;
 
-    private String user_name;
+    // private String user_name;
 
-    @Override
-    public void setEntity(ResultSet rs) {
-        try {
-            this.staff_id = rs.getInt("staff_id");
-            this.company_id = rs.getInt("company_id");
-            this.office_id = rs.getInt("office_id");
-            this.company_name = rs.getString("company_name");
-            this.office_name = rs.getString("office_name");
-            this.name = rs.getString("name");
-            this.name_kana = rs.getString("name_kana");
-            this.phone_number = rs.getString("phone_number");
-            this.email = rs.getString("email");
-            this.version = rs.getInt("version");
-            this.state = rs.getInt("state");
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
+    // @Override
+    // public void setEntity(ResultSet rs) {
+    //     try {
+    //         this.staff_id = rs.getInt("staff_id");
+    //         this.company_id = rs.getInt("company_id");
+    //         this.office_id = rs.getInt("office_id");
+    //         this.company_name = rs.getString("company_name");
+    //         this.office_name = rs.getString("office_name");
+    //         this.name = rs.getString("name");
+    //         this.name_kana = rs.getString("name_kana");
+    //         this.phone_number = rs.getString("phone_number");
+    //         this.email = rs.getString("email");
+    //         this.version = rs.getInt("version");
+    //         this.state = rs.getInt("state");
+    //     } catch (Exception e) {
+    //         System.out.println(e);
+    //     }
+    // }
     
     // public String getInsertString() {
     //     StringBuilder sb = new StringBuilder();

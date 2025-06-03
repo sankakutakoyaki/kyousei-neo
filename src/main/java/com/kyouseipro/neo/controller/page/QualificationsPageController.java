@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.kyouseipro.neo.entity.common.QualificationsEntity;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
+import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
 import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.service.ComboBoxService;
 import com.kyouseipro.neo.service.DatabaseService;
-import com.kyouseipro.neo.service.common.QualificationsService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
+import com.kyouseipro.neo.service.qualification.QualificationsService;
 
 import lombok.RequiredArgsConstructor;
 

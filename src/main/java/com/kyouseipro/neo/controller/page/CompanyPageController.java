@@ -18,9 +18,9 @@ import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.interfaceis.Entity;
 import com.kyouseipro.neo.service.ComboBoxService;
 import com.kyouseipro.neo.service.DatabaseService;
-import com.kyouseipro.neo.service.company.CompanyService;
-import com.kyouseipro.neo.service.company.OfficeService;
-import com.kyouseipro.neo.service.company.StaffService;
+import com.kyouseipro.neo.service.corporation.CompanyService;
+import com.kyouseipro.neo.service.corporation.OfficeService;
+import com.kyouseipro.neo.service.corporation.StaffService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
 import lombok.RequiredArgsConstructor;

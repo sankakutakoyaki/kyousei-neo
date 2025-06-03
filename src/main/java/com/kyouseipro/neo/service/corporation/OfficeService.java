@@ -1,0 +1,131 @@
+package com.kyouseipro.neo.service.corporation;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.kyouseipro.neo.csv.CsvExporter;
+import com.kyouseipro.neo.entity.corporation.OfficeEntity;
+import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.repository.corporation.OfficeRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class OfficeService {
+    private final OfficeRepository officeRepository;
+
+    /**
+     * 指定されたIDの支店情報を取得します。
+     * 論理削除されている場合は null を返します。
+     *
+     * @param id 支店ID
+     * @return OfficeEntity または null
+     */
+    public OfficeEntity getOfficeById(int id) {
+        return officeRepository.findById(id);
+    }
+
+    /**
+     * 支店情報を登録・更新します。
+     * IDが０の時は登録・０以上の時は更新します。
+     * 
+     * @param entity
+     * @param editor
+     * @return
+    */
+    public Integer saveOffice(OfficeEntity entity, String editor) {
+        if (entity.getOffice_id() > 0) {
+            return officeRepository.updateOffice(entity, editor);
+        } else {
+            return officeRepository.insertOffice(entity, editor);
+        }
+    }
+
+    /**
+     * IDからOfficeを削除
+     * @param ids
+     * @return
+     */
+    public Integer deleteOfficeByIds(List<SimpleData> list, String userName) {
+        return officeRepository.deleteOfficeByIds(list, userName);
+    }
+
+    /**
+     * IDからCsv用文字列を取得
+     * @param ids
+     * @return
+     */
+    public String downloadCsvOfficeByIds(List<SimpleData> list, String userName) {
+        List<OfficeEntity> Offices = officeRepository.downloadCsvOfficeByIds(list, userName);
+        return CsvExporter.export(Offices, OfficeEntity.class);
+    }
+
+    // /**
+    //  * IDからOfficeを取得
+    //  * @param account
+    //  * @return
+    //  */
+    // public Entity getOfficeById(int id) {
+    //     StringBuilder sb = new StringBuilder();
+    //     sb.append("SELECT o.*, c.name as company_name FROM offices o");
+    //     sb.append(" INNER JOIN companies c ON c.company_id = o.company_id AND NOT (c.state = "  + Enums.state.DELETE.getNum() + ")");
+    //     sb.append(" WHERE o.office_id = " + id + " AND NOT (o.state = " + Enums.state.DELETE.getNum() + ");");
+    //     SqlData sqlData = new SqlData();
+    //     sqlData.setData(sb.toString(), new OfficeEntity());
+    //     return sqlRepository.getEntity(sqlData);
+    // }
+
+
+
+    // /**
+    //  * Officeを保存
+    //  * @param company
+    //  * @return
+    //  */
+    // public Entity saveOffice(OfficeEntity entity) {
+    //     StringBuilder sb = new StringBuilder();
+    //     if (entity.getOffice_id() > 0) {
+    //         sb.append(entity.getUpdateString());
+    //     } else {
+    //         sb.append(entity.getInsertString());
+    //     }
+    //     return sqlRepository.excuteSqlString(sb.toString());
+    // }
+
+    // /**
+    //  * IDからOfficeeを削除
+    //  * @param ids
+    //  * @return
+    //  */
+    // public Entity deleteOfficeByIds(List<SimpleData> list, String userName) {
+    //     String ids = Utilities.createSequenceByIds(list);
+    //     StringBuilder sb = new StringBuilder();
+    //     sb.append("UPDATE offices SET state = " + Enums.state.DELETE.getNum() + " WHERE company_id IN(" + ids + ");");
+    //     sb.append("DECLARE @ROW_COUNT int;SET @ROW_COUNT = @@ROWCOUNT;");
+    //     sb.append("IF @ROW_COUNT > 0 BEGIN ");
+    //     sb.append(HistoryEntity.insertString(userName, "offices", "削除成功", "@ROW_COUNT", ""));
+    //     sb.append("SELECT 200 as number, '削除しました' as text; END");
+    //     sb.append(" ELSE BEGIN ");
+    //     sb.append(HistoryEntity.insertString(userName, "offices", "削除失敗", "@ROW_COUNT", ""));
+    //     sb.append("SELECT 0 as number, '削除できませんでした' as text; END;");
+    //     return sqlRepository.excuteSqlString(sb.toString());
+    // }
+
+    // /**
+    //  * IDからCsv用文字列を取得
+    //  * @param ids
+    //  * @return
+    //  */
+    // public String downloadCsvOfficeByIds(List<SimpleData> list, String userName) {
+    //     String ids = Utilities.createSequenceByIds(list);
+    //     StringBuilder sb = new StringBuilder();
+    //     sb.append("SELECT * FROM offices WHERE office_id IN(" + ids + ") AND NOT ( state = " + Enums.state.DELETE.getNum() + " );");
+    //     SqlData sqlData = new SqlData();
+    //     sqlData.setData(sb.toString(), new OfficeEntity());
+    //     List<Entity> entities = sqlRepository.getEntityList(sqlData);
+    //     return OfficeEntity.getCsvString(entities);
+    // }
+}
+

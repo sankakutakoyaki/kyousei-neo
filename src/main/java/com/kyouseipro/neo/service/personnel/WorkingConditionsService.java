@@ -1,21 +1,9 @@
 package com.kyouseipro.neo.service.personnel;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
-import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.common.Utilities;
-import com.kyouseipro.neo.entity.corporation.CompanyEntity;
-import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.data.SqlData;
-import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
-import com.kyouseipro.neo.entity.personnel.WorkingConditionsListEntity;
-import com.kyouseipro.neo.entity.record.HistoryEntity;
-import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.repository.SqlRepository;
-import com.kyouseipro.neo.repository.WorkingConditionsRepository;
+import com.kyouseipro.neo.repository.personnel.WorkingConditionsRepository;
 
 import lombok.RequiredArgsConstructor;
 

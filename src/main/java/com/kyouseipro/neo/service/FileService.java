@@ -6,24 +6,15 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.kyouseipro.neo.component.UploadConfig;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.interfaceis.FileUpload;
-import com.kyouseipro.neo.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -287,7 +278,7 @@ public class FileService {
      * @param url 削除するファイルのパス
      * @return
      */
-    public Entity deleteFile(String url) {
+    public SimpleData deleteFile(String url) {
         SimpleData result = new SimpleData();
         try {
             Path filePath = Paths.get(url);

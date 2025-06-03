@@ -24,14 +24,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.component.UploadConfig;
-import com.kyouseipro.neo.entity.common.QualificationFilesEntity;
+import com.kyouseipro.neo.entity.common.AddressEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.data.SqlData;
-import com.kyouseipro.neo.entity.master.AddressEntity;
-import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.repository.SqlRepository;
+import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
+import com.kyouseipro.neo.repository.common.SqlRepository;
 import com.kyouseipro.neo.service.FileService;
-import com.kyouseipro.neo.service.common.QualificationsService;
+import com.kyouseipro.neo.service.qualification.QualificationsService;
 
 import lombok.RequiredArgsConstructor;
 

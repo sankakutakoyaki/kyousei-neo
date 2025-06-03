@@ -4,17 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.common.Utilities;
+import com.kyouseipro.neo.csv.CsvExporter;
 import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.data.SqlData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
-import com.kyouseipro.neo.entity.personnel.EmployeeListEntity;
-import com.kyouseipro.neo.entity.record.HistoryEntity;
-import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.repository.EmployeeRepository;
-import com.kyouseipro.neo.repository.SqlRepository;
+import com.kyouseipro.neo.repository.personnel.EmployeeRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -76,6 +70,27 @@ public class EmployeeService {
         // sqlData.setData(sb.toString(), new EmployeeEntity());
         // return sqlRepository.getEntity(sqlData);
     }
+
+    /**
+     * IDからEmployeeを削除
+     * @param ids
+     * @return
+     */
+    public Integer deleteEmployeeByIds(List<SimpleData> list, String userName) {
+        return employeeRepository.deleteEmployeeByIds(list, userName);
+    }
+
+    /**
+     * IDからCsv用文字列を取得
+     * @param ids
+     * @return
+     */
+    public String downloadCsvEmployeeByIds(List<SimpleData> list, String userName) {
+        List<EmployeeEntity> employees = employeeRepository.downloadCsvEmployeeByIds(list, userName);
+        return CsvExporter.export(employees, EmployeeEntity.class);
+    }
+
+
 
     // /**
     //  * すべてのEmployeeを取得

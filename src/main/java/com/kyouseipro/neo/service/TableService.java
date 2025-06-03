@@ -1,15 +1,7 @@
 package com.kyouseipro.neo.service;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
-import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.entity.corporation.CompanyEntity;
-import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
-import com.kyouseipro.neo.entity.data.SqlData;
-import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 

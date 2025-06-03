@@ -3,8 +3,7 @@ package com.kyouseipro.neo.controller.api;
 import org.springframework.web.bind.annotation.*;
 
 import com.kyouseipro.neo.entity.data.SubscriptionRequest;
-import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.repository.PushRepository;
+import com.kyouseipro.neo.repository.common.PushRepository;
 import com.kyouseipro.neo.service.WebPushService;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -23,47 +22,47 @@ public class PushApiController {
     private final PushRepository pushRepository;
     private final WebPushService webPushService;
     
-    /**
-     * JWT署名を作成
-     * @param message
-     * @param csrftoken
-     * @return
-     * @throws Exception
-     */
-    @PostMapping("/send")
-    public void sendPush(@RequestParam String message, @RequestParam String csrftoken) throws Exception {
+    // /**
+    //  * JWT署名を作成
+    //  * @param message
+    //  * @param csrftoken
+    //  * @return
+    //  * @throws Exception
+    //  */
+    // @PostMapping("/send")
+    // public void sendPush(@RequestParam String message, @RequestParam String csrftoken) throws Exception {
 
-        Security.addProvider(new BouncyCastleProvider());
-        List<Entity> list = pushRepository.getList();
-        for (Entity entity : list) {
-            SubscriptionRequest subscriptionRequest = (SubscriptionRequest)entity;
+    //     Security.addProvider(new BouncyCastleProvider());
+    //     List<Entity> list = pushRepository.getList();
+    //     for (Entity entity : list) {
+    //         SubscriptionRequest subscriptionRequest = (SubscriptionRequest)entity;
 
-            try {
-                webPushService.sendPushNotification(subscriptionRequest, message);
-                System.out.println("Push通知を送信しました: " + subscriptionRequest.getUsername());
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("送信失敗: " + e.getMessage());
-            }
-        }
-    }
+    //         try {
+    //             webPushService.sendPushNotification(subscriptionRequest, message);
+    //             System.out.println("Push通知を送信しました: " + subscriptionRequest.getUsername());
+    //         } catch (Exception e) {
+    //             e.printStackTrace();
+    //             System.out.println("送信失敗: " + e.getMessage());
+    //         }
+    //     }
+    // }
 
-    /**
-     * クライアントから Pushサブスクリプション情報を受け取る
-     * @param subscriptionRequest
-     */
-    @PostMapping("/subscribe")
-    public boolean subscribe(@RequestBody SubscriptionRequest subscriptionRequest) {
-        SubscriptionRequest result = pushRepository.findByEndpoint(subscriptionRequest.getEndpoint());
-        if (result == null) {
-            pushRepository.save(subscriptionRequest);
-            System.out.println("Push scribe!");
-            return true;
-        } else {
-            System.out.println("scribe failed");
-            return false;
-        }
-    }
+    // /**
+    //  * クライアントから Pushサブスクリプション情報を受け取る
+    //  * @param subscriptionRequest
+    //  */
+    // @PostMapping("/subscribe")
+    // public boolean subscribe(@RequestBody SubscriptionRequest subscriptionRequest) {
+    //     SubscriptionRequest result = pushRepository.findByEndpoint(subscriptionRequest.getEndpoint());
+    //     if (result == null) {
+    //         pushRepository.save(subscriptionRequest);
+    //         System.out.println("Push scribe!");
+    //         return true;
+    //     } else {
+    //         System.out.println("scribe failed");
+    //         return false;
+    //     }
+    // }
 
     /**
      * VAPID公開鍵をクライアントへ渡す

@@ -6,11 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.entity.corporation.OfficeComboEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.data.SqlData;
-import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,8 +17,8 @@ public class ComboBoxService {
      * 性別のリスト
      * @return
      */
-    public List<Entity> getGender() {
-        List<Entity> list = new ArrayList<>();
+    public List<SimpleData> getGender() {
+        List<SimpleData> list = new ArrayList<>();
         for(Enums.gender ent: Enums.gender.values()) {
             SimpleData simpleData = new SimpleData();
             simpleData.setNumber(ent.getCode());
@@ -36,8 +32,8 @@ public class ComboBoxService {
      * 血液型のリスト
      * @return
      */
-    public List<Entity> getBloodType() {
-        List<Entity> list = new ArrayList<>();
+    public List<SimpleData> getBloodType() {
+        List<SimpleData> list = new ArrayList<>();
         for(Enums.bloodType ent: Enums.bloodType.values()) {
             SimpleData simpleData = new SimpleData();
             simpleData.setNumber(ent.getCode());
@@ -51,8 +47,8 @@ public class ComboBoxService {
      * 雇用形態のリスト
      * @return
      */
-    public List<Entity> getEmployeeCategory() {
-        List<Entity> list = new ArrayList<>();
+    public List<SimpleData> getEmployeeCategory() {
+        List<SimpleData> list = new ArrayList<>();
         for(Enums.employeeCategory ent: Enums.employeeCategory.values()) {
             SimpleData simpleData = new SimpleData();
             simpleData.setNumber(ent.getCode());
@@ -66,8 +62,8 @@ public class ComboBoxService {
      * 支払い形態のリスト
      * @return
      */
-    public List<Entity> getPaymentMethod() {
-        List<Entity> list = new ArrayList<>();
+    public List<SimpleData> getPaymentMethod() {
+        List<SimpleData> list = new ArrayList<>();
         for(Enums.paymentMethod ent: Enums.paymentMethod.values()) {
             SimpleData simpleData = new SimpleData();
             simpleData.setNumber(ent.getCode());
@@ -81,8 +77,8 @@ public class ComboBoxService {
      * 血液型のリスト
      * @return
      */
-    public List<Entity> getPayType() {
-        List<Entity> list = new ArrayList<>();
+    public List<SimpleData> getPayType() {
+        List<SimpleData> list = new ArrayList<>();
         for(Enums.payType ent: Enums.payType.values()) {
             SimpleData simpleData = new SimpleData();
             simpleData.setNumber(ent.getCode());
@@ -96,7 +92,7 @@ public class ComboBoxService {
     //  * すべての会社リスト
     //  * @return
     //  */
-    // public List<Entity> getCompany() {
+    // public List<SimpleData> getCompany() {
     //     StringBuilder sb = new StringBuilder();
     //     sb.append("SELECT company_id as number, name as text FROM companies WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") ORDER BY name_kana;");
     //     SqlData sqlData = new SqlData();
@@ -108,7 +104,7 @@ public class ComboBoxService {
     //  * すべての会社リスト
     //  * @return
     //  */
-    // public List<Entity> getClient() {
+    // public List<SimpleData> getClient() {
     //     StringBuilder sb = new StringBuilder();
     //     sb.append("SELECT company_id as number, name as text FROM companies WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") AND NOT (category = 0) ORDER BY name_kana;");
     //     SqlData sqlData = new SqlData();
@@ -120,7 +116,7 @@ public class ComboBoxService {
     //  * すべての営業所リスト
     //  * @return
     //  */
-    // public List<Entity> getOffice() {
+    // public List<SimpleData> getOffice() {
     //     StringBuilder sb = new StringBuilder();
     //     sb.append("SELECT company_id, office_id, name as office_name FROM offices WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") ORDER BY name_kana;");
     //     SqlData sqlData = new SqlData();
@@ -132,7 +128,7 @@ public class ComboBoxService {
     //  * すべての資格リスト
     //  * @return
     //  */
-    // public List<Entity> getQualificationMaster() {
+    // public List<SimpleData> getQualificationMaster() {
     //     StringBuilder sb = new StringBuilder();
     //     sb.append("SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") ORDER BY code;");
     //     SqlData sqlData = new SqlData();
@@ -144,7 +140,7 @@ public class ComboBoxService {
     //  * すべての許可証リスト
     //  * @return
     //  */
-    // public List<Entity> getLicenseMaster() {
+    // public List<SimpleData> getLicenseMaster() {
     //     StringBuilder sb = new StringBuilder();
     //     sb.append("SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") AND category_name = '許可' ORDER BY code;");
     //     SqlData sqlData = new SqlData();

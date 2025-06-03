@@ -1,14 +1,11 @@
 package com.kyouseipro.neo.entity.personnel;
 
-import java.sql.ResultSet;
 import java.time.LocalTime;
-
-import com.kyouseipro.neo.interfaceis.Entity;
 
 import lombok.Data;
 
 @Data
-public class WorkingConditionsEntity implements Entity {
+public class WorkingConditionsEntity {
     private int working_conditions_id;
     private int employee_id;
     private String office_name;
@@ -25,30 +22,30 @@ public class WorkingConditionsEntity implements Entity {
     private int version;
     private int state;
 
-    private String user_name;
+    // private String user_name;
 
-    @Override
-    public void setEntity(ResultSet rs) {
-        try {
-            this.working_conditions_id = rs.getInt("working_conditions_id");
-            this.employee_id = rs.getInt("employee_id");
-            this.office_name = rs.getString("office_name");
-            this.code = rs.getInt("code");
-            this.category = rs.getInt("category");
-            this.full_name = rs.getString("full_name");
-            this.full_name_kana = rs.getString("full_name_kana");
-            this.payment_method = rs.getInt("payment_method");
-            this.pay_type = rs.getInt("pay_type");
-            this.base_salary = rs.getInt("base_salary");
-            this.trans_cost = rs.getInt("trans_cost");
-            this.basic_start_time = rs.getTime("basic_start_time").toLocalTime();
-            this.basic_end_time = rs.getTime("basic_end_time").toLocalTime();
-            this.version = rs.getInt("version");
-            this.state = rs.getInt("state");
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
+    // @Override
+    // public void setEntity(ResultSet rs) {
+    //     try {
+    //         this.working_conditions_id = rs.getInt("working_conditions_id");
+    //         this.employee_id = rs.getInt("employee_id");
+    //         this.office_name = rs.getString("office_name");
+    //         this.code = rs.getInt("code");
+    //         this.category = rs.getInt("category");
+    //         this.full_name = rs.getString("full_name");
+    //         this.full_name_kana = rs.getString("full_name_kana");
+    //         this.payment_method = rs.getInt("payment_method");
+    //         this.pay_type = rs.getInt("pay_type");
+    //         this.base_salary = rs.getInt("base_salary");
+    //         this.trans_cost = rs.getInt("trans_cost");
+    //         this.basic_start_time = rs.getTime("basic_start_time").toLocalTime();
+    //         this.basic_end_time = rs.getTime("basic_end_time").toLocalTime();
+    //         this.version = rs.getInt("version");
+    //         this.state = rs.getInt("state");
+    //     } catch (Exception e) {
+    //         System.out.println(e);
+    //     }
+    // }
 
     // /**
     //  * セレクト用基本文字列

@@ -1,10 +1,14 @@
 package com.kyouseipro.neo.common;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.interfaceis.CodeEnum;
+import com.kyouseipro.neo.interfaceis.CsvExportable;
 
 public class Utilities {
     /**
@@ -28,11 +32,58 @@ public class Utilities {
      * @param list
      * @return
      */
-    public static String createSequenceByIds(List<SimpleData> list) {
-        StringBuilder idsStr = new StringBuilder();
+    // public static String createSequenceByIds(List<SimpleData> list) {
+    //     StringBuilder idsStr = new StringBuilder();
+    //     list.forEach(value -> {
+    //         idsStr.append(value.getNumber()).append(", ");
+    //     });
+    //     return idsStr.substring(0, idsStr.length() - 2);
+    // }
+    public static List<Integer> createSequenceByIds(List<SimpleData> list) {
+        List<Integer> ids = new ArrayList<>();
         list.forEach(value -> {
-            idsStr.append(value.getNumber()).append(", ");
+            ids.add(value.getNumber());
         });
-        return idsStr.substring(0, idsStr.length() - 2);
+        return ids;
+    }
+
+    /**
+     * プレースホルダー（？）の数を動的に変更する
+     * @param count
+     * @return
+     */
+    public static String generatePlaceholders(int count) {
+        return IntStream.range(0, count)
+                .mapToObj(i -> "?")
+                .collect(Collectors.joining(", "));
+    }
+
+    /**
+     * 
+     * @param value
+     * @return
+     */
+    public static String escapeCsv(String value) {
+        if (value == null) return "";
+        if (value.contains(",") || value.contains("\n") || value.contains("\"")) {
+            value = value.replace("\"", "\"\"");
+            return "\"" + value + "\"";
+        }
+        return value;
+    }
+
+    /**
+     * 
+     * @param list
+     * @param headers
+     * @return
+     */
+    public static String toCsv(List<? extends CsvExportable> list, List<String> headers) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.join(",", headers)).append("\n");
+        for (CsvExportable item : list) {
+            sb.append(String.join(",", item.toCsvRow())).append("\n");
+        }
+        return sb.toString();
     }
 }

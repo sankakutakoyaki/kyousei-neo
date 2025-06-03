@@ -2,9 +2,6 @@ package com.kyouseipro.neo.service;
 
 import org.springframework.stereotype.Service;
 
-import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.record.HistoryEntity;
-import com.kyouseipro.neo.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 
