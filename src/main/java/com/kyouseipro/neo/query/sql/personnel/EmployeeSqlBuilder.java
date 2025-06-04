@@ -88,7 +88,7 @@ public class EmployeeSqlBuilder {
             "SELECT employee_id FROM @UpdatedRows;";
     }
 
-    public static String buildDownloadCsvCompanyForIdsSql(int count) {
+    public static String buildDownloadCsvEmployeeForIdsSql(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return "SELECT * FROM employees WHERE employee_id IN (" + placeholders + ") \" + NOT (state = ?)";
     }

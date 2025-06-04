@@ -4,7 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.csv.CsvExporter;
 import com.kyouseipro.neo.entity.corporation.StaffEntity;
+import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.repository.corporation.StaffRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -39,6 +42,25 @@ public class StaffService {
         } else {
             return staffRepository.insertStaff(entity, editor);
         }
+    }
+
+    /**
+     * IDからStaffを削除
+     * @param ids
+     * @return
+     */
+    public Integer deleteStaffByIds(List<SimpleData> list, String userName) {
+        return staffRepository.deleteStaffByIds(list, userName);
+    }
+
+    /**
+     * IDからCsv用文字列を取得
+     * @param ids
+     * @return
+     */
+    public String downloadCsvStaffByIds(List<SimpleData> list, String userName) {
+        List<StaffEntity> staffs = staffRepository.downloadCsvStaffByIds(list, userName);
+        return CsvExporter.export(staffs, StaffEntity.class);
     }
 
     // /**

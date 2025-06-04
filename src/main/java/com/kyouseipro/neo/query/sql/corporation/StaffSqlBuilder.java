@@ -1,5 +1,7 @@
 package com.kyouseipro.neo.query.sql.corporation;
 
+import com.kyouseipro.neo.common.Utilities;
+
 public class StaffSqlBuilder {
 
     public static String buildInsertStaffSql() {
@@ -35,5 +37,25 @@ public class StaffSqlBuilder {
             " INNER LEFT OUTER JOIN companies c ON c.company_id = s.company_id" + 
             " INNER LEFT OUTER JOIN offices o ON o.office_id = s.office_id" + 
             " WHERE NOT (c.category = 0) AND NOT (s.state = ?) AND NOT (c.state = ?) AND NOT (o.state = ?)";
+    }
+
+    public static String buildDeleteStaffForIdsSql(int count) {
+        String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
+        return
+            "DECLARE @DeletedRows TABLE (staff_id INT); " +
+            "UPDATE staffs " +
+            "SET state = ? " +
+            "OUTPUT INSERTED.staff_id INTO @DeletedRows " +
+            "WHERE staff_id IN (" + placeholders + ") " +
+            "AND NOT (state = ?); " +
+
+            "INSERT INTO staffs_log (staff_id, editor, process, log_date, company_id, office_id, company_name, office_name, name, name_kana, phone_number, email, version, state) " +
+            "SELECT s.staff_id, ?, 'UPDATE', CURRENT_TIMESTAMP, s.company_id, s.office_id, s.company_name, s.office_name, s.name, s.name_kana, s.phone_number, s.email, s.version, s.state " +
+            "FROM staffs s INNER JOIN @UpdatedRows ur ON s.staff_id = ur.staff_id;";
+    }
+
+    public static String buildDownloadCsvStaffForIdsSql(int count) {
+        String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
+        return "SELECT * FROM staffs WHERE staff_id IN (" + placeholders + ") \" + NOT (state = ?)";
     }
 }

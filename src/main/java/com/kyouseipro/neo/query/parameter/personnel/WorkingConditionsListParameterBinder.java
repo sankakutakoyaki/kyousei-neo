@@ -9,4 +9,8 @@ public class WorkingConditionsListParameterBinder {
     public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
         ps.setInt(1, Enums.state.DELETE.getCode());
     }
+
+    public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
+        ps.setInt(1, Enums.state.DELETE.getCode());
+    }
 }

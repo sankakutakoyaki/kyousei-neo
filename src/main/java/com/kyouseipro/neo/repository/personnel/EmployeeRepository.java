@@ -56,7 +56,7 @@ public class EmployeeRepository {
 
     public List<EmployeeEntity> downloadCsvEmployeeByIds(List<SimpleData> ids, String editor) {
         List<Integer> employeeIds = Utilities.createSequenceByIds(ids);
-        String sql = EmployeeSqlBuilder.buildDownloadCsvCompanyForIdsSql(employeeIds.size());
+        String sql = EmployeeSqlBuilder.buildDownloadCsvEmployeeForIdsSql(employeeIds.size());
 
         return sqlRepository.findAll(
             sql,

@@ -1,9 +1,12 @@
 package com.kyouseipro.neo.entity.corporation;
 
+import com.kyouseipro.neo.common.Utilities;
+import com.kyouseipro.neo.interfaceis.CsvExportable;
+
 import lombok.Data;
 
 @Data
-public class StaffEntity {
+public class StaffEntity implements CsvExportable{
     private int staff_id;
     private int company_id;
     private int office_id;
@@ -15,6 +18,43 @@ public class StaffEntity {
     private String email;
     private int version;
     private int state;
+
+    // CSVヘッダーを返す static メソッド（必須ではないですが慣例的に付ける）
+    public static String getCsvHeader() {
+        return "ID,担当者,たんとうしゃめい,会社名,支店名,携帯番号,メールアドレス";
+    }
+
+    @Override
+    public String toCsvRow() {
+        return Utilities.escapeCsv(String.valueOf(staff_id)) + "," +
+               Utilities.escapeCsv(name) + "," +
+               Utilities.escapeCsv(name_kana) + "," +
+               Utilities.escapeCsv(company_name) + "," +
+               Utilities.escapeCsv(office_name) + "," +
+               Utilities.escapeCsv(phone_number) + "," +
+               Utilities.escapeCsv(email) + ",";
+    }
+
+
+    //     sb.append("ID,");
+    //     sb.append("担当者名,");
+    //     sb.append("たんとうしゃめい,");
+    //     sb.append("会社名,");
+    //     sb.append("支店名,");
+    //     sb.append("携帯番号,");
+    //     sb.append("メールアドレス,");
+    //     sb.append("\n");
+    //     for (Entity item : items) {
+    //         StaffEntity entity = (StaffEntity) item;
+    //         sb.append(String.valueOf(entity.getStaff_id()) + ",");
+    //         sb.append(entity.getName() + ",");
+    //         sb.append(entity.getName_kana() + ",");
+    //         sb.append(entity.getCompany_name() + ",");
+    //         sb.append(entity.getOffice_name() + ",");
+    //         sb.append(entity.getPhone_number() + ",");
+    //         sb.append(entity.getEmail() + ",");
+
+
 
     // private String user_name;
 

@@ -5,16 +5,12 @@ import java.util.List;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.corporation.StaffEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.corporation.StaffService;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +27,7 @@ public class StaffApiController {
      */
     @PostMapping("/staff/save")
 	@ResponseBody
-    public Integer saveEntity(@RequestBody EmployeeEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public Integer saveEntity(@RequestBody StaffEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
         return staffService.saveStaff(entity, userName);
     }

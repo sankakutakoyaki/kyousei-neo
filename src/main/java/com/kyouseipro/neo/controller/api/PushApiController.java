@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 public class PushApiController {
 
     private final PushRepository pushRepository;
-    private final WebPushService webPushService;
+    // private final WebPushService webPushService;
     
     // /**
     //  * JWT署名を作成
