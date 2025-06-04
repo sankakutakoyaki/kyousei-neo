@@ -8,8 +8,8 @@ import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.corporation.OfficeEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.mapper.corporation.OfficeEntityMapper;
-import com.kyouseipro.neo.query.parameter.company.OfficeParameterBinder;
-import com.kyouseipro.neo.query.sql.company.OfficeSqlBuilder;
+import com.kyouseipro.neo.query.parameter.corporation.OfficeParameterBinder;
+import com.kyouseipro.neo.query.sql.corporation.OfficeSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
 import lombok.RequiredArgsConstructor;

@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.mapper.corporation.OfficeListEntityMapper;
-import com.kyouseipro.neo.query.parameter.company.OfficeListParameterBinder;
-import com.kyouseipro.neo.query.sql.company.OfficeListSqlBuilder;
+import com.kyouseipro.neo.query.parameter.corporation.OfficeListParameterBinder;
+import com.kyouseipro.neo.query.sql.corporation.OfficeListSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
 import lombok.RequiredArgsConstructor;

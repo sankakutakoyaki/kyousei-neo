@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.entity.corporation.StaffEntity;
 import com.kyouseipro.neo.mapper.corporation.StaffEntityMapper;
-import com.kyouseipro.neo.query.parameter.company.StaffParameterBinder;
-import com.kyouseipro.neo.query.sql.company.StaffSqlBuilder;
+import com.kyouseipro.neo.query.parameter.corporation.StaffParameterBinder;
+import com.kyouseipro.neo.query.sql.corporation.StaffSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
 import lombok.RequiredArgsConstructor;

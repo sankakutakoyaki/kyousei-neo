@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.query.sql.company;
+package com.kyouseipro.neo.query.sql.corporation;
 
 public class StaffSqlBuilder {
 

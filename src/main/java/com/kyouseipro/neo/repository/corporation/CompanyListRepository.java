@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
 import com.kyouseipro.neo.mapper.corporation.CompanyListEntityMapper;
-import com.kyouseipro.neo.query.parameter.company.CompanyListParameterBinder;
-import com.kyouseipro.neo.query.sql.company.CompanyListSqlBuilder;
+import com.kyouseipro.neo.query.parameter.corporation.CompanyListParameterBinder;
+import com.kyouseipro.neo.query.sql.corporation.CompanyListSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
 import lombok.RequiredArgsConstructor;

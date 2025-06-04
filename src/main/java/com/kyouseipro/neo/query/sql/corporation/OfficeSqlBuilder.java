@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.query.sql.company;
+package com.kyouseipro.neo.query.sql.corporation;
 
 import com.kyouseipro.neo.common.Utilities;
 

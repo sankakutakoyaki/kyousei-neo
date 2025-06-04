@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.query.parameter.company;
+package com.kyouseipro.neo.query.parameter.corporation;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
