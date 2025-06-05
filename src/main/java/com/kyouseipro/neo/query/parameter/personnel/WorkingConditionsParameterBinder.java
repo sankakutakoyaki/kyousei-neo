@@ -3,6 +3,7 @@ package com.kyouseipro.neo.query.parameter.personnel;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
@@ -50,6 +51,23 @@ public class WorkingConditionsParameterBinder {
 
     public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
         ps.setInt(1, Enums.state.DELETE.getCode());
+    }
+
+    public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
+        for (Integer id : ids) {
+            ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
+        }
+        ps.setInt(index, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+    }
+
+    public static void bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+        int index = 1;
+        for (Integer id : ids) {
+            ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
+        }
+        ps.setInt(index, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
     }
 }
 

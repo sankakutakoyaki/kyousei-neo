@@ -14,8 +14,8 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
 import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.service.ComboBoxService;
 import com.kyouseipro.neo.service.DatabaseService;
+import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 import com.kyouseipro.neo.service.personnel.WorkingConditionsService;
 

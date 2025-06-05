@@ -3,11 +3,12 @@ package com.kyouseipro.neo.entity.personnel;
 import java.time.LocalTime;
 
 import com.kyouseipro.neo.common.Utilities;
+import com.kyouseipro.neo.interfaceis.CsvExportable;
 
 import lombok.Data;
 
 @Data
-public class WorkingConditionsEntity {
+public class WorkingConditionsEntity implements CsvExportable {
     private int working_conditions_id;
     private int employee_id;
     private String office_name;
@@ -26,18 +27,22 @@ public class WorkingConditionsEntity {
 
     // CSVヘッダーを返す static メソッド（必須ではないですが慣例的に付ける）
     public static String getCsvHeader() {
-        return "ID,担当者,たんとうしゃめい,会社名,支店名,携帯番号,メールアドレス";
+        return "ID,コード,営業所,名前,かな,支払い方法,給与形態,基本給/時給,交通費,基本始業時刻,基本就業時刻";
     }
-
+    
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(staff_id)) + "," +
-               Utilities.escapeCsv(name) + "," +
-               Utilities.escapeCsv(name_kana) + "," +
-               Utilities.escapeCsv(company_name) + "," +
+        return Utilities.escapeCsv(String.valueOf(employee_id)) + "," +
+               Utilities.escapeCsv(String.valueOf(code)) + "," +
                Utilities.escapeCsv(office_name) + "," +
-               Utilities.escapeCsv(phone_number) + "," +
-               Utilities.escapeCsv(email) + ",";
+               Utilities.escapeCsv(full_name) + "," +
+               Utilities.escapeCsv(full_name_kana) + "," +
+               Utilities.escapeCsv(String.valueOf(payment_method)) + "," +
+               Utilities.escapeCsv(String.valueOf(pay_type)) + "," +
+               Utilities.escapeCsv(String.valueOf(base_salary)) + "," +
+               Utilities.escapeCsv(String.valueOf(trans_cost)) + "," +
+               Utilities.escapeCsv(String.valueOf(basic_start_time)) + "," +
+               Utilities.escapeCsv(String.valueOf(basic_end_time));
     }
 
     // private String user_name;

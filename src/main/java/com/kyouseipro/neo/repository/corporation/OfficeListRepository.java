@@ -5,8 +5,12 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
+import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.mapper.corporation.OfficeListEntityMapper;
+import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
+import com.kyouseipro.neo.query.parameter.corporation.CompanyListParameterBinder;
 import com.kyouseipro.neo.query.parameter.corporation.OfficeListParameterBinder;
+import com.kyouseipro.neo.query.sql.corporation.CompanyListSqlBuilder;
 import com.kyouseipro.neo.query.sql.corporation.OfficeListSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
@@ -47,6 +51,17 @@ public class OfficeListRepository {
             sql,
             ps -> OfficeListParameterBinder.bindFindAllByCategoryId(ps, categoryId),
             OfficeListEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+
+    // コンボボックス用リスト取得
+    public List<SimpleData> findAllCombo() {
+        String sql = OfficeListSqlBuilder.buildFindAllComboClientSql();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> OfficeListParameterBinder.bindFindAllCombo(ps, null),
+            SimpleDataMapper::map
         );
     }
 }

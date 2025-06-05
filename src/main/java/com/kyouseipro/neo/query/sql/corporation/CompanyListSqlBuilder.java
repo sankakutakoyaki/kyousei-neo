@@ -7,10 +7,10 @@ public class CompanyListSqlBuilder {
     }
 
     public static String buildFindAllClientSql() {
-        return "SELECT * FROM companies WHERE NOT (category = ?) AND NOT (state = ?)";
+        return "SELECT * FROM companies WHERE NOT (state = ?) AND NOT (category = ?)";
     }
 
-    public static String buildFindAllClientSql(int categoryId) {
-        return "SELECT * FROM companies WHERE NOT (category = ?) AND NOT (state = ?)";
+    public static String buildFindAllComboClientSql() {
+        return "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND NOT (category = ?) ORDER BY name_kana;";
     }
 }

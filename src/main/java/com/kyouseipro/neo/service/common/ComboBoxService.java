@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.service;
+package com.kyouseipro.neo.service.common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,13 +6,19 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.repository.corporation.CompanyListRepository;
+import com.kyouseipro.neo.repository.corporation.OfficeListRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ComboBoxService {
+    private final CompanyListRepository companyListRepository;
+    private final OfficeListRepository officeListRepository;
+
     /**
      * 性別のリスト
      * @return
@@ -99,6 +105,14 @@ public class ComboBoxService {
     //     sqlData.setData(sb.toString(), new SimpleData());
     //     return sqlRepository.getEntityList(sqlData);
     // }
+
+    public List<SimpleData> getClientList() {
+        return companyListRepository.findAllComboClient();
+    }
+
+    public List<SimpleData> getOfficeList() {
+        return officeListRepository.findAllCombo();
+    }
 
     // /**
     //  * すべての会社リスト

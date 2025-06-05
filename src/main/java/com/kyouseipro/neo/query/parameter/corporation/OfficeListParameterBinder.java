@@ -18,8 +18,14 @@ public class OfficeListParameterBinder {
     // }
 
      public static void bindFindAllByCategoryId(PreparedStatement ps, Integer categoryId) throws SQLException {
-        ps.setInt(1, categoryId);
+        ps.setInt(1, Enums.state.DELETE.getCode());
         ps.setInt(2, Enums.state.DELETE.getCode());
-        ps.setInt(3, Enums.state.DELETE.getCode());
+        ps.setInt(3, categoryId);
+    }
+
+    public static void bindFindAllCombo(PreparedStatement ps, Integer categoryId) throws SQLException {
+        ps.setInt(1, Enums.state.DELETE.getCode());
+        ps.setInt(2, Enums.state.DELETE.getCode());
+        ps.setInt(3, categoryId);
     }
 }

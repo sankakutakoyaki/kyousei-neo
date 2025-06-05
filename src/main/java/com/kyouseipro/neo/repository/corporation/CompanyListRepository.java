@@ -3,7 +3,9 @@ package com.kyouseipro.neo.repository.corporation;
 import java.util.List;
 
 import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
+import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.mapper.corporation.CompanyListEntityMapper;
+import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
 import com.kyouseipro.neo.query.parameter.corporation.CompanyListParameterBinder;
 import com.kyouseipro.neo.query.sql.corporation.CompanyListSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
@@ -36,14 +38,25 @@ public class CompanyListRepository {
         );
     }
 
-    // 全件取得
-    public List<CompanyListEntity> findByCategoryId(int categoryId) {
-        String sql = CompanyListSqlBuilder.buildFindAllSql();
+    // // 全件取得
+    // public List<CompanyListEntity> findByCategoryId(int categoryId) {
+    //     String sql = CompanyListSqlBuilder.buildFindAllSql();
+
+    //     return sqlRepository.findAll(
+    //         sql,
+    //         ps -> CompanyListParameterBinder.bindFindAllByCategoryId(ps, categoryId),
+    //         CompanyListEntityMapper::map // ← ここで ResultSet を map
+    //     );
+    // }
+
+    // コンボボックス用リスト取得
+    public List<SimpleData> findAllComboClient() {
+        String sql = CompanyListSqlBuilder.buildFindAllComboClientSql();
 
         return sqlRepository.findAll(
             sql,
-            ps -> CompanyListParameterBinder.bindFindAllByCategoryId(ps, categoryId),
-            CompanyListEntityMapper::map // ← ここで ResultSet を map
+            ps -> CompanyListParameterBinder.bindFindAllComboClient(ps, null),
+            SimpleDataMapper::map
         );
     }
 }

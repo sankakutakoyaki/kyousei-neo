@@ -47,6 +47,7 @@ public class WorkingConditionsRepository {
         );
     }
 
+    // DELETE
     public int deleteWorkingConditionsByIds(List<SimpleData> ids, String editor) {
         List<Integer> workingConditionsIds = Utilities.createSequenceByIds(ids);
         String sql = WorkingConditionsSqlBuilder.buildDeleteWorkingConditionsForIdsSql(workingConditionsIds.size());
@@ -59,6 +60,7 @@ public class WorkingConditionsRepository {
         return result; // 成功件数。0なら削除なし
     }
 
+    // CSV
     public List<WorkingConditionsEntity> downloadCsvWorkingConditionsByIds(List<SimpleData> ids, String editor) {
         List<Integer> workingConditionsIds = Utilities.createSequenceByIds(ids);
         String sql = WorkingConditionsSqlBuilder.buildDownloadCsvWorkingConditionsForIdsSql(workingConditionsIds.size());
@@ -92,7 +94,5 @@ public class WorkingConditionsRepository {
             WorkingConditionsEntityMapper::map // ← ここで ResultSet を map
         );
     }
-
-
 }
 

@@ -12,14 +12,18 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.corporation.CompanyEntity;
+import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
 import com.kyouseipro.neo.entity.corporation.OfficeEntity;
+import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.corporation.StaffEntity;
+import com.kyouseipro.neo.entity.corporation.StaffListEntity;
+import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
-import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.service.ComboBoxService;
 import com.kyouseipro.neo.service.DatabaseService;
-import com.kyouseipro.neo.service.corporation.CompanyService;
-import com.kyouseipro.neo.service.corporation.OfficeService;
+import com.kyouseipro.neo.service.common.ComboBoxService;
+import com.kyouseipro.neo.service.corporation.CompanyListService;
+import com.kyouseipro.neo.service.corporation.OfficeListService;
+import com.kyouseipro.neo.service.corporation.StaffListService;
 import com.kyouseipro.neo.service.corporation.StaffService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
@@ -29,9 +33,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CompanyPageController {
     private final EmployeeService employeeService;
-    private final CompanyService companyService;
-    private final OfficeService officeService;
-    private final StaffService staffService;
+    private final CompanyListService companyListService;
+    private final OfficeListService officeListService;
+    private final StaffListService staffListService;
     private final ComboBoxService comboBoxService;
     private final DatabaseService databaseService;
 
@@ -62,19 +66,19 @@ public class CompanyPageController {
         mv.addObject("staffEntity", new StaffEntity());
 
         // 初期表示用Clientリスト取得
-        List<CompanyEntity> companyOrigin = companyService.getClientList();
+        List<CompanyListEntity> companyOrigin = companyListService.getClientList();
         mv.addObject("companyOrigin", companyOrigin);
         // 初期表示用Officeリスト取得
-        List<OfficeEntity> officeOrigin = officeService.getClientList();
+        List<OfficeListEntity> officeOrigin = officeListService.getClientList();
         mv.addObject("officeOrigin", officeOrigin);
         // 初期表示用Staffリスト取得
-        List<StaffEntity> staffOrigin = staffService.getStaffList();
+        List<StaffListEntity> staffOrigin = staffListService.getStaffList();
         mv.addObject("staffOrigin", staffOrigin);
 
         // コンボボックスアイテム取得
-        List<Entity> companyComboList = comboBoxService.getClient();
+        List<SimpleData> companyComboList = comboBoxService.getClientList();
         mv.addObject("companyComboList", companyComboList);
-        List<Entity> officeComboList = comboBoxService.getOffice();
+        List<SimpleData> officeComboList = comboBoxService.getOfficeList();
         mv.addObject("officeComboList", officeComboList);
 
         // 保存用コード

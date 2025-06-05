@@ -44,8 +44,10 @@ public class QualificationsParameterBinder {
     }
 
     public static void bindFindById(PreparedStatement ps, Integer qualificationsId) throws SQLException {
-        ps.setInt(1, qualificationsId);
+        ps.setInt(1, Enums.state.DELETE.getCode());
         ps.setInt(2, Enums.state.DELETE.getCode());
+        ps.setInt(3, Enums.state.DELETE.getCode());
+        ps.setInt(4, qualificationsId);
     }
 
     public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {

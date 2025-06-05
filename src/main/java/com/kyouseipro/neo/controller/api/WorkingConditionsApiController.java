@@ -54,7 +54,7 @@ public class WorkingConditionsApiController {
      */
     @PostMapping("/working_conditions/delete")
 	@ResponseBody
-    public WorkingConditionsEntity deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public Integer deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
         return workingConditionsService.deleteWorkingConditionsByIds(ids, userName);
     }
