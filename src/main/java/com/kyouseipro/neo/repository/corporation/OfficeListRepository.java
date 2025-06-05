@@ -28,16 +28,16 @@ public class OfficeListRepository {
         );
     }
 
-    // 全件取得
-    public List<OfficeListEntity> findAllClient() {
-        String sql = OfficeListSqlBuilder.buildFindAllClientSql();
+    // // 全件取得
+    // public List<OfficeListEntity> findAllClient() {
+    //     String sql = OfficeListSqlBuilder.buildFindAllClientSql();
 
-        return sqlRepository.findAll(
-            sql,
-            ps -> OfficeListParameterBinder.bindFindAllClient(ps, null),
-            OfficeListEntityMapper::map
-        );
-    }
+    //     return sqlRepository.findAll(
+    //         sql,
+    //         ps -> OfficeListParameterBinder.bindFindAllClient(ps, null),
+    //         OfficeListEntityMapper::map
+    //     );
+    // }
 
     // 全件取得
     public List<OfficeListEntity> findByCategoryId(int categoryId) {
@@ -45,7 +45,7 @@ public class OfficeListRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> OfficeListParameterBinder.bindFindAllByCategoryId(ps, null),
+            ps -> OfficeListParameterBinder.bindFindAllByCategoryId(ps, categoryId),
             OfficeListEntityMapper::map // ← ここで ResultSet を map
         );
     }

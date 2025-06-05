@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.entity.personnel.EmployeeListEntity;
+import com.kyouseipro.neo.mapper.personnel.EmployeeEntityMapper;
 import com.kyouseipro.neo.mapper.personnel.EmployeeListEntityMapper;
 import com.kyouseipro.neo.query.parameter.personnel.EmployeeListParameterBinder;
+import com.kyouseipro.neo.query.parameter.personnel.EmployeeParameterBinder;
 import com.kyouseipro.neo.query.sql.personnel.EmployeeListSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
@@ -34,7 +36,7 @@ public class EmployeeListRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> EmployeeListParameterBinder.bindFindAllByCategoryId(ps, null),
+            ps -> EmployeeListParameterBinder.bindFindAllByCategoryId(ps, categoryId),
             EmployeeListEntityMapper::map // ← ここで ResultSet を map
         );
     }

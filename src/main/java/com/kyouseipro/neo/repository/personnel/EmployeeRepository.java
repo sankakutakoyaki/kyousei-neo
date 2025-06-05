@@ -41,7 +41,6 @@ public class EmployeeRepository {
         );
     }
 
-
     public int deleteEmployeeByIds(List<SimpleData> ids, String editor) {
         List<Integer> employeeIds = Utilities.createSequenceByIds(ids);
         String sql = EmployeeSqlBuilder.buildDeleteEmployeeForIdsSql(employeeIds.size());

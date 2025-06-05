@@ -1,7 +1,12 @@
 package com.kyouseipro.neo.service.personnel;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.csv.CsvExporter;
+import com.kyouseipro.neo.entity.corporation.StaffEntity;
+import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
 import com.kyouseipro.neo.repository.personnel.WorkingConditionsRepository;
 
@@ -37,6 +42,25 @@ public class WorkingConditionsService {
         } else {
             return workingConditionsRepository.insertWorkingConditions(entity, editor);
         }
+    }
+
+    /**
+     * IDからWorkingConditionsを削除
+     * @param ids
+     * @return
+     */
+    public Integer deleteWorkingConditionsByIds(List<SimpleData> list, String userName) {
+        return workingConditionsRepository.deleteWorkingConditionsByIds(list, userName);
+    }
+
+    /**
+     * IDからCsv用文字列を取得
+     * @param ids
+     * @return
+     */
+    public String downloadCsvWorkingConditionsByIds(List<SimpleData> list, String userName) {
+        List<WorkingConditionsEntity> workingConditions = workingConditionsRepository.downloadCsvWorkingConditionsByIds(list, userName);
+        return CsvExporter.export(workingConditions, WorkingConditionsEntity.class);
     }
 
     // /**

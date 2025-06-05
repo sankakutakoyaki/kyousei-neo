@@ -34,7 +34,7 @@ public class OfficeListService {
      * @return
      */
     public List<OfficeListEntity> getClientList() {
-        return officeListRepository.findAllClient();
+        return officeListRepository.findByCategoryId(0);
         // StringBuilder sb = new StringBuilder();
         // sb.append(OfficeListEntity.selectString());
         // sb.append(" WHERE NOT (o.state = " + Enums.state.DELETE.getNum() + ") AND NOT (c.category = 0);");

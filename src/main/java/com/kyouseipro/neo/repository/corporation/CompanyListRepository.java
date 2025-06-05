@@ -42,7 +42,7 @@ public class CompanyListRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> CompanyListParameterBinder.bindFindAllByCategoryId(ps, null),
+            ps -> CompanyListParameterBinder.bindFindAllByCategoryId(ps, categoryId),
             CompanyListEntityMapper::map // ← ここで ResultSet を map
         );
     }

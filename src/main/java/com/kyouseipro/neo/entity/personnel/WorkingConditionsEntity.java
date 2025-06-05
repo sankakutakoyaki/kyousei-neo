@@ -2,6 +2,8 @@ package com.kyouseipro.neo.entity.personnel;
 
 import java.time.LocalTime;
 
+import com.kyouseipro.neo.common.Utilities;
+
 import lombok.Data;
 
 @Data
@@ -21,6 +23,22 @@ public class WorkingConditionsEntity {
     private LocalTime basic_end_time = LocalTime.of(0, 0);
     private int version;
     private int state;
+
+    // CSVヘッダーを返す static メソッド（必須ではないですが慣例的に付ける）
+    public static String getCsvHeader() {
+        return "ID,担当者,たんとうしゃめい,会社名,支店名,携帯番号,メールアドレス";
+    }
+
+    @Override
+    public String toCsvRow() {
+        return Utilities.escapeCsv(String.valueOf(staff_id)) + "," +
+               Utilities.escapeCsv(name) + "," +
+               Utilities.escapeCsv(name_kana) + "," +
+               Utilities.escapeCsv(company_name) + "," +
+               Utilities.escapeCsv(office_name) + "," +
+               Utilities.escapeCsv(phone_number) + "," +
+               Utilities.escapeCsv(email) + ",";
+    }
 
     // private String user_name;
 

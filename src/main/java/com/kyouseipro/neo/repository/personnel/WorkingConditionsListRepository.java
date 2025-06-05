@@ -38,7 +38,7 @@ public class WorkingConditionsListRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> WorkingConditionsListParameterBinder.bindFindAllByCategoryId(ps, null),
+            ps -> WorkingConditionsListParameterBinder.bindFindAllByCategoryId(ps, categoryId),
             WorkingConditionsListEntityMapper::map // ← ここで ResultSet を map
         );
     }

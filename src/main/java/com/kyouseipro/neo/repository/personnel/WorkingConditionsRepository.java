@@ -4,9 +4,15 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Utilities;
+import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
+import com.kyouseipro.neo.mapper.personnel.EmployeeEntityMapper;
 import com.kyouseipro.neo.mapper.personnel.WorkingConditionsEntityMapper;
+import com.kyouseipro.neo.query.parameter.personnel.EmployeeParameterBinder;
 import com.kyouseipro.neo.query.parameter.personnel.WorkingConditionsParameterBinder;
+import com.kyouseipro.neo.query.sql.personnel.EmployeeSqlBuilder;
 import com.kyouseipro.neo.query.sql.personnel.WorkingConditionsSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
@@ -41,6 +47,29 @@ public class WorkingConditionsRepository {
         );
     }
 
+    public int deleteWorkingConditionsByIds(List<SimpleData> ids, String editor) {
+        List<Integer> workingConditionsIds = Utilities.createSequenceByIds(ids);
+        String sql = WorkingConditionsSqlBuilder.buildDeleteWorkingConditionsForIdsSql(workingConditionsIds.size());
+
+        int result = sqlRepository.executeUpdate(
+            sql,
+            ps -> WorkingConditionsParameterBinder.bindDeleteForIds(ps, workingConditionsIds)
+        );
+
+        return result; // 成功件数。0なら削除なし
+    }
+
+    public List<WorkingConditionsEntity> downloadCsvWorkingConditionsByIds(List<SimpleData> ids, String editor) {
+        List<Integer> workingConditionsIds = Utilities.createSequenceByIds(ids);
+        String sql = WorkingConditionsSqlBuilder.buildDownloadCsvWorkingConditionsForIdsSql(workingConditionsIds.size());
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> WorkingConditionsParameterBinder.bindFindAll(ps, null),
+            WorkingConditionsEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+
     // IDによる取得
     public WorkingConditionsEntity findById(int workingConditionsId) {
         String sql = WorkingConditionsSqlBuilder.buildFindByIdSql();
@@ -63,5 +92,7 @@ public class WorkingConditionsRepository {
             WorkingConditionsEntityMapper::map // ← ここで ResultSet を map
         );
     }
+
+
 }
 
