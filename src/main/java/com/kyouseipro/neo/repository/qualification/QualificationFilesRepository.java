@@ -2,6 +2,8 @@ package com.kyouseipro.neo.repository.qualification;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
 import com.kyouseipro.neo.mapper.qualification.QualificationFilesEntityMapper;
 import com.kyouseipro.neo.query.parameter.qualification.QualificationFilesParameterBinder;
@@ -10,6 +12,7 @@ import com.kyouseipro.neo.repository.common.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 
+@Repository
 @RequiredArgsConstructor
 public class QualificationFilesRepository {
     private final SqlRepository sqlRepository;

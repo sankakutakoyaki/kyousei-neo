@@ -2,6 +2,8 @@ package com.kyouseipro.neo.repository.corporation;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.mapper.corporation.CompanyListEntityMapper;
@@ -12,6 +14,7 @@ import com.kyouseipro.neo.repository.common.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 
+@Repository
 @RequiredArgsConstructor
 public class CompanyListRepository {
     private final SqlRepository sqlRepository;
