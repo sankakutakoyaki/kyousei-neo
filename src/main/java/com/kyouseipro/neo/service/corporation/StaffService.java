@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import com.kyouseipro.neo.csv.CsvExporter;
 import com.kyouseipro.neo.entity.corporation.StaffEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.repository.corporation.StaffRepository;
 
 import lombok.RequiredArgsConstructor;

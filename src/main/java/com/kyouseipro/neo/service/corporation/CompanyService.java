@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.csv.CsvExporter;
 import com.kyouseipro.neo.entity.corporation.CompanyEntity;
-import com.kyouseipro.neo.entity.corporation.OfficeEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.repository.corporation.CompanyRepository;
 

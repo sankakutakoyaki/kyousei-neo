@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
 import com.kyouseipro.neo.repository.corporation.CompanyListRepository;
 import com.kyouseipro.neo.repository.corporation.OfficeListRepository;
 import com.kyouseipro.neo.repository.qualification.QualificationsRepository;

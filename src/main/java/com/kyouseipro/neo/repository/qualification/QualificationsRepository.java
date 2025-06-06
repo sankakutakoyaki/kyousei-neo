@@ -10,7 +10,6 @@ import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
 import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
 import com.kyouseipro.neo.mapper.qualification.QualificationsEntityMapper;
 import com.kyouseipro.neo.query.parameter.qualification.QualificationsParameterBinder;
-import com.kyouseipro.neo.query.sql.corporation.CompanyListSqlBuilder;
 import com.kyouseipro.neo.query.sql.qualification.QualificationsSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
