@@ -20,7 +20,10 @@ public class OfficeListSqlBuilder {
             " WHERE NOT (c.state = ?) AND NOT (o.state = ?) AND NOT (c.category = ?)";
     }
 
-        public static String buildFindAllComboClientSql() {
-        return "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND NOT (category = ?) ORDER BY name_kana;";
+    public static String buildFindAllComboClientSql() {
+        return
+            "SELECT o.office_id as number, o.name as text FROM offices o" + 
+            " LEFT OUTER JOIN companies c ON c.company_id = o.company_id AND NOT (c.state = ?)" +
+            " WHERE NOT (o.state = ?) AND NOT (c.category = ?) ORDER BY o.name_kana;";
     }
 }
