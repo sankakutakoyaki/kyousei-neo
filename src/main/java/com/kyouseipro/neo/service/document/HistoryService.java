@@ -1,33 +1,31 @@
-package com.kyouseipro.neo.service;
+package com.kyouseipro.neo.service.document;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.entity.document.HistoryEntity;
+import com.kyouseipro.neo.mapper.document.HistoryEntityMapper;
+import com.kyouseipro.neo.repository.document.HistoryRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class DatabaseService { 
-    // private final SqlRepository sqlRepository;
-    // /**
-    //  * 作業履歴を保存する
-    //  * @param user_name
-    //  * @param table_name
-    //  * @param action
-    //  * @param result_code
-    //  * @param result_message
-    //  * @return
-    //  */
-    // public SimpleData saveHistory(String user_name, String table_name, String action, int result_code, String result_message) {
-    //     HistoryEntity historyEntity = new HistoryEntity();
-    //     historyEntity.setUser_name(user_name);
-    //     historyEntity.setTable_name(table_name);
-    //     historyEntity.setAction(action);
-    //     historyEntity.setResult_code(result_code);
-    //     historyEntity.setResult_message(result_message);
-    //     String sqlString = historyEntity.getInsertString();
-    //     return sqlRepository.excuteSqlString(sqlString);
-    // }
+public class HistoryService { 
+    private final HistoryRepository historyRepository;
+    
+    /**
+     * 作業履歴を保存する
+     * @param user_name
+     * @param table_name
+     * @param action
+     * @param result_code
+     * @param result_message
+     * @return
+     */
+    public Integer saveHistory(String userName, String tableName, String action, int resultCode, String resultMessage) {
+        HistoryEntity entity = HistoryEntityMapper.set(userName, tableName, action, resultCode, resultMessage);
+        return historyRepository.insertHistory(entity, userName);
+    }
 
     // /**
     //  * 

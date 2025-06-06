@@ -16,9 +16,13 @@ public class CompanyListParameterBinder {
         ps.setInt(2, 0);
     }
 
+    public static void bindFindAllByCategoryId(PreparedStatement ps, int categoryId) throws SQLException {
+        ps.setInt(1, Enums.state.DELETE.getCode());
+        ps.setInt(2, categoryId);
+    }
+
     public static void bindFindAllComboClient(PreparedStatement ps, Void unused) throws SQLException {
         ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, 0);
-        
+        ps.setInt(2, 0);  
     }
 }

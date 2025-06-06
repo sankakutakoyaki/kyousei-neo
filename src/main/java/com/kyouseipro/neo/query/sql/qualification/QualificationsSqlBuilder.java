@@ -83,7 +83,7 @@ public class QualificationsSqlBuilder {
         return "SELECT * FROM qualifications WHERE qualifications_id IN (" + placeholders + ") \" + NOT (state = ?)";
     }
 
-    // public static String buildFindAllSql() {
-    //     return "SELECT * FROM qualifications WHERE NOT (state = ?)";
-    // }
+    public static String buildFindAllComboQualificationsSql() {
+        return "SELECT qualifications_id as number, name as text FROM qualifications WHERE NOT (state = ?);";
+    }
 }

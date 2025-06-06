@@ -38,16 +38,16 @@ public class CompanyListRepository {
         );
     }
 
-    // // 全件取得
-    // public List<CompanyListEntity> findByCategoryId(int categoryId) {
-    //     String sql = CompanyListSqlBuilder.buildFindAllSql();
+    // 全件取得
+    public List<CompanyListEntity> findByCategoryId(int categoryId) {
+        String sql = CompanyListSqlBuilder.buildFindAllClientSql();
 
-    //     return sqlRepository.findAll(
-    //         sql,
-    //         ps -> CompanyListParameterBinder.bindFindAllByCategoryId(ps, categoryId),
-    //         CompanyListEntityMapper::map // ← ここで ResultSet を map
-    //     );
-    // }
+        return sqlRepository.findAll(
+            sql,
+            ps -> CompanyListParameterBinder.bindFindAllByCategoryId(ps, categoryId),
+            CompanyListEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
 
     // コンボボックス用リスト取得
     public List<SimpleData> findAllComboClient() {

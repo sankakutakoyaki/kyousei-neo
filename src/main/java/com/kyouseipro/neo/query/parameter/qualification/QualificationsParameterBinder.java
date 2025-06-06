@@ -71,4 +71,8 @@ public class QualificationsParameterBinder {
         }
         ps.setInt(index, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
     }
+
+    public static void bindFindAllCombo(PreparedStatement ps, Void unused) throws SQLException {
+        ps.setInt(1, Enums.state.DELETE.getCode());
+    }
 }

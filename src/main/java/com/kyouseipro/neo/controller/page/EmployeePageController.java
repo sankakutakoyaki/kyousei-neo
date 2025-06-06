@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
-import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.service.DatabaseService;
+import com.kyouseipro.neo.entity.personnel.EmployeeListEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
+import com.kyouseipro.neo.service.document.HistoryService;
+import com.kyouseipro.neo.service.personnel.EmployeeListService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,8 +25,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EmployeePageController {
     private final EmployeeService employeeService;
+    private final EmployeeListService employeeListService;
     private final ComboBoxService comboBoxService;
-    private final DatabaseService databaseService;
+    private final HistoryService historyService;
 
     /**
 	 * 従業員
@@ -44,30 +47,30 @@ public class EmployeePageController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new EmployeeEntity());
 
         // 初期表示用従業員リスト取得
-        List<Entity> origin = employeeService.getEmployeeList();
+        List<EmployeeListEntity> origin = employeeListService.getEmployeeList();
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得
-        List<Entity> companyComboList = comboBoxService.getCompany();
+        List<SimpleData> companyComboList = comboBoxService.getClientList();
         mv.addObject("companyComboList", companyComboList);
-        List<Entity> officeList = comboBoxService.getOffice();
+        List<SimpleData> officeList = comboBoxService.getOfficeList();
         mv.addObject("officeList", officeList);
-        List<Entity> employeeCategoryComboList = comboBoxService.getEmployeeCategory();
+        List<SimpleData> employeeCategoryComboList = comboBoxService.getEmployeeCategory();
         mv.addObject("employeeCategoryComboList", employeeCategoryComboList);
-        List<Entity> genderComboList = comboBoxService.getGender();
+        List<SimpleData> genderComboList = comboBoxService.getGender();
         mv.addObject("genderComboList", genderComboList);
-        List<Entity> bloodTypeComboList = comboBoxService.getBloodType();
+        List<SimpleData> bloodTypeComboList = comboBoxService.getBloodType();
         mv.addObject("bloodTypeComboList", bloodTypeComboList);
-        List<Entity> paymentMethodComboList = comboBoxService.getPaymentMethod();
+        List<SimpleData> paymentMethodComboList = comboBoxService.getPaymentMethod();
         mv.addObject("paymentMethodComboList", paymentMethodComboList);
-        List<Entity> payTypeComboList = comboBoxService.getPayType();
+        List<SimpleData> payTypeComboList = comboBoxService.getPayType();
         mv.addObject("payTypeComboList", payTypeComboList);
 
         // 保存用コード
@@ -76,7 +79,7 @@ public class EmployeePageController {
         mv.addObject("categoryConstructCode", Enums.employeeCategory.CONSTRUCT.getCode());
 
         // 履歴保存
-        databaseService.saveHistory(userName, "employee", "閲覧", 200, "");
+        historyService.saveHistory(userName, "employee", "閲覧", 200, "");
 		
         return mv;
     }

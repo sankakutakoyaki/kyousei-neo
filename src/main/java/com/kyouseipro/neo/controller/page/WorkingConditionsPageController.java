@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
-import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.service.DatabaseService;
+import com.kyouseipro.neo.entity.personnel.WorkingConditionsListEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
+import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
-import com.kyouseipro.neo.service.personnel.WorkingConditionsService;
+import com.kyouseipro.neo.service.personnel.WorkingConditionsListService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,9 +26,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WorkingConditionsPageController {
     private final EmployeeService employeeService;
-    private final WorkingConditionsService workingConditionsService;
+    private final WorkingConditionsListService workingConditionsListService;
     private final ComboBoxService comboBoxService;
-    private final DatabaseService databaseService;
+    private final HistoryService historyService;
 
     /**
 	 * 勤務条件
@@ -54,13 +55,13 @@ public class WorkingConditionsPageController {
         mv.addObject("formEntity", new WorkingConditionsEntity());
 
         // 初期表示用従業員リスト取得
-        List<Entity> origin = workingConditionsService.getWorkingConditionsList();
+        List<WorkingConditionsListEntity> origin = workingConditionsListService.getWorkingConditionsList();
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得
-        List<Entity> paymentMethodComboList = comboBoxService.getPaymentMethod();
+        List<SimpleData> paymentMethodComboList = comboBoxService.getPaymentMethod();
         mv.addObject("paymentMethodComboList", paymentMethodComboList);
-        List<Entity> payTypeComboList = comboBoxService.getPayType();
+        List<SimpleData> payTypeComboList = comboBoxService.getPayType();
         mv.addObject("payTypeComboList", payTypeComboList);
 
         // 保存用コード
@@ -68,7 +69,7 @@ public class WorkingConditionsPageController {
         mv.addObject("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
 
         // 履歴保存
-        databaseService.saveHistory(userName, "working_conditions", "閲覧", 200, "");
+        historyService.saveHistory(userName, "working_conditions", "閲覧", 200, "");
 		
         return mv;
     }

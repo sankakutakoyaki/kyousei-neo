@@ -6,10 +6,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
 import com.kyouseipro.neo.repository.corporation.CompanyListRepository;
 import com.kyouseipro.neo.repository.corporation.OfficeListRepository;
+import com.kyouseipro.neo.repository.qualification.QualificationsRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class ComboBoxService {
     private final CompanyListRepository companyListRepository;
     private final OfficeListRepository officeListRepository;
+    private final QualificationsRepository qualificationsRepository;
 
     /**
      * 性別のリスト
@@ -114,6 +116,9 @@ public class ComboBoxService {
         return officeListRepository.findAllCombo();
     }
 
+    public List<SimpleData> getQualificationMaster() {
+        return qualificationsRepository.findAllCombo();
+    }
     // /**
     //  * すべての会社リスト
     //  * @return

@@ -19,12 +19,11 @@ import com.kyouseipro.neo.entity.corporation.StaffEntity;
 import com.kyouseipro.neo.entity.corporation.StaffListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
-import com.kyouseipro.neo.service.DatabaseService;
 import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.corporation.CompanyListService;
 import com.kyouseipro.neo.service.corporation.OfficeListService;
 import com.kyouseipro.neo.service.corporation.StaffListService;
-import com.kyouseipro.neo.service.corporation.StaffService;
+import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,7 +36,7 @@ public class CompanyPageController {
     private final OfficeListService officeListService;
     private final StaffListService staffListService;
     private final ComboBoxService comboBoxService;
-    private final DatabaseService databaseService;
+    private final HistoryService historyService;
 
     /**
 	 * 取引先
@@ -88,7 +87,7 @@ public class CompanyPageController {
         mv.addObject("categoryServiceCode", Enums.clientCategory.SERVICE.getCode());
 
         // 履歴保存
-        databaseService.saveHistory(userName, "companies", "閲覧", 200, "");
+        historyService.saveHistory(userName, "companies", "閲覧", 200, "");
 		
         return mv;
     }

@@ -7,8 +7,10 @@ import org.springframework.stereotype.Repository;
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
+import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
 import com.kyouseipro.neo.mapper.qualification.QualificationsEntityMapper;
 import com.kyouseipro.neo.query.parameter.qualification.QualificationsParameterBinder;
+import com.kyouseipro.neo.query.sql.corporation.CompanyListSqlBuilder;
 import com.kyouseipro.neo.query.sql.qualification.QualificationsSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
@@ -109,6 +111,17 @@ public class QualificationsRepository {
             sql,
             ps -> QualificationsParameterBinder.bindFindAll(ps, null),
             QualificationsEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+
+    // コンボボックス用リスト取得
+    public List<SimpleData> findAllCombo() {
+        String sql = QualificationsSqlBuilder.buildFindAllComboQualificationsSql();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> QualificationsParameterBinder.bindFindAllCombo(ps, null),
+            SimpleDataMapper::map
         );
     }
 }

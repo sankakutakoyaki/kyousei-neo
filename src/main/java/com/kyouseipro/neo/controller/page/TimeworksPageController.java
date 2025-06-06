@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
-import com.kyouseipro.neo.service.DatabaseService;
+import com.kyouseipro.neo.service.document.HistoryService;
 
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
 public class TimeworksPageController {
-    private final DatabaseService databaseService;
+    private final HistoryService historyService;
     
     /**
      * 打刻一覧画面を呼び出す
@@ -42,7 +42,7 @@ public class TimeworksPageController {
         mv.addObject("entity", entity);
 
         // 履歴保存
-        databaseService.saveHistory(userName, "timeworks", "閲覧", 200, "");
+        historyService.saveHistory(userName, "timeworks", "閲覧", 200, "");
 	    return mv;
 	}
 }

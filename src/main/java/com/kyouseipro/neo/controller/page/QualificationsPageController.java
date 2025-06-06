@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
-import com.kyouseipro.neo.interfaceis.Entity;
-import com.kyouseipro.neo.service.DatabaseService;
 import com.kyouseipro.neo.service.common.ComboBoxService;
+import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 import com.kyouseipro.neo.service.qualification.QualificationsService;
 
@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class QualificationsPageController {
     private final EmployeeService employeeService;
     private final ComboBoxService comboBoxService;
-    private final DatabaseService databaseService;
+    private final HistoryService historyService;
     private final QualificationsService qualificationsService;
 
     /**
@@ -57,19 +57,19 @@ public class QualificationsPageController {
             case "employee":
                 mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
                 // 初期表示用資格情報リスト取得
-                List<Entity> qualificationsOrigin = qualificationsService.getEmployeeQualificationsList();
+                List<QualificationsEntity> qualificationsOrigin = qualificationsService.getEmployeeQualificationsList();
                 mv.addObject("origin", qualificationsOrigin);
                 // コンボボックスアイテム取得
-                List<Entity> qualificationComboList = comboBoxService.getQualificationMaster();
+                List<SimpleData> qualificationComboList = comboBoxService.getQualificationMaster();
                 mv.addObject("qualificationComboList", qualificationComboList);
                 break;
             case "company":
                 mv.addObject("sidebarFragmentName", "fragments/menu :: salesFragment");
                 // 初期表示用資格情報リスト取得
-                List<Entity> licensesOrigin = qualificationsService.getCompanyQualificationsList();
+                List<QualificationsEntity> licensesOrigin = qualificationsService.getCompanyQualificationsList();
                 mv.addObject("origin", licensesOrigin);
                 // コンボボックスアイテム取得
-                List<Entity> licenseComboList = comboBoxService.getLicenseMaster();
+                List<SimpleData> licenseComboList = comboBoxService.getQualificationMaster();
                 mv.addObject("qualificationComboList", licenseComboList);
                 break;
             default:
@@ -77,7 +77,7 @@ public class QualificationsPageController {
         }
 
         // 履歴保存
-        databaseService.saveHistory(userName, "qualifications", "閲覧", 200, "");
+        historyService.saveHistory(userName, "qualifications", "閲覧", 200, "");
 		
         return mv;
     }

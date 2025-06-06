@@ -6,13 +6,13 @@ import lombok.Data;
 
 @Data
 public class HistoryEntity {
-    protected int history_id;
-    protected LocalDateTime execution_date;
-    protected String user_name;
-    protected String table_name;
-    protected String action;
-    protected int result_code; // 2000番台以外はエラー
-    protected String result_message;
+    private int history_id;
+    private LocalDateTime execution_date;
+    private String user_name;
+    private String table_name;
+    private String action;
+    private int result_code; // 2000番台以外はエラー
+    private String result_message;
 
     // @Override
     // public void setEntity(ResultSet rs) {

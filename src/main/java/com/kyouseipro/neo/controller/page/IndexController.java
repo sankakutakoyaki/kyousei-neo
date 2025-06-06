@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
-import com.kyouseipro.neo.service.DatabaseService;
+import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class IndexController {
 	private final EmployeeService employeeService;
-    private final DatabaseService databaseService;
+    private final HistoryService historyService;
 	/**
 	 * スタートページ
 	 * @param mv
@@ -45,7 +45,7 @@ public class IndexController {
 		mv.addObject("entity", entity);
 		mv.addObject("user_name", entity.getAccount());
 
-		databaseService.saveHistory(userName, "", "ログイン", 200, "ログインしました。");
+		historyService.saveHistory(userName, "", "ログイン", 200, "ログインしました。");
 		
         return mv;
     }
@@ -65,7 +65,7 @@ public class IndexController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		databaseService.saveHistory(userName, "", "ログアウト", 200, "ログアウトしました。");
+		historyService.saveHistory(userName, "", "ログアウト", 200, "ログアウトしました。");
     }
 
 	/**
@@ -88,7 +88,7 @@ public class IndexController {
 		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
 		mv.addObject("entity", entity);
 
-		databaseService.saveHistory(userName, "sales", "閲覧", 200, "");
+		historyService.saveHistory(userName, "sales", "閲覧", 200, "");
 		
         return mv;
     }
@@ -113,7 +113,7 @@ public class IndexController {
 		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
 		mv.addObject("entity", entity);
 
-		databaseService.saveHistory(userName, "personnel", "閲覧", 200, "");
+		historyService.saveHistory(userName, "personnel", "閲覧", 200, "");
 		
         return mv;
     }
