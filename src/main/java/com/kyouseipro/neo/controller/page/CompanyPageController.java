@@ -77,7 +77,7 @@ public class CompanyPageController {
         // コンボボックスアイテム取得
         List<SimpleData> companyComboList = comboBoxService.getClientList();
         mv.addObject("companyComboList", companyComboList);
-        List<SimpleData> officeComboList = comboBoxService.getOfficeList();
+        List<OfficeListEntity> officeComboList = comboBoxService.getOfficeList();
         mv.addObject("officeComboList", officeComboList);
 
         // 保存用コード

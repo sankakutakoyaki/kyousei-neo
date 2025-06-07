@@ -362,10 +362,10 @@
             // 選択した会社の支店をコンボボックスに登録する
             function createOfficeComboBox(self) {
                 const selectId = self.value;
-                const comboList = officeList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.office_name}));
+                const comboList = officeList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
                 const area = self.closest('.dialog-content');
                 const officeArea = area.querySelector('select[name="office"]');
-                createComboBox(officeArea, comboList, "");
+                createComboBoxWithTop(officeArea, comboList, "");
             }
 
 /******************************************************************************************************* 保存 */

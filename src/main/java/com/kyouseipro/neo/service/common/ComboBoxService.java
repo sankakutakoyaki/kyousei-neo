@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.repository.corporation.CompanyListRepository;
 import com.kyouseipro.neo.repository.corporation.OfficeListRepository;
@@ -107,12 +108,16 @@ public class ComboBoxService {
     //     return sqlRepository.getEntityList(sqlData);
     // }
 
+    public List<SimpleData> getCompanyList() {
+        return companyListRepository.findAllComboCompany();
+    }
+
     public List<SimpleData> getClientList() {
         return companyListRepository.findAllComboClient();
     }
 
-    public List<SimpleData> getOfficeList() {
-        return officeListRepository.findAllCombo();
+    public List<OfficeListEntity> getOfficeList() {
+        return officeListRepository.findAll();
     }
 
     public List<SimpleData> getQualificationMaster() {

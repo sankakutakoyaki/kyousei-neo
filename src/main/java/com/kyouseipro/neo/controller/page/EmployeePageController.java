@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.EmployeeListEntity;
@@ -58,9 +59,9 @@ public class EmployeePageController {
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得
-        List<SimpleData> companyComboList = comboBoxService.getClientList();
+        List<SimpleData> companyComboList = comboBoxService.getCompanyList();
         mv.addObject("companyComboList", companyComboList);
-        List<SimpleData> officeList = comboBoxService.getOfficeList();
+        List<OfficeListEntity> officeList = comboBoxService.getOfficeList();
         mv.addObject("officeList", officeList);
         List<SimpleData> employeeCategoryComboList = comboBoxService.getEmployeeCategory();
         mv.addObject("employeeCategoryComboList", employeeCategoryComboList);

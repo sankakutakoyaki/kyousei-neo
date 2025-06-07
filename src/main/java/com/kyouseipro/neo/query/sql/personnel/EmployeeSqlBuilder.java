@@ -18,17 +18,17 @@ public class EmployeeSqlBuilder {
     public static String buildInsertEmployeeSql() {
         return
             "DECLARE @InsertedRows TABLE (employee_id INT); " +
-            "INSERT INTO employees (employe_id, office_id, account, code, category, " +
-            "last_name, first_name, full_name, last_name_kana, first_name_kana, full_name_kana, " +
+            "INSERT INTO employees (company_id, office_id, account, code, category, " +
+            "last_name, first_name, last_name_kana, first_name_kana, " +
             "phone_number, postal_code, full_address, email, gender, blood_type, birthday, emergency_contact, " +
             "emergency_contact_number, date_of_hire, version, state) " +
             "OUTPUT INSERTED.employee_id INTO @InsertedRows " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
             "INSERT INTO employees_log (employee_id, editor, process, log_date, " +
-            "employe_id, office_id, account, code, category, last_name, first_name, full_name, last_name_kana, first_name_kana, full_name_kana, " +
+            "company_id, office_id, account, code, category, last_name, first_name, last_name_kana, first_name_kana, " +
             "phone_number, postal_code, full_address, email, gender, blood_type, birthday, emergency_contact, emergency_contact_number, date_of_hire, version, state) " +
             "SELECT e.employee_id, ?, 'INSERT', CURRENT_TIMESTAMP, " +
-            "e.employe_id, e.office_id, e.account, e.code, e.category, e.last_name, e.first_name, e.full_name, e.last_name_kana, e.first_name_kana, e.full_name_kana, " +
+            "e.company_id, e.office_id, e.account, e.code, e.category, e.last_name, e.first_name, e.last_name_kana, e.first_name_kana, " +
             "e.phone_number, e.postal_code, e.full_address, e.email, e.gender, e.blood_type, e.birthday, e.emergency_contact, e.emergency_contact_number, e.date_of_hire, e.version, e.state " +
             "FROM employees e " +
             "INNER JOIN @InsertedRows ir ON e.employee_id = ir.employee_id; " +
@@ -39,17 +39,17 @@ public class EmployeeSqlBuilder {
         return
             "DECLARE @UpdatedRows TABLE (employee_id INT); " +
             "UPDATE employees SET " +
-            "employe_id=?, office_id=?, account=?, code=?, category=?, " +
-            "last_name=?, first_name=?, full_name=?, last_name_kana=?, first_name_kana=?, full_name_kana=?, " +
+            "company_id=?, office_id=?, account=?, code=?, category=?, " +
+            "last_name=?, first_name=?, last_name_kana=?, first_name_kana=?, " +
             "phone_number=?, postal_code=?, full_address=?, email=?, gender=?, blood_type=?, birthday=?, emergency_contact=?, " +
             "emergency_contact_number=?, date_of_hire=?, version=?, state=? " +
             "OUTPUT INSERTED.employee_id INTO @UpdatedRows " +
             "WHERE employee_id=?; " +
             "INSERT INTO employees_log (employee_id, editor, process, log_date, " +
-            "employe_id, office_id, account, code, category, last_name, first_name, full_name, last_name_kana, first_name_kana, full_name_kana, " +
+            "company_id, office_id, account, code, category, last_name, first_name, last_name_kana, first_name_kana, " +
             "phone_number, postal_code, full_address, email, gender, blood_type, birthday, emergency_contact, emergency_contact_number, date_of_hire, version, state) " +
             "SELECT e.employee_id, ?, 'UPDATE', CURRENT_TIMESTAMP, " +
-            "e.employe_id, e.office_id, e.account, e.code, e.category, e.last_name, e.first_name, e.full_name, e.last_name_kana, e.first_name_kana, e.full_name_kana, " +
+            "e.company_id, e.office_id, e.account, e.code, e.category, e.last_name, e.first_name, e.last_name_kana, e.first_name_kana, " +
             "e.phone_number, e.postal_code, e.full_address, e.email, e.gender, e.blood_type, e.birthday, e.emergency_contact, e.emergency_contact_number, e.date_of_hire, e.version, e.state " +
             "FROM employees e " +
             "INNER JOIN @UpdatedRows ur ON e.employee_id = ur.employee_id; " +
@@ -78,10 +78,10 @@ public class EmployeeSqlBuilder {
             "WHERE employee_id IN (" + placeholders + ") " +
             "AND NOT (state = ?); " +
             "INSERT INTO employees_log (employee_id, editor, process, log_date, " +
-            "employe_id, office_id, account, code, category, last_name, first_name, full_name, last_name_kana, first_name_kana, full_name_kana, " +
+            "employee_id, office_id, account, code, category, last_name, first_name, last_name_kana, first_name_kana, " +
             "phone_number, postal_code, full_address, email, gender, blood_type, birthday, emergency_contact, emergency_contact_number, date_of_hire, version, state) " +
             "SELECT e.employee_id, ?, 'DELETE', CURRENT_TIMESTAMP, " +
-            "e.employe_id, e.office_id, e.account, e.code, e.category, e.last_name, e.first_name, e.full_name, e.last_name_kana, e.first_name_kana, e.full_name_kana, " +
+            "e.employee_id, e.office_id, e.account, e.code, e.category, e.last_name, e.first_name, e.last_name_kana, e.first_name_kana, " +
             "e.phone_number, e.postal_code, e.full_address, e.email, e.gender, e.blood_type, e.birthday, e.emergency_contact, e.emergency_contact_number, e.date_of_hire, e.version, e.state " +
             "FROM employees e " +
             "INNER JOIN @UpdatedRows ur ON e.employee_id = ur.employee_id; " +
