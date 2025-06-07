@@ -19,6 +19,12 @@ import lombok.RequiredArgsConstructor;
 public class EmployeeRepository {
     private final SqlRepository sqlRepository;
 
+    /**
+     * 新規作成。
+     * @param employee
+     * @param editor
+     * @return 新規IDを返す。
+     */
     public Integer insertEmployee(EmployeeEntity employee, String editor) {
         String sql = EmployeeSqlBuilder.buildInsertEmployeeSql();
 
@@ -30,17 +36,29 @@ public class EmployeeRepository {
         );
     }
 
-    public Integer updateEmployee(EmployeeEntity employee, String editor) {
+    /**
+     * 更新。
+     * @param employee
+     * @param editor
+     * @return 成功したか失敗したかを真偽値で返す。
+     */
+    public int updateEmployee(EmployeeEntity employee, String editor) {
         String sql = EmployeeSqlBuilder.buildUpdateEmployeeSql();
 
-        return sqlRepository.execute(
+        int result = sqlRepository.executeUpdate(
             sql,
-            (pstmt, emp) -> EmployeeParameterBinder.bindUpdateEmployeeParameters(pstmt, emp, editor),
-            rs -> rs.next() ? rs.getInt("employee_id") : null,
-            employee
+            pstmt -> EmployeeParameterBinder.bindUpdateEmployeeParameters(pstmt, employee, editor)
         );
+
+        return result; // 成功件数。0なら削除なし
     }
 
+    /**
+     * 削除。
+     * @param ids
+     * @param editor
+     * @return 成功件数を返す。
+     */
     public int deleteEmployeeByIds(List<SimpleData> ids, String editor) {
         List<Integer> employeeIds = Utilities.createSequenceByIds(ids);
         String sql = EmployeeSqlBuilder.buildDeleteEmployeeForIdsSql(employeeIds.size());
@@ -53,6 +71,12 @@ public class EmployeeRepository {
         return result; // 成功件数。0なら削除なし
     }
 
+    /**
+     * CSVファイルをダウンロードする。
+     * @param ids
+     * @param editor
+     * @return Idsで選択したEntityリストを返す。
+     */
     public List<EmployeeEntity> downloadCsvEmployeeByIds(List<SimpleData> ids, String editor) {
         List<Integer> employeeIds = Utilities.createSequenceByIds(ids);
         String sql = EmployeeSqlBuilder.buildDownloadCsvEmployeeForIdsSql(employeeIds.size());
@@ -64,7 +88,11 @@ public class EmployeeRepository {
         );
     }
    
-    // IDによる取得
+    /**
+     * IDによる取得。
+     * @param employeeId
+     * @return IDから取得したEntityをかえす。
+     */
     public EmployeeEntity findById(int employeeId) {
         String sql = EmployeeSqlBuilder.buildFindByIdSql();
 
@@ -76,7 +104,11 @@ public class EmployeeRepository {
         );
     }
 
-    // アカウントによる取得
+    /**
+     * アカウントによる取得。
+     * @param account
+     * @return アカウントで指定したEntityを返す。
+     */
     public EmployeeEntity findByAccount(String account) {
         String sql = EmployeeSqlBuilder.buildFindByAccountSql();
 
@@ -88,7 +120,10 @@ public class EmployeeRepository {
         );
     }
 
-    // 全件取得
+    /**
+     * 全件取得。
+     * @return 全てのEntityを返す。
+     */
     public List<EmployeeEntity> findAll() {
         String sql = EmployeeSqlBuilder.buildFindAllSql();
 

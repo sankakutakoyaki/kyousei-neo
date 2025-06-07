@@ -416,8 +416,8 @@
                 formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
 
                 // 保存処理
-                // const result = await postFetch(formdata, "/employee/save");
-                const result = await postFetch("/employee/save", JSON.stringify(formdata), token, "application/json");
+                const resultResponse = await postFetch("/employee/save", JSON.stringify(formdata), token, "application/json");
+                const result = await resultResponse.json();
                 if (result > 0) {
                     let tableId;
                     switch (formdata.category) {
@@ -518,26 +518,7 @@
 /******************************************************************************************************* 画面更新 */
 
         async function execUpdate() {
-            // const panel = self.closest('.tab-panel');
-            // const tab = panel.dataset.panel;
-            // let tableId, footerId, searchId, category;
-            // switch (tab) {
-            //     case "01":
-            //         tableId = 'table-01-content', footerId = 'footer-01', searchId = 'search-box-01', category = categoryEmployeeCode;
-            //         break;
-            //     case "02":
-            //         tableId = 'table-02-content', footerId = 'footer-02', searchId = 'search-box-02', category = categoryParttimeCode;
-            //         break;
-            //     case "03":
-            //         tableId = 'table-03-content', footerId = 'footer-03', searchId = 'search-box-03', category = categoryConstructCode;
-            //         break;
-            //     default:
-            //         break;
-            // }
-
             // リスト取得
-            // const data = "category=" + encodeURIComponent(category);
-            // const resultResponse = await postFetch('/employee/get/list/category', data, token, 'application/x-www-form-urlencoded');
             const resultResponse = await fetch('/employee/get/list');
             origin = await resultResponse.json();
 
@@ -548,37 +529,30 @@
             updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
             const list03 = origin.filter(function(value) { return value.category == categoryConstructCode });
             updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
-
-            // // 画面更新
-            // updateTableDisplay(tableId, footerId, searchId, true);
         }
 
 /******************************************************************************************************* 画面更新 */
 
         // テーブルリスト画面を更新する
         function updateTableDisplay(tableId, footerId, searchId, list) {
+            // フィルター処理
+            const result = filterDisplay(searchId, list);
+            // リスト画面を初期化
+            deleteElements(tableId);
             // リスト作成
-            // const tbl = document.getElementById(tableId);
-            // if (tbl != null) {
-                // フィルター処理
-                const result = filterDisplay(searchId, list);
-                // リスト画面を初期化
-                deleteElements(tableId);
-                // リスト作成
-                createTableContent(tableId, result);
-                // フッター作成
-                createTableFooter(footerId, list);
-                // チェックボタン押下時の処理を登録する
-                registCheckButtonClicked(tableId);
-                // テーブルのソートをリセットする
-                resetSortable(tableId);
-                // // スクロール時のページトップボタン処理を登録する
-                // setPageTopButton(tableId);
-                // テーブルにスクロールバーが表示されたときの処理を登録する
-                document.querySelectorAll('.scroll-area').forEach(el => {
-                    toggleScrollbar(el);
-                });
-            // }
+            createTableContent(tableId, result);
+            // フッター作成
+            createTableFooter(footerId, list);
+            // チェックボタン押下時の処理を登録する
+            registCheckButtonClicked(tableId);
+            // テーブルのソートをリセットする
+            resetSortable(tableId);
+            // // スクロール時のページトップボタン処理を登録する
+            // setPageTopButton(tableId);
+            // テーブルにスクロールバーが表示されたときの処理を登録する
+            document.querySelectorAll('.scroll-area').forEach(el => {
+                toggleScrollbar(el);
+            });
         }
 
 /******************************************************************************************************* 初期化時 */
