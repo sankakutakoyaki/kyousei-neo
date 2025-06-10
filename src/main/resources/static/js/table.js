@@ -184,21 +184,6 @@ function sortTable(table, col, reverse) {
         return reverse ? result : -result;
     });
 
-    // 行をソート
-    // tr.sort(function(a, b) {
-    //     const aValue = a.cells[col].textContent.trim().toLowerCase();
-    //     const bValue = b.cells[col].textContent.trim().toLowerCase();
-    //     if (reverse) {
-    //         if     (aValue < bValue){ return -1; }
-    //         else if(aValue > bValue){ return  1; }
-    //         return 0;
-    //     } else {
-    //         if     (bValue < aValue){ return -1; }
-    //         else if(bValue > aValue){ return  1; }
-    //         return 0;
-    //     }
-    // });
-
     // ソートされた行をテーブルに再配置
     tr.forEach(function(row) {
         tbody.appendChild(row);
@@ -360,8 +345,8 @@ function filterDisplay(boxId, list) {
  */
 async function downloadCsv(tableId, url) {
     // 選択された要素を取得する
-    const ids = getAllSelectedIds(tableId);
-    if (ids.length == 0) {
+    const data = getAllSelectedIds(tableId);
+    if (data.length == 0) {
         // 選択された要素がなければメッセージを表示して終了
         openMsgDialog("msg-dialog", "選択されていません", "red");
     } else {
@@ -369,7 +354,7 @@ async function downloadCsv(tableId, url) {
         startProcessing();
 
         // 取得処理
-        const data = JSON.stringify(ids);
+        // const data = JSON.stringify(ids);
         const result = await postFetch(url, data, token, "application/json");
         const text = await result.text();
 
@@ -390,61 +375,14 @@ async function downloadCsv(tableId, url) {
  * @param {*} tableId 
  * @param {*} url 
  */
-async function deleteTablelist(tableId, url, userName) {
+async function deleteTablelist(tableId, url) {
     // 選択された要素を取得する
-    const ids = getAllSelectedIds(tableId);console.log(ids)
-    if (ids.length == 0) {
+    const data = getAllSelectedIds(tableId);
+    if (data.length == 0) {
         // 選択された要素がなければメッセージを表示して終了
         openMsgDialog("msg-dialog", "選択されていません", "red");
     } else {
-        // // スピナー表示
-        // startProcessing();
-
-        const formData = new FormData();
-        formData.append('ids', ids);
-        formData.append("userName", userName);
-
-        const result = await saveFormData(formData, url)
-        // // 削除処理
-        // const data = JSON.stringify(ids);
-        // const resultResponse = await postFetch(url, data, token, 'application/json');
-        // const result = await resultResponse.json();
-
-        // // スピナー消去
-        // processingEnd();
-
-        if (result.number > 0) {
-            return true;
-        } else {
-            return false;
-        }
-
+        const resultResponse = await postFetch(url, data, token, 'application/json');
+        return await resultResponse.json();
     }
 }
-
-// /**
-//  * テーブルリスト画面を更新する
-//  * @param {*} tableId 
-//  * @param {*} footerId 
-//  * @param {*} searchId 
-//  */
-// function updateTableDisplay(tableId, footerId, searchId, isChecked, list) {
-//     // リスト作成
-//     const tbl = document.getElementById(tableId);
-//     if (tbl != null) {
-//         // フィルター処理
-//         const result = filterDisplay(searchId);
-//         // リスト画面を初期化
-//         deleteElements(tableId);
-//         // リスト作成
-//         createTableContent(tableId, tbl, result);
-//         // フッター作成
-//         createTableFooter(footerId, list);
-//         // チェックボタン押下時の処理を登録する
-//         if (isChecked) registCheckButtonClicked(tableId);
-//         // テーブルをソート可能にする
-//         makeSortable(tbl);
-//         // スクロール時のページトップボタン処理を登録する
-//         setPageTopButton(tableId);
-//     }
-// }

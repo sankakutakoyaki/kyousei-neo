@@ -245,153 +245,157 @@
 
 /******************************************************************************************************* 保存 */
 
-        // 保存処理
-        async function execSave() {
-            const form = document.getElementById('form-01');
-            // エラーチェック
-            if (formDataCheck(form) == false) {
-                return;
-            } else {
-                const formData = new FormData(form);
-                const formdata = structuredClone(formEntity);
-                formdata.working_conditions_id = Number(formData.get('working-conditions-id'));
-                formdata.employee_id = Number(formData.get('employee-id'));
-                formdata.category = Number(formData.get('category'));
-                formdata.payment_method = formData.get('payment-method');
-                formdata.pay_type = formData.get('pay-type');
-                if (formData.get('base-salary') == "") {
-                    formdata.base_salary = 0;
+            // 保存処理
+            async function execSave() {
+                const form = document.getElementById('form-01');
+                // エラーチェック
+                if (formDataCheck(form) == false) {
+                    return;
                 } else {
-                    formdata.base_salary = formData.get('base-salary');
-                }
-                if (formData.get('trans-cost') == "") {
-                    formdata.trans_cost = 0;
-                } else {
-                    formdata.trans_cost = formData.get('trans-cost');
-                }
-                const start = formData.get('basic-start-time');
-                if (start == null || start == "") {
-                    formdata.basic_start_time = "00:00";
-                } else {
-                    formdata.basic_start_time = start;
-                }
-                const end = formData.get('basic-end-time');
-                if (end == null || end == "") {
-                    formdata.basic_end_time = "00:00";
-                } else {
-                    formdata.basic_end_time = end;
-                }
-                formdata.version = formData.get('version');
-
-                formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
-
-                // 保存処理
-                // const result = await saveFormData(formdata, "/working_conditions/save");
-                const result = await postFetch("/working_conditions/save", JSON.stringify(formdata), token, "application/json");
-                if (result > 0) {
-                    let tableId;
-                    switch (formdata.category) {
-                        case categoryEmployeeCode:
-                            tableId = "table-01-content";
-                            break;
-                        case categoryParttimeCode:
-                            tableId = "table-02-content";
-                            break;
-                        default:
-                            break;
+                    const formData = new FormData(form);
+                    const formdata = structuredClone(formEntity);
+                    formdata.working_conditions_id = Number(formData.get('working-conditions-id'));
+                    formdata.employee_id = Number(formData.get('employee-id'));
+                    formdata.category = Number(formData.get('category'));
+                    formdata.payment_method = formData.get('payment-method');
+                    formdata.pay_type = formData.get('pay-type');
+                    if (formData.get('base-salary') == "") {
+                        formdata.base_salary = 0;
+                    } else {
+                        formdata.base_salary = formData.get('base-salary');
                     }
-                    // 画面更新
-                    await execUpdate();
-                    // 追加・変更行に移動
-                    scrollIntoTableList(tableId, result);
-                }
-                // ダイアログを閉じる
-                closeFormDialog('form-dialog-01');
-            }
-        }
+                    if (formData.get('trans-cost') == "") {
+                        formdata.trans_cost = 0;
+                    } else {
+                        formdata.trans_cost = formData.get('trans-cost');
+                    }
+                    const start = formData.get('basic-start-time');
+                    if (start == null || start == "") {
+                        formdata.basic_start_time = "00:00";
+                    } else {
+                        formdata.basic_start_time = start;
+                    }
+                    const end = formData.get('basic-end-time');
+                    if (end == null || end == "") {
+                        formdata.basic_end_time = "00:00";
+                    } else {
+                        formdata.basic_end_time = end;
+                    }
+                    formdata.version = formData.get('version');
 
-        // 入力チェック
-        function formDataCheck(area) {
-            let msg = "";
-            // 基本給が入力されていないとFalseを返す
-            const salary = area.querySelector('input[name="base-salary"]');
-            if (salary != null && salary.value == "") msg += '\n基本給または時給が入力されていません';
-            // 交通費が入力されていないとFalseを返す
-            const trans = area.querySelector('input[name="trans-cost"]');
-            if (trans != null && trans.value == "") msg += '\n交通費が入力されていません';
-            // 始業時間が入力されていないとFalseを返す
-            const start = area.querySelector('input[name="phone-number"]');
-            if (start != null && start.value == "") msg += '\n始業時間が入力されていません';
-            // 終業時間が入力されていないとFalseを返す
-            const end = area.querySelector('input[name="postal-code"]');
-            if (end != null && end.value == "") msg += '\n終業時間が入力されていません';
-            // エラーが一つ以上あればエラーメッセージダイアログを表示する
-            if (msg != "") {
-                openMsgDialog("msg-dialog", msg, "red");
-                return false;
+                    formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
+
+                    // 保存処理
+                    const result = await postFetch("/working_conditions/save", JSON.stringify(formdata), token, "application/json");
+                    if (result.success) {
+                        let tableId;
+                        switch (formdata.category) {
+                            case categoryEmployeeCode:
+                                tableId = "table-01-content";
+                                break;
+                            case categoryParttimeCode:
+                                tableId = "table-02-content";
+                                break;
+                            default:
+                                break;
+                        }
+                        // 画面更新
+                        openMsgDialog("msg-dialog", result.message, "blue");
+                        await execUpdate();
+                        // 追加・変更行に移動
+                        scrollIntoTableList(tableId, result);
+                    } else {
+                        openMsgDialog("msg-dialog", result.message, "red");
+                    }
+                    // ダイアログを閉じる
+                    closeFormDialog('form-dialog-01');
+                }
             }
-            return true;
-        }
+
+            // 入力チェック
+            function formDataCheck(area) {
+                let msg = "";
+                // 基本給が入力されていないとFalseを返す
+                const salary = area.querySelector('input[name="base-salary"]');
+                if (salary != null && salary.value == "") msg += '\n基本給または時給が入力されていません';
+                // 交通費が入力されていないとFalseを返す
+                const trans = area.querySelector('input[name="trans-cost"]');
+                if (trans != null && trans.value == "") msg += '\n交通費が入力されていません';
+                // 始業時間が入力されていないとFalseを返す
+                const start = area.querySelector('input[name="phone-number"]');
+                if (start != null && start.value == "") msg += '\n始業時間が入力されていません';
+                // 終業時間が入力されていないとFalseを返す
+                const end = area.querySelector('input[name="postal-code"]');
+                if (end != null && end.value == "") msg += '\n終業時間が入力されていません';
+                // エラーが一つ以上あればエラーメッセージダイアログを表示する
+                if (msg != "") {
+                    openMsgDialog("msg-dialog", msg, "red");
+                    return false;
+                }
+                return true;
+            }
 
 /******************************************************************************************************* 削除 */
 
-        async function execDelete(self) {
-            const panel = self.closest('.tab-panel');
-            const tab = panel.dataset.panel;
-            let result;
-            switch (tab) {
-                case "01":
-                    result = await deleteTablelsit('table-01-content', '/working_conditions/delete');
-                    if (result == true) { execUpdate(); }
-                    break;
-                case "02":
-                    result = await deleteTablelsit('table-02-content', '/working_conditions/delete');
-                    if (result == true) { execUpdate(); }
-                    break;
-                default:
-                    break;
+            async function execDelete(self) {
+                const panel = self.closest('.tab-panel');
+                const tab = panel.dataset.panel;
+                let result;
+                switch (tab) {
+                    case "01":
+                        result = await deleteTablelsit('table-01-content', '/working_conditions/delete');
+                        break;
+                    case "02":
+                        result = await deleteTablelsit('table-02-content', '/working_conditions/delete');
+                        break;
+                    default:
+                        break;
+                }
+
+                if (result.success) {                
+                    execUpdate();
+                    openMsgDialog("msg-dialog", result.message, "blue");
+                } else {
+                    openMsgDialog("msg-dialog", result.message, "red");
+                }
             }
-        }
 
 
 /******************************************************************************************************* ダウンロード */
 
-        async function execDownloadCsv(self) {
-            const panel = self.closest('.tab-panel');
-            const tab = panel.dataset.panel;
-            let result;
-            switch (tab) {
-                case "01":
-                    result = await downloadCsv('table-01-content', '/working_conditions/download/csv');
-                    break;
-                case "02":
-                    result = await downloadCsv('table-02-content', '/working_conditions/download/csv');
-                    break;
-                default:
-                    break;
+            async function execDownloadCsv(self) {
+                const panel = self.closest('.tab-panel');
+                const tab = panel.dataset.panel;
+                let result;
+                switch (tab) {
+                    case "01":
+                        result = await downloadCsv('table-01-content', '/working_conditions/download/csv');
+                        break;
+                    case "02":
+                        result = await downloadCsv('table-02-content', '/working_conditions/download/csv');
+                        break;
+                    default:
+                        break;
+                }
             }
-        }
 
 /******************************************************************************************************* 画面更新 */
 
-        async function execUpdate() {
-            const resultResponse = await fetch('/working_conditions/get/list');
-            origin = await resultResponse.json();
+            async function execUpdate() {
+                const resultResponse = await fetch('/working_conditions/get/list');
+                origin = await resultResponse.json();
 
-            // 画面更新
-            const list01 = origin.filter(function(value) { return value.category == categoryEmployeeCode });
-            updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
-            const list02 = origin.filter(function(value) { return value.category == categoryParttimeCode });
-            updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
-        }
+                // 画面更新
+                const list01 = origin.filter(function(value) { return value.category == categoryEmployeeCode });
+                updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
+                const list02 = origin.filter(function(value) { return value.category == categoryParttimeCode });
+                updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
+            }
 
 /******************************************************************************************************* 画面更新 */
 
-        // テーブルリスト画面を更新する
-        function updateTableDisplay(tableId, footerId, searchId, list) {
-            // リスト作成
-            // const tbl = document.getElementById(tableId);
-            // if (tbl != null) {
+            // テーブルリスト画面を更新する
+            function updateTableDisplay(tableId, footerId, searchId, list) {
                 // フィルター処理
                 const result = filterDisplay(searchId, list);
                 // リスト画面を初期化
@@ -410,9 +414,7 @@
                 document.querySelectorAll('.scroll-area').forEach(el => {
                     toggleScrollbar(el);
                 });
-              
-            // }
-        }
+            }
 
 /******************************************************************************************************* 初期化時 */
 

@@ -4,10 +4,14 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Utilities;
+import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
 import com.kyouseipro.neo.mapper.qualification.QualificationFilesEntityMapper;
 import com.kyouseipro.neo.query.parameter.qualification.QualificationFilesParameterBinder;
+import com.kyouseipro.neo.query.parameter.qualification.QualificationsParameterBinder;
 import com.kyouseipro.neo.query.sql.qualification.QualificationFilesSqlBuilder;
+import com.kyouseipro.neo.query.sql.qualification.QualificationsSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -39,8 +43,19 @@ public class QualificationFilesRepository {
         );
     }
 
+    public int deleteQualificationFilesByUrl(String url, String editor) {
+        String sql = QualificationFilesSqlBuilder.buildDeleteQualificationFilesSql();
+
+        int result = sqlRepository.executeUpdate(
+            sql,
+            ps -> QualificationFilesParameterBinder.bindDeleteQualificationFilesParameters(ps, url, editor)
+        );
+
+        return result; // 成功件数。0なら削除なし
+    }
+
     // IDによる取得
-    public QualificationFilesEntity findById(int qualificationFilesId) {
+    public QualificationFilesEntity findById(Integer qualificationFilesId) {
         String sql = QualificationFilesSqlBuilder.buildFindByIdSql();
 
         return sqlRepository.execute(
@@ -52,12 +67,12 @@ public class QualificationFilesRepository {
     }
 
     // 資格IDによる取得
-    public List<QualificationFilesEntity> findByQualificationsId() {
+    public List<QualificationFilesEntity> findByQualificationsId(Integer qualificationsId) {
         String sql = QualificationFilesSqlBuilder.buildFindAllByQualificationsIdSql();
 
         return sqlRepository.findAll(
             sql,
-            ps -> QualificationFilesParameterBinder.bindFindAllByQualificationsId(ps, null),
+            ps -> QualificationFilesParameterBinder.bindFindAllByQualificationsId(ps, qualificationsId),
             QualificationFilesEntityMapper::map
         );
     }

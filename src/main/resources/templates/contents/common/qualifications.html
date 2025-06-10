@@ -163,10 +163,13 @@
                     formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
 
                     // 保存処理
-                    // const result = await saveFormData(formdata, "/qualifications/save");
                     const result = await postFetch("/qualifications/save", JSON.stringify(formdata), token, "application/json");
-                    if (result > 0) {
+                    if (result.success) {
+                        // 画面更新
                         updatePanels();
+                        openMsgDialog("msg-dialog", result.message, "blue");
+                    } else {
+                        openMsgDialog("msg-dialog", result.message, "red");
                     }
                 }
             }
@@ -260,31 +263,27 @@
 
             // テーブルリスト画面を更新する
             function updateTableDisplay(tableId, footerId, searchId, list) {
-                // リスト作成
-                // const tbl = document.getElementById(tableId);
-                // if (tbl != null) {
-                    // フィルター処理
-                    const result1 = filterDisplay(searchId, list);
-                    const result2 = filterQualificationCombo(result1);
-                    const result3 = filterStatusCombo(result2);
+                // フィルター処理
+                const result1 = filterDisplay(searchId, list);
+                const result2 = filterQualificationCombo(result1);
+                const result3 = filterStatusCombo(result2);
 
-                    // リスト画面を初期化
-                    deleteElements(tableId);
-                    // リスト作成
-                    createTableContent(tableId, result3);
-                    // フッター作成
-                    createTableFooter(footerId, list);
-                    // チェックボタン押下時の処理を登録する
-                    registCheckButtonClicked(tableId);
-                    // テーブルのソートをリセットする
-                    resetSortable(tableId);
-                    // // スクロール時のページトップボタン処理を登録する
-                    // setPageTopButton(tableId);
-                    // テーブルにスクロールバーが表示されたときの処理を登録する
-                    document.querySelectorAll('.scroll-area').forEach(el => {
-                        toggleScrollbar(el);
-                    });
-                // }
+                // リスト画面を初期化
+                deleteElements(tableId);
+                // リスト作成
+                createTableContent(tableId, result3);
+                // フッター作成
+                createTableFooter(footerId, list);
+                // チェックボタン押下時の処理を登録する
+                registCheckButtonClicked(tableId);
+                // テーブルのソートをリセットする
+                resetSortable(tableId);
+                // // スクロール時のページトップボタン処理を登録する
+                // setPageTopButton(tableId);
+                // テーブルにスクロールバーが表示されたときの処理を登録する
+                document.querySelectorAll('.scroll-area').forEach(el => {
+                    toggleScrollbar(el);
+                });
             }
 
 /******************************************************************************************************* アップロード */
@@ -307,7 +306,7 @@
                 });
 
                 const result = await response.json();
-                // openMsgDialog("msg-dialog", result.file_name, "yellow");
+                // openMsgDialog("msg-dialog", result.message, "yellow");
                 return result;
             }
 
@@ -392,7 +391,6 @@
                                         const resultResponse2 = await postFetch('/qualifications/delete/id', data2, token, 'application/x-www-form-urlencoded');
                                         const result2 = await resultResponse2.json();
                                         if (result2.number > 0) {
-                                            // li.remove();
                                             openMsgDialog("msg-dialog", result2.text, "blue");
                                             updatePanels();
                                         } else {
@@ -448,7 +446,6 @@
                                         // その他の処理
                                         fileList.innerHTML = "";
                                         getQualificationsFiles(item.qualifications_id);
-                                        // const fileId = document.getElementById('qualifications-id');
                                         fileId02.value = item.qualifications_id;
                                     });
 

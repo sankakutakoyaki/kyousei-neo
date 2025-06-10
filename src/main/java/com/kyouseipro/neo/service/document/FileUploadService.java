@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.service;
+package com.kyouseipro.neo.service.document;
 
 import java.io.File;
 import java.io.IOException;

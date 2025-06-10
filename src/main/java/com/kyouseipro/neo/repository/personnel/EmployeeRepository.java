@@ -40,12 +40,12 @@ public class EmployeeRepository {
      * 更新。
      * @param employee
      * @param editor
-     * @return 成功したか失敗したかを真偽値で返す。
+     * @return 成功件数を返す。
      */
-    public int updateEmployee(EmployeeEntity employee, String editor) {
+    public Integer updateEmployee(EmployeeEntity employee, String editor) {
         String sql = EmployeeSqlBuilder.buildUpdateEmployeeSql();
 
-        int result = sqlRepository.executeUpdate(
+        Integer result = sqlRepository.executeUpdate(
             sql,
             pstmt -> EmployeeParameterBinder.bindUpdateEmployeeParameters(pstmt, employee, editor)
         );
@@ -59,13 +59,13 @@ public class EmployeeRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int deleteEmployeeByIds(List<SimpleData> ids, String editor) {
+    public Integer deleteEmployeeByIds(List<SimpleData> ids, String editor) {
         List<Integer> employeeIds = Utilities.createSequenceByIds(ids);
         String sql = EmployeeSqlBuilder.buildDeleteEmployeeForIdsSql(employeeIds.size());
 
-        int result = sqlRepository.executeUpdate(
+        Integer result = sqlRepository.executeUpdate(
             sql,
-            ps -> EmployeeParameterBinder.bindDeleteForIds(ps, employeeIds)
+            ps -> EmployeeParameterBinder.bindDeleteForIds(ps, employeeIds, editor)
         );
 
         return result; // 成功件数。0なら削除なし
@@ -83,7 +83,7 @@ public class EmployeeRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> EmployeeParameterBinder.bindFindAll(ps, null),
+            ps -> EmployeeParameterBinder.bindDownloadCsvForIds(ps, employeeIds),
             EmployeeEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -114,7 +114,7 @@ public class EmployeeRepository {
 
         return sqlRepository.execute(
             sql,
-            (pstmt, comp) -> EmployeeParameterBinder.bindFindByAccount(pstmt, comp),
+            (pstmt, str) -> EmployeeParameterBinder.bindFindByAccount(pstmt, str),
             rs -> rs.next() ? EmployeeEntityMapper.map(rs) : null,
             account
         );

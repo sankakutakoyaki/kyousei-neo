@@ -2,6 +2,7 @@ package com.kyouseipro.neo.controller.api;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
@@ -32,7 +34,6 @@ public class EmployeeApiController {
         return employeeService.getEmployeeById(id);
     }
 
-
     /**
      * 情報を保存する
      * @param ENTITY
@@ -40,9 +41,14 @@ public class EmployeeApiController {
      */
     @PostMapping("/employee/save")
 	@ResponseBody
-    public Integer saveEntity(@RequestBody EmployeeEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> saveEmployee(@RequestBody EmployeeEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        return employeeService.saveEmployee(entity, userName);
+        Integer id = employeeService.saveEmployee(entity, userName);
+        if (id != null && id > 0) {
+            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+        }
     }
 
     /**
@@ -52,9 +58,14 @@ public class EmployeeApiController {
      */
     @PostMapping("/employee/delete")
 	@ResponseBody
-    public Integer deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        return employeeService.deleteEmployeeByIds(ids, userName);
+        Integer id = employeeService.deleteEmployeeByIds(ids, userName);
+        if (id != null && id > 0) {
+            return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
+        }
     }
 
     /**

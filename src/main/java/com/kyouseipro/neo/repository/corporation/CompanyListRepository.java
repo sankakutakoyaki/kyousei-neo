@@ -53,6 +53,17 @@ public class CompanyListRepository {
     }
 
     // コンボボックス用リスト取得
+    public List<SimpleData> findAllComboOwnCompany() {
+        String sql = CompanyListSqlBuilder.buildFindAllComboOwnCompanySql();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> CompanyListParameterBinder.bindFindAllComboOwnCompany(ps, null),
+            SimpleDataMapper::map
+        );
+    }
+
+    // コンボボックス用リスト取得
     public List<SimpleData> findAllComboCompany() {
         String sql = CompanyListSqlBuilder.buildFindAllComboCompanySql();
 

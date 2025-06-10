@@ -4,33 +4,75 @@ import com.kyouseipro.neo.common.Utilities;
 
 public class CompanySqlBuilder {
 
+    private static String buildLogTableSql(String rowTableName) {
+        return
+            "DECLARE " + rowTableName + " TABLE (" +
+            "  company_id INT, category NVARCHAR(255), name NVARCHAR(255), name_kana NVARCHAR(255), " +
+            "  tel_number NVARCHAR(255), fax_number NVARCHAR(255), postal_code NVARCHAR(255), " +
+            "  full_address NVARCHAR(255), email NVARCHAR(255), web_address NVARCHAR(255), " +
+            "  version INT, state INT" +
+            "); ";
+    }
+
+    private static String buildOutputLogSql() {
+        return
+            "OUTPUT INSERTED.company_id, INSERTED.category, INSERTED.name, INSERTED.name_kana, " +
+            "INSERTED.tel_number, INSERTED.fax_number, INSERTED.postal_code, INSERTED.full_address, " +
+            "INSERTED.email, INSERTED.web_address, INSERTED.version, INSERTED.state ";
+    }
+
+    private static String buildInsertLogSql(String rowTableName, String processName) {
+        return
+            "INSERT INTO company_log (" +
+            "  company_id, editor, process, log_date, category, name, name_kana, tel_number, fax_number, " +
+            "  postal_code, full_address, email, web_address, version, state" +
+            ") " +
+            "SELECT company_id, ?, '" + processName + "', CURRENT_TIMESTAMP, category, name, name_kana, tel_number, fax_number, " +
+            "  postal_code, full_address, email, web_address, version, state " +
+            "FROM " + rowTableName + ";";
+    }
+
     public static String buildInsertCompanySql() {
         return
-            "DECLARE @InsertedRows TABLE (company_id INT);" +
-            "INSERT INTO company (category, name, name_kana, tel_number, fax_number, postal_code, full_address, email, web_address, version, state) " +
-            "OUTPUT INSERTED.company_id INTO @InsertedRows " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);" +
+            buildLogTableSql("@Inserted") +
 
-            "INSERT INTO company_log (company_id, editor, process, log_date, category, name, name_kana, tel_number, fax_number, postal_code, full_address, email, web_address, version, state) " +
-            "SELECT c.company_id, ?, 'INSERT', CURRENT_TIMESTAMP, c.category, c.name, c.name_kana, c.tel_number, c.fax_number, c.postal_code, c.full_address, c.email, c.web_address, c.version, c.state " +
-            "FROM company c INNER JOIN @InsertedRows ir ON c.company_id = ir.company_id;" +
+            "INSERT INTO company (" +
+            "  category, name, name_kana, tel_number, fax_number, postal_code, full_address, " +
+            "  email, web_address, version, state" +
+            ") " +
+            buildOutputLogSql() + "INTO @Inserted " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
-            "SELECT company_id FROM @InsertedRows;";
+            buildInsertLogSql("@Inserted", "INSERT") +
+            "SELECT company_id FROM @Inserted;";
     }
 
     public static String buildUpdateCompanySql() {
         return
-            "DECLARE @UpdatedRows TABLE (company_id INT);" +
+            buildLogTableSql("@Updated") +
+
             "UPDATE company SET " +
-            "category=?, name=?, name_kana=?, tel_number=?, fax_number=?, postal_code=?, full_address=?, email=?, web_address=?, version=?, state=? " +
-            "OUTPUT INSERTED.company_id INTO @UpdatedRows " +
-            "WHERE company_id=?;" +
+            "  category=?, name=?, name_kana=?, tel_number=?, fax_number=?, postal_code=?, " +
+            "  full_address=?, email=?, web_address=?, version=?, state=? " +
+            buildOutputLogSql() + "INTO @Updated " +
+            "WHERE company_id=?; " +
 
-            "INSERT INTO company_log (company_id, editor, process, log_date, category, name, name_kana, tel_number, fax_number, postal_code, full_address, email, web_address, version, state) " +
-            "SELECT c.company_id, ?, 'UPDATE', CURRENT_TIMESTAMP, c.category, c.name, c.name_kana, c.tel_number, c.fax_number, c.postal_code, c.full_address, c.email, c.web_address, c.version, c.state " +
-            "FROM company c INNER JOIN @UpdatedRows ur ON c.company_id = ur.company_id;" +
+            buildInsertLogSql("@Updated", "UPDATE") +
+            "SELECT company_id FROM @Updated;";
+    }
 
-            "SELECT company_id FROM @UpdatedRows;";
+    public static String buildDeleteCompanyForIdsSql(int count) {
+        String placeholders = Utilities.generatePlaceholders(count);
+
+        return
+            buildLogTableSql("@Deleted") +
+
+            "UPDATE company SET state = ? " +
+            buildOutputLogSql() + "INTO @Deleted " +
+            "WHERE company_id IN (" + placeholders + ") AND NOT (state = ?); " +
+
+            buildInsertLogSql("@Deleted", "DELETE") +
+            "SELECT company_id FROM @Deleted;";
     }
 
     public static String buildFindByIdSql() {
@@ -43,25 +85,6 @@ public class CompanySqlBuilder {
 
     public static String buildFindAllClientSql() {
         return "SELECT * FROM companies WHERE NOT (category = ?) AND NOT (state = ?)";
-    }
-
-    public static String buildDeleteCompanyForIdsSql(int count) {
-        String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
-        return
-            "DECLARE @DeletedRows TABLE (company_id INT); " +
-
-            "UPDATE companies " +
-            "SET state = ? " +
-            "OUTPUT INSERTED.company_id INTO @DeletedRows " +
-            "WHERE company_id IN (" + placeholders + ") " +
-            "AND NOT (state = ?); " +
-
-            "INSERT INTO company_log " +
-            "(company_id, editor, process, log_date, category, name, name_kana, tel_number, fax_number, postal_code, full_address, email, web_address, version, state) " +
-            "SELECT c.company_id, ?, 'DELETE', CURRENT_TIMESTAMP, " +
-            "c.category, c.name, c.name_kana, c.tel_number, c.fax_number, c.postal_code, " +
-            "c.full_address, c.email, c.web_address, c.version, c.state " +
-            "FROM company c INNER JOIN @DeletedRows d ON c.company_id = d.company_id; ";
     }
 
     public static String buildDownloadCsvCompanyForIdsSql(int count) {

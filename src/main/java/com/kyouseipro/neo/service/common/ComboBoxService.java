@@ -107,6 +107,9 @@ public class ComboBoxService {
     //     sqlData.setData(sb.toString(), new SimpleData());
     //     return sqlRepository.getEntityList(sqlData);
     // }
+    public List<SimpleData> getOwnCompanyList() {
+        return companyListRepository.findAllComboOwnCompany();
+    }
 
     public List<SimpleData> getCompanyList() {
         return companyListRepository.findAllComboCompany();

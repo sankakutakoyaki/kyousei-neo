@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.kyouseipro.neo.csv.CsvExporter;
+import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
+import com.kyouseipro.neo.repository.qualification.QualificationFilesRepository;
 import com.kyouseipro.neo.repository.qualification.QualificationsRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,8 +25,30 @@ public class QualificationsService {
      * @param id 資格ID
      * @return QualificationsEntity または null
      */
-    public QualificationsEntity getQualificationsById(int id) {
+    public QualificationsEntity getQualificationsById(Integer id) {
         return qualificationsRepository.findById(id);
+    }
+
+    /**
+     * 指定されたEmployeeIDの資格情報を取得します。
+     * 論理削除されている場合は null を返します。
+     *
+     * @param id 資格ID
+     * @return QualificationsEntityのリスト または null
+     */
+    public List<QualificationsEntity> getQualificationsByEmployeeId(Integer id) {
+        return qualificationsRepository.findByEmployeeId(id);
+    }
+
+    /**
+     * 指定されたCompanyIDの資格情報を取得します。
+     * 論理削除されている場合は null を返します。
+     *
+     * @param id 資格ID
+     * @return QualificationsEntityのリスト または null
+     */
+    public List<QualificationsEntity> getQualificationsByCompanyId(Integer id) {
+        return qualificationsRepository.findByCompanyId(id);
     }
 
     /**
@@ -48,7 +72,7 @@ public class QualificationsService {
      * @param id
      * @return
      */
-    public Integer deleteQualificationsById(int id, String userName) {
+    public Integer deleteQualificationsById(Integer id, String userName) {
         return qualificationsRepository.deleteQualifications(id, userName);
     }
 
@@ -86,6 +110,7 @@ public class QualificationsService {
     public List<QualificationsEntity> getCompanyQualificationsList() {
         return qualificationsRepository.findAllForCompany();
     }
+
 
     // /**
     //  * IDからQualificationsを取得

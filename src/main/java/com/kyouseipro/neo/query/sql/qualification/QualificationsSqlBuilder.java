@@ -4,79 +4,121 @@ import com.kyouseipro.neo.common.Utilities;
 
 public class QualificationsSqlBuilder {
 
+    private static String buildLogTableSql(String rowTableName) {
+        return
+            "DECLARE " + rowTableName + " TABLE (" +
+            "  qualifications_id INT, owner_id INT, qualification_master_id INT, number NVARCHAR(255), " +
+            "  acquisition_date DATE, expiry_date DATE, version INT, state INT" +
+            "); ";
+    }
+
+    private static String buildInsertLogSql(String rowTableName, String processName) {
+        return
+            "INSERT INTO qualifications_log (" +
+            "  qualifications_id, editor, process, log_date, owner_id, qualification_master_id, number, " +
+            "  acquisition_date, expiry_date, version, state" +
+            ") " +
+            "SELECT qualifications_id, ?, '" + processName + "', CURRENT_TIMESTAMP, owner_id, qualification_master_id, number, " +
+            "  acquisition_date, expiry_date, version, state " +
+            "FROM " + rowTableName + ";";
+    }
+
+    private static String buildOutputLogSql() {
+        return
+            "OUTPUT INSERTED.qualifications_id, INSERTED.owner_id, INSERTED.qualification_master_id, " +
+            "  INSERTED.number, INSERTED.acquisition_date, INSERTED.expiry_date, INSERTED.version, INSERTED.state ";
+    }
+
     public static String buildInsertQualificationsSql() {
         return
-            "DECLARE @Inserted TABLE (qualifications_id INT);" +
+            buildLogTableSql("@Inserted") +
+
             "INSERT INTO qualifications (owner_id, qualification_master_id, number, acquisition_date, expiry_date, version, state) " +
-            "OUTPUT INSERTED.qualifications_id INTO @Inserted " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?);" +
-            "INSERT INTO qualifications_log (qualifications_id, editor, process, log_date, owner_id, qualification_master_id, number, acquisition_date, expiry_date, version, state) " +
-            "SELECT q.qualifications_id, ?, 'INSERT', CURRENT_TIMESTAMP, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.version, q.state " +
-            "FROM qualifications q INNER JOIN @Inserted i ON q.qualifications_id = i.qualifications_id;" +
+            buildOutputLogSql() + "INTO @Inserted " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?); " +
+
+            buildInsertLogSql("@Inserted", "INSERT") +
             "SELECT qualifications_id FROM @Inserted;";
     }
 
     public static String buildUpdateQualificationsSql() {
         return
-            "DECLARE @Updated TABLE (qualifications_id INT);" +
+            buildLogTableSql("@Updated") +
+
             "UPDATE qualifications SET owner_id=?, qualification_master_id=?, number=?, acquisition_date=?, expiry_date=?, version=?, state=? " +
-            "OUTPUT INSERTED.qualifications_id INTO @Updated " +
-            "WHERE qualifications_id=?;" +
-            "INSERT INTO qualifications_log (qualifications_id, editor, process, log_date, owner_id, qualification_master_id, number, acquisition_date, expiry_date, version, state) " +
-            "SELECT q.qualifications_id, ?, 'UPDATE', CURRENT_TIMESTAMP, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.version, q.state " +
-            "FROM qualifications q INNER JOIN @Updated u ON q.qualifications_id = u.qualifications_id;" +
+            buildOutputLogSql() + "INTO @Updated " +
+            "WHERE qualifications_id=?; " +
+
+            buildInsertLogSql("@Updated", "UPDATE") +
             "SELECT qualifications_id FROM @Updated;";
+    }
+
+    public static String buildDeleteQualificationsForIdsSql(int count) {
+        String placeholders = Utilities.generatePlaceholders(count);
+
+        return
+            buildLogTableSql("@Deleted") +
+
+            "UPDATE qualifications SET state = ? " +
+            buildOutputLogSql() + "INTO @Deleted " +
+            "WHERE qualifications_id IN (" + placeholders + ") AND NOT (state = ?); " +
+
+            buildInsertLogSql("@Deleted", "DELETE") +
+            "SELECT qualifications_id FROM @Deleted;";
     }
 
     public static String buildDeleteQualificationsSql() {
         return
-            "DECLARE @Deleted TABLE (qualifications_id INT);" +
+            buildLogTableSql("@Deleted") +
+
             "UPDATE qualifications SET state=? " +
-            "OUTPUT INSERTED.qualifications_id INTO @Deleted " +
-            "WHERE qualifications_id=?;" +
-            "INSERT INTO qualifications_log (qualifications_id, editor, process, log_date, owner_id, qualification_master_id, number, acquisition_date, expiry_date, version, state) " +
-            "SELECT q.qualifications_id, ?, 'DELETE', CURRENT_TIMESTAMP, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.version, q.state " +
-            "FROM qualifications q INNER JOIN @Deleted d ON q.qualifications_id = d.qualifications_id;" +
+            buildOutputLogSql() + "INTO @Deleted " +
+            "WHERE qualifications_id=?; " +
+
+            buildInsertLogSql("@Deleted", "DELETE") +
             "SELECT qualifications_id FROM @Deleted;";
     }
 
     public static String buildFindByIdSql() {
-        return "SELECT * FROM qualifications WHERE qualifiations_id = ? AND NOT (state = ?)";
+        return "SELECT * FROM qualifications WHERE NOT (state = ?) AND qualifiations_id = ?";
     }
 
-    public static String buildFindAllEmployeeSql() {
-        // return "SELECT * FROM qualifications WHERE qualifiations_id = ? AND NOT (state = ?)";
+    public static String buildFindAllEmployeeIdSql() {
         return  
             "SELECT q.qualifications_id, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.is_enabled" +
             ", q.version, q.state, e.full_name as owner_name, qm.name as qualification_name FROM qualifications q" +
             " LEFT OUTER JOIN employees e ON e.employee_id = q.owner_id AND NOT (e.state = ?) " +
-            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)";
+            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)" +
+            " WHERE NOT (q.state = ?) AND e.employee_id = ?";
     }
 
-    public static String buildFindAllCompanySql() {
-        // return "SELECT * FROM qualifications WHERE qualifiations_id = ? AND NOT (state = ?)";
+    public static String buildFindAllCompanyIdSql() {
         return  
             "SELECT q.qualifications_id, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.is_enabled" +
             ", q.version, q.state, c.name as owner_name, qm.name as qualification_name FROM qualifications q" +
             " LEFT OUTER JOIN companies c ON c.company_id = q.owner_id AND NOT (c.state = ?) " +
-            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)";
+            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)" +
+            " WHERE NOT (q.state = ?) AND c.company_id = ?";
     }
 
-    public static String buildDeleteQualificationsForIdsSql(int count) {
-        String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
-        return
-            "DECLARE @DeletedRows TABLE (qualifications_id INT); " +
-
-            "UPDATE qualifications " +
-            "SET state = ? " +
-            "OUTPUT INSERTED.qualifications_id INTO @DeletedRows " +
-            "WHERE qualifications_id IN (" + placeholders + ") " +
-            "AND NOT (state = ?); " +
-
-            "INSERT INTO qualifications_log (qualifications_id, editor, process, log_date, owner_id, qualification_master_id, number, acquisition_date, expiry_date, version, state) " +
-            "SELECT q.qualifications_id, ?, 'DELETE', CURRENT_TIMESTAMP, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.version, q.state " +
-            "FROM qualifications q INNER JOIN @Updated u ON q.qualifications_id = u.qualifications_id;";
+        public static String buildFindAllEmployeeSql() {
+        return  
+            "SELECT q.qualifications_id, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.is_enabled" +
+            ", q.version, q.state, e.full_name as owner_name, qm.name as qualification_name FROM qualifications q" +
+            " LEFT OUTER JOIN employees e ON e.employee_id = q.owner_id AND NOT (e.state = ?) " +
+            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)" +
+            " WHERE NOT (q.state = ?)";
     }
+
+    public static String buildFindAllCompanySql() {
+        return  
+            "SELECT q.qualifications_id, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.is_enabled" +
+            ", q.version, q.state, c.name as owner_name, qm.name as qualification_name FROM qualifications q" +
+            " LEFT OUTER JOIN companies c ON c.company_id = q.owner_id AND NOT (c.state = ?) " +
+            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)" +
+            " WHERE NOT (q.state = ?)";
+    }
+
 
     public static String buildDownloadCsvQualificationsForIdsSql(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."

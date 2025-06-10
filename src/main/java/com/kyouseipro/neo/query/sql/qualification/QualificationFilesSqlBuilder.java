@@ -2,33 +2,69 @@ package com.kyouseipro.neo.query.sql.qualification;
 
 public class QualificationFilesSqlBuilder {
 
+    private static String buildLogTableSql(String tableName) {
+        return
+            "DECLARE " + tableName + " TABLE (" +
+            "  qualifications_files_id INT, qualifications_id INT, file_name NVARCHAR(255), " +
+            "  internal_name NVARCHAR(255), folder_name NVARCHAR(255), version INT, state INT" +
+            "); ";
+    }
+
+    private static String buildOutputLogSql() {
+        return
+            "OUTPUT INSERTED.qualifications_files_id, INSERTED.qualifications_id, INSERTED.file_name, " +
+            "INSERTED.internal_name, INSERTED.folder_name, INSERTED.version, INSERTED.state ";
+    }
+
+    private static String buildInsertLogSql(String tableName, String process) {
+        return
+            "INSERT INTO qualifications_files_log (" +
+            "  qualifications_files_id, editor, process, log_date, " +
+            "  qualifications_id, file_name, internal_name, folder_name, version, state" +
+            ") " +
+            "SELECT qualifications_files_id, ?, '" + process + "', CURRENT_TIMESTAMP, " +
+            "  qualifications_id, file_name, internal_name, folder_name, version, state " +
+            "FROM " + tableName + "; ";
+    }
+
     public static String buildInsertQualificationFilesSql() {
         return
-            "DECLARE @InsertedRows TABLE (qualifications_files_id INT);" +
-            "INSERT INTO qualifications_files (qualifications_id, file_name, internal_name, folder_name, version, state) " +
-            "OUTPUT INSERTED.qualifications_files_id INTO @InsertedRows " +
-            "VALUES (?, ?, ?, ?, ?, ?);" +
-            "INSERT INTO qualifications_files_log (qualifications_files_id, editor, process, log_date, " +
-            "qualifications_id, file_name, internal_name, folder_name, version, state) " +
-            "SELECT qf.qualifications_files_id, ?, 'INSERT', CURRENT_TIMESTAMP, " +
-            "qf.qualifications_id, qf.file_name, qf.internal_name, qf.folder_name, qf.version, qf.state " +
-            "FROM qualifications_files qf INNER JOIN @InsertedRows ir ON qf.qualifications_files_id = ir.qualifications_files_id;" +
-            "SELECT qualifications_files_id FROM @InsertedRows;";
+            buildLogTableSql("@Inserted") +
+
+            "INSERT INTO qualifications_files (" +
+            "  qualifications_id, file_name, internal_name, folder_name, version, state" +
+            ") " +
+            buildOutputLogSql() + "INTO @Inserted " +
+            "VALUES (?, ?, ?, ?, ?, ?); " +
+
+            buildInsertLogSql("@Inserted", "INSERT") +
+            "SELECT qualifications_files_id FROM @Inserted;";
     }
 
     public static String buildUpdateQualificationFilesSql() {
         return
-            "DECLARE @UpdatedRows TABLE (qualifications_files_id INT);" +
+            buildLogTableSql("@Updated") +
+
             "UPDATE qualifications_files SET " +
-            "qualifications_id=?, file_name=?, internal_name=?, folder_name=?, version=?, state=? " +
-            "OUTPUT INSERTED.qualifications_files_id INTO @UpdatedRows " +
-            "WHERE qualifications_files_id=?;" +
-            "INSERT INTO qualifications_files_log (qualifications_files_id, editor, process, log_date, " +
-            "qualifications_id, file_name, internal_name, folder_name, version, state) " +
-            "SELECT qf.qualifications_files_id, ?, 'UPDATE', CURRENT_TIMESTAMP, " +
-            "qf.qualifications_id, qf.file_name, qf.internal_name, qf.folder_name, qf.version, qf.state " +
-            "FROM qualifications_files qf INNER JOIN @UpdatedRows ur ON qf.qualifications_files_id = ur.qualifications_files_id;" +
-            "SELECT qualifications_files_id FROM @UpdatedRows;";
+            "  qualifications_id=?, file_name=?, internal_name=?, folder_name=?, version=?, state=? " +
+            buildOutputLogSql() + "INTO @Updated " +
+            "WHERE qualifications_files_id=?; " +
+
+            buildInsertLogSql("@Updated", "UPDATE") +
+            "SELECT qualifications_files_id FROM @Updated;";
+    }
+
+    public static String buildDeleteQualificationFilesSql() {
+        return
+            buildLogTableSql("@Deleted") +
+
+            "UPDATE qualifications_files SET " +
+            "  state=? " +
+            buildOutputLogSql() + "INTO @Deleted " +
+            "WHERE forder_name_id=?; " +
+
+            buildInsertLogSql("@Deleted", "DELETE") +
+            "SELECT qualifications_files_id FROM @Deleted;";
     }
 
     public static String buildFindByIdSql() {

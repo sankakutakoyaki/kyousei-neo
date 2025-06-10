@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.service;
+package com.kyouseipro.neo.service.document;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -6,15 +6,28 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.kyouseipro.neo.component.UploadConfig;
+import com.kyouseipro.neo.entity.common.AddressEntity;
+import com.kyouseipro.neo.entity.corporation.StaffEntity;
+import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.interfaceis.FileUpload;
+import com.kyouseipro.neo.repository.common.AddressRepository;
+import com.kyouseipro.neo.repository.common.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,7 +45,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class FileService {
-    // private final SqlRepository sqlRepository;
+    private final SqlRepository sqlRepository;
+    private final AddressRepository addressRepository;
 
     /** 許可された拡張子のリスト（必要に応じて変更可） */
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "pdf", "gif", "zip");
@@ -185,110 +199,104 @@ public class FileService {
         return (dot != -1) ? filename.substring(dot + 1).toLowerCase() : "";
     }
 
-    // /**
-    //  * ファイルをアップロードする
-    //  * @param files
-    //  * @param folderName
-    //  * @param entity
-    //  * @return
-    //  */
-    // public Entity fileUpload(MultipartFile[] files, String folderName, FileUpload fileUploadEntity) {
-    //     if (files.length == 0) {
-    //         SimpleData simpleData = new SimpleData();
-    //         simpleData.setText("ファイルが空です");
-    //         return simpleData;
-    //     }
+    /**
+     * ファイルをアップロードする
+     * @param files
+     * @param folderName
+     * @param entity
+     * @return
+     */
+    public SimpleData fileUpload(MultipartFile[] files, String folderName, FileUpload fileUploadEntity) {
+        if (files.length == 0) {
+            SimpleData simpleData = new SimpleData();
+            simpleData.setText("ファイルが空です");
+            return simpleData;
+        }
 
-    //     File uploadDir = new File(UploadConfig.getUploadDir() + folderName);
-    //     if (!uploadDir.exists()) {
-    //         uploadDir.mkdirs();
-    //     }
+        File uploadDir = new File(UploadConfig.getUploadDir() + folderName);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
 
-    //     StringBuilder resultStr = new StringBuilder();
-    //     StringBuilder sqlBuilder = new StringBuilder();
-    //     Pattern invalidChars = Pattern.compile("[/\\\\:*?\"<>`]");
+        StringBuilder resultStr = new StringBuilder();
+        StringBuilder sqlBuilder = new StringBuilder();
+        Pattern invalidChars = Pattern.compile("[/\\\\:*?\"<>`]");
 
-    //     for (MultipartFile file : files) {
-    //         if (!file.isEmpty()) {
-    //             try {
-    //                 String originalFilename = file.getOriginalFilename();
-    //                 if (originalFilename == null || invalidChars.matcher(originalFilename).find()) {
-    //                     resultStr.append("無効なファイル名: ").append(originalFilename).append("\n");
-    //                     continue;
-    //                 }
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                try {
+                    String originalFilename = file.getOriginalFilename();
+                    if (originalFilename == null || invalidChars.matcher(originalFilename).find()) {
+                        resultStr.append("無効なファイル名: ").append(originalFilename).append("\n");
+                        continue;
+                    }
 
-    //                 originalFilename = originalFilename.replaceAll(" ", "_");
+                    originalFilename = originalFilename.replaceAll(" ", "_");
 
-    //                 String extension = "";
-    //                 int dotIndex = originalFilename.lastIndexOf(".");
-    //                 if (dotIndex != -1) {
-    //                     extension = originalFilename.substring(dotIndex);
-    //                 }
+                    String extension = "";
+                    int dotIndex = originalFilename.lastIndexOf(".");
+                    if (dotIndex != -1) {
+                        extension = originalFilename.substring(dotIndex);
+                    }
 
-    //                 String safeFilename = UUID.randomUUID().toString() + extension;
-    //                 File dest = new File(uploadDir, safeFilename);
-    //                 file.transferTo(dest);
+                    String safeFilename = UUID.randomUUID().toString() + extension;
+                    File dest = new File(uploadDir, safeFilename);
+                    file.transferTo(dest);
 
-    //                 resultStr.append("成功: ").append(safeFilename).append("\n");
+                    resultStr.append("成功: ").append(safeFilename).append("\n");
 
-    //                 // エンティティに設定
-    //                 fileUploadEntity.setFileName(originalFilename);
-    //                 fileUploadEntity.setInternalName(safeFilename);
-    //                 fileUploadEntity.setFolderName(dest.getAbsolutePath());
+                    // エンティティに設定
+                    fileUploadEntity.setFileName(originalFilename);
+                    fileUploadEntity.setInternalName(safeFilename);
+                    fileUploadEntity.setFolderName(dest.getAbsolutePath());
 
-    //                 sqlBuilder.append(fileUploadEntity.getInsertString());
+                    // sqlBuilder.append(fileUploadEntity.getInsertString());
 
-    //             } catch (IOException e) {
-    //                 resultStr.append("失敗: ").append(file.getOriginalFilename()).append(" - ").append(e.getMessage()).append("\n");
-    //             }
-    //         }
-    //     }
+                } catch (IOException e) {
+                    resultStr.append("失敗: ").append(file.getOriginalFilename()).append(" - ").append(e.getMessage()).append("\n");
+                }
+            }
+        }
 
-    //     SimpleData result = new SimpleData();
-    //     if (sqlBuilder.length() > 0) {
-    //         String sql = sqlBuilder.toString();
+        SimpleData result = new SimpleData();
+        if (sqlBuilder.length() > 0) {
+            String sql = sqlBuilder.toString();
 
-    //         result = sqlRepository.execSql(conn -> {
-    //             try (Statement stmt = conn.createStatement()) {
-    //                 stmt.execute(sql);
-    //                 SimpleData data = new SimpleData();
-    //                 data.setNumber(1);
-    //                 data.setText(resultStr.toString());  // ファイルごとの結果も含める
-    //                 return data;
-    //             } catch (SQLException e) {
-    //                 e.printStackTrace();
-    //                 SimpleData error = new SimpleData();
-    //                 error.setNumber(0);
-    //                 error.setText("SQLエラー: " + e.getMessage());
-    //                 return error;
-    //             }
-    //         });
-    //         result.setText(resultStr.toString() + result.getText());
-    //     } else {
-    //         result.setText(resultStr.toString());
-    //     }
+            result = sqlRepository.execSql(conn -> {
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(sql);
+                    SimpleData data = new SimpleData();
+                    data.setNumber(1);
+                    data.setText(resultStr.toString());  // ファイルごとの結果も含める
+                    return data;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    SimpleData error = new SimpleData();
+                    error.setNumber(0);
+                    error.setText("SQLエラー: " + e.getMessage());
+                    return error;
+                }
+            });
+            result.setText(resultStr.toString() + result.getText());
+        } else {
+            result.setText(resultStr.toString());
+        }
 
-    //     return result;
-    // }
-
-
+        return result;
+    }
 
     /**
      * ファイル削除用エンドポイント
      * @param url 削除するファイルのパス
      * @return
      */
-    public SimpleData deleteFile(String url) {
-        SimpleData result = new SimpleData();
+    public boolean deleteFile(String url) {
         try {
             Path filePath = Paths.get(url);
             Files.deleteIfExists(filePath);
-            result.setNumber(200);
-            result.setText("File deleted");
-            return result;
+            return true;
         } catch (IOException e) {
-            result.setText("Error deleting file");
-            return result;
+            return false;
         }
     }
 
@@ -306,4 +314,7 @@ public class FileService {
         }
     }
 
+    public AddressEntity getAddressByPostalCode(String postalCode) {
+        return addressRepository.findByPostalCode(postalCode);
+    }
 }

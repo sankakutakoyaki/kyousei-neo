@@ -45,14 +45,26 @@ public class QualificationsParameterBinder {
 
     public static void bindFindById(PreparedStatement ps, Integer qualificationsId) throws SQLException {
         ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.state.DELETE.getCode());
-        ps.setInt(3, Enums.state.DELETE.getCode());
-        ps.setInt(4, qualificationsId);
+        ps.setInt(2, qualificationsId);
     }
 
+    public static void bindFindByEmployeeId(PreparedStatement ps, Integer employeeId) throws SQLException {
+        ps.setInt(1, Enums.state.DELETE.getCode());
+        ps.setInt(2, Enums.state.DELETE.getCode());
+        ps.setInt(3, Enums.state.DELETE.getCode());
+        ps.setInt(4, employeeId);
+    }
+
+    public static void bindFindByCompanyId(PreparedStatement ps, Integer companyId) throws SQLException {
+        ps.setInt(1, Enums.state.DELETE.getCode());
+        ps.setInt(2, Enums.state.DELETE.getCode());
+        ps.setInt(3, Enums.state.DELETE.getCode());
+        ps.setInt(4, companyId);
+    }
     public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
         ps.setInt(1, Enums.state.DELETE.getCode());
         ps.setInt(2, Enums.state.DELETE.getCode());
+        ps.setInt(3, Enums.state.DELETE.getCode());
     }
 
     public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {

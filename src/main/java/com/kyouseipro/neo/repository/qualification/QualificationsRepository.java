@@ -74,7 +74,7 @@ public class QualificationsRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> QualificationsParameterBinder.bindFindAll(ps, null),
+            ps -> QualificationsParameterBinder.bindDownloadCsvForIds(ps, qualificationsIds),
             QualificationsEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -88,6 +88,28 @@ public class QualificationsRepository {
             (pstmt, comp) -> QualificationsParameterBinder.bindFindById(pstmt, comp),
             rs -> rs.next() ? QualificationsEntityMapper.map(rs) : null,
             qualificationsId
+        );
+    }
+
+    // EmployeeIDによる取得
+    public List<QualificationsEntity> findByEmployeeId(int employeeId) {
+        String sql = QualificationsSqlBuilder.buildFindAllEmployeeIdSql();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> QualificationsParameterBinder.bindFindByEmployeeId(ps, employeeId),
+            QualificationsEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+
+    // CompanyIDによる取得
+    public List<QualificationsEntity> findByCompanyId(int companyId) {
+        String sql = QualificationsSqlBuilder.buildFindAllCompanyIdSql();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> QualificationsParameterBinder.bindFindByEmployeeId(ps, companyId),
+            QualificationsEntityMapper::map // ← ここで ResultSet を map
         );
     }
 

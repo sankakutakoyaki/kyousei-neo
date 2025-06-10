@@ -2,6 +2,7 @@ package com.kyouseipro.neo.controller.api;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.corporation.StaffEntity;
+import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.service.corporation.StaffService;
 
@@ -27,9 +29,14 @@ public class StaffApiController {
      */
     @PostMapping("/staff/save")
 	@ResponseBody
-    public Integer saveEntity(@RequestBody StaffEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> saveEntity(@RequestBody StaffEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        return staffService.saveStaff(entity, userName);
+        Integer id = staffService.saveStaff(entity, userName);
+        if (id != null && id > 0) {
+            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+        }
     }
 
     /**
@@ -39,9 +46,14 @@ public class StaffApiController {
      */
     @PostMapping("/staff/delete")
 	@ResponseBody
-    public Integer deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        return staffService.deleteStaffByIds(ids, userName);
+        Integer id = staffService.deleteStaffByIds(ids, userName);
+        if (id != null && id > 0) {
+            return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
+        }
     }
 
     /**

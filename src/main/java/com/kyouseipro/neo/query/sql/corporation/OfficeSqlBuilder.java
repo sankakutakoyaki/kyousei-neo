@@ -4,29 +4,76 @@ import com.kyouseipro.neo.common.Utilities;
 
 public class OfficeSqlBuilder {
 
+    private static String buildLogTableSql(String rowTableName) {
+        return
+            "DECLARE " + rowTableName + " TABLE (" +
+            "  office_id INT, office_name NVARCHAR(255), name NVARCHAR(255), name_kana NVARCHAR(255), " +
+            "  tel_number NVARCHAR(255), fax_number NVARCHAR(255), postal_code NVARCHAR(255), " +
+            "  full_address NVARCHAR(255), email NVARCHAR(255), web_address NVARCHAR(255), " +
+            "  version INT, state INT" +
+            "); ";
+    }
+
+    private static String buildOutputLogSql() {
+        return
+            "OUTPUT INSERTED.office_id, INSERTED.office_name, INSERTED.name, INSERTED.name_kana, " +
+            "INSERTED.tel_number, INSERTED.fax_number, INSERTED.postal_code, INSERTED.full_address, " +
+            "INSERTED.email, INSERTED.web_address, INSERTED.version, INSERTED.state ";
+    }
+
+    private static String buildInsertLogSql(String rowTableName, String processName) {
+        return
+            "INSERT INTO offices_log (" +
+            "  office_id, editor, process, log_date, office_id, office_name, name, name_kana, tel_number, fax_number, " +
+            "  postal_code, full_address, email, web_address, version, state" +
+            ") " +
+            "SELECT office_id, ?, '" + processName + "', CURRENT_TIMESTAMP, " +
+            "  office_id, office_name, name, name_kana, tel_number, fax_number, " +
+            "  postal_code, full_address, email, web_address, version, state " +
+            "FROM " + rowTableName + ";";
+    }
+
     public static String buildInsertOfficeSql() {
         return
-            "DECLARE @InsertedRows TABLE (office_id INT);" +
-            "INSERT INTO offices (office_id, office_name, name, name_kana, tel_number, fax_number, postal_code, full_address, email, web_address, version, state) " +
-            "OUTPUT INSERTED.office_id INTO @InsertedRows " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);" +
-            "INSERT INTO offices_log (office_id, editor, process, log_date, office_id, office_name, name, name_kana, tel_number, fax_number, postal_code, full_address, email, web_address, version, state) " +
-            "SELECT o.office_id, ?, 'INSERT', CURRENT_TIMESTAMP, office_id, office_name, name, name_kana, tel_number, fax_number, postal_code, full_address, email, web_address, version, state " +
-            "FROM offices o INNER JOIN @InsertedRows ir ON o.office_id = ir.office_id;" +
-            "SELECT office_id FROM @InsertedRows;";
+            buildLogTableSql("@Inserted") +
+
+            "INSERT INTO offices (" +
+            "  office_id, office_name, name, name_kana, tel_number, fax_number, " +
+            "  postal_code, full_address, email, web_address, version, state" +
+            ") " +
+            buildOutputLogSql() + "INTO @Inserted " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
+
+            buildInsertLogSql("@Inserted", "INSERT") +
+            "SELECT office_id FROM @Inserted;";
     }
 
     public static String buildUpdateOfficeSql() {
         return
-            "DECLARE @UpdatedRows TABLE (office_id INT);" +
+            buildLogTableSql("@Updated") +
+
             "UPDATE offices SET " +
-            "office_id=?, office_name=?, name=?, name_kana=?, tel_number=?, fax_number=?, postal_code=?, full_address=?, email=?, web_address=?, version=?, state=? " +
-            "OUTPUT INSERTED.office_id INTO @UpdatedRows " +
-            "WHERE office_id=?;" +
-            "INSERT INTO offices_log (office_id, editor, process, log_date, office_id, office_name, name, name_kana, tel_number, fax_number, postal_code, full_address, email, web_address, version, state) " +
-            "SELECT o.office_id, ?, 'UPDATE', CURRENT_TIMESTAMP, office_id, office_name, name, name_kana, tel_number, fax_number, postal_code, full_address, email, web_address, version, state " +
-            "FROM offices o INNER JOIN @UpdatedRows ur ON o.office_id = ur.office_id;" +
-            "SELECT office_id FROM @UpdatedRows;";
+            "  office_id=?, office_name=?, name=?, name_kana=?, tel_number=?, fax_number=?, " +
+            "  postal_code=?, full_address=?, email=?, web_address=?, version=?, state=? " +
+            buildOutputLogSql() + "INTO @Updated " +
+            "WHERE office_id=?; " +
+
+            buildInsertLogSql("@Updated", "UPDATE") +
+            "SELECT office_id FROM @Updated;";
+    }
+
+    public static String buildDeleteOfficeForIdsSql(int count) {
+        String placeholders = Utilities.generatePlaceholders(count);
+
+        return
+            buildLogTableSql("@Deleted") +
+
+            "UPDATE offices SET state = ? " +
+            buildOutputLogSql() + "INTO @Deleted " +
+            "WHERE office_id IN (" + placeholders + ") AND NOT (state = ?); " +
+
+            buildInsertLogSql("@Deleted", "DELETE") +
+            "SELECT office_id FROM @Deleted;";
     }
 
     public static String buildFindByIdSql() {
@@ -41,20 +88,6 @@ public class OfficeSqlBuilder {
         return "SELECT o.*, c.name as company_name, c.name_kana as company_name_kana FROM offices o" + 
             " INNER JOIN companies c ON c.company_id = o.company_id" + 
             " WHERE NOT (c.category = ?) AND NOT (c.state = ?) AND NOT (o.state = ?)";
-    }
-
-    public static String buildDeleteOfficeForIdsSql(int count) {
-        String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
-        return
-            "DECLARE @DeletedRows TABLE (office_id INT); " +
-            "UPDATE offices " +
-            "SET state = ? " +
-            "OUTPUT INSERTED.office_id INTO @DeletedRows " +
-            "WHERE office_id IN (" + placeholders + ") " +
-            "AND NOT (state = ?); " +
-            "INSERT INTO offices_log (office_id, editor, process, log_date, office_id, office_name, name, name_kana, tel_number, fax_number, postal_code, full_address, email, web_address, version, state) " +
-            "SELECT o.office_id, ?, 'DELETE', CURRENT_TIMESTAMP, office_id, office_name, name, name_kana, tel_number, fax_number, postal_code, full_address, email, web_address, version, state " +
-            "FROM offices o INNER JOIN @UpdatedRows ur ON o.office_id = ur.office_id;";
     }
 
     public static String buildDownloadCsvOfficeForIdsSql(int count) {

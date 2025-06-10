@@ -21,6 +21,11 @@ public class CompanyListParameterBinder {
         ps.setInt(2, categoryId);
     }
 
+    public static void bindFindAllComboOwnCompany(PreparedStatement ps, Void unused) throws SQLException {
+        ps.setInt(1, Enums.state.DELETE.getCode());
+        ps.setInt(2, 0);
+    }
+
     public static void bindFindAllComboCompany(PreparedStatement ps, Void unused) throws SQLException {
         ps.setInt(1, Enums.state.DELETE.getCode());
     }

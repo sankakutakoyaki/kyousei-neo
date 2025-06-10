@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.service;
+package com.kyouseipro.neo.service.document;
 
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.entity.data.SubscriptionRequest;
-import com.kyouseipro.neo.repository.common.PushRepository;
+import com.kyouseipro.neo.repository.document.PushRepository;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class WebPushService {
      * @param message
      * @throws Exception
      */
-    public void sendPushNotification(SubscriptionRequest subscription, String message) throws Exception {
+    public void sendPushNotification(SubscriptionRequest subscription, String message, String editor) throws Exception {
         Notification notification = new Notification(
             subscription.getEndpoint(),
             subscription.getP256dh(),
@@ -62,7 +62,7 @@ public class WebPushService {
         }
         if (statusCode == 410 || statusCode == 404) {
             // 無効な subscription を削除
-            pushRepository.deleteByEndpoint(subscription.getEndpoint());
+            pushRepository.deleteByEndpoint(subscription.getEndpoint(), editor);
             System.out.println("無効なエンドポイントだったため、削除しました。");
         }
     }

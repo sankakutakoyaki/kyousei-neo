@@ -59,8 +59,10 @@ public class EmployeePageController {
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得
-        List<SimpleData> companyComboList = comboBoxService.getCompanyList();
+        List<SimpleData> companyComboList = comboBoxService.getOwnCompanyList();
         mv.addObject("companyComboList", companyComboList);
+        List<SimpleData> clientComboList = comboBoxService.getClientList();
+        mv.addObject("clientComboList", clientComboList);
         List<OfficeListEntity> officeList = comboBoxService.getOfficeList();
         mv.addObject("officeList", officeList);
         List<SimpleData> employeeCategoryComboList = comboBoxService.getEmployeeCategory();
@@ -80,7 +82,7 @@ public class EmployeePageController {
         mv.addObject("categoryConstructCode", Enums.employeeCategory.CONSTRUCT.getCode());
 
         // 履歴保存
-        historyService.saveHistory(userName, "employee", "閲覧", 200, "");
+        historyService.saveHistory(userName, "employee", "閲覧", 0, "");
 		
         return mv;
     }

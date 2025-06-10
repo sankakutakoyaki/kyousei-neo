@@ -2,6 +2,7 @@ package com.kyouseipro.neo.controller.api;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
 import com.kyouseipro.neo.service.qualification.QualificationsService;
 
@@ -39,9 +41,14 @@ public class QualificationsApiController {
      */
     @PostMapping("/qualifications/save")
 	@ResponseBody
-    public Integer saveEntity(@RequestBody QualificationsEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> saveEntity(@RequestBody QualificationsEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        return qualificationsService.saveQualifications(entity, userName);
+        Integer id = qualificationsService.saveQualifications(entity, userName);
+        if (id != null && id > 0) {
+            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+        }
     }
 
     /**
@@ -51,9 +58,14 @@ public class QualificationsApiController {
      */
     @PostMapping("/qualifications/delete/id")
     @ResponseBody
-    public Integer deleteEntityById(@RequestParam int id, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> deleteEntityById(@RequestParam int id, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        return qualificationsService.deleteQualificationsById(id, userName);
+        Integer result = qualificationsService.deleteQualificationsById(id, userName);
+        if (result != null && result > 0) {
+            return ResponseEntity.ok(ApiResponse.ok("削除しました。", result));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
+        }
     }
 
     /**

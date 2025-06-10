@@ -32,6 +32,13 @@ public class QualificationFilesParameterBinder {
         pstmt.setString(8, editor);
     }
 
+    public static void bindDeleteQualificationFilesParameters(PreparedStatement pstmt, String url, String editor) throws SQLException {
+        pstmt.setInt(1, Enums.state.DELETE.getCode());
+        pstmt.setString(2, url);
+
+        pstmt.setString(3, editor);
+    }
+
     public static void bindFindById(PreparedStatement ps, Integer qualificationFilesId) throws SQLException {
         ps.setInt(1, qualificationFilesId);
         ps.setInt(2, Enums.state.DELETE.getCode());

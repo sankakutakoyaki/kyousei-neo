@@ -4,28 +4,71 @@ import com.kyouseipro.neo.common.Utilities;
 
 public class StaffSqlBuilder {
 
+    private static String buildLogTableSql(String rowTableName) {
+        return
+            "DECLARE " + rowTableName + " TABLE (" +
+            "  staff_id INT, company_id INT, office_id INT, company_name NVARCHAR(255), office_name NVARCHAR(255), " +
+            "  name NVARCHAR(255), name_kana NVARCHAR(255), phone_number NVARCHAR(255), email NVARCHAR(255), " +
+            "  version INT, state INT" +
+            "); ";
+    }
+
+    private static String buildOutputLogSql() {
+        return
+            "OUTPUT INSERTED.staff_id, INSERTED.company_id, INSERTED.office_id, INSERTED.company_name, INSERTED.office_name, " +
+            "INSERTED.name, INSERTED.name_kana, INSERTED.phone_number, INSERTED.email, INSERTED.version, INSERTED.state ";
+    }
+
+    private static String buildInsertLogSql(String rowTableName, String processName) {
+        return
+            "INSERT INTO staffs_log (" +
+            "  staff_id, editor, process, log_date, company_id, office_id, company_name, office_name, " +
+            "  name, name_kana, phone_number, email, version, state" +
+            ") " +
+            "SELECT staff_id, ?, '" + processName + "', CURRENT_TIMESTAMP, " +
+            "  company_id, office_id, company_name, office_name, name, name_kana, phone_number, email, version, state " +
+            "FROM " + rowTableName + ";";
+    }
+
     public static String buildInsertStaffSql() {
         return
-            "DECLARE @InsertedRows TABLE (staff_id INT);" +
-            "INSERT INTO staffs (company_id, office_id, company_name, office_name, name, name_kana, phone_number, email, version, state) " +
-            "OUTPUT INSERTED.staff_id INTO @InsertedRows " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);" +
-            "INSERT INTO staffs_log (staff_id, editor, process, log_date, company_id, office_id, company_name, office_name, name, name_kana, phone_number, email, version, state) " +
-            "SELECT s.staff_id, ?, 'INSERT', CURRENT_TIMESTAMP, s.company_id, s.office_id, s.company_name, s.office_name, s.name, s.name_kana, s.phone_number, s.email, s.version, s.state " +
-            "FROM staffs s INNER JOIN @InsertedRows ir ON s.staff_id = ir.staff_id;" +
-            "SELECT staff_id FROM @InsertedRows;";
+            buildLogTableSql("@Inserted") +
+
+            "INSERT INTO staffs (" +
+            "  company_id, office_id, company_name, office_name, name, name_kana, phone_number, email, version, state" +
+            ") " +
+            buildOutputLogSql() + "INTO @Inserted " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
+
+            buildInsertLogSql("@Inserted", "INSERT") +
+            "SELECT staff_id FROM @Inserted;";
     }
 
     public static String buildUpdateStaffSql() {
         return
-            "DECLARE @UpdatedRows TABLE (staff_id INT);" +
-            "UPDATE staffs SET company_id=?, office_id=?, company_name=?, office_name=?, name=?, name_kana=?, phone_number=?, email=?, version=?, state=? " +
-            "OUTPUT INSERTED.staff_id INTO @UpdatedRows " +
-            "WHERE staff_id=?;" +
-            "INSERT INTO staffs_log (staff_id, editor, process, log_date, company_id, office_id, company_name, office_name, name, name_kana, phone_number, email, version, state) " +
-            "SELECT s.staff_id, ?, 'UPDATE', CURRENT_TIMESTAMP, s.company_id, s.office_id, s.company_name, s.office_name, s.name, s.name_kana, s.phone_number, s.email, s.version, s.state " +
-            "FROM staffs s INNER JOIN @UpdatedRows ur ON s.staff_id = ur.staff_id;" +
-            "SELECT staff_id FROM @UpdatedRows;";
+            buildLogTableSql("@Updated") +
+
+            "UPDATE staffs SET " +
+            "  company_id=?, office_id=?, company_name=?, office_name=?, name=?, name_kana=?, phone_number=?, email=?, version=?, state=? " +
+            buildOutputLogSql() + "INTO @Updated " +
+            "WHERE staff_id=?; " +
+
+            buildInsertLogSql("@Updated", "UPDATE") +
+            "SELECT staff_id FROM @Updated;";
+    }
+
+    public static String buildDeleteStaffForIdsSql(int count) {
+        String placeholders = Utilities.generatePlaceholders(count);
+
+        return
+            buildLogTableSql("@Deleted") +
+
+            "UPDATE staffs SET state = ? " +
+            buildOutputLogSql() + "INTO @Deleted " +
+            "WHERE staff_id IN (" + placeholders + ") AND NOT (state = ?); " +
+
+            buildInsertLogSql("@Deleted", "DELETE") +
+            "SELECT staff_id FROM @Deleted;";
     }
 
     public static String buildFindByIdSql() {
@@ -37,21 +80,6 @@ public class StaffSqlBuilder {
             " INNER LEFT OUTER JOIN companies c ON c.company_id = s.company_id" + 
             " INNER LEFT OUTER JOIN offices o ON o.office_id = s.office_id" + 
             " WHERE NOT (c.category = 0) AND NOT (s.state = ?) AND NOT (c.state = ?) AND NOT (o.state = ?)";
-    }
-
-    public static String buildDeleteStaffForIdsSql(int count) {
-        String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
-        return
-            "DECLARE @DeletedRows TABLE (staff_id INT); " +
-            "UPDATE staffs " +
-            "SET state = ? " +
-            "OUTPUT INSERTED.staff_id INTO @DeletedRows " +
-            "WHERE staff_id IN (" + placeholders + ") " +
-            "AND NOT (state = ?); " +
-
-            "INSERT INTO staffs_log (staff_id, editor, process, log_date, company_id, office_id, company_name, office_name, name, name_kana, phone_number, email, version, state) " +
-            "SELECT s.staff_id, ?, 'UPDATE', CURRENT_TIMESTAMP, s.company_id, s.office_id, s.company_name, s.office_name, s.name, s.name_kana, s.phone_number, s.email, s.version, s.state " +
-            "FROM staffs s INNER JOIN @UpdatedRows ur ON s.staff_id = ur.staff_id;";
     }
 
     public static String buildDownloadCsvStaffForIdsSql(int count) {
