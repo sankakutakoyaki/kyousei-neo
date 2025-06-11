@@ -16,17 +16,17 @@ public class WorkingConditionsSqlBuilder {
     private static String buildInsertLogSql(String rowTableName, String processName) {
         return
             "INSERT INTO working_conditions_log (" +
-            "  working_conditions_id, editor, process, log_date, employee_id, code, category, payment_method, " +
+            "  working_conditions_id, editor, process, log_date, employee_id, payment_method, " +
             "  pay_type, base_salary, trans_cost, basic_start_time, basic_end_time, version, state" +
             ") " +
-            "SELECT working_conditions_id, ?, '" + processName + "', CURRENT_TIMESTAMP, employee_id, code, category, payment_method, " +
+            "SELECT working_conditions_id, ?, '" + processName + "', CURRENT_TIMESTAMP, employee_id, payment_method, " +
             "  pay_type, base_salary, trans_cost, basic_start_time, basic_end_time, version, state " +
             "FROM " + rowTableName + ";";
     }
 
     private static String buildOutputLogSql() {
         return
-            "OUTPUT INSERTED.working_conditions_id, INSERTED.employee_id, INSERTED.code, INSERTED.category, " +
+            "OUTPUT INSERTED.working_conditions_id, INSERTED.employee_id, " +
             "  INSERTED.payment_method, INSERTED.pay_type, INSERTED.base_salary, INSERTED.trans_cost, " +
             "  INSERTED.basic_start_time, INSERTED.basic_end_time, INSERTED.version, INSERTED.state ";
     }
@@ -36,7 +36,7 @@ public class WorkingConditionsSqlBuilder {
             buildLogTableSql("@Inserted") +
 
             "INSERT INTO working_conditions (" +
-            "  employee_id, code, category, payment_method, pay_type, base_salary, trans_cost, " +
+            "  employee_id, payment_method, pay_type, base_salary, trans_cost, " +
             "  basic_start_time, basic_end_time, version, state" +
             ") " +
             buildOutputLogSql() + "INTO @Inserted " +
@@ -51,7 +51,7 @@ public class WorkingConditionsSqlBuilder {
             buildLogTableSql("@Updated") +
 
             "UPDATE working_conditions SET " +
-            "  employee_id=?, code=?, category=?, payment_method=?, pay_type=?, base_salary=?, trans_cost=?, " +
+            "  employee_id=?, payment_method=?, pay_type=?, base_salary=?, trans_cost=?, " +
             "  basic_start_time=?, basic_end_time=?, version=?, state=? " +
             buildOutputLogSql() + "INTO @Updated " +
             "WHERE working_conditions_id=?; " +

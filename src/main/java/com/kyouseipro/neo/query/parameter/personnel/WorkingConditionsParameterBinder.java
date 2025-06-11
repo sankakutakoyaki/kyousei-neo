@@ -45,8 +45,10 @@ public class WorkingConditionsParameterBinder {
     }
 
     public static void bindFindById(PreparedStatement ps, Integer workingConditionsId) throws SQLException {
-        ps.setInt(1, workingConditionsId);
+        ps.setInt(1, Enums.state.DELETE.getCode());
         ps.setInt(2, Enums.state.DELETE.getCode());
+        ps.setInt(3, Enums.state.DELETE.getCode());
+        ps.setInt(4, workingConditionsId);        
     }
 
     public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
