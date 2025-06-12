@@ -28,6 +28,17 @@ public class WorkingConditionsService {
     }
 
     /**
+     * EmployeeIDで指定された従業員の労働条件情報を取得します。
+     * 論理削除されている場合は null を返します。
+     *
+     * @param id 従業員ID
+     * @return WorkingConditionsEntity または null
+     */
+    public WorkingConditionsEntity getWorkingConditionsByEmployeeId(int id) {
+        return workingConditionsRepository.findByEmployeeId(id);
+    }
+
+    /**
      * 労働条件情報を登録・更新します。
      * IDが０の時は登録・０以上の時は更新します。
      * 

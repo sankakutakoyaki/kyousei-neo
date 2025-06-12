@@ -35,6 +35,17 @@ public class WorkingConditionsApiController {
     }
 
     /**
+     * EmployeeIDからEntityを取得する
+     * @param ID
+     * @return 
+     */
+    @PostMapping("/working_conditions/get/employeeid")
+	@ResponseBody
+    public WorkingConditionsEntity getEntityByEmployeeId(@RequestParam int id) {
+            return workingConditionsService.getWorkingConditionsByEmployeeId(id);
+    }
+
+    /**
      * 情報を保存する
      * @param ENTITY
      * @return 

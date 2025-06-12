@@ -181,7 +181,7 @@
 
 /******************************************************************************************************* 入力画面 */
 
-            // 従業員登録画面を開く
+            // 勤務条件登録画面を開く
             async function execEdit(id, name, self) {
                 const panel = self.closest('.tab-panel');
                 const tab = panel.dataset.panel;
@@ -197,7 +197,7 @@
 
                 // 選択されたIDのエンティティを取得
                 const data = "id=" + encodeURIComponent(parseInt(id));
-                const resultResponse = await postFetch('/working_conditions/get/id', data, token, 'application/x-www-form-urlencoded');
+                const resultResponse = await postFetch('/working_conditions/get/employeeid', data, token, 'application/x-www-form-urlencoded');
                 const result = await resultResponse.json();
 
                 let entity = {};
@@ -286,7 +286,8 @@
                     formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
 
                     // 保存処理
-                    const result = await postFetch("/working_conditions/save", JSON.stringify(formdata), token, "application/json");
+                    const resultResponse = await postFetch("/working_conditions/save", JSON.stringify(formdata), token, "application/json");
+                    const result = await resultResponse.json();
                     if (result.success) {
                         let tableId;
                         switch (formdata.category) {
@@ -303,7 +304,7 @@
                         openMsgDialog("msg-dialog", result.message, "blue");
                         await execUpdate();
                         // 追加・変更行に移動
-                        scrollIntoTableList(tableId, result);
+                        scrollIntoTableList(tableId, result.id);
                     } else {
                         openMsgDialog("msg-dialog", result.message, "red");
                     }
@@ -343,10 +344,10 @@
                 let result;
                 switch (tab) {
                     case "01":
-                        result = await deleteTablelsit('table-01-content', '/working_conditions/delete');
+                        result = await deleteTablelist('table-01-content', '/working_conditions/delete');
                         break;
                     case "02":
-                        result = await deleteTablelsit('table-02-content', '/working_conditions/delete');
+                        result = await deleteTablelist('table-02-content', '/working_conditions/delete');
                         break;
                     default:
                         break;

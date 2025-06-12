@@ -50,7 +50,7 @@ public class WorkingConditionsRepository {
 
         int result = sqlRepository.executeUpdate(
             sql,
-            ps -> WorkingConditionsParameterBinder.bindDeleteForIds(ps, workingConditionsIds)
+            ps -> WorkingConditionsParameterBinder.bindDeleteForIds(ps, workingConditionsIds, editor)
         );
 
         return result; // 成功件数。0なら削除なし
@@ -63,7 +63,7 @@ public class WorkingConditionsRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> WorkingConditionsParameterBinder.bindFindAll(ps, null),
+            ps -> WorkingConditionsParameterBinder.bindDownloadCsvForIds(ps, workingConditionsIds),
             WorkingConditionsEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -77,6 +77,18 @@ public class WorkingConditionsRepository {
             (pstmt, comp) -> WorkingConditionsParameterBinder.bindFindById(pstmt, comp),
             rs -> rs.next() ? WorkingConditionsEntityMapper.map(rs) : null,
             workingConditionsId
+        );
+    }
+
+    // IDによる取得
+    public WorkingConditionsEntity findByEmployeeId(int employeeId) {
+        String sql = WorkingConditionsSqlBuilder.buildFindByEmployeeIdSql();
+
+        return sqlRepository.execute(
+            sql,
+            (pstmt, comp) -> WorkingConditionsParameterBinder.bindFindByEmployeeId(pstmt, comp),
+            rs -> rs.next() ? WorkingConditionsEntityMapper.map(rs) : null,
+            employeeId
         );
     }
 

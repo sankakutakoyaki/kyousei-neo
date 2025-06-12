@@ -2,6 +2,7 @@ package com.kyouseipro.neo.entity.personnel;
 
 import java.time.LocalTime;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.interfaceis.CsvExportable;
 
@@ -37,8 +38,8 @@ public class WorkingConditionsEntity implements CsvExportable {
                Utilities.escapeCsv(office_name) + "," +
                Utilities.escapeCsv(full_name) + "," +
                Utilities.escapeCsv(full_name_kana) + "," +
-               Utilities.escapeCsv(String.valueOf(payment_method)) + "," +
-               Utilities.escapeCsv(String.valueOf(pay_type)) + "," +
+               Utilities.escapeCsv(String.valueOf(Enums.paymentMethod.getDescriptionByNum(payment_method))) + "," +
+               Utilities.escapeCsv(String.valueOf(Enums.payType.getDescriptionByNum(pay_type))) + "," +
                Utilities.escapeCsv(String.valueOf(base_salary)) + "," +
                Utilities.escapeCsv(String.valueOf(trans_cost)) + "," +
                Utilities.escapeCsv(String.valueOf(basic_start_time)) + "," +

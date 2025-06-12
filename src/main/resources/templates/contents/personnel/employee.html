@@ -439,7 +439,7 @@
                     openMsgDialog("msg-dialog", result.message, "blue");
                     await execUpdate();
                     // 追加・変更行に移動
-                    scrollIntoTableList(tableId, result);
+                    scrollIntoTableList(tableId, result.id);
                 } else {
                     openMsgDialog("msg-dialog", result.message, "red");
                 }

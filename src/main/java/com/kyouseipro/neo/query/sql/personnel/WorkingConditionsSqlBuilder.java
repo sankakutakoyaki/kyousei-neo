@@ -7,7 +7,7 @@ public class WorkingConditionsSqlBuilder {
     private static String buildLogTableSql(String rowTableName) {
         return
             "DECLARE " + rowTableName + " TABLE (" +
-            "  working_conditions_id INT, employee_id INT, code NVARCHAR(255), category NVARCHAR(255), " +
+            "  working_conditions_id INT, employee_id INT, " +
             "  payment_method NVARCHAR(255), pay_type NVARCHAR(255), base_salary INT, trans_cost INT, " +
             "  basic_start_time TIME, basic_end_time TIME, version INT, state INT" +
             "); ";
@@ -40,7 +40,7 @@ public class WorkingConditionsSqlBuilder {
             "  basic_start_time, basic_end_time, version, state" +
             ") " +
             buildOutputLogSql() + "INTO @Inserted " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
             buildInsertLogSql("@Inserted", "INSERT") +
             "SELECT working_conditions_id FROM @Inserted;";
@@ -95,10 +95,17 @@ public class WorkingConditionsSqlBuilder {
             " LEFT OUTER JOIN working_conditions w ON w.employee_id = e.employee_id AND NOT (w.state = ?)" +
             " LEFT OUTER JOIN offices o ON o.office_id = e.office_id AND NOT (o.state = ?)";
     }
+
     public static String buildFindByIdSql() {
         return
             basicSelectString() +
             " WHERE NOT (e.state = ?) AND w.working_conditions_id = ?";
+    }
+
+    public static String buildFindByEmployeeIdSql() {
+        return
+            basicSelectString() +
+            " WHERE NOT (e.state = ?) AND e.employee_id = ?";
     }
 
     public static String buildFindAllSql() {
@@ -111,6 +118,6 @@ public class WorkingConditionsSqlBuilder {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return
             basicSelectString() + 
-            " WHERE working_conditions_id IN (" + placeholders + ") \" + NOT (state = ?)";
+            " WHERE e.employee_id IN (" + placeholders + ") AND NOT (e.state = ?)";
     }
 }

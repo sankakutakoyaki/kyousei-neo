@@ -284,7 +284,8 @@ function getAllSelectedIds(tableId) {
             checked_data.push({ 'number': num });
         }
     }
-    return JSON.stringify(checked_data);
+    // return JSON.stringify(checked_data);
+    return checked_data;
 }
 
 /**
@@ -355,7 +356,7 @@ async function downloadCsv(tableId, url) {
 
         // 取得処理
         // const data = JSON.stringify(ids);
-        const result = await postFetch(url, data, token, "application/json");
+        const result = await postFetch(url, JSON.stringify(data), token, "application/json");
         const text = await result.text();
 
         // 文字列データが返却されなければ、エラーメッセージを表示
@@ -382,7 +383,7 @@ async function deleteTablelist(tableId, url) {
         // 選択された要素がなければメッセージを表示して終了
         openMsgDialog("msg-dialog", "選択されていません", "red");
     } else {
-        const resultResponse = await postFetch(url, data, token, 'application/json');
+        const resultResponse = await postFetch(url, JSON.stringify(data), token, 'application/json');
         return await resultResponse.json();
     }
 }
