@@ -112,7 +112,7 @@
                     let newRow = tbl.insertRow();
                     // ID（Post送信用）
                     newRow.setAttribute('name', 'data-row');
-                    newRow.setAttribute('data-id', item.employee_id);
+                    newRow.setAttribute('data-id', item.working_conditions_id);
                     // シングルクリック時の処理
                     newRow.onclick = function (e) {
                         if (!e.currentTarget.classList.contains('selected')){

@@ -281,10 +281,9 @@ function getAllSelectedIds(tableId) {
     if (0 < ids.length) {
         for (let data of ids) {
             let num = parseInt(data.closest('tr').dataset.id);
-            checked_data.push({ 'number': num });
+            if (num > 0) checked_data.push({ 'number': num });
         }
     }
-    // return JSON.stringify(checked_data);
     return checked_data;
 }
 
@@ -381,7 +380,8 @@ async function deleteTablelist(tableId, url) {
     const data = getAllSelectedIds(tableId);
     if (data.length == 0) {
         // 選択された要素がなければメッセージを表示して終了
-        openMsgDialog("msg-dialog", "選択されていません", "red");
+        // openMsgDialog("msg-dialog", "選択されていません", "red");
+        return {"success":false, "message":"選択されていないか、データがありません。"};
     } else {
         const resultResponse = await postFetch(url, JSON.stringify(data), token, 'application/json');
         return await resultResponse.json();
