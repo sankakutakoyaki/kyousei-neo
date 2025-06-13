@@ -16,14 +16,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.component.UploadConfig;
 import com.kyouseipro.neo.entity.common.AddressEntity;
-import com.kyouseipro.neo.entity.corporation.StaffEntity;
-import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.interfaceis.FileUpload;
 import com.kyouseipro.neo.repository.common.AddressRepository;

@@ -4,14 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.common.Utilities;
-import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
 import com.kyouseipro.neo.mapper.qualification.QualificationFilesEntityMapper;
 import com.kyouseipro.neo.query.parameter.qualification.QualificationFilesParameterBinder;
-import com.kyouseipro.neo.query.parameter.qualification.QualificationsParameterBinder;
 import com.kyouseipro.neo.query.sql.qualification.QualificationFilesSqlBuilder;
-import com.kyouseipro.neo.query.sql.qualification.QualificationsSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
 import lombok.RequiredArgsConstructor;

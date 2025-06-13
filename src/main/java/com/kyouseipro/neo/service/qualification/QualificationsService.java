@@ -6,9 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
-import com.kyouseipro.neo.repository.qualification.QualificationFilesRepository;
 import com.kyouseipro.neo.repository.qualification.QualificationsRepository;
 
 import lombok.RequiredArgsConstructor;
