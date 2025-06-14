@@ -151,30 +151,34 @@
                 <form id="form-02" class="dialog-content">
                     <input name="staff-id" type="hidden" value="">
                     <input name="company-id" type="hidden" value="">
-                    <input name="office-id" type="hidden" value="">
+                    <!-- <input name="office-id" type="hidden" value=""> -->
                     <input name="version" type="hidden" value="">
                     <div class="flex-area">
                         <div class="form-parts">
-                            <label>担当者名</label>
-                            <input tabindex="1" name="name" class="normal-input" type="text" value="" placeholder="担当者名" onfocus="this.select();">
+                            <label>支店名</label>
+                            <select tabindex="1" id="office-id" name="office-id" class="normal-select" value=""></select>
                         </div>
                     </div>
                     <div class="flex-area">
                         <div class="form-parts">
+                            <label>担当者名</label>
+                            <input tabindex="2" name="name" class="normal-input" type="text" value="" placeholder="担当者名" onfocus="this.select();">
+                        </div>
+                        <div class="form-parts">
                             <label>かな</label>
-                            <input tabindex="2" name="name-kana" class="normal-input" type="text" value="" placeholder="たんとうしゃめい" onfocus="this.select();">
+                            <input tabindex="3" name="name-kana" class="normal-input" type="text" value="" placeholder="たんとうしゃめい" onfocus="this.select();">
                         </div>
                     </div>
                     <div class="flex-area">
                         <div class="form-parts">
                             <label>電話番号</label>
-                            <input tabindex="3" name="phone-number" class="normal-input" type="text" inputmode="numeric" pattern="\\d{3}-\\d{4}-\\d{4}" value="" placeholder="012-3456-7890" onfocus="this.select();">
+                            <input tabindex="4" name="phone-number" class="normal-input" type="text" inputmode="numeric" pattern="\\d{3}-\\d{4}-\\d{4}" value="" placeholder="012-3456-7890" onfocus="this.select();">
                         </div>
                     </div>
                     <div class="flex-area">
                         <div class="form-parts">
                             <label>メールアドレス</label>
-                            <input tabindex="4" name="email" class="normal-input" type="email" value="" placeholder="例）example@kyouseibin.com" onfocus="this.select();">
+                            <input tabindex="5" name="email" class="normal-input" type="email" value="" placeholder="例）example@kyouseibin.com" onfocus="this.select();">
                         </div>
                     </div>    
                 </form>
@@ -228,6 +232,9 @@
                     switch (tab) {
                         case "05":
                             newRow.setAttribute('data-id', item.office_id);
+                            break;
+                        case "06":
+                            newRow.setAttribute('data-id', item.staff_id);
                             break;
                         default:
                             newRow.setAttribute('data-id', item.company_id);
@@ -297,8 +304,10 @@
                 
                 switch (tab) {
                     case "06":
-                        // 会社名
-                        newRow.insertAdjacentHTML('beforeend', '<td name="company-cell"><span>' + (item.company_name ?? "登録なし") + '</span></td>');
+                        // 電話番号
+                        newRow.insertAdjacentHTML('beforeend', '<td name="tel-cell"><span>' + (item.phone_number ?? "登録なし") + '</span></td>');
+                        // // 会社名
+                        // newRow.insertAdjacentHTML('beforeend', '<td name="company-cell"><span>' + (item.company_name ?? "登録なし") + '</span></td>');
                         // 支店名
                         newRow.insertAdjacentHTML('beforeend', '<td name="office-cell"><span>' + (item.office_name ?? "登録なし") + '</span></td>');
                         break;
@@ -434,6 +443,8 @@
                 switch (tab) {
                     case "06":
                         form.querySelector('[name="staff-id"]').value = entity.staff_id;
+                        const combo = document.getElementById('office-id');
+                        createOfficeComboBox(combo);
                         form.querySelector('[name="office-id"]').value = entity.office_id;
                         form.querySelector('[name="phone-number"]').value = entity.phone_number;
                         break;
@@ -754,7 +765,7 @@
                 officeOrigin = await resultResponse.json();
                 const list = officeOrigin.filter(function(value) { return value.company_id == code01.value });
                 createDisplay("table-05-content", "footer-05", list);
-                createOfficeComboBox();
+                createOfficeComboBox(name03);
             }
 
             async function updateStaffTableDisplay() {
@@ -771,11 +782,11 @@
             }
 
             // 選択した会社の支店をコンボボックスに登録する
-            async function createOfficeComboBox() {
+            async function createOfficeComboBox(self) {
                 const selectId = name02.value;
                 const comboList = officeComboList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
-                createComboBoxWithTop(name03, comboList, "");
-                name03.onchange = async function() {
+                createComboBoxWithTop(self, comboList, "");
+                self.onchange = async function() {
                     await updateStaffTableDisplay();
                 };
             }
@@ -863,7 +874,7 @@
                 });
                 code02.addEventListener('blur', function (e) {
                     updateStaffTableDisplay();
-                    createOfficeComboBox(this);
+                    createOfficeComboBox(name03);
                 });
 
                 // 会社名コンボボックス
@@ -874,7 +885,7 @@
                 createComboBoxWithTop(name02,companyComboList, "");
                 name02.onchange = async function() {
                     updateStaffTableDisplay();
-                    createOfficeComboBox(this);
+                    createOfficeComboBox(name03);
                 };
 
                 // タブメニュー処理

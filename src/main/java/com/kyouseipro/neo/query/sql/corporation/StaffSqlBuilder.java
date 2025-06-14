@@ -94,6 +94,6 @@ public class StaffSqlBuilder {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return
             baseSelectString() +
-            " WHERE staff_id IN (" + placeholders + ") NOT (state = ?)";
+            " WHERE s.staff_id IN (" + placeholders + ") AND NOT (s.state = ?)";
     }
 }

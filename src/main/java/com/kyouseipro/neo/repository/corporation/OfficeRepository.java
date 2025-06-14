@@ -59,7 +59,7 @@ public class OfficeRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> OfficeParameterBinder.bindFindAll(ps, null),
+            ps -> OfficeParameterBinder.bindDownloadCsvForIds(ps, officeIds),
             OfficeEntityMapper::map // ← ここで ResultSet を map
         );
     }

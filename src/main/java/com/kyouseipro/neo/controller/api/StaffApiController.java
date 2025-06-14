@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.kyouseipro.neo.entity.corporation.StaffEntity;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.corporation.StaffService;
 
 import lombok.RequiredArgsConstructor;

@@ -51,20 +51,23 @@ public class StaffParameterBinder {
         ps.setInt(3, Enums.state.DELETE.getCode());
     }
 
-    public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
             ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
         }
-        ps.setInt(index, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        ps.setString(index, editor);
     }
 
     public static void bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
+        ps.setInt(index++, Enums.state.DELETE.getCode()); // 2. SET state = ?
         for (Integer id : ids) {
-            ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
+            ps.setInt(index++, id); // 3. company_id IN (?, ?, ?)
         }
-        ps.setInt(index, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        ps.setInt(index, Enums.state.DELETE.getCode()); // 4. AND NOT (state = ?)
     }
 }

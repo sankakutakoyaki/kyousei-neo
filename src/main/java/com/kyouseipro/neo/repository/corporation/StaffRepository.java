@@ -50,7 +50,7 @@ public class StaffRepository {
 
         int result = sqlRepository.executeUpdate(
             sql,
-            ps -> StaffParameterBinder.bindDeleteForIds(ps, staffIds)
+            ps -> StaffParameterBinder.bindDeleteForIds(ps, staffIds, editor)
         );
 
         return result; // 成功件数。0なら削除なし
@@ -62,7 +62,7 @@ public class StaffRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> StaffParameterBinder.bindFindAll(ps, null),
+            ps -> StaffParameterBinder.bindDownloadCsvForIds(ps, staffIds),
             StaffEntityMapper::map // ← ここで ResultSet を map
         );
     }

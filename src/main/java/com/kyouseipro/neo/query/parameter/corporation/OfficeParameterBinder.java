@@ -44,18 +44,19 @@ public class OfficeParameterBinder {
     }
 
     public static void bindFindById(PreparedStatement ps, Integer officeId) throws SQLException {
-        ps.setInt(1, officeId); // 1番目の ?
-        ps.setInt(2, Enums.state.DELETE.getCode()); 
+        ps.setInt(1, Enums.state.DELETE.getCode());
+        ps.setInt(2, Enums.state.DELETE.getCode());
+        ps.setInt(3, officeId);
     }
 
     public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
         ps.setInt(1, Enums.state.DELETE.getCode());
     }
 
-    public static void bindFindAllClient(PreparedStatement ps, Void unused) throws SQLException {
-        ps.setInt(1, 0); // 1番目の ?
-        ps.setInt(2, Enums.state.DELETE.getCode());     // 2番目の ?
-        ps.setInt(3, Enums.state.DELETE.getCode());     // 3番目の ?
+    public static void bindFindAllClient(PreparedStatement ps, Void unused) throws SQLException {        
+        ps.setInt(1, Enums.state.DELETE.getCode());
+        ps.setInt(2, Enums.state.DELETE.getCode());
+        ps.setInt(3, 0);
     }
 
     public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
@@ -70,6 +71,7 @@ public class OfficeParameterBinder {
 
     public static void bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
             ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
         }

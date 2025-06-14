@@ -79,13 +79,13 @@ public class OfficeSqlBuilder {
     private static String baseSelectString() {
         return
             "SELECT o.*, c.name as company_name, c.name_kana as company_name_kana FROM offices o" + 
-            " INNER JOIN companies c ON c.company_id = o.company_id";
+            " INNER JOIN companies c ON c.company_id = o.company_id AND NOT (c.state = ?)";
     }
 
     public static String buildFindByIdSql() {
         return
             baseSelectString() +
-            " WHERE o.office_id = ? AND NOT (o.state = ?)";
+            " WHERE NOT (o.state = ?) AND o.office_id = ?";
     }
 
     public static String buildFindAllSql() {
@@ -97,13 +97,13 @@ public class OfficeSqlBuilder {
     public static String buildFindAllClientSql() {
         return 
             baseSelectString() + 
-            " WHERE NOT (c.category = ?) AND NOT (c.state = ?) AND NOT (o.state = ?)";
+            " WHERE NOT (o.state = ?) AND NOT (c.category = ?)";
     }
 
     public static String buildDownloadCsvOfficeForIdsSql(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return
             baseSelectString() +
-            " WHERE office_id IN (" + placeholders + ") \" + NOT (state = ?)";
+            " WHERE o.office_id IN (" + placeholders + ") AND NOT (o.state = ?)";
     }
 }
