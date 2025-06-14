@@ -354,7 +354,7 @@
                 }
 
                 if (result.success) {                
-                    execUpdate();
+                    await execUpdate();
                     openMsgDialog("msg-dialog", result.message, "blue");
                 } else {
                     openMsgDialog("msg-dialog", result.message, "red");
@@ -388,15 +388,15 @@
 
                 // 画面更新
                 const list01 = origin.filter(function(value) { return value.category == categoryEmployeeCode });
-                updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
+                await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
                 const list02 = origin.filter(function(value) { return value.category == categoryParttimeCode });
-                updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
+                await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
             }
 
 /******************************************************************************************************* 画面更新 */
 
             // テーブルリスト画面を更新する
-            function updateTableDisplay(tableId, footerId, searchId, list) {
+            async function updateTableDisplay(tableId, footerId, searchId, list) {
                 // フィルター処理
                 const result = filterDisplay(searchId, list);
                 // リスト画面を初期化
@@ -420,18 +420,18 @@
 /******************************************************************************************************* 初期化時 */
 
             // ページ読み込み後の処理
-            window.addEventListener("load", () => {
+            window.addEventListener("load", async  () => {
                 // スピナー表示
                 startProcessing();
 
                 // 検索ボックス入力時の処理
-                document.getElementById('search-box-01').addEventListener('search', function(e) {
+                document.getElementById('search-box-01').addEventListener('search', async function(e) {
                     const list = origin.filter(function(value) { return value.category == categoryEmployeeCode });
-                    updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+                    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
                 }, false);
-                document.getElementById('search-box-02').addEventListener('search', function(e) {
+                document.getElementById('search-box-02').addEventListener('search', async function(e) {
                     const list = origin.filter(function(value) { return value.category == categoryParttimeCode });
-                    updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
+                    await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
                 }, false);
 
                 // エンターフォーカス処理をイベントリスナーに登録する
@@ -439,13 +439,13 @@
   
                 // 画面更新
                 const list01 = origin.filter(function(value) { return value.category == categoryEmployeeCode });
-                updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
+                await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
                 // テーブルをソート可能にする
                 makeSortable("table-01-content");
                 // スクロール時のページトップボタン処理を登録する
                 setPageTopButton("table-01-content");
                 const list02 = origin.filter(function(value) { return value.category == categoryParttimeCode });
-                updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
+                await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
                 // テーブルをソート可能にする
                 makeSortable("table-02-content");
                 // スクロール時のページトップボタン処理を登録する

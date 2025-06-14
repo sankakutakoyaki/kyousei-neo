@@ -12,42 +12,43 @@ public class StaffParameterBinder {
     public static void bindInsertStaffParameters(PreparedStatement pstmt, StaffEntity staff, String editor) throws SQLException {
         pstmt.setInt(1, staff.getCompany_id());
         pstmt.setInt(2, staff.getOffice_id());
-        pstmt.setString(3, staff.getCompany_name());
-        pstmt.setString(4, staff.getOffice_name());
-        pstmt.setString(5, staff.getName());
-        pstmt.setString(6, staff.getName_kana());
-        pstmt.setString(7, staff.getPhone_number());
-        pstmt.setString(8, staff.getEmail());
-        pstmt.setInt(9, staff.getVersion());
-        pstmt.setInt(10, staff.getState());
+        pstmt.setString(3, staff.getName());
+        pstmt.setString(4, staff.getName_kana());
+        pstmt.setString(5, staff.getPhone_number());
+        pstmt.setString(6, staff.getEmail());
+        pstmt.setInt(7, staff.getVersion());
+        pstmt.setInt(8, staff.getState());
 
-        pstmt.setString(11, editor);
+        pstmt.setString(9, editor);
     }
 
     public static void bindUpdateStaffParameters(PreparedStatement pstmt, StaffEntity staff, String editor) throws SQLException {
         pstmt.setInt(1, staff.getCompany_id());
         pstmt.setInt(2, staff.getOffice_id());
-        pstmt.setString(3, staff.getCompany_name());
-        pstmt.setString(4, staff.getOffice_name());
-        pstmt.setString(5, staff.getName());
-        pstmt.setString(6, staff.getName_kana());
-        pstmt.setString(7, staff.getPhone_number());
-        pstmt.setString(8, staff.getEmail());
-        pstmt.setInt(9, staff.getVersion());
-        pstmt.setInt(10, staff.getState());
+        pstmt.setString(3, staff.getName());
+        pstmt.setString(4, staff.getName_kana());
+        pstmt.setString(5, staff.getPhone_number());
+        pstmt.setString(6, staff.getEmail());
+        pstmt.setInt(7, staff.getVersion());
+        pstmt.setInt(8, staff.getState());
 
-        pstmt.setInt(11, staff.getStaff_id());
+        pstmt.setInt(9, staff.getStaff_id());
 
-        pstmt.setString(12, editor);
+        pstmt.setString(10, editor);
     }
 
     public static void bindFindById(PreparedStatement ps, Integer staffId) throws SQLException {
-        ps.setInt(1, staffId);
+        ps.setInt(1, Enums.state.DELETE.getCode());
         ps.setInt(2, Enums.state.DELETE.getCode());
+        ps.setInt(3, Enums.state.DELETE.getCode());
+        ps.setInt(4, staffId);
+        
     }
 
     public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
         ps.setInt(1, Enums.state.DELETE.getCode());
+        ps.setInt(2, Enums.state.DELETE.getCode());
+        ps.setInt(3, Enums.state.DELETE.getCode());
     }
 
     public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {

@@ -47,7 +47,7 @@ public class CompanyRepository {
 
         int result = sqlRepository.executeUpdate(
             sql,
-            ps -> CompanyParameterBinder.bindDeleteForIds(ps, companyIds)
+            ps -> CompanyParameterBinder.bindDeleteForIds(ps, companyIds, editor)
         );
 
         return result; // 成功件数。0なら削除なし
@@ -59,7 +59,7 @@ public class CompanyRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> CompanyParameterBinder.bindFindAll(ps, null),
+            ps -> CompanyParameterBinder.bindDownloadCsvForIds(ps, companyIds),
             CompanyEntityMapper::map // ← ここで ResultSet を map
         );
     }

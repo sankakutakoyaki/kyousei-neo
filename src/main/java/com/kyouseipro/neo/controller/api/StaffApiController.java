@@ -8,11 +8,13 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.corporation.StaffEntity;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.corporation.StaffService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,17 @@ import lombok.RequiredArgsConstructor;
 public class StaffApiController {
     private final StaffService staffService;
     
+    /**
+     * IDからEntityを取得する
+     * @param ID
+     * @return 
+     */
+    @PostMapping("/staff/get/id")
+	@ResponseBody
+    public StaffEntity getEntityById(@RequestParam int id) {
+        return staffService.getStaffById(id);
+    }
+   
     /**
      * 情報を保存する
      * @param ENTITY

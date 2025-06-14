@@ -372,222 +372,222 @@
 
 /******************************************************************************************************* 保存 */
 
-        // 保存処理
-        async function execSave() {
-            const form = document.getElementById('form-01');
-            // エラーチェック
-            if (formDataCheck(form) == false) {
-                return;
-            } else {
-                const formData = new FormData(form);
-                const formdata = structuredClone(formEntity);
-                formdata.employee_id = formData.get('employee-id');
-                if (formData.get('code') == "") {
-                    formdata.code = 0;
+            // 保存処理
+            async function execSave() {
+                const form = document.getElementById('form-01');
+                // エラーチェック
+                if (formDataCheck(form) == false) {
+                    return;
                 } else {
-                    formdata.code = formData.get('code');
-                }
-                formdata.category = Number(formData.get('category'));
-                formdata.account = formData.get('account').trim();
-                formdata.company_id = formData.get('company');
-                formdata.office_id = formData.get('office');
-                formdata.last_name = formData.get('last-name').trim();
-                formdata.first_name = formData.get('first-name').trim();
-                formdata.last_name_kana = formData.get('last-name-kana').trim();
-                formdata.first_name_kana = formData.get('first-name-kana').trim();
-                formdata.phone_number = formData.get('phone-number').trim();
-                formdata.postal_code = formData.get('postal-code').trim();
-                formdata.full_address = formData.get('full-address').trim();
-                formdata.email = formData.get('email').trim();
-                formdata.gender= formData.get('gender');
-                formdata.blood_type = formData.get('blood-type');
-                if (formData.get('birthday') == "") {
-                    formdata.birthday = "9999-12-31";
-                } else {
-                    formdata.birthday = formData.get('birthday');
-                }
-                formdata.emergency_contact = formData.get('emergency-contact').trim();
-                formdata.emergency_contact_number = formData.get('emergency-contact-number').trim();
-                if (formData.get('date-of-hire') == "") {
-                    formdata.date_of_hire = "9999-12-31";
-                } else {
-                    formdata.date_of_hire = formData.get('date-of-hire');
-                }
-                formdata.version = formData.get('version');
-
-                formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
-
-                // 保存処理
-                const resultResponse = await postFetch("/employee/save", JSON.stringify(formdata), token, "application/json");
-                const result = await resultResponse.json();
-                if (result.success) {
-                    let tableId;
-                    switch (formdata.category) {
-                        case categoryEmployeeCode:
-                            tableId = "table-01-content";
-                            break;
-                        case categoryParttimeCode:
-                            tableId = "table-02-content";
-                            break;
-                        case categoryConstructCode:
-                            tableId = "table-03-content";
-                            break;
-                        default:
-                            break;
+                    const formData = new FormData(form);
+                    const formdata = structuredClone(formEntity);
+                    formdata.employee_id = formData.get('employee-id');
+                    if (formData.get('code') == "") {
+                        formdata.code = 0;
+                    } else {
+                        formdata.code = formData.get('code');
                     }
-                    // 画面更新
-                    openMsgDialog("msg-dialog", result.message, "blue");
-                    await execUpdate();
-                    // 追加・変更行に移動
-                    scrollIntoTableList(tableId, result.id);
-                } else {
-                    openMsgDialog("msg-dialog", result.message, "red");
-                }
-                // ダイアログを閉じる
-                closeFormDialog('form-dialog-01');
-            }
-        }
+                    formdata.category = Number(formData.get('category'));
+                    formdata.account = formData.get('account').trim();
+                    formdata.company_id = formData.get('company');
+                    formdata.office_id = formData.get('office');
+                    formdata.last_name = formData.get('last-name').trim();
+                    formdata.first_name = formData.get('first-name').trim();
+                    formdata.last_name_kana = formData.get('last-name-kana').trim();
+                    formdata.first_name_kana = formData.get('first-name-kana').trim();
+                    formdata.phone_number = formData.get('phone-number').trim();
+                    formdata.postal_code = formData.get('postal-code').trim();
+                    formdata.full_address = formData.get('full-address').trim();
+                    formdata.email = formData.get('email').trim();
+                    formdata.gender= formData.get('gender');
+                    formdata.blood_type = formData.get('blood-type');
+                    if (formData.get('birthday') == "") {
+                        formdata.birthday = "9999-12-31";
+                    } else {
+                        formdata.birthday = formData.get('birthday');
+                    }
+                    formdata.emergency_contact = formData.get('emergency-contact').trim();
+                    formdata.emergency_contact_number = formData.get('emergency-contact-number').trim();
+                    if (formData.get('date-of-hire') == "") {
+                        formdata.date_of_hire = "9999-12-31";
+                    } else {
+                        formdata.date_of_hire = formData.get('date-of-hire');
+                    }
+                    formdata.version = formData.get('version');
 
-        // 入力チェック
-        function formDataCheck(area) {
-            let msg = "";
-            // アカウントが入力されていないとFalseを返す
-            const account = area.querySelector('input[name="account"]');
-            if (account != null && account.value == "") msg += '\nアカウントが入力されていません';
-            // 姓が入力されていないとFalseを返す
-            const name = area.querySelector('input[name="last-name"]');
-            if (name != null && name.value == "") msg += '\n姓が入力されていません';
-            // 電話番号チェック
-            const phone = area.querySelector('input[name="phone-number"]');
-            if (!checkPhoneNumber(phone)) msg += '\n電話番号に誤りがあります';
-            // 電話番号チェック
-            const postal = area.querySelector('input[name="postal-code"]');
-            if (!checkPostalCode(postal)) msg += '\n郵便番号に誤りがあります';
-            // メールアドレスチェック
-            const email = area.querySelector('input[name="email"]');
-            if (!checkMailAddress(email)) msg += '\nメールアドレスに誤りがあります';
-            // エラーが一つ以上あればエラーメッセージダイアログを表示する
-            if (msg != "") {
-                openMsgDialog("msg-dialog", msg, "red");
-                return false;
+                    formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
+
+                    // 保存処理
+                    const resultResponse = await postFetch("/employee/save", JSON.stringify(formdata), token, "application/json");
+                    const result = await resultResponse.json();
+                    if (result.success) {
+                        let tableId;
+                        switch (formdata.category) {
+                            case categoryEmployeeCode:
+                                tableId = "table-01-content";
+                                break;
+                            case categoryParttimeCode:
+                                tableId = "table-02-content";
+                                break;
+                            case categoryConstructCode:
+                                tableId = "table-03-content";
+                                break;
+                            default:
+                                break;
+                        }
+                        // 画面更新
+                        openMsgDialog("msg-dialog", result.message, "blue");
+                        await execUpdate();
+                        // 追加・変更行に移動
+                        scrollIntoTableList(tableId, result.id);
+                    } else {
+                        openMsgDialog("msg-dialog", result.message, "red");
+                    }
+                    // ダイアログを閉じる
+                    closeFormDialog('form-dialog-01');
+                }
             }
-            return true;
-        }
+
+            // 入力チェック
+            function formDataCheck(area) {
+                let msg = "";
+                // アカウントが入力されていないとFalseを返す
+                const account = area.querySelector('input[name="account"]');
+                if (account != null && account.value == "") msg += '\nアカウントが入力されていません';
+                // 姓が入力されていないとFalseを返す
+                const name = area.querySelector('input[name="last-name"]');
+                if (name != null && name.value == "") msg += '\n姓が入力されていません';
+                // 電話番号チェック
+                const phone = area.querySelector('input[name="phone-number"]');
+                if (!checkPhoneNumber(phone)) msg += '\n電話番号に誤りがあります';
+                // 電話番号チェック
+                const postal = area.querySelector('input[name="postal-code"]');
+                if (!checkPostalCode(postal)) msg += '\n郵便番号に誤りがあります';
+                // メールアドレスチェック
+                const email = area.querySelector('input[name="email"]');
+                if (!checkMailAddress(email)) msg += '\nメールアドレスに誤りがあります';
+                // エラーが一つ以上あればエラーメッセージダイアログを表示する
+                if (msg != "") {
+                    openMsgDialog("msg-dialog", msg, "red");
+                    return false;
+                }
+                return true;
+            }
 
 /******************************************************************************************************* 削除 */
 
-        async function execDelete(self) {
-            const panel = self.closest('.tab-panel');
-            const tab = panel.dataset.panel;
-            let result;
-            switch (tab) {
-                case "01":
-                    result = await deleteTablelist('table-01-content', '/employee/delete');
-                    break;
-                case "02":
-                    result = await deleteTablelist('table-02-content', '/employee/delete');
-                    break;
-                case "03":
-                    result = await deleteTablelist('table-03-content', '/employee/delete');
-                    break;
-                default:
-                    break;
+            async function execDelete(self) {
+                const panel = self.closest('.tab-panel');
+                const tab = panel.dataset.panel;
+                let result;
+                switch (tab) {
+                    case "01":
+                        result = await deleteTablelist('table-01-content', '/employee/delete');
+                        break;
+                    case "02":
+                        result = await deleteTablelist('table-02-content', '/employee/delete');
+                        break;
+                    case "03":
+                        result = await deleteTablelist('table-03-content', '/employee/delete');
+                        break;
+                    default:
+                        break;
+                }
+                
+                if (result.success) {                
+                    await execUpdate();
+                    openMsgDialog("msg-dialog", result.message, "blue");
+                } else {
+                    openMsgDialog("msg-dialog", result.message, "red");
+                }
             }
-            
-            if (result.success) {                
-                execUpdate();
-                openMsgDialog("msg-dialog", result.message, "blue");
-            } else {
-                openMsgDialog("msg-dialog", result.message, "red");
-            }
-        }
 
 
 /******************************************************************************************************* ダウンロード */
 
-        async function execDownloadCsv(self) {
-            const panel = self.closest('.tab-panel');
-            const tab = panel.dataset.panel;
-            let result;
-            switch (tab) {
-                case "01":
-                    result = await downloadCsv('table-01-content', '/employee/download/csv');
-                    break;
-                case "02":
-                    result = await downloadCsv('table-02-content', '/employee/download/csv');
-                    break;
-                case "03":
-                    result = await downloadCsv('table-03-content', '/employee/download/csv');
-                    break;
-                default:
-                    break;
+            async function execDownloadCsv(self) {
+                const panel = self.closest('.tab-panel');
+                const tab = panel.dataset.panel;
+                let result;
+                switch (tab) {
+                    case "01":
+                        result = await downloadCsv('table-01-content', '/employee/download/csv');
+                        break;
+                    case "02":
+                        result = await downloadCsv('table-02-content', '/employee/download/csv');
+                        break;
+                    case "03":
+                        result = await downloadCsv('table-03-content', '/employee/download/csv');
+                        break;
+                    default:
+                        break;
+                }
             }
-        }
 
-/******************************************************************************************************* 画面更新 */
+    /******************************************************************************************************* 画面更新 */
 
-        async function execUpdate() {
-            // リスト取得
-            const resultResponse = await fetch('/employee/get/list');
-            origin = await resultResponse.json();
+            async function execUpdate() {
+                // リスト取得
+                const resultResponse = await fetch('/employee/get/list');
+                origin = await resultResponse.json();
 
-            // 画面更新
-            const list01 = origin.filter(function(value) { return value.category == categoryEmployeeCode });
-            updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
-            const list02 = origin.filter(function(value) { return value.category == categoryParttimeCode });
-            updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
-            const list03 = origin.filter(function(value) { return value.category == categoryConstructCode });
-            updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
-        }
+                // 画面更新
+                const list01 = origin.filter(function(value) { return value.category == categoryEmployeeCode });
+                await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
+                const list02 = origin.filter(function(value) { return value.category == categoryParttimeCode });
+                await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
+                const list03 = origin.filter(function(value) { return value.category == categoryConstructCode });
+                await updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
+            }
 
-/******************************************************************************************************* 画面更新 */
+    /******************************************************************************************************* 画面更新 */
 
-        // テーブルリスト画面を更新する
-        function updateTableDisplay(tableId, footerId, searchId, list) {
-            // フィルター処理
-            const result = filterDisplay(searchId, list);
-            // リスト画面を初期化
-            deleteElements(tableId);
-            // リスト作成
-            createTableContent(tableId, result);
-            // フッター作成
-            createTableFooter(footerId, list);
-            // チェックボタン押下時の処理を登録する
-            registCheckButtonClicked(tableId);
-            // テーブルのソートをリセットする
-            resetSortable(tableId);
-            // // スクロール時のページトップボタン処理を登録する
-            // setPageTopButton(tableId);
-            // テーブルにスクロールバーが表示されたときの処理を登録する
-            document.querySelectorAll('.scroll-area').forEach(el => {
-                toggleScrollbar(el);
-            });
-        }
+            // テーブルリスト画面を更新する
+            async function updateTableDisplay(tableId, footerId, searchId, list) {
+                // フィルター処理
+                const result = filterDisplay(searchId, list);
+                // リスト画面を初期化
+                deleteElements(tableId);
+                // リスト作成
+                createTableContent(tableId, result);
+                // フッター作成
+                createTableFooter(footerId, list);
+                // チェックボタン押下時の処理を登録する
+                registCheckButtonClicked(tableId);
+                // テーブルのソートをリセットする
+                resetSortable(tableId);
+                // // スクロール時のページトップボタン処理を登録する
+                // setPageTopButton(tableId);
+                // テーブルにスクロールバーが表示されたときの処理を登録する
+                document.querySelectorAll('.scroll-area').forEach(el => {
+                    toggleScrollbar(el);
+                });
+            }
 
 /******************************************************************************************************* 初期化時 */
 
             // ページ読み込み後の処理
-            window.addEventListener("load", () => {
+            window.addEventListener("load", async () => {
                 // スピナー表示
                 startProcessing();
 
                 // 検索ボックス入力時の処理
-                document.getElementById('search-box-01').addEventListener('search', function(e) {
+                document.getElementById('search-box-01').addEventListener('search', async function(e) {
                     const list = origin.filter(function(value) { return value.category == categoryEmployeeCode });
-                    updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+                    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
                 }, false);
-                document.getElementById('search-box-02').addEventListener('search', function(e) {
+                document.getElementById('search-box-02').addEventListener('search', async function(e) {
                     const list = origin.filter(function(value) { return value.category == categoryParttimeCode });
-                    updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
+                    await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
                 }, false);
-                document.getElementById('search-box-03').addEventListener('search', function(e) {
+                document.getElementById('search-box-03').addEventListener('search', async function(e) {
                     const list = origin.filter(function(value) { return value.category == categoryConstructCode });
-                    updateTableDisplay("table-03-content", "footer-03", "search-box-03", list);
+                    await updateTableDisplay("table-03-content", "footer-03", "search-box-03", list);
                 }, false);
 
                 // 郵便番号入力ボックスでエンターキーが押された時の処理を登録
-                document.getElementById('employee-postal-code').addEventListener('keydown', function (e) {
-                    getAddress(e, 'employee-postal-code', 'employee-full-address');                                                                                                                                                                                                                                                                                                                                                       ;
+                document.getElementById('employee-postal-code').addEventListener('keydown', async function (e) {
+                    await getAddress(e, 'employee-postal-code', 'employee-full-address');                                                                                                                                                                                                                                                                                                                                                       ;
                 });
 
                 // エンターフォーカス処理をイベントリスナーに登録する
@@ -595,19 +595,19 @@
 
                 // 画面更新
                 const list01 = origin.filter(function(value) { return value.category == categoryEmployeeCode });
-                updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
+                await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
                 // テーブルをソート可能にする
                 makeSortable("table-01-content");
                 // スクロール時のページトップボタン処理を登録する
                 setPageTopButton("table-01-content");
                 const list02 = origin.filter(function(value) { return value.category == categoryParttimeCode });
-                updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
+                await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
                 // テーブルをソート可能にする
                 makeSortable("table-02-content");
                 // スクロール時のページトップボタン処理を登録する
                 setPageTopButton("table-02-content");
                 const list03 = origin.filter(function(value) { return value.category == categoryConstructCode });
-                updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
+                await updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
                 // テーブルをソート可能にする
                 makeSortable("table-03-content");
                 // スクロール時のページトップボタン処理を登録する

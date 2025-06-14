@@ -23,7 +23,7 @@ public class CompanySqlBuilder {
 
     private static String buildInsertLogSql(String rowTableName, String processName) {
         return
-            "INSERT INTO company_log (" +
+            "INSERT INTO companies_log (" +
             "  company_id, editor, process, log_date, category, name, name_kana, tel_number, fax_number, " +
             "  postal_code, full_address, email, web_address, version, state" +
             ") " +
@@ -36,7 +36,7 @@ public class CompanySqlBuilder {
         return
             buildLogTableSql("@Inserted") +
 
-            "INSERT INTO company (" +
+            "INSERT INTO companies (" +
             "  category, name, name_kana, tel_number, fax_number, postal_code, full_address, " +
             "  email, web_address, version, state" +
             ") " +
@@ -51,7 +51,7 @@ public class CompanySqlBuilder {
         return
             buildLogTableSql("@Updated") +
 
-            "UPDATE company SET " +
+            "UPDATE companies SET " +
             "  category=?, name=?, name_kana=?, tel_number=?, fax_number=?, postal_code=?, " +
             "  full_address=?, email=?, web_address=?, version=?, state=? " +
             buildOutputLogSql() + "INTO @Updated " +
@@ -67,7 +67,7 @@ public class CompanySqlBuilder {
         return
             buildLogTableSql("@Deleted") +
 
-            "UPDATE company SET state = ? " +
+            "UPDATE companies SET state = ? " +
             buildOutputLogSql() + "INTO @Deleted " +
             "WHERE company_id IN (" + placeholders + ") AND NOT (state = ?); " +
 
@@ -89,6 +89,6 @@ public class CompanySqlBuilder {
 
     public static String buildDownloadCsvCompanyForIdsSql(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
-        return "SELECT * FROM companies WHERE company_id IN (" + placeholders + ") \" + NOT (state = ?)";
+        return "SELECT * FROM companies WHERE company_id IN (" + placeholders + ") AND NOT (state = ?)";
     }
 }

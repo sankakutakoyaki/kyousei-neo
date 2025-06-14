@@ -256,13 +256,13 @@
                 origin = await resultResponse.json();
 
                 // 画面更新
-                updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+                await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
             }
 
 /******************************************************************************************************* 画面更新 */
 
             // テーブルリスト画面を更新する
-            function updateTableDisplay(tableId, footerId, searchId, list) {
+            async function updateTableDisplay(tableId, footerId, searchId, list) {
                 // フィルター処理
                 const result1 = filterDisplay(searchId, list);
                 const result2 = filterQualificationCombo(result1);

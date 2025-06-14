@@ -408,7 +408,7 @@
                                 closeFormDialog('form-dialog-01');
                                 return;
                             }
-                            entity.company_id = id.value;
+                            entity.company_id = code01.value;
                             break;
                         case "06":
                             entity = structuredClone(staffEntity);
@@ -503,28 +503,29 @@
                             formdata.fax_number = formData.get('fax-number').trim();
                             formdata.postal_code = formData.get('postal-code').trim();
                             formdata.full_address = formData.get('full-address').trim();
-                            formdata.web_address = formData.get('web-address');
+                            formdata.web_address = formData.get('web-address').trim();
                             break;
                     }
 
-                    formdata.company_id = formData.get('company-id');
+                    formdata.company_id = Number(formData.get('company-id'));
                     formdata.name = formData.get('name').trim();
                     formdata.name_kana = formData.get('name-kana').trim();
                     formdata.email = formData.get('email').trim();                    
-                    formdata.version = formData.get('version');
+                    formdata.version = Number(formData.get('version'));
 
                     formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
 
                     // 保存処理
                     // const result = await saveFormData(formdata, url);
-                    const result = await postFetch(url, JSON.stringify(formdata), token, "application/json");
+                    const resultResponse = await postFetch(url, JSON.stringify(formdata), token, "application/json");
+                    const result = await resultResponse.json();
                     if (result.success) {
                         const tableId = "table-" + tab + "-content";
                         // 画面更新
                         openMsgDialog("msg-dialog", result.message, "blue");
                         await execUpdate();
                         // 追加・変更行に移動
-                        scrollIntoTableList(tableId, result);
+                        scrollIntoTableList(tableId, result.data);
                     } else {
                         openMsgDialog("msg-dialog", result.message, "red");
                     }
@@ -586,7 +587,7 @@
                 return true;
             }
 
-    /******************************************************************************************************* 削除 */
+/******************************************************************************************************* 削除 */
 
             async function execDelete(self) {
                 const panel = self.closest('.tab-panel');
@@ -613,7 +614,7 @@
             }
 
 
-    /******************************************************************************************************* ダウンロード */
+/******************************************************************************************************* ダウンロード */
 
             async function execDownloadCsv(self) {
                 const panel = self.closest('.tab-panel');
@@ -632,7 +633,7 @@
                 }
             }
 
-    /******************************************************************************************************* 画面更新 */
+/******************************************************************************************************* 画面更新 */
 
             async function execUpdate() {
                 startProcessing();
@@ -640,38 +641,38 @@
                 const panel = document.querySelector('.is-active');
                 const tab = panel.dataset.tab;
 
-                let resultResponse;
+                // let resultResponse;
 
                 switch (tab) {
                     case "01":
                         await updateCompanyOrigin();
                         const list01 = companyOrigin.filter(function(value) { return value.category == categoryPartnerCode });
-                        updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
-                        updateCompanyOrigin();
+                        await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
+                        // updateCompanyOrigin();
                         break;
                     case "02":
                         await updateCompanyOrigin();
                         const list02 = companyOrigin.filter(function(value) { return value.category == categoryShipperCode });
-                        updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
-                        updateCompanyOrigin();
+                        await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
+                        // updateCompanyOrigin();
                         break
                     case "03":
                         await updateCompanyOrigin();
                         const list03 = companyOrigin.filter(function(value) { return value.category == categorySupplierCode });
-                        updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
-                        updateCompanyOrigin();
+                        await updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
+                        // updateCompanyOrigin();
                         break;
                     case "04":
                         await updateCompanyOrigin();
                         const list04 = companyOrigin.filter(function(value) { return value.category == categoryServiceCode });
-                        updateTableDisplay("table-04-content", "footer-04", "search-box-04", list04);
-                        updateCompanyOrigin();
+                        await updateTableDisplay("table-04-content", "footer-04", "search-box-04", list04);
+                        // updateCompanyOrigin();
                         break;
                     case "05":
-                        updateOfficeTableDisplay("05");
+                        await updateOfficeTableDisplay();
                         break;
                     case "06":
-                        updateOfficeTableDisplay("06");
+                        await updateStaffTableDisplay();
                         break;
                     default:
                         break;
@@ -692,10 +693,10 @@
                 createComboBoxWithTop(name02, companyComboList, '');
             }
 
-    /******************************************************************************************************* 画面更新 */
+/******************************************************************************************************* 画面更新 */
 
             // テーブルリスト画面を更新する
-            function updateTableDisplay(tableId, footerId, searchId, list) {
+            async function updateTableDisplay(tableId, footerId, searchId, list) {
                 // フィルター処理
                 result = filterDisplay(searchId, list);
                 createDisplay(tableId, footerId, result);
@@ -726,25 +727,38 @@
                 });
             }
 
-            async function updateOfficeTableDisplay(tab) {
-                switch (tab) {
-                    case "05":
-                        code01.value = name01.value == 0 ? "": name01.value;
-                        const list = officeOrigin.filter(function(value) { return value.company_id == code01.value });
-                        createDisplay("table-05-content", "footer-05", list);
-                        createOfficeComboBox();
-                        break;
-                    case "06":
-                        code02.value = name02.value == 0 ? "": name02.value;
-                        updateStaffTableDisplay();
-                        createOfficeComboBox();
-                        break;
-                    default:
-                        return;
-                }
+            // async function updateOfficeTableDisplay(tab) {
+            //     switch (tab) {
+            //         case "05":
+            //             code01.value = name01.value == 0 ? "": name01.value;
+            //             // const resultResponse = await fetch('office/get/list');
+            //             // officeOrigin = await resultResponse.json();
+            //             // const list = officeOrigin.filter(function(value) { return value.company_id == code01.value });
+            //             // createDisplay("table-05-content", "footer-05", list);
+            //             updateOfficeTableDisplay();
+            //             createOfficeComboBox();
+            //             break;
+            //         case "06":
+            //             code02.value = name02.value == 0 ? "": name02.value;
+            //             updateStaffTableDisplay();
+            //             createOfficeComboBox();
+            //             break;
+            //         default:
+            //             return;
+            //     }
+            // }
+
+            async function updateOfficeTableDisplay() {
+                code01.value = name01.value == 0 ? "": name01.value;
+                const resultResponse = await fetch('office/get/list');
+                officeOrigin = await resultResponse.json();
+                const list = officeOrigin.filter(function(value) { return value.company_id == code01.value });
+                createDisplay("table-05-content", "footer-05", list);
+                createOfficeComboBox();
             }
 
             async function updateStaffTableDisplay() {
+                code02.value = name02.value == 0 ? "": name02.value;
                 if (name02.value < 1) return;
                 const resultResponse = await fetch('staff/get/list');
                 staffOrigin = await resultResponse.json();
@@ -753,46 +767,47 @@
                     list = list.filter(function(value) { return value.office_id == name03.value });
                 }
                 createDisplay("table-06-content", "footer-06", list);
+                // createOfficeComboBox();
             }
 
             // 選択した会社の支店をコンボボックスに登録する
-            function createOfficeComboBox() {
+            async function createOfficeComboBox() {
                 const selectId = name02.value;
-                const comboList = officeComboList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.office_name}));
+                const comboList = officeComboList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
                 createComboBoxWithTop(name03, comboList, "");
                 name03.onchange = async function() {
-                    updateStaffTableDisplay();
+                    await updateStaffTableDisplay();
                 };
             }
 
 /******************************************************************************************************* 初期化時 */
 
             // ページ読み込み後の処理
-            window.addEventListener("load", () => {
+            window.addEventListener("load", async () => {
                 // スピナー表示
                 startProcessing();
 
                 // 検索ボックス入力時の処理
-                document.getElementById('search-box-01').addEventListener('search', function(e) {
+                document.getElementById('search-box-01').addEventListener('search', async function(e) {
                     const list = companyOrigin.filter(function(value) { return value.category == categoryPartnerCode });
-                    updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+                    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
                 }, false);
-                document.getElementById('search-box-02').addEventListener('search', function(e) {
+                document.getElementById('search-box-02').addEventListener('search', async function(e) {
                     const list = companyOrigin.filter(function(value) { return value.category == categoryShipperCode });
-                    updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
+                    await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
                 }, false);
-                document.getElementById('search-box-03').addEventListener('search', function(e) {
+                document.getElementById('search-box-03').addEventListener('search', async function(e) {
                     const list = companyOrigin.filter(function(value) { return value.category == categorySupplierCode });
-                    updateTableDisplay("table-03-content", "footer-03", "search-box-03", list);
+                    await updateTableDisplay("table-03-content", "footer-03", "search-box-03", list);
                 }, false);
-                document.getElementById('search-box-04').addEventListener('search', function(e) {
+                document.getElementById('search-box-04').addEventListener('search', async function(e) {
                     const list = companyOrigin.filter(function(value) { return value.category == categoryServiceCode });
-                    updateTableDisplay("table-04-content", "footer-04", "search-box-04", list);
+                    await updateTableDisplay("table-04-content", "footer-04", "search-box-04", list);
                 }, false);
 
                 // 郵便番号入力ボックスでエンターキーが押された時の処理を登録
-                document.getElementById('postal-code').addEventListener('keydown', function (e) {
-                    getAddress(e, 'postal-code', 'full-address');                                                                                                                                                                                                                                                                                                                                                       ;
+                document.getElementById('postal-code').addEventListener('keydown', async function (e) {
+                    await getAddress(e, 'postal-code', 'full-address');                                                                                                                                                                                                                                                                                                                                                       ;
                 });
 
                 // エンターフォーカス処理をイベントリスナーに登録する
@@ -801,28 +816,28 @@
 
                 // 画面更新
                 const list01 = companyOrigin.filter(function(value) { return value.category == categoryPartnerCode });
-                updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
+                await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
                 // テーブルをソート可能にする
                 makeSortable("table-01-content");
                 // スクロール時のページトップボタン処理を登録する
                 setPageTopButton("table-01-content");
 
                 const list02 = companyOrigin.filter(function(value) { return value.category == categoryShipperCode });
-                updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
+                await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
                 // テーブルをソート可能にする
                 makeSortable("table-02-content");
                 // スクロール時のページトップボタン処理を登録する
                 setPageTopButton("table-02-content");
 
                 const list03 = companyOrigin.filter(function(value) { return value.category == categorySupplierCode });
-                updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
+                await updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
                 // テーブルをソート可能にする
                 makeSortable("table-03-content");
                 // スクロール時のページトップボタン処理を登録する
                 setPageTopButton("table-03-content");
 
                 const list04 = companyOrigin.filter(function(value) { return value.category == categoryServiceCode });
-                updateTableDisplay("table-04-content", "footer-04", "search-box-04", list04);
+                await updateTableDisplay("table-04-content", "footer-04", "search-box-04", list04);
                 // テーブルをソート可能にする
                 makeSortable("table-04-content");
                 // スクロール時のページトップボタン処理を登録する
@@ -838,7 +853,7 @@
                     }
                 });
                 code01.addEventListener('blur', function (e) {
-                    updateOfficeTableDisplay("05");
+                    updateOfficeTableDisplay();
                 });
                 code02.addEventListener('keydown', function (e) {
                     if ((e && e.key === "Enter") || e === "Enter") {
@@ -847,18 +862,18 @@
                     }
                 });
                 code02.addEventListener('blur', function (e) {
-                    updateOfficeTableDisplay("06");
+                    updateStaffTableDisplay();
                     createOfficeComboBox(this);
                 });
 
                 // 会社名コンボボックス
                 createComboBoxWithTop(name01, companyComboList, "");
                 name01.onchange = async function() {
-                    updateOfficeTableDisplay("05");
+                    updateOfficeTableDisplay();
                 };
                 createComboBoxWithTop(name02,companyComboList, "");
                 name02.onchange = async function() {
-                    updateOfficeTableDisplay("06");
+                    updateStaffTableDisplay();
                     createOfficeComboBox(this);
                 };
 

@@ -11,38 +11,36 @@ public class OfficeParameterBinder {
 
     public static void bindInsertOfficeParameters(PreparedStatement pstmt, OfficeEntity office, String editor) throws SQLException {
         pstmt.setInt(1, office.getCompany_id());
-        pstmt.setString(2, office.getCompany_name());
-        pstmt.setString(3, office.getName());
-        pstmt.setString(4, office.getName_kana());
-        pstmt.setString(5, office.getTel_number());
-        pstmt.setString(6, office.getFax_number());
-        pstmt.setString(7, office.getPostal_code());
-        pstmt.setString(8, office.getFull_address());
-        pstmt.setString(9, office.getEmail());
-        pstmt.setString(10, office.getWeb_address());
-        pstmt.setInt(11, office.getVersion());
-        pstmt.setInt(12, office.getState());
+        pstmt.setString(2, office.getName());
+        pstmt.setString(3, office.getName_kana());
+        pstmt.setString(4, office.getTel_number());
+        pstmt.setString(5, office.getFax_number());
+        pstmt.setString(6, office.getPostal_code());
+        pstmt.setString(7, office.getFull_address());
+        pstmt.setString(8, office.getEmail());
+        pstmt.setString(9, office.getWeb_address());
+        pstmt.setInt(10, office.getVersion());
+        pstmt.setInt(11, office.getState());
 
-        pstmt.setString(13, editor);
+        pstmt.setString(12, editor);
     }
 
     public static void bindUpdateOfficeParameters(PreparedStatement pstmt, OfficeEntity office, String editor) throws SQLException {
         pstmt.setInt(1, office.getCompany_id());
-        pstmt.setString(2, office.getCompany_name());
-        pstmt.setString(3, office.getName());
-        pstmt.setString(4, office.getName_kana());
-        pstmt.setString(5, office.getTel_number());
-        pstmt.setString(6, office.getFax_number());
-        pstmt.setString(7, office.getPostal_code());
-        pstmt.setString(8, office.getFull_address());
-        pstmt.setString(9, office.getEmail());
-        pstmt.setString(10, office.getWeb_address());
-        pstmt.setInt(11, office.getVersion());
-        pstmt.setInt(12, office.getState());
+        pstmt.setString(2, office.getName());
+        pstmt.setString(3, office.getName_kana());
+        pstmt.setString(4, office.getTel_number());
+        pstmt.setString(5, office.getFax_number());
+        pstmt.setString(6, office.getPostal_code());
+        pstmt.setString(7, office.getFull_address());
+        pstmt.setString(8, office.getEmail());
+        pstmt.setString(9, office.getWeb_address());
+        pstmt.setInt(10, office.getVersion());
+        pstmt.setInt(11, office.getState());
 
-        pstmt.setInt(13, office.getOffice_id());  // WHERE句
+        pstmt.setInt(12, office.getOffice_id());  // WHERE句
 
-        pstmt.setString(14, editor);
+        pstmt.setString(13, editor);
     }
 
     public static void bindFindById(PreparedStatement ps, Integer officeId) throws SQLException {
@@ -60,13 +58,14 @@ public class OfficeParameterBinder {
         ps.setInt(3, Enums.state.DELETE.getCode());     // 3番目の ?
     }
 
-    public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
             ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
         }
-        ps.setInt(index, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        ps.setString(index, editor);
     }
 
     public static void bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {

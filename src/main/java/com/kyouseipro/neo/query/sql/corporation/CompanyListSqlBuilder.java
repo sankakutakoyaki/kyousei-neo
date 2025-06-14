@@ -3,7 +3,7 @@ package com.kyouseipro.neo.query.sql.corporation;
 public class CompanyListSqlBuilder {
     
     public static String buildFindAllSql() {
-        return "SELECT * FROM companies WHERE NOT (state = ?)";
+        return "SELECT company_id, category, name, name_kana, tel_number, email FROM companies WHERE NOT (state = ?)";
     }
 
     public static String buildFindAllClientSql() {

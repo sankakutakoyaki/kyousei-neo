@@ -43,7 +43,7 @@ public class OfficeListRepository {
 
     // 全件取得
     public List<OfficeListEntity> findByCategoryId(int categoryId) {
-        String sql = OfficeListSqlBuilder.buildFindAllSql();
+        String sql = OfficeListSqlBuilder.buildFindAllByCategorySql();
 
         return sqlRepository.findAll(
             sql,

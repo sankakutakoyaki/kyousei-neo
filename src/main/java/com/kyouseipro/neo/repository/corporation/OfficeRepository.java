@@ -47,7 +47,7 @@ public class OfficeRepository {
 
         int result = sqlRepository.executeUpdate(
             sql,
-            ps -> OfficeParameterBinder.bindDeleteForIds(ps, officeIds)
+            ps -> OfficeParameterBinder.bindDeleteForIds(ps, officeIds, editor)
         );
 
         return result; // 成功件数。0なら削除なし
