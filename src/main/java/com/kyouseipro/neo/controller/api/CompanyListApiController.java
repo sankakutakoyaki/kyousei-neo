@@ -1,6 +1,5 @@
 package com.kyouseipro.neo.controller.api;
 
-import java.beans.SimpleBeanInfo;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
