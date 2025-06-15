@@ -16,7 +16,7 @@
     <div th:fragment="salesFragment" th:remove="tag">
         <div class="hamburger-item sp-style" onclick="moveLinkPage('/');hamburgerClose()"><img th:src="@{/icons/home.png}"><span>ホーム</span></div>
         <div class="hamburger-item" onclick="moveLinkPage('/client');hamburgerClose()"><img th:src="@{/icons/buillding.png}"><span>取引先</span></div>
-        <div class="hamburger-item" onclick="moveLinkPage('/qualifications/company');hamburgerClose()"><img th:src="@{/icons/license.png}"><span>許認可</span></div>
+        <div class="hamburger-item" onclick="moveLinkPage('/license');hamburgerClose()"><img th:src="@{/icons/license.png}"><span>許認可</span></div>
     </div>
 
     <div th:fragment="personnelFragment" th:remove="tag">
@@ -24,7 +24,7 @@
         <div class="hamburger-item" onclick="moveLinkPage('/employee');hamburgerClose()"><img th:src="@{/icons/person.png}"><span>従業員</span></div>
         <div class="hamburger-item" onclick="moveLinkPage('/working_conditions');hamburgerClose()"><img th:src="@{/icons/conditions.png}"><span>勤務条件</span></div>
         <div class="hamburger-item" onclick="moveLinkPage('/timeworks');hamburgerClose()"><img th:src="@{/icons/clock2.png}"><span>勤怠</span></div>
-        <div class="hamburger-item" onclick="moveLinkPage('/qualifications/employee');hamburgerClose()"><img th:src="@{/icons/license.png}"><span>資格</span></div>
+        <div class="hamburger-item" onclick="moveLinkPage('/qualifications');hamburgerClose()"><img th:src="@{/icons/license.png}"><span>資格</span></div>
     </div>
 </body>
 

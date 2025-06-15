@@ -61,7 +61,7 @@ public class QualificationsSqlBuilder {
 
             "UPDATE qualifications SET state = ? " +
             buildOutputLogSql() + "INTO @Deleted " +
-            "WHERE qualifications_id IN (" + placeholders + ") AND NOT (state = ?); " +
+            "WHERE qualifications_id IN (" + placeholders + ") AND NOT (state = ?);" +
 
             buildInsertLogSql("@Deleted", "DELETE") +
             "SELECT qualifications_id FROM @Deleted;";
@@ -79,44 +79,85 @@ public class QualificationsSqlBuilder {
             "SELECT qualifications_id FROM @Deleted;";
     }
 
-    public static String buildFindByIdSql() {
-        return "SELECT * FROM qualifications WHERE NOT (state = ?) AND qualifiations_id = ?";
+    public static String buildFindByIdForEmployeeSql() {
+        return
+            baseEmployeeStatusSelectString() +
+            " WHERE NOT (q.state = ?) AND q.owner_id = ?";
+    }
+
+    public static String buildFindByIdForCompanySql() {
+        return
+            baseCompanyStatusSelectString() +
+            " WHERE NOT (state = ?) AND q.owner_id = ?";
+    }
+
+    private static String baseEmployeeSelectString() {
+        return
+            "SELECT q.qualifications_id, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, '取得済み' as status, q.is_enabled" +
+            ", q.version, q.state, e.full_name as owner_name, e.full_name_kana as owner_name_kana, qm.name as qualification_name FROM qualifications q" +
+            " LEFT OUTER JOIN employees e ON e.employee_id = q.owner_id AND NOT (e.state = ?) " +
+            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)";
+    }
+
+    private static String baseCompanySelectString() {
+        return
+            "SELECT q.qualifications_id, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, '取得済み' as status, q.is_enabled" +
+            ", q.version, q.state, c.name as owner_name, e.name_kana as owner_name_kana, qm.name as qualification_name FROM qualifications q" +
+            " LEFT OUTER JOIN companies c ON c.company_id = q.owner_id AND NOT (c.state = ?) " +
+            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)";
+    }
+
+    private static String baseEmployeeStatusSelectString() {
+        return
+            "SELECT e.employee_id as owner_id, e.full_name as owner_name, e.full_name_kana as owner_name_kana, qm.name as qualification_name" +
+            ", q.qualifications_id, qm.qualification_master_id, q.number, q.is_enabled, q.version, q.state" +
+            ", COALESCE(q.acquisition_date, '9999-12-31') as acquisition_date, COALESCE(q.expiry_date, '9999-12-31') as expiry_date" +
+            ", CASE WHEN q.owner_id IS NOT NULL THEN '取得済み' ELSE '未取得' END AS status FROM employees e" +
+            " CROSS JOIN qualification_master qm" +
+            " LEFT JOIN qualifications q ON q.owner_id = e.employee_id AND q.qualification_master_id = qm.qualification_master_id" +
+            " AND NOT (q.state = ?)";
+    }
+
+    private static String baseCompanyStatusSelectString() {
+        return
+            "SELECT c.company_id as owner_id, c.name as owner_name, c.name_kana as owner_name_kana, qm.name as qualification_name" +
+            ", q.qualifications_id, qm.qualification_master_id, q.number, q.is_enabled, q.version, q.state" +
+            ", COALESCE(q.acquisition_date, '9999-12-31') as acquisition_date, COALESCE(q.expiry_date, '9999-12-31') as expiry_date" +
+            ", CASE WHEN q.owner_id IS NOT NULL THEN '取得済み' ELSE '未取得' END AS status FROM companies c" +
+            " CROSS JOIN qualification_master qm" +
+            " LEFT JOIN qualifications q ON q.owner_id = c.company_id AND q.qualification_master_id = qm.qualification_master_id" +
+            " AND NOT (q.state = ?)";
+    //     sb.append(" WHERE NOT (c.state = " + Enums.state.DELETE.getCode() + ") AND c.category = " + Enums.clientCategory.PARTNER.getCode() + " AND qm.category_name = '許可'");
+    //     sb.append(" ORDER BY qm.qualification_master_id, c.company_id");
+    //     return sb.toString();
     }
 
     public static String buildFindAllEmployeeIdSql() {
         return  
-            "SELECT q.qualifications_id, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.is_enabled" +
-            ", q.version, q.state, e.full_name as owner_name, qm.name as qualification_name FROM qualifications q" +
-            " LEFT OUTER JOIN employees e ON e.employee_id = q.owner_id AND NOT (e.state = ?) " +
-            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)" +
+            baseEmployeeSelectString() +
             " WHERE NOT (q.state = ?) AND e.employee_id = ?";
     }
 
     public static String buildFindAllCompanyIdSql() {
         return  
-            "SELECT q.qualifications_id, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.is_enabled" +
-            ", q.version, q.state, c.name as owner_name, qm.name as qualification_name FROM qualifications q" +
-            " LEFT OUTER JOIN companies c ON c.company_id = q.owner_id AND NOT (c.state = ?) " +
-            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)" +
-            " WHERE NOT (q.state = ?) AND c.company_id = ?";
+            baseCompanySelectString() +
+            " WHERE NOT (q.state = ?) AND c.company_id = ? AND c.category = ?" +
+            " AND qm.category_name = '許可'";
     }
 
-        public static String buildFindAllEmployeeSql() {
+    public static String buildFindAllEmployeeStatusSql() {
         return  
-            "SELECT q.qualifications_id, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.is_enabled" +
-            ", q.version, q.state, e.full_name as owner_name, qm.name as qualification_name FROM qualifications q" +
-            " LEFT OUTER JOIN employees e ON e.employee_id = q.owner_id AND NOT (e.state = ?) " +
-            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)" +
-            " WHERE NOT (q.state = ?)";
+            baseEmployeeStatusSelectString() +
+            " WHERE NOT (qm.state = ?) AND NOT (e.state = ?)" +
+            " ORDER BY qm.qualification_master_id, e.employee_id";
     }
 
-    public static String buildFindAllCompanySql() {
+    public static String buildFindAllCompanyStatusSql() {
         return  
-            "SELECT q.qualifications_id, q.owner_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, q.is_enabled" +
-            ", q.version, q.state, c.name as owner_name, qm.name as qualification_name FROM qualifications q" +
-            " LEFT OUTER JOIN companies c ON c.company_id = q.owner_id AND NOT (c.state = ?) " +
-            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)" +
-            " WHERE NOT (q.state = ?)";
+            baseCompanyStatusSelectString() +
+            " WHERE NOT (c.state = ?) AND NOT (q.state = ?) AND c.category = ?" +
+            " AND qm.category_name = '許可'" +
+            " ORDER BY qm.qualification_master_id, c.company_id";
     }
 
 
@@ -125,7 +166,7 @@ public class QualificationsSqlBuilder {
         return "SELECT * FROM qualifications WHERE qualifications_id IN (" + placeholders + ") \" + NOT (state = ?)";
     }
 
-    public static String buildFindAllComboQualificationsSql() {
-        return "SELECT qualifications_id as number, name as text FROM qualifications WHERE NOT (state = ?);";
+    public static String buildFindAllComboQualificationMasterSql() {
+        return "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = ?);";
     }
 }

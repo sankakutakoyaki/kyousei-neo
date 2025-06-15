@@ -27,52 +27,72 @@ public class QualificationFilesSqlBuilder {
             "FROM " + tableName + "; ";
     }
 
-    public static String buildInsertQualificationFilesSql() {
-        return
-            buildLogTableSql("@Inserted") +
+    // public static String buildInsertQualificationFilesSql(int count) {
+    //     return
+    //         buildLogTableSql("@Inserted") +
 
-            "INSERT INTO qualifications_files (" +
-            "  qualifications_id, file_name, internal_name, folder_name, version, state" +
-            ") " +
-            buildOutputLogSql() + "INTO @Inserted " +
-            "VALUES (?, ?, ?, ?, ?, ?); " +
+    //         "INSERT INTO qualifications_files (" +
+    //         "  qualifications_id, file_name, internal_name, folder_name, version, state" +
+    //         ") " +
+    //         buildOutputLogSql() + "INTO @Inserted " +
+    //         "VALUES (?, ?, ?, ?, ?, ?); " +
 
-            buildInsertLogSql("@Inserted", "INSERT") +
-            "SELECT qualifications_files_id FROM @Inserted;";
+    //         buildInsertLogSql("@Inserted", "INSERT") +
+    //         "SELECT qualifications_files_id FROM @Inserted;";
+    // }
+    public static String buildInsertQualificationFilesSql(int count) {
+        StringBuilder sqlBuilder = new StringBuilder();
+
+        for (int i = 0; i < count; i++) {
+            String insertedVar = "@Inserted" + i;
+            sqlBuilder.append(buildLogTableSql(insertedVar));
+
+            sqlBuilder.append(
+                "INSERT INTO qualifications_files (" +
+                "  qualifications_id, file_name, internal_name, folder_name, version, state" +
+                ") " +
+                buildOutputLogSql() + "INTO " + insertedVar + " " +
+                "VALUES (?, ?, ?, ?, ?, ?); "
+            );
+
+            sqlBuilder.append(buildInsertLogSql(insertedVar, "INSERT"));
+            sqlBuilder.append("SELECT qualifications_files_id FROM " + insertedVar + "; ");
+        }
+
+        return sqlBuilder.toString();
     }
 
-    public static String buildUpdateQualificationFilesSql() {
-        return
-            buildLogTableSql("@Updated") +
+    // public static String buildUpdateQualificationFilesSql() {
+    //     return
+    //         buildLogTableSql("@Updated") +
 
-            "UPDATE qualifications_files SET " +
-            "  qualifications_id=?, file_name=?, internal_name=?, folder_name=?, version=?, state=? " +
-            buildOutputLogSql() + "INTO @Updated " +
-            "WHERE qualifications_files_id=?; " +
+    //         "UPDATE qualifications_files SET " +
+    //         "  qualifications_id=?, file_name=?, internal_name=?, folder_name=?, version=?, state=? " +
+    //         buildOutputLogSql() + "INTO @Updated " +
+    //         "WHERE qualifications_files_id=?; " +
 
-            buildInsertLogSql("@Updated", "UPDATE") +
-            "SELECT qualifications_files_id FROM @Updated;";
-    }
+    //         buildInsertLogSql("@Updated", "UPDATE") +
+    //         "SELECT qualifications_files_id FROM @Updated;";
+    // }
 
     public static String buildDeleteQualificationFilesSql() {
         return
             buildLogTableSql("@Deleted") +
 
-            "UPDATE qualifications_files SET " +
-            "  state=? " +
+            "UPDATE qualifications_files SET state=? " +
             buildOutputLogSql() + "INTO @Deleted " +
-            "WHERE forder_name_id=?; " +
+            "WHERE folder_name=?; " +
 
             buildInsertLogSql("@Deleted", "DELETE") +
             "SELECT qualifications_files_id FROM @Deleted;";
     }
 
-    public static String buildFindByIdSql() {
-        return "SELECT * FROM qualifications_files WHERE qualifications_files_id = ? AND NOT (state = ?";
+    public static String buildFindByQualificationsFilesIdSql() {
+        return "SELECT * FROM qualifications_files WHERE NOT (state = ?) AND qualifications_files_id = ?";
     }
 
     public static String buildFindAllByQualificationsIdSql() {
-        return "SELECT * FROM qualifications_files WHERE qualifications_id = ? AND NOT (state = ?)";
+        return "SELECT * FROM qualifications_files WHERE NOT (state = ?) AND qualifications_id = ?";
     }
 }
 

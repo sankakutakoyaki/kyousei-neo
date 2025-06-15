@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
+import com.kyouseipro.neo.interfaceis.FileUpload;
 import com.kyouseipro.neo.repository.qualification.QualificationFilesRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,15 @@ public class QualificationFilesService {
      */
     public Integer deleteQualificationsFilesByUrl(String url, String userName) {
         return qualificationFilesRepository.deleteQualificationFilesByUrl(url, userName);
+    }
+
+    /**
+     * QualificationsFilesを登録します。
+     * @param entity
+     * @param editor
+     * @return
+    */
+    public Integer saveQualificationsFiles(List<FileUpload> entities, String editor, Integer id) {
+        return qualificationFilesRepository.insertQualificationFiles(entities, editor, id);
     }
 }

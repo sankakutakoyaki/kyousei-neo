@@ -132,6 +132,11 @@ public class QualificationFilesEntity implements FileUpload {
         this.folder_name = folder_name;
     }
 
+    @Override
+    public QualificationFilesEntity create() {
+        return new QualificationFilesEntity();
+    }
+    
     // @Override
     // public Integer insertFilesTable() {
     //     return qualificationFilesRepository.insertQualificationFiles(this, user_name);

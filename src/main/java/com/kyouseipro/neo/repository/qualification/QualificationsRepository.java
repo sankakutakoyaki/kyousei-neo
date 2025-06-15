@@ -45,8 +45,8 @@ public class QualificationsRepository {
     }
 
     // DELETE
-    public int deleteQualifications(int id, String editor) {
-        String sql = QualificationsSqlBuilder.buildUpdateQualificationsSql();
+    public Integer deleteQualifications(int id, String editor) {
+        String sql = QualificationsSqlBuilder.buildDeleteQualificationsSql();
 
         return sqlRepository.execute(
             sql,
@@ -56,16 +56,14 @@ public class QualificationsRepository {
         );
     }
 
-    public int deleteQualificationsByIds(List<SimpleData> ids, String editor) {
+    public Integer deleteQualificationsByIds(List<SimpleData> ids, String editor) {
         List<Integer> qualificationsIds = Utilities.createSequenceByIds(ids);
         String sql = QualificationsSqlBuilder.buildDeleteQualificationsForIdsSql(qualificationsIds.size());
 
-        int result = sqlRepository.executeUpdate(
+        return sqlRepository.executeUpdate(
             sql,
-            ps -> QualificationsParameterBinder.bindDeleteForIds(ps, qualificationsIds)
+            ps -> QualificationsParameterBinder.bindDeleteForIds(ps, qualificationsIds, editor)
         );
-
-        return result; // 成功件数。0なら削除なし
     }
 
     public List<QualificationsEntity> downloadCsvQualificationsByIds(List<SimpleData> ids, String editor) {
@@ -79,65 +77,77 @@ public class QualificationsRepository {
         );
     }
 
-    // IDによる取得
-    public QualificationsEntity findById(int qualificationsId) {
-        String sql = QualificationsSqlBuilder.buildFindByIdSql();
+    // // IDによる取得
+    // public QualificationsEntity findByIdForEmployee(int qualificationsId) {
+    //     String sql = QualificationsSqlBuilder.buildFindByIdForEmployeeSql();
 
-        return sqlRepository.execute(
-            sql,
-            (pstmt, comp) -> QualificationsParameterBinder.bindFindById(pstmt, comp),
-            rs -> rs.next() ? QualificationsEntityMapper.map(rs) : null,
-            qualificationsId
-        );
-    }
+    //     return sqlRepository.execute(
+    //         sql,
+    //         (pstmt, comp) -> QualificationsParameterBinder.bindFindByIdForEmployee(pstmt, comp),
+    //         rs -> rs.next() ? QualificationsEntityMapper.map(rs) : null,
+    //         qualificationsId
+    //     );
+    // }
 
-    // EmployeeIDによる取得
-    public List<QualificationsEntity> findByEmployeeId(int employeeId) {
+    // // IDによる取得
+    // public QualificationsEntity findByIdForCompany(int qualificationsId) {
+    //     String sql = QualificationsSqlBuilder.buildFindByIdForCompanySql();
+
+    //     return sqlRepository.execute(
+    //         sql,
+    //         (pstmt, comp) -> QualificationsParameterBinder.bindFindByIdForCompany(pstmt, comp),
+    //         rs -> rs.next() ? QualificationsEntityMapper.map(rs) : null,
+    //         qualificationsId
+    //     );
+    // }
+
+    // IDによる資格情報取得
+    public List<QualificationsEntity> findByIdForEmployee(int employeeId) {
         String sql = QualificationsSqlBuilder.buildFindAllEmployeeIdSql();
 
         return sqlRepository.findAll(
             sql,
-            ps -> QualificationsParameterBinder.bindFindByEmployeeId(ps, employeeId),
+            ps -> QualificationsParameterBinder.bindFindByIdForEmployee(ps, employeeId),
             QualificationsEntityMapper::map // ← ここで ResultSet を map
         );
     }
 
-    // CompanyIDによる取得
-    public List<QualificationsEntity> findByCompanyId(int companyId) {
+    // IDによる許認可情報取得
+    public List<QualificationsEntity> findByIdForCompany(int companyId) {
         String sql = QualificationsSqlBuilder.buildFindAllCompanyIdSql();
 
         return sqlRepository.findAll(
             sql,
-            ps -> QualificationsParameterBinder.bindFindByEmployeeId(ps, companyId),
+            ps -> QualificationsParameterBinder.bindFindByIdForEmployee(ps, companyId),
             QualificationsEntityMapper::map // ← ここで ResultSet を map
         );
     }
 
     // 全件取得
     public List<QualificationsEntity> findAllForEmployee() {
-        String sql = QualificationsSqlBuilder.buildFindAllEmployeeSql();
+        String sql = QualificationsSqlBuilder.buildFindAllEmployeeStatusSql();
 
         return sqlRepository.findAll(
             sql,
-            ps -> QualificationsParameterBinder.bindFindAll(ps, null),
+            ps -> QualificationsParameterBinder.bindFindAllEmployeeStatus(ps, null),
             QualificationsEntityMapper::map // ← ここで ResultSet を map
         );
     }
 
     // 全件取得
     public List<QualificationsEntity> findAllForCompany() {
-        String sql = QualificationsSqlBuilder.buildFindAllCompanySql();
+        String sql = QualificationsSqlBuilder.buildFindAllCompanyStatusSql();
 
         return sqlRepository.findAll(
             sql,
-            ps -> QualificationsParameterBinder.bindFindAll(ps, null),
+            ps -> QualificationsParameterBinder.bindFindAllCompanyStatus(ps, null),
             QualificationsEntityMapper::map // ← ここで ResultSet を map
         );
     }
 
     // コンボボックス用リスト取得
     public List<SimpleData> findAllCombo() {
-        String sql = QualificationsSqlBuilder.buildFindAllComboQualificationsSql();
+        String sql = QualificationsSqlBuilder.buildFindAllComboQualificationMasterSql();
 
         return sqlRepository.findAll(
             sql,

@@ -7,7 +7,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -34,11 +33,10 @@ public class QualificationsPageController {
 	 * @param mv
 	 * @return
 	 */
-	@GetMapping("/qualifications/{type}")
+	@GetMapping("/qualifications")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getQualifications(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
-
+	public ModelAndView getQualifications(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "資格");
         mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
@@ -53,28 +51,50 @@ public class QualificationsPageController {
         // 初期化されたエンティティ
         mv.addObject("formEntity", new QualificationsEntity());
 
-        switch (type.toLowerCase()) {
-            case "employee":
-                mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
-                // 初期表示用資格情報リスト取得
-                List<QualificationsEntity> qualificationsOrigin = qualificationsService.getEmployeeQualificationsList();
-                mv.addObject("origin", qualificationsOrigin);
-                // コンボボックスアイテム取得
-                List<SimpleData> qualificationComboList = comboBoxService.getQualificationMaster();
-                mv.addObject("qualificationComboList", qualificationComboList);
-                break;
-            case "company":
-                mv.addObject("sidebarFragmentName", "fragments/menu :: salesFragment");
-                // 初期表示用資格情報リスト取得
-                List<QualificationsEntity> licensesOrigin = qualificationsService.getCompanyQualificationsList();
-                mv.addObject("origin", licensesOrigin);
-                // コンボボックスアイテム取得
-                List<SimpleData> licenseComboList = comboBoxService.getQualificationMaster();
-                mv.addObject("qualificationComboList", licenseComboList);
-                break;
-            default:
-                break;
-        }
+        mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
+        // 初期表示用資格情報リスト取得
+        List<QualificationsEntity> qualificationsOrigin = qualificationsService.getEmployeeQualificationsList();
+        mv.addObject("origin", qualificationsOrigin);
+        // コンボボックスアイテム取得
+        List<SimpleData> qualificationComboList = comboBoxService.getQualificationMaster();
+        mv.addObject("qualificationComboList", qualificationComboList);
+
+        // 履歴保存
+        historyService.saveHistory(userName, "qualifications", "閲覧", 200, "");
+		
+        return mv;
+    }
+
+    /**
+	 * 許認可
+	 * @param mv
+	 * @return
+	 */
+	@GetMapping("/license")
+	@ResponseBody
+	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
+	public ModelAndView getLicense(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+		mv.setViewName("layouts/main");
+        mv.addObject("title", "許認可");
+        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
+        mv.addObject("bodyFragmentName", "contents/common/qualifications :: bodyFragment");
+        mv.addObject("insertCss", "/css/common/qualifications.css");
+
+		// ユーザー名
+		String userName = principal.getAttribute("preferred_username");
+		EmployeeEntity user = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		mv.addObject("user", user);
+
+        // 初期化されたエンティティ
+        mv.addObject("formEntity", new QualificationsEntity());
+
+        mv.addObject("sidebarFragmentName", "fragments/menu :: salesFragment");
+        // 初期表示用資格情報リスト取得
+        List<QualificationsEntity> licensesOrigin = qualificationsService.getCompanyQualificationsList();
+        mv.addObject("origin", licensesOrigin);
+        // コンボボックスアイテム取得
+        List<SimpleData> licenseComboList = comboBoxService.getQualificationMaster();
+        mv.addObject("qualificationComboList", licenseComboList);
 
         // 履歴保存
         historyService.saveHistory(userName, "qualifications", "閲覧", 200, "");

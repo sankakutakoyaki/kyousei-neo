@@ -30,8 +30,19 @@ public class QualificationsApiController {
      */
     @PostMapping("/qualifications/get/id")
 	@ResponseBody
-    public QualificationsEntity getQualificationsById(@RequestParam int id) {
-        return qualificationsService.getQualificationsById(id);
+    public List<QualificationsEntity> getQualificationsByIdForEmployee(@RequestParam int id) {
+        return qualificationsService.getQualificationsByIdForEmployee(id);
+    }
+
+    /**
+     * IDから情報を取得する
+     * @param ID
+     * @return 
+     */
+    @PostMapping("/license/get/id")
+	@ResponseBody
+    public List<QualificationsEntity> getQualificationsByIdForCompany(@RequestParam int id) {
+        return qualificationsService.getQualificationsByIdForCompany(id);
     }
 
     /**
@@ -72,17 +83,17 @@ public class QualificationsApiController {
      * すべての資格情報を取得する
      * @return
      */
-    @GetMapping("/qualifications/get/employee")
+    @GetMapping("/qualifications/get")
 	@ResponseBody
     public List<QualificationsEntity> getQualificationsListForEmployee() {
         return qualificationsService.getEmployeeQualificationsList();
     }
 
     /**
-     * すべての資格情報を取得する
+     * すべての許認可情報を取得する
      * @return
      */
-    @GetMapping("/qualifications/get/company")
+    @GetMapping("/license/get")
 	@ResponseBody
     public List<QualificationsEntity> getQualificationsListForCompany() {
         return qualificationsService.getCompanyQualificationsList();

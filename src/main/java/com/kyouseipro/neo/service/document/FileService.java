@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +26,9 @@ import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.interfaceis.FileUpload;
 import com.kyouseipro.neo.repository.common.AddressRepository;
 import com.kyouseipro.neo.repository.common.SqlRepository;
+import com.kyouseipro.neo.service.qualification.QualificationFilesService;
 
+import groovyjarjarantlr4.v4.parse.ANTLRParser.id_return;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -42,6 +45,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class FileService {
+
+    private final QualificationFilesService qualificationFilesService;
     private final SqlRepository sqlRepository;
     private final AddressRepository addressRepository;
 
@@ -203,11 +208,9 @@ public class FileService {
      * @param entity
      * @return
      */
-    public SimpleData fileUpload(MultipartFile[] files, String folderName, FileUpload fileUploadEntity) {
+    public List<FileUpload> fileUpload(MultipartFile[] files, String folderName, FileUpload fileUploadEntity) {
         if (files.length == 0) {
-            SimpleData simpleData = new SimpleData();
-            simpleData.setText("ファイルが空です");
-            return simpleData;
+            return null;
         }
 
         File uploadDir = new File(UploadConfig.getUploadDir() + folderName);
@@ -215,8 +218,7 @@ public class FileService {
             uploadDir.mkdirs();
         }
 
-        StringBuilder resultStr = new StringBuilder();
-        StringBuilder sqlBuilder = new StringBuilder();
+        List<FileUpload> list = new ArrayList<>();
         Pattern invalidChars = Pattern.compile("[/\\\\:*?\"<>`]");
 
         for (MultipartFile file : files) {
@@ -224,7 +226,6 @@ public class FileService {
                 try {
                     String originalFilename = file.getOriginalFilename();
                     if (originalFilename == null || invalidChars.matcher(originalFilename).find()) {
-                        resultStr.append("無効なファイル名: ").append(originalFilename).append("\n");
                         continue;
                     }
 
@@ -240,46 +241,53 @@ public class FileService {
                     File dest = new File(uploadDir, safeFilename);
                     file.transferTo(dest);
 
-                    resultStr.append("成功: ").append(safeFilename).append("\n");
-
+                    FileUpload entity = fileUploadEntity.create();
                     // エンティティに設定
-                    fileUploadEntity.setFileName(originalFilename);
-                    fileUploadEntity.setInternalName(safeFilename);
-                    fileUploadEntity.setFolderName(dest.getAbsolutePath());
+                    entity.setFileName(originalFilename);
+                    entity.setInternalName(safeFilename);
+                    entity.setFolderName(dest.getAbsolutePath());
+                    list.add(entity);
 
-                    // sqlBuilder.append(fileUploadEntity.getInsertString());
+                    // fileUploadEntity.setFileName(originalFilename);
+                    // fileUploadEntity.setInternalName(safeFilename);
+                    // fileUploadEntity.setFolderName(dest.getAbsolutePath());
+                    
+                    // list.add(fileUploadEntity);
 
                 } catch (IOException e) {
-                    resultStr.append("失敗: ").append(file.getOriginalFilename()).append(" - ").append(e.getMessage()).append("\n");
+                    continue;
                 }
             }
         }
 
-        SimpleData result = new SimpleData();
-        if (sqlBuilder.length() > 0) {
-            String sql = sqlBuilder.toString();
+        return list;
 
-            result = sqlRepository.execSql(conn -> {
-                try (Statement stmt = conn.createStatement()) {
-                    stmt.execute(sql);
-                    SimpleData data = new SimpleData();
-                    data.setNumber(1);
-                    data.setText(resultStr.toString());  // ファイルごとの結果も含める
-                    return data;
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    SimpleData error = new SimpleData();
-                    error.setNumber(0);
-                    error.setText("SQLエラー: " + e.getMessage());
-                    return error;
-                }
-            });
-            result.setText(resultStr.toString() + result.getText());
-        } else {
-            result.setText(resultStr.toString());
-        }
+        // SimpleData result = new SimpleData();
+        // qualificationFilesService.saveQualifications(fileUploadEntity, "editor");
+        // if (sqlBuilder.length() > 0) {
+        //     String sql = sqlBuilder.toString();
 
-        return result;
+        //     result = sqlRepository.execSql(conn -> {
+        //         try (Statement stmt = conn.createStatement()) {
+        //             stmt.execute(sql);
+        //             SimpleData data = new SimpleData();
+        //             data.setNumber(1);
+        //             data.setText(resultStr.toString());  // ファイルごとの結果も含める
+        //             return data;
+        //         } catch (SQLException e) {
+        //             e.printStackTrace();
+        //             SimpleData error = new SimpleData();
+        //             error.setNumber(0);
+        //             error.setText("SQLエラー: " + e.getMessage());
+        //             return error;
+        //         }
+        //     });
+        //     result.setText(resultStr.toString() + result.getText());
+        // } else {
+        //     result.setText(resultStr.toString());
+        // }
+
+        // return result;
     }
 
     /**
@@ -290,8 +298,7 @@ public class FileService {
     public boolean deleteFile(String url) {
         try {
             Path filePath = Paths.get(url);
-            Files.deleteIfExists(filePath);
-            return true;
+            return Files.deleteIfExists(filePath);
         } catch (IOException e) {
             return false;
         }

@@ -29,6 +29,7 @@ import com.kyouseipro.neo.component.UploadConfig;
 import com.kyouseipro.neo.entity.common.AddressEntity;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
+import com.kyouseipro.neo.interfaceis.FileUpload;
 import com.kyouseipro.neo.service.document.FileService;
 import com.kyouseipro.neo.service.qualification.QualificationFilesService;
 
@@ -106,9 +107,10 @@ public class FileController {
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteQualificationsFilesByUrl(@RequestParam String url, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        boolean result = fileService.deleteFile(UploadConfig.getUploadDir() + url);
+        String uploadStr = UploadConfig.getUploadDir() + "qualification/" + url;
+        boolean result = fileService.deleteFile(uploadStr);
         if (result) {
-            Integer resultInt = qualificationFilesService.deleteQualificationsFilesByUrl(UploadConfig.getUploadDir() + url, userName);
+            Integer resultInt = qualificationFilesService.deleteQualificationsFilesByUrl(uploadStr, userName);
             if (resultInt != null && resultInt > 0) {
                 return ResponseEntity.ok(ApiResponse.ok("削除しました。", resultInt));
             }
@@ -130,7 +132,8 @@ public class FileController {
         QualificationFilesEntity entity = new QualificationFilesEntity();
         entity.setQualifications_id(id);
 
-        fileService.fileUpload(files, folderName, entity);
+        List<FileUpload> entities = fileService.fileUpload(files, folderName, entity);
+        qualificationFilesService.saveQualificationsFiles(entities, userName, id);
         return qualificationFilesService.getQualificationFilesById(id, userName);
     }
 }

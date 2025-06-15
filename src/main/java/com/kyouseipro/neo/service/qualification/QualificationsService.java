@@ -16,6 +16,17 @@ import lombok.RequiredArgsConstructor;
 public class QualificationsService {
     private final QualificationsRepository qualificationsRepository;
 
+    // /**
+    //  * 指定されたIDの資格情報を取得します。
+    //  * 論理削除されている場合は null を返します。
+    //  *
+    //  * @param id 資格ID
+    //  * @return QualificationsEntity または null
+    //  */
+    // public QualificationsEntity getQualificationsById(Integer id) {
+    //     return qualificationsRepository.findById(id);
+    // }
+
     /**
      * 指定されたIDの資格情報を取得します。
      * 論理削除されている場合は null を返します。
@@ -23,30 +34,19 @@ public class QualificationsService {
      * @param id 資格ID
      * @return QualificationsEntity または null
      */
-    public QualificationsEntity getQualificationsById(Integer id) {
-        return qualificationsRepository.findById(id);
+    public List<QualificationsEntity> getQualificationsByIdForEmployee(Integer id) {
+        return qualificationsRepository.findByIdForEmployee(id);
     }
 
     /**
-     * 指定されたEmployeeIDの資格情報を取得します。
+     * 指定されたIDの許認可情報を取得します。
      * 論理削除されている場合は null を返します。
      *
      * @param id 資格ID
-     * @return QualificationsEntityのリスト または null
+     * @return QualificationsEntity または null
      */
-    public List<QualificationsEntity> getQualificationsByEmployeeId(Integer id) {
-        return qualificationsRepository.findByEmployeeId(id);
-    }
-
-    /**
-     * 指定されたCompanyIDの資格情報を取得します。
-     * 論理削除されている場合は null を返します。
-     *
-     * @param id 資格ID
-     * @return QualificationsEntityのリスト または null
-     */
-    public List<QualificationsEntity> getQualificationsByCompanyId(Integer id) {
-        return qualificationsRepository.findByCompanyId(id);
+    public List<QualificationsEntity> getQualificationsByIdForCompany(Integer id) {
+        return qualificationsRepository.findByIdForCompany(id);
     }
 
     /**
