@@ -80,7 +80,7 @@ function setFileRemoveEventListner(removeBtn, li, path, url) {
     removeBtn.addEventListener('click', async (e) => {
         e.stopPropagation(); // liの他のイベントが誤動作しないように
         const result = await deleteFiles(path, url);
-        if (result.number > 0) {
+        if (result.success) {
             li.remove();
         }
     });

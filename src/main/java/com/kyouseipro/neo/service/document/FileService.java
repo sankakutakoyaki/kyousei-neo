@@ -247,13 +247,6 @@ public class FileService {
                     entity.setInternalName(safeFilename);
                     entity.setFolderName(dest.getAbsolutePath());
                     list.add(entity);
-
-                    // fileUploadEntity.setFileName(originalFilename);
-                    // fileUploadEntity.setInternalName(safeFilename);
-                    // fileUploadEntity.setFolderName(dest.getAbsolutePath());
-                    
-                    // list.add(fileUploadEntity);
-
                 } catch (IOException e) {
                     continue;
                 }
@@ -261,33 +254,6 @@ public class FileService {
         }
 
         return list;
-
-        // SimpleData result = new SimpleData();
-        // qualificationFilesService.saveQualifications(fileUploadEntity, "editor");
-        // if (sqlBuilder.length() > 0) {
-        //     String sql = sqlBuilder.toString();
-
-        //     result = sqlRepository.execSql(conn -> {
-        //         try (Statement stmt = conn.createStatement()) {
-        //             stmt.execute(sql);
-        //             SimpleData data = new SimpleData();
-        //             data.setNumber(1);
-        //             data.setText(resultStr.toString());  // ファイルごとの結果も含める
-        //             return data;
-        //         } catch (SQLException e) {
-        //             e.printStackTrace();
-        //             SimpleData error = new SimpleData();
-        //             error.setNumber(0);
-        //             error.setText("SQLエラー: " + e.getMessage());
-        //             return error;
-        //         }
-        //     });
-        //     result.setText(resultStr.toString() + result.getText());
-        // } else {
-        //     result.setText(resultStr.toString());
-        // }
-
-        // return result;
     }
 
     /**
