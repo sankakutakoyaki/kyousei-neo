@@ -24,9 +24,11 @@
                         <!-- ヘッダー -->
                         <header th:replace="~{fragments/sales/client :: headerFragment('search-box-01')}"></header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/sales/client :: mainFragment('table-01', 'table-01-content')}"></main>
+                        <main th:replace="~{fragments/sales/client :: mainFragment('table-01', 'table-01-content')}">
+                        </main>
                         <!-- フッター -->
-                        <footer id="footer-01" class="pc-style" th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
+                        <footer id="footer-01" class="pc-style"
+                            th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="02">
@@ -34,9 +36,11 @@
                         <!-- ヘッダー -->
                         <header th:replace="~{fragments/sales/client :: headerFragment('search-box-02')}"></header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/sales/client :: mainFragment('table-02', 'table-02-content')}"></main>
+                        <main th:replace="~{fragments/sales/client :: mainFragment('table-02', 'table-02-content')}">
+                        </main>
                         <!-- フッター -->
-                        <footer id="footer-02" class="pc-style" th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
+                        <footer id="footer-02" class="pc-style"
+                            th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="03">
@@ -44,9 +48,11 @@
                         <!-- ヘッダー -->
                         <header th:replace="~{fragments/sales/client :: headerFragment('search-box-03')}"></header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/sales/client :: mainFragment('table-03', 'table-03-content')}"></main>
+                        <main th:replace="~{fragments/sales/client :: mainFragment('table-03', 'table-03-content')}">
+                        </main>
                         <!-- フッター -->
-                        <footer id="footer-03" class="pc-style" th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
+                        <footer id="footer-03" class="pc-style"
+                            th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="04">
@@ -54,29 +60,40 @@
                         <!-- ヘッダー -->
                         <header th:replace="~{fragments/sales/client :: headerFragment('search-box-04')}"></header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/sales/client :: mainFragment('table-04', 'table-04-content')}"></main>
+                        <main th:replace="~{fragments/sales/client :: mainFragment('table-04', 'table-04-content')}">
+                        </main>
                         <!-- フッター -->
-                        <footer id="footer-04" class="pc-style" th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
+                        <footer id="footer-04" class="pc-style"
+                            th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="05">
                     <div class="table-area">
                         <!-- ヘッダー -->
-                        <header th:replace="~{fragments/sales/client :: headerOfficeFragment('code-box-01', 'name-box-01')}"></header>
+                        <header
+                            th:replace="~{fragments/sales/client :: headerOfficeFragment('code-box-01', 'name-box-01')}">
+                        </header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/sales/client :: mainFragment('table-05', 'table-05-content')}"></main>
+                        <main th:replace="~{fragments/sales/client :: mainFragment('table-05', 'table-05-content')}">
+                        </main>
                         <!-- フッター -->
-                        <footer id="footer-05" class="pc-style" th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
+                        <footer id="footer-05" class="pc-style"
+                            th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="06">
                     <div class="table-area">
                         <!-- ヘッダー -->
-                        <header th:replace="~{fragments/sales/client :: headerStaffFragment('code-box-02', 'name-box-02', 'name-box-03')}"></header>
+                        <header
+                            th:replace="~{fragments/sales/client :: headerStaffFragment('code-box-02', 'name-box-02', 'name-box-03')}">
+                        </header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/sales/client :: mainStaffFragment('table-06', 'table-06-content')}"></main>
+                        <main
+                            th:replace="~{fragments/sales/client :: mainStaffFragment('table-06', 'table-06-content')}">
+                        </main>
                         <!-- フッター -->
-                        <footer id="footer-06" class="pc-style" th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
+                        <footer id="footer-06" class="pc-style"
+                            th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
                     </div>
                 </div>
             </div>
@@ -84,107 +101,136 @@
         <div id="form-dialog-area">
             <!-- フォーム画面をここに記入する -->
             <div id="form-dialog-01" class="form-dialog none">
-                <div class="dialog-header"><span></span>
-                    <div class="img-btn" onclick="closeFormDialog('form-dialog-01', event)"><img title="閉じる" src="/icons/close-s.png"></div>
-                </div>
-                <form id="form-01" class="dialog-content">
-                    <input name="company-id" type="hidden" value="">
-                    <input name="office-id" type="hidden" value="">
-                    <input name="category" type="hidden" value="">
-                    <input name="version" type="hidden" value="">
-                    <div class="flex-area">
-                        <div class="form-parts">
-                            <label>名称</label>
-                            <input tabindex="1" name="name" class="normal-input" type="text" value="" placeholder="会社名" onfocus="this.select();">
-                        </div>
+                <div class="dialog-main">
+                    <div class="dialog-header"><span></span>
+                        <div class="img-btn" onclick="closeFormDialog('form-dialog-01', event)"><img title="閉じる"
+                                src="/icons/close-s.png"></div>
                     </div>
-                    <div class="flex-area">
-                        <div class="form-parts">
-                            <label>かな</label>
-                            <input tabindex="2" name="name-kana" class="normal-input" type="text" value="" placeholder="かいしゃめい" onfocus="this.select();">
+                    <form id="form-01" class="dialog-content">
+                        <input name="company-id" type="hidden" value="">
+                        <input name="office-id" type="hidden" value="">
+                        <input name="category" type="hidden" value="">
+                        <input name="version" type="hidden" value="">
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>名称</label>
+                                <input tabindex="1" name="name" class="normal-input" type="text" value=""
+                                    placeholder="会社名" onfocus="this.select();">
+                            </div>
                         </div>
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>かな</label>
+                                <input tabindex="2" name="name-kana" class="normal-input" type="text" value=""
+                                    placeholder="かいしゃめい" onfocus="this.select();">
+                            </div>
+                        </div>
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>電話番号</label>
+                                <input tabindex="3" name="tel-number" class="normal-input" type="text"
+                                    inputmode="numeric" pattern="\\d{4}-\\d{4}-\\d{4}" value=""
+                                    placeholder="01-2345-6789" onfocus="this.select();">
+                            </div>
+                            <div class="form-parts">
+                                <label>FAX番号</label>
+                                <input tabindex="4" name="fax-number" class="normal-input" type="text"
+                                    inputmode="numeric" pattern="\\d{4}-\\d{4}-\\d{4}" value=""
+                                    placeholder="01-2345-6789" onfocus="this.select();">
+                            </div>
+                        </div>
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>郵便番号</label>
+                                <input tabindex="5" id="postal-code" name="postal-code" class="normal-input" type="text"
+                                    inputmode="numeric" pattern="\\d{3}-?\\d{4}" value="" placeholder="012-3456"
+                                    onfocus="this.select();">
+                                <img title="検索" src="/icons/search.png"
+                                    onclick="getAddress('Enter', 'postal-code', 'full-address')">
+                            </div>
+                        </div>
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>住所</label>
+                                <input tabindex="6" id="full-address" name="full-address" class="normal-input"
+                                    type="text" value="" placeholder="例）大阪府高槻市柱本5丁目7番10号" onfocus="this.select();">
+                            </div>
+                        </div>
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>メールアドレス</label>
+                                <input tabindex="7" name="email" class="normal-input" type="email" value=""
+                                    placeholder="例）example@kyouseibin.com" onfocus="this.select();">
+                            </div>
+                        </div>
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>Webアドレス</label>
+                                <input tabindex="8" name="web-address" class="normal-input" type="url" value=""
+                                    placeholder="例）example@kyouseibin.com" onfocus="this.select();">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="dialog-footer">
+                        <button class="normal-btn frameless" type="button"
+                            onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
+                        <button tabindex="9" class="normal-btn ok" type="button"
+                            onclick="execSave(this)"><span>保存</span></button>
                     </div>
-                    <div class="flex-area">
-                        <div class="form-parts">
-                            <label>電話番号</label>
-                            <input tabindex="3" name="tel-number" class="normal-input" type="text" inputmode="numeric" pattern="\\d{4}-\\d{4}-\\d{4}" value="" placeholder="01-2345-6789" onfocus="this.select();">
-                        </div>
-                        <div class="form-parts">
-                            <label>FAX番号</label>
-                            <input tabindex="4" name="fax-number" class="normal-input" type="text" inputmode="numeric" pattern="\\d{4}-\\d{4}-\\d{4}" value="" placeholder="01-2345-6789" onfocus="this.select();">
-                        </div>
-                    </div>
-                    <div class="flex-area">
-                        <div class="form-parts">
-                            <label>郵便番号</label>
-                            <input tabindex="5" id="postal-code" name="postal-code" class="normal-input" type="text" inputmode="numeric" pattern="\\d{3}-?\\d{4}" value="" placeholder="012-3456" onfocus="this.select();">
-                            <img title="検索" src="/icons/search.png" onclick="getAddress('Enter', 'postal-code', 'full-address')">
-                        </div>
-                    </div>
-                    <div class="flex-area">
-                        <div class="form-parts">
-                            <label>住所</label>
-                            <input tabindex="6" id="full-address" name="full-address" class="normal-input" type="text" value="" placeholder="例）大阪府高槻市柱本5丁目7番10号" onfocus="this.select();">
-                        </div>
-                    </div>
-                    <div class="flex-area">
-                        <div class="form-parts">
-                            <label>メールアドレス</label>
-                            <input tabindex="7" name="email" class="normal-input" type="email" value="" placeholder="例）example@kyouseibin.com" onfocus="this.select();">
-                        </div>
-                    </div>                    <div class="flex-area">
-                        <div class="form-parts">
-                            <label>Webアドレス</label>
-                            <input tabindex="8" name="web-address" class="normal-input" type="url" value="" placeholder="例）example@kyouseibin.com" onfocus="this.select();">
-                        </div>
-                    </div>
-                </form>
-                <div class="dialog-footer">
-                    <button class="normal-btn frameless" type="button" onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
-                    <button tabindex="9" class="normal-btn ok" type="button" onclick="execSave(this)"><span>保存</span></button>
                 </div>
             </div>
             <div id="form-dialog-02" class="form-dialog none">
-                <div class="dialog-header"><span></span>
-                    <div class="img-btn" onclick="closeFormDialog('form-dialog-02', event)"><img title="閉じる" src="/icons/close-s.png"></div>
-                </div>
-                <form id="form-02" class="dialog-content">
-                    <input name="staff-id" type="hidden" value="">
-                    <input name="company-id" type="hidden" value="">
-                    <!-- <input name="office-id" type="hidden" value=""> -->
-                    <input name="version" type="hidden" value="">
-                    <div class="flex-area">
-                        <div class="form-parts">
-                            <label>支店名</label>
-                            <select tabindex="1" id="office-id" name="office-id" class="normal-select" value=""></select>
-                        </div>
+                <div class="dialog-main">
+                    <div class="dialog-header"><span></span>
+                        <div class="img-btn" onclick="closeFormDialog('form-dialog-02', event)"><img title="閉じる"
+                                src="/icons/close-s.png"></div>
                     </div>
-                    <div class="flex-area">
-                        <div class="form-parts">
-                            <label>担当者名</label>
-                            <input tabindex="2" name="name" class="normal-input" type="text" value="" placeholder="担当者名" onfocus="this.select();">
+                    <form id="form-02" class="dialog-content">
+                        <input name="staff-id" type="hidden" value="">
+                        <input name="company-id" type="hidden" value="">
+                        <!-- <input name="office-id" type="hidden" value=""> -->
+                        <input name="version" type="hidden" value="">
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>支店名</label>
+                                <select tabindex="1" id="office-id" name="office-id" class="normal-select"
+                                    value=""></select>
+                            </div>
                         </div>
-                        <div class="form-parts">
-                            <label>かな</label>
-                            <input tabindex="3" name="name-kana" class="normal-input" type="text" value="" placeholder="たんとうしゃめい" onfocus="this.select();">
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>担当者名</label>
+                                <input tabindex="2" name="name" class="normal-input" type="text" value=""
+                                    placeholder="担当者名" onfocus="this.select();">
+                            </div>
+                            <div class="form-parts">
+                                <label>かな</label>
+                                <input tabindex="3" name="name-kana" class="normal-input" type="text" value=""
+                                    placeholder="たんとうしゃめい" onfocus="this.select();">
+                            </div>
                         </div>
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>電話番号</label>
+                                <input tabindex="4" name="phone-number" class="normal-input" type="text"
+                                    inputmode="numeric" pattern="\\d{3}-\\d{4}-\\d{4}" value=""
+                                    placeholder="012-3456-7890" onfocus="this.select();">
+                            </div>
+                        </div>
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>メールアドレス</label>
+                                <input tabindex="5" name="email" class="normal-input" type="email" value=""
+                                    placeholder="例）example@kyouseibin.com" onfocus="this.select();">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="dialog-footer">
+                        <button class="normal-btn frameless" type="button"
+                            onclick="closeFormDialog('form-dialog-02', event)"><span>キャンセル</span></button>
+                        <button tabindex="5" class="normal-btn ok" type="button"
+                            onclick="execSave(this)"><span>保存</span></button>
                     </div>
-                    <div class="flex-area">
-                        <div class="form-parts">
-                            <label>電話番号</label>
-                            <input tabindex="4" name="phone-number" class="normal-input" type="text" inputmode="numeric" pattern="\\d{3}-\\d{4}-\\d{4}" value="" placeholder="012-3456-7890" onfocus="this.select();">
-                        </div>
-                    </div>
-                    <div class="flex-area">
-                        <div class="form-parts">
-                            <label>メールアドレス</label>
-                            <input tabindex="5" name="email" class="normal-input" type="email" value="" placeholder="例）example@kyouseibin.com" onfocus="this.select();">
-                        </div>
-                    </div>    
-                </form>
-                <div class="dialog-footer">
-                    <button class="normal-btn frameless" type="button" onclick="closeFormDialog('form-dialog-02', event)"><span>キャンセル</span></button>
-                    <button tabindex="5" class="normal-btn ok" type="button" onclick="execSave(this)"><span>保存</span></button>
                 </div>
             </div>
         </div>

@@ -112,7 +112,7 @@ body {
     cursor: pointer;
 }
 
-.header-title>.hamburger-item>img {
+.hamburger-item>img {
     width: 2rem;
 }
 
