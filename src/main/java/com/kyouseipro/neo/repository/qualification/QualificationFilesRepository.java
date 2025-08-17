@@ -18,11 +18,11 @@ import lombok.RequiredArgsConstructor;
 public class QualificationFilesRepository {
     private final SqlRepository sqlRepository;
 
-    public Integer insertQualificationFiles(List<FileUpload> entitiees, String editor, Integer id) {
-        String sql = QualificationFilesSqlBuilder.buildInsertQualificationFilesSql(entitiees.size());
+    public Integer insertQualificationFiles(List<FileUpload> entities, String editor, Integer id) {
+        String sql = QualificationFilesSqlBuilder.buildInsertQualificationFilesSql(entities.size());
         return sqlRepository.executeUpdate(
             sql,
-            ps -> QualificationFilesParameterBinder.bindInsertQualificationFilesParameters(ps, entitiees, editor, id)
+            ps -> QualificationFilesParameterBinder.bindInsertQualificationFilesParameters(ps, entities, editor, id)
         );
         // return sqlRepository.execute(
         //     sql,

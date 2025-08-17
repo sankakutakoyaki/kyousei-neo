@@ -294,9 +294,9 @@
                 const formData = new FormData();
                 for (let i = 0; i < files.length; i++) {
                     formData.append('files', files[i]); // name="files" がサーバと一致する必要あり
-                    formData.append("folder_name", "qualification/" + String(id.value) + "/");
-                    formData.append("id", parseInt(id.value));
                 }
+                formData.append("folder_name", "qualification/" + String(id.value) + "/");
+                formData.append("id", parseInt(id.value));
 
                 const response = await fetch("/files/upload/qualifications", {
                     headers: {  // リクエストヘッダを追加
@@ -353,6 +353,20 @@
                 processingEnd();
             }
 
+/******************************************************************************************************* 削除 */
+
+            async function removeQualificationById(id) {
+                const data = "id=" + encodeURIComponent(parseInt(id));
+                const resultResponse = await postFetch('/qualifications/delete/id', data, token, 'application/x-www-form-urlencoded');
+                const result = await resultResponse.json();
+                if (result.success) {
+                    openMsgDialog("msg-dialog", result.message, "blue");
+                    updatePanels();
+                } else {
+                    openMsgDialog("msg-dialog", result.message, "red");
+                }
+            }
+
 /******************************************************************************************************* 取得 */
 
             // コードから担当者と登録資格を取得してリストに表示する
@@ -386,15 +400,16 @@
                                     const removeBtn = createRemoveBtn();
                                     removeBtn.addEventListener('click', async (e) => {
                                         e.stopPropagation(); // liの他のイベントが誤動作しないように
-                                        const data2 = "id=" + encodeURIComponent(parseInt(item.qualifications_id));
-                                        const resultResponse2 = await postFetch('/qualifications/delete/id', data2, token, 'application/x-www-form-urlencoded');
-                                        const result2 = await resultResponse2.json();
-                                        if (result2.success) {
-                                            openMsgDialog("msg-dialog", result2.message, "blue");
-                                            updatePanels();
-                                        } else {
-                                            openMsgDialog("msg-dialog", result2.message, "red");
-                                        }
+                                        removeQualificationById(item.qualifications_id);
+                                        // const data2 = "id=" + encodeURIComponent(parseInt(item.qualifications_id));
+                                        // const resultResponse2 = await postFetch('/qualifications/delete/id', data2, token, 'application/x-www-form-urlencoded');
+                                        // const result2 = await resultResponse2.json();
+                                        // if (result2.success) {
+                                        //     openMsgDialog("msg-dialog", result2.message, "blue");
+                                        //     updatePanels();
+                                        // } else {
+                                        //     openMsgDialog("msg-dialog", result2.message, "red");
+                                        // }
                                     });
 
                                     li.appendChild(removeBtn);
