@@ -450,8 +450,6 @@
                     }
                     formdata.version = formData.get('version');
 
-                    // formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
-
                     // 保存処理
                     const resultResponse = await postFetch("/employee/save", JSON.stringify(formdata), token, "application/json");
                     const result = await resultResponse.json();
