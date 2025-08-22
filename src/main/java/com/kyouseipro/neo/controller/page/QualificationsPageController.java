@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
@@ -59,6 +60,9 @@ public class QualificationsPageController {
         List<SimpleData> qualificationComboList = comboBoxService.getQualificationMaster();
         mv.addObject("qualificationComboList", qualificationComboList);
 
+        // mv.addObject("url", "/qualifications/get/id");
+        mv.addObject("url", "/employee/get/id");
+        mv.addObject("owner_category", 0);
         // 履歴保存
         historyService.saveHistory(userName, "qualifications", "閲覧", 200, "");
 		
@@ -77,6 +81,7 @@ public class QualificationsPageController {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "許認可");
         mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
+        // mv.addObject("bodyFragmentName", "contents/common/qualifications :: bodyFragment");
         mv.addObject("bodyFragmentName", "contents/common/qualifications :: bodyFragment");
         mv.addObject("insertCss", "/css/common/qualifications.css");
 
@@ -93,9 +98,12 @@ public class QualificationsPageController {
         List<QualificationsEntity> licensesOrigin = qualificationsService.getCompanyQualificationsList();
         mv.addObject("origin", licensesOrigin);
         // コンボボックスアイテム取得
-        List<SimpleData> licenseComboList = comboBoxService.getQualificationMaster();
+        List<SimpleData> licenseComboList = comboBoxService.getLicenseMaster();
         mv.addObject("qualificationComboList", licenseComboList);
 
+        // mv.addObject("url", "/license/get/id");
+        mv.addObject("url", "/company/get/id");
+        mv.addObject("owner_category", Enums.clientCategory.PARTNER.getCode());
         // 履歴保存
         historyService.saveHistory(userName, "qualifications", "閲覧", 200, "");
 		

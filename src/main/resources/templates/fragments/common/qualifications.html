@@ -6,7 +6,7 @@
         <div id="code-area" class="flex-area">
             <div class="form-parts">
                 <label>ID</label>
-                <input th:id="${code}" class="normal-input" type="text" value="">
+                <input tabindex="1" th:id="${code}" class="normal-input" type="text" value="">
             </div>
             <div class="form-parts">
                 <label>名前</label>
@@ -26,26 +26,26 @@
             <div class="flex-area">
                 <div class="form-parts">
                     <label>資格</label>
-                    <select tabindex="1" id="qualification-combo" name="qualification-combo" class="normal-select"></select>
+                    <select tabindex="2" id="qualification-combo" name="qualification-combo" class="normal-select"></select>
                 </div>
             </div>
             <div class="flex-area">
                 <div class="form-parts">
                     <label>番号</label>
-                    <input tabindex="2" id="number" name="number" class="normal-input" type="text" value="" onfocus="this.select();">
+                    <input tabindex="3" id="number" name="number" class="normal-input" type="text" value="" onfocus="this.select();">
                 </div>
             </div>
             <div class="flex-area">
                 <div class="form-parts">
                     <label>取得日</label>
-                    <input tabindex="3" id="acquisition-date" name="acquisition-date" class="normal-input" type="date"></select>
+                    <input tabindex="4" id="acquisition-date" name="acquisition-date" class="normal-input" type="date"></select>
                 </div>
                 <div class="form-parts">
                     <label>有効期限</label>
-                    <input tabindex="4" id="expiry-date" name="expiry-date" class="normal-input" type="date"></select>
+                    <input tabindex="5" id="expiry-date" name="expiry-date" class="normal-input" type="date"></select>
                 </div>
                 <button class="normal-btn" type="button" onclick="initialPanel('03')">リセット</button>
-                <button tabindex="5" class="normal-btn ok" type="button" onclick="execSave()">保存</button>
+                <button tabindex="6" class="normal-btn ok" type="button" onclick="execSave()">保存</button>
             </div>
         </form>
         <ul id="qualification-list-01" class="normal-list qualification"></ul>

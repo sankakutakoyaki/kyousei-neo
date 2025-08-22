@@ -126,6 +126,10 @@ public class ComboBoxService {
     public List<SimpleData> getQualificationMaster() {
         return qualificationsRepository.findAllCombo();
     }
+
+    public List<SimpleData> getLicenseMaster() {
+        return qualificationsRepository.findAllComboByLicense();
+    }
     // /**
     //  * すべての会社リスト
     //  * @return

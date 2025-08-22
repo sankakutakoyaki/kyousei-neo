@@ -10,6 +10,7 @@ public class QualificationsEntityMapper {
         QualificationsEntity entity = new QualificationsEntity();
         entity.setQualifications_id(rs.getInt("qualifications_id"));
         entity.setOwner_id(rs.getInt("owner_id"));
+        entity.setOwner_category(rs.getInt("owner_category"));
         entity.setOwner_name(rs.getString("owner_name"));
         entity.setOwner_name_kana(rs.getString("owner_name_kana"));
         entity.setQualification_master_id(rs.getInt("qualification_master_id"));

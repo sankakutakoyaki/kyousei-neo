@@ -11,6 +11,7 @@ import lombok.Data;
 public class QualificationsEntity implements CsvExportable {
     private int qualifications_id;
     private int owner_id;
+    private int owner_category;
     private String owner_name;
     private String owner_name_kana;
     private int qualification_master_id;

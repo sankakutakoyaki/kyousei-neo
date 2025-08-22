@@ -118,7 +118,7 @@ public class QualificationsRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> QualificationsParameterBinder.bindFindByIdForEmployee(ps, companyId),
+            ps -> QualificationsParameterBinder.bindFindByIdForCompany(ps, companyId),
             QualificationsEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -148,6 +148,17 @@ public class QualificationsRepository {
     // コンボボックス用リスト取得
     public List<SimpleData> findAllCombo() {
         String sql = QualificationsSqlBuilder.buildFindAllComboQualificationMasterSql();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> QualificationsParameterBinder.bindFindAllCombo(ps, null),
+            SimpleDataMapper::map
+        );
+    }
+
+    // コンボボックス用リスト取得
+    public List<SimpleData> findAllComboByLicense() {
+        String sql = QualificationsSqlBuilder.buildFindAllComboLicenseMasterSql();
 
         return sqlRepository.findAll(
             sql,

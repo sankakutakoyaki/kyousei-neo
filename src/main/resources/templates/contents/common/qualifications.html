@@ -60,6 +60,7 @@
             const token = /*[[${_csrf.token}]]*/;
             const user = /*[[${user}]]*/;
             const url = /*[[${url}]]*/;
+            const owner_category = /*[[${owner_category}]]*/;
             const formEntity = /*[[${formEntity}]]*/;
             let origin = /*[[${origin}]]*/; // 初期リスト記憶用
             const qualificationComboList = /*[[${qualificationComboList}]]*/;
@@ -145,6 +146,7 @@
                     const formdata = structuredClone(formEntity);
                     const id = document.getElementById('code-box-01');
                     formdata.owner_id = id.value;
+                    formdata.owner_category = owner_category;
                     formdata.qualifications_id = Number(fileId01.value);
                     formdata.qualification_master_id = formData.get('qualification-combo');
                     formdata.number = formData.get('number').trim();
@@ -160,11 +162,11 @@
                     }
                     formdata.version = Number(formData.get('version'));
 
-                    formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
+                    // formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
 
                     // 保存処理
                     const resultResponse = await postFetch("/qualifications/save", JSON.stringify(formdata), token, "application/json");
-                    const result = resultResponse.json();
+                    const result = await resultResponse.json();
                     if (result.success) {
                         // 画面更新
                         updatePanels();
@@ -252,12 +254,12 @@
 /******************************************************************************************************* 画面更新 */
 
             async function execUpdate() {
-                // リスト取得
-                const resultResponse = await fetch('/qualifications/get/all/' + url);
-                origin = await resultResponse.json();
+                // // リスト取得
+                // const resultResponse = await fetch('/qualifications/get/all/' + url);// 要修正
+                // origin = await resultResponse.json();
 
-                // 画面更新
-                await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+                // // 画面更新
+                // await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
             }
 
 /******************************************************************************************************* 画面更新 */
@@ -371,7 +373,7 @@
 
             // コードから担当者と登録資格を取得してリストに表示する
             async function getQualifications(e, codeId, nameId) {
-                if ((e && e.key === "Enter") || e === "Enter") {
+                if ((e.key === "Enter") || e === "Enter") {
                     const code = document.getElementById(codeId);
                     const name = document.getElementById(nameId);
 
@@ -383,9 +385,9 @@
                     const panel = code.closest('.tab-panel');
                     const tab = panel.dataset.panel;
 
-                    const data = "id=" + encodeURIComponent(parseInt(code.value));
+                    const data = "id=" + encodeURIComponent(parseInt(code.value)) + "&category=" + encodeURIComponent(parseInt(owner_category));
                     // const data = JSON.stringify({ id: parseInt(code.value) });
-                    const resultResponse = await postFetch('/qualifications/get/id', data, token, 'application/x-www-form-urlencoded');
+                    const resultResponse = await postFetch("/qualifications/get/id", data, token, 'application/x-www-form-urlencoded');
                     const result = await resultResponse.json();
 
                     if (result.length > 0) {
@@ -401,15 +403,6 @@
                                     removeBtn.addEventListener('click', async (e) => {
                                         e.stopPropagation(); // liの他のイベントが誤動作しないように
                                         removeQualificationById(item.qualifications_id);
-                                        // const data2 = "id=" + encodeURIComponent(parseInt(item.qualifications_id));
-                                        // const resultResponse2 = await postFetch('/qualifications/delete/id', data2, token, 'application/x-www-form-urlencoded');
-                                        // const result2 = await resultResponse2.json();
-                                        // if (result2.success) {
-                                        //     openMsgDialog("msg-dialog", result2.message, "blue");
-                                        //     updatePanels();
-                                        // } else {
-                                        //     openMsgDialog("msg-dialog", result2.message, "red");
-                                        // }
                                     });
 
                                     li.appendChild(removeBtn);
@@ -470,8 +463,27 @@
                             default:
                                 break;
                         }
-                    } else {
-                        initialPanel(tab);
+                    } else {                        
+                        const data = "id=" + encodeURIComponent(parseInt(code.value));
+                        const resultResponse2 = await postFetch(url, data, token, 'application/x-www-form-urlencoded');
+                        const result2 = await resultResponse2.json();
+
+                        if (result2 != null) {
+                            switch (url) {
+                                case "/employee/get/id":
+                                    name.value = result2.full_name;
+                                    break;
+                                case "/company/get/id":
+                                    name.value = result2.name;
+                                    break;             
+                                default:
+                                    name.value = "";
+                                    break;
+                            }
+                            
+                        } else {
+                            initialPanel(tab);
+                        }
                     }
 
                     processingEnd();
