@@ -254,12 +254,20 @@
 /******************************************************************************************************* 画面更新 */
 
             async function execUpdate() {
-                // // リスト取得
-                // const resultResponse = await fetch('/qualifications/get/all/' + url);// 要修正
-                // origin = await resultResponse.json();
+                let getUrl = "";
+                // リスト取得
+                if (owner_category == 0) {
+                    // 従業員の場合
+                    getUrl = "/qualifications/get";
+                } else {
+                    // 会社の場合
+                    getUrl = "/license/get";
+                }
+                const resultResponse = await fetch(getUrl);
+                origin = await resultResponse.json();
 
-                // // 画面更新
-                // await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+                // 画面更新
+                await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
             }
 
 /******************************************************************************************************* 画面更新 */
