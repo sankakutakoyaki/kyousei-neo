@@ -58,7 +58,7 @@ public class QualificationsParameterBinder {
         ps.setInt(3, Enums.state.DELETE.getCode());
         ps.setInt(4, companyId);
         ps.setInt(5, Enums.clientCategory.PARTNER.getCode());
-        ps.setInt(5, Enums.clientCategory.PARTNER.getCode());
+        ps.setInt(6, Enums.clientCategory.PARTNER.getCode());
     }
 
     public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
