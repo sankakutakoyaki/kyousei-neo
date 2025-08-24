@@ -405,6 +405,7 @@
                         switch (tab) {
                             case "03":
                                 qualificationList01.innerHTML = "";
+                                initialForm03();
                                 for (const item of result) {
                                     // 選択機能付きリストアイテムを取得する
                                     const li = createListItemWithSelection(item.qualifications_id, item.qualification_name);
@@ -481,10 +482,12 @@
                         switch (tab) {
                             case "03":
                                 qualificationList01.innerHTML = "";
+                                initialForm03();
                                 break;
                             case "04":
                                 qualificationList02.innerHTML = "";
                                 fileList.innerHTML = "";
+                                fileId02.value = "";
                                 break;
                             default:
                                 break;
@@ -652,6 +655,13 @@
                 const qualificationArea = document.getElementById('qualification-combo');
                 createComboBox(qualificationArea, qualificationComboList);
                 qualificationArea.value = -1;
+                qualificationArea.addEventListener('change', function (e) {
+                    fileId01.value = "";
+                    document.getElementById('number').value = "";
+                    document.getElementById('acquisition-date').value = "";
+                    document.getElementById('expiry-date').value = "";
+                    document.getElementById('version01').value = "0";
+                });
 
                 // エンターフォーカス処理をイベントリスナーに登録する
                 setEnterFocus("form-01");
