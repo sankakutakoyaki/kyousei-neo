@@ -170,6 +170,7 @@
                     if (result.success) {
                         // 画面更新
                         updatePanels();
+                        await execUpdate();
                         openMsgDialog("msg-dialog", result.message, "blue");
                     } else {
                         openMsgDialog("msg-dialog", result.message, "red");
@@ -476,6 +477,18 @@
                         const resultResponse2 = await postFetch(url, data, token, 'application/x-www-form-urlencoded');
                         const result2 = await resultResponse2.json();
 
+                        // リストの初期化
+                        switch (tab) {
+                            case "03":
+                                qualificationList01.innerHTML = "";
+                                break;
+                            case "04":
+                                qualificationList02.innerHTML = "";
+                                fileList.innerHTML = "";
+                                break;
+                            default:
+                                break;
+                        }
                         if (result2 != null) {
                             switch (url) {
                                 case "/employee/get/id":

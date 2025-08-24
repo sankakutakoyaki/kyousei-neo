@@ -82,13 +82,13 @@ public class QualificationsSqlBuilder {
     public static String buildFindByIdForEmployeeSql() {
         return
             baseEmployeeStatusSelectString() +
-            " WHERE NOT (q.state = ?) AND q.owner_id = ? AND q.owner_category = ?";
+            " WHERE NOT (q.state = ?) AND q.owner_id = ? AND q.owner_category = ? ORDER BY qm.code";
     }
 
     public static String buildFindByIdForCompanySql() {
         return
             baseCompanyStatusSelectString() +
-            " WHERE NOT (q.state = ?) AND q.owner_id = ? AND q.owner_category = ?";
+            " WHERE NOT (q.state = ?) AND q.owner_id = ? AND q.owner_category = ? ORDER BY qm.code";
     }
 
     private static String baseEmployeeSelectString() {
@@ -115,7 +115,7 @@ public class QualificationsSqlBuilder {
             ", CASE WHEN q.owner_id IS NOT NULL THEN '取得済み' ELSE '未取得' END AS status FROM employees e" +
             " CROSS JOIN qualification_master qm" +
             " LEFT JOIN qualifications q ON q.owner_id = e.employee_id AND q.qualification_master_id = qm.qualification_master_id" +
-            " AND NOT (q.state = ?)";
+            " AND NOT (q.state = ?) AND q.owner_category = 0";
     }
 
     private static String baseCompanyStatusSelectString() {
@@ -126,7 +126,7 @@ public class QualificationsSqlBuilder {
             ", CASE WHEN q.owner_id IS NOT NULL THEN '取得済み' ELSE '未取得' END AS status FROM companies c" +
             " CROSS JOIN qualification_master qm" +
             " LEFT JOIN qualifications q ON q.owner_id = c.company_id AND q.qualification_master_id = qm.qualification_master_id" +
-            " AND NOT (q.state = ?)";
+            " AND NOT (q.state = ?) AND owner_category = ?";
     //     sb.append(" WHERE NOT (c.state = " + Enums.state.DELETE.getCode() + ") AND c.category = " + Enums.clientCategory.PARTNER.getCode() + " AND qm.category_name = '許可'");
     //     sb.append(" ORDER BY qm.qualification_master_id, c.company_id");
     //     return sb.toString();
@@ -135,14 +135,14 @@ public class QualificationsSqlBuilder {
     public static String buildFindAllEmployeeIdSql() {
         return  
             baseEmployeeSelectString() +
-            " WHERE NOT (q.state = ?) AND e.employee_id = ?" +
+            " WHERE NOT (q.state = ?) AND e.employee_id = ? AND q.owner_category = 0" +
             " ORDER BY qm.code";
     }
 
     public static String buildFindAllCompanyIdSql() {
         return  
             baseCompanySelectString() +
-            " WHERE NOT (q.state = ?) AND c.company_id = ? AND c.category = ?" +
+            " WHERE NOT (q.state = ?) AND c.company_id = ? AND c.category = ? AND q.owner_category = ?" +
             " AND qm.category_name = '許可'" +
             " ORDER BY qm.code";
     }
@@ -151,7 +151,7 @@ public class QualificationsSqlBuilder {
         return  
             baseEmployeeStatusSelectString() +
             " WHERE NOT (qm.state = ?) AND NOT (e.state = ?)" +
-            " ORDER BY qm.qualification_master_id, e.employee_id";
+            " ORDER BY qm.code, e.employee_id";
     }
 
     public static String buildFindAllCompanyStatusSql() {
@@ -159,7 +159,7 @@ public class QualificationsSqlBuilder {
             baseCompanyStatusSelectString() +
             " WHERE NOT (c.state = ?) AND NOT (qm.state = ?) AND c.category = ?" +
             " AND qm.category_name = '許可'" +
-            " ORDER BY qm.qualification_master_id, c.company_id";
+            " ORDER BY qm.code, c.company_id";
     }
 
 

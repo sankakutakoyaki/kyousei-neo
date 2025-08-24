@@ -45,18 +45,11 @@ public class QualificationsParameterBinder {
         pstmt.setString(3, editor);
     }
 
-    // public static void bindFindById(PreparedStatement ps, Integer qualificationsId) throws SQLException {
-    //     ps.setInt(1, Enums.state.DELETE.getCode());
-    //     ps.setInt(2, qualificationsId);
-    // }
-
     public static void bindFindByIdForEmployee(PreparedStatement ps, Integer employeeId) throws SQLException {
         ps.setInt(1, Enums.state.DELETE.getCode());
         ps.setInt(2, Enums.state.DELETE.getCode());
         ps.setInt(3, Enums.state.DELETE.getCode());
-        // ps.setInt(4, Enums.state.DELETE.getCode());
         ps.setInt(4, employeeId);
-        // ps.setInt(5, 0);
     }
 
     public static void bindFindByIdForCompany(PreparedStatement ps, Integer companyId) throws SQLException {
@@ -65,7 +58,7 @@ public class QualificationsParameterBinder {
         ps.setInt(3, Enums.state.DELETE.getCode());
         ps.setInt(4, companyId);
         ps.setInt(5, Enums.clientCategory.PARTNER.getCode());
-        // ps.setInt(6, Enums.clientCategory.PARTNER.getCode());
+        ps.setInt(5, Enums.clientCategory.PARTNER.getCode());
     }
 
     public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
@@ -83,10 +76,10 @@ public class QualificationsParameterBinder {
 
     public static void bindFindAllCompanyStatus(PreparedStatement ps, Void unused) throws SQLException {
         ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.state.DELETE.getCode());
+        ps.setInt(2, Enums.clientCategory.PARTNER.getCode());
         ps.setInt(3, Enums.state.DELETE.getCode());
-        ps.setInt(4, Enums.clientCategory.PARTNER.getCode());
-        // ps.setInt(5, Enums.clientCategory.PARTNER.getCode());
+        ps.setInt(4, Enums.state.DELETE.getCode());
+        ps.setInt(5, Enums.clientCategory.PARTNER.getCode());
     }
 
     public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
