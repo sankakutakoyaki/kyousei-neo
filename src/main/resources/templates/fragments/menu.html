@@ -4,13 +4,13 @@
 <body>
     <div th:fragment="homeFragment" th:remove="tag">
         <div class="hamburger-item" onclick="moveLinkPage('/sales');hamburgerClose()"><img class="sp-style" th:src="@{/icons/sales.png}"><span>営業</span></div>
-        <div class="hamburger-item" onclick="moveLinkPage('/logistics');hamburgerClose()"><img class="sp-style" th:src="@{/icons/truck.png}"><span>物流</span></div>
+        <!-- <div class="hamburger-item" onclick="moveLinkPage('/logistics');hamburgerClose()"><img class="sp-style" th:src="@{/icons/truck.png}"><span>物流</span></div> -->
         <div class="hamburger-item" onclick="moveLinkPage('/personnel');hamburgerClose()"><img class="sp-style" th:src="@{/icons/person.png}"><span>人事</span></div>
-        <div class="hamburger-item" onclick="moveLinkPage('/piggy_bank');hamburgerClose()"><img class="sp-style" th:src="@{/icons/piggy_bank.png}"><span>経理</span></div>
-        <div class="hamburger-item" onclick="moveLinkPage('/management');hamburgerClose()"><img class="sp-style" th:src="@{/icons/regist.png}"><span>総務</span></div>
+        <!-- <div class="hamburger-item" onclick="moveLinkPage('/piggy_bank');hamburgerClose()"><img class="sp-style" th:src="@{/icons/piggy_bank.png}"><span>経理</span></div> -->
+        <!-- <div class="hamburger-item" onclick="moveLinkPage('/management');hamburgerClose()"><img class="sp-style" th:src="@{/icons/regist.png}"><span>総務</span></div> -->
         <!-- <div class="hamburger-item" onclick="moveLinkPage('/recycle');hamburgerClose()"><img class="sp-style" th:src="@{/icons/recycle.png}"><span>リサイクル</span></div> -->
-        <div class="hamburger-item" onclick="moveLinkPage('/info');hamburgerClose()"><img class="sp-style" th:src="@{/icons/info.png}"><span>お知らせ</span></div>
-        <div class="hamburger-item" onclick="moveLinkPage('/setting');hamburgerClose()"><img class="sp-style" th:src="@{/icons/setting.png}"><span>設定</span></div>
+        <!-- <div class="hamburger-item" onclick="moveLinkPage('/info');hamburgerClose()"><img class="sp-style" th:src="@{/icons/info.png}"><span>お知らせ</span></div> -->
+        <!-- <div class="hamburger-item" onclick="moveLinkPage('/setting');hamburgerClose()"><img class="sp-style" th:src="@{/icons/setting.png}"><span>設定</span></div> -->
     </div>
 
     <div th:fragment="salesFragment" th:remove="tag">
@@ -23,7 +23,7 @@
         <div class="hamburger-item sp-style" onclick="moveLinkPage('/');hamburgerClose()"><img th:src="@{/icons/home.png}"><span>ホーム</span></div>
         <div class="hamburger-item" onclick="moveLinkPage('/employee');hamburgerClose()"><img th:src="@{/icons/person.png}"><span>従業員</span></div>
         <div class="hamburger-item" onclick="moveLinkPage('/working_conditions');hamburgerClose()"><img th:src="@{/icons/conditions.png}"><span>勤務条件</span></div>
-        <!-- <div class="hamburger-item" onclick="moveLinkPage('/timeworks');hamburgerClose()"><img th:src="@{/icons/clock2.png}"><span>勤怠</span></div> -->
+        <div class="hamburger-item" onclick="moveLinkPage('/timeworks');hamburgerClose()"><img th:src="@{/icons/clock2.png}"><span>勤怠</span></div>
         <div class="hamburger-item" onclick="moveLinkPage('/qualifications');hamburgerClose()"><img th:src="@{/icons/license.png}"><span>資格</span></div>
     </div>
 </body>

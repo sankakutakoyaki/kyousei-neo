@@ -155,6 +155,7 @@ body {
 .loaded {
     display: none;
 }
+
 .spinner {
     font-size: .5rem;
     width: .6rem;
@@ -243,7 +244,7 @@ body {
     }
 }
 
-@media screen and (orientation:portrait) {
+/* @media screen and (orientation:portrait) {
 	#wrp {
 		width: 100vh;
 		height: 100vw;
@@ -251,4 +252,4 @@ body {
 		transform: rotate(90deg);
 		transform-origin: left bottom;
 	}
-}
+} */
