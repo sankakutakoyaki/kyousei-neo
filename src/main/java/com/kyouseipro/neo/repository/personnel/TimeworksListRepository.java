@@ -6,9 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
-import com.kyouseipro.neo.mapper.personnel.EmployeeListEntityMapper;
 import com.kyouseipro.neo.mapper.personnel.TimeworksListEntityMapper;
-import com.kyouseipro.neo.query.parameter.personnel.EmployeeListParameterBinder;
 import com.kyouseipro.neo.query.parameter.personnel.TimeworksListParameterBinder;
 import com.kyouseipro.neo.query.sql.personnel.TimeworksListSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
@@ -23,14 +21,14 @@ public class TimeworksListRepository {
     /**
      * IDによる取得。
      * @param employeeId
-     * @return IDから取得したEntityをかえす。
+     * @return IDから取得した今日の日付のEntityをかえす。
      */
-    public TimeworksListEntity findById(int employeeId) {
-        String sql = TimeworksListSqlBuilder.buildFindByIdSql();
+    public TimeworksListEntity findByTodaysEntityByEmployeeId(int employeeId) {
+        String sql = TimeworksListSqlBuilder.buildFindByTodaysEntityByEmployeeId();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, comp) -> TimeworksListParameterBinder.bindFindById(pstmt, comp),
+            (pstmt, comp) -> TimeworksListParameterBinder.bindFindByTodaysEntityByEmployeeId(pstmt, comp),
             rs -> rs.next() ? TimeworksListEntityMapper.map(rs) : null,
             employeeId
         );
@@ -39,12 +37,6 @@ public class TimeworksListRepository {
     public List<TimeworksListEntity> findByDate(LocalDate date) {
         String sql = TimeworksListSqlBuilder.buildFindByDateSql();
 
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, comp) -> TimeworksListParameterBinder.bindFindByDate(pstmt, comp),
-        //     rs -> rs.next() ? TimeworksListEntityMapper.map(rs) : null,
-        //     date
-        // );
         return sqlRepository.findAll(
             sql,
             ps -> TimeworksListParameterBinder.bindFindByDate(ps, date),

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
-    <header class="flex-area pc-style" th:fragment="headerFragment()">
+    <header class="timeworks-content" th:fragment="headerFragment()">
         <div class="clock">
             <div>
                 <span class="clock-date">0000年00月00日（日）</span>
@@ -11,7 +11,7 @@
                 <span class="clock-time">00:00:00</span>
             </div>
         </div>
-        <div class="input-area code-box">
+        <div class="flex-area code-box">
             <div class="form-parts">
                 <label>コード</label>
                 <input autofocus id="code" class="normal-input" type="text" inputmode="numeric" pattern="\d*" value="" onfocus="this.select();">
@@ -21,14 +21,14 @@
                 <input id="name" class="normal-input" type="text" disabled>
             </div>
         </div>    
-        <div class="input-area time-btn">  
+        <div class="flex-area time-btn">  
             <button name="start-btn" class="large-btn" type="button" onclick="execTimeWorks('start')"><span>出勤</span></button>
             <button name="end-btn" class="large-btn" type="button" onclick="execTimeWorks('end')"><span>退勤</span></button>
         </div>
     </header>
 
     <main th:fragment="mainFragment(tableId, scrollId)">
-        <table th:id="${tableId}" class="normal-table">
+        <table th:id="${tableId}" class="normal-table timeworks">
             <tr id="row-0" name="table-header" class="pc-style">
                 <th><span>氏名<span class="sort-arrow"></span></span></th>
                 <th><span>出勤<span class="sort-arrow"></span></span></th>

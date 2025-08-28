@@ -8,9 +8,10 @@ import com.kyouseipro.neo.common.Enums;
 
 public class TimeworksListParameterBinder {
 
-    public static void bindFindById(PreparedStatement ps, Integer employeeId) throws SQLException {
+    public static void bindFindByTodaysEntityByEmployeeId(PreparedStatement ps, Integer employeeId) throws SQLException {
         ps.setInt(1, employeeId);
         ps.setInt(2, Enums.state.DELETE.getCode());
+        ps.setString(3, LocalDate.now().toString());
     }
 
     public static void bindFindByDate(PreparedStatement ps, LocalDate date) throws SQLException {

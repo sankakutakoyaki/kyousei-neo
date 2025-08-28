@@ -17,13 +17,16 @@
                     <li class="tab-menu-item" data-tab="03"></li>
                 </ul>
                 <div class="tab-panel is-show" data-panel="01">
-                    <div class="table-area">
+                    <!-- <div class="table-area"> -->
+                    <div class="timeworks-container">
                         <!-- ヘッダー -->
                         <header th:replace="~{fragments/personnel/timeworks :: headerFragment()}"></header>
-                        <!-- コンテンツ -->
-                        <main th:replace="~{fragments/personnel/timeworks :: mainFragment('table-01', 'table-01-content')}"></main>
-                        <!-- フッター -->
-                        <footer id="footer-01" class="pc-style" th:insert="~{fragments/personnel/timeworks :: footerFragment()}"></footer>
+                        <div class="table-area">
+                            <!-- コンテンツ -->
+                            <main th:replace="~{fragments/personnel/timeworks :: mainFragment('table-01', 'table-01-content')}"></main>
+                            <!-- フッター -->
+                            <footer id="footer-01" class="pc-style" th:insert="~{fragments/personnel/timeworks :: footerFragment()}"></footer>
+                        </div>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="02">
@@ -133,12 +136,12 @@
             }
 
             // [id=code]に入力されたコードから[timeworks]を取得して[id=name]に入力する
-            const data = "code=" + encodeURIComponent(parseInt(code.value));
-            const url = '/timeworks/get/today/code';
+            const data = "id=" + encodeURIComponent(parseInt(code.value));
+            const url = '/timeworks/get/today/id';
             const contentType = 'application/x-www-form-urlencoded';
             // [timeworks]を取得
-            const result = await postFetch(url, data, token, contentType);
-            entity = await result.json();
+            const resultResponse = await postFetch(url, data, token, contentType);
+            entity = await resultResponse.json();
             if (entity != null && entity.employee_id > 0) {
                 name.value = entity.full_name;
                 checkTimeWorksStartSaved(entity);
@@ -150,6 +153,7 @@
                 return;
             }
         }
+
         // コード入力ボックスからフォーカスが外れた時の処理
         function execCodeBlur(e) {
             if (e.target.value == "") {

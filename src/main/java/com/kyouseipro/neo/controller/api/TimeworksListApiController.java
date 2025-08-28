@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
@@ -24,5 +26,15 @@ public class TimeworksListApiController {
 	@ResponseBody
     public List<TimeworksListEntity> getEntityList() {
         return timeworksListService.getTodaysList();
+    }
+
+    /**
+     * EntityListを取得する
+     * @return
+     */
+    @PostMapping("/timeworks/get/today/id")
+	@ResponseBody
+    public TimeworksListEntity getTodaysByCode(@RequestParam int id) {
+        return timeworksListService.getTodaysEntityByEmployeeId(id);
     }
 }
