@@ -71,7 +71,7 @@
     grid-template-columns: 11rem 7rem 7rem 1fr;
 }
 
-.normal-table.timeworks tbody {
+.normal-table.timeworks tbody.scroll-area {
     min-height: 12rem;
 }
 

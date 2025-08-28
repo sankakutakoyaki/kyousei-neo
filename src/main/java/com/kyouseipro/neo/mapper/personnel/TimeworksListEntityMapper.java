@@ -13,16 +13,19 @@ public class TimeworksListEntityMapper {
         entity.setTimeworks_id(rs.getInt("timeworks_id"));
         entity.setEmployee_id(rs.getInt("employee_id"));
         entity.setCategory(rs.getInt("category"));
+        entity.setWork_date(rs.getDate("work_date").toLocalDate());
         entity.setFull_name(rs.getString("full_name"));
         entity.setOffice_name(rs.getString("office_name"));
-        if (rs.getTimestamp("start_time") != null){
-            LocalDateTime startTime = rs.getTimestamp("comp_start_time").toLocalDateTime();
-            entity.setStart_time(startTime.format(DateTimeFormatter.ofPattern("HH:mm")).toString());
+        LocalDateTime start = rs.getTimestamp("start_time").toLocalDateTime();
+        if (start != null) {
+            entity.setStart_time(start.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString());
         }
-        if (rs.getTimestamp("end_time") != null) {
-            LocalDateTime endTime = rs.getTimestamp("comp_end_time").toLocalDateTime();
-            entity.setEnd_time(endTime.format(DateTimeFormatter.ofPattern("HH:mm")).toString());
+        LocalDateTime end = rs.getTimestamp("end_time").toLocalDateTime();
+        if (end != null) {
+            entity.setEnd_time(end.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString());
         }
+        entity.setVersion(rs.getInt("version"));
+        entity.setState(rs.getInt("state"));
         return entity;
     }
 }

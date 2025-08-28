@@ -45,10 +45,10 @@
         </div>
         <script th:src="@{/js/table.js}"></script>
         <script th:src="@{/js/info.js}"></script>
+        <script th:src="@{/js/timeworks.js}"></script>
         <script type="text/JavaScript" th:inline="JavaScript">
         const token = /*[[${_csrf.token}]]*/;
         let entity = {};
-        const username = /*[[${username}]]*/;
         const code = document.getElementById('code');
         const name = document.getElementById('name');
         const startBtn = document.querySelector('button[name="start-btn"]');
@@ -172,14 +172,15 @@
             }
             if(e.key === 'Enter'){
                 e.preventDefault();
-                searchForNameByCode(e);
+                // searchForNameByCode(e);
+                execCodeBlur(e);
             }
         }
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 出勤退勤確認
         function checkTimeWorksStartSaved(entity) {
             if (entity != null) {
-                if (entity.comp_start_time != null) {
+                if (entity.start_time != null) {
                     endBtn.focus();
                 } else {
                     startBtn.focus();
@@ -189,14 +190,13 @@
 
 // -------------------------------------------------------------------------------------------------------------------------------------- リスト画面作成
         // function createTable(list) {
-        function createTableContent(tbl, list) {
+        function createTableContent(tableId, list) {
+            const tbl = document.getElementById(tableId);
             list.forEach(function (item) {
                 let newRow = tbl.insertRow();
                 // ID（Post送信用）
                 newRow.setAttribute('name', 'data-row');
                 newRow.setAttribute('data-id', item.timeworks_id);
-                // 調整用セル
-                newRow.insertCell();
                 // 担当者名
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.full_name + '</span></td>');
                 // 出勤時刻

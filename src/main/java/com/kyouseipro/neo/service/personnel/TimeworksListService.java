@@ -3,6 +3,8 @@ package com.kyouseipro.neo.service.personnel;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
@@ -45,6 +47,20 @@ public class TimeworksListService {
      */
     public TimeworksListEntity getTodaysEntityByEmployeeId(int id) {
         return timeworksListRepository.findByTodaysEntityByEmployeeId(id);
+    }
+
+    /**
+     * 従業員の今日の勤怠情報を保存します。
+     *
+     * @param entity 従業員の勤怠データ
+     * @return
+     */
+    public Integer saveTodaysTimeworks(TimeworksListEntity entity, String editor) {
+        if (entity.getTimeworks_id() > 0) {
+            return timeworksListRepository.updateTimeworks(entity, editor);
+        } else {
+            return timeworksListRepository.insertTimeworks(entity, editor);
+        }
     }
 
     // /**

@@ -14,6 +14,8 @@ public class TimeworksListEntity {
     private LocalDate work_date;
     private String start_time;
     private String end_time;
+    private int version;
+    private int state;
 
     // @Override
     // public void setEntity(ResultSet rs) {
