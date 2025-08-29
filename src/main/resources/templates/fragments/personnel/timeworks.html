@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
-    <header class="timeworks-content" th:fragment="headerFragment()">
+    <header class="timeworks-content01" th:fragment="header01Fragment()">
         <div class="clock">
             <div>
                 <span class="clock-date">0000年00月00日（日）</span>
@@ -27,8 +27,8 @@
         </div>
     </header>
 
-    <main th:fragment="mainFragment(tableId, scrollId)">
-        <table th:id="${tableId}" class="normal-table timeworks">
+    <main th:fragment="mainFragment01(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table timeworks01">
             <tr id="row-0" name="table-header" class="pc-style">
                 <th><span>氏名<span class="sort-arrow"></span></span></th>
                 <th><span>出勤<span class="sort-arrow"></span></span></th>
@@ -43,6 +43,33 @@
     <footer th:fragment="footerFragment()" th:remove="tag">
         <span>0件 : 0000/00/00 00:00 現在</span>
     </footer>
+
+    <header class="timeworks-content02" th:fragment="header02Fragment()">
+        <!-- 期間指定ボックス -->
+        <div class="flex-area">
+            <input id="start-date01" class="normal-input date-area" type="date" value="" onfocus="this.select();">
+            <span class="pc-style">〜</span>
+            <input id="end-date01" class="normal-input date-area" type="date" value="" onfocus="this.select();">
+            <button name="search-btn" class="normal-btn ok" type="button" onclick="execSearch()">
+                <span>検索</span>
+            </button>
+        </div>
+    </header>
+
+    <main th:fragment="mainFragment02(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table timeworks02">
+            <tr id="row-0" name="table-header" class="pc-style">
+                <th><span>日付<span class="sort-arrow"></span></span></th>
+                <th><span>出勤<span class="sort-arrow"></span></span></th>
+                <th><span><span class="sort-arrow"></span></span></th>
+                <th><span>退勤<span class="sort-arrow"></span></span></th>
+                <th><span><span class="sort-arrow"></span></span></th>
+                <th><span>休憩<span class="sort-arrow"></span></span></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
 </body>
 
 </html>

@@ -10,7 +10,6 @@ function createListItemWithSelection(id, fileName) {
     li.dataset.id = id;
     li.textContent = fileName;
 
-    // クリック時にPDFリストを切り替える
     li.addEventListener('click', () => {
         // すでに選択されているなら解除して return
         if (li.classList.contains('selected')) {

@@ -23,4 +23,8 @@ public class OfficeListParameterBinder {
         ps.setInt(2, Enums.state.DELETE.getCode());
         ps.setInt(3, categoryId);
     }
+
+    public static void bindFindAllComboOffice(PreparedStatement ps, Integer categoryId) throws SQLException {
+        ps.setInt(1, Enums.state.DELETE.getCode());
+    }
 }

@@ -11,7 +11,9 @@ public class EmployeeListEntityMapper {
         EmployeeListEntity entity = new EmployeeListEntity();
         entity.setEmployee_id(rs.getInt("employee_id"));
         entity.setCode(rs.getInt("code"));
+        entity.setCompany_id(rs.getInt("company_id"));
         entity.setCompany_name(rs.getString("company_name"));
+        entity.setOffice_id(rs.getInt("office_id"));
         entity.setOffice_name(rs.getString("office_name"));
         entity.setFull_name(rs.getString("full_name"));
         entity.setFull_name_kana(rs.getString("full_name_kana"));

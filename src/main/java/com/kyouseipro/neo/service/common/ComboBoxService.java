@@ -123,6 +123,10 @@ public class ComboBoxService {
         return officeListRepository.findAll();
     }
 
+    public List<SimpleData> getSimpleOfficeList() {
+        return officeListRepository.findAllComboOffice();
+    }
+
     public List<SimpleData> getQualificationMaster() {
         return qualificationsRepository.findAllCombo();
     }

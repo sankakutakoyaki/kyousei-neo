@@ -8,7 +8,9 @@ import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.mapper.corporation.OfficeListEntityMapper;
 import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
+import com.kyouseipro.neo.query.parameter.corporation.CompanyListParameterBinder;
 import com.kyouseipro.neo.query.parameter.corporation.OfficeListParameterBinder;
+import com.kyouseipro.neo.query.sql.corporation.CompanyListSqlBuilder;
 import com.kyouseipro.neo.query.sql.corporation.OfficeListSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
@@ -27,6 +29,17 @@ public class OfficeListRepository {
             sql,
             ps -> OfficeListParameterBinder.bindFindAll(ps, null),
             OfficeListEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+
+    // コンボボックス用リスト取得
+    public List<SimpleData> findAllComboOffice() {
+        String sql = OfficeListSqlBuilder.buildFindAllComboOfficeSql();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> OfficeListParameterBinder.bindFindAllComboOffice(ps, null),
+            SimpleDataMapper::map
         );
     }
 

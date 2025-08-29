@@ -6,7 +6,9 @@ import lombok.Data;
 public class EmployeeListEntity {
     private int employee_id;
     private int code;
+    private int company_id;
     private String company_name;
+    private int office_id;
     private String office_name;
     private String full_name;
     private String full_name_kana;

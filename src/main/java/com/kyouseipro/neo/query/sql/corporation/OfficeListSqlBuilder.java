@@ -14,6 +14,10 @@ public class OfficeListSqlBuilder {
             " WHERE NOT (o.state = ?)";
     }
 
+    public static String buildFindAllComboOfficeSql() {
+        return "SELECT office_id as number, name as text FROM offices WHERE NOT (state = ?);";
+    }
+
     public static String buildFindAllByCategorySql() {
         return 
             basicSelectString() +

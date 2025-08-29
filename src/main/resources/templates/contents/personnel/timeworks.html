@@ -13,24 +13,43 @@
             <div class="tab-area">
                 <ul class="tab-menu">
                     <li class="tab-menu-item is-active" data-tab="01">打刻</li>
-                    <li class="tab-menu-item" data-tab="02"></li>
+                    <li class="tab-menu-item" data-tab="02">一覧</li>
                     <li class="tab-menu-item" data-tab="03"></li>
                 </ul>
                 <div class="tab-panel is-show" data-panel="01">
-                    <!-- <div class="table-area"> -->
-                    <div class="timeworks-container">
+                    <div class="timeworks-container01">
                         <!-- ヘッダー -->
-                        <header th:replace="~{fragments/personnel/timeworks :: headerFragment()}"></header>
+                        <header th:replace="~{fragments/personnel/timeworks :: header01Fragment()}"></header>
                         <div class="table-area">
                             <!-- コンテンツ -->
-                            <main th:replace="~{fragments/personnel/timeworks :: mainFragment('table-01', 'table-01-content')}"></main>
+                            <main th:replace="~{fragments/personnel/timeworks :: mainFragment01('table-01', 'table-01-content')}"></main>
                             <!-- フッター -->
                             <footer id="footer-01" class="pc-style" th:insert="~{fragments/personnel/timeworks :: footerFragment()}"></footer>
                         </div>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="02">
-
+                    <div class="timeworks-container02">
+                        <!-- サイド -->
+                        <div id="timeworks-sidemenu01" class="side-area">
+                            <div class="form-parts">
+                                <label>営業所・支店</label>
+                                <select tabindex="1" name="office" class="normal-select"></select>
+                            </div>
+                            <ul id="employee-list-01" class="normal-list timeworks"></ul>
+                        </div>
+                        <!-- メイン -->
+                         <div class="main-area">
+                            <!-- ヘッダー -->
+                            <header th:replace="~{fragments/personnel/timeworks :: header02Fragment()}"></header>
+                            <div class="table-area">
+                                <!-- コンテンツ -->
+                                <main th:replace="~{fragments/personnel/timeworks :: mainFragment02('table-01', 'table-01-content')}"></main>
+                                <!-- フッター -->
+                                <footer id="footer-01" class="pc-style" th:insert="~{fragments/personnel/timeworks :: footerFragment()}"></footer>
+                            </div>
+                         </div>
+                    </div>
                 </div>
                 <div class="tab-panel" data-panel="03">
 
@@ -53,6 +72,10 @@
         const name = document.getElementById('name');
         const startBtn = document.querySelector('button[name="start-btn"]');
         const endBtn = document.querySelector('button[name="end-btn"]');
+        const officeId = /*[[${officeId}]]*/;
+        const officeList = /*[[${officeList}]]*/;
+        const employeeList = /*[[${employeeList}]]*/;
+        const employeeList01 = document.getElementById('employee-list-01');
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 時計作成
         function clock() {
@@ -208,6 +231,31 @@
             });
         };
 
+        // 従業員選択メニュー作成
+        function createEmployeeList(params) {
+            employeeList01.innerHTML = "";
+            const form01 = document.getElementById('timeworks-sidemenu01');
+            const officeArea = form01.querySelector('select[name="office"]');
+            const list = employeeList.filter(value => value.office_id === Number(officeArea.value));
+            list.forEach(function(item) {
+                const li = document.createElement('li');
+                li.dataset.id = item.employee_id;
+                li.textContent = item.full_name;
+                li.addEventListener('click', () => {
+                    // すでに選択されているなら解除して return
+                    if (li.classList.contains('selected')) {
+                        li.classList.remove('selected');
+                        return;
+                    }
+                    // 他のliから選択クラスを外す
+                    document.querySelectorAll('#employee-list-01.normal-list>li').forEach(el => el.classList.remove('selected'));
+                    // このliに選択クラスを追加
+                    li.classList.add('selected');
+                });
+                employeeList01.appendChild(li);
+            });
+        }
+
 // -------------------------------------------------------------------------------------------------------------------------------------- 初期化時の処理
         window.addEventListener("load", async () => {
             // 1秒ごとにclock関数を呼び出す
@@ -217,7 +265,25 @@
             // コード入力ボックスのフォーカスが外れた時の処理を登録
             document.getElementById('code').addEventListener('blur', function (e) { execCodeBlur(e); });
 
+            const form01 = document.getElementById('timeworks-sidemenu01');
+            const officeArea = form01.querySelector('select[name="office"]');
+            createComboBox(officeArea, officeList);
+            setComboboxSelected(officeArea, officeId);
+            officeArea.onchange = function() { createEmployeeList(); };
+
+            createEmployeeList();
+
+            // 日付ボックスを設定
+            execSpecifyPeriod('this-month', 'start-date01', 'end-date01');
+
             await updateDisplay();
+
+            // タブメニュー処理
+            const tabMenus = document.querySelectorAll('.tab-menu-item');
+            // イベント付加
+            tabMenus.forEach((tabMenu) => {
+                tabMenu.addEventListener('click', tabSwitch);
+            })
         });
 
     </script>
