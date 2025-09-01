@@ -130,4 +130,5 @@ input[type="time"]::-webkit-date-and-time-value {
 
 .icon-del::-webkit-calendar-picker-indicator {
     display: none;
+    -webkit-appearance: none;
 }

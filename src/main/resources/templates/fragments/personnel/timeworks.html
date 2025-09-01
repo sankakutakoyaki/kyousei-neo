@@ -54,6 +54,11 @@
                 <span>検索</span>
             </button>
         </div>
+        <!-- 日付移動ボタン -->
+        <div class="flex-area">
+            <!-- <div th:replace="~{fragments/header::header-month-move-btn-fragment('start-date01', 'end-date01')}"></div> -->
+            <div th:replace="~{fragments/header::header-2week-move-btn-fragment('start-date01', 'end-date01')}"></div>
+        </div>
     </header>
 
     <main th:fragment="mainFragment02(tableId, scrollId)">
@@ -61,9 +66,9 @@
             <tr id="row-0" name="table-header" class="pc-style">
                 <th><span>日付<span class="sort-arrow"></span></span></th>
                 <th><span>出勤<span class="sort-arrow"></span></span></th>
-                <th><span><span class="sort-arrow"></span></span></th>
                 <th><span>退勤<span class="sort-arrow"></span></span></th>
-                <th><span><span class="sort-arrow"></span></span></th>
+                <th><span>確定（出勤）<span class="sort-arrow"></span></span></th>
+                <th><span>確定（退勤）<span class="sort-arrow"></span></span></th>
                 <th><span>休憩<span class="sort-arrow"></span></span></th>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>

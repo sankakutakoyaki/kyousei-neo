@@ -16,6 +16,69 @@
             </form>
         </div>
     </div>
+
+    <!-- 日付移動ボタン -->
+    <div th:fragment="header-month-move-btn-fragment(startId, endId)"  class="flex-area">
+        <button name="prev-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-month', [[${startId}]], [[${endId}]])">
+            <span>前月</span>
+        </button>
+        <button name="this-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('this-month', [[${startId}]], [[${endId}]])">
+            <span>今月</span>
+        </button>
+        <button name="next-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-month', [[${startId}]], [[${endId}]])">
+            <span>次月</span>
+        </button>
+    </div>
+    <!-- 日付移動ボタン -->
+    <div th:fragment="header-day-move-btn-fragment(startId, endId)" class="flex-area">
+        <button name="prev-day-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-day', [[${startId}]], [[${endId}]])">
+            <span>前日</span>
+        </button>
+        <button name="today-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('today', [[${startId}]], [[${endId}]])">
+            <span>今日</span>
+        </button>
+        <button name="next-day-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-day', [[${startId}]], [[${endId}]])">
+            <span>翌日</span>
+        </button>
+    </div>
+    <!-- 日付移動ボタン -->
+    <div th:fragment="header-week-move-btn-fragment(startId, endId)" class="flex-area">
+        <button name="prev-week-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-week', [[${startId}]], [[${endId}]])">
+            <span>前週</span>
+        </button>
+        <button name="this-week-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('this-week', [[${startId}]], [[${endId}]])">
+            <span>今週</span>
+        </button>
+        <button name="next-week-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-week', [[${startId}]], [[${endId}]])">
+            <span>次週</span>
+        </button>
+    </div>
+    <!-- 日付移動ボタン -->
+    <div th:fragment="header-2week-move-btn-fragment(startId, endId)" class="flex-area">
+        <button name="prev-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-month-move', [[${startId}]], [[${endId}]])">
+            <span><</span>
+        </button>
+        <button name="prev-2week-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('half-month', [[${startId}]], [[${endId}]])">
+            <span>15締め</span>
+        </button>
+        <button name="next-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-month-move', [[${startId}]], [[${endId}]])">
+            <span>></span>
+        </button>
+        
+        <!-- <button name="this-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('this-month', [[${startId}]], [[${endId}]])">
+            <span>今月</span>
+        </button> -->
+
+        <button name="prev-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-month', [[${startId}]], [[${endId}]])">
+            <span><</span>
+        </button>
+        <button name="this-2week-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('end-month', [[${startId}]], [[${endId}]])">
+            <span>末締め</span>
+        </button>
+        <button name="next-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-month', [[${startId}]], [[${endId}]])">
+            <span>></span>
+        </button>
+    </div>
 </body>
 
 </html>

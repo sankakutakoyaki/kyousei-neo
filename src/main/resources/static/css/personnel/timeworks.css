@@ -45,9 +45,19 @@
 
 .timeworks-content02 {
     display: grid;
-    row-gap: 1rem;
+    /* row-gap: 1rem; */
     grid-template-rows: auto auto;
     padding: 1rem;
+}
+
+.timeworks-content02>div.flex-area:nth-child(2) {
+    column-gap: 2rem;
+}
+
+.timeworks-content02 .normal-btn.frameless:nth-child(1) {
+    min-width: 1.5rem;
+    padding-left: .5rem;
+    padding-right: .5rem;
 }
 
 .timeworks-content01 .code-box {
@@ -77,7 +87,7 @@
 }
 
 .normal-table.timeworks02 tr {
-    grid-template-columns: 8rem 7rem 7rem 7rem 7rem 3rem 1fr;
+    grid-template-columns: 8rem 6rem 6rem 7rem 7rem 6rem 1fr;
 }
 
 .normal-table.timeworks01 tbody.scroll-area,
@@ -99,6 +109,18 @@
 .normal-table.timeworks01 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child,
 .normal-table.timeworks02 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child {
     border: 0;
+}
+
+.normal-table.timeworks02 tr td:nth-child(2) span,
+.normal-table.timeworks02 tr td:nth-child(3) span {
+    color: lightgray;
+}
+
+.normal-table.timeworks02 tr input {
+    border: 0;
+    padding: .5rem;
+    width: fit-content;
+    font-size: 1.1rem;
 }
 
 #employee-list-01.normal-list {

@@ -6,15 +6,11 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
-import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
 import com.kyouseipro.neo.mapper.personnel.TimeworksListEntityMapper;
 import com.kyouseipro.neo.query.parameter.personnel.TimeworksListParameterBinder;
-import com.kyouseipro.neo.query.parameter.personnel.WorkingConditionsParameterBinder;
 import com.kyouseipro.neo.query.sql.personnel.TimeworksListSqlBuilder;
-import com.kyouseipro.neo.query.sql.personnel.WorkingConditionsSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
-import groovyjarjarantlr4.v4.parse.ANTLRParser.terminal_return;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -35,6 +31,21 @@ public class TimeworksListRepository {
             (pstmt, comp) -> TimeworksListParameterBinder.bindFindByTodaysEntityByEmployeeId(pstmt, comp),
             rs -> rs.next() ? TimeworksListEntityMapper.map(rs) : null,
             employeeId
+        );
+    }
+
+    /**
+     * 日付指定でIDで指定した従業員の勤怠情報を取得
+     * @param date
+     * @return
+     */
+    public List<TimeworksListEntity> findByEmployeeIdFromBetweenDate(int id, LocalDate start, LocalDate end) {
+        String sql = TimeworksListSqlBuilder.buildFindByBetweenEntityByEmployeeId();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> TimeworksListParameterBinder.bindFindByBetweenEntityByEmployeeId(ps, id, start, end),
+            TimeworksListEntityMapper::map // ← ここで ResultSet を map
         );
     }
 

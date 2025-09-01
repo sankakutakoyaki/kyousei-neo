@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
@@ -56,6 +55,31 @@ public class TimeworksListApiController {
             }
         }
         return entity;
+    }
+
+    /**
+     * 指定した期間のEntityListを取得する
+     * @return
+     */
+    @PostMapping("/timeworks/get/between/id")
+	@ResponseBody
+    public List<TimeworksListEntity> getBetweenEntityByEmployeeId(
+                @RequestParam int id,
+                @RequestParam LocalDate start,
+                @RequestParam LocalDate end) {
+        List<TimeworksListEntity> list = timeworksListService.getBetweenEntityByEmployeeId(id, start, end);
+        // if (entity == null) {
+        //     entity = new TimeworksListEntity();
+        //     EmployeeEntity emp = employeeService.getEmployeeById(id);
+        //     if (emp != null) {
+        //         entity.setEmployee_id(emp.getEmployee_id());
+        //         entity.setFull_name(emp.getFull_name());
+        //         entity.setWork_date(LocalDate.now());
+        //     } else {
+        //         return entity;
+        //     }
+        // }
+        return list;
     }
 
     /**

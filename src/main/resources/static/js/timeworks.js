@@ -5,10 +5,12 @@ async function setTimeworks(timeCategory) {
     const position = await getLoacation();
     if (timeCategory == "start") {
         entity.start_time = time;
+        entity.comp_start_time = time;
         entity.start_latitude = position.coords.latitude;
         entity.start_longitude = position.coords.longitude;
     } else if (timeCategory == "end") {
         entity.end_time = time;
+        entity.comp_end_time = time;
         entity.end_latitude = position.coords.latitude;
         entity.end_longitude = position.coords.longitude;
     } else {

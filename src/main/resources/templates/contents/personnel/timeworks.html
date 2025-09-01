@@ -44,9 +44,9 @@
                             <header th:replace="~{fragments/personnel/timeworks :: header02Fragment()}"></header>
                             <div class="table-area">
                                 <!-- コンテンツ -->
-                                <main th:replace="~{fragments/personnel/timeworks :: mainFragment02('table-01', 'table-01-content')}"></main>
+                                <main th:replace="~{fragments/personnel/timeworks :: mainFragment02('table-02', 'table-02-content')}"></main>
                                 <!-- フッター -->
-                                <footer id="footer-01" class="pc-style" th:insert="~{fragments/personnel/timeworks :: footerFragment()}"></footer>
+                                <footer id="footer-02" class="pc-style" th:insert="~{fragments/personnel/timeworks :: footerFragment()}"></footer>
                             </div>
                          </div>
                     </div>
@@ -65,6 +65,7 @@
         <script th:src="@{/js/table.js}"></script>
         <script th:src="@{/js/info.js}"></script>
         <script th:src="@{/js/timeworks.js}"></script>
+        <script th:src="@{/js/enterfocus.js}"></script>
         <script type="text/JavaScript" th:inline="JavaScript">
         const token = /*[[${_csrf.token}]]*/;
         let entity = {};
@@ -251,9 +252,58 @@
                     document.querySelectorAll('#employee-list-01.normal-list>li').forEach(el => el.classList.remove('selected'));
                     // このliに選択クラスを追加
                     li.classList.add('selected');
+                    createEmployeeTimeworksList(item.employee_id);
                 });
                 employeeList01.appendChild(li);
             });
+        }
+
+        // 選択した従業員IDで勤怠情報を取得してリスト作成
+        async function createEmployeeTimeworksList(id) {
+            const list = await getEmployeeTimeworksBetween(id);
+            createBetweenTableContent(list);
+            // エンターフォーカス処理をイベントリスナーに登録する
+            tabFocusElements = createTabFocusElements();
+            setEnterFocus("table-02");
+        }
+
+        //一覧表示用のテーブル作成
+        function createBetweenTableContent(list) {
+            const tbl = document.getElementById("table-02-content");
+            let i = 0;
+            list.forEach(function (item) {
+                let newRow = tbl.insertRow();
+                // ID（Post送信用）
+                newRow.setAttribute('name', 'data-row');
+                newRow.setAttribute('data-id', item.timeworks_id);
+                // 担当者名
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.work_date + '</span></td>');
+                // 出勤打刻
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.start_time ?? "") + '</span></td>');
+                // 退勤打刻
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.end_time ?? "") + '</span></td>');
+                // 出勤確定
+                i++;
+                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" class="icon-del" type="time" step="1" value="' + (item.comp_start_time ?? "") + '"></td>');
+                // 退勤確定
+                i++;
+                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" class="icon-del" type="time" step="1" value="' + (item.comp_end_time ?? "") + '"></td>');
+                // 休憩
+                i++;
+                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" class="icon-del" type="time" value="' + (item.rest_time ?? "") + '"></td>');
+            });
+        };
+
+        // 一覧表示用のリスト取得
+        async function getEmployeeTimeworksBetween(id) {
+            const start = document.getElementById("start-date01").value;
+            const end = document.getElementById("end-date01").value;
+            const data = "id=" + encodeURIComponent(parseInt(id)) + "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end);
+            const url = '/timeworks/get/between/id';
+            const contentType = 'application/x-www-form-urlencoded';
+            // List<Timeworks>を取得
+            const resultResponse = await postFetch(url, data, token, contentType);
+            return await resultResponse.json();
         }
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 初期化時の処理

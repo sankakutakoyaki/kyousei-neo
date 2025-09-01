@@ -50,6 +50,17 @@ public class TimeworksListService {
     }
 
     /**
+     * 指定された従業員IDの指定した期間の勤怠情報を取得します。
+     * 論理削除されている場合は null を返します。
+     *
+     * @param id 従業員ID
+     * @return TimeworksListEntity または null
+     */
+    public List<TimeworksListEntity> getBetweenEntityByEmployeeId(int id, LocalDate start, LocalDate end) {
+        return timeworksListRepository.findByEmployeeIdFromBetweenDate(id, start, end);
+    }
+
+    /**
      * 従業員の今日の勤怠情報を保存します。
      *
      * @param entity 従業員の勤怠データ
