@@ -13,8 +13,8 @@
             <div class="tab-area">
                 <ul class="tab-menu">
                     <li class="tab-menu-item is-active" data-tab="01">打刻</li>
-                    <li class="tab-menu-item" data-tab="02">一覧</li>
-                    <li class="tab-menu-item" data-tab="03"></li>
+                    <li class="tab-menu-item" data-tab="02">修正</li>
+                    <li class="tab-menu-item" data-tab="03">出力</li>
                 </ul>
                 <div class="tab-panel is-show" data-panel="01">
                     <div class="timeworks-container01">
@@ -52,7 +52,22 @@
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="03">
-
+                    <div class="timeworks-container03">
+                         <!-- <div class="main-area"> -->
+                            <div class="form-parts office">
+                                <label>営業所・支店</label>
+                                <select tabindex="1" name="office" class="normal-select"></select>
+                            </div>
+                            <!-- ヘッダー -->
+                            <header th:replace="~{fragments/personnel/timeworks :: header03Fragment()}"></header>
+                            <div class="table-area">
+                                <!-- コンテンツ -->
+                                <main th:replace="~{fragments/personnel/timeworks :: mainFragment03('table-03', 'table-03-content')}"></main>
+                                <!-- フッター -->
+                                <footer id="footer-03" class="pc-style" th:insert="~{fragments/personnel/timeworks :: footerFragment()}"></footer>
+                            </div>
+                        <!-- </div> -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -77,6 +92,7 @@
         const officeList = /*[[${officeList}]]*/;
         const employeeList = /*[[${employeeList}]]*/;
         const employeeList01 = document.getElementById('employee-list-01');
+        let list02 = {};
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 時計作成
         function clock() {
@@ -186,6 +202,7 @@
             }
             searchForNameByCode(e);
         }
+
         // コード入力ボックスでエンターを押した時の処理
         function execCodeChanged(e) {
             if (e == null) return;
@@ -198,6 +215,44 @@
                 e.preventDefault();
                 // searchForNameByCode(e);
                 execCodeBlur(e);
+            }
+        }
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 保存処理
+        async function execSave() {
+            let changedList = list02.filter(value => (value.state > 0));
+            if (changedList.length == 0) return;
+
+            changedList.forEach(function (item) {
+                // let target = list02.filter(value => (value.timeworks_id == item.timeworks_id));
+                let start = document.querySelector('#table-02-content tr[data-id="' + item.timeworks_id + '"] input[name="start"]');
+                let end = document.querySelector('#table-02-content tr[data-id="' + item.timeworks_id + '"] input[name="end"]');
+                let rest = document.querySelector('#table-02-content tr[data-id="' + item.timeworks_id + '"] input[name="rest"]');
+                item.comp_start_time = start.value;
+                item.comp_end_time = end.value;
+                item.rest_time = rest.value;
+                item.state = 0;
+            });
+            const result = await updateTimeworks(changedList);
+            if (result.success) {
+                // 画面更新
+                openMsgDialog("msg-dialog", result.message, "blue");
+            } else {
+                openMsgDialog("msg-dialog", result.message, "red");
+            }
+        }
+
+// -------------------------------------------------------------------------------------------------------------------------------------- セル変更処理
+        function cellChange(id, self) {
+            self.classList.add("changed");
+            const item = list02.find(value => (value.timeworks_id == Number(id)));
+            if (item != null) item.state = 1; // 変更のフラグ
+            const btn = document.getElementById("save-btn02");
+            if (btn != null) {
+                btn.disabled = false;
+                if (!btn.classList.contains("ok")){
+                    btn.classList.add("ok");
+                }
             }
         }
 
@@ -216,6 +271,7 @@
         // function createTable(list) {
         function createTableContent(tableId, list) {
             const tbl = document.getElementById(tableId);
+            deleteElements(tbl);
             list.forEach(function (item) {
                 let newRow = tbl.insertRow();
                 // ID（Post送信用）
@@ -233,7 +289,7 @@
         };
 
         // 従業員選択メニュー作成
-        function createEmployeeList(params) {
+        function createEmployeeList() {
             employeeList01.innerHTML = "";
             const form01 = document.getElementById('timeworks-sidemenu01');
             const officeArea = form01.querySelector('select[name="office"]');
@@ -258,10 +314,18 @@
             });
         }
 
+        // 日付ボックスが変更された時の処理
+        async function execListChange() {
+            const selectedId = document.querySelector("#employee-list-01 li.selected");
+            if (selectedId != null) {
+                await createEmployeeTimeworksList(selectedId.dataset.id);
+            }
+        }
+
         // 選択した従業員IDで勤怠情報を取得してリスト作成
         async function createEmployeeTimeworksList(id) {
-            const list = await getEmployeeTimeworksBetween(id);
-            createBetweenTableContent(list);
+            list02 = await getEmployeeTimeworksBetween(id);
+            createBetweenTableContent(list02);
             // エンターフォーカス処理をイベントリスナーに登録する
             tabFocusElements = createTabFocusElements();
             setEnterFocus("table-02");
@@ -270,6 +334,7 @@
         //一覧表示用のテーブル作成
         function createBetweenTableContent(list) {
             const tbl = document.getElementById("table-02-content");
+            deleteElements(tbl);
             let i = 0;
             list.forEach(function (item) {
                 let newRow = tbl.insertRow();
@@ -284,14 +349,21 @@
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.end_time ?? "") + '</span></td>');
                 // 出勤確定
                 i++;
-                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" class="icon-del" type="time" step="1" value="' + (item.comp_start_time ?? "") + '"></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" name="start"' +
+                    ' class="icon-del" type="time" step="1" value="' + (item.comp_start_time ?? "") + '"' +
+                    ' onchange="cellChange(' + item.timeworks_id + ', this)"></td>');
                 // 退勤確定
                 i++;
-                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" class="icon-del" type="time" step="1" value="' + (item.comp_end_time ?? "") + '"></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" name="end"' +
+                    ' class="icon-del" type="time" step="1" value="' + (item.comp_end_time ?? "") + '"' +
+                    ' onchange="cellChange(' + item.timeworks_id + ', this)"></td>');
                 // 休憩
                 i++;
-                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" class="icon-del" type="time" value="' + (item.rest_time ?? "") + '"></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" name="rest"' +
+                    ' class="icon-del" type="time" value="' + (item.rest_time ?? "") + '"' +
+                    ' onchange="cellChange(' + item.timeworks_id + ', this)"></td>');
             });
+            createTableFooter("footer-02", list);
         };
 
         // 一覧表示用のリスト取得
@@ -316,17 +388,42 @@
             document.getElementById('code').addEventListener('blur', function (e) { execCodeBlur(e); });
 
             const form01 = document.getElementById('timeworks-sidemenu01');
-            const officeArea = form01.querySelector('select[name="office"]');
-            createComboBox(officeArea, officeList);
-            setComboboxSelected(officeArea, officeId);
-            officeArea.onchange = function() { createEmployeeList(); };
+
+            const officeArea01 = form01.querySelector('select[name="office"]');
+            createComboBox(officeArea01, officeList);
+            setComboboxSelected(officeArea01, officeId);
+            officeArea01.onchange = function() { createEmployeeList(); };
+
+            const officeArea02 = document.querySelector('div[data-panel="03"] select[name="office"]');
+            createComboBoxWithTop(officeArea02, officeList, "すべて");
+            setComboboxSelected(officeArea02, officeId);
+            officeArea02.onchange = function() { createEmployeeList(); };
 
             createEmployeeList();
 
             // 日付ボックスを設定
-            execSpecifyPeriod('this-month', 'start-date01', 'end-date01');
+            let monthStr = "";
+            switch (officeId) {
+                case 1000:
+                    monthStr = "half-month";
+                    break;
+                case 1001:
+                    monthStr = "half-month";
+                    break;
+                case 1002:
+                    monthStr = "this-month";
+                    break;
+                case 1003:
+                    monthStr = "this-month";
+                    break;
+                default:
+                    monthStr = "this-month"
+                    break;
+            }
+            execSpecifyPeriod(monthStr, 'start-date01', 'end-date01');
 
             await updateDisplay();
+            createTableFooter("footer-02", null);
 
             // タブメニュー処理
             const tabMenus = document.querySelectorAll('.tab-menu-item');

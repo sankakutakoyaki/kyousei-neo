@@ -25,3 +25,14 @@ async function setTimeworks(timeCategory) {
     
     return await result.json();
 }
+
+async function updateTimeworks(list) {
+    const data = JSON.stringify(list);
+    const url = '/timeworks/update/list';
+    const contentType = 'application/json';
+    const result = await postFetch(url, data, token, contentType);
+
+    await execListChange();
+    
+    return await result.json();
+}

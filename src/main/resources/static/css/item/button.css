@@ -2,6 +2,13 @@
 
 /******************************************************************************************************* 基本のボタン */
 
+button:disabled,
+button:disabled:hover {
+  background-color: #ccc;   /* 無効時の色 */
+  color: #666;
+  cursor: default;      /* カーソルも無効っぽく */
+}
+
 .normal-btn {
     display: grid;
     align-items: center;

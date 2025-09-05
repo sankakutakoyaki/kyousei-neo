@@ -245,8 +245,8 @@ function execSpecifyPeriod(str, startId, endId) {
             enddate.value = new Date(end.getFullYear(), end.getMonth() + 2, 0).toLocaleDateString('sv-SE');
             break;
         case "half-month":
-            startdate.value = new Date(date.getFullYear(), date.getMonth(), 16).toLocaleDateString('sv-SE');
-            enddate.value = new Date(date.getFullYear(), date.getMonth() + 1, 15).toLocaleDateString('sv-SE');
+            startdate.value = new Date(date.getFullYear(), date.getMonth() - 1, 16).toLocaleDateString('sv-SE');
+            enddate.value = new Date(date.getFullYear(), date.getMonth(), 15).toLocaleDateString('sv-SE');
             break;
         case "end-month":
             startdate.value = new Date(date.getFullYear(), date.getMonth() - 1, 1).toLocaleDateString('sv-SE');

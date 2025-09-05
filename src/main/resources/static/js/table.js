@@ -32,7 +32,8 @@ function registCheckButtonClicked(tableId) {
 function createTableFooter(footerId, list) {
     deleteElements(footerId);
     const footer = document.getElementById(footerId);
-    footer.insertAdjacentHTML('beforeend', '<span>' + list.length + '件 : ' + getNow() + ' 現在</span>');
+    const num = list == null ? 0: list.length;
+    footer.insertAdjacentHTML('beforeend', '<span>' + num + '件 : ' + getNow() + ' 現在</span>');
 }
 
 /**

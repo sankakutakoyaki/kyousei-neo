@@ -19,7 +19,8 @@
 }
 
 .timeworks-container01,
-.timeworks-container02 {
+.timeworks-container02,
+.timeworks-container03 {
     display: grid;
     width: 100%;
     height: 100%;
@@ -36,6 +37,10 @@
     column-gap: 2rem;
 }
 
+.timeworks-container03 {
+    grid-template-columns: 40rem;
+}
+
 .timeworks-content01 {
     display: grid;
     row-gap: 1rem;
@@ -45,16 +50,54 @@
 
 .timeworks-content02 {
     display: grid;
-    /* row-gap: 1rem; */
+    row-gap: .5rem;
     grid-template-rows: auto auto;
     padding: 1rem;
 }
 
-.timeworks-content02>div.flex-area:nth-child(2) {
-    column-gap: 2rem;
+.timeworks-content03 {
+    display: grid;
+    row-gap: .5rem;
+    grid-template-rows: auto auto;
+    /* padding: 1rem; */
 }
 
-.timeworks-content02 .normal-btn.frameless:nth-child(1) {
+/* .timeworks-content02>div.flex-area:nth-child(2) {
+    column-gap: 2rem;
+} */
+
+.timeworks-content02>div.flex-area:nth-child(2)>div.flex-area,
+.timeworks-content03>div.flex-area:nth-child(2)>div.flex-area {
+    column-gap: 0;
+}
+
+.timeworks-content02 .normal-btn.frameless>img,
+.timeworks-content03 .normal-btn.frameless>img {
+    width: .8rem;
+}
+
+.timeworks-content02 .normal-btn.frameless:nth-child(1),
+.timeworks-content02 .normal-btn.frameless:nth-child(3),
+.timeworks-content02 .normal-btn.frameless:nth-child(4),
+.timeworks-content02 .normal-btn.frameless:nth-child(6),
+.timeworks-content03 .normal-btn.frameless:nth-child(1),
+.timeworks-content03 .normal-btn.frameless:nth-child(3),
+.timeworks-content03 .normal-btn.frameless:nth-child(4),
+.timeworks-content03 .normal-btn.frameless:nth-child(6) {
+    min-width: 1.5rem;
+    padding-left: .5rem;
+    padding-right: .5rem;
+}
+
+.timeworks-content02 .normal-btn.frameless:nth-child(3),
+.timeworks-content03 .normal-btn.frameless:nth-child(3) {
+    margin-right: 2rem;
+}
+
+.timeworks-content02 .normal-btn.frameless:nth-child(2),
+.timeworks-content02 .normal-btn.frameless:nth-child(5),
+.timeworks-content03 .normal-btn.frameless:nth-child(2),
+.timeworks-content03 .normal-btn.frameless:nth-child(5)  {
     min-width: 1.5rem;
     padding-left: .5rem;
     padding-right: .5rem;
@@ -90,24 +133,36 @@
     grid-template-columns: 8rem 6rem 6rem 7rem 7rem 6rem 1fr;
 }
 
-.normal-table.timeworks01 tbody.scroll-area,
-.normal-table.timeworks02 tbody.scroll-area {
-    min-height: 12rem;
+.normal-table.timeworks03 tr {
+    grid-template-columns: 3rem 5rem 10rem 5rem 1fr;
 }
 
+div[data-panel="03"] .form-parts.office {
+    width: 15rem;
+    margin-bottom: .5rem;
+}
+
+/* .normal-table.timeworks01 tbody.scroll-area,
+.normal-table.timeworks02 tbody.scroll-area {
+    min-height: 12rem;
+} */
+
 .normal-table.timeworks01 tbody tr[name="data-row"],
-.normal-table.timeworks02 tbody tr[name="data-row"] {
+.normal-table.timeworks02 tbody tr[name="data-row"],
+.normal-table.timeworks03 tbody tr[name="data-row"] {
     height: 2.5rem;
     border: 0;
 }
 
 .normal-table.timeworks01 tbody tr[name="data-row"].selected,
-.normal-table.timeworks02 tbody tr[name="data-row"].selected {
+.normal-table.timeworks02 tbody tr[name="data-row"].selected,
+.normal-table.timeworks03 tbody tr[name="data-row"].selected {
     background-color: transparent;
 }
 
 .normal-table.timeworks01 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child,
-.normal-table.timeworks02 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child {
+.normal-table.timeworks02 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child,
+.normal-table.timeworks03 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child {
     border: 0;
 }
 
@@ -121,6 +176,10 @@
     padding: .5rem;
     width: fit-content;
     font-size: 1.1rem;
+}
+
+.normal-table.timeworks02 tr input.changed {
+    color: darkred;
 }
 
 #employee-list-01.normal-list {

@@ -3,6 +3,7 @@ package com.kyouseipro.neo.controller.api;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
@@ -89,10 +91,34 @@ public class TimeworksListApiController {
      */
     @PostMapping("/timeworks/regist/today")
 	@ResponseBody
-    public Integer saveTimeworksToday(@RequestBody TimeworksListEntity timeworksEntity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> saveTimeworksToday(@RequestBody TimeworksListEntity timeworksEntity, @AuthenticationPrincipal OidcUser principal) {
         // LocalDate date = LocalDate.now();
         // String datetime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSS"));
         String editor = principal.getAttribute("preferred_username");
-        return timeworksListService.saveTodaysTimeworks(timeworksEntity, editor);
+        // return timeworksListService.saveTodaysTimeworks(timeworksEntity, editor);
+        Integer id = timeworksListService.saveTodaysTimeworks(timeworksEntity, editor);
+        if (id != null && id > 0) {
+            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+        }
+    }
+
+    /**
+     * 勤怠情報を作成・更新する
+     * @param list
+     * @return
+     */
+    @PostMapping("/timeworks/update/list")
+	@ResponseBody
+    public ResponseEntity<ApiResponse<Integer>> updateTimeworksList(@RequestBody List<TimeworksListEntity> list, @AuthenticationPrincipal OidcUser principal) {
+        String editor = principal.getAttribute("preferred_username");
+        // return timeworksListService.updateTimeworksList(list, editor);
+        Integer id = timeworksListService.updateTimeworksList(list, editor);
+        if (id != null && id > 0) {
+            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+        }
     }
 }

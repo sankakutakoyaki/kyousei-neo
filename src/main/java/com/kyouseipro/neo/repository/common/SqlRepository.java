@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.function.ThrowingConsumer;
 
+import com.kyouseipro.neo.interfaceis.sql.SQLBiConsumer;
 import com.kyouseipro.neo.interfaceis.sql.SQLConsumer;
 import com.kyouseipro.neo.interfaceis.sql.SQLFunction;
 import com.kyouseipro.neo.interfaceis.sql.SqlParameterBinder;
@@ -149,6 +151,27 @@ public class SqlRepository {
             PreparedStatement ps = conn.prepareStatement(sql)) {
             binder.accept(ps);
             return ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T> int executeBatch(
+        String sql,
+        SQLBiConsumer<PreparedStatement, T> binder,
+        List<T> entities) {
+
+        try (Connection conn = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            for (T entity : entities) {
+                binder.accept(pstmt, entity); // パラメータをセット
+                pstmt.addBatch();             // バッチに追加
+            }
+
+            int[] results = pstmt.executeBatch(); // まとめて実行
+            return Arrays.stream(results).sum();  // 更新件数の合計を返す
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

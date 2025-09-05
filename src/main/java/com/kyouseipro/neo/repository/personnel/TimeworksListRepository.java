@@ -97,4 +97,37 @@ public class TimeworksListRepository {
             t
         );
     }
+
+    /**
+     * UPDATE
+     * @param w
+     * @param editor
+     * @return
+     */
+    public Integer updateTimeworksList(List<TimeworksListEntity> list, String editor) {
+        // if (list.size() == 0) return 0;
+
+        // String sql = "";
+        // for (int i = 0; i < list.size(); i++) {
+        //     sql += TimeworksListSqlBuilder.buildUpdateSql();
+        // }
+
+        // return sqlRepository.execute(
+        //     sql,
+        //     (pstmt, entities) -> TimeworksListParameterBinder.bindUpdateListParameters(pstmt, entities, editor),
+        //     rs -> rs.next() ? rs.getInt("timeworks_id") : null,
+        //     list
+        // );
+        // public int updateTimeworksList(List<TimeworksListEntity> list, String editor) {
+        if (list.isEmpty()) return 0;
+
+        String sql = TimeworksListSqlBuilder.buildUpdateSql(); // UPDATE ... WHERE id = ?
+
+        return sqlRepository.executeBatch(
+            sql,
+            (pstmt, entity) -> TimeworksListParameterBinder.bindUpdateParameters(pstmt, entity, editor),
+            list
+        );
+
+    }
 }
