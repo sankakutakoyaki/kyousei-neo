@@ -31,6 +31,13 @@ public class TimeworksListParameterBinder {
         ps.setString(7, end.toString());
     }
 
+    public static void bindFindByBetweenSummaryEntityByOfficeId(PreparedStatement ps, Integer officeId, LocalDate start, LocalDate end) throws SQLException {
+        ps.setInt(1, Enums.state.DELETE.getCode());
+        ps.setInt(2, officeId);
+        ps.setString(3, start.toString());
+        ps.setString(4, end.toString());
+    }
+
     public static void bindFindByDate(PreparedStatement ps, LocalDate date) throws SQLException {
         ps.setInt(1, Enums.state.DELETE.getCode());
         ps.setInt(2, Enums.state.DELETE.getCode());

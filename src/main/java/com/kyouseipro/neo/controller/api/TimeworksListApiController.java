@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
+import com.kyouseipro.neo.entity.personnel.TimeworksSummaryEntity;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 import com.kyouseipro.neo.service.personnel.TimeworksListService;
 
@@ -70,17 +71,20 @@ public class TimeworksListApiController {
                 @RequestParam LocalDate start,
                 @RequestParam LocalDate end) {
         List<TimeworksListEntity> list = timeworksListService.getBetweenEntityByEmployeeId(id, start, end);
-        // if (entity == null) {
-        //     entity = new TimeworksListEntity();
-        //     EmployeeEntity emp = employeeService.getEmployeeById(id);
-        //     if (emp != null) {
-        //         entity.setEmployee_id(emp.getEmployee_id());
-        //         entity.setFull_name(emp.getFull_name());
-        //         entity.setWork_date(LocalDate.now());
-        //     } else {
-        //         return entity;
-        //     }
-        // }
+        return list;
+    }
+
+    /**
+     * 指定した期間のEntityList概要版を取得する
+     * @return
+     */
+    @PostMapping("/timeworks/summary/get/between/id")
+	@ResponseBody
+    public List<TimeworksSummaryEntity> getBetweenSummaryEntityByEmployeeId(
+                @RequestParam int id,
+                @RequestParam LocalDate start,
+                @RequestParam LocalDate end) {
+        List<TimeworksSummaryEntity> list = timeworksListService.getBetweenSummaryEntityByEmployeeId(id, start, end);
         return list;
     }
 

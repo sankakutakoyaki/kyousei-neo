@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
+import com.kyouseipro.neo.entity.personnel.TimeworksSummaryEntity;
 import com.kyouseipro.neo.repository.personnel.TimeworksListRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,17 @@ public class TimeworksListService {
      */
     public List<TimeworksListEntity> getBetweenEntityByEmployeeId(int id, LocalDate start, LocalDate end) {
         return timeworksListRepository.findByEmployeeIdFromBetweenDate(id, start, end);
+    }
+
+    /**
+     * 指定された営業所IDの指定した期間の勤怠情報概要を取得します。
+     * 論理削除されている場合は null を返します。
+     *
+     * @param id 営業所ID
+     * @return TimeworksSummaryListEntity または null
+     */
+    public List<TimeworksSummaryEntity> getBetweenSummaryEntityByEmployeeId(int id, LocalDate start, LocalDate end) {
+        return timeworksListRepository.findByOfficeIdFromBetweenDate(id, start, end);
     }
 
     /**

@@ -6,7 +6,9 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
+import com.kyouseipro.neo.entity.personnel.TimeworksSummaryEntity;
 import com.kyouseipro.neo.mapper.personnel.TimeworksListEntityMapper;
+import com.kyouseipro.neo.mapper.personnel.TimeworksSummaryEntityMapper;
 import com.kyouseipro.neo.query.parameter.personnel.TimeworksListParameterBinder;
 import com.kyouseipro.neo.query.sql.personnel.TimeworksListSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
@@ -46,6 +48,21 @@ public class TimeworksListRepository {
             sql,
             ps -> TimeworksListParameterBinder.bindFindByBetweenEntityByEmployeeId(ps, id, start, end),
             TimeworksListEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+
+    /**
+     * 日付指定でIDで指定した従業員の勤怠情報を取得
+     * @param date
+     * @return
+     */
+    public List<TimeworksSummaryEntity> findByOfficeIdFromBetweenDate(int id, LocalDate start, LocalDate end) {
+        String sql = TimeworksListSqlBuilder.buildFindByBetweenSummaryEntityByOfficeId();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> TimeworksListParameterBinder.bindFindByBetweenSummaryEntityByOfficeId(ps, id, start, end),
+            TimeworksSummaryEntityMapper::map // ← ここで ResultSet を map
         );
     }
 

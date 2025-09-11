@@ -21,6 +21,16 @@ public class TimeworksListSqlBuilder {
         return baseSelectString() +  " WHERE t.employee_id = ? AND NOT (t.state = ?) AND t.work_date BETWEEN ? AND ?";
     }
 
+    public static String buildFindByBetweenSummaryEntityByOfficeId() {
+        // return baseSelectString() +  " WHERE t.employee_id = ? AND NOT (t.state = ?) AND t.work_date BETWEEN ? AND ?";
+        return 
+        "SELECT t.employee_id, COALESCE(e.full_name, '') as full_name, COUNT(DISTINCT t.work_date) AS total_working_date, " +
+        "SUM(DATEDIFF(MINUTE, t.comp_start_time, t.comp_end_time) - DATEDIFF(MINUTE, '00:00:00', t.rest_time)) / 60.0 AS total_working_time " +
+        "FROM timeworks t " +
+        "LEFT OUTER JOIN employees e ON e.employee_id = t.employee_id AND NOT (e.state = ?)" +
+        "WHERE e.office_id = ? AND t.work_date >= ? AND t.work_date < ? GROUP BY t.employee_id, full_name;";
+    }
+
     public static String buildFindByDateSql() {
         return baseSelectString() + " WHERE t.work_date = ? AND NOT (t.state = ?)";
     }
