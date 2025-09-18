@@ -3,7 +3,6 @@ package com.kyouseipro.neo.mapper.personnel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
@@ -44,16 +43,20 @@ public class TimeworksListEntityMapper {
         // 確定データ
         LocalDateTime compStart = rs.getTimestamp("comp_start_time").toLocalDateTime();
         if (compStart != null) {
-            if (compStart.toString().isEmpty() || compStart.toLocalTime().equals(LocalTime.MIDNIGHT)) {
-                entity.setComp_start_time(basicStartStr);
+            // if (compStart.toString().isEmpty() || compStart.toLocalTime().equals(LocalTime.MIDNIGHT)) {
+            //     entity.setComp_start_time(basicStartStr);
+            if (compStart.toString().isEmpty()) {
+                entity.setComp_start_time("00:00:00");
             } else {
                 entity.setComp_start_time(compStart.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString());
             }
         }
         LocalDateTime compEnd = rs.getTimestamp("comp_end_time").toLocalDateTime();
         if (compEnd != null) {
-            if (compEnd.toString().isEmpty() || compEnd.toLocalTime().equals(LocalTime.MIDNIGHT)) {
-                entity.setComp_end_time(basicEndStr);
+            // if (compEnd.toString().isEmpty() || compEnd.toLocalTime().equals(LocalTime.MIDNIGHT)) {
+            //     entity.setComp_end_time(basicEndStr);
+            if (compEnd.toString().isEmpty()) {
+                entity.setComp_end_time("00:00:00");
             } else {
                 entity.setComp_end_time(compEnd.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString());
             }

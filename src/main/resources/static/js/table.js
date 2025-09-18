@@ -351,24 +351,49 @@ async function downloadCsv(tableId, url) {
         // 選択された要素がなければメッセージを表示して終了
         openMsgDialog("msg-dialog", "選択されていません", "red");
     } else {
-        // スピナー表示
-        startProcessing();
-
-        // 取得処理
-        // const data = JSON.stringify(ids);
-        const result = await postFetch(url, JSON.stringify(data), token, "application/json");
-        const text = await result.text();
-
-        // 文字列データが返却されなければ、エラーメッセージを表示
-        if (text == null || text == "") {
-            openMsgDialog("msg-dialog", "取得できませんでした", "red");
-        } else {
-            createCsvThenDownload(text);
-        }
-
-        // スピナー消去
-        processingEnd();
+        execDownloadCsv(data, url);
     }
+}
+
+/**
+ * 選択された要素のCSVファイルを作成してダウンロードする
+ * @param {*} parent 
+ * @param {*} downloaddata 
+ */
+async function downloadCsvByBetweenDate(tableId, url, startStr, endStr) {
+    // 選択された要素を取得する
+    const data = getAllSelectedIds(tableId);
+    if (data.length == 0) {
+        // 選択された要素がなければメッセージを表示して終了
+        openMsgDialog("msg-dialog", "選択されていません", "red");
+    } else {
+        funcDownloadCsv({ids:data, start:startStr, end:endStr}, url);
+    }
+}
+
+/**
+ * CSVダウンロード処理部分
+ * @param {*} data 
+ * @param {*} url 
+ */
+async function funcDownloadCsv(data, url) {
+    // スピナー表示
+    startProcessing();
+
+    // 取得処理
+    // const data = JSON.stringify(ids);
+    const result = await postFetch(url, JSON.stringify(data), token, "application/json");
+    const text = await result.text();
+
+    // 文字列データが返却されなければ、エラーメッセージを表示
+    if (text == null || text == "") {
+        openMsgDialog("msg-dialog", "取得できませんでした", "red");
+    } else {
+        createCsvThenDownload(text);
+    }
+
+    // スピナー消去
+    processingEnd();
 }
 
 /**

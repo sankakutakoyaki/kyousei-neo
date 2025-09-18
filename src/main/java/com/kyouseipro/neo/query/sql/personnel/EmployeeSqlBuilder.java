@@ -95,6 +95,10 @@ public class EmployeeSqlBuilder {
         return "SELECT * FROM employees WHERE employee_id = ? AND NOT (state = ?)";
     }
 
+    public static String buildFindByCodeSql() {
+        return "SELECT * FROM employees WHERE code = ? AND NOT (state = ?)";
+    }
+
     public static String buildFindByAccountSql() {
         return "SELECT * FROM employees WHERE account = ? AND NOT (state = ?)";
     }

@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
+<!-- タブ1 --------------------------------------------------------------------------------------------------------------->
     <header class="timeworks-content01" th:fragment="header01Fragment()">
         <div class="clock">
             <div>
@@ -40,10 +41,7 @@
         <button type="button" class="page-top"></button>
     </main>
 
-    <footer th:fragment="footerFragment()" th:remove="tag">
-        <span>0件 : 0000/00/00 00:00 現在</span>
-    </footer>
-
+<!-- タブ2 --------------------------------------------------------------------------------------------------------------->    
     <header class="timeworks-content02" th:fragment="header02Fragment()">
         <!-- 期間指定ボックス -->
         <div class="flex-area">
@@ -51,7 +49,7 @@
             <span class="pc-style">〜</span>
             <input id="end-date01" class="normal-input date-area icon-del" type="date" value="" disabled>
             <!-- <button name="search-btn" class="normal-btn ok" type="button" onclick="execSearch()"> -->
-            <button id="save-btn02" name="save-btn" class="normal-btn" type="button" onclick="execSave()" disabled>
+            <button id="save-btn02" name="save-btn" class="normal-btn" type="button" onclick="execSave(this)" disabled>
                 <span>保存</span>
             </button>
         </div>
@@ -77,6 +75,7 @@
         <button type="button" class="page-top"></button>
     </main>
 
+<!-- タブ3 --------------------------------------------------------------------------------------------------------------->
     <header class="timeworks-content03" th:fragment="header03Fragment()">
         <!-- 期間指定ボックス -->
         <div class="flex-area">
@@ -84,7 +83,7 @@
             <span class="pc-style">〜</span>
             <input id="end-date02" class="normal-input date-area icon-del" type="date" value="" disabled>
             <!-- <button name="search-btn" class="normal-btn ok" type="button" onclick="execSearch()"> -->
-            <button id="down-btn01" name="down-btn" class="normal-btn ok" type="button" onclick="execDownload()">
+            <button id="down-btn01" name="down-btn" class="normal-btn ok" type="button" onclick="execDownloadCsv()">
                 <span>出力</span>
             </button>
         </div>
@@ -108,6 +107,40 @@
         </table>
         <button type="button" class="page-top"></button>
     </main>
+
+<!-- タブ4 --------------------------------------------------------------------------------------------------------------->
+    <main th:fragment="mainFragment04(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table timeworks04">
+            <tr id="row-0" name="table-header" class="pc-style">
+                <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
+                <th><span>ID<span class="sort-arrow"></span></span></th>
+                <th><span>氏名<span class="sort-arrow"></span></span></th>
+                <th><span>使用日数<span class="sort-arrow"></span></span></th>
+                <!-- <th><span>残日数<span class="sort-arrow"></span></span></th> -->
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+    <main th:fragment="mainFragment05(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table timeworks05">
+            <tr id="row-0" name="table-header" class="pc-style">
+                <!-- <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th> -->
+                <th><span>開始日<span class="sort-arrow"></span></span></th>
+                <th><span>終了日<span class="sort-arrow"></span></span></th>
+                <th><span>事由<span class="sort-arrow"></span></span></th>
+                <th></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+<!-- フッター --------------------------------------------------------------------------------------------------------------->
+    <footer th:fragment="footerFragment()" th:remove="tag">
+        <span>0件 : 0000/00/00 00:00 現在</span>
+    </footer>
 </body>
 
 </html>

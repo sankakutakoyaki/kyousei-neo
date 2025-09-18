@@ -55,13 +55,13 @@
     </div>
     <!-- 日付移動ボタン -->
     <div th:fragment="header-2week-move-btn-fragment(startId, endId)" class="flex-area">
-        <button name="prev-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-month-move', [[${startId}]], [[${endId}]]); execListChange()">
+        <button name="prev-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-month-move', [[${startId}]], [[${endId}]]); execListChange(this)">
             <img th:src="@{/icons/prev.png}">
         </button>
-        <button name="prev-2week-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('half-month', [[${startId}]], [[${endId}]]); execListChange()">
+        <button name="prev-2week-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('half-month', [[${startId}]], [[${endId}]]); execListChange(this)">
             <span>15締め</span>
         </button>
-        <button name="next-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-month-move', [[${startId}]], [[${endId}]]); execListChange()">
+        <button name="next-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-month-move', [[${startId}]], [[${endId}]]); execListChange(this)">
             <img th:src="@{/icons/next.png}">
         </button>
         
@@ -69,13 +69,13 @@
             <span>今月</span>
         </button> -->
 
-        <button name="prev-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-month', [[${startId}]], [[${endId}]]); execListChange()">
+        <button name="prev-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-month', [[${startId}]], [[${endId}]]); execListChange(this)">
             <img th:src="@{/icons/prev.png}">
         </button>
-        <button name="this-2week-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('end-month', [[${startId}]], [[${endId}]]); execListChange()">
+        <button name="this-2week-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('end-month', [[${startId}]], [[${endId}]]); execListChange(this)">
             <span>末締め</span>
         </button>
-        <button name="next-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-month', [[${startId}]], [[${endId}]]); execListChange()">
+        <button name="next-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-month', [[${startId}]], [[${endId}]]); execListChange(this)">
             <img th:src="@{/icons/next.png}">
         </button>
     </div>

@@ -8,6 +8,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.personnel.PaidHolidayEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
 
 public class TimeworksListParameterBinder {
@@ -31,11 +32,36 @@ public class TimeworksListParameterBinder {
         ps.setString(7, end.toString());
     }
 
-    public static void bindFindByBetweenSummaryEntityByOfficeId(PreparedStatement ps, Integer officeId, LocalDate start, LocalDate end) throws SQLException {
+    public static void bindFindByBetweenSummaryEntity(PreparedStatement ps, LocalDate start, LocalDate end) throws SQLException {
         ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, officeId);
+        ps.setInt(2, Enums.state.CREATE.getCode());
         ps.setString(3, start.toString());
         ps.setString(4, end.toString());
+    }
+
+    public static void bindFindByBetweenSummaryEntityByOfficeId(PreparedStatement ps, Integer officeId, LocalDate start, LocalDate end) throws SQLException {
+        ps.setInt(1, Enums.state.DELETE.getCode());
+        ps.setInt(2, Enums.state.CREATE.getCode());
+        ps.setInt(3, officeId);
+        ps.setString(4, start.toString());
+        ps.setString(5, end.toString());
+    }
+
+    // 有給休暇取得リスト
+    public static void bindFindPaidHolidayEntityByOfficeIdFromYear(PreparedStatement ps, Integer officeId, String year) throws SQLException {
+        ps.setInt(1, Enums.state.DELETE.getCode());
+        ps.setString(2, year);
+        ps.setString(3, year);        
+        ps.setInt(4, Enums.state.DELETE.getCode());
+        ps.setInt(5, officeId);
+    }
+
+    public static void bindFindPaidHolidayEntityByEmployeeIdFromYear(PreparedStatement ps, Integer employeeId, String year) throws SQLException {
+        ps.setInt(1, Enums.state.DELETE.getCode());
+        ps.setInt(2, employeeId);
+        ps.setInt(3, Enums.state.DELETE.getCode());
+        ps.setString(4, year);
+        ps.setString(5, year);
     }
 
     public static void bindFindByDate(PreparedStatement ps, LocalDate date) throws SQLException {
@@ -95,22 +121,49 @@ public class TimeworksListParameterBinder {
         pstmt.setString(12, editor);
     }
 
-    // public static void bindUpdateListParameters(PreparedStatement pstmt, List<TimeworksListEntity> list, String editor) throws SQLException {
-    //     for (TimeworksListEntity t : list) {
-    //         pstmt.setInt(1, t.getEmployee_id());
-    //         pstmt.setInt(2, t.getCategory());
-    //         pstmt.setString(3, LocalDate.now().toString());
-    //         pstmt.setTime(4, t.getStart_time() != null ? Time.valueOf(t.getStart_time()) : Time.valueOf("00:00:00"));
-    //         pstmt.setTime(5, t.getEnd_time() != null ? Time.valueOf(t.getEnd_time()) : Time.valueOf("00:00:00"));
-    //         pstmt.setTime(6, t.getComp_start_time() != null ? Time.valueOf(t.getComp_start_time()) : Time.valueOf("00:00:00"));
-    //         pstmt.setTime(7, t.getComp_end_time() != null ? Time.valueOf(t.getComp_end_time()) : Time.valueOf("00:00:00"));
-    //         pstmt.setTime(8, t.getRest_time() != null ? Time.valueOf(t.getRest_time()) : Time.valueOf("00:00:00"));
-    //         pstmt.setInt(9, t.getVersion());
-    //         pstmt.setInt(10, t.getState());
+    public static void bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids, String start, String end) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        for (Integer id : ids) {
+            ps.setInt(index++, id); // 1. employee_id IN (?, ?, ?)
+        }
+        ps.setInt(index++, Enums.state.CREATE.getCode()); // 2. AND NOT (state = ?)
+        ps.setString(index++, start);
+        ps.setString(index++, end);
+    }
 
-    //         pstmt.setInt(11, t.getTimeworks_id());
+    // 有給
+    public static void bindInsertPaidHolidayParameters(PreparedStatement pstmt, PaidHolidayEntity p, String editor) throws SQLException {
+        pstmt.setInt(1, p.getEmployee_id());
+        if (p.getStart_date() != null) {
+            pstmt.setDate(2, java.sql.Date.valueOf(p.getStart_date()));
+        } else {
+            pstmt.setNull(2, java.sql.Types.DATE);
+        }
+        if (p.getEnd_date() != null) {
+            pstmt.setDate(3, java.sql.Date.valueOf(p.getEnd_date()));
+        } else {
+            pstmt.setNull(3, java.sql.Types.DATE);
+        }
+        pstmt.setInt(4, p.getPermit_employee_id());
+        pstmt.setString(5, p.getReason());
+        pstmt.setInt(6, p.getVersion());
+        pstmt.setInt(7, p.getState());
 
-    //         pstmt.setString(12, editor);
-    //     };
-    // }
+        pstmt.setInt(8, p.getEmployee_id());
+        pstmt.setInt(9, Enums.state.DELETE.getCode());
+        pstmt.setDate(10, java.sql.Date.valueOf(p.getEnd_date()));
+        pstmt.setDate(11, java.sql.Date.valueOf(p.getStart_date()));
+
+        pstmt.setString(12, editor);
+    }
+
+    public static void bindDeletePaidHolidayParameters(PreparedStatement pstmt, int id, String editor) throws SQLException {
+        pstmt.setInt(1, Enums.state.DELETE.getCode());
+        pstmt.setInt(2, id);
+
+        pstmt.setString(3, editor);
+    }
 }

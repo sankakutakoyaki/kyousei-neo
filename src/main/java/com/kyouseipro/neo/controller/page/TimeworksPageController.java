@@ -49,7 +49,7 @@ public class TimeworksPageController {
         TimeworksListEntity entity = new TimeworksListEntity();
         mv.addObject("entity", entity);
         // 初期表示用営業所ID
-        mv.addObject("officeId", session.getAttribute("officeId"));
+        mv.addObject("officeId", session.getAttribute("officeId") == null ? "1000" : session.getAttribute("officeId").toString());
         // 営業所リスト
         List<SimpleData> officeList = comboBoxService.getSimpleOfficeList();
         mv.addObject("officeList", officeList);

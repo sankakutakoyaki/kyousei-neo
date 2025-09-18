@@ -6,12 +6,16 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
 import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
+import com.kyouseipro.neo.mapper.personnel.EmployeeEntityMapper;
 import com.kyouseipro.neo.mapper.qualification.QualificationsEntityMapper;
+import com.kyouseipro.neo.query.parameter.personnel.EmployeeParameterBinder;
 import com.kyouseipro.neo.query.parameter.qualification.QualificationsParameterBinder;
 import com.kyouseipro.neo.query.sql.qualification.QualificationsSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
+import com.kyouseipro.neo.repository.personnel.EmployeeRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QualificationsRepository {
     private final SqlRepository sqlRepository;
+    private final EmployeeRepository employeeRepository;
 
     // INSERT
     public Integer insertQualifications(QualificationsEntity q, String editor) {
@@ -104,10 +109,12 @@ public class QualificationsRepository {
     // IDによる資格情報取得
     public List<QualificationsEntity> findByIdForEmployee(int employeeId) {
         String sql = QualificationsSqlBuilder.buildFindAllEmployeeIdSql();
+            EmployeeEntity entity = employeeRepository.findById(employeeId);
+            int id = entity.getEmployee_id();
 
         return sqlRepository.findAll(
             sql,
-            ps -> QualificationsParameterBinder.bindFindByIdForEmployee(ps, employeeId),
+            ps -> QualificationsParameterBinder.bindFindByIdForEmployee(ps, id),
             QualificationsEntityMapper::map // ← ここで ResultSet を map
         );
     }

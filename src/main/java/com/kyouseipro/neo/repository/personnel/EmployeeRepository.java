@@ -2,6 +2,8 @@ package com.kyouseipro.neo.repository.personnel;
 
 import java.util.List;
 
+import javax.swing.text.html.parser.Entity;
+
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Utilities;
@@ -96,11 +98,33 @@ public class EmployeeRepository {
     public EmployeeEntity findById(int employeeId) {
         String sql = EmployeeSqlBuilder.buildFindByIdSql();
 
+        // 3桁以下のIDは4桁以上に変換する
+        if (String.valueOf(Math.abs(employeeId)).length() < 4) {
+            EmployeeEntity entity = findByCode(employeeId);
+            employeeId = entity.getEmployee_id();
+        }
+
         return sqlRepository.execute(
             sql,
             (pstmt, comp) -> EmployeeParameterBinder.bindFindById(pstmt, comp),
             rs -> rs.next() ? EmployeeEntityMapper.map(rs) : null,
             employeeId
+        );
+    }
+
+    /**
+     * IDによる取得。
+     * @param employeeId
+     * @return IDから取得したEntityをかえす。
+     */
+    public EmployeeEntity findByCode(int code) {
+        String sql = EmployeeSqlBuilder.buildFindByCodeSql();
+
+        return sqlRepository.execute(
+            sql,
+            (pstmt, comp) -> EmployeeParameterBinder.bindFindById(pstmt, comp),
+            rs -> rs.next() ? EmployeeEntityMapper.map(rs) : null,
+            code
         );
     }
 

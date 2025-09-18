@@ -9,7 +9,7 @@ import com.kyouseipro.neo.interfaceis.CsvExportable;
 import lombok.Data;
 
 @Data
-public class EmployeeEntity  implements CsvExportable {
+public class EmployeeEntity implements CsvExportable {
     private int employee_id;
     private int company_id;
     private int office_id;

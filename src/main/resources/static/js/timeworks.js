@@ -26,13 +26,21 @@ async function setTimeworks(timeCategory) {
     return await result.json();
 }
 
-async function updateTimeworks(list) {
+async function updateTimeworks(list, self) {
     const data = JSON.stringify(list);
     const url = '/timeworks/update/list';
     const contentType = 'application/json';
     const result = await postFetch(url, data, token, contentType);
 
-    await execListChange();
+    await execListChange(self);
     
     return await result.json();
+}
+
+function zeroTimeCheck(self) {
+    if (self.value === "00:00:00") {
+        self.classList.add("zero-time");
+    } else {
+        self.classList.remove("zero-time");
+    }
 }

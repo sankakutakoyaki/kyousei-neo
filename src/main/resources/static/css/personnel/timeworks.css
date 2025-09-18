@@ -20,7 +20,8 @@
 
 .timeworks-container01,
 .timeworks-container02,
-.timeworks-container03 {
+.timeworks-container03,
+.timeworks-container04 {
     display: grid;
     width: 100%;
     height: 100%;
@@ -38,6 +39,10 @@
 }
 
 .timeworks-container03 {
+    grid-template-columns: 40rem;
+}
+
+.timeworks-container04 {
     grid-template-columns: 40rem;
 }
 
@@ -59,7 +64,14 @@
     display: grid;
     row-gap: .5rem;
     grid-template-rows: auto auto;
-    /* padding: 1rem; */
+}
+
+.timeworks-content04 {
+    display: grid;
+}
+
+#form02 {
+    display: grid;
 }
 
 /* .timeworks-content02>div.flex-area:nth-child(2) {
@@ -137,11 +149,28 @@
     grid-template-columns: 3rem 5rem 10rem 5rem 1fr;
 }
 
-div[data-panel="03"] .form-parts.office {
+.normal-table.timeworks04 tr {
+    grid-template-columns: 3rem 5rem 10rem 5rem 1fr;
+}
+
+.normal-table.timeworks05 tr {
+    grid-template-columns: 8rem 8rem minmax(8rem, 1fr) 3rem;
+}
+
+div[data-panel="03"] .form-parts.office,
+div[data-panel="04"] .form-parts.office {
     width: 15rem;
+    /* margin-bottom: .5rem; */
+}
+
+div[data-panel="03"] .form-parts.office {
     margin-bottom: .5rem;
 }
 
+div[data-panel="04"] .form-parts.year {
+    width: 7rem;
+    /* margin-bottom: .5rem; */
+}
 /* .normal-table.timeworks01 tbody.scroll-area,
 .normal-table.timeworks02 tbody.scroll-area {
     min-height: 12rem;
@@ -149,20 +178,29 @@ div[data-panel="03"] .form-parts.office {
 
 .normal-table.timeworks01 tbody tr[name="data-row"],
 .normal-table.timeworks02 tbody tr[name="data-row"],
-.normal-table.timeworks03 tbody tr[name="data-row"] {
+.normal-table.timeworks03 tbody tr[name="data-row"],
+.normal-table.timeworks04 tbody tr[name="data-row"],
+.normal-table.timeworks05 tbody tr[name="data-row"] {
     height: 2.5rem;
     border: 0;
 }
 
 .normal-table.timeworks01 tbody tr[name="data-row"].selected,
 .normal-table.timeworks02 tbody tr[name="data-row"].selected,
-.normal-table.timeworks03 tbody tr[name="data-row"].selected {
+.normal-table.timeworks03 tbody tr[name="data-row"].selected,
+.normal-table.timeworks05 tbody tr[name="data-row"].selected {
     background-color: transparent;
+}
+
+.normal-table.timeworks04 tbody tr[name="data-row"].selected {
+    background-color: var(--row-selected);
 }
 
 .normal-table.timeworks01 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child,
 .normal-table.timeworks02 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child,
-.normal-table.timeworks03 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child {
+.normal-table.timeworks03 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child,
+.normal-table.timeworks04 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child,
+.normal-table.timeworks05 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child {
     border: 0;
 }
 
@@ -171,11 +209,16 @@ div[data-panel="03"] .form-parts.office {
     color: lightgray;
 }
 
-.normal-table.timeworks02 tr input {
+.normal-table.timeworks02 tr input,
+.normal-table.timeworks05 tr input {
     border: 0;
     padding: .5rem;
     width: fit-content;
     font-size: 1.1rem;
+}
+
+.normal-table.timeworks05 tr input {
+    background-color: transparent;
 }
 
 .normal-table.timeworks02 tr input.changed {
@@ -186,22 +229,43 @@ div[data-panel="03"] .form-parts.office {
     padding: 0 1rem;
 }
 
+#form-01 .form-parts {
+    width: 100%;
+}
+
+#form-01 textarea[name="reason"] {
+    width: 100%;
+    height: 8rem;
+}
+
+#form-01 .code-box>:first-child {
+    width: 8rem;
+}
+
 @media screen and (max-width:1240px) {
 }
 
 @media screen and (max-width:560px) {
     .timeworks-container01,
-    .timeworks-container02 {
+    .timeworks-container02,
+    .timeworks-container03,
+    .timeworks-container04 {
         display: block;
         width: 100%;
         padding: 0;
     }
     .normal-table.timeworks01 tr,
-    .normal-table.timeworks02 tr {
+    .normal-table.timeworks02 tr,
+    .normal-table.timeworks03 tr,
+    .normal-table.timeworks04 tr,
+    .normal-table.timeworks05 tr {
         grid-template-columns: 1fr;
     }
     .normal-table.timeworks01 tr th,
-    .normal-table.timeworks02 tr th {
+    .normal-table.timeworks02 tr th,
+    .normal-table.timeworks03 tr th,
+    .normal-table.timeworks04 tr th,
+    .normal-table.timeworks05 tr th {
         display: none;
     }
     .input-area.code-box {

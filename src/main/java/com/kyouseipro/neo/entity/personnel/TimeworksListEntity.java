@@ -2,10 +2,13 @@ package com.kyouseipro.neo.entity.personnel;
 
 import java.time.LocalDate;
 
+import com.kyouseipro.neo.common.Utilities;
+import com.kyouseipro.neo.interfaceis.CsvExportable;
+
 import lombok.Data;
 
 @Data
-public class TimeworksListEntity {
+public class TimeworksListEntity implements CsvExportable {
     private int timeworks_id;
     private int employee_id;
     private int category;
@@ -21,6 +24,23 @@ public class TimeworksListEntity {
     private String rest_time;
     private int version;
     private int state;
+
+    // CSVヘッダーを返す static メソッド（必須ではないですが慣例的に付ける）
+    public static String getCsvHeader() {
+        return "ID,従業員名,出勤日,出勤時刻(打刻),退勤時刻(打刻),出勤時刻(確定),退勤時刻(確定),休憩時間";
+    }
+
+    @Override
+    public String toCsvRow() {
+        return Utilities.escapeCsv(String.valueOf(employee_id)) + "," +
+               Utilities.escapeCsv(full_name) + "," +
+               Utilities.escapeCsv(String.valueOf(work_date)) + "," +
+               Utilities.escapeCsv(start_time) + "," +
+               Utilities.escapeCsv(end_time) + "," +
+               Utilities.escapeCsv(comp_start_time) + "," +
+               Utilities.escapeCsv(comp_end_time) + "," +
+               Utilities.escapeCsv(rest_time);
+    }
 
     // @Override
     // public void setEntity(ResultSet rs) {

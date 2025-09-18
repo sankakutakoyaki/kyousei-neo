@@ -11,7 +11,7 @@ public class TimeworksSummaryEntityMapper {
         entity.setEmployee_id(rs.getInt("employee_id"));
         entity.setFull_name(rs.getString("full_name"));
         entity.setTotal_working_date(rs.getInt("total_working_date"));
-        entity.setTotal_working_time(rs.getInt("total_working_time"));
+        entity.setTotal_working_time(rs.getDouble("total_working_time"));
         return entity;
     }
 }

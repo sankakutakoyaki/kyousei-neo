@@ -3,9 +3,8 @@ package com.kyouseipro.neo.entity.personnel;
 import lombok.Data;
 
 @Data
-public class TimeworksSummaryEntity {
+public class PaidHolidayListEntity {
     private int employee_id;
     private String full_name;
-    private int total_working_date;
-    private double total_working_time;
+    private int total_days;
 }

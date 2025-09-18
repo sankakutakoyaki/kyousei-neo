@@ -1,7 +1,9 @@
 package com.kyouseipro.neo.controller.api;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.data.ApiResponse;
+import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
+import com.kyouseipro.neo.entity.personnel.PaidHolidayEntity;
+import com.kyouseipro.neo.entity.personnel.PaidHolidayListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksSummaryEntity;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
@@ -84,8 +89,73 @@ public class TimeworksListApiController {
                 @RequestParam int id,
                 @RequestParam LocalDate start,
                 @RequestParam LocalDate end) {
-        List<TimeworksSummaryEntity> list = timeworksListService.getBetweenSummaryEntityByEmployeeId(id, start, end);
-        return list;
+        if (id == 0) {
+            return timeworksListService.getBetweenSummaryEntity(start, end);
+        } else {
+            return timeworksListService.getBetweenSummaryEntityByOfficeId(id, start, end);
+        }
+        // List<TimeworksSummaryEntity> list = timeworksListService.getBetweenSummaryEntityByEmployeeId(id, start, end);
+        // return list;
+    }
+
+    /**
+     * 指定した年と営業所のEntityListを取得する
+     * @return
+     */
+    @PostMapping("/timeworks/paidholiday/get/year")
+	@ResponseBody
+    public List<PaidHolidayListEntity> getPaidHolidayEntityFromYear (
+                @RequestParam int id,
+                @RequestParam String year) {
+        return timeworksListService.getPaidHolidayEntityFromYear(id, year);
+    }
+
+    /**
+     * 指定した年と従業員の有給リストを取得する
+     * @return
+     */
+    @PostMapping("/timeworks/paidholiday/get/employeeid")
+	@ResponseBody
+    public List<PaidHolidayEntity> getPaidHolidayEntityFromEmployeeId (
+                @RequestParam int id,
+                @RequestParam String year) {
+        return timeworksListService.getPaidHolidayEntityByEmployeeId(id, year);
+    }
+
+    /**
+     * 指定した期間のEntityListを保存する
+     * @return
+     */
+    @PostMapping("/timeworks/paidholiday/save")
+	@ResponseBody
+    public ResponseEntity<ApiResponse<Integer>> savePaidHolidayEntityByEmployeeId (
+                @RequestBody PaidHolidayEntity entity,
+                @AuthenticationPrincipal OidcUser principal) {
+        String editor = principal.getAttribute("preferred_username");
+        Integer id = timeworksListService.savePaidHolidayEntityByEmployeeId(entity, editor);
+        if (id != null && id > 0) {
+            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました\n期間が重複している可能性があります。"));
+        }
+    }
+
+    /**
+     * 指定したIDのEntityを削除する
+     * @return
+     */
+    @PostMapping("/timeworks/paidholiday/delete/id")
+	@ResponseBody
+    public ResponseEntity<ApiResponse<Integer>> deletePaidHolidayEntityById (
+                @RequestParam int id,
+                @AuthenticationPrincipal OidcUser principal) {
+        String editor = principal.getAttribute("preferred_username");
+        Integer result = timeworksListService.deletePaidHolidayEntityById(id, editor);
+        if (result != null && result > 0) {
+            return ResponseEntity.ok(ApiResponse.ok("保存しました。", result));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+        }
     }
 
     /**
@@ -124,5 +194,26 @@ public class TimeworksListApiController {
         } else {
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
+    }
+
+    /**
+     * IDリストからCSV用データを取得する
+     * @param IDS
+     * @return 
+     */
+    @PostMapping("/timeworks/download/csv")
+	@ResponseBody
+    public String downloadCsvEntityByBetweenDate(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal) {
+        List<Map<String, Object>> items = (List<Map<String, Object>>) body.get("ids");
+        List<SimpleData> list = new ArrayList<>();
+        for (Map<String, Object> item : items) {
+            SimpleData data = new SimpleData();
+            data.setNumber(((Number) item.get("number")).intValue());
+            list.add(data);
+        }
+        String start = (String) body.get("start");
+        String end = (String) body.get("end");
+        String editor = principal.getAttribute("preferred_username");
+        return timeworksListService.downloadCsvByIds(list, start, end, editor);
     }
 }

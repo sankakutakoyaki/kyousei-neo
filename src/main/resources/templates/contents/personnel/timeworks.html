@@ -15,6 +15,7 @@
                     <li class="tab-menu-item is-active" data-tab="01">打刻</li>
                     <li class="tab-menu-item" data-tab="02">修正</li>
                     <li class="tab-menu-item" data-tab="03">出力</li>
+                    <li class="tab-menu-item" data-tab="04">有給</li>
                 </ul>
                 <div class="tab-panel is-show" data-panel="01">
                     <div class="timeworks-container01">
@@ -78,16 +79,108 @@
                         <!-- </div> -->
                     </div>
                 </div>
+                <div class="tab-panel" data-panel="04">
+                    <div class="timeworks-container04">
+                        <!-- <div class="main-area"> -->
+                        <div class="flex-area">
+                            <div class="form-parts office">
+                                <label>営業所・支店</label>
+                                <select tabindex="1" name="office" class="normal-select"></select>
+                            </div>
+                            <div class="form-parts year">
+                                <label>年</label>
+                                <select tabindex="2" name="year" class="normal-select"></select>
+                            </div>
+                            <div class="form-parts">
+                                <label></label>
+                                <button class="normal-btn ok" type="button" onclick="execPaidApplicationEdit()"><span>申請</span></button>
+                            </div>
+                        </div>
+                        <!-- ヘッダー -->
+                        <!-- <header th:replace="~{fragments/personnel/timeworks :: header04Fragment()}"></header> -->
+                        <div class="table-area">
+                            <!-- コンテンツ -->
+                            <main
+                                th:replace="~{fragments/personnel/timeworks :: mainFragment04('table-04', 'table-04-content')}">
+                            </main>
+                            <!-- フッター -->
+                            <footer id="footer-04" class="pc-style"
+                                th:insert="~{fragments/personnel/timeworks :: footerFragment()}"></footer>
+                        </div>
+                        <!-- </div> -->
+                    </div>
+                </div>
             </div>
         </div>
         <div id="form-dialog-area">
             <!-- フォーム画面をここに記入する -->
+            <div id="form-dialog-01" class="form-dialog none">
+                <div class="dialog-main">
+                    <div class="dialog-header"><span></span>
+                        <div class="img-btn" onclick="closeFormDialog('form-dialog-01', event)"><img title="閉じる"
+                            src="/icons/close-s.png">
+                        </div>
+                    </div>
+                    <form id="form-01" class="dialog-content">
+                        <div class="flex-area code-box">
+                            <div class="form-parts">
+                                <label>コード</label>
+                                <input id="code02" name="employee-id" class="normal-input" type="text" inputmode="numeric" pattern="\d*" value="" onfocus="this.select();">
+                            </div>
+                            <div class="form-parts">
+                                <label>申請者名</label>
+                                <input id="name02" name="employee-name" class="normal-input" type="text" disabled>
+                            </div>
+                        </div>
+                        <div class="form-parts">
+                            <label>期間</label>
+                            <div class="flex-area">
+                                <input id="start-date03" name="start-date" tabindex="11" class="normal-input date-area icon-del" type="date" value="">
+                                <span class="pc-style">〜</span>
+                                <input id="end-date03" name="end-date" tabindex="12" class="normal-input date-area icon-del" type="date" value="">
+                            </div>
+                        </div>
+                        <div class="form-parts">
+                            <label>事由</label>
+                            <textarea tabindex="13" name="reason" class="normal-input" value=""></textarea>
+                        </div>
+                    </form>
+                    <div class="dialog-footer">
+                        <button class="normal-btn frameless" type="button"
+                            onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
+                        <button tabindex="14" class="normal-btn ok" type="button"
+                            onclick="execApplication()"><span>申請</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- フォーム画面をここに記入する -->
+            <div id="form-dialog-02" class="form-dialog none">
+                <div class="dialog-main">
+                    <div class="dialog-header"><span></span>
+                        <div class="img-btn" onclick="closeFormDialog('form-dialog-02', event)"><img title="閉じる"
+                            src="/icons/close-s.png">
+                        </div>
+                    </div>
+                    <form id="form-02" class="dialog-content">
+                        <main
+                            th:replace="~{fragments/personnel/timeworks :: mainFragment05('table-05', 'table-05-content')}">
+                        </main>
+                    </form>
+                    <div class="dialog-footer">
+                        <button class="normal-btn frameless" type="button"
+                            onclick="closeFormDialog('form-dialog-02', event)"><span>キャンセル</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id="msg-dialog-area">
             <div th:replace="~{fragments/dialog :: messageFragment}"></div>
         </div>
         <!-- </div> -->
         <script th:src="@{/js/table.js}"></script>
+        <script th:src="@{/js/file.js}"></script>
         <script th:src="@{/js/info.js}"></script>
         <script th:src="@{/js/timeworks.js}"></script>
         <script th:src="@{/js/enterfocus.js}"></script>
@@ -96,6 +189,9 @@
         let entity = {};
         const code = document.getElementById('code');
         const name = document.getElementById('name');
+        const code02 = document.getElementById('code02');
+        const name02 = document.getElementById('name02');
+        const start03 = document.getElementById('start-date03');
         const startBtn = document.querySelector('button[name="start-btn"]');
         const endBtn = document.querySelector('button[name="end-btn"]');
         const officeId = /*[[${officeId}]]*/;
@@ -103,6 +199,15 @@
         const employeeList = /*[[${employeeList}]]*/;
         const employeeList01 = document.getElementById('employee-list-01');
         let list02 = {};
+        let list03 = {};
+        let list04 = {};
+        let list05 = {};
+        const thisYear = new Date().getFullYear();
+        const yearList = [];
+        for (let y = thisYear - 10; y <= thisYear; y++) {
+            let item = {"number":y, "text":y + "年"};
+            yearList.push(item);
+        }
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 時計作成
         function clock() {
@@ -229,7 +334,7 @@
         }
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 保存処理
-        async function execSave() {
+        async function execSave(self) {
             let changedList = list02.filter(value => (value.state > 0));
             if (changedList.length == 0) return;
 
@@ -243,7 +348,7 @@
                 item.rest_time = rest.value;
                 item.state = 0;
             });
-            const result = await updateTimeworks(changedList);
+            const result = await updateTimeworks(changedList, self);
             if (result.success) {
                 // 画面更新
                 openMsgDialog("msg-dialog", result.message, "blue");
@@ -277,7 +382,7 @@
             }
         }
 
-// -------------------------------------------------------------------------------------------------------------------------------------- 修正リスト画面作成
+// -------------------------------------------------------------------------------------------------------------------------------------- 打刻リスト画面作成
         // function createTable(list) {
         function createTableContent(tableId, list) {
             const tbl = document.getElementById(tableId);
@@ -298,6 +403,7 @@
             });
         };
 
+// -------------------------------------------------------------------------------------------------------------------------------------- 修正タブ
         // 従業員選択メニュー作成
         function createEmployeeList() {
             employeeList01.innerHTML = "";
@@ -322,14 +428,6 @@
                 });
                 employeeList01.appendChild(li);
             });
-        }
-
-        // 日付ボックスが変更された時の処理
-        async function execListChange() {
-            const selectedId = document.querySelector("#employee-list-01 li.selected");
-            if (selectedId != null) {
-                await createEmployeeTimeworksList(selectedId.dataset.id);
-            }
         }
 
         // 選択した従業員IDで勤怠情報を取得してリスト作成
@@ -359,14 +457,17 @@
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.end_time ?? "") + '</span></td>');
                 // 出勤確定
                 i++;
+                let zeroClassStart = item.comp_start_time === "00:00:00" ? " zero-time" : "";
                 newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" name="start"' +
-                    ' class="icon-del" type="time" step="1" value="' + (item.comp_start_time ?? "") + '"' +
-                    ' onchange="cellChange(' + item.timeworks_id + ', this)"></td>');
+                    ' class="icon-del' + zeroClassStart + '" type="time" step="1" value="' + (item.comp_start_time ?? "") + '"' +
+                    ' onchange="cellChange(' + item.timeworks_id + ', this; zeroTimeCheck(this))"></td>');
                 // 退勤確定
                 i++;
+                let zeroClassEnd = item.comp_end_time === "00:00:00" ? " zero-time" : "";
                 newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" name="end"' +
-                    ' class="icon-del" type="time" step="1" value="' + (item.comp_end_time ?? "") + '"' +
-                    ' onchange="cellChange(' + item.timeworks_id + ', this)"></td>');
+                    ' class="icon-del' + zeroClassEnd + '" type="time" step="1" value="' + (item.comp_end_time ?? "") + '"' +
+                    ' onchange="cellChange(' + item.timeworks_id + ', this); zeroTimeCheck(this)"></td>'
+                );
                 // 休憩
                 i++;
                 newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" name="rest"' +
@@ -375,6 +476,30 @@
             });
             createTableFooter("footer-02", list);
         };
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 日付変更
+        // 日付ボックスが変更された時の処理
+        async function execListChange(self) {
+            const panel = self.closest('.tab-panel');
+            const tab = panel.dataset.panel;
+
+            switch (tab) {
+                case "02":
+                    const selectedId = document.querySelector("#employee-list-01 li.selected");
+                    if (selectedId != null) {
+                        await createEmployeeTimeworksList(selectedId.dataset.id);
+                    }
+                    break;
+                case "03":
+                    const selectedItem = panel.querySelector("[name='office']");
+                    if (selectedItem != null) {
+                        createTimeworksSummaryList(selectedItem.value);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 取得
         // 一覧表示用のリスト取得
@@ -388,11 +513,29 @@
             return await resultResponse.json();
         }
 
+        // 有給休暇一覧表示用のリスト取得
+        async function getEmployeePaidHolidayFromYear(id, year, url) {
+            const data = "id=" + encodeURIComponent(parseInt(id)) + "&year=" + encodeURIComponent(year);
+            const contentType = 'application/x-www-form-urlencoded';
+            // List<Timeworks>を取得
+            const resultResponse = await postFetch(url, data, token, contentType);
+            return await resultResponse.json();
+        }
+
+// -------------------------------------------------------------------------------------------------------------------------------------- ダウンロード
+        async function execDownloadCsv() {
+            const start = document.getElementById("start-date02").value;
+            const end = document.getElementById("end-date02").value;
+            await downloadCsvByBetweenDate('table-03-content', '/timeworks/download/csv', start, end);
+        }
+
 // -------------------------------------------------------------------------------------------------------------------------------------- 出力
         // 選択した営業所IDで従業員の勤怠情報概要を取得してリスト作成
         async function createTimeworksSummaryList(officeId) {
             list03 = await getEmployeeTimeworksBetween(officeId, "start-date02", "end-date02", "/timeworks/summary/get/between/id");
             createBetweenTable03Content(list03);
+            // チェックボックスの処理を再登録する
+            registCheckButtonClicked("table-03-content");
             // エンターフォーカス処理をイベントリスナーに登録する
             tabFocusElements = createTabFocusElements();
             setEnterFocus("table-03");
@@ -422,14 +565,303 @@
             createTableFooter("footer-03", list);
         };
 
+// -------------------------------------------------------------------------------------------------------------------------------------- 有給
+        // 選択した営業所IDと年で従業員の勤怠情報概要を取得してリスト作成
+        async function createPaidHolidayList(officeId, year) {
+            list04 = await getEmployeePaidHolidayFromYear(officeId, year, "/timeworks/paidholiday/get/year");
+            createTable04Content(list04);
+            // チェックボックスの処理を再登録する
+            registCheckButtonClicked("table-04-content");
+            // エンターフォーカス処理をイベントリスナーに登録する
+            tabFocusElements = createTabFocusElements();
+            setEnterFocus("table-04");
+        }
+
+        // 出力一覧表示用のテーブル作成
+        function createTable04Content(list) {
+            const tbl = document.getElementById("table-04-content");
+            deleteElements(tbl);
+            let i = 0;
+            list.forEach(function (item) {
+                let newRow = tbl.insertRow();
+                // ID（Post送信用）
+                newRow.setAttribute('name', 'data-row');
+                newRow.setAttribute('data-id', item.employee_id);
+                // シングルクリック時の処理
+                newRow.onclick = function (e) {
+                    if (!e.currentTarget.classList.contains('selected')){
+                        // すべての行の選択状態を解除する
+                        detachmentSelectClassToAllRow(tbl, false);
+                        // 選択した行にセレクトクラスを付与する
+                        const result = addSelectClassToRow(e.currentTarget);
+                    } else {
+                        // 選択済みの要素をクリックした時の処理
+                        const clickedTd = e.target.closest("td");
+                        // 取得したTDの処理
+                    }
+                }
+                // ダブルクリック時の処理
+                newRow.ondblclick = function (e) { 
+                    // チェックボックスの動作を停止させる
+                    e.preventDefault();
+                    // 選択済みの場合
+                    if (!e.currentTarget.classList.contains('selected')){
+                        // すべての行の選択状態を解除する
+                        detachmentSelectClassToAllRow(tableId, false);
+                        // 選択した行にセレクトクラスを付与する
+                        const result = addSelectClassToRow(e.currentTarget);
+                    }
+                    
+                    // フォーム入力画面を表示する
+                    // execPaidApplicationEdit(item.employee_id);
+                    const year = document.querySelector('div[data-panel="04"] select[name="year"]');
+                    displayPaidHolidayList(item.employee_id, year.value);
+                }
+                // チェックセル
+                newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
+                // ID
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.employee_id + '</span></td>');
+                // 担当者名
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.full_name + '</span></td>');
+                // 使用日数
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.total_days ?? "0") + ' 日</span></td>');
+                // // 残日数
+                // newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.rest_days ?? "0" + ' 日</span></td>');
+                // 申請ボタン
+                // newRow.insertAdjacentHTML('beforeend', '<button class="normal-btn ok" type="button" onclick="paidApplication(' + item.employy_id + ')"><span>申請</span></button>');
+            });
+            createTableFooter("footer-04", list);
+        };
+
+        // 申請入力ダイアログを開く ---------------------------------
+        function execPaidApplicationEdit() {
+            const form = document.getElementById('form-01');
+            const id = form.querySelector('input[name="employee-id"]');
+            id.value = "";
+            const name = form.querySelector('input[name="employee-name"]');
+            name.value = "";
+            const start = form.querySelector('input[name="start-date"]');
+            start.value = "";
+            const end = form.querySelector('input[name="end-date"]');
+            end.value = "";
+            const reason = form.querySelector('textarea[name="reason"]');
+            reason.value = "";
+            
+            // 入力フォームダイアログを開く
+            openFormDialog("form-dialog-01");
+            code02.focus();
+        }
+
+        // 新規申請を保存する
+        async function execApplication() {
+            const form = document.getElementById('form-01');
+            const formdata = {};
+            // エラーチェック
+            if (formDataCheck(form) == false) {
+                return;
+            } else {
+                const formData = new FormData(form);
+                formdata.employee_id = formData.get('employee-id');
+                formdata.start_date = formData.get('start-date');
+                const end = formData.get('end-date');
+                formdata.end_date = end == "" ? formdata.start_date: end;
+                formdata.reason = formData.get('reason').trim();
+
+                // 保存処理
+                const resultResponse = await postFetch("/timeworks/paidholiday/save", JSON.stringify(formdata), token, "application/json");
+                const result = await resultResponse.json();
+                if (result.success) {
+                    // 画面更新
+                    openMsgDialog("msg-dialog", result.message, "blue");
+                    const office = document.querySelector('div[data-panel="04"] select[name="office"]');
+                    const year = document.querySelector('div[data-panel="04"] select[name="year"]');
+                    await createPaidHolidayList(office.value, year.value)
+                    // 追加・変更行に移動
+                    scrollIntoTableList('table-04', result.data);
+                } else {
+                    openMsgDialog("msg-dialog", result.message, "red");
+                }
+                // ダイアログを閉じる
+                closeFormDialog('form-dialog-01');
+            }
+        }
+
+        // 入力チェック
+        function formDataCheck(area) {
+            let msg = "";
+            // コードが入力されていないとFalseを返す
+            const account = area.querySelector('input[name="employee_id"]');
+            if (account != null && account.value == "") msg += '\n申請者が入力されていません';
+            const start = area.querySelector('input[name="start-date"]');
+            if (start != null && start.value == "") msg += '\n開始日が入力されていません';
+            const end = area.querySelector('input[name="end-date"]');
+            if (start && end) {
+                const startDate = new Date(start.value);
+                const endDate = new Date(end.value);
+                if (startDate > endDate) {
+                    msg += '\n終了日が開始日より前に設定されています';
+                }
+            }
+            // エラーが一つ以上あればエラーメッセージダイアログを表示する
+            if (msg != "") {
+                openMsgDialog("msg-dialog", msg, "red");
+                return false;
+            }
+            return true;
+        }
+
+
+        // 有給申請リストダイアログを開く ---------------------------------
+        async function displayPaidHolidayList(id, year) {
+            openFormDialog("form-dialog-02");
+
+            await createPaidHolidayListByEmployeeId(id, year);
+        }
+
+        // 選択した従業員IDと年で従業員の勤怠情報概要を取得してリスト作成
+        async function createPaidHolidayListByEmployeeId(employeeId, year) {
+            list05 = await getEmployeePaidHolidayFromYear(employeeId, year, "/timeworks/paidholiday/get/employeeid");
+            createTable05Content(list05, year);
+            // チェックボックスの処理を再登録する
+            registCheckButtonClicked("table-05-content");
+            // エンターフォーカス処理をイベントリスナーに登録する
+            tabFocusElements = createTabFocusElements();
+            setEnterFocus("table-05");
+        }
+
+        // 従業員の申請一覧表示用のテーブル作成
+        function createTable05Content(list, year) {
+            const tbl = document.getElementById("table-05-content");
+            deleteElements(tbl);
+            let i = 0;
+            list.forEach(function (item) {
+                let newRow = tbl.insertRow();
+                // ID（Post送信用）
+                newRow.setAttribute('name', 'data-row');
+                newRow.setAttribute('data-id', item.paid_holiday_id);
+                // シングルクリック時の処理
+                newRow.onclick = function (e) {
+                    if (!e.currentTarget.classList.contains('selected')){
+                        // すべての行の選択状態を解除する
+                        detachmentSelectClassToAllRow(tbl, false);
+                        // 選択した行にセレクトクラスを付与する
+                        const result = addSelectClassToRow(e.currentTarget);
+                    } else {
+                        // 選択済みの要素をクリックした時の処理
+                        const clickedTd = e.target.closest("td");
+                        // 取得したTDの処理
+                    }
+                }
+                // // チェックセル
+                // newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
+                // 開始日
+                newRow.insertAdjacentHTML('beforeend', '<td><input class="icon-del" type="date" value="' + item.start_date + '" disabled></td>');
+                // 終了日
+                newRow.insertAdjacentHTML('beforeend', '<td><input class="icon-del" type="date" value="' + item.end_date + '" disabled></td>');
+                // 事由
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.reason ?? "0") + '</span></td>');
+                // 削除ボタン
+                newRow.insertAdjacentHTML('beforeend', '<td><div onclick="execDeletePaidHolidayByEmployeeId(' + item.paid_holiday_id + ')" class="img-btn"><img src="icons/dust.png"></div></td>');
+            });
+            createTableFooter("footer-04", list);
+        };
+
+        // 選択した営業所IDと年で従業員の勤怠情報概要を取得してリスト作成
+        async function createPaidHolidayList(officeId, year) {
+            list04 = await getEmployeePaidHolidayFromYear(officeId, year, "/timeworks/paidholiday/get/year");
+            createTable04Content(list04);
+            // チェックボックスの処理を再登録する
+            registCheckButtonClicked("table-04-content");
+            // エンターフォーカス処理をイベントリスナーに登録する
+            tabFocusElements = createTabFocusElements();
+            setEnterFocus("table-04");
+        }
+
+        async function execDeletePaidHolidayByEmployeeId(id) {
+            const data = "id=" + encodeURIComponent(parseInt(id));
+            const url = '/timeworks/paidholiday/delete/id';
+            const contentType = 'application/x-www-form-urlencoded';
+            const resultResponse = await postFetch(url, data, token, contentType);
+            const result = await resultResponse.json();
+
+            if (result.success) {
+                // 画面更新
+                openMsgDialog("msg-dialog", result.message, "blue");
+                const office = document.querySelector('div[data-panel="04"] select[name="office"]');
+                const year = document.querySelector('div[data-panel="04"] select[name="year"]');
+                await createPaidHolidayList(office.value, year.value)
+            } else {
+                openMsgDialog("msg-dialog", result.message, "red");
+            }
+            // ダイアログを閉じる
+            closeFormDialog('form-dialog-02');
+        }
+
+        // コードから[paid_holiday]を取得して、名前を表示
+        async function searchForNameByCodeForPaidHoliday(e) {
+            e.preventDefault();
+            if (code02 == null || name02 == null) return;
+            if (code02.value == "" || isNaN(code02.value)) {
+                name02.value = "";
+                return;
+            }
+
+            // [id=code]に入力されたコードから[employee]を取得して[id=name]に入力する
+            const data = "id=" + encodeURIComponent(parseInt(code02.value));
+            const url = '/employee/get/id';
+            const contentType = 'application/x-www-form-urlencoded';
+            // [employee]を取得
+            const resultResponse = await postFetch(url, data, token, contentType);
+            const entity02 = await resultResponse.json();
+            if (entity02 != null && entity02.employee_id > 0) {
+                name02.value = entity02.full_name;
+                start03.focus();
+                return;
+            } else {
+                code02.value = ""
+                name02.value = "";
+                messageDialog("コードが登録されていません", 'エラー', 'red');
+                return;
+            }
+        }
+
+        // コード入力ボックスからフォーカスが外れた時の処理
+        function execCode02Blur(e) {
+            if (e.target.value == "") {
+                name02.value = "";
+                return;
+            }
+            searchForNameByCodeForPaidHoliday(e);
+        }
+
+        // コード入力ボックスでエンターを押した時の処理
+        function execCode02Changed(e) {
+            if (e == null) return;
+            // ボックスが空白なら処理しない
+            if (e.target.value == "") {
+                name02.value = "";
+                return;
+            }
+            if(e.key === 'Enter'){
+                e.preventDefault();
+                // searchForNameByCode(e);
+                execCode02Blur(e);
+            }
+        }
+
 // -------------------------------------------------------------------------------------------------------------------------------------- 初期化時の処理
         window.addEventListener("load", async () => {
             // 1秒ごとにclock関数を呼び出す
             setInterval(clock, 1000);
-            // コード入力ボックスでエンターキーが押された時の処理を登録
+            // 打刻画面のコード入力ボックスでエンターキーが押された時の処理を登録
             document.getElementById('code').addEventListener('keydown', function (e) { execCodeChanged(e); });
-            // コード入力ボックスのフォーカスが外れた時の処理を登録
+            // 打刻画面のコード入力ボックスのフォーカスが外れた時の処理を登録
             document.getElementById('code').addEventListener('blur', function (e) { execCodeBlur(e); });
+
+            // 有給申請フォームのコード入力ボックスでエンターキーが押された時の処理を登録
+            document.getElementById('code02').addEventListener('keydown', function (e) { execCode02Changed(e); });
+            // 有給申請フォームのコード入力ボックスのフォーカスが外れた時の処理を登録
+            document.getElementById('code02').addEventListener('blur', function (e) { execCode02Blur(e); });
 
             const form01 = document.getElementById('timeworks-sidemenu01');
 
@@ -443,11 +875,27 @@
             setComboboxSelected(officeArea02, officeId);
             officeArea02.onchange = function() { createTimeworksSummaryList(this.value); };
 
+            const officeArea03 = document.querySelector('div[data-panel="04"] select[name="office"]');
+            createComboBoxWithTop(officeArea03, officeList, "すべて");
+            setComboboxSelected(officeArea03, officeId);
+            officeArea03.onchange = function() { 
+                const year = document.querySelector('div[data-panel="04"] select[name="year"]');
+                createPaidHolidayList(this.value, year.value); 
+            };
+
+            const yearArea01 = document.querySelector('div[data-panel="04"] select[name="year"]');
+            createComboBox(yearArea01, yearList);
+            setComboboxSelected(yearArea01, thisYear);
+            yearArea01.onchange = function() {
+                const office = document.querySelector('div[data-panel="04"] select[name="office"]');
+                createPaidHolidayList(office.value, this.value);
+            };
+
             createEmployeeList();
 
             // 日付ボックスを設定
             let monthStr = "";
-            switch (officeId) {
+            switch (Number(officeId)) {
                 case 1000:
                     monthStr = "half-month";
                     break;
@@ -461,7 +909,7 @@
                     monthStr = "this-month";
                     break;
                 default:
-                    monthStr = "this-month"
+                    monthStr = "this-month";
                     break;
             }
             execSpecifyPeriod(monthStr, 'start-date01', 'end-date01');
@@ -469,8 +917,13 @@
 
             await updateDisplay();
             createTimeworksSummaryList(officeId);
+            createPaidHolidayList(officeId, thisYear)
             createTableFooter("footer-02", null);
             createTableFooter("footer-03", null);
+            createTableFooter("footer-04", null);
+
+            // エンターフォーカス処理をイベントリスナーに登録する
+            setEnterFocus("form-01");
 
             // タブメニュー処理
             const tabMenus = document.querySelectorAll('.tab-menu-item');

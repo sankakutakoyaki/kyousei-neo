@@ -5,11 +5,21 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Utilities;
+import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
+import com.kyouseipro.neo.entity.personnel.PaidHolidayEntity;
+import com.kyouseipro.neo.entity.personnel.PaidHolidayListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksSummaryEntity;
+import com.kyouseipro.neo.mapper.personnel.EmployeeEntityMapper;
+import com.kyouseipro.neo.mapper.personnel.PaidHolidayEntityMapper;
+import com.kyouseipro.neo.mapper.personnel.PaidHolidayListEntityMapper;
 import com.kyouseipro.neo.mapper.personnel.TimeworksListEntityMapper;
 import com.kyouseipro.neo.mapper.personnel.TimeworksSummaryEntityMapper;
+import com.kyouseipro.neo.query.parameter.personnel.EmployeeParameterBinder;
 import com.kyouseipro.neo.query.parameter.personnel.TimeworksListParameterBinder;
+import com.kyouseipro.neo.query.sql.personnel.EmployeeSqlBuilder;
 import com.kyouseipro.neo.query.sql.personnel.TimeworksListSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
@@ -52,7 +62,22 @@ public class TimeworksListRepository {
     }
 
     /**
-     * 日付指定でIDで指定した従業員の勤怠情報を取得
+     * 日付指定で従業員の勤怠情報を取得
+     * @param date
+     * @return
+     */
+    public List<TimeworksSummaryEntity> findByEntityFromBetweenDate(LocalDate start, LocalDate end) {
+        String sql = TimeworksListSqlBuilder.buildFindByBetweenSummaryEntity();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> TimeworksListParameterBinder.bindFindByBetweenSummaryEntity(ps, start, end),
+            TimeworksSummaryEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+    
+    /**
+     * 日付指定でIDで指定した営業所の勤怠情報を取得
      * @param date
      * @return
      */
@@ -63,6 +88,36 @@ public class TimeworksListRepository {
             sql,
             ps -> TimeworksListParameterBinder.bindFindByBetweenSummaryEntityByOfficeId(ps, id, start, end),
             TimeworksSummaryEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+
+    /**
+     * 年指定でIDで指定した営業所の勤怠情報を取得
+     * @param year
+     * @return
+     */
+    public List<PaidHolidayListEntity> findPaidHolidayByOfficeIdFromYear(int id, String year) {
+        String sql = TimeworksListSqlBuilder.buildFindPaidHolidayByOfficeIdFromYear();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> TimeworksListParameterBinder.bindFindPaidHolidayEntityByOfficeIdFromYear(ps, id, year),
+            PaidHolidayListEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+
+    /**
+     * 年指定でIDで指定した従業員の有給リストを取得
+     * @param year
+     * @return
+     */
+    public List<PaidHolidayEntity> findPaidHolidayByEmployeeIdFromYear(int id, String year) {
+        String sql = TimeworksListSqlBuilder.buildFindPaidHolidayByEmployeeIdFromYear();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> TimeworksListParameterBinder.bindFindPaidHolidayEntityByEmployeeIdFromYear(ps, id, year),
+            PaidHolidayEntityMapper::map // ← ここで ResultSet を map
         );
     }
 
@@ -78,6 +133,23 @@ public class TimeworksListRepository {
             sql,
             ps -> TimeworksListParameterBinder.bindFindByDate(ps, date),
             TimeworksListEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+
+    /**
+     * INSERT
+     * @param t
+     * @param editor
+     * @return
+     */
+    public Integer insertPaidHolidayByEmployeeId(PaidHolidayEntity p, String editor) {
+        String sql = TimeworksListSqlBuilder.buildInsertPaidHolidaySql();
+
+        return sqlRepository.execute(
+            sql,
+            (pstmt, entity) -> TimeworksListParameterBinder.bindInsertPaidHolidayParameters(pstmt, entity, editor),
+            rs -> rs.next() ? rs.getInt("paid_holiday_id") : null,
+            p
         );
     }
 
@@ -145,6 +217,39 @@ public class TimeworksListRepository {
             (pstmt, entity) -> TimeworksListParameterBinder.bindUpdateParameters(pstmt, entity, editor),
             list
         );
+    }
 
+    /**
+     * DELETE
+     * @param w
+     * @param editor
+     * @return
+     */
+    public Integer deletePaidHolidayEntityById(int id, String editor) {
+        String sql = TimeworksListSqlBuilder.buildDeletePaidHolidaySql();
+
+        Integer result = sqlRepository.executeUpdate(
+            sql,
+            ps -> TimeworksListParameterBinder.bindDeletePaidHolidayParameters(ps, id, editor)
+        );
+
+        return result; // 成功件数。0なら削除なし
+    }
+
+    /**
+     * CSVファイルをダウンロードする。
+     * @param ids
+     * @param editor
+     * @return Idsで選択したEntityリストを返す。
+     */
+    public List<TimeworksListEntity> downloadCsvByIds(List<SimpleData> ids, String start, String end, String editor) {
+        List<Integer> employeeIds = Utilities.createSequenceByIds(ids);
+        String sql = TimeworksListSqlBuilder.buildDownloadCsvForIdsSql(employeeIds.size());
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> TimeworksListParameterBinder.bindDownloadCsvForIds(ps, employeeIds, start, end),
+            TimeworksListEntityMapper::map // ← ここで ResultSet を map
+        );
     }
 }
