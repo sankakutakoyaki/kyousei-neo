@@ -44,7 +44,7 @@ public class TimeworksListApiController {
     }
 
     /**
-     * EntityListを取得する
+     * Entityを取得する
      * @return
      */
     @PostMapping("/timeworks/get/today/id")

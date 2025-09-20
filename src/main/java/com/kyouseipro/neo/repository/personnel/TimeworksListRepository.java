@@ -12,14 +12,11 @@ import com.kyouseipro.neo.entity.personnel.PaidHolidayEntity;
 import com.kyouseipro.neo.entity.personnel.PaidHolidayListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksSummaryEntity;
-import com.kyouseipro.neo.mapper.personnel.EmployeeEntityMapper;
 import com.kyouseipro.neo.mapper.personnel.PaidHolidayEntityMapper;
 import com.kyouseipro.neo.mapper.personnel.PaidHolidayListEntityMapper;
 import com.kyouseipro.neo.mapper.personnel.TimeworksListEntityMapper;
 import com.kyouseipro.neo.mapper.personnel.TimeworksSummaryEntityMapper;
-import com.kyouseipro.neo.query.parameter.personnel.EmployeeParameterBinder;
 import com.kyouseipro.neo.query.parameter.personnel.TimeworksListParameterBinder;
-import com.kyouseipro.neo.query.sql.personnel.EmployeeSqlBuilder;
 import com.kyouseipro.neo.query.sql.personnel.TimeworksListSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
@@ -29,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TimeworksListRepository {
     private final SqlRepository sqlRepository;
+    private final EmployeeRepository employeeRepository;
 
     /**
      * IDによる取得。
@@ -37,12 +35,14 @@ public class TimeworksListRepository {
      */
     public TimeworksListEntity findByTodaysEntityByEmployeeId(int employeeId) {
         String sql = TimeworksListSqlBuilder.buildFindByTodaysEntityByEmployeeId();
+        EmployeeEntity entity = employeeRepository.findById(employeeId);
+        int id = entity.getEmployee_id();
 
         return sqlRepository.execute(
             sql,
             (pstmt, comp) -> TimeworksListParameterBinder.bindFindByTodaysEntityByEmployeeId(pstmt, comp),
             rs -> rs.next() ? TimeworksListEntityMapper.map(rs) : null,
-            employeeId
+            id
         );
     }
 
@@ -51,8 +51,10 @@ public class TimeworksListRepository {
      * @param date
      * @return
      */
-    public List<TimeworksListEntity> findByEmployeeIdFromBetweenDate(int id, LocalDate start, LocalDate end) {
+    public List<TimeworksListEntity> findByEmployeeIdFromBetweenDate(int employeeId, LocalDate start, LocalDate end) {
         String sql = TimeworksListSqlBuilder.buildFindByBetweenEntityByEmployeeId();
+        EmployeeEntity entity = employeeRepository.findById(employeeId);
+        int id = entity.getEmployee_id();
 
         return sqlRepository.findAll(
             sql,
@@ -111,8 +113,10 @@ public class TimeworksListRepository {
      * @param year
      * @return
      */
-    public List<PaidHolidayEntity> findPaidHolidayByEmployeeIdFromYear(int id, String year) {
+    public List<PaidHolidayEntity> findPaidHolidayByEmployeeIdFromYear(int employeeId, String year) {
         String sql = TimeworksListSqlBuilder.buildFindPaidHolidayByEmployeeIdFromYear();
+        EmployeeEntity entity = employeeRepository.findById(employeeId);
+        int id = entity.getEmployee_id();
 
         return sqlRepository.findAll(
             sql,

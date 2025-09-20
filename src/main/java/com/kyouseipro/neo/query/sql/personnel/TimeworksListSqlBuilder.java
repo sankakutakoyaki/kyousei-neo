@@ -8,7 +8,7 @@ public class TimeworksListSqlBuilder {
         return
             "SELECT t.timeworks_id, t.employee_id, t.category" +
             ", t.work_date, t.start_time, t.end_time, t.comp_start_time, t.comp_end_time, t.rest_time, t.version, t.state" +
-            ", w.basic_start_time, w.basic_end_time" +
+            ", COALESCE(w.basic_start_time, '00:00:00') as basic_start_time, COALESCE(w.basic_end_time, '00:00:00') as basic_end_time" +
             ", COALESCE(e.full_name, '') as full_name, COALESCE(o.name, '') as office_name FROM timeworks t" +
             " LEFT OUTER JOIN employees e ON e.employee_id = t.employee_id AND NOT (e.state = ?)" +
             " LEFT OUTER JOIN offices o ON o.office_id = e.office_id AND NOT (o.state = ?)" +
@@ -20,7 +20,7 @@ public class TimeworksListSqlBuilder {
     }
 
     public static String buildFindByBetweenEntityByEmployeeId() {
-        return baseSelectString() +  " WHERE t.employee_id = ? AND NOT (t.state = ?) AND t.work_date BETWEEN ? AND ?";
+        return baseSelectString() +  " WHERE t.employee_id = ? AND t.state = ? AND t.work_date BETWEEN ? AND ?";
     }
 
     private static String baseBetweenEntityString() {

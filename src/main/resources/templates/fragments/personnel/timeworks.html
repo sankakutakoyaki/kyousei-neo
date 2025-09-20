@@ -52,6 +52,14 @@
             <button id="save-btn02" name="save-btn" class="normal-btn" type="button" onclick="execSave(this)" disabled>
                 <span>保存</span>
             </button>
+            <button id="confirm-btn02" name="confirm-btn" class="normal-btn" type="button" onclick="execConfirmSave(this)" disabled>
+                <span>確定</span>
+            </button>
+            <div sec:authorize="hasAuthority('APPROLE_admin')">
+                <button id="cancel-btn02" name="cancel-btn" class="normal-btn" type="button" onclick="execCancel(this)">
+                    <span>取消</span>
+                </button>
+            </div>
         </div>
         <!-- 日付移動ボタン -->
         <div class="flex-area">

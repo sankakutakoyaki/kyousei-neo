@@ -8,15 +8,55 @@
         <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
         <!-- ボディ -->
         <div class="normal-body">
-            <!-- <div class="flex-area">
-                <div class="flex-area">
-                    <button name="start-btn" class="normal-btn" type="button" onclick="execTimeworks('start')"><span>出勤</span></button>
-                    <span>08:30</span>
+            <h2>勤怠</h2>
+            <div class="flex-area time-btn">  
+                <div class="form-parts">
+                    <button name="start-btn" class="normal-btn" type="button" onclick="setTimeworks('start')"><span>出勤</span></button>
+                    <span id="start-time">00:00:00</span>
                 </div>
-                <div class="flex-area">
-                    <button name="end-btn" class="normal-btn" type="button" onclick="execTimeworks('end')"><span>退勤</span></button>
-                    <span>20:30</span>
+                <div class="form-parts">
+                    <button name="end-btn" class="normal-btn" type="button" onclick="setTimeworks('end')"><span>退勤</span></button>
+                    <span id="end-time">00:00:00</span>
                 </div>
+            </div>
+            <br>
+            <div sec:authorize="hasAuthority('APPROLE_admin')">
+                <h2>管理者メニュー</h2>
+            </div>
+
+            <div sec:authorize="hasAuthority('APPROLE_master')">
+                <h2>所長メニュー</h2>
+            </div>
+
+            <div sec:authorize="hasAuthority('APPROLE_leader')">
+                <h2>班長メニュー</h2>
+            </div>
+
+            <div sec:authorize="hasAuthority('APPROLE_user')">
+                <h2>一般メニュー</h2>
+            </div>
+
+            <div sec:authorize="hasAuthority('APPROLE_office')">
+                <h2>営業所メニュー</h2>
+            </div>
+
+            <div sec:authorize="hasAuthority('APPROLE_staff')">
+                <h2>事務員メニュー</h2>
+            </div> 
+
+            <!-- <div sec:authorize="hasAuthority('APPROLE_master')">
+                <h2>マスターメニュー</h2>
+                <a th:href="@{/master/tools}">マスター専用ツール</a>
+            </div>
+
+            <div sec:authorize="hasAuthority('APPROLE_staff')">
+                <h2>スタッフメニュー</h2>
+                <a th:href="@{/staff/schedule}">スケジュール管理</a>
+            </div>
+
+            <div sec:authorize="hasAuthority('APPROLE_user')">
+                <h2>ユーザーメニュー</h2>
+                <a th:href="@{/user/profile}">プロフィール</a>
             </div> -->
         </div>
         <div id="form-dialog-area">
@@ -26,16 +66,45 @@
             <!-- ダイアログ画面をここに記入する -->
         </div>
         <script th:src="@{/js/subscription.js}"></script>
+        <script th:src="@{/js/info.js}"></script>
+        <script th:src="@{/js/timeworks.js}"></script>
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
             const user_name = /*[[${user_name}]]*/;
+            const employeeId = /*[[${employeeId}]]*/;
 
+// -------------------------------------------------------------------------------------------------------------------------------------- 個人勤怠
+            async function updateDisplay() {
+                await searchForNameByCode(employeeId);
+            }
+
+            // コードから[timeworks]を取得
+            async function searchForNameByCode(id) {
+                // [id=code]に入力されたコードから[timeworks]を取得して[id=name]に入力する
+                const data = "id=" + encodeURIComponent(parseInt(id));
+                const url = '/timeworks/get/today/id';
+                const contentType = 'application/x-www-form-urlencoded';
+                // [timeworks]を取得
+                const resultResponse = await postFetch(url, data, token, contentType);
+                entity = await resultResponse.json();
+
+                document.getElementById('start-time').textContent = "00:00:00";
+                document.getElementById('end-time').textContent = "00:00:00";
+                if (entity && entity.employee_id > 0) {
+                    if (entity.start_time != null) document.getElementById('start-time').textContent = entity.start_time;
+                    if (entity.end_time != null) document.getElementById('end-time').textContent = entity.end_time;
+                } 
+            }
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 初期化時処理
             window.addEventListener("load", async () => {
                 if ('serviceWorker' in navigator && 'PushManager' in window) {
                     registerServiceWorker().catch(err => console.error('Error during registration:', err));
                 } else {
                     console.warn('Push messaging is not supported in this browser.');
                 }
+
+                await updateDisplay();
             });
         </script>
     </div>

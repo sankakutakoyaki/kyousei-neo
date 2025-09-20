@@ -1,0 +1,9 @@
+@charset "UTF-8";
+
+.time-btn button {
+    margin-bottom: 1rem;
+}
+
+.time-btn span {
+    text-align: center;
+}

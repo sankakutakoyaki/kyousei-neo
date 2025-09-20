@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
-import com.kyouseipro.neo.service.corporation.CompanyService;
-import com.kyouseipro.neo.service.corporation.OfficeService;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
@@ -44,10 +41,12 @@ public class IndexController {
         mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
 		mv.addObject("sidebarFragmentName", "fragments/menu :: homeFragment");
         mv.addObject("bodyFragmentName", "contents/index/home :: bodyFragment");
+		mv.addObject("insertCss", "/css/home.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
 		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
 		mv.addObject("entity", entity);
+		mv.addObject("employeeId", entity.getEmployee_id());
 		// mv.addObject("user_name", entity.getAccount());
 
 		historyService.saveHistory(userName, "", "ログイン", 200, "ログインしました。");

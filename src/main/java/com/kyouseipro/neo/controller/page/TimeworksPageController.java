@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
@@ -56,6 +56,8 @@ public class TimeworksPageController {
         // 初期表示用従業員リスト取得
         List<EmployeeListEntity> employeeList = employeeListService.getEmployeeList();
         mv.addObject("employeeList", employeeList);
+        // 完了コードを取得
+        mv.addObject("completeNum", Enums.state.COMPLETE.getCode());
         // 履歴保存
         historyService.saveHistory(userName, "timeworks", "閲覧", 200, "");
 	    return mv;

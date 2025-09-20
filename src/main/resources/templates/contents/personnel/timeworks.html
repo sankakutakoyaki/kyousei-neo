@@ -13,7 +13,7 @@
             <div class="tab-area">
                 <ul class="tab-menu">
                     <li class="tab-menu-item is-active" data-tab="01">打刻</li>
-                    <li class="tab-menu-item" data-tab="02">修正</li>
+                    <li class="tab-menu-item" data-tab="02">確定</li>
                     <li class="tab-menu-item" data-tab="03">出力</li>
                     <li class="tab-menu-item" data-tab="04">有給</li>
                 </ul>
@@ -194,6 +194,7 @@
         const start03 = document.getElementById('start-date03');
         const startBtn = document.querySelector('button[name="start-btn"]');
         const endBtn = document.querySelector('button[name="end-btn"]');
+        const completeNum = /*[[${completeNum}]]*/;
         const officeId = /*[[${officeId}]]*/;
         const officeList = /*[[${officeList}]]*/;
         const employeeList = /*[[${employeeList}]]*/;
@@ -357,6 +358,30 @@
             }
         }
 
+// -------------------------------------------------------------------------------------------------------------------------------------- 確定処理
+        async function execConfirm(self) {
+            if (list02.some(value => value?.state > 0)) {
+                openMsgDialog("msg-dialog", "未保存のデータがあります", "red");
+                return;
+            }
+
+            if (list02.some(value => value?.start_time === "00:00:00" || value?.end_time === "00:00:00")) {
+                openMsgDialog("msg-dialog", "未保存のデータがあります", "red");
+                return;
+            }
+
+            list02.forEach(function (item) {
+                item.state = completeNum;
+            });
+            const result = await updateTimeworks(list02, self);
+            if (result.success) {
+                // 画面更新
+                openMsgDialog("msg-dialog", result.message, "blue");
+            } else {
+                openMsgDialog("msg-dialog", result.message, "red");
+            }
+        }
+
 // -------------------------------------------------------------------------------------------------------------------------------------- セル変更処理
         function cellChange(id, self) {
             self.classList.add("changed");
@@ -367,6 +392,15 @@
                 btn.disabled = false;
                 if (!btn.classList.contains("ok")){
                     btn.classList.add("ok");
+                }
+            }
+            const btn2 = document.getElementById("confirm-btn02");
+            if (btn2 != null) {
+                if (!list02.some(value => value?.state > 0)) {
+                    btn2.disabled = false;
+                    if (!btn2.classList.contains("ok")){
+                        btn2.classList.add("ok");
+                    }
                 }
             }
         }
@@ -460,7 +494,7 @@
                 let zeroClassStart = item.comp_start_time === "00:00:00" ? " zero-time" : "";
                 newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" name="start"' +
                     ' class="icon-del' + zeroClassStart + '" type="time" step="1" value="' + (item.comp_start_time ?? "") + '"' +
-                    ' onchange="cellChange(' + item.timeworks_id + ', this; zeroTimeCheck(this))"></td>');
+                    ' onchange="cellChange(' + item.timeworks_id + ', this); zeroTimeCheck(this)"></td>');
                 // 退勤確定
                 i++;
                 let zeroClassEnd = item.comp_end_time === "00:00:00" ? " zero-time" : "";
