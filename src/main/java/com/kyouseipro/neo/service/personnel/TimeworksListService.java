@@ -64,6 +64,17 @@ public class TimeworksListService {
     }
 
     /**
+     * 指定された従業員IDの指定した期間の確定済みも含めた勤怠情報を取得します。
+     * 論理削除されている場合は null を返します。
+     *
+     * @param id 従業員ID
+     * @return TimeworksListEntity または null
+     */
+    public List<TimeworksListEntity> getBetweenAllEntityByEmployeeId(int id, LocalDate start, LocalDate end) {
+        return timeworksListRepository.findAllByEmployeeIdFromBetweenDate(id, start, end);
+    }
+
+    /**
      * 指定された期間の勤怠情報概要を取得します。
      * 論理削除されている場合は null を返します。
      *
@@ -140,6 +151,16 @@ public class TimeworksListService {
         } else {
             return timeworksListRepository.insertTimeworks(entity, editor);
         }
+    }
+
+    /**
+     * 従業員の勤怠情報確定を取り消します。
+     *
+     * @param id 従業員のID
+     * @return
+     */
+    public Integer reverseConfirm(int id, String editor) {
+        return timeworksListRepository.reverseConfirm(id, editor);
     }
 
     /**

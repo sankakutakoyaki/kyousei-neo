@@ -1,5 +1,6 @@
 package com.kyouseipro.neo.query.parameter.personnel;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -17,6 +18,7 @@ public class TimeworksListParameterBinder {
         ps.setInt(1, Enums.state.DELETE.getCode());
         ps.setInt(2, Enums.state.DELETE.getCode());
         ps.setInt(3, Enums.state.DELETE.getCode());
+        // ps.setInt(4, Enums.state.DELETE.getCode());
         ps.setInt(4, employeeId);
         ps.setInt(5, Enums.state.DELETE.getCode());
         ps.setString(6, LocalDate.now().toString());
@@ -26,10 +28,37 @@ public class TimeworksListParameterBinder {
         ps.setInt(1, Enums.state.DELETE.getCode());
         ps.setInt(2, Enums.state.DELETE.getCode());
         ps.setInt(3, Enums.state.DELETE.getCode());
+        // ps.setInt(4, Enums.state.DELETE.getCode());
         ps.setInt(4, employeeId);
         ps.setInt(5, Enums.state.CREATE.getCode());
         ps.setString(6, start.toString());
         ps.setString(7, end.toString());
+    }
+
+    public static void bindFindAllByBetweenEntityByEmployeeId(PreparedStatement ps, Integer employeeId, LocalDate start, LocalDate end) throws SQLException {
+        // ps.setInt(1, Enums.state.DELETE.getCode());
+        // ps.setInt(2, Enums.state.DELETE.getCode());
+        // ps.setInt(3, Enums.state.DELETE.getCode());
+        // // ps.setInt(4, Enums.state.DELETE.getCode());
+        // ps.setInt(4, employeeId);
+        // ps.setInt(5, Enums.state.DELETE.getCode());
+        // ps.setString(6, start.toString());
+        // ps.setString(7, end.toString());
+
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());//ps.setInt(index++, Enums.state.COMPLETE.getCode());
+        ps.setInt(index++, employeeId);
+        ps.setDate(index++, Date.valueOf(start));
+        ps.setDate(index++, Date.valueOf(end));
+
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, employeeId);
+        ps.setDate(index++, Date.valueOf(start));
+        ps.setDate(index++, Date.valueOf(end));
     }
 
     public static void bindFindByBetweenSummaryEntity(PreparedStatement ps, LocalDate start, LocalDate end) throws SQLException {
@@ -68,6 +97,7 @@ public class TimeworksListParameterBinder {
         ps.setInt(1, Enums.state.DELETE.getCode());
         ps.setInt(2, Enums.state.DELETE.getCode());
         ps.setInt(3, Enums.state.DELETE.getCode());
+        // ps.setInt(4, Enums.state.DELETE.getCode());
         ps.setString(4, date.toString());
         ps.setInt(5, Enums.state.DELETE.getCode());
     }
@@ -80,7 +110,6 @@ public class TimeworksListParameterBinder {
         pstmt.setTime(5, t.getEnd_time() != null ? Time.valueOf(t.getEnd_time()) : Time.valueOf("00:00:00"));
         pstmt.setTime(6, t.getComp_start_time() != null ? Time.valueOf(t.getComp_start_time()) : Time.valueOf("00:00:00"));
         pstmt.setTime(7, t.getComp_end_time() != null ? Time.valueOf(t.getComp_end_time()) : Time.valueOf("00:00:00"));
-        // pstmt.setTime(8, t.getRest_time() != null ? Time.valueOf(t.getRest_time()) : Time.valueOf("00:00:00"));
         String rest = t.getRest_time();
         if (rest == null || rest.isBlank()) {
             pstmt.setTime(8, Time.valueOf("00:00:00"));
@@ -102,8 +131,6 @@ public class TimeworksListParameterBinder {
         pstmt.setTime(5, t.getEnd_time() != null ? Time.valueOf(t.getEnd_time()) : Time.valueOf("00:00:00"));
         pstmt.setTime(6, t.getComp_start_time() != null ? Time.valueOf(t.getComp_start_time()) : Time.valueOf("00:00:00"));
         pstmt.setTime(7, t.getComp_end_time() != null ? Time.valueOf(t.getComp_end_time()) : Time.valueOf("00:00:00"));
-        // System.out.println(t.getRest_time());
-        // pstmt.setTime(8, t.getRest_time() != null ? Time.valueOf(t.getRest_time()) : Time.valueOf("00:00:00"));
         
         String rest = t.getRest_time();
         if (rest == null || rest.isBlank()) {
@@ -121,17 +148,38 @@ public class TimeworksListParameterBinder {
         pstmt.setString(12, editor);
     }
 
+    public static void bindReverseConfirmParameters(PreparedStatement pstmt, int id, String editor) throws SQLException {
+        pstmt.setInt(1, Enums.state.CREATE.getCode());
+        pstmt.setInt(2, id);
+        pstmt.setString(3, editor);
+    }
+
+    // CSVダウンロード
     public static void bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids, String start, String end) throws SQLException {
         int index = 1;
+
         ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.COMPLETE.getCode());
+        for (Integer id : ids) {
+            ps.setInt(index++, id); // IN (?, ?, ?)
+        }
+        // ps.setString(index++, start);
+        // ps.setString(index++, end);
+        ps.setDate(index++, Date.valueOf(start));
+        ps.setDate(index++, Date.valueOf(end));
+
+        // ps.setInt(index++, Enums.state.DELETE.getCode());
+        // ps.setInt(index++, Enums.state.DELETE.getCode());
+
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {
-            ps.setInt(index++, id); // 1. employee_id IN (?, ?, ?)
+            ps.setInt(index++, id); // IN (?, ?, ?)
         }
-        ps.setInt(index++, Enums.state.CREATE.getCode()); // 2. AND NOT (state = ?)
-        ps.setString(index++, start);
-        ps.setString(index++, end);
+        ps.setDate(index++, Date.valueOf(start));
+        ps.setDate(index++, Date.valueOf(end));
     }
 
     // 有給

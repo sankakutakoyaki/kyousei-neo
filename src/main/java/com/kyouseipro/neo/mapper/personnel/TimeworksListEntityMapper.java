@@ -70,6 +70,15 @@ public class TimeworksListEntityMapper {
         } else {
             entity.setRest_time("0");
         }
+
+        //　状態
+        entity.setSituation(rs.getString("situation"));
+        // 有給
+        // entity.setPaid_holiday_id(rs.getInt("paid_holiday_id"));
+        // int paidHolidayId = rs.getInt("paid_holiday_id");
+        // if (paidHolidayId > 0) {
+        //     entity.setSituation("有給");
+        // }
         
         entity.setVersion(rs.getInt("version"));
         entity.setState(rs.getInt("state"));

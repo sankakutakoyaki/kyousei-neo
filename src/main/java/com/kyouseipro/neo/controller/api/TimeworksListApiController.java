@@ -80,6 +80,20 @@ public class TimeworksListApiController {
     }
 
     /**
+     * 指定した期間の確定済みも含めたEntityListを取得する
+     * @return
+     */
+    @PostMapping("/timeworks/get/between/id/all")
+	@ResponseBody
+    public List<TimeworksListEntity> getBetweenAllEntityByEmployeeId(
+                @RequestParam int id,
+                @RequestParam LocalDate start,
+                @RequestParam LocalDate end) {
+        List<TimeworksListEntity> list = timeworksListService.getBetweenAllEntityByEmployeeId(id, start, end);
+        return list;
+    }
+
+    /**
      * 指定した期間のEntityList概要版を取得する
      * @return
      */
@@ -175,6 +189,23 @@ public class TimeworksListApiController {
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+        }
+    }
+
+    /**
+     * 勤怠情報の確定を取り消す
+     * @param id
+     * @return
+     */
+    @PostMapping("/timeworks/confirm/reverse")
+	@ResponseBody
+    public ResponseEntity<ApiResponse<Integer>> reverseConrirm(@RequestParam int id, @AuthenticationPrincipal OidcUser principal) {
+        String editor = principal.getAttribute("preferred_username");
+        Integer newId = timeworksListService.reverseConfirm(id, editor);
+        if (newId != null && newId > 0) {
+            return ResponseEntity.ok(ApiResponse.ok("戻しました。", newId));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("戻せませんでした。"));
         }
     }
 

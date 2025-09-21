@@ -64,6 +64,23 @@ public class TimeworksListRepository {
     }
 
     /**
+     * 日付指定でIDで指定した従業員の確定済みも含めた勤怠情報を取得
+     * @param date
+     * @return
+     */
+    public List<TimeworksListEntity> findAllByEmployeeIdFromBetweenDate(int employeeId, LocalDate start, LocalDate end) {
+        String sql = TimeworksListSqlBuilder.buildFindAllByBetweenEntityByEmployeeId();
+        EmployeeEntity entity = employeeRepository.findById(employeeId);
+        int id = entity.getEmployee_id();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> TimeworksListParameterBinder.bindFindAllByBetweenEntityByEmployeeId(ps, id, start, end),
+            TimeworksListEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+
+    /**
      * 日付指定で従業員の勤怠情報を取得
      * @param date
      * @return
@@ -189,6 +206,23 @@ public class TimeworksListRepository {
             rs -> rs.next() ? rs.getInt("timeworks_id") : null,
             t
         );
+    }
+
+    /**
+     * UPDATE
+     * @param id
+     * @param editor
+     * @return
+     */
+    public Integer reverseConfirm(int id, String editor) {
+        String sql = TimeworksListSqlBuilder.buildReverseConfirmSql();
+
+       Integer result = sqlRepository.executeUpdate(
+            sql,
+            ps -> TimeworksListParameterBinder.bindReverseConfirmParameters(ps, id, editor)
+        );
+        
+        return result; // 成功件数。0なら削除なし
     }
 
     /**

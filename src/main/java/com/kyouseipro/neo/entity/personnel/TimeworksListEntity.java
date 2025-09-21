@@ -22,12 +22,15 @@ public class TimeworksListEntity implements CsvExportable {
     private String basic_start_time;
     private String basic_end_time;
     private String rest_time;
+    // private int paid_holiday_id;
+    // private String work_style;
+    private String situation;
     private int version;
     private int state;
 
     // CSVヘッダーを返す static メソッド（必須ではないですが慣例的に付ける）
     public static String getCsvHeader() {
-        return "ID,従業員名,出勤日,出勤時刻(打刻),退勤時刻(打刻),出勤時刻(確定),退勤時刻(確定),休憩時間";
+        return "ID,従業員名,出勤日,出勤時刻(打刻),退勤時刻(打刻),出勤時刻(確定),退勤時刻(確定),休憩時間,状態,営業所";
     }
 
     @Override
@@ -39,7 +42,9 @@ public class TimeworksListEntity implements CsvExportable {
                Utilities.escapeCsv(end_time) + "," +
                Utilities.escapeCsv(comp_start_time) + "," +
                Utilities.escapeCsv(comp_end_time) + "," +
-               Utilities.escapeCsv(rest_time);
+               Utilities.escapeCsv(rest_time) + "," +
+               Utilities.escapeCsv(situation) + "," +
+               Utilities.escapeCsv(office_name);
     }
 
     // @Override

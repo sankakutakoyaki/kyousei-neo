@@ -45,26 +45,19 @@
     <header class="timeworks-content02" th:fragment="header02Fragment()">
         <!-- 期間指定ボックス -->
         <div class="flex-area">
-            <input id="start-date01" class="normal-input date-area icon-del" type="date" value="" disabled>
+            <input id="start-date02" class="normal-input date-area icon-del" type="date" value="" disabled>
             <span class="pc-style">〜</span>
-            <input id="end-date01" class="normal-input date-area icon-del" type="date" value="" disabled>
-            <!-- <button name="search-btn" class="normal-btn ok" type="button" onclick="execSearch()"> -->
+            <input id="end-date02" class="normal-input date-area icon-del" type="date" value="" disabled>
             <button id="save-btn02" name="save-btn" class="normal-btn" type="button" onclick="execSave(this)" disabled>
                 <span>保存</span>
             </button>
-            <button id="confirm-btn02" name="confirm-btn" class="normal-btn" type="button" onclick="execConfirmSave(this)" disabled>
+            <button id="confirm-btn02" name="confirm-btn" class="normal-btn" type="button" onclick="execConfirm(this)" disabled>
                 <span>確定</span>
             </button>
-            <div sec:authorize="hasAuthority('APPROLE_admin')">
-                <button id="cancel-btn02" name="cancel-btn" class="normal-btn" type="button" onclick="execCancel(this)">
-                    <span>取消</span>
-                </button>
-            </div>
         </div>
         <!-- 日付移動ボタン -->
         <div class="flex-area">
-            <!-- <div th:replace="~{fragments/header::header-month-move-btn-fragment('start-date01', 'end-date01')}"></div> -->
-            <div th:replace="~{fragments/header::header-2week-move-btn-fragment('start-date01', 'end-date01')}"></div>
+            <div th:replace="~{fragments/header::header-2week-move-btn-fragment('start-date02', 'end-date02')}"></div>
         </div>
     </header>
 
@@ -87,9 +80,9 @@
     <header class="timeworks-content03" th:fragment="header03Fragment()">
         <!-- 期間指定ボックス -->
         <div class="flex-area">
-            <input id="start-date02" class="normal-input date-area icon-del" type="date" value="" disabled>
+            <input id="start-date03" class="normal-input date-area icon-del" type="date" value="" disabled>
             <span class="pc-style">〜</span>
-            <input id="end-date02" class="normal-input date-area icon-del" type="date" value="" disabled>
+            <input id="end-date03" class="normal-input date-area icon-del" type="date" value="" disabled>
             <!-- <button name="search-btn" class="normal-btn ok" type="button" onclick="execSearch()"> -->
             <button id="down-btn01" name="down-btn" class="normal-btn ok" type="button" onclick="execDownloadCsv()">
                 <span>出力</span>
@@ -97,8 +90,7 @@
         </div>
         <!-- 日付移動ボタン -->
         <div class="flex-area">
-            <!-- <div th:replace="~{fragments/header::header-month-move-btn-fragment('start-date01', 'end-date01')}"></div> -->
-            <div th:replace="~{fragments/header::header-2week-move-btn-fragment('start-date02', 'end-date02')}"></div>
+            <div th:replace="~{fragments/header::header-2week-move-btn-fragment('start-date03', 'end-date03')}"></div>
         </div>
     </header>
 
@@ -120,7 +112,7 @@
     <main th:fragment="mainFragment04(tableId, scrollId)">
         <table th:id="${tableId}" class="normal-table timeworks04">
             <tr id="row-0" name="table-header" class="pc-style">
-                <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
+                <!-- <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th> -->
                 <th><span>ID<span class="sort-arrow"></span></span></th>
                 <th><span>氏名<span class="sort-arrow"></span></span></th>
                 <th><span>使用日数<span class="sort-arrow"></span></span></th>
@@ -131,13 +123,44 @@
         <button type="button" class="page-top"></button>
     </main>
 
-    <main th:fragment="mainFragment05(tableId, scrollId)">
-        <table th:id="${tableId}" class="normal-table timeworks05">
+    <main th:fragment="mainFragment15(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table timeworks15">
             <tr id="row-0" name="table-header" class="pc-style">
                 <!-- <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th> -->
                 <th><span>開始日<span class="sort-arrow"></span></span></th>
                 <th><span>終了日<span class="sort-arrow"></span></span></th>
                 <th><span>事由<span class="sort-arrow"></span></span></th>
+                <th></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+<!-- タブ5 --------------------------------------------------------------------------------------------------------------->    
+    <header class="timeworks-content05" th:fragment="header05Fragment()">
+        <!-- 期間指定ボックス -->
+        <div class="flex-area">
+            <input id="start-date05" class="normal-input date-area icon-del" type="date" value="" disabled>
+            <span class="pc-style">〜</span>
+            <input id="end-date05" class="normal-input date-area icon-del" type="date" value="" disabled>
+        </div>
+        <!-- 日付移動ボタン -->
+        <div class="flex-area">
+            <div th:replace="~{fragments/header::header-2week-move-btn-fragment('start-date05', 'end-date05')}"></div>
+        </div>
+    </header>
+
+    <main th:fragment="mainFragment05(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table timeworks05">
+            <tr id="row-0" name="table-header" class="pc-style">
+                <th><span>日付<span class="sort-arrow"></span></span></th>
+                <th><span>出勤<span class="sort-arrow"></span></span></th>
+                <th><span>退勤<span class="sort-arrow"></span></span></th>
+                <th><span>確定（出勤）<span class="sort-arrow"></span></span></th>
+                <th><span>確定（退勤）<span class="sort-arrow"></span></span></th>
+                <th><span>休憩<span class="sort-arrow"></span></span></th>
+                <th></th>
                 <th></th>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>
