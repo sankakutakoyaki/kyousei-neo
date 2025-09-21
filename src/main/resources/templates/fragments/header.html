@@ -10,6 +10,25 @@
         <div class="header-title pc-style" th:insert="~{fragments/menu :: homeFragment}">
         </div>
         <div class="user-btn">
+            <div sec:authorize="hasAuthority('APPROLE_admin')">
+                <span>管理者：</span>
+            </div>
+            <div sec:authorize="hasAuthority('APPROLE_master')">
+                <span>所長：</span>
+            </div>
+            <div sec:authorize="hasAuthority('APPROLE_leader')">
+                <span>班長：</span>
+            </div>
+            <div sec:authorize="hasAuthority('APPROLE_user')">
+                <span>一般：</span>
+            </div>
+            <div sec:authorize="hasAuthority('APPROLE_office')">
+                <span>営業所：</span>
+            </div>
+            <div sec:authorize="hasAuthority('APPROLE_staff')">
+                <span>事務：</span>
+            </div> 
+
             <span class="pc-style" sec:authentication="name"></span>
             <form class="logout-btn" th:action="@{/logout}" th:method="post">
                 <button type="submit"><img th:src="@{/icons/logout.png}"></button>

@@ -43,7 +43,7 @@ button:disabled:hover {
 
 .user-btn {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto auto auto;
     align-items: end;
     justify-content: end;
 }

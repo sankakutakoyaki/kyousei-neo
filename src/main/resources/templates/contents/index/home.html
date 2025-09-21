@@ -8,6 +8,32 @@
         <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
         <!-- ボディ -->
         <div class="normal-body">
+            <!-- <div sec:authorize="hasAuthority('APPROLE_admin')">
+                <h2>管理者</h2>
+            </div>
+
+            <div sec:authorize="hasAuthority('APPROLE_master')">
+                <h2>所長</h2>
+            </div>
+
+            <div sec:authorize="hasAuthority('APPROLE_leader')">
+                <h2>班長</h2>
+            </div>
+
+            <div sec:authorize="hasAuthority('APPROLE_user')">
+                <h2>一般</h2>
+            </div>
+
+            <div sec:authorize="hasAuthority('APPROLE_office')">
+                <h2>営業所</h2>
+            </div>
+
+            <div sec:authorize="hasAuthority('APPROLE_staff')">
+                <h2>事務員</h2>
+            </div> 
+
+            <br> -->
+
             <h2>勤怠</h2>
             <div class="flex-area time-btn">  
                 <div class="form-parts">
@@ -19,30 +45,6 @@
                     <span id="end-time">00:00:00</span>
                 </div>
             </div>
-            <br>
-            <div sec:authorize="hasAuthority('APPROLE_admin')">
-                <h2>管理者メニュー</h2>
-            </div>
-
-            <div sec:authorize="hasAuthority('APPROLE_master')">
-                <h2>所長メニュー</h2>
-            </div>
-
-            <div sec:authorize="hasAuthority('APPROLE_leader')">
-                <h2>班長メニュー</h2>
-            </div>
-
-            <div sec:authorize="hasAuthority('APPROLE_user')">
-                <h2>一般メニュー</h2>
-            </div>
-
-            <div sec:authorize="hasAuthority('APPROLE_office')">
-                <h2>営業所メニュー</h2>
-            </div>
-
-            <div sec:authorize="hasAuthority('APPROLE_staff')">
-                <h2>事務員メニュー</h2>
-            </div> 
 
             <!-- <div sec:authorize="hasAuthority('APPROLE_master')">
                 <h2>マスターメニュー</h2>
