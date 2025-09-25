@@ -6,8 +6,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,13 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.component.UploadConfig;
 import com.kyouseipro.neo.entity.common.AddressEntity;
-import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.interfaceis.FileUpload;
 import com.kyouseipro.neo.repository.common.AddressRepository;
-import com.kyouseipro.neo.repository.common.SqlRepository;
-import com.kyouseipro.neo.service.qualification.QualificationFilesService;
 
-import groovyjarjarantlr4.v4.parse.ANTLRParser.id_return;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -46,8 +40,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FileService {
 
-    private final QualificationFilesService qualificationFilesService;
-    private final SqlRepository sqlRepository;
     private final AddressRepository addressRepository;
 
     /** 許可された拡張子のリスト（必要に応じて変更可） */

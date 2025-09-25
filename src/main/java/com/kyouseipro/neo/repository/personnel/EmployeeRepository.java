@@ -2,8 +2,6 @@ package com.kyouseipro.neo.repository.personnel;
 
 import java.util.List;
 
-import javax.swing.text.html.parser.Entity;
-
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Utilities;
