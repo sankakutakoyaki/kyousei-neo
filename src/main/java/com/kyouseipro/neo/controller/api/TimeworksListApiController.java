@@ -187,6 +187,8 @@ public class TimeworksListApiController {
         Integer id = timeworksListService.saveTodaysTimeworks(timeworksEntity, editor);
         if (id != null && id > 0) {
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        } else if (id != null && id == -1) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("有給申請されているため\n勤務登録できません。", id));
         } else {
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }

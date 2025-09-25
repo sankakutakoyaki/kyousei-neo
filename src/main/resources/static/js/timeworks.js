@@ -19,11 +19,15 @@ async function setTimeworks(timeCategory) {
     const data = JSON.stringify(entity);
     const url = '/timeworks/regist/today';
     const contentType = 'application/json';
-    const result = await postFetch(url, data, token, contentType);
+    const resultResponse = await postFetch(url, data, token, contentType);
+    const result = await resultResponse.json();
 
-    await updateDisplay();
-    
-    return await result.json();
+    await updateDisplay(result);
+    // if (result.data == -1) {
+    //     funcHandlingErrors(result.message);
+    // } else {
+    //     await updateDisplay(result);
+    // }    
 }
 
 async function updateTimeworks(list, self) {

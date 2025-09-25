@@ -8,31 +8,6 @@
         <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
         <!-- ボディ -->
         <div class="normal-body">
-            <!-- <div sec:authorize="hasAuthority('APPROLE_admin')">
-                <h2>管理者</h2>
-            </div>
-
-            <div sec:authorize="hasAuthority('APPROLE_master')">
-                <h2>所長</h2>
-            </div>
-
-            <div sec:authorize="hasAuthority('APPROLE_leader')">
-                <h2>班長</h2>
-            </div>
-
-            <div sec:authorize="hasAuthority('APPROLE_user')">
-                <h2>一般</h2>
-            </div>
-
-            <div sec:authorize="hasAuthority('APPROLE_office')">
-                <h2>営業所</h2>
-            </div>
-
-            <div sec:authorize="hasAuthority('APPROLE_staff')">
-                <h2>事務員</h2>
-            </div> 
-
-            <br> -->
 
             <h2>勤怠</h2>
             <div class="flex-area time-btn">  
@@ -64,20 +39,26 @@
         <div id="form-dialog-area">
             <!-- フォーム画面をここに記入する -->
         </div>
-        <div id="dialog-area">
-            <!-- ダイアログ画面をここに記入する -->
+        <div id="msg-dialog-area">
+            <div th:replace="~{fragments/dialog :: messageFragment}"></div>
         </div>
+
         <script th:src="@{/js/subscription.js}"></script>
         <script th:src="@{/js/info.js}"></script>
         <script th:src="@{/js/timeworks.js}"></script>
+        <script th:src="@{/js/dialog.js}"></script>
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
             const user_name = /*[[${user_name}]]*/;
             const employeeId = /*[[${employeeId}]]*/;
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 個人勤怠
-            async function updateDisplay() {
-                await searchForNameByCode(employeeId);
+            async function updateDisplay(result) {
+                if (result != null && result.data == -1) {
+                    openMsgDialog("msg-dialog", result.message, 'red');
+                } else {
+                    await searchForNameByCode(employeeId);
+                }
             }
 
             // コードから[timeworks]を取得

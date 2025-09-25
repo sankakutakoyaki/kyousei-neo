@@ -103,24 +103,28 @@ public class TimeworksListParameterBinder {
     }
 
     public static void bindInsertParameters(PreparedStatement pstmt, TimeworksListEntity t, String editor) throws SQLException {
-        pstmt.setInt(1, t.getEmployee_id());
-        pstmt.setInt(2, t.getCategory());
-        pstmt.setString(3, LocalDate.now().toString());
-        pstmt.setTime(4, t.getStart_time() != null ? Time.valueOf(t.getStart_time()) : Time.valueOf("00:00:00"));
-        pstmt.setTime(5, t.getEnd_time() != null ? Time.valueOf(t.getEnd_time()) : Time.valueOf("00:00:00"));
-        pstmt.setTime(6, t.getComp_start_time() != null ? Time.valueOf(t.getComp_start_time()) : Time.valueOf("00:00:00"));
-        pstmt.setTime(7, t.getComp_end_time() != null ? Time.valueOf(t.getComp_end_time()) : Time.valueOf("00:00:00"));
+        int index = 1;
+
+        pstmt.setInt(index++, t.getEmployee_id());
+        pstmt.setString(index++, t.getWork_date().toString());
+        pstmt.setInt(index++, t.getEmployee_id());
+        pstmt.setInt(index++, t.getCategory());
+        pstmt.setString(index++, LocalDate.now().toString());
+        pstmt.setTime(index++, t.getStart_time() != null ? Time.valueOf(t.getStart_time()) : Time.valueOf("00:00:00"));
+        pstmt.setTime(index++, t.getEnd_time() != null ? Time.valueOf(t.getEnd_time()) : Time.valueOf("00:00:00"));
+        pstmt.setTime(index++, t.getComp_start_time() != null ? Time.valueOf(t.getComp_start_time()) : Time.valueOf("00:00:00"));
+        pstmt.setTime(index++, t.getComp_end_time() != null ? Time.valueOf(t.getComp_end_time()) : Time.valueOf("00:00:00"));
         String rest = t.getRest_time();
         if (rest == null || rest.isBlank()) {
-            pstmt.setTime(8, Time.valueOf("00:00:00"));
+            pstmt.setTime(index++, Time.valueOf("00:00:00"));
         } else {
             LocalTime lt = LocalTime.parse(rest); // "00:00" もOK
-            pstmt.setTime(8, Time.valueOf(lt));
+            pstmt.setTime(index++, Time.valueOf(lt));
         }
-        pstmt.setInt(9, t.getVersion());
-        pstmt.setInt(10, t.getState());
+        pstmt.setInt(index++, t.getVersion());
+        pstmt.setInt(index++, t.getState());
 
-        pstmt.setString(11, editor);
+        pstmt.setString(index++, editor);
     }
 
     public static void bindUpdateParameters(PreparedStatement pstmt, TimeworksListEntity t, String editor) throws SQLException {
