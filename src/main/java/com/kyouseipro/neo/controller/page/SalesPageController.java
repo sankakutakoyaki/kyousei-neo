@@ -1,5 +1,6 @@
 package com.kyouseipro.neo.controller.page;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,25 +11,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
-import com.kyouseipro.neo.entity.personnel.EmployeeListEntity;
 import com.kyouseipro.neo.entity.sales.OrderEntity;
+import com.kyouseipro.neo.entity.sales.OrderListEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
-import com.kyouseipro.neo.service.corporation.CompanyListService;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
+import com.kyouseipro.neo.service.sales.OrderListService;
 
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
 public class SalesPageController {
+    private final OrderListService orderListService;
     private final EmployeeService employeeService;
-    private final CompanyListService companyListService;
     private final ComboBoxService comboBoxService;
     private final HistoryService historyService;
 
@@ -39,8 +38,8 @@ public class SalesPageController {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "受注");
         mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
-        mv.addObject("bodyFragmentName", "contents/personnel/employee :: bodyFragment");
+		mv.addObject("sidebarFragmentName", "fragments/menu :: salesFragment");
+        mv.addObject("bodyFragmentName", "contents/sales/order :: bodyFragment");
         mv.addObject("insertCss", "/css/sales/order.css");
 
 		// ユーザー名
@@ -52,8 +51,8 @@ public class SalesPageController {
         mv.addObject("formEntity", new OrderEntity());
 
         // 初期表示用受注リスト取得
-        // List<OrderListEntity> origin = orderListService.getOrderList(LocalDate.now(), LocalDate.now());
-        // mv.addObject("origin", origin);
+        List<OrderListEntity> origin = orderListService.getBetweenOrderEntity(LocalDate.now(), LocalDate.now());
+        mv.addObject("origin", origin);
 
         // // コンボボックスアイテム取得
         List<SimpleData> clientComboList = comboBoxService.getClientList();

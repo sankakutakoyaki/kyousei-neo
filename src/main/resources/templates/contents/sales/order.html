@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- 本体 -->
+    <div class="normal-content" th:fragment="bodyFragment">
+        <!-- ハンバーガー -->
+        <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+        <!-- サイドバー -->
+        <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
+        <!-- ボディ -->
+        <div class="normal-body">
+            <div class="tab-area">
+                <ul class="tab-menu">
+                    <li class="tab-menu-item is-active" data-tab="01">社員</li>
+                    <!-- <li class="tab-menu-item" data-tab="02">アルバイト</li> -->
+                    <!-- <li class="tab-menu-item" data-tab="03">請負</li> -->
+                </ul>
+                <div class="tab-panel is-show" data-panel="01">
+                    <div class="table-area">
+                        <!-- ヘッダー -->
+                        <header th:replace="~{fragments/sales/order :: headerFragment('search-box-01')}">
+                        </header>
+                        <!-- コンテンツ -->
+                        <main
+                            th:replace="~{fragments/sales/order :: mainFragment('table-01', 'table-01-content')}">
+                        </main>
+                        <!-- フッター -->
+                        <footer id="footer-01" class="pc-style"
+                            th:insert="~{fragments/sales/order :: footerFragment()}"></footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="form-dialog-area">
+            <!-- フォーム画面をここに記入する -->
+            <div id="form-dialog-01" class="form-dialog none">
+                <div class="dialog-main">
+                    <div class="dialog-header"><span></span>
+                        <div class="img-btn" onclick="closeFormDialog('form-dialog-01', event)"><img title="閉じる"
+                                src="/icons/close-s.png"></div>
+                    </div>
+                    <form id="form-01" class="dialog-content">
+                        <input name="order-id" type="hidden" value="">
+                        <input name="version" type="hidden" value="">
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>件名</label>
+                                <input tabindex="1" name="title" class="normal-input" type="text" value="" onfocus="this.select();">
+                            </div>
+                            <div class="form-parts">
+                                <label>受注番号</label>
+                                <input tabindex="2" name="request-number" class="normal-input" type="text" value="" onfocus="this.select();">
+                            </div>
+                        </div>
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>元請</label>
+                                <select tabindex="3" name="prime-contractor" class="normal-select"></select>
+                            </div>
+                            <div class="form-parts">
+                                <label>元請支店</label>
+                                <select tabindex="4" name="prime-contractor-office" class="normal-select"></select>
+                            </div>
+                        </div>
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>郵便番号</label>
+                                <input tabindex="11" id="order-postal-code" name="order-postal-code" class="normal-input"
+                                    type="text" inputmode="numeric" pattern="\\d{3}-?\\d{4}" value=""
+                                    placeholder="012-3456" onfocus="this.select();">
+                                <img title="検索" src="/icons/search.png"
+                                    onclick="getAddress('Enter', 'order-postal-code', 'order-full-address')">
+                            </div>
+                            <div class="form-parts">
+                                <label>住所</label>
+                                <input tabindex="12" id="order-full-address" name="order-ull-address" class="normal-input"
+                                    type="text" value="" placeholder="例）大阪府高槻市柱本5丁目7番10号" onfocus="this.select();">
+                            </div>
+                        </div>
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>受注日</label>
+                                <input tabindex="18" name="order-date" class="normal-input" type="date" value=""
+                                    onfocus="this.select();">
+                            </div>
+                            <div class="form-parts">
+                                <label>着工日</label>
+                                <input tabindex="18" name="start-date" class="normal-input" type="date" value=""
+                                    onfocus="this.select();">
+                            </div>
+                            <div class="form-parts">
+                                <label>完工日</label>
+                                <input tabindex="18" name="end-date" class="normal-input" type="date" value=""
+                                    onfocus="this.select();">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="dialog-footer">
+                        <button class="normal-btn frameless" type="button"
+                            onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
+                        <button tabindex="19" class="normal-btn ok" type="button"
+                            onclick="execSave()"><span>保存</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="msg-dialog-area">
+            <div th:replace="~{fragments/dialog :: messageFragment}"></div>
+        </div>
+        <script th:src="@{/js/table.js}"></script>
+        <script th:src="@{/js/info.js}"></script>
+        <script th:src="@{/js/file.js}"></script>
+        <script th:src="@{/js/enterfocus.js}"></script>
+        <script type="text/JavaScript" th:inline="JavaScript">
+            const token = /*[[${_csrf.token}]]*/;
+            const user = /*[[${user}]]*/;
+            // const formEntity = /*[[${formEntity}]]*/;
+            // const categoryEmployeeCode = /*[[${categoryEmployeeCode}]]*/;
+            // const categoryParttimeCode = /*[[${categoryParttimeCode}]]*/;
+            // const categoryConstructCode = /*[[${categoryConstructCode}]]*/;
+            // const companyComboList = /*[[${companyComboList}]]*/;
+            // const clientComboList = /*[[${clientComboList}]]*/;
+            // const officeList = /*[[${officeList}]]*/;
+            // const employeeCategoryComboList = /*[[${employeeCategoryComboList}]]*/;
+            // const genderComboList = /*[[${genderComboList}]]*/;
+            // const bloodTypeComboList = /*[[${bloodTypeComboList}]]*/;
+            // let origin = /*[[${origin}]]*/; // 初期リスト記憶用
+
+/******************************************************************************************************* 入力画面 */
+
+            // リスト画面の本体部分を作成する
+            function createTableContent(tableId, list) {
+                const tbl = document.getElementById(tableId);
+                list.forEach(function (item) {
+                    let newRow = tbl.insertRow();
+                    // ID（Post送信用）
+                    newRow.setAttribute('name', 'data-row');
+                    newRow.setAttribute('data-id', item.employee_id);
+                    // シングルクリック時の処理
+                    newRow.onclick = function (e) {
+                        if (!e.currentTarget.classList.contains('selected')){
+                            // すべての行の選択状態を解除する
+                            detachmentSelectClassToAllRow(tbl, false);
+                            // 選択した行にセレクトクラスを付与する
+                            const result = addSelectClassToRow(e.currentTarget);
+                        } else {
+                            // 選択済みの要素をクリックした時の処理
+                            const clickedTd = e.target.closest("td");
+                            // 取得したTDの処理
+                        }
+                    }
+                    // ダブルクリック時の処理
+                    newRow.ondblclick = function (e) { 
+                        // チェックボックスの動作を停止させる
+                        e.preventDefault();
+                        // 選択済みの場合
+                        if (!e.currentTarget.classList.contains('selected')){
+                            // すべての行の選択状態を解除する
+                            detachmentSelectClassToAllRow(tableId, false);
+                            // 選択した行にセレクトクラスを付与する
+                            const result = addSelectClassToRow(e.currentTarget);
+                        }
+                        
+                        // フォーム入力画面を表示する
+                        switch (tableId) {
+                            case "table-01-content":
+                                execEdit(item.employee_id, this);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+                    switch (tableId) {
+                        case "table-01-content":
+                            createTableRow(newRow, item, "01");
+                            break;
+                        default:
+                            break;
+                    }
+
+                });
+            }
+
+            // テーブル行を作成する
+            function createTableRow(newRow, item, tab) {
+                // 選択用チェックボックス
+                newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
+                // ID
+                newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.order_id + ', this)">' + String(item.order_id).padStart(8, '0') + '</td>');
+                // 依頼番号
+                newRow.insertAdjacentHTML('beforeend', '<td name="request-number-cell"<span>' + (item.request_number ?? "登録なし") + '</span></td>');
+                // 受注日
+                newRow.insertAdjacentHTML('beforeend', '<td name="order-date-cell"><span>' + (item.order_date ?? "") + '</span></td>');
+                // 着工日
+                newRow.insertAdjacentHTML('beforeend', '<td name="start-date-cell"><span>' + (item.start_date ?? "") + '</span></td>');
+                // 完工日
+                newRow.insertAdjacentHTML('beforeend', '<td name="end-date-cell"><span>' + (item.end_date ?? "") + '</span></td>');
+                // 元請
+                newRow.insertAdjacentHTML('beforeend', '<td name="prime-contractor-cell"><span>' + (item.prime_contractor_name ?? "") + '</span></td>');
+                // 元請支店
+                newRow.insertAdjacentHTML('beforeend', '<td name="prime-contractor-office-cell"><span>' + (item.prime_contractor_office_name ?? "") + '</span></td>');
+                // 件名
+                newRow.insertAdjacentHTML('beforeend', '<td name="title-cell"><span>' + (item.title ?? "") + '</span></td>');
+                // 住所
+                newRow.insertAdjacentHTML('beforeend', '<td name="order-full-address-cell"><span>' + (item.order_full_address ?? "") + '</span></td>');
+            }
+
+/******************************************************************************************************* 入力画面 */
+
+            // 受注伝票登録画面を開く
+            async function execEdit(id, self) {
+                const panel = self.closest('.tab-panel');
+                const tab = panel.dataset.panel;
+
+                // スピナー表示
+                startProcessing();
+
+                // 入力フォームダイアログを開く
+                openFormDialog("form-dialog-01");
+
+                // フォーム画面を取得
+                const form = document.getElementById('form-dialog-01');              
+
+                let entity = {};
+                if (id > 0) {
+                    // 選択されたIDのエンティティを取得
+                    const data = "id=" + encodeURIComponent(parseInt(id));
+                    const resultResponse = await postFetch('/order/get/id', data, token, 'application/x-www-form-urlencoded');
+                    const result = await resultResponse.json();
+                    if (result.order_id == 0) {
+                        openMsgDialog("msg-dialog", "データがありません", "red");
+                        return;
+                    }
+                    entity = structuredClone(result);
+                } else {
+                    entity = structuredClone(formEntity);
+                }
+
+                form.querySelector('[name="order-id"]').value = entity.order_id;
+                form.querySelector('[name="request-number"]').value = entity.request_number;
+                form.querySelector('[name="title"]').value = entity.title;
+                form.querySelector('[name="order-postal-code"]').value = entity.order_postal_code;
+                form.querySelector('[name="order-full-address"]').value = entity.order_full_address;
+                if (entity.order_date == "9999-12-31") {
+                    form.querySelector('[name="order_date"]').value = "";
+                } else {
+                    form.querySelector('[name="order_date"]').value = entity.order_date;
+                }
+                if (entity.start_date == "9999-12-31") {
+                    form.querySelector('[name="start_date"]').value = "";
+                } else {
+                    form.querySelector('[name="start_date"]').value = entity.start_date;
+                }
+                if (entity.end_date == "9999-12-31") {
+                    form.querySelector('[name="end_date"]').value = "";
+                } else {
+                    form.querySelector('[name="end_date"]').value = entity.end_date;
+                }
+                form.querySelector('[name="version"]').value = entity.version;
+
+                // 元請コンボボックス
+                const primeContractorArea = form.querySelector('select[name="prime-contractor"]');
+                createComboBox(primeContractorArea, primeContractorComboList);
+                primeContractorArea.style.pointerEvents = 'none';
+                setComboboxSelected(primeContractorArea, entity.prime_contractor_id);
+                primeContractorArea.onchange = function() { createPrimeContractorOfficeComboBox(this) };
+                // 元請支店コンボボックス
+                createPrimeContractorOfficeComboBox(primeContractorArea);
+                const primeContractorOfficeArea = form.querySelector('select[name="prime-contractor-office"]');
+                setComboboxSelected(primeContractorOfficeArea, entity.prime_contractor_office_id);
+
+                // スピナー消去
+                processingEnd();
+            }
+
+            // 選択した元請の支店をコンボボックスに登録する
+            function createPrimeContractorOfficeComboBox(self) {
+                const selectId = self.value;
+                const comboList = primeContractorOfficeList.filter(value => { return value.prime_contractor_id == selectId }).map(item => ({number:item.prime_contractor_office_id, text:item.prime_contractor_office_name}));
+                const area = self.closest('.dialog-content');
+                const primeContractorOfficeArea = area.querySelector('select[name="prime-contractor-office"]');
+                createComboBoxWithTop(primeContractorOfficeArea, comboList, "");
+            }
+
+/******************************************************************************************************* 保存 */
+
+            // 保存処理
+            async function execSave() {
+                const form = document.getElementById('form-01');
+                // エラーチェック
+                if (formDataCheck(form) == false) {
+                    return;
+                } else {
+                    const formData = new FormData(form);
+                    const formdata = structuredClone(formEntity);
+                    formdata.order_id = formData.get('order-id');
+                    formdata.request_number = formData.get('request-number');
+                    if (formData.get('order-date') == "") {
+                        formdata.order_date = "9999-12-31";
+                    } else {
+                        formdata.order_date = formData.get('order-date');
+                    }
+                    if (formData.get('start-date') == "") {
+                        formdata.start_date = "9999-12-31";
+                    } else {
+                        formdata.start_date = formData.get('start-date');
+                    }
+                    if (formData.get('end-date') == "") {
+                        formdata.end_date = "9999-12-31";
+                    } else {
+                        formdata.end_date = formData.get('end-date');
+                    }
+                    formdata.prime_contractor_id = formData.get('prime-contractor');
+                    formdata.prime_contractor_office_id = formData.get('prime-contractor-office');
+                    formdata.title = formData.get('title').trim();
+                    formdata.order_postal_code = formData.get('order-postal-code').trim();
+                    formdata.order_full_address = formData.get('order-full-address').trim();
+                    formdata.version = formData.get('version');
+
+                    // 保存処理
+                    const resultResponse = await postFetch("/order/save", JSON.stringify(formdata), token, "application/json");
+                    const result = await resultResponse.json();
+                    if (result.success) {
+                        // 画面更新
+                        openMsgDialog("msg-dialog", result.message, "blue");
+                        await execUpdate();
+                        // 追加・変更行に移動
+                        scrollIntoTableList("table-01-content", result.id);
+                    } else {
+                        openMsgDialog("msg-dialog", result.message, "red");
+                    }
+                    // ダイアログを閉じる
+                    closeFormDialog('form-dialog-01');
+                }
+            }
+
+            // 入力チェック
+            function formDataCheck(area) {
+                let msg = "";
+                // 件名が入力されていないとFalseを返す
+                const title = area.querySelector('input[name="title"]');
+                if (account != null && account.value == "") msg += '\n件名が入力されていません';
+                // エラーが一つ以上あればエラーメッセージダイアログを表示する
+                if (msg != "") {
+                    openMsgDialog("msg-dialog", msg, "red");
+                    return false;
+                }
+                return true;
+            }
+
+/******************************************************************************************************* 削除 */
+
+            async function execDelete(self) {
+                const panel = self.closest('.tab-panel');
+                const tab = panel.dataset.panel;
+                let result;
+                switch (tab) {
+                    case "01":
+                        result = await deleteTablelist('table-01-content', '/order/delete');
+                        break;
+                    default:
+                        break;
+                }
+                
+                if (result.success) {                
+                    await execUpdate();
+                    openMsgDialog("msg-dialog", result.message, "blue");
+                } else {
+                    openMsgDialog("msg-dialog", result.message, "red");
+                }
+            }
+
+
+/******************************************************************************************************* ダウンロード */
+
+            async function execDownloadCsv(self) {
+                const panel = self.closest('.tab-panel');
+                const tab = panel.dataset.panel;
+                let result;
+                switch (tab) {
+                    case "01":
+                        result = await downloadCsv('table-01-content', '/order/download/csv');
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+    /******************************************************************************************************* 画面更新 */
+
+            async function execUpdate() {
+                // リスト取得
+                const resultResponse = await fetch('/order/get/list');
+                origin = await resultResponse.json();
+
+                // 画面更新
+                await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+            }
+
+    /******************************************************************************************************* 画面更新 */
+
+            // テーブルリスト画面を更新する
+            async function updateTableDisplay(tableId, footerId, searchId, list) {
+                // フィルター処理
+                const result = filterDisplay(searchId, list);
+                // リスト画面を初期化
+                deleteElements(tableId);
+                // リスト作成
+                createTableContent(tableId, result);
+                // フッター作成
+                createTableFooter(footerId, list);
+                // チェックボタン押下時の処理を登録する
+                registCheckButtonClicked(tableId);
+                // テーブルのソートをリセットする
+                resetSortable(tableId);
+                // // スクロール時のページトップボタン処理を登録する
+                // setPageTopButton(tableId);
+                // テーブルにスクロールバーが表示されたときの処理を登録する
+                document.querySelectorAll('.scroll-area').forEach(el => {
+                    toggleScrollbar(el);
+                });
+            }
+
+/******************************************************************************************************* 初期化時 */
+
+            // ページ読み込み後の処理
+            window.addEventListener("load", async () => {
+                // スピナー表示
+                startProcessing();
+
+                // 検索ボックス入力時の処理
+                document.getElementById('search-box-01').addEventListener('search', async function(e) {
+                    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+                }, false);
+
+                // 郵便番号入力ボックスでエンターキーが押された時の処理を登録
+                document.getElementById('order-postal-code').addEventListener('keydown', async function (e) {
+                    await getAddress(e, 'order-postal-code', 'order-full-address');                                                                                                                                                                                                                                                                                                                                                       ;
+                });
+
+                // エンターフォーカス処理をイベントリスナーに登録する
+                setEnterFocus("form-01");
+
+                // 画面更新
+                await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+                // テーブルをソート可能にする
+                makeSortable("table-01-content");
+                // スクロール時のページトップボタン処理を登録する
+                setPageTopButton("table-01-content");
+
+                // タブメニュー処理
+                const tabMenus = document.querySelectorAll('.tab-menu-item');
+                // イベント付加
+                tabMenus.forEach((tabMenu) => {
+                    tabMenu.addEventListener('click', tabSwitch);
+                })
+
+                // スピナー消去
+                processingEnd();
+            });
+        </script>
+    </div>
+
+</body>
