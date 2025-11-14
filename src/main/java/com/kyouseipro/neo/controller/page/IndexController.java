@@ -78,6 +78,7 @@ public class IndexController {
 		historyService.saveHistory(userName, "", "ログイン", 200, "ログインしました。");
         return mv;
     }
+	
 	/**
 	 * ログアウト
 	 * @param httpRequest

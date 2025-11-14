@@ -51,12 +51,13 @@ public class SalesPageController {
         mv.addObject("formEntity", new OrderEntity());
 
         // 初期表示用受注リスト取得
-        List<OrderListEntity> origin = orderListService.getBetweenOrderEntity(LocalDate.now(), LocalDate.now());
+        // List<OrderListEntity> origin = orderListService.getBetweenOrderEntity(LocalDate.now(), LocalDate.now());
+        List<OrderListEntity> origin = orderListService.getOrderList();
         mv.addObject("origin", origin);
 
         // // コンボボックスアイテム取得
-        List<SimpleData> clientComboList = comboBoxService.getClientList();
-        mv.addObject("clientComboList", clientComboList);
+        List<SimpleData> primeConstractorComboList = comboBoxService.getPrimeConstractorList();
+        mv.addObject("primeConstractorComboList", primeConstractorComboList);
         List<OfficeListEntity> officeList = comboBoxService.getOfficeList();
         mv.addObject("officeList", officeList);
 

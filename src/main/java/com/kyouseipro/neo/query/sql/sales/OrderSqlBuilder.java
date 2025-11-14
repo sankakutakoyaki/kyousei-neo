@@ -39,14 +39,15 @@ public class OrderSqlBuilder {
             buildLogTableSql("@InsertedRows") +
 
             "INSERT INTO orders (" +
-            "  request_number, order_date, start_date, end_date, " +
-            "  title, order_postal_code, order_full_address, " +
-            "  version, state" +
+            " request_number, order_date, start_date, end_date, " +
+            " prime_constractor_id, prime_constractor_office_id, " +
+            " title, order_postal_code, order_full_address, " +
+            " version, state" +
             ") " +
 
             buildOutputLogSql() + "INTO @InsertedRows " +
 
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?); " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
             buildInsertLogSql("@InsertedRows", "INSERT") +
 

@@ -84,4 +84,15 @@ public class CompanyListRepository {
             SimpleDataMapper::map
         );
     }
+
+    // コンボボックス用リスト取得
+    public List<SimpleData> findAllComboPrimeConstractor() {
+        String sql = CompanyListSqlBuilder.buildFindAllComboPrimeConstractorSql();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> CompanyListParameterBinder.bindFindAllComboPrimeConstractor(ps, null),
+            SimpleDataMapper::map
+        );
+    }
 }

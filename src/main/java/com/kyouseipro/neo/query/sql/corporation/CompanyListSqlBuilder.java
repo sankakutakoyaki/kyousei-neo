@@ -21,4 +21,8 @@ public class CompanyListSqlBuilder {
     public static String buildFindAllComboClientSql() {
         return "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND NOT (category = ?) ORDER BY name_kana, category;";
     }
+
+    public static String buildFindAllComboPrimeConstractorSql() {
+        return "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana, category;";
+    }
 }

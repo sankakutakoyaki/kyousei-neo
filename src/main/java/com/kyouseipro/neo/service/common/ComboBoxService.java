@@ -119,6 +119,10 @@ public class ComboBoxService {
         return companyListRepository.findAllComboClient();
     }
 
+    public List<SimpleData> getPrimeConstractorList() {
+        return companyListRepository.findAllComboPrimeConstractor();
+    }
+
     public List<OfficeListEntity> getOfficeList() {
         return officeListRepository.findAll();
     }

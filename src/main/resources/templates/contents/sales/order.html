@@ -43,30 +43,44 @@
                     <form id="form-01" class="dialog-content">
                         <input name="order-id" type="hidden" value="">
                         <input name="version" type="hidden" value="">
+
                         <div class="flex-area">
                             <div class="form-parts">
-                                <label>件名</label>
-                                <input tabindex="1" name="title" class="normal-input" type="text" value="" onfocus="this.select();">
+                                <label>受注日</label>
+                                <input tabindex="1" name="order-date" class="normal-input" type="date" value=""
+                                    onfocus="this.select();">
                             </div>
                             <div class="form-parts">
                                 <label>受注番号</label>
                                 <input tabindex="2" name="request-number" class="normal-input" type="text" value="" onfocus="this.select();">
                             </div>
                         </div>
+
                         <div class="flex-area">
                             <div class="form-parts">
                                 <label>元請</label>
-                                <select tabindex="3" name="prime-contractor" class="normal-select"></select>
-                            </div>
-                            <div class="form-parts">
-                                <label>元請支店</label>
-                                <select tabindex="4" name="prime-contractor-office" class="normal-select"></select>
+                                <select tabindex="3" name="prime-constractor" class="normal-select"></select>
                             </div>
                         </div>
+
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>元請支店</label>
+                                <select tabindex="4" name="prime-constractor-office" class="normal-select"></select>
+                            </div>
+                        </div>
+
+                        <div class="flex-area">
+                            <div class="form-parts">
+                                <label>件名</label>
+                                <input tabindex="5" name="title" class="normal-input" type="text" value="" onfocus="this.select();">
+                            </div>
+                        </div>
+
                         <div class="flex-area">
                             <div class="form-parts">
                                 <label>郵便番号</label>
-                                <input tabindex="11" id="order-postal-code" name="order-postal-code" class="normal-input"
+                                <input tabindex="6" id="order-postal-code" name="order-postal-code" class="normal-input"
                                     type="text" inputmode="numeric" pattern="\\d{3}-?\\d{4}" value=""
                                     placeholder="012-3456" onfocus="this.select();">
                                 <img title="検索" src="/icons/search.png"
@@ -74,24 +88,20 @@
                             </div>
                             <div class="form-parts">
                                 <label>住所</label>
-                                <input tabindex="12" id="order-full-address" name="order-ull-address" class="normal-input"
+                                <input tabindex="7" id="order-full-address" name="order-full-address" class="normal-input"
                                     type="text" value="" placeholder="例）大阪府高槻市柱本5丁目7番10号" onfocus="this.select();">
                             </div>
                         </div>
+
                         <div class="flex-area">
                             <div class="form-parts">
-                                <label>受注日</label>
-                                <input tabindex="18" name="order-date" class="normal-input" type="date" value=""
-                                    onfocus="this.select();">
-                            </div>
-                            <div class="form-parts">
                                 <label>着工日</label>
-                                <input tabindex="18" name="start-date" class="normal-input" type="date" value=""
+                                <input tabindex="8" name="start-date" class="normal-input" type="date" value=""
                                     onfocus="this.select();">
                             </div>
                             <div class="form-parts">
                                 <label>完工日</label>
-                                <input tabindex="18" name="end-date" class="normal-input" type="date" value=""
+                                <input tabindex="9" name="end-date" class="normal-input" type="date" value=""
                                     onfocus="this.select();">
                             </div>
                         </div>
@@ -99,7 +109,7 @@
                     <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
-                        <button tabindex="19" class="normal-btn ok" type="button"
+                        <button tabindex="20" class="normal-btn ok" type="button"
                             onclick="execSave()"><span>保存</span></button>
                     </div>
                 </div>
@@ -115,17 +125,10 @@
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
             const user = /*[[${user}]]*/;
-            // const formEntity = /*[[${formEntity}]]*/;
-            // const categoryEmployeeCode = /*[[${categoryEmployeeCode}]]*/;
-            // const categoryParttimeCode = /*[[${categoryParttimeCode}]]*/;
-            // const categoryConstructCode = /*[[${categoryConstructCode}]]*/;
-            // const companyComboList = /*[[${companyComboList}]]*/;
-            // const clientComboList = /*[[${clientComboList}]]*/;
-            // const officeList = /*[[${officeList}]]*/;
-            // const employeeCategoryComboList = /*[[${employeeCategoryComboList}]]*/;
-            // const genderComboList = /*[[${genderComboList}]]*/;
-            // const bloodTypeComboList = /*[[${bloodTypeComboList}]]*/;
-            // let origin = /*[[${origin}]]*/; // 初期リスト記憶用
+            const formEntity = /*[[${formEntity}]]*/;
+            const primeConstractorComboList = /*[[${primeConstractorComboList}]]*/;
+            const officeList = /*[[${officeList}]]*/;
+            let origin = /*[[${origin}]]*/; // 初期リスト記憶用
 
 /******************************************************************************************************* 入力画面 */
 
@@ -187,24 +190,14 @@
             function createTableRow(newRow, item, tab) {
                 // 選択用チェックボックス
                 newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
-                // ID
-                newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.order_id + ', this)">' + String(item.order_id).padStart(8, '0') + '</td>');
-                // 依頼番号
-                newRow.insertAdjacentHTML('beforeend', '<td name="request-number-cell"<span>' + (item.request_number ?? "登録なし") + '</span></td>');
-                // 受注日
-                newRow.insertAdjacentHTML('beforeend', '<td name="order-date-cell"><span>' + (item.order_date ?? "") + '</span></td>');
-                // 着工日
-                newRow.insertAdjacentHTML('beforeend', '<td name="start-date-cell"><span>' + (item.start_date ?? "") + '</span></td>');
-                // 完工日
-                newRow.insertAdjacentHTML('beforeend', '<td name="end-date-cell"><span>' + (item.end_date ?? "") + '</span></td>');
-                // 元請
-                newRow.insertAdjacentHTML('beforeend', '<td name="prime-contractor-cell"><span>' + (item.prime_contractor_name ?? "") + '</span></td>');
-                // 元請支店
-                newRow.insertAdjacentHTML('beforeend', '<td name="prime-contractor-office-cell"><span>' + (item.prime_contractor_office_name ?? "") + '</span></td>');
-                // 件名
-                newRow.insertAdjacentHTML('beforeend', '<td name="title-cell"><span>' + (item.title ?? "") + '</span></td>');
-                // 住所
-                newRow.insertAdjacentHTML('beforeend', '<td name="order-full-address-cell"><span>' + (item.order_full_address ?? "") + '</span></td>');
+                // ID 依頼番号
+                newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.order_id + ', this)"><span>' + String(item.order_id).padStart(8, '0') + '</span><br><span>' + (item.request_number ?? "登録なし") + '</span></td>');
+                // 着工日 完工日
+                newRow.insertAdjacentHTML('beforeend', '<td name="date-cell"><span>' + (item.start_date ?? "") + '</span><br><span>' + (item.end_date ?? "") + '</span></td>');
+                // 元請 支店
+                newRow.insertAdjacentHTML('beforeend', '<td name="prime-constractor-cell"><span>' + (item.prime_constractor_name ?? "") + '</span><br><span>' + (item.prime_constractor_office_name ?? "") + '</span></td>');
+                // 件名 住所
+                newRow.insertAdjacentHTML('beforeend', '<td name="ditail-cell"><span>' + (item.title ?? "") + '</span><br><span>' + (item.order_full_address ?? "") + '</span></td>');
             }
 
 /******************************************************************************************************* 入力画面 */
@@ -244,44 +237,43 @@
                 form.querySelector('[name="order-postal-code"]').value = entity.order_postal_code;
                 form.querySelector('[name="order-full-address"]').value = entity.order_full_address;
                 if (entity.order_date == "9999-12-31") {
-                    form.querySelector('[name="order_date"]').value = "";
+                    form.querySelector('[name="order-date"]').value = getDate();
                 } else {
-                    form.querySelector('[name="order_date"]').value = entity.order_date;
+                    form.querySelector('[name="order-date"]').value = entity.order_date;
                 }
                 if (entity.start_date == "9999-12-31") {
-                    form.querySelector('[name="start_date"]').value = "";
+                    form.querySelector('[name="start-date"]').value = "";
                 } else {
-                    form.querySelector('[name="start_date"]').value = entity.start_date;
+                    form.querySelector('[name="start-date"]').value = entity.start_date;
                 }
                 if (entity.end_date == "9999-12-31") {
-                    form.querySelector('[name="end_date"]').value = "";
+                    form.querySelector('[name="end-date"]').value = "";
                 } else {
-                    form.querySelector('[name="end_date"]').value = entity.end_date;
+                    form.querySelector('[name="end-date"]').value = entity.end_date;
                 }
                 form.querySelector('[name="version"]').value = entity.version;
 
                 // 元請コンボボックス
-                const primeContractorArea = form.querySelector('select[name="prime-contractor"]');
-                createComboBox(primeContractorArea, primeContractorComboList);
-                primeContractorArea.style.pointerEvents = 'none';
-                setComboboxSelected(primeContractorArea, entity.prime_contractor_id);
-                primeContractorArea.onchange = function() { createPrimeContractorOfficeComboBox(this) };
+                const primeConstractorArea = form.querySelector('select[name="prime-constractor"]');
+                createComboBoxWithTop(primeConstractorArea, primeConstractorComboList, "");
+                setComboboxSelected(primeConstractorArea, entity.prime_constractor_id);
+                primeConstractorArea.onchange = function() { createPrimeConstractorOfficeComboBox(this) };
                 // 元請支店コンボボックス
-                createPrimeContractorOfficeComboBox(primeContractorArea);
-                const primeContractorOfficeArea = form.querySelector('select[name="prime-contractor-office"]');
-                setComboboxSelected(primeContractorOfficeArea, entity.prime_contractor_office_id);
+                createPrimeConstractorOfficeComboBox(primeConstractorArea);
+                const primeConstractorOfficeArea = form.querySelector('select[name="prime-constractor-office"]');
+                setComboboxSelected(primeConstractorOfficeArea, entity.prime_constractor_office_id);
 
                 // スピナー消去
                 processingEnd();
             }
 
             // 選択した元請の支店をコンボボックスに登録する
-            function createPrimeContractorOfficeComboBox(self) {
+            function createPrimeConstractorOfficeComboBox(self) {
                 const selectId = self.value;
-                const comboList = primeContractorOfficeList.filter(value => { return value.prime_contractor_id == selectId }).map(item => ({number:item.prime_contractor_office_id, text:item.prime_contractor_office_name}));
+                const comboList = officeList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
                 const area = self.closest('.dialog-content');
-                const primeContractorOfficeArea = area.querySelector('select[name="prime-contractor-office"]');
-                createComboBoxWithTop(primeContractorOfficeArea, comboList, "");
+                const primeConstractorOfficeArea = area.querySelector('select[name="prime-constractor-office"]');
+                createComboBoxWithTop(primeConstractorOfficeArea, comboList, "");
             }
 
 /******************************************************************************************************* 保存 */
@@ -312,8 +304,8 @@
                     } else {
                         formdata.end_date = formData.get('end-date');
                     }
-                    formdata.prime_contractor_id = formData.get('prime-contractor');
-                    formdata.prime_contractor_office_id = formData.get('prime-contractor-office');
+                    formdata.prime_constractor_id = formData.get('prime-constractor');
+                    formdata.prime_constractor_office_id = formData.get('prime-constractor-office');
                     formdata.title = formData.get('title').trim();
                     formdata.order_postal_code = formData.get('order-postal-code').trim();
                     formdata.order_full_address = formData.get('order-full-address').trim();
@@ -341,7 +333,7 @@
                 let msg = "";
                 // 件名が入力されていないとFalseを返す
                 const title = area.querySelector('input[name="title"]');
-                if (account != null && account.value == "") msg += '\n件名が入力されていません';
+                if (title != null && title.value == "") msg += '\n件名が入力されていません';
                 // エラーが一つ以上あればエラーメッセージダイアログを表示する
                 if (msg != "") {
                     openMsgDialog("msg-dialog", msg, "red");

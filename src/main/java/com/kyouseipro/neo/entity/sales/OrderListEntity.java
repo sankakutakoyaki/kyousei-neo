@@ -11,13 +11,13 @@ import lombok.Data;
 public class OrderListEntity implements CsvExportable {
     private int order_id;
     private String request_number;
-    private LocalDate order_date;
-    private LocalDate start_date;
-    private LocalDate end_date;
-    private int prime_contractor_id;
-    private String prime_contractor_name;
-    private int prime_contractor_office_id;
-    private String prime_contractor_office_name;
+    private LocalDate order_date = LocalDate.of(9999, 12, 31);
+    private LocalDate start_date = LocalDate.of(9999, 12, 31);
+    private LocalDate end_date = LocalDate.of(9999, 12, 31);
+    private int prime_constractor_id;
+    private String prime_constractor_name;
+    private int prime_constractor_office_id;
+    private String prime_constractor_office_name;
     private String title;
     private String order_postal_code;
     private String order_full_address;
@@ -37,8 +37,8 @@ public class OrderListEntity implements CsvExportable {
                Utilities.escapeCsv(String.valueOf(order_date)) + "," +
                Utilities.escapeCsv(String.valueOf(start_date)) + "," +
                Utilities.escapeCsv(String.valueOf(end_date)) + "," +
-               Utilities.escapeCsv(prime_contractor_name) + "," +
-               Utilities.escapeCsv(prime_contractor_office_name) + "," +
+               Utilities.escapeCsv(prime_constractor_name) + "," +
+               Utilities.escapeCsv(prime_constractor_office_name) + "," +
                Utilities.escapeCsv(String.valueOf(title)) + "," +
                Utilities.escapeCsv(String.valueOf(order_postal_code)) + "," +
                Utilities.escapeCsv(String.valueOf(order_full_address));

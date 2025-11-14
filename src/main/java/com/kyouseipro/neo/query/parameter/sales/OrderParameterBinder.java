@@ -10,7 +10,7 @@ import com.kyouseipro.neo.entity.sales.OrderEntity;
 public class OrderParameterBinder {
     public static void bindInsertOrderParameters(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
         int index = 1;
-        pstmt.setInt(index++, o.getOrder_id());
+        // pstmt.setInt(index++, o.getOrder_id());
         pstmt.setString(index++, o.getRequest_number());
         if (o.getOrder_date() != null) {
             pstmt.setDate(index++, java.sql.Date.valueOf(o.getOrder_date()));
@@ -27,6 +27,8 @@ public class OrderParameterBinder {
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
+        pstmt.setInt(index++, o.getPrime_constractor_id());
+        pstmt.setInt(index++, o.getPrime_constractor_office_id());
         pstmt.setString(index++, o.getTitle());
         pstmt.setString(index++, o.getOrder_postal_code());
         pstmt.setString(index++, o.getOrder_full_address());
@@ -56,6 +58,8 @@ public class OrderParameterBinder {
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
+        pstmt.setInt(index++, o.getPrime_constractor_id());
+        pstmt.setInt(index++, o.getPrime_constractor_office_id());
         pstmt.setString(index++, o.getTitle());
         pstmt.setString(index++, o.getOrder_postal_code());
         pstmt.setString(index++, o.getOrder_full_address());
@@ -69,6 +73,11 @@ public class OrderParameterBinder {
 
     public static void bindFindById(PreparedStatement ps, Integer orderId) throws SQLException {
         ps.setInt(1, orderId);
+        ps.setInt(2, Enums.state.DELETE.getCode());
+    }
+
+    public static void bindFindByAccount(PreparedStatement ps, String account) throws SQLException {
+        ps.setString(1, account);
         ps.setInt(2, Enums.state.DELETE.getCode());
     }
 
