@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.kyouseipro.neo.entity.data.SubscriptionRequest;
 import com.kyouseipro.neo.repository.document.PushRepository;
+import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.document.WebPushService;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -23,6 +24,7 @@ public class PushApiController {
 
     private final PushRepository pushRepository;
     private final WebPushService webPushService;
+    private final HistoryService historyService;
     
     /**
      * JWT署名を作成
@@ -42,9 +44,11 @@ public class PushApiController {
             try {
                 webPushService.sendPushNotification(subscriptionRequest, message, userName);
                 System.out.println("Push通知を送信しました: " + subscriptionRequest.getUsername());
+                historyService.saveHistory(userName, "push", "通知", 200, "成功");
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("送信失敗: " + e.getMessage());
+                historyService.saveHistory(userName, "push", "通知", 400, "失敗");
             }
         }
     }
@@ -60,9 +64,11 @@ public class PushApiController {
         if (result == null) {
             pushRepository.save(subscriptionRequest, userName);
             System.out.println("Push scribe!");
+            historyService.saveHistory(userName, "subscribe", "保存", 200, "成功");
             return true;
         } else {
             System.out.println("scribe failed");
+            historyService.saveHistory(userName, "subscribe", "保存", 400, "失敗");
             return false;
         }
     }
@@ -92,8 +98,10 @@ public class PushApiController {
             Integer result = pushRepository.deleteByEndpoint(endpoint, userName);
             if (result > 0) {
                 System.out.println("endpoint '" + endpoint + "'を削除しました");
+                historyService.saveHistory(userName, "endpoint", "削除", 200, "成功");
             } else {
                 System.out.println("endpoint '" + endpoint + "'を削除できませんでした");
+                historyService.saveHistory(userName, "endpoint", "削除", 400, "失敗");
             }
         } catch (Exception e) {
             e.printStackTrace();

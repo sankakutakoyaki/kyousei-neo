@@ -11,40 +11,37 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.EmployeeListEntity;
+import com.kyouseipro.neo.entity.sales.OrderEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
+import com.kyouseipro.neo.service.corporation.CompanyListService;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.personnel.EmployeeListService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class EmployeePageController {
+public class SalesPageController {
     private final EmployeeService employeeService;
-    private final EmployeeListService employeeListService;
+    private final CompanyListService companyListService;
     private final ComboBoxService comboBoxService;
     private final HistoryService historyService;
 
-    /**
-	 * 従業員
-	 * @param mv
-	 * @return
-	 */
-	@GetMapping("/employee")
+	@GetMapping("/order")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
 	public ModelAndView getEmployee(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
-        mv.addObject("title", "従業員");
+        mv.addObject("title", "受注");
         mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
 		mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
         mv.addObject("bodyFragmentName", "contents/personnel/employee :: bodyFragment");
-        mv.addObject("insertCss", "/css/personnel/employee.css");
+        mv.addObject("insertCss", "/css/sales/order.css");
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
@@ -52,37 +49,20 @@ public class EmployeePageController {
 		mv.addObject("user", user);
 
         // 初期化されたエンティティ
-        mv.addObject("formEntity", new EmployeeEntity());
+        mv.addObject("formEntity", new OrderEntity());
 
-        // 初期表示用従業員リスト取得
-        List<EmployeeListEntity> origin = employeeListService.getEmployeeList();
-        mv.addObject("origin", origin);
+        // 初期表示用受注リスト取得
+        // List<OrderListEntity> origin = orderListService.getOrderList(LocalDate.now(), LocalDate.now());
+        // mv.addObject("origin", origin);
 
-        // コンボボックスアイテム取得
-        List<SimpleData> companyComboList = comboBoxService.getOwnCompanyList();
-        mv.addObject("companyComboList", companyComboList);
+        // // コンボボックスアイテム取得
         List<SimpleData> clientComboList = comboBoxService.getClientList();
         mv.addObject("clientComboList", clientComboList);
         List<OfficeListEntity> officeList = comboBoxService.getOfficeList();
         mv.addObject("officeList", officeList);
-        List<SimpleData> employeeCategoryComboList = comboBoxService.getEmployeeCategory();
-        mv.addObject("employeeCategoryComboList", employeeCategoryComboList);
-        List<SimpleData> genderComboList = comboBoxService.getGender();
-        mv.addObject("genderComboList", genderComboList);
-        List<SimpleData> bloodTypeComboList = comboBoxService.getBloodType();
-        mv.addObject("bloodTypeComboList", bloodTypeComboList);
-        List<SimpleData> paymentMethodComboList = comboBoxService.getPaymentMethod();
-        mv.addObject("paymentMethodComboList", paymentMethodComboList);
-        List<SimpleData> payTypeComboList = comboBoxService.getPayType();
-        mv.addObject("payTypeComboList", payTypeComboList);
-
-        // 保存用コード
-        mv.addObject("categoryEmployeeCode", Enums.employeeCategory.FULLTIME.getCode());
-        mv.addObject("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
-        mv.addObject("categoryConstructCode", Enums.employeeCategory.CONSTRUCT.getCode());
 
         // 履歴保存
-        historyService.saveHistory(userName, "employee", "閲覧", 0, "");
+        historyService.saveHistory(userName, "order", "閲覧", 0, "");
 		
         return mv;
     }

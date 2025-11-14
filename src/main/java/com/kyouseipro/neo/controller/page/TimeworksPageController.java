@@ -2,6 +2,7 @@ package com.kyouseipro.neo.controller.page;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -34,6 +35,7 @@ public class TimeworksPageController {
      * @return ModelAndView
      */
 	@GetMapping("/timeworks")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
 	public ModelAndView showList(ModelAndView mv, OAuth2AuthenticationToken token, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
         mv.setViewName("layouts/main");
         mv.addObject("title", "勤怠");

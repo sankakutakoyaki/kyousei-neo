@@ -15,6 +15,7 @@ import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.service.corporation.CompanyService;
+import com.kyouseipro.neo.service.document.HistoryService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CompanyApiController {
     private final CompanyService companyService;
+    private final HistoryService historyService;
 
     /**
      * IDからEntityを取得する
@@ -46,8 +48,10 @@ public class CompanyApiController {
         String userName = principal.getAttribute("preferred_username");
         Integer id = companyService.saveCompany(entity, userName);
         if (id != null && id > 0) {
+            historyService.saveHistory(userName, "companies", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
+            historyService.saveHistory(userName, "companies", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -63,8 +67,10 @@ public class CompanyApiController {
         String userName = principal.getAttribute("preferred_username");
         Integer id = companyService.deleteCompanyByIds(ids, userName);
         if (id != null && id > 0) {
+            historyService.saveHistory(userName, "companies", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
+            historyService.saveHistory(userName, "companies", "保存", 200, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -78,6 +84,7 @@ public class CompanyApiController {
 	@ResponseBody
     public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
+        historyService.saveHistory(userName, "companies", "ダウンロード", 0, "");
         return companyService.downloadCsvCompanyByIds(ids, userName);
     }
 

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
+import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.WorkingConditionsService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WorkingConditionsApiController {
     private final WorkingConditionsService workingConditionsService;
+    private final HistoryService historyService;
 
     /**
      * IDからEntityを取得する
@@ -56,8 +58,10 @@ public class WorkingConditionsApiController {
         String userName = principal.getAttribute("preferred_username");
         Integer id = workingConditionsService.saveWorkingConditions(entity, userName);
         if (id != null && id > 0) {
+            historyService.saveHistory(userName, "working_conditions", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
+            historyService.saveHistory(userName, "working_conditions", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -73,8 +77,10 @@ public class WorkingConditionsApiController {
         String userName = principal.getAttribute("preferred_username");
         Integer id = workingConditionsService.deleteWorkingConditionsByIds(ids, userName);
         if (id != null && id > 0) {
+            historyService.saveHistory(userName, "working_conditions", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
+            historyService.saveHistory(userName, "working_conditions", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -88,6 +94,7 @@ public class WorkingConditionsApiController {
 	@ResponseBody
     public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
+        historyService.saveHistory(userName, "working_conditions", "ダウンロード", 0, "");
         return workingConditionsService.downloadCsvWorkingConditionsByIds(ids, userName);
     }
 }

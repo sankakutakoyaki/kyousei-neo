@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
+import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.qualification.QualificationsService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QualificationsApiController {
     private final QualificationsService qualificationsService;
+    private final HistoryService historyService;
 
     /**
      * IDから情報を取得する
@@ -79,8 +81,10 @@ public class QualificationsApiController {
         String userName = principal.getAttribute("preferred_username");
         Integer result = qualificationsService.deleteQualificationsById(id, userName);
         if (result != null && result > 0) {
+            historyService.saveHistory(userName, "qualifications", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("削除しました。", result));
         } else {
+            historyService.saveHistory(userName, "qualifications", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }

@@ -123,6 +123,7 @@ public class TimeworksListSqlBuilder {
             "   FROM paid_holiday ph " +
             "   WHERE ph.employee_id = ? " +  // 1: employee_id
             "     AND CAST(? AS DATE) BETWEEN CAST(ph.start_date AS DATE) AND CAST(ph.end_date AS DATE)" + // 2: work_date
+            "     AND NOT (ph.state = ?)" + //3: state
             ") " +
             "BEGIN " +
             "   SELECT -1 AS timeworks_id; " + // -1 を返して終了

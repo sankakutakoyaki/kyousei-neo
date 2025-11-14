@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
+import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EmployeeApiController {
     private final EmployeeService employeeService;
+    private final HistoryService historyService;
 
     /**
      * IDからEntityを取得する
@@ -45,8 +47,10 @@ public class EmployeeApiController {
         String userName = principal.getAttribute("preferred_username");
         Integer id = employeeService.saveEmployee(entity, userName);
         if (id != null && id > 0) {
+            historyService.saveHistory(userName, "employees", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
+            historyService.saveHistory(userName, "employees", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -62,8 +66,10 @@ public class EmployeeApiController {
         String userName = principal.getAttribute("preferred_username");
         Integer id = employeeService.deleteEmployeeByIds(ids, userName);
         if (id != null && id > 0) {
+            historyService.saveHistory(userName, "employees", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
+            historyService.saveHistory(userName, "employees", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -77,6 +83,7 @@ public class EmployeeApiController {
 	@ResponseBody
     public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
+        historyService.saveHistory(userName, "employees", "ダウンロード", 0, "");
         return employeeService.downloadCsvEmployeeByIds(ids, userName);
     }
 

@@ -9,32 +9,25 @@
         <!-- ボディ -->
         <div class="normal-body">
 
-            <h2>勤怠</h2>
-            <div class="flex-area time-btn">  
-                <div class="form-parts">
-                    <button name="start-btn" class="normal-btn" type="button" onclick="setTimeworks('start')"><span>出勤</span></button>
-                    <span id="start-time">00:00:00</span>
+            <div sec:authorize="hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_user', 'APPROLE_staff')">
+                <h2>勤怠</h2>
+                <div class="flex-area time-btn">  
+                    <div class="form-parts">
+                        <button name="start-btn" class="normal-btn" type="button" onclick="setTimeworks('start')"><span>出勤</span></button>
+                        <span id="start-time">00:00:00</span>
+                    </div>
+                    <div class="form-parts">
+                        <button name="end-btn" class="normal-btn" type="button" onclick="setTimeworks('end')"><span>退勤</span></button>
+                        <span id="end-time">00:00:00</span>
+                    </div>
                 </div>
-                <div class="form-parts">
-                    <button name="end-btn" class="normal-btn" type="button" onclick="setTimeworks('end')"><span>退勤</span></button>
-                    <span id="end-time">00:00:00</span>
-                </div>
+            </div> 
+            
+            <div sec:authorize="hasAuthority('APPROLE_office')">
+                <h2>営業所メニュー</h2>
+                <a th:href="@{/timeworks}">勤怠</a>
             </div>
 
-            <!-- <div sec:authorize="hasAuthority('APPROLE_master')">
-                <h2>マスターメニュー</h2>
-                <a th:href="@{/master/tools}">マスター専用ツール</a>
-            </div>
-
-            <div sec:authorize="hasAuthority('APPROLE_staff')">
-                <h2>スタッフメニュー</h2>
-                <a th:href="@{/staff/schedule}">スケジュール管理</a>
-            </div>
-
-            <div sec:authorize="hasAuthority('APPROLE_user')">
-                <h2>ユーザーメニュー</h2>
-                <a th:href="@{/user/profile}">プロフィール</a>
-            </div> -->
         </div>
         <div id="form-dialog-area">
             <!-- フォーム画面をここに記入する -->

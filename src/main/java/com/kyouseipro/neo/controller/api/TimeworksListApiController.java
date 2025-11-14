@@ -22,6 +22,7 @@ import com.kyouseipro.neo.entity.personnel.PaidHolidayEntity;
 import com.kyouseipro.neo.entity.personnel.PaidHolidayListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksSummaryEntity;
+import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 import com.kyouseipro.neo.service.personnel.TimeworksListService;
 
@@ -32,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class TimeworksListApiController {
     private final TimeworksListService timeworksListService;
     private final EmployeeService employeeService;
+    private final HistoryService historyService;
 
     /**
      * EntityListを取得する
@@ -148,8 +150,10 @@ public class TimeworksListApiController {
         String editor = principal.getAttribute("preferred_username");
         Integer id = timeworksListService.savePaidHolidayEntityByEmployeeId(entity, editor);
         if (id != null && id > 0) {
+            historyService.saveHistory(editor, "paid_holiday", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
+            historyService.saveHistory(editor, "paid_holiday", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました\n期間が重複している可能性があります。"));
         }
     }
@@ -166,9 +170,11 @@ public class TimeworksListApiController {
         String editor = principal.getAttribute("preferred_username");
         Integer result = timeworksListService.deletePaidHolidayEntityById(id, editor);
         if (result != null && result > 0) {
-            return ResponseEntity.ok(ApiResponse.ok("保存しました。", result));
+            historyService.saveHistory(editor, "paid_holiday", "削除", 200, "成功");
+            return ResponseEntity.ok(ApiResponse.ok("削除しました。", result));
         } else {
-            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+            historyService.saveHistory(editor, "paid_holiday", "削除", 400, "失敗");
+            return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
 
@@ -186,10 +192,13 @@ public class TimeworksListApiController {
         // return timeworksListService.saveTodaysTimeworks(timeworksEntity, editor);
         Integer id = timeworksListService.saveTodaysTimeworks(timeworksEntity, editor);
         if (id != null && id > 0) {
+            historyService.saveHistory(editor, "timeworks", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else if (id != null && id == -1) {
+            historyService.saveHistory(editor, "timeworks", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("有給申請されているため\n勤務登録できません。", id));
         } else {
+            historyService.saveHistory(editor, "timeworks", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -205,8 +214,10 @@ public class TimeworksListApiController {
         String editor = principal.getAttribute("preferred_username");
         Integer newId = timeworksListService.reverseConfirm(id, editor);
         if (newId != null && newId > 0) {
+            historyService.saveHistory(editor, "timeworks", "確定取消", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("戻しました。", newId));
         } else {
+            historyService.saveHistory(editor, "timeworks", "確定取消", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("戻せませんでした。"));
         }
     }
@@ -223,8 +234,10 @@ public class TimeworksListApiController {
         // return timeworksListService.updateTimeworksList(list, editor);
         Integer id = timeworksListService.updateTimeworksList(list, editor);
         if (id != null && id > 0) {
+            historyService.saveHistory(editor, "timeworks", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
+            historyService.saveHistory(editor, "timeworks", "保存", 200, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -247,6 +260,7 @@ public class TimeworksListApiController {
         String start = (String) body.get("start");
         String end = (String) body.get("end");
         String editor = principal.getAttribute("preferred_username");
+        historyService.saveHistory(editor, "timeworks", "ダウンロード", 0, "");
         return timeworksListService.downloadCsvByIds(list, start, end, editor);
     }
 }

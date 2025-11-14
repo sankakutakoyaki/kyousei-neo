@@ -15,6 +15,7 @@ import com.kyouseipro.neo.entity.corporation.OfficeEntity;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.service.corporation.OfficeService;
+import com.kyouseipro.neo.service.document.HistoryService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OfficeApiController {
     private final OfficeService officeService;
+    private final HistoryService historyService;
 
     /**
      * IDからEntityを取得する
@@ -45,8 +47,10 @@ public class OfficeApiController {
         String userName = principal.getAttribute("preferred_username");
         Integer id = officeService.saveOffice(entity, userName);
         if (id != null && id > 0) {
+            historyService.saveHistory(userName, "offices", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
+            historyService.saveHistory(userName, "offices", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -62,8 +66,10 @@ public class OfficeApiController {
         String userName = principal.getAttribute("preferred_username");
         Integer id = officeService.deleteOfficeByIds(ids, userName);
         if (id != null && id > 0) {
+            historyService.saveHistory(userName, "offices", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
+            historyService.saveHistory(userName, "offices", "削除", 200, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -77,6 +83,7 @@ public class OfficeApiController {
 	@ResponseBody
     public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
+        historyService.saveHistory(userName, "offices", "ダウンロード", 0, "");
         return officeService.downloadCsvOfficeByIds(ids, userName);
     }
 }

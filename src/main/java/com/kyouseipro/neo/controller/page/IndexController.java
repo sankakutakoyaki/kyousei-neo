@@ -2,6 +2,7 @@ package com.kyouseipro.neo.controller.page;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -46,15 +47,36 @@ public class IndexController {
 		String userName = principal.getAttribute("preferred_username");
 		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
 		mv.addObject("entity", entity);
-		mv.addObject("employeeId", entity.getEmployee_id());
-		// mv.addObject("user_name", entity.getAccount());
-
+		if (entity != null) {
+			mv.addObject("employeeId", entity.getEmployee_id());
+			// セッションに保持
+			session.setAttribute("userName", entity.getAccount());
+			session.setAttribute("companyId", entity.getCompany_id());
+			session.setAttribute("officeId", entity.getOffice_id());
+		} else {
+			mv.addObject("employeeId", 0);
+			// セッションに保持
+			session.setAttribute("userName", userName);
+			switch (userName) {
+				case "osaka@kyouseibin.com":
+					session.setAttribute("companyId", 1000);
+					session.setAttribute("officeId", 1001);
+					break;
+				case "wakayama@kyouseibin.com":
+					session.setAttribute("companyId", 1000);
+					session.setAttribute("officeId", 1002);
+					break;
+				case "hyogo@kyouseibin.com":
+					session.setAttribute("companyId", 1000);
+					session.setAttribute("officeId", 1003);
+					break;
+				default:
+					session.setAttribute("companyId", 1000);
+					session.setAttribute("officeId", 0);
+					break;
+			}
+		}
 		historyService.saveHistory(userName, "", "ログイン", 200, "ログインしました。");
-		// セッションに保持
-		session.setAttribute("userName", entity.getAccount());
-    	session.setAttribute("companyId", entity.getCompany_id());
-    	session.setAttribute("officeId", entity.getOffice_id());
-
         return mv;
     }
 	/**
@@ -63,17 +85,17 @@ public class IndexController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@PostMapping("/logout")
+	@PostMapping("/user/logout")
 	@ResponseBody
     public void logOut(HttpServletRequest httpRequest, HttpServletResponse response, @AuthenticationPrincipal OidcUser principal) throws IOException {
         httpRequest.getSession().invalidate();
         String endSessionEndpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/logout";
 		String redirectUrl = "https://www.kyouseipro.com/";
-        response.sendRedirect(endSessionEndpoint + "?post_logout_redirect_uri=" + URLEncoder.encode(redirectUrl, "UTF-8"));
-
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
 		historyService.saveHistory(userName, "", "ログアウト", 200, "ログアウトしました。");
+
+		response.sendRedirect(endSessionEndpoint + "?post_logout_redirect_uri=" + URLEncoder.encode(redirectUrl, "UTF-8"));
     }
 
 	/**

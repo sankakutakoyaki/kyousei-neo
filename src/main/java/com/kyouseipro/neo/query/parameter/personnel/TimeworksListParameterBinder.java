@@ -107,6 +107,7 @@ public class TimeworksListParameterBinder {
 
         pstmt.setInt(index++, t.getEmployee_id());
         pstmt.setString(index++, t.getWork_date().toString());
+        pstmt.setInt(index++, Enums.state.DELETE.getCode());
         pstmt.setInt(index++, t.getEmployee_id());
         pstmt.setInt(index++, t.getCategory());
         pstmt.setString(index++, LocalDate.now().toString());
