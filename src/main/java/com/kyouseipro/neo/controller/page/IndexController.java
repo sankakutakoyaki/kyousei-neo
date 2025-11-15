@@ -69,6 +69,10 @@ public class IndexController {
 					session.setAttribute("companyId", 1000);
 					session.setAttribute("officeId", 1003);
 					break;
+				case null:
+					session.setAttribute("companyId", 1000);
+					session.setAttribute("officeId", 0);
+					break;
 				default:
 					session.setAttribute("companyId", 1000);
 					session.setAttribute("officeId", 0);
