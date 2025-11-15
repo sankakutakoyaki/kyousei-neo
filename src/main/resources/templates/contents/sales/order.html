@@ -12,7 +12,7 @@
         <div class="normal-body">
             <div class="tab-area">
                 <ul class="tab-menu">
-                    <li class="tab-menu-item is-active" data-tab="01">社員</li>
+                    <li class="tab-menu-item is-active" data-tab="01">一覧</li>
                     <!-- <li class="tab-menu-item" data-tab="02">アルバイト</li> -->
                     <!-- <li class="tab-menu-item" data-tab="03">請負</li> -->
                 </ul>
@@ -46,27 +46,24 @@
 
                         <div class="flex-area">
                             <div class="form-parts">
+                                <label>元請</label>
+                                <select tabindex="1" name="prime-constractor" class="normal-select"></select>
+                            </div>
+                            <div class="form-parts">
+                                <label>元請支店</label>
+                                <select tabindex="2" name="prime-constractor-office" class="normal-select"></select>
+                            </div>
+                        </div>
+
+                        <div class="flex-area">
+                            <div class="form-parts">
                                 <label>受注日</label>
-                                <input tabindex="1" name="order-date" class="normal-input" type="date" value=""
+                                <input tabindex="3" name="order-date" class="normal-input" type="date" value=""
                                     onfocus="this.select();">
                             </div>
                             <div class="form-parts">
                                 <label>受注番号</label>
-                                <input tabindex="2" name="request-number" class="normal-input" type="text" value="" onfocus="this.select();">
-                            </div>
-                        </div>
-
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>元請</label>
-                                <select tabindex="3" name="prime-constractor" class="normal-select"></select>
-                            </div>
-                        </div>
-
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>元請支店</label>
-                                <select tabindex="4" name="prime-constractor-office" class="normal-select"></select>
+                                <input tabindex="4" name="request-number" class="normal-input" type="text" value="" onfocus="this.select();">
                             </div>
                         </div>
 
@@ -139,7 +136,7 @@
                     let newRow = tbl.insertRow();
                     // ID（Post送信用）
                     newRow.setAttribute('name', 'data-row');
-                    newRow.setAttribute('data-id', item.employee_id);
+                    newRow.setAttribute('data-id', item.order_id);
                     // シングルクリック時の処理
                     newRow.onclick = function (e) {
                         if (!e.currentTarget.classList.contains('selected')){
@@ -168,7 +165,7 @@
                         // フォーム入力画面を表示する
                         switch (tableId) {
                             case "table-01-content":
-                                execEdit(item.employee_id, this);
+                                execEdit(item.order_id, this);
                                 break;
                             default:
                                 break;
@@ -191,13 +188,13 @@
                 // 選択用チェックボックス
                 newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
                 // ID 依頼番号
-                newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.order_id + ', this)"><span>' + String(item.order_id).padStart(8, '0') + '</span><br><span>' + (item.request_number ?? "登録なし") + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.order_id + ', this)"><span>' + String(item.order_id).padStart(5, '0') + '</span><br><span>' + (item.request_number ?? "登録なし") + '</span></td>');
                 // 着工日 完工日
-                newRow.insertAdjacentHTML('beforeend', '<td name="date-cell"><span>' + (item.start_date ?? "") + '</span><br><span>' + (item.end_date ?? "") + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td name="date-cell"><span>' + (item.start_date == '9999-12-31' ? "": item.start_date) + '</span><br><span>' + (item.end_date == '9999-12-31' ? "": item.end_date) + '</span></td>');
                 // 元請 支店
                 newRow.insertAdjacentHTML('beforeend', '<td name="prime-constractor-cell"><span>' + (item.prime_constractor_name ?? "") + '</span><br><span>' + (item.prime_constractor_office_name ?? "") + '</span></td>');
                 // 件名 住所
-                newRow.insertAdjacentHTML('beforeend', '<td name="ditail-cell"><span>' + (item.title ?? "") + '</span><br><span>' + (item.order_full_address ?? "") + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td name="detail-cell"><span>' + (item.title ?? "") + '</span><br><span>' + (item.order_full_address ?? "") + '</span></td>');
             }
 
 /******************************************************************************************************* 入力画面 */
@@ -363,7 +360,6 @@
                     openMsgDialog("msg-dialog", result.message, "red");
                 }
             }
-
 
 /******************************************************************************************************* ダウンロード */
 

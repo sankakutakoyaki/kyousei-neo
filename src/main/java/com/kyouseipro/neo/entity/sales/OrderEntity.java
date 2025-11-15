@@ -15,7 +15,9 @@ public class OrderEntity implements CsvExportable {
     private LocalDate start_date = LocalDate.of(9999, 12, 31);
     private LocalDate end_date = LocalDate.of(9999, 12, 31);
     private int prime_constractor_id;
+    private String prime_constractor_name;
     private int prime_constractor_office_id;
+    private String prime_constractor_office_name;
     private String title;
     private String order_postal_code;
     private String order_full_address;
@@ -35,8 +37,8 @@ public class OrderEntity implements CsvExportable {
                Utilities.escapeCsv(String.valueOf(order_date)) + "," +
                Utilities.escapeCsv(String.valueOf(start_date)) + "," +
                Utilities.escapeCsv(String.valueOf(end_date)) + "," +
-               Utilities.escapeCsv(String.valueOf(prime_constractor_id)) + "," +
-               Utilities.escapeCsv(String.valueOf(prime_constractor_office_id)) + "," +
+               Utilities.escapeCsv(String.valueOf(prime_constractor_name)) + "," +
+               Utilities.escapeCsv(String.valueOf(prime_constractor_office_name)) + "," +
                Utilities.escapeCsv(String.valueOf(title)) + "," +
                Utilities.escapeCsv(String.valueOf(order_postal_code)) + "," +
                Utilities.escapeCsv(String.valueOf(order_full_address));

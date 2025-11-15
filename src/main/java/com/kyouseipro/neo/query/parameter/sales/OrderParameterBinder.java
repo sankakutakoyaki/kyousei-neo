@@ -72,17 +72,23 @@ public class OrderParameterBinder {
     }
 
     public static void bindFindById(PreparedStatement ps, Integer orderId) throws SQLException {
-        ps.setInt(1, orderId);
-        ps.setInt(2, Enums.state.DELETE.getCode());
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, orderId);
+        ps.setInt(index++, Enums.state.DELETE.getCode());
     }
 
-    public static void bindFindByAccount(PreparedStatement ps, String account) throws SQLException {
-        ps.setString(1, account);
-        ps.setInt(2, Enums.state.DELETE.getCode());
-    }
+    // public static void bindFindByAccount(PreparedStatement ps, String account) throws SQLException {
+    //     ps.setString(1, account);
+    //     ps.setInt(2, Enums.state.DELETE.getCode());
+    // }
 
     public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
     }
 
     public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
@@ -97,9 +103,11 @@ public class OrderParameterBinder {
 
     public static void bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {
-            ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
+            ps.setInt(index++, id); // company_id IN (?, ?, ?)
         }
-        ps.setInt(index, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        ps.setInt(index++, Enums.state.DELETE.getCode()); // AND NOT (state = ?)
     }
 }

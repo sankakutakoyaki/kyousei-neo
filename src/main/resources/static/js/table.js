@@ -350,8 +350,9 @@ async function downloadCsv(tableId, url) {
     if (data.length == 0) {
         // 選択された要素がなければメッセージを表示して終了
         openMsgDialog("msg-dialog", "選択されていません", "red");
+        // return {"success":false, "message":"選択されていないか、データがありません。"};
     } else {
-        execDownloadCsv(data, url);
+        funcDownloadCsv(data, url);
     }
 }
 
