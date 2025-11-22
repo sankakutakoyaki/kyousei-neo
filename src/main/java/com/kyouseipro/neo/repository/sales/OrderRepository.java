@@ -4,11 +4,14 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.sales.OrderEntity;
+import com.kyouseipro.neo.entity.sales.OrderItemEntity;
 import com.kyouseipro.neo.mapper.sales.OrderEntityMapper;
 import com.kyouseipro.neo.query.parameter.sales.OrderParameterBinder;
+import com.kyouseipro.neo.query.sql.sales.OrderItemSqlBuilder;
 import com.kyouseipro.neo.query.sql.sales.OrderSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
@@ -21,18 +24,29 @@ public class OrderRepository {
 
     /**
      * 新規作成。
-     * @param order
+     * @param orderEntity
+     * @param itemEntity
      * @param editor
      * @return 新規IDを返す。
      */
-    public Integer insertOrder(OrderEntity order, String editor) {
+    public Integer insertOrder(OrderEntity orderEntity, List<OrderItemEntity> itemEntityList, String editor) {
         String sql = OrderSqlBuilder.buildInsertOrderSql();
+        int index = 1;
+        for(int i = 0; i < itemEntityList.size(); i++) {
+            // sql += OrderItemSqlBuilder.buildInsertOrderItemSql(index++);
+            if (orderEntity.getOrder_id() > 0) {
+                sql += OrderItemSqlBuilder.buildInsertOrderItemSql(index++);
+            } else {
+                sql += OrderItemSqlBuilder.buildInsertNewOrderItemSql(index++);
+            }
+        }
+        orderEntity.setItem_list(itemEntityList);
 
         return sqlRepository.execute(
             sql,
-            (pstmt, emp) -> OrderParameterBinder.bindInsertOrderParameters(pstmt, order, editor),
+            (pstmt, emp) -> OrderParameterBinder.bindInsertOrderParameters(pstmt, orderEntity, editor),
             rs -> rs.next() ? rs.getInt("order_id") : null,
-            order
+            orderEntity
         );
     }
 
@@ -42,15 +56,29 @@ public class OrderRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public Integer updateOrder(OrderEntity order, String editor) {
+    public Integer updateOrder(OrderEntity orderEntity, List<OrderItemEntity> itemEntityList, String editor) {
         String sql = OrderSqlBuilder.buildUpdateOrderSql();
+        // String sql = "";
+        int index = 1;
+        for (OrderItemEntity orderItemEntity : itemEntityList) {
+            if (orderItemEntity.getState() == Enums.state.DELETE.getCode()) {
+                sql += OrderItemSqlBuilder.buildDeleteOrderItemSql(index++);
+            } else {
+                if (orderItemEntity.getOrder_item_id() > 0) {
+                    sql += OrderItemSqlBuilder.buildUpdateOrderItemSql(index++);
+                } else {
+                    sql += OrderItemSqlBuilder.buildInsertOrderItemSql(index++);
+                }
+            }
+        }
+        orderEntity.setItem_list(itemEntityList);
 
         Integer result = sqlRepository.executeUpdate(
             sql,
-            pstmt -> OrderParameterBinder.bindUpdateOrderParameters(pstmt, order, editor)
+            pstmt -> OrderParameterBinder.bindUpdateOrderParameters(pstmt, orderEntity, editor)
         );
 
-        return result; // 成功件数。0なら削除なし
+        return result; // 成功件数。0なら更新なし
     }
 
     /**

@@ -277,4 +277,38 @@ public class Enums {
             return Utilities.enumValueOf(Enums.payType.class, num).getDescription();
         }
     }
+
+    /**
+     * 型番項目分類
+     * 
+     * @return 1.商品 2.作業 3.部材
+     */
+    public enum ItemClass implements CodeEnum {
+        NULL(0, ""),
+        GOODS(1, "商品"),
+        WORK(2, "作業"),
+        MATERIALS(3, "部材");
+
+        private int num;
+        private String str;
+
+        private ItemClass(int num, String str) {
+            this.num = num;
+            this.str = str;
+        }
+
+        @Override
+        public int getCode() {
+            return this.num;
+        }
+
+        @Override
+        public String getDescription() {
+            return this.str;
+        }
+
+        public static String getDescriptionByNum(int num) {
+            return Utilities.enumValueOf(Enums.ItemClass.class, num).getDescription();
+        }
+    }
 }

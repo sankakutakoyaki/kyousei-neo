@@ -16,6 +16,12 @@
     /* text-align: center; */
 }
 
+#table-12 tr {
+    grid-template-columns: 10rem 10rem 1fr 4rem 3rem;
+    height: 3rem;
+    /* text-align: center; */
+}
+
 .tab-panel .table-area {
     display: grid;
     grid-template-rows: auto 1fr;
@@ -24,39 +30,54 @@
     max-width: 90rem;
 }
 
-#form-dialog-01 {
-    & .dialog-content {
-        & >.flex-area:nth-of-type(1) {
-            display: grid;
-            grid-template-columns: auto minmax(15rem, auto);
-            width: 100%;
-        }
-        /* & >.flex-area:nth-of-type(2) {
-            display: grid;
-            grid-template-columns: minmax(15rem, auto) 1fr;
-            width: 100%;
-        } */
-        & >.flex-area:nth-of-type(2) {
-            display: grid;
-            grid-template-columns: auto 20rem;
-        }
-        & >.flex-area:nth-of-type(3) {
-            display: grid;
-            grid-template-columns: auto;
-            width: 100%;
-        }
-        & >.flex-area:nth-of-type(4) {
-            display: grid;
-            grid-template-columns: 8rem 1fr;
-            width: 100%;
-        }
-        & >.flex-area:nth-of-type(5) {
-            display: grid;
-            grid-template-columns: auto auto 1fr;
-            width: 100%;
-        }
+.form-dialog>.dialog-main {
+    min-width: 50rem;
+    grid-template-rows: auto 40rem auto;
+}
+
+.tab-panel[data-panel="11"]>.flex-area,
+.tab-panel[data-panel="12"]>.table-area>.flex-area {
+    margin-top: .5rem;
+}
+
+.tab-panel[data-panel="11"] {
+    margin-top: 2rem;
+    max-width: 90rem;
+    & >.flex-area:nth-of-type(1) {
+        display: grid;
+        grid-template-columns: auto minmax(10rem, auto) 10rem;
+        width: 100%;
     }
-    .form-dialog>.dialog-main {
-        min-width: 40rem;
+    & >.flex-area:nth-of-type(2) {
+        display: grid;
+        grid-template-columns: auto 1fr;
+    }
+    & >.flex-area:nth-of-type(3) {
+        display: grid;
+        grid-template-columns: auto;
+        width: 100%;
+    }
+    & >.flex-area:nth-of-type(4) {
+        display: grid;
+        grid-template-columns: 8rem 1fr;
+        width: 100%;
+    }
+    & >.flex-area:nth-of-type(5) {
+        display: grid;
+        grid-template-columns: 10rem auto auto 1fr;
+        width: 100%;
+    }
+}
+
+.tab-panel[data-panel="12"] {
+    & >.table-area>.flex-area:nth-of-type(1) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+    }
+    & >.table-area>.flex-area:nth-of-type(2) {
+        display: grid;
+        grid-template-columns: 1fr 5rem 5rem;
+        width: 100%;
     }
 }

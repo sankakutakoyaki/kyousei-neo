@@ -9,7 +9,7 @@ public class OrderSqlBuilder {
             "DECLARE " + rowTableName + " TABLE (" +
             "  order_id INT, request_number NVARCHAR(255), order_date DATE, start_date DATE, end_date DATE, " +
             "  prime_constractor_id INT, prime_constractor_office_id INT, " +
-            "  title NVARCHAR(255), order_postal_code NVARCHAR(255), order_full_address NVARCHAR(255), " +
+            "  title NVARCHAR(255), order_postal_code NVARCHAR(255), order_full_address NVARCHAR(255), contact_information NVARCHAR(255), " +
             "  version INT, state INT" +
             "); ";
     }
@@ -18,11 +18,11 @@ public class OrderSqlBuilder {
         return
             "INSERT INTO orders_log (" +
             "  order_id, editor, process, log_date, request_number, order_date, start_date, end_date, " +
-            "  prime_constractor_id, prime_constractor_office_id, title, order_postal_code, order_full_address, " +
+            "  prime_constractor_id, prime_constractor_office_id, title, order_postal_code, order_full_address, contact_information, " +
             "  version, state" +
             ") " +
             "SELECT order_id, ?, '" + processName + "', CURRENT_TIMESTAMP, request_number, order_date, start_date, end_date, " +
-            "  prime_constractor_id, prime_constractor_office_id, title, order_postal_code, order_full_address, " +
+            "  prime_constractor_id, prime_constractor_office_id, title, order_postal_code, order_full_address, contact_information, " +
             "  version, state " +
             "FROM " + rowTableName + ";";
     }
@@ -30,7 +30,7 @@ public class OrderSqlBuilder {
     private static String buildOutputLogSql() {
         return
             "OUTPUT INSERTED.order_id, INSERTED.request_number, INSERTED.order_date, INSERTED.start_date, INSERTED.end_date, " +
-            "  INSERTED.prime_constractor_id, INSERTED.prime_constractor_office_id, INSERTED.title, INSERTED.order_postal_code, INSERTED.order_full_address, " +
+            "  INSERTED.prime_constractor_id, INSERTED.prime_constractor_office_id, INSERTED.title, INSERTED.order_postal_code, INSERTED.order_full_address, INSERTED.contact_information, " +
             "  INSERTED.version, INSERTED.state ";
     }
 
@@ -41,26 +41,29 @@ public class OrderSqlBuilder {
             "INSERT INTO orders (" +
             " request_number, order_date, start_date, end_date, " +
             " prime_constractor_id, prime_constractor_office_id, " +
-            " title, order_postal_code, order_full_address, " +
+            " title, order_postal_code, order_full_address, contact_information, " +
             " version, state" +
             ") " +
 
             buildOutputLogSql() + "INTO @InsertedRows " +
 
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
             buildInsertLogSql("@InsertedRows", "INSERT") +
 
-            "SELECT order_id FROM @InsertedRows;";
+            "SELECT order_id FROM @InsertedRows;" +
+            "DECLARE @NEW_ID int; SET @NEW_ID = @@IDENTITY;";
     }
 
     public static String buildUpdateOrderSql() {
         return
             buildLogTableSql("@UpdatedRows") +
 
+            "DECLARE @NEW_ID int; SET @NEW_ID = ?;" +
             "UPDATE orders SET " +
             "  request_number=?, order_date=?, start_date=?, end_date=?, " +
-            "  title=?, order_postal_code=?, order_full_address=?, " +
+            "  prime_constractor_id=?, prime_constractor_office_id=?, " +
+            "  title=?, order_postal_code=?, order_full_address=?, contact_information=?, " +
             "  version=?, state=? " +
             
             buildOutputLogSql() + "INTO @UpdatedRows " +
@@ -70,6 +73,7 @@ public class OrderSqlBuilder {
             buildInsertLogSql("@UpdatedRows", "UPDATE") +
 
             "SELECT order_id FROM @UpdatedRows;";
+            
     }
 
     public static String buildDeleteOrderForIdsSql(int count) {
@@ -94,7 +98,7 @@ public class OrderSqlBuilder {
             "SELECT ord.order_id, ord.request_number, ord.order_date, ord.start_date, ord.end_date" +
             ", ord.prime_constractor_id, ord.prime_constractor_office_id" +
             ", COALESCE(c.name, '') as prime_constractor_name, COALESCE(o.name, '') as prime_constractor_office_name" +
-            ", ord.title, ord.order_postal_code, ord.order_full_address, ord.version, ord.state FROM orders ord" +
+            ", ord.title, ord.order_postal_code, ord.order_full_address, ord.contact_information, ord.version, ord.state FROM orders ord" +
             " LEFT OUTER JOIN companies c ON c.company_id = ord.prime_constractor_id AND NOT (c.state = ?)" +
             " LEFT OUTER JOIN offices o ON o.office_id = ord.prime_constractor_office_id AND NOT (o.state = ?)";
     }

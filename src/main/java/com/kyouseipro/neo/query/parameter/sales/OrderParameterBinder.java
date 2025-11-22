@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.sales.OrderEntity;
+import com.kyouseipro.neo.entity.sales.OrderItemEntity;
 
 public class OrderParameterBinder {
     public static void bindInsertOrderParameters(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
@@ -32,11 +33,17 @@ public class OrderParameterBinder {
         pstmt.setString(index++, o.getTitle());
         pstmt.setString(index++, o.getOrder_postal_code());
         pstmt.setString(index++, o.getOrder_full_address());
+        pstmt.setString(index++, o.getContact_information());
 
         pstmt.setInt(index++, o.getVersion());
         pstmt.setInt(index++, o.getState());
 
         pstmt.setString(index++, editor);
+
+        for (OrderItemEntity orderItemEntity : o.getItem_list()) {
+            OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, orderItemEntity, editor, index, true);
+            index = index + 8;
+        }
     }
 
     public static void bindUpdateOrderParameters(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
@@ -63,12 +70,28 @@ public class OrderParameterBinder {
         pstmt.setString(index++, o.getTitle());
         pstmt.setString(index++, o.getOrder_postal_code());
         pstmt.setString(index++, o.getOrder_full_address());
+        pstmt.setString(index++, o.getContact_information());
 
         pstmt.setInt(index++, o.getVersion());
         pstmt.setInt(index++, o.getState());
 
         pstmt.setInt(index++, o.getOrder_id()); // WHERE句
         pstmt.setString(index++, editor);          // ログ用
+
+        for (OrderItemEntity orderItemEntity : o.getItem_list()) {
+            if (orderItemEntity.getState() == Enums.state.DELETE.getCode()) {
+                OrderItemParameterBinder.bindDeleteOrderItemParameters(pstmt, orderItemEntity.getOrder_item_id(), editor, index);
+                index = index + 3;
+            } else {
+                if (orderItemEntity.getOrder_item_id() > 0){
+                    OrderItemParameterBinder.bindUpdateOrderItemParameters(pstmt, orderItemEntity, editor, index);
+                    index = index + 10;
+                } else {
+                    OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, orderItemEntity, editor, index, false);
+                    index = index + 9;
+                }
+            }
+        }
     }
 
     public static void bindFindById(PreparedStatement ps, Integer orderId) throws SQLException {

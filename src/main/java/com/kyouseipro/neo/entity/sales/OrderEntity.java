@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.entity.sales;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.interfaceis.CsvExportable;
@@ -21,13 +22,16 @@ public class OrderEntity implements CsvExportable {
     private String title;
     private String order_postal_code;
     private String order_full_address;
+    private String contact_information;
+
+    private List<OrderItemEntity> item_list;
 
     private int version;
     private int state;
 
     // CSVヘッダーを返す static メソッド（必須ではないですが慣例的に付ける）
     public static String getCsvHeader() {
-        return "ID,依頼番号,受注日,着工日,完工日,元請,元請支店,件名,郵便番号.住所";
+        return "ID,依頼番号,受注日,着工日,完工日,元請,元請支店,件名,郵便番号.住所,連絡先";
     }
 
     @Override
@@ -41,6 +45,7 @@ public class OrderEntity implements CsvExportable {
                Utilities.escapeCsv(String.valueOf(prime_constractor_office_name)) + "," +
                Utilities.escapeCsv(String.valueOf(title)) + "," +
                Utilities.escapeCsv(String.valueOf(order_postal_code)) + "," +
-               Utilities.escapeCsv(String.valueOf(order_full_address));
+               Utilities.escapeCsv(String.valueOf(order_full_address)) + "," +
+               Utilities.escapeCsv(String.valueOf(contact_information));
     }
 }

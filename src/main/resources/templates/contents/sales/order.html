@@ -44,64 +44,119 @@
                         <input name="order-id" type="hidden" value="">
                         <input name="version" type="hidden" value="">
 
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>元請</label>
-                                <select tabindex="1" name="prime-constractor" class="normal-select"></select>
+                        <div class="tab-area">
+                            <ul class="tab-menu">
+                                <li class="tab-menu-item is-active" data-tab="11">情報</li>
+                                <li class="tab-menu-item" data-tab="12">商品</li>
+                                <li class="tab-menu-item" data-tab="13">作業</li>
+                            </ul>
+                            <div class="tab-panel is-show" data-panel="11">
+                                <div class="flex-area">
+                                    <div class="form-parts">
+                                        <label>元請</label>
+                                        <select tabindex="1" name="prime-constractor" class="normal-select"></select>
+                                    </div>
+                                    <div class="form-parts">
+                                        <label>元請支店</label>
+                                        <select tabindex="2" name="prime-constractor-office" class="normal-select"></select>
+                                    </div>
+                                    <div class="form-parts">
+                                        <label>営業担当</label>
+                                        <select tabindex="3" name="prime-constractor-staff" class="normal-select"></select>
+                                    </div>
+                                </div>
+
+                                <div class="flex-area">
+                                    <div class="form-parts">
+                                        <label>受注日</label>
+                                        <input tabindex="4" name="order-date" class="normal-input" type="date" value=""
+                                            onfocus="this.select();">
+                                    </div>
+                                    <div class="form-parts">
+                                        <label>受注番号</label>
+                                        <input tabindex="5" name="request-number" class="normal-input" type="text" value="" onfocus="this.select();">
+                                    </div>
+                                </div>
+
+                                <div class="flex-area">
+                                    <div class="form-parts">
+                                        <label>件名</label>
+                                        <input tabindex="6" name="title" class="normal-input" type="text" value="" onfocus="this.select();">
+                                    </div>
+                                </div>
+
+                                <div class="flex-area">
+                                    <div class="form-parts">
+                                        <label>郵便番号</label>
+                                        <input tabindex="7" id="order-postal-code" name="order-postal-code" class="normal-input"
+                                            type="text" inputmode="numeric" pattern="\\d{3}-?\\d{4}" value=""
+                                            placeholder="012-3456" onfocus="this.select();">
+                                        <img title="検索" src="/icons/search.png"
+                                            onclick="getAddress('Enter', 'order-postal-code', 'order-full-address')">
+                                    </div>
+                                    <div class="form-parts">
+                                        <label>住所</label>
+                                        <input tabindex="8" id="order-full-address" name="order-full-address" class="normal-input"
+                                            type="text" value="" placeholder="例）大阪府高槻市柱本5丁目7番10号" onfocus="this.select();">
+                                    </div>
+                                </div>
+
+                                <div class="flex-area">
+                                    <div class="form-parts">
+                                        <label>連絡先</label>
+                                        <input tabindex="9" id="contact-information" name="contact-information" class="normal-input"
+                                            type="text" value="" placeholder="012-3456-7890" onfocus="this.select();">
+                                    </div>
+                                    <div class="form-parts">
+                                        <label>着工日</label>
+                                        <input tabindex="10" name="start-date" class="normal-input" type="date" value=""
+                                            onfocus="this.select();">
+                                    </div>
+                                    <div class="form-parts">
+                                        <label>完工日</label>
+                                        <input tabindex="11" name="end-date" class="normal-input" type="date" value=""
+                                            onfocus="this.select();">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-parts">
-                                <label>元請支店</label>
-                                <select tabindex="2" name="prime-constractor-office" class="normal-select"></select>
+                            <div class="tab-panel" data-panel="12">
+                                <div class="table-area">
+                                    <div class="flex-area">
+                                        <div class="form-parts">
+                                            <label>メーカー</label>
+                                            <input tabindex="21" name="item-maker" class="normal-input" type="text" value=""
+                                                onfocus="this.select();">
+                                        </div>
+                                        <div class="form-parts">
+                                            <label>品目</label>
+                                            <input tabindex="22" name="item-name" class="normal-input" type="text" value=""
+                                                onfocus="this.select();">
+                                        </div>
+                                    </div>
+                                    <div class="flex-area">
+                                        <div class="form-parts">
+                                            <label>型番</label>
+                                            <input tabindex="23" name="item-model" class="normal-input" type="text" value=""
+                                                onfocus="this.select();">
+                                        </div>
+                                        <div class="form-parts">
+                                            <label>数量</label>
+                                            <input tabindex="24" name="item-quantity" class="normal-input text-right" type="text" value=""
+                                                onfocus="this.select();">
+                                        </div>
+                                        <div class="form-parts">
+                                            <label></label>
+                                            <button tabindex="25" class="normal-btn ok" type="button"
+                                                onclick="execRegistItem(this)"><span>登録</span></button>
+                                        </div>
+                                    </div>
+                                    <main
+                                        th:replace="~{fragments/sales/order :: tabPanel12Fragment('table-12', 'table-12-content')}">
+                                    </main>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>受注日</label>
-                                <input tabindex="3" name="order-date" class="normal-input" type="date" value=""
-                                    onfocus="this.select();">
-                            </div>
-                            <div class="form-parts">
-                                <label>受注番号</label>
-                                <input tabindex="4" name="request-number" class="normal-input" type="text" value="" onfocus="this.select();">
-                            </div>
-                        </div>
-
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>件名</label>
-                                <input tabindex="5" name="title" class="normal-input" type="text" value="" onfocus="this.select();">
-                            </div>
-                        </div>
-
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>郵便番号</label>
-                                <input tabindex="6" id="order-postal-code" name="order-postal-code" class="normal-input"
-                                    type="text" inputmode="numeric" pattern="\\d{3}-?\\d{4}" value=""
-                                    placeholder="012-3456" onfocus="this.select();">
-                                <img title="検索" src="/icons/search.png"
-                                    onclick="getAddress('Enter', 'order-postal-code', 'order-full-address')">
-                            </div>
-                            <div class="form-parts">
-                                <label>住所</label>
-                                <input tabindex="7" id="order-full-address" name="order-full-address" class="normal-input"
-                                    type="text" value="" placeholder="例）大阪府高槻市柱本5丁目7番10号" onfocus="this.select();">
-                            </div>
-                        </div>
-
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>着工日</label>
-                                <input tabindex="8" name="start-date" class="normal-input" type="date" value=""
-                                    onfocus="this.select();">
-                            </div>
-                            <div class="form-parts">
-                                <label>完工日</label>
-                                <input tabindex="9" name="end-date" class="normal-input" type="date" value=""
-                                    onfocus="this.select();">
-                            </div>
-                        </div>
                     </form>
                     <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
@@ -123,9 +178,14 @@
             const token = /*[[${_csrf.token}]]*/;
             const user = /*[[${user}]]*/;
             const formEntity = /*[[${formEntity}]]*/;
+            const itemEntity = /*[[${itemEntity}]]*/;
             const primeConstractorComboList = /*[[${primeConstractorComboList}]]*/;
+            // const itemClassComboList = /*[[${itemClassComboList}]]*/;
             const officeList = /*[[${officeList}]]*/;
+            const deleteCode = /*[[${deleteCode}]]*/;
             let origin = /*[[${origin}]]*/; // 初期リスト記憶用
+            let itemList = [];
+            let itemId = 0;
 
 /******************************************************************************************************* 入力画面 */
 
@@ -201,8 +261,20 @@
 
             // 受注伝票登録画面を開く
             async function execEdit(id, self) {
-                const panel = self.closest('.tab-panel');
-                const tab = panel.dataset.panel;
+                const form = document.getElementById('form-dialog-01');
+                // const form01 = document.getElementById('form-01');
+                const selectTab = form.querySelector('.tab-menu-item.is-active');
+                if (selectTab != null) selectTab.classList.remove('is-active');
+                const selectPanel = form.querySelector('.tab-panel.is-show');                
+                if (selectPanel != null) selectPanel.classList.remove('is-show');
+                const targetTab = form.querySelector('[data-tab="11"]');
+                targetTab.classList.add('is-active');
+                const targetPanel = form.querySelector('[data-panel="11"]');
+                targetPanel.classList.add('is-show');
+
+                resetForm12Input();
+                // const panel = self.closest('.tab-panel');
+                // const tab = panel.dataset.panel;
 
                 // スピナー表示
                 startProcessing();
@@ -211,7 +283,7 @@
                 openFormDialog("form-dialog-01");
 
                 // フォーム画面を取得
-                const form = document.getElementById('form-dialog-01');              
+                // const form = document.getElementById('form-dialog-01');              
 
                 let entity = {};
                 if (id > 0) {
@@ -250,6 +322,10 @@
                 }
                 form.querySelector('[name="version"]').value = entity.version;
 
+                itemList = entity.item_list;
+                // 商品リスト作成
+                updateTable12Display("table-12-content", itemList);
+
                 // 元請コンボボックス
                 const primeConstractorArea = form.querySelector('select[name="prime-constractor"]');
                 createComboBoxWithTop(primeConstractorArea, primeConstractorComboList, "");
@@ -259,6 +335,9 @@
                 createPrimeConstractorOfficeComboBox(primeConstractorArea);
                 const primeConstractorOfficeArea = form.querySelector('select[name="prime-constractor-office"]');
                 setComboboxSelected(primeConstractorOfficeArea, entity.prime_constractor_office_id);
+                // // 型番分類コンボボックス
+                // const itemClassArea = form.querySelector('select[name="item-class"]');
+                // createComboBox(itemClassArea, itemClassComboList);
 
                 // スピナー消去
                 processingEnd();
@@ -308,8 +387,10 @@
                     formdata.order_full_address = formData.get('order-full-address').trim();
                     formdata.version = formData.get('version');
 
+                    // formdata.item_list = itemList;
+
                     // 保存処理
-                    const resultResponse = await postFetch("/order/save", JSON.stringify(formdata), token, "application/json");
+                    const resultResponse = await postFetch("/order/save", JSON.stringify({orderEntity:formdata, itemEntityList:itemList}), token, "application/json");
                     const result = await resultResponse.json();
                     if (result.success) {
                         // 画面更新
@@ -359,6 +440,150 @@
                 } else {
                     openMsgDialog("msg-dialog", result.message, "red");
                 }
+            }
+
+/******************************************************************************************************* 商品登録 */
+
+            function execRegistItem(self) {
+                const panel = self.closest('#form-dialog-01');
+                const form = panel.querySelector('#form-01');
+                if (form12DataCheck(form) == false) {
+                    return;
+                } else {
+                    const formData = new FormData(form);
+                    const formdata = structuredClone(itemEntity);
+                    // let formdata = {};
+                    itemId -= 1;
+                    formdata.order_id = formData.get('order-id');
+                    formdata.order_item_id = itemId;
+                    formdata.item_maker = formData.get('item-maker');
+                    formdata.item_name = formData.get('item-name');
+                    formdata.item_model = formData.get('item-model');
+                    formdata.item_quantity = formData.get('item-quantity');
+                    formdata.arrival_date = "9999-12-31";
+                    formdata.item_state = 0;
+
+                    itemList.push(formdata);
+
+                    updateTable12Display("table-12-content", itemList);
+
+                    resetForm12Input();
+                }
+            }
+
+            // 入力フォームの内容をリセットする
+            function resetForm12Input() {
+                const form = document.getElementById('form-dialog-01');
+                const maker = form.querySelector('input[name="item-maker"]');
+                if (maker != null) maker.value = "";
+                const name = form.querySelector('input[name="item-name"]');
+                if (name != null) name.value = "";
+                const model = form.querySelector('input[name="item-model"]');
+                if (model != null) model.value = "";
+                const quantity = form.querySelector('input[name="item-quantity"]');
+                if (quantity != null) quantity.value = "";
+                maker.focus();
+            }
+
+            // 入力チェック
+            function form12DataCheck(area) {
+                let msg = "";
+                // 型番が入力されていないとFalseを返す
+                const model = area.querySelector('input[name="item-model"]');
+                if (model != null && model.value == "") msg += '\n型番が入力されていません';
+                // エラーが一つ以上あればエラーメッセージダイアログを表示する
+                if (msg != "") {
+                    openMsgDialog("msg-dialog", msg, "red");
+                    return false;
+                }
+                return true;
+            }
+
+            // リスト画面の本体部分を作成する
+            function createTable12Content(tableId, list) {
+                const tbl = document.getElementById(tableId);
+                list.forEach(function (item) {
+                    if (item.state != deleteCode) {
+                        let newRow = tbl.insertRow();
+                        // ID（Post送信用）
+                        newRow.setAttribute('name', 'data-row');
+                        newRow.setAttribute('data-id', item.order_item_id);
+                        // // シングルクリック時の処理
+                        // newRow.onclick = function (e) {
+                        //     if (!e.currentTarget.classList.contains('selected')){
+                        //         // すべての行の選択状態を解除する
+                        //         detachmentSelectClassToAllRow(tbl, false);
+                        //         // 選択した行にセレクトクラスを付与する
+                        //         const result = addSelectClassToRow(e.currentTarget);
+                        //     } else {
+                        //         // 選択済みの要素をクリックした時の処理
+                        //         const clickedTd = e.target.closest("td");
+                        //         // 取得したTDの処理
+                        //     }
+                        // }
+                        // // ダブルクリック時の処理
+                        // newRow.ondblclick = function (e) { 
+                        //     // チェックボックスの動作を停止させる
+                        //     e.preventDefault();
+                        //     // 選択済みの場合
+                        //     if (!e.currentTarget.classList.contains('selected')){
+                        //         // すべての行の選択状態を解除する
+                        //         detachmentSelectClassToAllRow(tableId, false);
+                        //         // 選択した行にセレクトクラスを付与する
+                        //         const result = addSelectClassToRow(e.currentTarget);
+                        //     }
+                        // }
+
+                        createTable12Row(newRow, item, "12");
+                    }
+                });
+            }
+
+            // テーブル行を作成する
+            function createTable12Row(newRow, item, tab) {
+                // メーカー
+                newRow.insertAdjacentHTML('beforeend', '<td name="maker"><span>' + (item.item_maker ?? '') + '</span></td>');
+                // 品目
+                newRow.insertAdjacentHTML('beforeend', '<td name="item"><span>' + (item.item_name ?? '') + '</span></td>');
+                // 型番
+                newRow.insertAdjacentHTML('beforeend', '<td name="model"><span>' + (item.item_model ?? '') + '</span></td>');
+                // 数量
+                newRow.insertAdjacentHTML('beforeend', '<td name="quantity" class="text-center"><span>' + (item.item_quantity ?? '0') + '</span></td>');
+                // 削除ボタン
+                newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(' + item.order_item_id + ')"><img src="/icons/dust.png"></div></td>');
+            }
+
+            // テーブルリスト画面を更新する
+            async function updateTable12Display(tableId, list) {
+                // // フィルター処理
+                // const result = filterDisplay(searchId, list);
+                // リスト画面を初期化
+                deleteElements(tableId);
+                // リスト作成
+                createTable12Content(tableId, list);
+                // // フッター作成
+                // createTableFooter(footerId, list);
+                // // チェックボタン押下時の処理を登録する
+                // registCheckButtonClicked(tableId);
+                // // テーブルのソートをリセットする
+                // resetSortable(tableId);
+                // // スクロール時のページトップボタン処理を登録する
+                // setPageTopButton(tableId);
+                // テーブルにスクロールバーが表示されたときの処理を登録する
+                document.querySelectorAll('.scroll-area').forEach(el => {
+                    toggleScrollbar(el);
+                });
+            }
+
+            function deleteItem(id) {
+                if (id < 0) {
+                    itemList = itemList.filter(value => value.order_item_id != id);
+                    // updateTable12Display("table-12-content", itemList);
+                } else {
+                    const item = itemList.find(value => value.order_item_id == id);
+                    item.state = deleteCode;
+                }
+                updateTable12Display("table-12-content", itemList);
             }
 
 /******************************************************************************************************* ダウンロード */

@@ -46,6 +46,20 @@
         <button type="button" class="page-top"></button>
     </main>
 
+    <main th:fragment="tabPanel12Fragment(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table">
+            <tr name="table-header" class="pc-style">
+                <th><span>メーカー</span></th>
+                <th><span>品目</span></th>
+                <th><span>型番</span></th>
+                <th><span>数量</span></th>
+                <th></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
     <footer th:fragment="footerFragment()" th:remove="tag">
         <span>0件 : 0000/00/00 00:00 現在</span>
     </footer>

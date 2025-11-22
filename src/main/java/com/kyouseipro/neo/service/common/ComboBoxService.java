@@ -96,6 +96,21 @@ public class ComboBoxService {
         return list;
     }
 
+    /**
+     * 分類リスト　商品：作業：部材
+     * @return
+     */
+    public List<SimpleData> getItemClass() {
+        List<SimpleData> list = new ArrayList<>();
+        for(Enums.ItemClass ent: Enums.ItemClass.values()) {
+            SimpleData simpleData = new SimpleData();
+            simpleData.setNumber(ent.getCode());
+            simpleData.setText(ent.getDescription());
+            list.add(simpleData);
+        }
+        return list;
+    }
+
     // /**
     //  * すべての会社リスト
     //  * @return
