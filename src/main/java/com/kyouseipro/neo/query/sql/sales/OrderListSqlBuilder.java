@@ -20,7 +20,11 @@ public class OrderListSqlBuilder {
     public static String buildFindByBetweenOrderListEntity() {
         return 
             baseSelectString() +
-            " WHERE NOT (ord.state = ?) AND ord.start_date >= ? AND ord.end_date <= ?";
+            " WHERE NOT (ord.state = ?) AND " +
+            "((ord.start_date >= ? AND ord.end_date <= ?) OR" +
+            "(ord.start_date >= ? AND ord.end_date <= '9999-12-31') OR" +
+            "(ord.start_date >= '9999-12-31' AND ord.end_date <= ?) OR" +
+            "(ord.start_date >= '9999-12-31' AND ord.end_date <= '9999-12-31'))";
     }
 }
 

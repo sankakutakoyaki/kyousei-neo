@@ -1,5 +1,6 @@
 package com.kyouseipro.neo.controller.page;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -53,8 +54,8 @@ public class SalesPageController {
         mv.addObject("itemEntity", new OrderItemEntity());
 
         // 初期表示用受注リスト取得
-        // List<OrderListEntity> origin = orderListService.getBetweenOrderEntity(LocalDate.now(), LocalDate.now());
-        List<OrderListEntity> origin = orderListService.getOrderList();
+        List<OrderListEntity> origin = orderListService.getBetweenOrderEntity(LocalDate.now(), LocalDate.now());
+        // List<OrderListEntity> origin = orderListService.getOrderList();
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得

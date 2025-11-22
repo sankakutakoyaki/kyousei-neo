@@ -16,8 +16,10 @@ public class OrderListParameterBinder {
     public static void bindFindByBetweenOrderListEntity(PreparedStatement ps, LocalDate start, LocalDate end) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.COMPLETE.getCode());
-        ps.setInt(index++, Enums.state.COMPLETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setString(index++, start.toString());
+        ps.setString(index++, end.toString());
         ps.setString(index++, start.toString());
         ps.setString(index++, end.toString());
     }

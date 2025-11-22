@@ -31,7 +31,7 @@ public class OrderEntity implements CsvExportable {
 
     // CSVヘッダーを返す static メソッド（必須ではないですが慣例的に付ける）
     public static String getCsvHeader() {
-        return "ID,依頼番号,受注日,着工日,完工日,元請,元請支店,件名,郵便番号.住所,連絡先";
+        return "ID,依頼番号,受注日,着工日,完工日,元請,元請支店,件名,郵便番号,住所,連絡先";
     }
 
     @Override

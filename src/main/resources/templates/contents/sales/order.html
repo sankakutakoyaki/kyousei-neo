@@ -636,6 +636,25 @@
                 });
             }
 
+            async function execDate01Search() {
+                // リスト取得
+                origin = await getOrdersBetween("start-date01", "end-date01", "/order/get/between");
+
+                // 画面更新
+                await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+            }
+
+            // 一覧表示用のリスト取得
+            async function getOrdersBetween(startId, endId, url) {
+                const start = document.getElementById(startId).value;
+                const end = document.getElementById(endId).value;
+                const data = "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end);
+                const contentType = 'application/x-www-form-urlencoded';
+                // List<Timeworks>を取得
+                const resultResponse = await postFetch(url, data, token, contentType);
+                return await resultResponse.json();
+            }
+
 /******************************************************************************************************* 初期化時 */
 
             // ページ読み込み後の処理
@@ -669,6 +688,8 @@
                 tabMenus.forEach((tabMenu) => {
                     tabMenu.addEventListener('click', tabSwitch);
                 })
+
+                execSpecifyPeriod("today", 'start-date01', 'end-date01');
 
                 // スピナー消去
                 processingEnd();
