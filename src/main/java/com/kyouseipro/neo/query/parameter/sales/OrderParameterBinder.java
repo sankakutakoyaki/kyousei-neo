@@ -5,13 +5,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.sales.DeliveryStaffEntity;
 import com.kyouseipro.neo.entity.sales.OrderEntity;
 import com.kyouseipro.neo.entity.sales.OrderItemEntity;
 
 public class OrderParameterBinder {
     public static void bindInsertOrderParameters(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
         int index = 1;
-        // pstmt.setInt(index++, o.getOrder_id());
         pstmt.setString(index++, o.getRequest_number());
         if (o.getOrder_date() != null) {
             pstmt.setDate(index++, java.sql.Date.valueOf(o.getOrder_date()));
@@ -34,6 +34,7 @@ public class OrderParameterBinder {
         pstmt.setString(index++, o.getOrder_postal_code());
         pstmt.setString(index++, o.getOrder_full_address());
         pstmt.setString(index++, o.getContact_information());
+        pstmt.setString(index++, o.getRemarks());
 
         pstmt.setInt(index++, o.getVersion());
         pstmt.setInt(index++, o.getState());
@@ -71,6 +72,7 @@ public class OrderParameterBinder {
         pstmt.setString(index++, o.getOrder_postal_code());
         pstmt.setString(index++, o.getOrder_full_address());
         pstmt.setString(index++, o.getContact_information());
+        pstmt.setString(index++, o.getRemarks());
 
         pstmt.setInt(index++, o.getVersion());
         pstmt.setInt(index++, o.getState());
@@ -78,17 +80,38 @@ public class OrderParameterBinder {
         pstmt.setInt(index++, o.getOrder_id()); // WHERE句
         pstmt.setString(index++, editor);          // ログ用
 
+        // 商品リスト
         for (OrderItemEntity orderItemEntity : o.getItem_list()) {
+            // 削除の場合
             if (orderItemEntity.getState() == Enums.state.DELETE.getCode()) {
                 OrderItemParameterBinder.bindDeleteOrderItemParameters(pstmt, orderItemEntity.getOrder_item_id(), editor, index);
                 index = index + 3;
             } else {
+                // 更新か新規かで分岐
                 if (orderItemEntity.getOrder_item_id() > 0){
                     OrderItemParameterBinder.bindUpdateOrderItemParameters(pstmt, orderItemEntity, editor, index);
                     index = index + 10;
                 } else {
                     OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, orderItemEntity, editor, index, false);
                     index = index + 9;
+                }
+            }
+        }
+
+        // 配送担当リスト
+        for (DeliveryStaffEntity deliveryStaffEntity : o.getStaff_list()) {
+            // 削除の場合
+            if (deliveryStaffEntity.getState() == Enums.state.DELETE.getCode()) {
+                DeliveryStaffParameterBinder.bindDeleteDeliveryStaffParameters(pstmt, deliveryStaffEntity.getDelivery_staff_id(), editor, index);
+                index = index + 3;
+            } else {
+                // 更新か新規かで分岐
+                if (deliveryStaffEntity.getDelivery_staff_id() > 0){
+                    DeliveryStaffParameterBinder.bindUpdateDeliveryStaffParameters(pstmt, deliveryStaffEntity, editor, index);
+                    index = index + 6;
+                } else {
+                    DeliveryStaffParameterBinder.bindInsertDeliveryStaffParameters(pstmt, deliveryStaffEntity, editor, index, false);
+                    index = index + 5;
                 }
             }
         }

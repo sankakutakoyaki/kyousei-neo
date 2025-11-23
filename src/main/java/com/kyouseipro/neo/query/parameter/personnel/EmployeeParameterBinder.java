@@ -90,17 +90,26 @@ public class EmployeeParameterBinder {
     }
 
     public static void bindFindById(PreparedStatement ps, Integer employeeId) throws SQLException {
-        ps.setInt(1, employeeId);
-        ps.setInt(2, Enums.state.DELETE.getCode());
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, employeeId);
+        ps.setInt(index++, Enums.state.DELETE.getCode());
     }
 
     public static void bindFindByAccount(PreparedStatement ps, String account) throws SQLException {
-        ps.setString(1, account);
-        ps.setInt(2, Enums.state.DELETE.getCode());
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setString(index++, account);
+        ps.setInt(index++, Enums.state.DELETE.getCode());
     }
 
     public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
     }
 
     public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {

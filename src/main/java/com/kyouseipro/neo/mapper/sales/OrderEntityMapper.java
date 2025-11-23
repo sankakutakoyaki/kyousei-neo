@@ -20,6 +20,8 @@ public class OrderEntityMapper {
         entity.setTitle(rs.getString("title"));
         entity.setOrder_postal_code(rs.getString("order_postal_code"));
         entity.setOrder_full_address(rs.getString("order_full_address"));
+        entity.setContact_information(rs.getString("contact_information"));
+        entity.setRemarks(rs.getString("remarks"));
         entity.setVersion(rs.getInt("version"));
         entity.setState(rs.getInt("state"));
         return entity;

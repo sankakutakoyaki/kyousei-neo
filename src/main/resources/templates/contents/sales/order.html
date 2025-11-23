@@ -22,8 +22,7 @@
                         <header th:replace="~{fragments/sales/order :: headerFragment('search-box-01')}">
                         </header>
                         <!-- コンテンツ -->
-                        <main
-                            th:replace="~{fragments/sales/order :: mainFragment('table-01', 'table-01-content')}">
+                        <main th:replace="~{fragments/sales/order :: mainFragment('table-01', 'table-01-content')}">
                         </main>
                         <!-- フッター -->
                         <footer id="footer-01" class="pc-style"
@@ -49,6 +48,7 @@
                                 <li class="tab-menu-item is-active" data-tab="11">情報</li>
                                 <li class="tab-menu-item" data-tab="12">商品</li>
                                 <li class="tab-menu-item" data-tab="13">作業</li>
+                                <li class="tab-menu-item" data-tab="14">担当</li>
                             </ul>
                             <div class="tab-panel is-show" data-panel="11">
                                 <div class="flex-area">
@@ -58,11 +58,13 @@
                                     </div>
                                     <div class="form-parts">
                                         <label>元請支店</label>
-                                        <select tabindex="2" name="prime-constractor-office" class="normal-select"></select>
+                                        <select tabindex="2" name="prime-constractor-office"
+                                            class="normal-select"></select>
                                     </div>
                                     <div class="form-parts">
                                         <label>営業担当</label>
-                                        <select tabindex="3" name="prime-constractor-staff" class="normal-select"></select>
+                                        <select tabindex="3" name="prime-constractor-staff"
+                                            class="normal-select"></select>
                                     </div>
                                 </div>
 
@@ -74,38 +76,43 @@
                                     </div>
                                     <div class="form-parts">
                                         <label>受注番号</label>
-                                        <input tabindex="5" name="request-number" class="normal-input" type="text" value="" onfocus="this.select();">
+                                        <input tabindex="5" name="request-number" class="normal-input" type="text"
+                                            value="" onfocus="this.select();">
                                     </div>
                                 </div>
 
                                 <div class="flex-area">
                                     <div class="form-parts">
                                         <label>件名</label>
-                                        <input tabindex="6" name="title" class="normal-input" type="text" value="" onfocus="this.select();">
+                                        <input tabindex="6" name="title" class="normal-input" type="text" value=""
+                                            onfocus="this.select();">
                                     </div>
                                 </div>
 
                                 <div class="flex-area">
                                     <div class="form-parts">
                                         <label>郵便番号</label>
-                                        <input tabindex="7" id="order-postal-code" name="order-postal-code" class="normal-input"
-                                            type="text" inputmode="numeric" pattern="\\d{3}-?\\d{4}" value=""
-                                            placeholder="012-3456" onfocus="this.select();">
+                                        <input tabindex="7" id="order-postal-code" name="order-postal-code"
+                                            class="normal-input" type="text" inputmode="numeric"
+                                            pattern="\\d{3}-?\\d{4}" value="" placeholder="012-3456"
+                                            onfocus="this.select();">
                                         <img title="検索" src="/icons/search.png"
                                             onclick="getAddress('Enter', 'order-postal-code', 'order-full-address')">
                                     </div>
                                     <div class="form-parts">
                                         <label>住所</label>
-                                        <input tabindex="8" id="order-full-address" name="order-full-address" class="normal-input"
-                                            type="text" value="" placeholder="例）大阪府高槻市柱本5丁目7番10号" onfocus="this.select();">
+                                        <input tabindex="8" id="order-full-address" name="order-full-address"
+                                            class="normal-input" type="text" value="" placeholder="例）大阪府高槻市柱本5丁目7番10号"
+                                            onfocus="this.select();">
                                     </div>
                                 </div>
 
                                 <div class="flex-area">
                                     <div class="form-parts">
                                         <label>連絡先</label>
-                                        <input tabindex="9" id="contact-information" name="contact-information" class="normal-input"
-                                            type="text" value="" placeholder="012-3456-7890" onfocus="this.select();">
+                                        <input tabindex="9" id="contact-information" name="contact-information"
+                                            class="normal-input" type="text" value="" placeholder="012-3456-7890"
+                                            onfocus="this.select();">
                                     </div>
                                     <div class="form-parts">
                                         <label>着工日</label>
@@ -122,6 +129,42 @@
                             <div class="tab-panel" data-panel="12">
                                 <div class="table-area">
                                     <div class="flex-area">
+                                        <div class="form-parts">
+                                            <label>メーカー</label>
+                                            <input tabindex="21" id="maker12" name="item-maker" class="normal-input" type="text"
+                                                value="" onfocus="this.select();">
+                                        </div>
+                                        <div class="form-parts">
+                                            <label>品目</label>
+                                            <input tabindex="22" id="name12" name="item-name" class="normal-input" type="text"
+                                                value="" onfocus="this.select();">
+                                        </div>
+                                    </div>
+                                    <div class="flex-area">
+                                        <div class="form-parts">
+                                            <label>型番</label>
+                                            <input tabindex="23" id="model12" name="item-model" class="normal-input" type="text"
+                                                value="" onfocus="this.select();">
+                                        </div>
+                                        <div class="form-parts">
+                                            <label>数量</label>
+                                            <input tabindex="24" id="quanrity12" name="item-quantity" class="normal-input text-right"
+                                                type="text" value="" onfocus="this.select();">
+                                        </div>
+                                        <div class="form-parts">
+                                            <label></label>
+                                            <button tabindex="25" class="normal-btn ok" type="button"
+                                                onclick="execRegistItem(this)"><span>登録</span></button>
+                                        </div>
+                                    </div>
+                                    <main
+                                        th:replace="~{fragments/sales/order :: tabPanel12Fragment('table-12', 'table-12-content')}">
+                                    </main>
+                                </div>
+                            </div>
+                            <div class="tab-panel" data-panel="13">
+                                <div class="table-area">
+                                    <!-- <div class="flex-area">
                                         <div class="form-parts">
                                             <label>メーカー</label>
                                             <input tabindex="21" name="item-maker" class="normal-input" type="text" value=""
@@ -152,6 +195,35 @@
                                     </div>
                                     <main
                                         th:replace="~{fragments/sales/order :: tabPanel12Fragment('table-12', 'table-12-content')}">
+                                    </main> -->
+                                </div>
+                            </div>
+                            <div class="tab-panel" data-panel="14">
+                                <div class="table-area">
+                                    <div class="flex-area">
+                                        <div class="form-parts">
+                                            <label>コード</label>
+                                            <input id="code14" name="code" class="normal-input" type="text" value=""
+                                                onfocus="this.select();">
+                                        </div>
+                                        <div class="form-parts">
+                                            <label>担当者名</label>
+                                            <input readonly id="emp14" name="employee-name" class="normal-input" type="text"
+                                                value="" onfocus="this.select();">
+                                        </div>
+                                        <div class="form-parts">
+                                            <label>会社名</label>
+                                            <input readonly id="com14" name="company-name" class="normal-input" type="text"
+                                                value="" onfocus="this.select();">
+                                        </div>
+                                        <div class="form-parts">
+                                            <label></label>
+                                            <button id="regist-btn14" class="normal-btn ok" type="button"
+                                                onclick="execRegistStaff()"><span>登録</span></button>
+                                        </div>
+                                    </div>
+                                    <main
+                                        th:replace="~{fragments/sales/order :: tabPanel14Fragment('table-14', 'table-14-content')}">
                                     </main>
                                 </div>
                             </div>
@@ -179,13 +251,23 @@
             const user = /*[[${user}]]*/;
             const formEntity = /*[[${formEntity}]]*/;
             const itemEntity = /*[[${itemEntity}]]*/;
+            const staffEntity = /*[[${staffEntity}]]*/;
             const primeConstractorComboList = /*[[${primeConstractorComboList}]]*/;
-            // const itemClassComboList = /*[[${itemClassComboList}]]*/;
             const officeList = /*[[${officeList}]]*/;
             const deleteCode = /*[[${deleteCode}]]*/;
             let origin = /*[[${origin}]]*/; // 初期リスト記憶用
             let itemList = [];
+            let staffList = [];
             let itemId = 0;
+            let staffId = 0;
+            const maker12 = document.getElementById('maker12');
+            const name12 = document.getElementById('name12');
+            const model12 = document.getElementById('model12');
+            const quantity12 = document.getElementById('quantity12');
+            const code14 = document.getElementById('code14');
+            const emp14 = document.getElementById('emp14');
+            const com14 = document.getElementById('com14');
+            const regBtn14 = document.getElementById('regist-btn14');
 
 /******************************************************************************************************* 入力画面 */
 
@@ -248,7 +330,8 @@
                 // 選択用チェックボックス
                 newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
                 // ID 依頼番号
-                newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.order_id + ', this)"><span>' + String(item.order_id).padStart(5, '0') + '</span><br><span>' + (item.request_number ?? "登録なし") + '</span></td>');
+                // newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.order_id + ', this)"><span class="br-cell">' + String(item.order_id).padStart(5, '0') + '</span><br><span class="br-cell">' + (item.request_number ?? "登録なし") + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td name="id-cell"><span class="link-cell" onclick="execEdit(' + item.order_id + ', this)">' + String(item.order_id).padStart(5, '0') + '</span><br><span>' + (item.request_number ?? "登録なし") + '</span></td>');
                 // 着工日 完工日
                 newRow.insertAdjacentHTML('beforeend', '<td name="date-cell"><span>' + (item.start_date == '9999-12-31' ? "": item.start_date) + '</span><br><span>' + (item.end_date == '9999-12-31' ? "": item.end_date) + '</span></td>');
                 // 元請 支店
@@ -273,6 +356,7 @@
                 targetPanel.classList.add('is-show');
 
                 resetForm12Input();
+                resetForm14Input();
                 // const panel = self.closest('.tab-panel');
                 // const tab = panel.dataset.panel;
 
@@ -323,8 +407,12 @@
                 form.querySelector('[name="version"]').value = entity.version;
 
                 itemList = entity.item_list;
+                staffList = entity.staff_list;
+
                 // 商品リスト作成
-                updateTable12Display("table-12-content", itemList);
+                updateTable12Display("table-12-content");
+                // 配送員リスト作成
+                updateTable14Display("table-14-content");
 
                 // 元請コンボボックス
                 const primeConstractorArea = form.querySelector('select[name="prime-constractor"]');
@@ -390,12 +478,12 @@
                     // formdata.item_list = itemList;
 
                     // 保存処理
-                    const resultResponse = await postFetch("/order/save", JSON.stringify({orderEntity:formdata, itemEntityList:itemList}), token, "application/json");
+                    const resultResponse = await postFetch("/order/save", JSON.stringify({orderEntity:formdata, itemEntityList:itemList, staffEntityList:staffList}), token, "application/json");
                     const result = await resultResponse.json();
                     if (result.success) {
                         // 画面更新
                         openMsgDialog("msg-dialog", result.message, "blue");
-                        await execUpdate();
+                        await execDate01Search();
                         // 追加・変更行に移動
                         scrollIntoTableList("table-01-content", result.id);
                     } else {
@@ -435,7 +523,7 @@
                 }
                 
                 if (result.success) {                
-                    await execUpdate();
+                    await execDate01Search();
                     openMsgDialog("msg-dialog", result.message, "blue");
                 } else {
                     openMsgDialog("msg-dialog", result.message, "red");
@@ -465,24 +553,25 @@
 
                     itemList.push(formdata);
 
-                    updateTable12Display("table-12-content", itemList);
+                    updateTable12Display("table-12-content");
 
                     resetForm12Input();
+                    maker12.focus();
                 }
             }
 
             // 入力フォームの内容をリセットする
             function resetForm12Input() {
-                const form = document.getElementById('form-dialog-01');
-                const maker = form.querySelector('input[name="item-maker"]');
-                if (maker != null) maker.value = "";
-                const name = form.querySelector('input[name="item-name"]');
-                if (name != null) name.value = "";
-                const model = form.querySelector('input[name="item-model"]');
-                if (model != null) model.value = "";
-                const quantity = form.querySelector('input[name="item-quantity"]');
-                if (quantity != null) quantity.value = "";
-                maker.focus();
+                // const form = document.getElementById('form-dialog-01');
+                // const maker = form.querySelector('input[name="item-maker"]');
+                if (maker12 != null) maker12.value = "";
+                // const name = form.querySelector('input[name="item-name"]');
+                if (name12 != null) name12.value = "";
+                // const model = form.querySelector('input[name="item-model"]');
+                if (model12 != null) model12.value = "";
+                // const quantity = form.querySelector('input[name="item-quantity"]');
+                if (quantity12 != null) quantity12.value = "";
+                // maker.focus();
             }
 
             // 入力チェック
@@ -500,9 +589,9 @@
             }
 
             // リスト画面の本体部分を作成する
-            function createTable12Content(tableId, list) {
+            function createTable12Content(tableId) {
                 const tbl = document.getElementById(tableId);
-                list.forEach(function (item) {
+                itemList.forEach(function (item) {
                     if (item.state != deleteCode) {
                         let newRow = tbl.insertRow();
                         // ID（Post送信用）
@@ -554,13 +643,13 @@
             }
 
             // テーブルリスト画面を更新する
-            async function updateTable12Display(tableId, list) {
+            async function updateTable12Display(tableId) {
                 // // フィルター処理
                 // const result = filterDisplay(searchId, list);
                 // リスト画面を初期化
                 deleteElements(tableId);
                 // リスト作成
-                createTable12Content(tableId, list);
+                createTable12Content(tableId);
                 // // フッター作成
                 // createTableFooter(footerId, list);
                 // // チェックボタン押下時の処理を登録する
@@ -578,12 +667,167 @@
             function deleteItem(id) {
                 if (id < 0) {
                     itemList = itemList.filter(value => value.order_item_id != id);
-                    // updateTable12Display("table-12-content", itemList);
                 } else {
                     const item = itemList.find(value => value.order_item_id == id);
                     item.state = deleteCode;
                 }
-                updateTable12Display("table-12-content", itemList);
+                updateTable12Display("table-12-content");
+            }
+
+/******************************************************************************************************* 配送員登録 */
+
+            function execRegistStaff() {
+                const panel = document.getElementById('form-dialog-01');
+                const form = panel.querySelector('#form-01');
+                if (form14DataCheck(form) == false) {
+                    resetForm14Input();
+                    return;
+                } else {
+                    const formData = new FormData(form);
+                    const formdata = structuredClone(staffEntity);
+                    staffId -= 1;
+                    formdata.order_id = formData.get('order-id');
+                    formdata.delivery_staff_id = staffId;
+                    formdata.employee_id = formData.get('code');
+                    formdata.full_name = formData.get('employee-name');
+                    formdata.company_name = formData.get('company-name');
+                    formdata.item_state = 0;
+
+                    staffList.push(formdata);
+
+                    updateTable14Display("table-14-content", staffList);
+                
+                    resetForm14Input();
+                    code14.focus();
+                }
+            }
+
+            // 入力フォームの内容をリセットする
+            function resetForm14Input() {
+                // const form = document.getElementById('form-dialog-01');
+                // const code = form.querySelector('input[name="code"]');
+                if (code14 != null) code14.value = "";
+                // const emp = form.querySelector('input[name="employee-name"]');
+                if (emp14 != null) emp14.value = "";
+                // const com = form.querySelector('input[name="company-name"]');
+                if (com14 != null) com14.value = "";
+
+                
+            }
+
+            // 入力チェック
+            function form14DataCheck(area) {
+                let msg = "";
+                // 型番が入力されていないとFalseを返す
+                // const emp = area.querySelector('input[name="employee-name"]');
+                if (emp14 != null && emp14.value == "") msg += '\n担当者が入力されていません';
+                // 同一担当者でないか
+                const staff = staffList.find(value => value.employee_id == Number(code14.value));
+                if (staff != null) msg += '\n既に登録済みです';
+                // エラーが一つ以上あればエラーメッセージダイアログを表示する
+                if (msg != "") {
+                    openMsgDialog("msg-dialog", msg, "red");
+                    return false;
+                }
+                return true;
+            }
+
+            // リスト画面の本体部分を作成する
+            function createTable14Content(tableId) {
+                const tbl = document.getElementById(tableId);
+                staffList.forEach(function (item) {
+                    if (item.state != deleteCode) {
+                        let newRow = tbl.insertRow();
+                        // ID（Post送信用）
+                        newRow.setAttribute('name', 'data-row');
+                        newRow.setAttribute('data-id', item.delivery_staff_id);
+
+                        createTable14Row(newRow, item, "14");
+                    }
+                });
+            }
+
+            // テーブル行を作成する
+            function createTable14Row(newRow, item, tab) {
+                // ID
+                newRow.insertAdjacentHTML('beforeend', '<td name="id-cell">' + String(item.employee_id).padStart(4, '0') + '</td>');
+                // 担当者名
+                newRow.insertAdjacentHTML('beforeend', '<td name="emp"><span>' + (item.full_name ?? '') + '</span></td>');
+                // 会社名
+                newRow.insertAdjacentHTML('beforeend', '<td name="com"><span>' + (item.company_name ?? '') + '</span></td>');
+                // 削除ボタン
+                newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteStaff(' + item.delivery_staff_id + ')"><img src="/icons/dust.png"></div></td>');
+            }
+
+            // テーブルリスト画面を更新する
+            async function updateTable14Display(tableId) {
+                // リスト画面を初期化
+                deleteElements(tableId);
+                // リスト作成
+                createTable14Content(tableId);
+                // テーブルにスクロールバーが表示されたときの処理を登録する
+                document.querySelectorAll('.scroll-area').forEach(el => {
+                    toggleScrollbar(el);
+                });
+            }
+
+            function deleteStaff(id) {
+                if (id < 0) {
+                    staffList = staffList.filter(value => value.delivery_staff_id != id);
+                } else {
+                    const staff = staffList.find(value => value.delivery_staff_id == id);
+                    staff.state = deleteCode;
+                }
+                updateTable14Display("table-14-content", staffList);
+            }
+
+            // コード入力ボックスからフォーカスが外れた時の処理
+            function execCodeBlur(e) {
+                if (e.target.value == "") {
+                    emp14.value = "";
+                    com14.value = "";
+                    return;
+                }
+                searchForNameByCode(e);
+            }
+
+            // コード入力ボックスでエンターを押した時の処理
+            function execCodeChanged(e) {
+                if (e == null) return;
+                // ボックスが空白なら処理しない
+                if (e.target.value == "") {
+                    emp14.value = "";
+                    com14.value = "";
+                    return;
+                }
+                if(e.key === 'Enter'){
+                    e.preventDefault();
+                    execCodeBlur(e);
+                }
+            }
+
+            // コードから[employee]を取得して、名前と会社名を表示
+            async function searchForNameByCode(e) {
+                e.preventDefault();
+                if (code14 == null || emp14 == null || com14 == null) return;
+                if (code14.value == "" || isNaN(code14.value)) {
+                    emp14.value = "";
+                    com14.value = "";
+                    return;
+                }
+
+                const entity = await getEmployeeByCode(Number(code14.value));
+
+                if (entity != null && entity.employee_id > 0) {
+                    emp14.value = entity.full_name;
+                    com14.value = entity.company_name;
+                    regBtn14.focus();
+                } else {
+                    code14.value = "";
+                    emp14.value = "";
+                    com14.value = "";
+                    openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
+                }                
             }
 
 /******************************************************************************************************* ダウンロード */
@@ -601,16 +845,16 @@
                 }
             }
 
-    /******************************************************************************************************* 画面更新 */
+    // /******************************************************************************************************* 画面更新 */
 
-            async function execUpdate() {
-                // リスト取得
-                const resultResponse = await fetch('/order/get/list');
-                origin = await resultResponse.json();
+    //         async function execUpdate() {
+    //             // リスト取得
+    //             const resultResponse = await fetch('/order/get/between');
+    //             origin = await resultResponse.json();
 
-                // 画面更新
-                await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
-            }
+    //             // 画面更新
+    //             await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+    //         }
 
     /******************************************************************************************************* 画面更新 */
 
@@ -661,6 +905,14 @@
             window.addEventListener("load", async () => {
                 // スピナー表示
                 startProcessing();
+
+                // 配送員登録画面のコード入力ボックスでエンターキーが押された時の処理を登録
+                code14.addEventListener('keydown', function (e) { execCodeChanged(e); });
+                // 配送員登録画面のコード入力ボックスのフォーカスが外れた時の処理を登録
+                code14.addEventListener('blur', function (e) { execCodeBlur(e); });
+
+                // regBtn14.addEventListener('keydown', function (e) { execRegistBtnKeyDown(e); });
+                regBtn14.addEventListener('keydown', function () { execRegistStaff(); });
 
                 // 検索ボックス入力時の処理
                 document.getElementById('search-box-01').addEventListener('search', async function(e) {

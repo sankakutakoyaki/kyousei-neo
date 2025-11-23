@@ -11,17 +11,17 @@ public class OfficeListSqlBuilder {
     public static String buildFindAllSql() {
         return
             basicSelectString() +
-            " WHERE NOT (o.state = ?)";
+            " WHERE NOT (o.state = ?) ORDER BY name_kana;";
     }
 
     public static String buildFindAllComboOfficeSql() {
-        return "SELECT office_id as number, name as text FROM offices WHERE NOT (state = ?);";
+        return "SELECT office_id as number, name as text FROM offices WHERE NOT (state = ?) ORDER BY name_kana;";
     }
 
     public static String buildFindAllByCategorySql() {
         return 
             basicSelectString() +
-            " WHERE NOT (o.state = ?) AND NOT (c.category = ?)";
+            " WHERE NOT (o.state = ?) AND NOT (c.category = ?) ORDER BY name_kana";
     }
 
     public static String buildFindAllComboClientSql() {

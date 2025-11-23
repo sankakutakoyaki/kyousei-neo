@@ -14,7 +14,6 @@
                 <ul class="tab-menu">
                     <li class="tab-menu-item is-active" data-tab="01">社員</li>
                     <li class="tab-menu-item" data-tab="02">アルバイト</li>
-                    <li class="tab-menu-item" data-tab="03">請負</li>
                 </ul>
                 <div class="tab-panel is-show" data-panel="01">
                     <div class="table-area">
@@ -41,20 +40,6 @@
                         </main>
                         <!-- フッター -->
                         <footer id="footer-02" class="pc-style"
-                            th:insert="~{fragments/personnel/employee :: footerFragment()}"></footer>
-                    </div>
-                </div>
-                <div class="tab-panel" data-panel="03">
-                    <div class="table-area">
-                        <!-- ヘッダー -->
-                        <header th:replace="~{fragments/personnel/employee :: headerFragment('search-box-03')}">
-                        </header>
-                        <!-- コンテンツ -->
-                        <main
-                            th:replace="~{fragments/personnel/employee :: mainFragment('table-03', 'table-03-content')}">
-                        </main>
-                        <!-- フッター -->
-                        <footer id="footer-03" class="pc-style"
                             th:insert="~{fragments/personnel/employee :: footerFragment()}"></footer>
                     </div>
                 </div>
@@ -197,9 +182,8 @@
             const formEntity = /*[[${formEntity}]]*/;
             const categoryEmployeeCode = /*[[${categoryEmployeeCode}]]*/;
             const categoryParttimeCode = /*[[${categoryParttimeCode}]]*/;
-            const categoryConstructCode = /*[[${categoryConstructCode}]]*/;
             const companyComboList = /*[[${companyComboList}]]*/;
-            const clientComboList = /*[[${clientComboList}]]*/;
+            // const clientComboList = /*[[${clientComboList}]]*/;
             const officeList = /*[[${officeList}]]*/;
             const employeeCategoryComboList = /*[[${employeeCategoryComboList}]]*/;
             const genderComboList = /*[[${genderComboList}]]*/;
@@ -249,9 +233,6 @@
                             case "table-02-content":
                                 execEdit(item.employee_id, this);
                                 break;
-                            case "table-03-content":
-                                execEdit(item.employee_id, this);
-                                break;
                             default:
                                 break;
                         }
@@ -263,9 +244,6 @@
                             break;
                         case "table-02-content":
                             createTableRow(newRow, item, "02");
-                            break;
-                        case "table-03-content":
-                            createTableRow(newRow, item, "03");
                             break;
                         default:
                             break;
@@ -329,9 +307,6 @@
                             break;
                         case "02":
                             entity.category = categoryParttimeCode;
-                            break;
-                        case "03":
-                            entity.category = categoryConstructCode;
                             break;
                         default:
                             break;
@@ -462,9 +437,6 @@
                             case categoryParttimeCode:
                                 tableId = "table-02-content";
                                 break;
-                            case categoryConstructCode:
-                                tableId = "table-03-content";
-                                break;
                             default:
                                 break;
                         }
@@ -520,9 +492,6 @@
                     case "02":
                         result = await deleteTablelist('table-02-content', '/employee/delete');
                         break;
-                    case "03":
-                        result = await deleteTablelist('table-03-content', '/employee/delete');
-                        break;
                     default:
                         break;
                 }
@@ -549,9 +518,6 @@
                     case "02":
                         result = await downloadCsv('table-02-content', '/employee/download/csv');
                         break;
-                    case "03":
-                        result = await downloadCsv('table-03-content', '/employee/download/csv');
-                        break;
                     default:
                         break;
                 }
@@ -569,8 +535,6 @@
                 await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
                 const list02 = origin.filter(function(value) { return value.category == categoryParttimeCode });
                 await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
-                const list03 = origin.filter(function(value) { return value.category == categoryConstructCode });
-                await updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
             }
 
     /******************************************************************************************************* 画面更新 */
@@ -613,10 +577,6 @@
                     const list = origin.filter(function(value) { return value.category == categoryParttimeCode });
                     await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
                 }, false);
-                document.getElementById('search-box-03').addEventListener('search', async function(e) {
-                    const list = origin.filter(function(value) { return value.category == categoryConstructCode });
-                    await updateTableDisplay("table-03-content", "footer-03", "search-box-03", list);
-                }, false);
 
                 // 郵便番号入力ボックスでエンターキーが押された時の処理を登録
                 document.getElementById('employee-postal-code').addEventListener('keydown', async function (e) {
@@ -639,12 +599,6 @@
                 makeSortable("table-02-content");
                 // スクロール時のページトップボタン処理を登録する
                 setPageTopButton("table-02-content");
-                const list03 = origin.filter(function(value) { return value.category == categoryConstructCode });
-                await updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
-                // テーブルをソート可能にする
-                makeSortable("table-03-content");
-                // スクロール時のページトップボタン処理を登録する
-                setPageTopButton("table-03-content");
 
                 // タブメニュー処理
                 const tabMenus = document.querySelectorAll('.tab-menu-item');

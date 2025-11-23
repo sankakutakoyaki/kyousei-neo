@@ -62,7 +62,7 @@
                 <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
                 <th><span>受注ID</span><br><span>依頼番号</span></th>
                 <th><span>着工日</span><br><span>完工日</span></th>
-                <th><span>元請</span><br><span>元請支店</span></th>
+                <th><span>元請</span><br><span>支店</span></th>
                 <th><span>件名</span><br><span>住所</span></th>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>
@@ -77,6 +77,19 @@
                 <th><span>品目</span></th>
                 <th><span>型番</span></th>
                 <th><span>数量</span></th>
+                <th></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+    <main th:fragment="tabPanel14Fragment(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table">
+            <tr name="table-header" class="pc-style">
+                <th><span>ID</span></th>
+                <th><span>担当者名</span></th>
+                <th><span>会社名</span></th>
                 <th></th>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>

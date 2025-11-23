@@ -48,7 +48,7 @@ public class OrderItemSqlBuilder {
             "SELECT order_item_id FROM " + rowTableName + ";";
     }
 
-    public static String buildInsertNewOrderItemSql(int index) {
+    public static String buildInsertOrderItemByNewOrderSql(int index) {
         String rowTableName = "@InsertedRows" + index;
         return
             buildLogTableSql(rowTableName) +

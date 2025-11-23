@@ -12,7 +12,9 @@ import lombok.Data;
 public class EmployeeEntity implements CsvExportable {
     private int employee_id;
     private int company_id;
+    private String company_name;
     private int office_id;
+    private String office_name;
     private String account;
     private int code;
     private int category;

@@ -4,52 +4,27 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.entity.sales.OrderItemEntity;
+import com.kyouseipro.neo.entity.sales.DeliveryStaffEntity;
 
-public class OrderItemParameterBinder {
-    public static void bindInsertOrderItemParameters(PreparedStatement pstmt, OrderItemEntity o, String editor, int index, boolean isNew) throws SQLException {
-        // int index = 1;
-        // pstmt.setInt(index++, o.getOrder_id());
-        // if (o.getOrder_id() > 0){
-        //     pstmt.setInt(index++, o.getOrder_id());
-        // }
+public class DeliveryStaffParameterBinder {
+    public static void bindInsertDeliveryStaffParameters(PreparedStatement pstmt, DeliveryStaffEntity d, String editor, int index, boolean isNew) throws SQLException {
         if (isNew == false) {
-            pstmt.setInt(index++, o.getOrder_id());
+            pstmt.setInt(index++, d.getOrder_id());
         }
-        pstmt.setString(index++, o.getItem_maker());
-        pstmt.setString(index++, o.getItem_name());
-        pstmt.setString(index++, o.getItem_model());
-        pstmt.setInt(index++, o.getItem_quantity());
-        if (o.getArrival_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(o.getArrival_date()));
-        } else {
-            pstmt.setNull(index++, java.sql.Types.DATE);
-        }
-
-        pstmt.setInt(index++, o.getVersion());
-        pstmt.setInt(index++, o.getState());
+        pstmt.setInt(index++, d.getEmployee_id());
+        pstmt.setInt(index++, d.getVersion());
+        pstmt.setInt(index++, d.getState());
 
         pstmt.setString(index++, editor);
     }
 
-    public static void bindUpdateOrderItemParameters(PreparedStatement pstmt, OrderItemEntity o, String editor, int index) throws SQLException {
-        // int index = 1;
-        // pstmt.setInt(index++, o.getOrder_item_id());
-        pstmt.setInt(index++, o.getOrder_id());
-        pstmt.setString(index++, o.getItem_maker());
-        pstmt.setString(index++, o.getItem_name());
-        pstmt.setString(index++, o.getItem_model());
-        pstmt.setInt(index++, o.getItem_quantity());
-        if (o.getArrival_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(o.getArrival_date()));
-        } else {
-            pstmt.setNull(index++, java.sql.Types.DATE);
-        }
+    public static void bindUpdateDeliveryStaffParameters(PreparedStatement pstmt, DeliveryStaffEntity d, String editor, int index) throws SQLException {
+        pstmt.setInt(index++, d.getOrder_id());
+        pstmt.setInt(index++, d.getEmployee_id());
+        pstmt.setInt(index++, d.getVersion());
+        pstmt.setInt(index++, d.getState());
 
-        pstmt.setInt(index++, o.getVersion());
-        pstmt.setInt(index++, o.getState());
-
-        pstmt.setInt(index++, o.getOrder_item_id()); // WHERE句
+        pstmt.setInt(index++, d.getDelivery_staff_id()); // WHERE句
         pstmt.setString(index++, editor);          // ログ用
     }
 
@@ -73,12 +48,14 @@ public class OrderItemParameterBinder {
 
     public static void bindFindAllByOrderId(PreparedStatement ps, int id) throws SQLException {
         int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, id);
         ps.setInt(index++, Enums.state.DELETE.getCode());
     }
 
-    public static void bindDeleteOrderItemParameters(PreparedStatement ps, int id, String editor, int index) throws SQLException {
-        // int index = 1;
+    public static void bindDeleteDeliveryStaffParameters(PreparedStatement ps, int id, String editor, int index) throws SQLException {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, id);
         ps.setString(index, editor);

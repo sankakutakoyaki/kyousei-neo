@@ -1,7 +1,5 @@
 package com.kyouseipro.neo.controller.api;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,9 +16,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
+import com.kyouseipro.neo.entity.sales.DeliveryStaffEntity;
 import com.kyouseipro.neo.entity.sales.OrderEntity;
 import com.kyouseipro.neo.entity.sales.OrderItemEntity;
+import com.kyouseipro.neo.query.sql.sales.OrderSqlBuilder;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.sales.OrderService;
 
@@ -41,7 +40,8 @@ public class OrderApiController {
     @PostMapping("/order/get/id")
 	@ResponseBody
     public OrderEntity getEntityById(@RequestParam int id) {
-        return orderService.getOrderById(id);
+        String sql = OrderSqlBuilder.buildFindByIdSql();
+        return orderService.getOrderById(sql, id);
     }
 
     /**
@@ -70,7 +70,8 @@ public class OrderApiController {
         // for (Map<String, Object> item : items) {
         //     list.add((OrderItemEntity)item);
         // }
-        Integer id = orderService.saveOrder(orderEntity, itemList, userName);
+        List<DeliveryStaffEntity> staffList = objectMapper.convertValue(body.get("staffEntityList"), new TypeReference<List<DeliveryStaffEntity>>() {});
+        Integer id = orderService.saveOrder(orderEntity, itemList, staffList, userName);
         if (id != null && id > 0) {
             historyService.saveHistory(userName, "orders", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));

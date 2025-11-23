@@ -125,3 +125,12 @@ async function getLoacation() {
     console.error("このブラウザはGeolocationをサポートしていません。");
     }
 }
+
+// コードからemployeeを取得
+async function getEmployeeByCode(code) {
+    const data = "id=" + encodeURIComponent(parseInt(code));
+    const url = '/employee/get/id';
+    const contentType = 'application/x-www-form-urlencoded';
+    const resultResponse = await postFetch(url, data, token, contentType);
+    return await resultResponse.json();
+}

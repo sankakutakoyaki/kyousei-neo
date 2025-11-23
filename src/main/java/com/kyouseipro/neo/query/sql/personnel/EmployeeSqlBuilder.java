@@ -91,20 +91,32 @@ public class EmployeeSqlBuilder {
             "SELECT employee_id FROM @DeletedRows;";
     }
 
+    private static String baseSelectString() {
+        return
+            "SELECT e.employee_id, e.account, e.code, e.category" +
+            ", e.first_name, e.last_name, e.full_name, e.first_name_kana, e.last_name_kana, e.full_name_kana" +
+            ", e.phone_number, e.postal_code, e.full_address, e.company_id, e.office_id" +
+            ", COALESCE(c.name, '') as company_name, COALESCE(o.name, '') as office_name" +
+            ", e.email, e.gender, e.blood_type, e.birthday, e.emergency_contact, e.emergency_contact_number, e.date_of_hire" +
+            ", e.version, e.state FROM employees e" +
+            " LEFT OUTER JOIN companies c ON c.company_id = e.company_id AND NOT (c.state = ?)" +
+            " LEFT OUTER JOIN offices o ON o.office_id = e.office_id AND NOT (o.state = ?)";
+    }
+
     public static String buildFindByIdSql() {
-        return "SELECT * FROM employees WHERE employee_id = ? AND NOT (state = ?)";
+        return baseSelectString() + " WHERE e.employee_id = ? AND NOT (e.state = ?)";
     }
 
     public static String buildFindByCodeSql() {
-        return "SELECT * FROM employees WHERE code = ? AND NOT (state = ?)";
+        return baseSelectString() + " WHERE e.code = ? AND NOT (e.state = ?)";
     }
 
     public static String buildFindByAccountSql() {
-        return "SELECT * FROM employees WHERE account = ? AND NOT (state = ?)";
+        return baseSelectString() + " WHERE e.account = ? AND NOT (e.state = ?)";
     }
 
     public static String buildFindAllSql() {
-        return "SELECT * FROM employees WHERE NOT (state = ?)";
+        return baseSelectString() + " WHERE NOT (e.state = ?)";
     }
 
     public static String buildDownloadCsvEmployeeForIdsSql(int count) {

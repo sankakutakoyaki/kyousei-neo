@@ -15,6 +15,7 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
+import com.kyouseipro.neo.entity.sales.DeliveryStaffEntity;
 import com.kyouseipro.neo.entity.sales.OrderEntity;
 import com.kyouseipro.neo.entity.sales.OrderItemEntity;
 import com.kyouseipro.neo.entity.sales.OrderListEntity;
@@ -52,10 +53,10 @@ public class SalesPageController {
         // 初期化されたエンティティ
         mv.addObject("formEntity", new OrderEntity());
         mv.addObject("itemEntity", new OrderItemEntity());
+        mv.addObject("staffEntity", new DeliveryStaffEntity());
 
         // 初期表示用受注リスト取得
         List<OrderListEntity> origin = orderListService.getBetweenOrderEntity(LocalDate.now(), LocalDate.now());
-        // List<OrderListEntity> origin = orderListService.getOrderList();
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得
@@ -63,8 +64,6 @@ public class SalesPageController {
         mv.addObject("primeConstractorComboList", primeConstractorComboList);
         List<OfficeListEntity> officeList = comboBoxService.getOfficeList();
         mv.addObject("officeList", officeList);
-        // List<SimpleData> itemClassComboList = comboBoxService.getItemClass();
-        // mv.addObject("itemClassComboList", itemClassComboList);
 
         mv.addObject("deleteCode", Enums.state.DELETE.getCode());
 

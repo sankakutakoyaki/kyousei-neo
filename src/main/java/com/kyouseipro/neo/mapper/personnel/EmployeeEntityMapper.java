@@ -10,7 +10,9 @@ public class EmployeeEntityMapper {
         EmployeeEntity entity = new EmployeeEntity();
         entity.setEmployee_id(rs.getInt("employee_id"));
         entity.setCompany_id(rs.getInt("company_id"));
+        entity.setCompany_name(rs.getString("company_name"));
         entity.setOffice_id(rs.getInt("office_id"));
+        entity.setOffice_name(rs.getString("office_name"));
         entity.setAccount(rs.getString("account"));
         entity.setCode(rs.getInt("code"));
         entity.setCategory(rs.getInt("category"));
