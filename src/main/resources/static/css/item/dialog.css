@@ -54,7 +54,7 @@
     overflow: auto;
     padding: 2rem;
     justify-items: start;
-    height: fit-content;
+    /* height: fit-content; */
 }
 
 .dialog-footer {
@@ -87,7 +87,7 @@
     inset: 0;
     margin: auto;
     background-color: var(--bg);
-    max-height: 90%;
+    /* max-height: 90%; */
     border-radius: .5rem;
     border: .5px solid var(--shadow);
     box-shadow: 0 0 8px var(--shadow);

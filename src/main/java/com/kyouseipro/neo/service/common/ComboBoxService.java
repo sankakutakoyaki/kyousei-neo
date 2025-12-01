@@ -7,9 +7,11 @@ import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
+import com.kyouseipro.neo.entity.corporation.StaffListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.repository.corporation.CompanyListRepository;
 import com.kyouseipro.neo.repository.corporation.OfficeListRepository;
+import com.kyouseipro.neo.repository.corporation.StaffListRepository;
 import com.kyouseipro.neo.repository.qualification.QualificationsRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class ComboBoxService {
     private final CompanyListRepository companyListRepository;
     private final OfficeListRepository officeListRepository;
+    private final StaffListRepository staffListRepository;
     private final QualificationsRepository qualificationsRepository;
 
     /**
@@ -97,7 +100,7 @@ public class ComboBoxService {
     }
 
     /**
-     * 分類リスト　商品：作業：部材
+     * 分類リスト　商品：材料：備品：返品
      * @return
      */
     public List<SimpleData> getItemClass() {
@@ -138,8 +141,16 @@ public class ComboBoxService {
         return companyListRepository.findAllComboPrimeConstractor();
     }
 
+    public List<SimpleData> getCompanyListByCategory(int category) {
+        return companyListRepository.findAllComboByCategory(category);
+    }
+
     public List<OfficeListEntity> getOfficeList() {
         return officeListRepository.findAll();
+    }
+
+    public List<StaffListEntity> getSalesStaffList() {
+        return staffListRepository.findBySalesStaff();
     }
 
     public List<SimpleData> getSimpleOfficeList() {
@@ -153,6 +164,8 @@ public class ComboBoxService {
     public List<SimpleData> getLicenseMaster() {
         return qualificationsRepository.findAllComboByLicense();
     }
+
+
     // /**
     //  * すべての会社リスト
     //  * @return

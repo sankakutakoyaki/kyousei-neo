@@ -615,6 +615,10 @@
                 return searchList;
             }
 
+            async function execFilterDisplay(self) {
+                await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+            }
+
 /******************************************************************************************************* 初期化時 */
 
             // ページ読み込み後の処理
@@ -624,8 +628,9 @@
 
                 setDragAndDrop();
                 // 検索ボックス入力時の処理
-                document.getElementById('search-box-01').addEventListener('search', function(e) {
-                    updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+                document.getElementById('search-box-01').addEventListener('search', async function(e) {
+                    await execFilterDisplay(e.currentTarget);
+                    // updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
                 }, false);
 
                 // コード入力ボックスでエンターキーが押された時の処理を登録

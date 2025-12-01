@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
+import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.corporation.OfficeListService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OfficeListApiController {
     private final OfficeListService officeListService;
+    private final ComboBoxService comboBoxService;
 
     /**
      * EntityListを取得する
@@ -36,5 +39,15 @@ public class OfficeListApiController {
 	@ResponseBody
     public List<OfficeListEntity> getEntityListByCategory(@RequestParam int category) {
         return officeListService.getOfficeListByCategory(category);
+    }
+
+    /**
+     * EntityListを取得する
+     * @return
+     */
+    @GetMapping("/office/get/combo")
+	@ResponseBody
+    public List<OfficeListEntity> getComboForOffice() {
+        return comboBoxService.getOfficeList();
     }
 }

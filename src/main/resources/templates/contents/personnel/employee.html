@@ -561,6 +561,24 @@
                 });
             }
 
+            async function execFilterDisplay(self) {
+                const panel = self.closest('.tab-panel');
+                const tab = panel.dataset.panel;
+                let list = [];
+                switch (tab) {
+                    case "01":
+                        list = origin.filter(function(value) { return value.category == categoryEmployeeCode });
+                        await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+                        break;
+                    case "02":
+                        list = origin.filter(function(value) { return value.category == categoryParttimeCode });
+                        await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
 /******************************************************************************************************* 初期化時 */
 
             // ページ読み込み後の処理
@@ -570,12 +588,14 @@
 
                 // 検索ボックス入力時の処理
                 document.getElementById('search-box-01').addEventListener('search', async function(e) {
-                    const list = origin.filter(function(value) { return value.category == categoryEmployeeCode });
-                    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+                    await execFilterDisplay(e.currentTarget);
+                    // const list = origin.filter(function(value) { return value.category == categoryEmployeeCode });
+                    // await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
                 }, false);
                 document.getElementById('search-box-02').addEventListener('search', async function(e) {
-                    const list = origin.filter(function(value) { return value.category == categoryParttimeCode });
-                    await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
+                    await execFilterDisplay(e.currentTarget);
+                    // const list = origin.filter(function(value) { return value.category == categoryParttimeCode });
+                    // await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
                 }, false);
 
                 // 郵便番号入力ボックスでエンターキーが押された時の処理を登録

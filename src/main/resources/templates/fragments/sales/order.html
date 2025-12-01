@@ -32,33 +32,40 @@
                 </div>
             </div>
         </div>
-
-        <!-- <div class="form-parts"> -->
-            <!-- 期間指定ボックス -->
-            <div class="flex-area">
-                <div>
-                    <input id="start-date01" class="normal-input date-area" type="date" value="" onfocus="this.select();" onchange="checkDateChanged(this)">
-                    <span class="pc-style">〜</span>
-                    <input id="end-date01" class="normal-input date-area" type="date" value="" onfocus="this.select();" onchange="checkDateChanged(this)">
-                    <button id="date-search-btn01" class="normal-btn ok" type="button" onclick="execDate01Search()">
-                        <span>検索</span>
-                    </button>                    
-                </div>
-
-            <!-- </div> -->
-        
-            <!-- <div class="flex-area"> -->
-                <!-- 日付移動ボタン -->
-                <div th:replace="~{fragments/header::header-month-move-btn-fragment('start-date01', 'end-date01')}"></div>
-                <div th:replace="~{fragments/header::header-day-move-btn-fragment('start-date01', 'end-date01')}"></div>
-                <div th:replace="~{fragments/header::header-week-move-btn-fragment('start-date01', end-date01)}"></div>
-            </div>    
-        <!-- </div> -->
+        <!-- 期間指定ボックス -->
+        <div class="flex-area">
+            <div>
+                <input id="start-date01" class="normal-input date-area" type="date" value="" onfocus="this.select();" onchange="checkDateChanged(this)">
+                <span class="pc-style">〜</span>
+                <input id="end-date01" class="normal-input date-area" type="date" value="" onfocus="this.select();" onchange="checkDateChanged(this)">
+                <button id="date-search-btn01" class="normal-btn ok" type="button" onclick="execDate01Search()">
+                    <span>検索</span>
+                </button>                    
+            </div>
+            <!-- 日付移動ボタン -->
+            <div th:replace="~{fragments/header::header-month-move-btn-fragment('start-date01', 'end-date01')}"></div>
+            <div th:replace="~{fragments/header::header-day-move-btn-fragment('start-date01', 'end-date01')}"></div>
+            <div th:replace="~{fragments/header::header-week-move-btn-fragment('start-date01', end-date01)}"></div>
+        </div>
     </header>
 
-    <main th:fragment="mainFragment(tableId, scrollId)">
+    <main th:fragment="main01Fragment(tableId, scrollId)">
         <table th:id="${tableId}" class="normal-table">
-            <tr id="row-0" name="table-header" class="pc-style">
+            <tr name="table-header" class="pc-style">
+                <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
+                <th><span>受注ID</span><br><span>依頼番号</span></th>
+                <th><span>着工日</span><br><span>完工日</span></th>
+                <th><span>元請</span><br><span>支店</span></th>
+                <th><span>件名</span><br><span>住所</span></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+    <main th:fragment="main02Fragment(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table">
+            <tr name="table-header" class="pc-style">
                 <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
                 <th><span>受注ID</span><br><span>依頼番号</span></th>
                 <th><span>着工日</span><br><span>完工日</span></th>
@@ -77,6 +84,20 @@
                 <th><span>品目</span></th>
                 <th><span>型番</span></th>
                 <th><span>数量</span></th>
+                <th></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+    <main th:fragment="tabPanel13Fragment(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table">
+            <tr name="table-header" class="pc-style">
+                <th><span>作業内容</span></th>
+                <th><span>金額</span></th>
+                <th><span>数量</span></th>
+                <th><span>小計</span></th>
                 <th></th>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>

@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.entity.sales;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Utilities;
@@ -12,7 +13,6 @@ import lombok.Data;
 public class OrderEntity implements CsvExportable {
     private int order_id;
     private String request_number;
-    private LocalDate order_date = LocalDate.of(9999, 12, 31);
     private LocalDate start_date = LocalDate.of(9999, 12, 31);
     private LocalDate end_date = LocalDate.of(9999, 12, 31);
     private int prime_constractor_id;
@@ -23,24 +23,25 @@ public class OrderEntity implements CsvExportable {
     private String order_postal_code;
     private String order_full_address;
     private String contact_information;
+    private String contact_information2;
     private String remarks;
 
-    private List<OrderItemEntity> item_list;
-    private List<DeliveryStaffEntity> staff_list;
+    private List<OrderItemEntity> item_list = new ArrayList();
+    private List<DeliveryStaffEntity> staff_list = new ArrayList();
+    private List<WorkContentEntity> work_list = new ArrayList<>();
 
     private int version;
     private int state;
 
     // CSVヘッダーを返す static メソッド（必須ではないですが慣例的に付ける）
     public static String getCsvHeader() {
-        return "ID,依頼番号,受注日,着工日,完工日,元請,元請支店,件名,郵便番号,住所,連絡先,備考";
+        return "ID,依頼番号,受注日,着工日,完工日,元請,元請支店,件名,郵便番号,住所,連絡先,連絡先2,備考";
     }
 
     @Override
     public String toCsvRow() {
         return Utilities.escapeCsv(String.valueOf(order_id)) + "," +
                Utilities.escapeCsv(request_number) + "," +
-               Utilities.escapeCsv(String.valueOf(order_date)) + "," +
                Utilities.escapeCsv(String.valueOf(start_date)) + "," +
                Utilities.escapeCsv(String.valueOf(end_date)) + "," +
                Utilities.escapeCsv(prime_constractor_name) + "," +
@@ -49,6 +50,7 @@ public class OrderEntity implements CsvExportable {
                Utilities.escapeCsv(String.valueOf(order_postal_code)) + "," +
                Utilities.escapeCsv(String.valueOf(order_full_address)) + "," +
                Utilities.escapeCsv(String.valueOf(contact_information)) + "," +
+               Utilities.escapeCsv(String.valueOf(contact_information2)) + "," +
                Utilities.escapeCsv(remarks);
     }
 }

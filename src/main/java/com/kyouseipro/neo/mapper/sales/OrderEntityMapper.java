@@ -10,7 +10,6 @@ public class OrderEntityMapper {
         OrderEntity entity = new OrderEntity();
         entity.setOrder_id(rs.getInt("order_id"));
         entity.setRequest_number(rs.getString("request_number"));
-        entity.setOrder_date(rs.getDate("order_date").toLocalDate());
         entity.setStart_date(rs.getDate("start_date").toLocalDate());
         entity.setEnd_date(rs.getDate("end_date").toLocalDate());
         entity.setPrime_constractor_id(rs.getInt("prime_constractor_id"));
@@ -21,6 +20,7 @@ public class OrderEntityMapper {
         entity.setOrder_postal_code(rs.getString("order_postal_code"));
         entity.setOrder_full_address(rs.getString("order_full_address"));
         entity.setContact_information(rs.getString("contact_information"));
+        entity.setContact_information2(rs.getString("contact_information2"));
         entity.setRemarks(rs.getString("remarks"));
         entity.setVersion(rs.getInt("version"));
         entity.setState(rs.getInt("state"));

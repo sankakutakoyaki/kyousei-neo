@@ -95,4 +95,15 @@ public class CompanyListRepository {
             SimpleDataMapper::map
         );
     }
+
+    // コンボボックス用リスト取得
+    public List<SimpleData> findAllComboByCategory(int category) {
+        String sql = CompanyListSqlBuilder.buildFindAllComboByCategorySql();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> CompanyListParameterBinder.bindFindAllComboByCategory(ps, category),
+            SimpleDataMapper::map
+        );
+    }
 }

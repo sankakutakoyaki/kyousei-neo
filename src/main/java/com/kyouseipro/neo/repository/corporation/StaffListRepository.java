@@ -27,4 +27,15 @@ public class StaffListRepository {
             StaffListEntityMapper::map // ← ここで ResultSet を map
         );
     }
+
+    // 全件取得
+    public List<StaffListEntity> findBySalesStaff() {
+        String sql = StaffSqlBuilder.buildFindBySalesStaffSql();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> StaffListParameterBinder.bindFindBySalesStaff(ps, null),
+            StaffListEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
 }

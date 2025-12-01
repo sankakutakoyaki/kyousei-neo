@@ -11,7 +11,7 @@ public class OfficeListSqlBuilder {
     public static String buildFindAllSql() {
         return
             basicSelectString() +
-            " WHERE NOT (o.state = ?) ORDER BY name_kana;";
+            " WHERE NOT (o.state = ?);";
     }
 
     public static String buildFindAllComboOfficeSql() {
@@ -21,7 +21,7 @@ public class OfficeListSqlBuilder {
     public static String buildFindAllByCategorySql() {
         return 
             basicSelectString() +
-            " WHERE NOT (o.state = ?) AND NOT (c.category = ?) ORDER BY name_kana";
+            " WHERE NOT (o.state = ?) AND NOT (c.category = ?)";
     }
 
     public static String buildFindAllComboClientSql() {

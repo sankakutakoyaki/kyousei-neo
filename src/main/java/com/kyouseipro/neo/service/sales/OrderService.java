@@ -11,12 +11,15 @@ import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.sales.DeliveryStaffEntity;
 import com.kyouseipro.neo.entity.sales.OrderEntity;
 import com.kyouseipro.neo.entity.sales.OrderItemEntity;
+import com.kyouseipro.neo.entity.sales.WorkContentEntity;
 import com.kyouseipro.neo.query.sql.sales.DeliveryStaffSqlBuilder;
 import com.kyouseipro.neo.query.sql.sales.OrderItemSqlBuilder;
 import com.kyouseipro.neo.query.sql.sales.OrderSqlBuilder;
+import com.kyouseipro.neo.query.sql.sales.WorkContentSqlBuilder;
 import com.kyouseipro.neo.repository.sales.DeliveryStaffRepository;
 import com.kyouseipro.neo.repository.sales.OrderItemRepository;
 import com.kyouseipro.neo.repository.sales.OrderRepository;
+import com.kyouseipro.neo.repository.sales.WorkContentRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +29,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final DeliveryStaffRepository deliveryStaffRepository;
+    private final WorkContentRepository workContentRepository;
 
     /**
      * 指定されたIDの受注情報を取得します。
@@ -39,8 +43,10 @@ public class OrderService {
         OrderEntity orderEntity = orderRepository.findById(sql, id);
         List<OrderItemEntity> orderItemEntityList = orderItemRepository.findAllByOrderId(id, null);
         List<DeliveryStaffEntity> deliveryStaffEntityList = deliveryStaffRepository.findAllByOrderId(id, null);
+        List<WorkContentEntity> workContentEntityList = workContentRepository.findAllByOrderId(id, null);
         orderEntity.setItem_list(orderItemEntityList);
         orderEntity.setStaff_list(deliveryStaffEntityList);
+        orderEntity.setWork_list(workContentEntityList);
         return orderEntity;
     }
 
@@ -52,7 +58,11 @@ public class OrderService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer saveOrder(OrderEntity entity, List<OrderItemEntity> itemEntityList, List<DeliveryStaffEntity> staffEntityList, String editor) {
+    public Integer saveOrder(OrderEntity entity, 
+                                List<OrderItemEntity> itemEntityList, 
+                                List<DeliveryStaffEntity> staffEntityList, 
+                                List<WorkContentEntity> workContentEntityList,
+                                String editor) {
         String sql = "";
         int index = 1;
         if (entity.getOrder_id() > 0) {
@@ -72,6 +82,20 @@ public class OrderService {
                 }
             }
             entity.setItem_list(itemEntityList);
+
+            // 作業リスト
+            for (WorkContentEntity workContentEntity : workContentEntityList) {
+                if (workContentEntity.getState() == Enums.state.DELETE.getCode()) {
+                    sql += WorkContentSqlBuilder.buildDeleteWorkContentSql(index++);
+                } else {
+                    if (workContentEntity.getWork_content_id() > 0) {
+                        sql += WorkContentSqlBuilder.buildUpdateWorkContentSql(index++);
+                    } else {
+                        sql += WorkContentSqlBuilder.buildInsertWorkContentSql(index++);
+                    }
+                }
+            }
+            entity.setWork_list(workContentEntityList);
 
             // 配送員リスト
             for (DeliveryStaffEntity deliveryStaffEntity : staffEntityList) {
@@ -101,6 +125,16 @@ public class OrderService {
                 }
             }
             entity.setItem_list(itemEntityList);
+
+            // 作業リスト
+            for(int i = 0; i < workContentEntityList.size(); i++) {
+                if (entity.getOrder_id() > 0) {
+                    sql += WorkContentSqlBuilder.buildInsertWorkContentSql(index++);
+                } else {
+                    sql += WorkContentSqlBuilder.buildInsertWorkContentByNewOrderSql(index++);
+                }
+            }
+            entity.setWork_list(workContentEntityList);
 
             // 配送員リスト
             for(int i = 0; i < staffEntityList.size(); i++) {

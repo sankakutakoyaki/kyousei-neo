@@ -85,6 +85,7 @@ public class CompanyPageController {
         mv.addObject("categoryShipperCode", Enums.clientCategory.SHIPPER.getCode());
         mv.addObject("categorySupplierCode", Enums.clientCategory.SUPPLIER.getCode());
         mv.addObject("categoryServiceCode", Enums.clientCategory.SERVICE.getCode());
+        mv.addObject("categoryTransportCode", Enums.clientCategory.TRANSPORT.getCode());
 
         // 履歴保存
         historyService.saveHistory(userName, "companies", "閲覧", 200, "");

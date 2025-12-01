@@ -10,7 +10,7 @@ public class OrderListEntityMapper {
         OrderListEntity entity = new OrderListEntity();
         entity.setOrder_id(rs.getInt("order_id"));
         entity.setRequest_number(rs.getString("request_number"));
-        entity.setOrder_date(rs.getDate("order_date").toLocalDate());
+        // entity.setOrder_date(rs.getDate("order_date").toLocalDate());
         entity.setStart_date(rs.getDate("start_date").toLocalDate());
         entity.setEnd_date(rs.getDate("end_date").toLocalDate());
         entity.setPrime_constractor_id(rs.getInt("prime_constractor_id"));

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <header class="form-parts pc-style" th:fragment="header01Fragment(box, tableId)">
+        <div class="flex-area">
+            <!-- 検索ボックス -->
+            <div class="search-box">
+                <input th:id="${box}" type="search" placeholder="検索">
+                <img title="検索" src="/icons/search.png" onclick="execFilterDisplay(this)">
+            </div>
+            <div class="kebab-btns">
+                <!-- 新規作成ボタン -->
+                <div class="img-btn" th:onclick="execEdit('__${tableId}__', this)">
+                    <img title="編集" src="/icons/edit.png">
+                    <span>編集</span>
+                </div>
+                <!-- 削除ボタン -->
+                <div class="img-btn" onclick="execDelete(this)">
+                    <img title="削除" src="/icons/dust.png">
+                    <span>削除</span>
+                </div>
+                <!-- ダウンロードボタン -->
+                <div class="img-btn" onclick="execDownloadCsv(this)">
+                    <img title="ダウンロード" src="/icons/download.png">
+                    <span>取得</span>
+                </div>
+                <!-- 更新ボタン -->
+                <div class="img-btn" onclick="execUpdate(this)">
+                    <img title="更新" src="/icons/update.png">
+                    <span>更新</span>
+                </div>
+            </div>
+        </div>
+        <!-- 期間指定ボックス -->
+        <div class="flex-area">
+            <div>
+                <input id="start-date01" class="normal-input date-area" type="date" value="" onfocus="this.select();" onchange="checkDateChanged(this)">
+                <span class="pc-style">〜</span>
+                <input id="end-date01" class="normal-input date-area" type="date" value="" onfocus="this.select();" onchange="checkDateChanged(this)">
+                <button id="date-search-btn01" class="normal-btn ok" type="button" onclick="execDate01Search()">
+                    <span>検索</span>
+                </button>                    
+            </div>
+            <!-- 日付移動ボタン -->
+            <div th:replace="~{fragments/header::header-month-move-btn-fragment('start-date01', 'end-date01')}"></div>
+            <div th:replace="~{fragments/header::header-day-move-btn-fragment('start-date01', 'end-date01')}"></div>
+            <div th:replace="~{fragments/header::header-week-move-btn-fragment('start-date01', end-date01)}"></div>
+        </div>
+    </header>
+
+    <header class="form-parts pc-style" th:fragment="header02Fragment()">
+        <input name="order-item-id02" type="hidden" value="">
+        <input name="version02" type="hidden" value="">
+
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>分類</label>
+                <select tabindex="" name="classification02"
+                    class="normal-select"></select>
+            </div>
+            <div class="form-parts">
+                <label>入荷日</label>
+                <input tabindex="" name="arrival-date02" class="normal-input" type="date" value=""
+                    onfocus="this.select();">
+            </div>                            
+            <div class="form-parts">
+                <label>検品者</label>
+                <input tabindex="" id="inspector-code02" name="inspector-code02" class="normal-input" type="text" value="" placeholder="コード"
+                    onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label></label>
+                <input readonly id="inspector-name02" name="inspector-name02" class="normal-input" type="text"
+                    value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>伝票番号</label>
+                <input tabindex="" id="document-number02" name="document-number02" class="normal-input"
+                    type="text" value="" onfocus="this.select();">
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>運送会社</label>
+                <select tabindex="" name="shipping-company02"
+                    class="normal-select"></select>
+            </div>
+            <div class="form-parts">
+                <label>発荷主</label>
+                <select tabindex="" name="company02"
+                    class="normal-select"></select>
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>メーカー</label>
+                <input tabindex="" id="item-maker02" name="item-maker02" class="normal-input" type="text" autocomplete="on"
+                    value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>品目</label>
+                <input tabindex="" id="item-name02" name="item-name02" class="normal-input" type="text" autocomplete="on"
+                    value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>型番</label>
+                <input tabindex="" id="item-model02" name="item-model02" class="normal-input" type="text" autocomplete="on"
+                    value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>数量</label>
+                <input tabindex="" id="item-quantity02" name="item-quantity02" class="normal-input text-right"
+                    type="text" value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>単価</label>
+                <input tabindex="" id="item-payment02" name="item-quantity02" class="normal-input text-right"
+                    type="text" value="" onfocus="this.select();">
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>購入者</label>
+                <input tabindex="" id="buyer-code02" name="buyer-code02" class="normal-input" type="text" value="" placeholder="コード"
+                    onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label></label>
+                <input readonly id="buyer-name02" name="buyer-name02" class="normal-input" type="text"
+                    value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label></label>
+                <input readonly id="buyer-company-name02" name="buyer-company-name02" class="normal-input" type="text"
+                    value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>備考</label>
+                <textarea class="normal-input" tabindex="" maxlength="255" id="remarks02" name="remarks02" onfocus="this.select();"></textarea>
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label></label>
+                <button tabindex="" class="normal-btn ok" type="button"
+                    onclick="execRegistItem(this)"><span>登録</span></button>
+            </div>
+        </div>
+    </header>
+
+    <form id="form-01" class="dialog-content" th:fragment="form01Fragment()">
+        <div class="table-area">
+            <input name="order-item-id11" type="hidden" value="">
+            <input name="version11" type="hidden" value="">
+
+            <div class="flex-area">
+                <div class="form-parts">
+                    <label>入荷日</label>
+                    <input tabindex="" name="arrival-date11" class="normal-input" type="date" value=""
+                        onfocus="this.select();">
+                </div>                            
+                <div class="form-parts">
+                    <label>分類</label>
+                    <select tabindex="" name="classification11"
+                        class="normal-select"></select>
+                </div>
+                <div class="form-parts">
+                    <label>コード</label>
+                    <input tabindex="" id="inspector-code11" name="inspector-code11" class="normal-input" type="text" value=""
+                        onfocus="this.select();">
+                </div>
+                <div class="form-parts">
+                    <label>検品者</label>
+                    <input readonly id="inspector-name11" name="inspector-name11" class="normal-input" type="text"
+                        value="" onfocus="this.select();">
+                </div>
+                <div class="form-parts">
+                    <label>運送会社</label>
+                    <select tabindex="" name="shipping-company11"
+                        class="normal-select"></select>
+                </div>
+            </div>
+            <div class="flex-area">
+                <div class="form-parts">
+                    <label>メーカー</label>
+                    <input tabindex="" id="item-maker11" name="item-maker11" class="normal-input" type="text" autocomplete="on"
+                        value="" onfocus="this.select();">
+                </div>
+                <div class="form-parts">
+                    <label>品目</label>
+                    <input tabindex="" id="item-name11" name="item-name11" class="normal-input" type="text" autocomplete="on"
+                        value="" onfocus="this.select();">
+                </div>
+            </div>
+            <div class="flex-area">
+                <div class="form-parts">
+                    <label>型番</label>
+                    <input tabindex="" id="item-model11" name="item-model11" class="normal-input" type="text" autocomplete="on"
+                        value="" onfocus="this.select();">
+                </div>
+                <div class="form-parts">
+                    <label>数量</label>
+                    <input tabindex="" id="item-quantity11" name="item-quantity11" class="normal-input text-right"
+                        type="text" value="" onfocus="this.select();">
+                </div>
+                <div class="form-parts">
+                    <label>単価</label>
+                    <input tabindex="" id="item-payment11" name="item-quantity11" class="normal-input text-right"
+                        type="text" value="" onfocus="this.select();">
+                </div>
+            </div>
+            <div class="flex-area">
+                <div class="form-parts">
+                    <label>伝票番号</label>
+                    <input tabindex="" id="document-number11" name="document-number11" class="normal-input"
+                        type="text" value="" onfocus="this.select();">
+                </div>
+                <div class="form-parts">
+                    <label>コード</label>
+                    <input tabindex="" id="buyer-code11" name="buyer-code11" class="normal-input" type="text" value=""
+                        onfocus="this.select();">
+                </div>
+                <div class="form-parts">
+                    <label>購入者</label>
+                    <input readonly id="buyer-company-name11" name="buyer-company-name11" class="normal-input" type="text"
+                        value="" onfocus="this.select();">
+                </div>
+                <div class="form-parts">
+                    <label></label>
+                    <input readonly id="buyer-name11" name="buyer-name11" class="normal-input" type="text"
+                        value="" onfocus="this.select();">
+                </div>
+            </div>
+            <div class="flex-area">
+                <div class="form-parts">
+                    <label>備考</label>
+                    <textarea class="normal-input" tabindex="" maxlength="255" id="remarks" name="remarks" onfocus="this.select();"></textarea>
+                </div>
+            </div>
+            <div class="flex-area">
+                <div class="form-parts">
+                    <label></label>
+                    <button tabindex="" class="normal-btn ok" type="button"
+                        onclick="execRegistItem(this)"><span>登録</span></button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <main th:fragment="main01Fragment(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table">
+            <tr name="table-header" class="pc-style">
+                <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
+                <th><span>入荷日</span></th>
+                <th><span>分類</span></th>
+                <th><span>商品名</span></th>
+                <th><span>型式</span></th>
+                <th><span>数量</span></th>
+                <th><span>発荷主</span></th>
+                <th><span>備考</span></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+    <footer th:fragment="footerFragment()" th:remove="tag">
+        <span>0件 : 0000/00/00 00:00 現在</span>
+    </footer>
+</body>
+
+</html>

@@ -4,7 +4,7 @@ public class OrderListSqlBuilder {
     
     private static String baseSelectString() {
         return
-            "SELECT ord.order_id, ord.request_number, ord.order_date, ord.start_date, ord.end_date" +
+            "SELECT ord.order_id, ord.request_number, ord.start_date, ord.end_date" +
             ", ord.title, ord.order_postal_code, ord.order_full_address" +
             ", prime_constractor_id, prime_constractor_office_id" +
             ", COALESCE(c.name, '') as prime_constractor_name, COALESCE(o.name, '') as prime_constractor_office_name, ord.version, ord.state FROM orders ord" +

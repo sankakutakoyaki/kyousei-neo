@@ -90,6 +90,12 @@ public class StaffSqlBuilder {
             " WHERE NOT (c.category = 0) AND NOT (s.state = ?)";
     }
 
+    public static String buildFindBySalesStaffSql() {
+        return 
+            baseSelectString() +
+            " WHERE c.category = ? AND NOT (s.state = ?)";
+    }
+
     public static String buildDownloadCsvStaffForIdsSql(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return

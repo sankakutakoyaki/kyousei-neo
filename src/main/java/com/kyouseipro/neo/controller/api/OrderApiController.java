@@ -19,6 +19,7 @@ import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.sales.DeliveryStaffEntity;
 import com.kyouseipro.neo.entity.sales.OrderEntity;
 import com.kyouseipro.neo.entity.sales.OrderItemEntity;
+import com.kyouseipro.neo.entity.sales.WorkContentEntity;
 import com.kyouseipro.neo.query.sql.sales.OrderSqlBuilder;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.sales.OrderService;
@@ -71,7 +72,8 @@ public class OrderApiController {
         //     list.add((OrderItemEntity)item);
         // }
         List<DeliveryStaffEntity> staffList = objectMapper.convertValue(body.get("staffEntityList"), new TypeReference<List<DeliveryStaffEntity>>() {});
-        Integer id = orderService.saveOrder(orderEntity, itemList, staffList, userName);
+        List<WorkContentEntity> workList = objectMapper.convertValue(body.get("workEntityList"), new TypeReference<List<WorkContentEntity>>() {});
+        Integer id = orderService.saveOrder(orderEntity, itemList, staffList, workList, userName);
         if (id != null && id > 0) {
             historyService.saveHistory(userName, "orders", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));

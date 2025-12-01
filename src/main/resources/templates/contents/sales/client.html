@@ -16,6 +16,7 @@
                     <li class="tab-menu-item" data-tab="02">荷主</li>
                     <li class="tab-menu-item" data-tab="03">購買</li>
                     <li class="tab-menu-item" data-tab="04">サービス</li>
+                    <li class="tab-menu-item" data-tab="07">運送</li>
                     <li class="tab-menu-item" data-tab="05">支店</li>
                     <li class="tab-menu-item" data-tab="06">スタッフ</li>
                 </ul>
@@ -64,6 +65,18 @@
                         </main>
                         <!-- フッター -->
                         <footer id="footer-04" class="pc-style"
+                            th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
+                    </div>
+                </div>
+                <div class="tab-panel" data-panel="07">
+                    <div class="table-area">
+                        <!-- ヘッダー -->
+                        <header th:replace="~{fragments/sales/client :: headerFragment('search-box-07')}"></header>
+                        <!-- コンテンツ -->
+                        <main th:replace="~{fragments/sales/client :: mainFragment('table-07', 'table-07-content')}">
+                        </main>
+                        <!-- フッター -->
+                        <footer id="footer-07" class="pc-style"
                             th:insert="~{fragments/sales/client :: footerFragment()}"></footer>
                     </div>
                 </div>
@@ -251,6 +264,7 @@
             const categoryShipperCode = /*[[${categoryShipperCode}]]*/;
             const categorySupplierCode = /*[[${categorySupplierCode}]]*/;
             const categoryServiceCode = /*[[${categoryServiceCode}]]*/;
+            const categoryTransportCode = /*[[${categoryTransportCode}]]*/;
             let companyOrigin = /*[[${companyOrigin}]]*/; // 初期リスト記憶用
             let officeOrigin = /*[[${officeOrigin}]]*/; // 初期リスト記憶用
             let staffOrigin = /*[[${staffOrigin}]]*/; // 初期リスト記憶用
@@ -455,6 +469,10 @@
                         case "04":
                             entity = structuredClone(companyEntity);
                             entity.category = categoryServiceCode;
+                            break;
+                        case "07":
+                            entity = structuredClone(companyEntity);
+                            entity.category = categoryTransportCode;
                             break;
                         case "05":
                             entity = structuredClone(officeEntity);
@@ -670,7 +688,6 @@
                 }
             }
 
-
 /******************************************************************************************************* ダウンロード */
 
             async function execDownloadCsv(self) {
@@ -703,29 +720,41 @@
                 switch (tab) {
                     case "01":
                         await updateCompanyOrigin();
+                        await updateOfficeOrigin();
                         const list01 = companyOrigin.filter(function(value) { return value.category == categoryPartnerCode });
                         await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
                         // updateCompanyOrigin();
                         break;
                     case "02":
                         await updateCompanyOrigin();
+                        await updateOfficeOrigin();
                         const list02 = companyOrigin.filter(function(value) { return value.category == categoryShipperCode });
                         await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
                         // updateCompanyOrigin();
                         break
                     case "03":
                         await updateCompanyOrigin();
+                        await updateOfficeOrigin();
                         const list03 = companyOrigin.filter(function(value) { return value.category == categorySupplierCode });
                         await updateTableDisplay("table-03-content", "footer-03", "search-box-03", list03);
                         // updateCompanyOrigin();
                         break;
                     case "04":
                         await updateCompanyOrigin();
+                        await updateOfficeOrigin();
                         const list04 = companyOrigin.filter(function(value) { return value.category == categoryServiceCode });
                         await updateTableDisplay("table-04-content", "footer-04", "search-box-04", list04);
                         // updateCompanyOrigin();
                         break;
+                    case "07":
+                        await updateCompanyOrigin();
+                        await updateOfficeOrigin();
+                        const list07 = companyOrigin.filter(function(value) { return value.category == categoryTransportCode });
+                        await updateTableDisplay("table-07-content", "footer-07", "search-box-07", list07);
+                        // updateCompanyOrigin();
+                        break;
                     case "05":
+                        await updateOfficeOrigin();
                         await updateOfficeTableDisplay();
                         break;
                     case "06":
@@ -748,6 +777,18 @@
 
                 createComboBoxWithTop(name01, companyComboList, '');
                 createComboBoxWithTop(name02, companyComboList, '');
+            }
+
+            // office-tab 更新処理
+            async function updateOfficeOrigin() {
+                let resultResponse = await fetch('/office/get/list');
+                officeOrigin = await resultResponse.json();
+
+                resultResponse = await fetch('/office/get/combo');
+                officeComboList = await resultResponse.json();
+
+                // createComboBoxWithTop(name01, officeComboList, '');
+                createComboBoxWithTop(name03, officeComboList, '');
             }
 
 /******************************************************************************************************* 画面更新 */
@@ -837,6 +878,36 @@
                 };
             }
 
+            async function execFilterDisplay(self) {
+                const panel = self.closest('.tab-panel');
+                const tab = panel.dataset.panel;
+                let list = [];
+                switch (tab) {
+                    case "01":
+                        list = companyOrigin.filter(function(value) { return value.category == categoryPartnerCode });
+                        await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+                        break;
+                    case "02":
+                        list = companyOrigin.filter(function(value) { return value.category == categoryShipperCode });
+                        await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
+                        break;
+                    case "03":
+                        list = companyOrigin.filter(function(value) { return value.category == categorySupplierCode });
+                        await updateTableDisplay("table-03-content", "footer-03", "search-box-03", list);
+                        break;
+                    case "04":
+                        list = companyOrigin.filter(function(value) { return value.category == categoryServiceCode });
+                        await updateTableDisplay("table-04-content", "footer-04", "search-box-04", list);
+                        break;
+                    case "07":
+                        list = companyOrigin.filter(function(value) { return value.category == categoryTransportCode });
+                        await updateTableDisplay("table-07-content", "footer-07", "search-box-07", list);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
 /******************************************************************************************************* 初期化時 */
 
             // ページ読み込み後の処理
@@ -846,22 +917,30 @@
 
                 // 検索ボックス入力時の処理
                 document.getElementById('search-box-01').addEventListener('search', async function(e) {
-                    const list = companyOrigin.filter(function(value) { return value.category == categoryPartnerCode });
-                    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+                    await execFilterDisplay(e.currentTarget);
+                    // const list = companyOrigin.filter(function(value) { return value.category == categoryPartnerCode });
+                    // await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
                 }, false);
                 document.getElementById('search-box-02').addEventListener('search', async function(e) {
-                    const list = companyOrigin.filter(function(value) { return value.category == categoryShipperCode });
-                    await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
+                    await execFilterDisplay(e.currentTarget);
+                    // const list = companyOrigin.filter(function(value) { return value.category == categoryShipperCode });
+                    // await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
                 }, false);
                 document.getElementById('search-box-03').addEventListener('search', async function(e) {
-                    const list = companyOrigin.filter(function(value) { return value.category == categorySupplierCode });
-                    await updateTableDisplay("table-03-content", "footer-03", "search-box-03", list);
+                    await execFilterDisplay(e.currentTarget);
+                    // const list = companyOrigin.filter(function(value) { return value.category == categorySupplierCode });
+                    // await updateTableDisplay("table-03-content", "footer-03", "search-box-03", list);
                 }, false);
                 document.getElementById('search-box-04').addEventListener('search', async function(e) {
-                    const list = companyOrigin.filter(function(value) { return value.category == categoryServiceCode });
-                    await updateTableDisplay("table-04-content", "footer-04", "search-box-04", list);
+                    await execFilterDisplay(e.currentTarget);
+                    // const list = companyOrigin.filter(function(value) { return value.category == categoryServiceCode });
+                    // await updateTableDisplay("table-04-content", "footer-04", "search-box-04", list);
                 }, false);
-
+                document.getElementById('search-box-07').addEventListener('search', async function(e) {
+                    await execFilterDisplay(e.currentTarget);
+                    // const list = companyOrigin.filter(function(value) { return value.category == categoryServiceCode });
+                    // await updateTableDisplay("table-04-content", "footer-04", "search-box-04", list);
+                }, false);
                 // 郵便番号入力ボックスでエンターキーが押された時の処理を登録
                 document.getElementById('postal-code').addEventListener('keydown', async function (e) {
                     await getAddress(e, 'postal-code', 'full-address');                                                                                                                                                                                                                                                                                                                                                       ;
@@ -899,6 +978,13 @@
                 makeSortable("table-04-content");
                 // スクロール時のページトップボタン処理を登録する
                 setPageTopButton("table-04-content");
+
+                const list07 = companyOrigin.filter(function(value) { return value.category == categoryTransportCode });
+                await updateTableDisplay("table-07-content", "footer-07", "search-box-07", list04);
+                // テーブルをソート可能にする
+                makeSortable("table-07-content");
+                // スクロール時のページトップボタン処理を登録する
+                setPageTopButton("table-07-content");
 
                 initialTableDisplay("table-05-content", "footer-05");
 

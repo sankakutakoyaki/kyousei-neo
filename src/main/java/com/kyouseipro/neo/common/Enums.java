@@ -40,13 +40,14 @@ public class Enums {
     /**
      * 取引先カテゴリー
      * 
-     * @return 1.施工(PARTNER) 2.荷主(CLIENT) 3.購買(SUPPLIER) 4.サービス(SERVICE)
+     * @return 1.施工(PARTNER) 2.荷主(CLIENT) 3.購買(SUPPLIER) 4.運送(TRANSPORT)
      */
     public enum clientCategory implements CodeEnum {
         PARTNER(1, "施工"),
         SHIPPER(2, "荷主"),
         SUPPLIER(3, "購買"),
-        SERVICE(4, "サービス");
+        SERVICE(4, "サービス"),
+        TRANSPORT(5, "運送");
 
         private int num;
         private String str;
@@ -279,15 +280,14 @@ public class Enums {
     }
 
     /**
-     * 型番項目分類
+     * 商品項目分類
      * 
-     * @return 1.商品 2.作業 3.部材
+     * @return 1.商品 2.材料 3.備品 4.返品
      */
     public enum ItemClass implements CodeEnum {
-        NULL(0, ""),
         GOODS(1, "商品"),
-        WORK(2, "作業"),
-        MATERIALS(3, "部材");
+        MATERIALS(2, "材料"),
+        EQUIPMENT(3, "備品");
 
         private int num;
         private String str;

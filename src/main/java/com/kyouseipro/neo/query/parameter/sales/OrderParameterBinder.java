@@ -13,11 +13,11 @@ public class OrderParameterBinder {
     public static void bindInsertOrderParameters(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
         int index = 1;
         pstmt.setString(index++, o.getRequest_number());
-        if (o.getOrder_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(o.getOrder_date()));
-        } else {
-            pstmt.setNull(index++, java.sql.Types.DATE);
-        }
+        // if (o.getOrder_date() != null) {
+        //     pstmt.setDate(index++, java.sql.Date.valueOf(o.getOrder_date()));
+        // } else {
+        //     pstmt.setNull(index++, java.sql.Types.DATE);
+        // }
         if (o.getStart_date() != null) {
             pstmt.setDate(index++, java.sql.Date.valueOf(o.getStart_date()));
         } else {
@@ -34,6 +34,7 @@ public class OrderParameterBinder {
         pstmt.setString(index++, o.getOrder_postal_code());
         pstmt.setString(index++, o.getOrder_full_address());
         pstmt.setString(index++, o.getContact_information());
+        pstmt.setString(index++, o.getContact_information2());
         pstmt.setString(index++, o.getRemarks());
 
         pstmt.setInt(index++, o.getVersion());
@@ -51,11 +52,11 @@ public class OrderParameterBinder {
         int index = 1;
         pstmt.setInt(index++, o.getOrder_id());
         pstmt.setString(index++, o.getRequest_number());
-        if (o.getOrder_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(o.getOrder_date()));
-        } else {
-            pstmt.setNull(index++, java.sql.Types.DATE);
-        }
+        // if (o.getOrder_date() != null) {
+        //     pstmt.setDate(index++, java.sql.Date.valueOf(o.getOrder_date()));
+        // } else {
+        //     pstmt.setNull(index++, java.sql.Types.DATE);
+        // }
         if (o.getStart_date() != null) {
             pstmt.setDate(index++, java.sql.Date.valueOf(o.getStart_date()));
         } else {
@@ -72,6 +73,7 @@ public class OrderParameterBinder {
         pstmt.setString(index++, o.getOrder_postal_code());
         pstmt.setString(index++, o.getOrder_full_address());
         pstmt.setString(index++, o.getContact_information());
+        pstmt.setString(index++, o.getContact_information2());
         pstmt.setString(index++, o.getRemarks());
 
         pstmt.setInt(index++, o.getVersion());
