@@ -11,9 +11,9 @@
             </div>
             <div class="kebab-btns">
                 <!-- 新規作成ボタン -->
-                <div class="img-btn" th:onclick="execEdit('__${tableId}__', this)">
-                    <img title="編集" src="/icons/edit.png">
-                    <span>編集</span>
+                <div class="img-btn" th:onclick="execEdit(0, this)">
+                    <img title="編集" src="/icons/add.png">
+                    <span>新規</span>
                 </div>
                 <!-- 削除ボタン -->
                 <div class="img-btn" onclick="execDelete(this)">
@@ -49,7 +49,7 @@
         </div>
     </header>
 
-    <header class="form-parts pc-style" th:fragment="header02Fragment()">
+    <!-- <header class="form-parts pc-style" th:fragment="header02Fragment()">
         <input name="order-item-id02" type="hidden" value="">
         <input name="version02" type="hidden" value="">
 
@@ -147,7 +147,7 @@
                     onclick="execRegistItem(this)"><span>登録</span></button>
             </div>
         </div>
-    </header>
+    </header> -->
 
     <form id="form-01" class="dialog-content" th:fragment="form01Fragment()">
         <div class="table-area">
@@ -248,6 +248,7 @@
         </div>
     </form>
 
+    
     <main th:fragment="main01Fragment(tableId, scrollId)">
         <table th:id="${tableId}" class="normal-table">
             <tr name="table-header" class="pc-style">

@@ -13,7 +13,7 @@
             <div class="tab-area">
                 <ul class="tab-menu">
                     <li class="tab-menu-item is-active" data-tab="01">一覧</li>
-                    <li class="tab-menu-item" data-tab="02">登録</li>
+                    <!-- <li class="tab-menu-item" data-tab="02">登録</li> -->
                     <!-- <li class="tab-menu-item" data-tab="03">請負</li> -->
                 </ul>
                 <div class="tab-panel is-show" data-panel="01">
@@ -52,13 +52,65 @@
                         <div class="img-btn" onclick="closeFormDialog('form-dialog-01', event)"><img title="閉じる"
                                 src="/icons/close-s.png"></div>
                     </div>
+
                     <form th:replace="~{fragments/sales/goods :: form01Fragment()}"></form>
 
                     <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
-                        <button tabindex="20" class="normal-btn ok" type="button"
-                            onclick="execSave()"><span>保存</span></button>
+                        <button tabindex="19" class="normal-btn ok" type="button"
+                            onclick="execSave('form-dialog-01')"><span>保存</span></button>
+                    </div>
+                </div>
+            </div>
+            <div id="form-dialog-02" class="form-dialog none">
+                <div class="dialog-main">
+                    <div class="dialog-header"><span></span>
+                        <div class="img-btn" onclick="closeFormDialog('form-dialog-02', event)"><img title="閉じる"
+                                src="/icons/close-s.png"></div>
+                    </div>
+                    
+                    <form th:replace="~{fragments/sales/goods :: form02Fragment()}"></form>
+
+                    <div class="dialog-footer">
+                        <button class="normal-btn frameless" type="button"
+                            onclick="closeFormDialog('form-dialog-02', event)"><span>キャンセル</span></button>
+                        <button tabindex="29" class="normal-btn ok" type="button"
+                            onclick="execSave('form-dialog-02')"><span>保存</span></button>
+                    </div>
+                </div>
+            </div>
+            <div id="form-dialog-03" class="form-dialog none">
+                <div class="dialog-main">
+                    <div class="dialog-header"><span></span>
+                        <div class="img-btn" onclick="closeFormDialog('form-dialog-03', event)"><img title="閉じる"
+                                src="/icons/close-s.png"></div>
+                    </div>
+                    
+                    <form th:replace="~{fragments/sales/goods :: form03Fragment()}"></form>
+
+                    <div class="dialog-footer">
+                        <button class="normal-btn frameless" type="button"
+                            onclick="closeFormDialog('form-dialog-03', event)"><span>キャンセル</span></button>
+                        <button tabindex="39" class="normal-btn ok" type="button"
+                            onclick="execSave('form-dialog-03')"><span>保存</span></button>
+                    </div>
+                </div>
+            </div>
+            <div id="form-dialog-04" class="form-dialog none">
+                <div class="dialog-main">
+                    <div class="dialog-header"><span></span>
+                        <div class="img-btn" onclick="closeFormDialog('form-dialog-04', event)"><img title="閉じる"
+                                src="/icons/close-s.png"></div>
+                    </div>
+                    
+                    <form th:replace="~{fragments/sales/goods :: form04Fragment()}"></form>
+
+                    <div class="dialog-footer">
+                        <button class="normal-btn frameless" type="button"
+                            onclick="closeFormDialog('form-dialog-04', event)"><span>キャンセル</span></button>
+                        <button tabindex="49" class="normal-btn ok" type="button"
+                            onclick="execSave('form-dialog-04')"><span>保存</span></button>
                     </div>
                 </div>
             </div>
@@ -75,13 +127,16 @@
             const user = /*[[${user}]]*/;
             const formEntity = /*[[${formEntity}]]*/;
             const deleteCode = /*[[${deleteCode}]]*/;
+            const goodsCode = /*[[${goodsCode}]]*/;
+            const materialsCode = /*[[${materialsCode}]]*/;
+            const equipmentCode = /*[[${equipmentCode}]]*/;
+            const returnsCode = /*[[${returnsCode}]]*/;
             const companyComboList = /*[[${companyComboList}]]*/;
             const shippingCompanyComboList = /*[[${shippingCompanyComboList}]]*/;
             const transportComboList = /*[[${transportComboList}]]*/;
             const classificationComboList = /*[[${classificationComboList}]]*/;
             let origin = /*[[${origin}]]*/; // 初期リスト記憶用
             // let itemList = [];
-            let select01Id = 0;
 
 /******************************************************************************************************* 入力画面 */
 
@@ -100,8 +155,6 @@
                             detachmentSelectClassToAllRow(tbl, false);
                             // 選択した行にセレクトクラスを付与する
                             const result = addSelectClassToRow(e.currentTarget);
-                            const clickedTr = e.target.closest("tr");
-                            select01Id = clickedTr.dataset.id;
                         } else {
                             // 選択済みの要素をクリックした時の処理
                             const clickedTd = e.target.closest("td");
@@ -118,34 +171,50 @@
                             detachmentSelectClassToAllRow(tableId, false);
                             // 選択した行にセレクトクラスを付与する
                             const result = addSelectClassToRow(e.currentTarget);
-                            const clickedTr = e.target.closest("tr");
-                            select01Id = clickedTr.dataset.id;
                         }
                         
                         // フォーム入力画面を表示する
                         switch (tableId) {
                             case "table-01-content":
-                                execEdit("table-01-content", this);
+                                execEdit(item.order_item_id, "table-01-content", this);
+                                break;
+                            case "table-02-content":
+                                execEdit(item.order_item_id, "table-02-content", this);
+                                break;
+                            case "table-03-content":
+                                execEdit(item.order_item_id, "table-03-content", this);
+                                break;
+                             case "table-04-content":
+                                execEdit(item.order_item_id, "table-04-content", this);
                                 break;
                             default:
                                 break;
                         }
                     }
 
-                    // createTableRow(newRow, item, "01");
                     switch (tableId) {
                         case "table-01-content":
-                            createTableRow(newRow, item, "01");
+                            createTable01Row(newRow, item);
+                            break;
+                        case "table-02-content":
+                            createTable02Row(newRow, item);
+                            break;
+                        case "table-03-content":
+                            createTable03Row(newRow, item);
+                            break;
+                        case "table-04-content":
+                            createTable04Row(newRow, item);
                             break;
                         default:
                             break;
                     }
-
                 });
             }
 
+/******************************************************************************************************* テーブル行作成 */
+
             // テーブル行を作成する
-            function createTableRow(newRow, item, tab) {
+            function createTable01Row(newRow, item) {
                 // 選択用チェックボックス
                 newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
                 // 入荷日
@@ -164,21 +233,72 @@
                 newRow.insertAdjacentHTML('beforeend', '<td name="delivery-cell"><span>' + (item.remarks ?? "") + '</span></td>');
             }
 
-// /******************************************************************************************************* 入力画面 */
+            function createTable02Row(newRow, item) {
+                // // 選択用チェックボックス
+                // newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
+                // // 入荷日
+                // newRow.insertAdjacentHTML('beforeend', '<td name="date-cell"><span>' + (item.arrival_date == '9999-12-31' ? "": item.arrival_date) + '</span></td>');
+                // // 分類
+                // newRow.insertAdjacentHTML('beforeend', '<td name="class-cell"><span>' + (item.classification_name ?? "") + '</span></td>');
+                // // 商品名
+                // newRow.insertAdjacentHTML('beforeend', '<td name="name-cell"><span>' + (item.item_name ?? "") + '</span></td>');
+                // // 型式
+                // newRow.insertAdjacentHTML('beforeend', '<td name="model-cell"><span>' + (item.item_model ?? "") + '</span></td>');
+                // // 数量
+                // newRow.insertAdjacentHTML('beforeend', '<td name="quantity-cell" class="text-right"><span>' + (item.item_quantity ?? "") + '</span></td>');
+                // // 発荷主
+                // newRow.insertAdjacentHTML('beforeend', '<td name="company-cell"><span>' + (item.company_name ?? "") + '</span></td>');
+                // // 備考
+                // newRow.insertAdjacentHTML('beforeend', '<td name="delivery-cell"><span>' + (item.remarks ?? "") + '</span></td>');
+            }
+
+            function createTable03Row(newRow, item) {
+                // // 選択用チェックボックス
+                // newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
+                // // 入荷日
+                // newRow.insertAdjacentHTML('beforeend', '<td name="date-cell"><span>' + (item.arrival_date == '9999-12-31' ? "": item.arrival_date) + '</span></td>');
+                // // 分類
+                // newRow.insertAdjacentHTML('beforeend', '<td name="class-cell"><span>' + (item.classification_name ?? "") + '</span></td>');
+                // // 商品名
+                // newRow.insertAdjacentHTML('beforeend', '<td name="name-cell"><span>' + (item.item_name ?? "") + '</span></td>');
+                // // 型式
+                // newRow.insertAdjacentHTML('beforeend', '<td name="model-cell"><span>' + (item.item_model ?? "") + '</span></td>');
+                // // 数量
+                // newRow.insertAdjacentHTML('beforeend', '<td name="quantity-cell" class="text-right"><span>' + (item.item_quantity ?? "") + '</span></td>');
+                // // 発荷主
+                // newRow.insertAdjacentHTML('beforeend', '<td name="company-cell"><span>' + (item.company_name ?? "") + '</span></td>');
+                // // 備考
+                // newRow.insertAdjacentHTML('beforeend', '<td name="delivery-cell"><span>' + (item.remarks ?? "") + '</span></td>');
+            }
+
+            function createTable04Row(newRow, item) {
+                // // 選択用チェックボックス
+                // newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
+                // // 入荷日
+                // newRow.insertAdjacentHTML('beforeend', '<td name="date-cell"><span>' + (item.arrival_date == '9999-12-31' ? "": item.arrival_date) + '</span></td>');
+                // // 分類
+                // newRow.insertAdjacentHTML('beforeend', '<td name="class-cell"><span>' + (item.classification_name ?? "") + '</span></td>');
+                // // 商品名
+                // newRow.insertAdjacentHTML('beforeend', '<td name="name-cell"><span>' + (item.item_name ?? "") + '</span></td>');
+                // // 型式
+                // newRow.insertAdjacentHTML('beforeend', '<td name="model-cell"><span>' + (item.item_model ?? "") + '</span></td>');
+                // // 数量
+                // newRow.insertAdjacentHTML('beforeend', '<td name="quantity-cell" class="text-right"><span>' + (item.item_quantity ?? "") + '</span></td>');
+                // // 発荷主
+                // newRow.insertAdjacentHTML('beforeend', '<td name="company-cell"><span>' + (item.company_name ?? "") + '</span></td>');
+                // // 備考
+                // newRow.insertAdjacentHTML('beforeend', '<td name="delivery-cell"><span>' + (item.remarks ?? "") + '</span></td>');
+            }
+
+/******************************************************************************************************* 入力画面 */
 
             // 商品登録画面を開く
-            async function execEdit(tableId, self) {
-                let id = 0;
-                switch (tableId) {
-                    case "table-01-content":
-                        id = select01Id;
-                        break;
-                    default:
-                        break;
-                }
-
+            async function execEdit(id, tableId, self) {
                 // スピナー表示
                 startProcessing();
+
+                // 入力フォームダイアログを開く
+                openFormDialog("form-dialog-01"); 
 
                 let entity = {};
                 if (id > 0) {
@@ -193,52 +313,183 @@
                     }
                     entity = structuredClone(result);
                 } else {
-                    openMsgDialog("msg-dialog", "選択されていません", "red");
-                    processingEnd();
-                    return;
+                    entity = structuredClone(formEntity);
+                    switch (tab) {
+                        case "01":
+                            entity.classification = goodsCode;
+                            setForm01Content(entity);
+                            break;
+                        case "02":
+                            entity.classification = materialsCode;
+                            setForm02Content(entity);
+                            break;
+                        case "03":
+                            entity.classification = equipmentCode;
+                            setForm03Content(entity);
+                            break;
+                        case "04":
+                            entity.classification = returnsCode;
+                            setForm04Content(entity);
+                            break;
+                        default:
+                            break;
+                    }
                 }
-
-                // 入力フォームダイアログを開く
-                openFormDialog("form-dialog-01"); 
-
-                const form = document.getElementById('form-dialog-01');
-                form.querySelector('[name="order-item-id"]').value = entity.order_item_id;
-                if (entity.arrivalt_date == "9999-12-31") {
-                    form.querySelector('[name="arrival-date11"]').value = "";
-                } else {
-                    form.querySelector('[name="arrival-date11"]').value = entity.arrival_date;
-                }
-                form.querySelector('[name="order-id11"]').value = entity.order_id;
-                form.querySelector('[name="company11"]').value = entity.company_id;
-                form.querySelector('[name="delivery_address11"]').value = entity.delivery_address;                
-                form.querySelector('[name="inspector-name11"]').value = entity.inspector_name;
-                form.querySelector('[name="shippng-company11"]').value = entity.shipping_company_id;
-                form.querySelector('[name="document_number11"]').value = entity.document_number;
-                form.querySelector('[name="item_maker11"]').value = entity.item_maker;
-                form.querySelector('[name="item_name11"]').value = entity.item_name;
-                form.querySelector('[name="item_model11"]').value = entity.item_model;
-                form.querySelector('[name="item_quantity11"]').value = entity.item_quantity;
-                form.querySelector('[name="item_payment11"]').value = entity.item_payment;
-                form.querySelector('[name="buyer-name11"]').value = entity.buyer_name;
-                form.querySelector('[name="classification11"]').value = entity.classification;
-                form.querySelector('[name="remarks11"]').value = entity.remarks;
-                form.querySelector('[name="version11"]').value = entity.version;
-
-                // 荷主コンボボックス
-                const companyArea = form.querySelector('select[name="company11"]');
-                createComboBoxWithTop(companyArea, companyComboList, "");
-                setComboboxSelected(companyArea, entity.company_id);
-                // 運送会社コンボボックス
-                const shippingCompanyArea = form.querySelector('select[name="shipping-company11"]');
-                createComboBoxWithTop(shippingCompanyArea, shippingCompanyComboList, "");
-                setComboboxSelected(shippingCompanyArea, entity.shipping_company_id);
-                // 分類コンボボックス
-                const classificationArea = form.querySelector('select[name="classification11"]');
-                createComboBoxWithTop(classificatioArea, classificationComboList, "");
-                setComboboxSelected(classificationArea, entity.classification);
 
                 // スピナー消去
                 processingEnd();
+            }
+
+            function setForm01Content(entity) {
+                // const form = document.getElementById('form-dialog-01');
+                // form.querySelector('[name="order-item-id"]').value = entity.order_item_id;
+                // if (entity.arrivalt_date == "9999-12-31") {
+                //     form.querySelector('[name="arrival-date11"]').value = "";
+                // } else {
+                //     form.querySelector('[name="arrival-date11"]').value = entity.arrival_date;
+                // }
+                // form.querySelector('[name="order-id11"]').value = entity.order_id;
+                // form.querySelector('[name="company11"]').value = entity.company_id;
+                // form.querySelector('[name="delivery_address11"]').value = entity.delivery_address;                
+                // form.querySelector('[name="inspector-name11"]').value = entity.inspector_name;
+                // form.querySelector('[name="shippng-company11"]').value = entity.shipping_company_id;
+                // form.querySelector('[name="document_number11"]').value = entity.document_number;
+                // form.querySelector('[name="item_maker11"]').value = entity.item_maker;
+                // form.querySelector('[name="item_name11"]').value = entity.item_name;
+                // form.querySelector('[name="item_model11"]').value = entity.item_model;
+                // form.querySelector('[name="item_quantity11"]').value = entity.item_quantity;
+                // form.querySelector('[name="item_payment11"]').value = entity.item_payment;
+                // form.querySelector('[name="buyer-name11"]').value = entity.buyer_name;
+                // form.querySelector('[name="classification11"]').value = entity.classification;
+                // form.querySelector('[name="remarks11"]').value = entity.remarks;
+                // form.querySelector('[name="version11"]').value = entity.version;
+
+                // // 荷主コンボボックス
+                // const companyArea = form.querySelector('select[name="company11"]');
+                // createComboBoxWithTop(companyArea, companyComboList, "");
+                // setComboboxSelected(companyArea, entity.company_id);
+                // // 運送会社コンボボックス
+                // const shippingCompanyArea = form.querySelector('select[name="shipping-company11"]');
+                // createComboBoxWithTop(shippingCompanyArea, shippingCompanyComboList, "");
+                // setComboboxSelected(shippingCompanyArea, entity.shipping_company_id);
+                // // 分類コンボボックス
+                // const classificationArea = form.querySelector('select[name="classification11"]');
+                // createComboBoxWithTop(classificatioArea, classificationComboList, "");
+                // setComboboxSelected(classificationArea, entity.classification);
+            }
+
+            function setForm02Content(entity) {
+                // const form = document.getElementById('form-dialog-01');
+                // form.querySelector('[name="order-item-id"]').value = entity.order_item_id;
+                // if (entity.arrivalt_date == "9999-12-31") {
+                //     form.querySelector('[name="arrival-date11"]').value = "";
+                // } else {
+                //     form.querySelector('[name="arrival-date11"]').value = entity.arrival_date;
+                // }
+                // form.querySelector('[name="order-id11"]').value = entity.order_id;
+                // form.querySelector('[name="company11"]').value = entity.company_id;
+                // form.querySelector('[name="delivery_address11"]').value = entity.delivery_address;                
+                // form.querySelector('[name="inspector-name11"]').value = entity.inspector_name;
+                // form.querySelector('[name="shippng-company11"]').value = entity.shipping_company_id;
+                // form.querySelector('[name="document_number11"]').value = entity.document_number;
+                // form.querySelector('[name="item_maker11"]').value = entity.item_maker;
+                // form.querySelector('[name="item_name11"]').value = entity.item_name;
+                // form.querySelector('[name="item_model11"]').value = entity.item_model;
+                // form.querySelector('[name="item_quantity11"]').value = entity.item_quantity;
+                // form.querySelector('[name="item_payment11"]').value = entity.item_payment;
+                // form.querySelector('[name="buyer-name11"]').value = entity.buyer_name;
+                // form.querySelector('[name="classification11"]').value = entity.classification;
+                // form.querySelector('[name="remarks11"]').value = entity.remarks;
+                // form.querySelector('[name="version11"]').value = entity.version;
+
+                // // 荷主コンボボックス
+                // const companyArea = form.querySelector('select[name="company11"]');
+                // createComboBoxWithTop(companyArea, companyComboList, "");
+                // setComboboxSelected(companyArea, entity.company_id);
+                // // 運送会社コンボボックス
+                // const shippingCompanyArea = form.querySelector('select[name="shipping-company11"]');
+                // createComboBoxWithTop(shippingCompanyArea, shippingCompanyComboList, "");
+                // setComboboxSelected(shippingCompanyArea, entity.shipping_company_id);
+                // // 分類コンボボックス
+                // const classificationArea = form.querySelector('select[name="classification11"]');
+                // createComboBoxWithTop(classificatioArea, classificationComboList, "");
+                // setComboboxSelected(classificationArea, entity.classification);
+            }
+
+            function setForm03Content(entity) {
+                // const form = document.getElementById('form-dialog-01');
+                // form.querySelector('[name="order-item-id"]').value = entity.order_item_id;
+                // if (entity.arrivalt_date == "9999-12-31") {
+                //     form.querySelector('[name="arrival-date11"]').value = "";
+                // } else {
+                //     form.querySelector('[name="arrival-date11"]').value = entity.arrival_date;
+                // }
+                // form.querySelector('[name="order-id11"]').value = entity.order_id;
+                // form.querySelector('[name="company11"]').value = entity.company_id;
+                // form.querySelector('[name="delivery_address11"]').value = entity.delivery_address;                
+                // form.querySelector('[name="inspector-name11"]').value = entity.inspector_name;
+                // form.querySelector('[name="shippng-company11"]').value = entity.shipping_company_id;
+                // form.querySelector('[name="document_number11"]').value = entity.document_number;
+                // form.querySelector('[name="item_maker11"]').value = entity.item_maker;
+                // form.querySelector('[name="item_name11"]').value = entity.item_name;
+                // form.querySelector('[name="item_model11"]').value = entity.item_model;
+                // form.querySelector('[name="item_quantity11"]').value = entity.item_quantity;
+                // form.querySelector('[name="item_payment11"]').value = entity.item_payment;
+                // form.querySelector('[name="buyer-name11"]').value = entity.buyer_name;
+                // form.querySelector('[name="classification11"]').value = entity.classification;
+                // form.querySelector('[name="remarks11"]').value = entity.remarks;
+                // form.querySelector('[name="version11"]').value = entity.version;
+
+                // // 荷主コンボボックス
+                // const companyArea = form.querySelector('select[name="company11"]');
+                // createComboBoxWithTop(companyArea, companyComboList, "");
+                // setComboboxSelected(companyArea, entity.company_id);
+                // // 運送会社コンボボックス
+                // const shippingCompanyArea = form.querySelector('select[name="shipping-company11"]');
+                // createComboBoxWithTop(shippingCompanyArea, shippingCompanyComboList, "");
+                // setComboboxSelected(shippingCompanyArea, entity.shipping_company_id);
+                // // 分類コンボボックス
+                // const classificationArea = form.querySelector('select[name="classification11"]');
+                // createComboBoxWithTop(classificatioArea, classificationComboList, "");
+                // setComboboxSelected(classificationArea, entity.classification);
+            }
+
+            function setForm04Content(entity) {
+                // const form = document.getElementById('form-dialog-01');
+                // form.querySelector('[name="order-item-id"]').value = entity.order_item_id;
+                // if (entity.arrivalt_date == "9999-12-31") {
+                //     form.querySelector('[name="arrival-date11"]').value = "";
+                // } else {
+                //     form.querySelector('[name="arrival-date11"]').value = entity.arrival_date;
+                // }
+                // form.querySelector('[name="order-id11"]').value = entity.order_id;
+                // form.querySelector('[name="company11"]').value = entity.company_id;
+                // form.querySelector('[name="delivery_address11"]').value = entity.delivery_address;                
+                // form.querySelector('[name="inspector-name11"]').value = entity.inspector_name;
+                // form.querySelector('[name="shippng-company11"]').value = entity.shipping_company_id;
+                // form.querySelector('[name="document_number11"]').value = entity.document_number;
+                // form.querySelector('[name="item_maker11"]').value = entity.item_maker;
+                // form.querySelector('[name="item_name11"]').value = entity.item_name;
+                // form.querySelector('[name="item_model11"]').value = entity.item_model;
+                // form.querySelector('[name="item_quantity11"]').value = entity.item_quantity;
+                // form.querySelector('[name="item_payment11"]').value = entity.item_payment;
+                // form.querySelector('[name="buyer-name11"]').value = entity.buyer_name;
+                // form.querySelector('[name="classification11"]').value = entity.classification;
+                // form.querySelector('[name="remarks11"]').value = entity.remarks;
+                // form.querySelector('[name="version11"]').value = entity.version;
+
+                // // 荷主コンボボックス
+                // const companyArea = form.querySelector('select[name="company11"]');
+                // createComboBoxWithTop(companyArea, companyComboList, "");
+                // setComboboxSelected(companyArea, entity.company_id);
+                // // 運送会社コンボボックス
+                // const shippingCompanyArea = form.querySelector('select[name="shipping-company11"]');
+                // createComboBoxWithTop(shippingCompanyArea, shippingCompanyComboList, "");
+                // setComboboxSelected(shippingCompanyArea, entity.shipping_company_id);
+                // // 分類コンボボックス
+                // const classificationArea = form.querySelector('select[name="classification11"]');
+                // createComboBoxWithTop(classificatioArea, classificationComboList, "");
+                // setComboboxSelected(classificationArea, entity.classification);
             }
 
 /******************************************************************************************************* 削除 */
@@ -249,7 +500,16 @@
                 let result;
                 switch (tab) {
                     case "01":
-                        result = await deleteTablelist('table-01-content', '/order/delete');
+                        result = await deleteTablelist('table-01-content', '/order/item/delete');
+                        break;
+                    case "02":
+                        result = await deleteTablelist('table-02-content', '/order/item/delete');
+                        break;
+                    case "03":
+                        result = await deleteTablelist('table-03-content', '/order/item/delete');
+                        break;
+                    case "04":
+                        result = await deleteTablelist('table-04-content', '/order/item/delete');
                         break;
                     default:
                         break;
@@ -263,116 +523,189 @@
                 }
             }
 
-/******************************************************************************************************* 商品登録 */
+/******************************************************************************************************* 登録 */
 
             async function execRegistItem(self) {
-                const panel = self.closest('#form-dialog-01');
-                const form = panel.querySelector('#form-01');
-                if (form12DataCheck(form) == false) {
-                    return;
-                } else {
-                    const formData = new FormData(form);
-                    const formdata = structuredClone(itemEntity);
-                    itemId -= 1;
-                    formdata.order_id = formData.get('order-id');
-                    formdata.order_item_id = itemId;
-                    if (formData.get('item-maker') == "") {
-                        formdata.item_maker = "-----";
-                    } else {
-                        formdata.item_maker = formData.get('item-maker');
-                    }
-                    if (formData.get('item-name') == "") {
-                        formdata.item_name = "-----";
-                    } else {
-                        formdata.item_name = formData.get('item-name');
-                    }
-                    formdata.item_model = formData.get('item-model');
-                    if (formData.get('item-quantity') == "") {
-                        formdata.item_quantity = 1;
-                    } else {
-                        formdata.item_quantity = formData.get('item-quantity');
-                    }
-                    formdata.arrival_date = "9999-12-31";
-                    formdata.state = 0;
+            //     const panel = self.closest('#form-dialog-01');
+            //     const form = panel.querySelector('#form-01');
+            //     if (form12DataCheck(form) == false) {
+            //         return;
+            //     } else {
+            //         const formData = new FormData(form);
+            //         const formdata = structuredClone(itemEntity);
+            //         itemId -= 1;
+            //         formdata.order_id = formData.get('order-id');
+            //         formdata.order_item_id = itemId;
+            //         if (formData.get('item-maker') == "") {
+            //             formdata.item_maker = "-----";
+            //         } else {
+            //             formdata.item_maker = formData.get('item-maker');
+            //         }
+            //         if (formData.get('item-name') == "") {
+            //             formdata.item_name = "-----";
+            //         } else {
+            //             formdata.item_name = formData.get('item-name');
+            //         }
+            //         formdata.item_model = formData.get('item-model');
+            //         if (formData.get('item-quantity') == "") {
+            //             formdata.item_quantity = 1;
+            //         } else {
+            //             formdata.item_quantity = formData.get('item-quantity');
+            //         }
+            //         formdata.arrival_date = "9999-12-31";
+            //         formdata.state = 0;
 
-                    itemList.push(formdata);
+            //         itemList.push(formdata);
 
-                    await updateTable12Display("table-12-content");
+            //         await updateTable12Display("table-12-content");
 
-                    resetForm12Input();
-                    maker12.focus();
-                }
+            //         resetForm12Input();
+            //         maker12.focus();
+            //     }
+            // }
+
+            // // 入力フォームの内容をリセットする
+            // function resetForm12Input() {
+            //     if (maker12 != null) maker12.value = "";
+            //     if (name12 != null) name12.value = "";
+            //     if (model12 != null) model12.value = "";
+            //     if (quantity12 != null) quantity12.value = "";
+            // }
+
+            // // 入力チェック
+            // function form12DataCheck(area) {
+            //     let msg = "";
+            //     // 型番が入力されていないとFalseを返す
+            //     const model = area.querySelector('input[name="item-model"]');
+            //     if (model != null && model.value == "") msg += '\n型番が入力されていません';
+            //     // エラーが一つ以上あればエラーメッセージダイアログを表示する
+            //     if (msg != "") {
+            //         openMsgDialog("msg-dialog", msg, "red");
+            //         return false;
+            //     }
+            //     return true;
+            // }
+
+            // // コード入力ボックスからフォーカスが外れた時の処理
+            // function execCodeBlur(e) {
+            //     if (e.target.value == "") {
+            //         emp14.value = "";
+            //         com14.value = "";
+            //         return;
+            //     }
+            //     searchForNameByCode(e);
+            // }
+
+            // // コード入力ボックスでエンターを押した時の処理
+            // function execCodeChanged(e) {
+            //     if (e == null) return;
+            //     // ボックスが空白なら処理しない
+            //     if (e.target.value == "") {
+            //         emp14.value = "";
+            //         com14.value = "";
+            //         return;
+            //     }
+            //     if(e.key === 'Enter'){
+            //         e.preventDefault();
+            //         execCodeBlur(e);
+            //     }
+            // }
+
+            // // コードから[employee]を取得して、名前と会社名を表示
+            // async function searchForNameByCode(e) {
+            //     e.preventDefault();
+            //     if (code14 == null || emp14 == null || com14 == null) return;
+            //     if (code14.value == "" || isNaN(code14.value)) {
+            //         emp14.value = "";
+            //         com14.value = "";
+            //         return;
+            //     }
+
+            //     const entity = await getEmployeeByCode(Number(code14.value));
+
+            //     if (entity != null && entity.employee_id > 0) {
+            //         emp14.value = entity.full_name;
+            //         com14.value = entity.company_name;
+            //         regBtn14.focus();
+            //     } else {
+            //         code14.value = "";
+            //         emp14.value = "";
+            //         com14.value = "";
+            //         openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
+            //     }                
             }
 
-            // 入力フォームの内容をリセットする
-            function resetForm12Input() {
-                if (maker12 != null) maker12.value = "";
-                if (name12 != null) name12.value = "";
-                if (model12 != null) model12.value = "";
-                if (quantity12 != null) quantity12.value = "";
-            }
+/******************************************************************************************************* 保存 */
 
-            // 入力チェック
-            function form12DataCheck(area) {
-                let msg = "";
-                // 型番が入力されていないとFalseを返す
-                const model = area.querySelector('input[name="item-model"]');
-                if (model != null && model.value == "") msg += '\n型番が入力されていません';
-                // エラーが一つ以上あればエラーメッセージダイアログを表示する
-                if (msg != "") {
-                    openMsgDialog("msg-dialog", msg, "red");
-                    return false;
-                }
-                return true;
-            }
+            // 保存処理
+            async function execSave() {
+                // const form = document.getElementById('form-01');
+                // // エラーチェック
+                // if (formDataCheck(form) == false) {
+                //     return;
+                // } else {
+                //     const formData = new FormData(form);
+                //     const formdata = structuredClone(formEntity);
+                //     formdata.employee_id = formData.get('employee-id');
+                //     if (formData.get('code') == "") {
+                //         formdata.code = 0;
+                //     } else {
+                //         formdata.code = formData.get('code');
+                //     }
+                //     formdata.category = Number(formData.get('category'));
+                //     formdata.account = formData.get('account').trim();
+                //     formdata.company_id = formData.get('company');
+                //     formdata.office_id = formData.get('office');
+                //     formdata.last_name = formData.get('last-name').trim();
+                //     formdata.first_name = formData.get('first-name').trim();
+                //     formdata.last_name_kana = formData.get('last-name-kana').trim();
+                //     formdata.first_name_kana = formData.get('first-name-kana').trim();
+                //     formdata.phone_number = formData.get('phone-number').trim();
+                //     formdata.postal_code = formData.get('postal-code').trim();
+                //     formdata.full_address = formData.get('full-address').trim();
+                //     formdata.email = formData.get('email').trim();
+                //     formdata.gender= formData.get('gender');
+                //     formdata.blood_type = formData.get('blood-type');
+                //     if (formData.get('birthday') == "") {
+                //         formdata.birthday = "9999-12-31";
+                //     } else {
+                //         formdata.birthday = formData.get('birthday');
+                //     }
+                //     formdata.emergency_contact = formData.get('emergency-contact').trim();
+                //     formdata.emergency_contact_number = formData.get('emergency-contact-number').trim();
+                //     if (formData.get('date-of-hire') == "") {
+                //         formdata.date_of_hire = "9999-12-31";
+                //     } else {
+                //         formdata.date_of_hire = formData.get('date-of-hire');
+                //     }
+                //     formdata.version = formData.get('version');
 
-            // コード入力ボックスからフォーカスが外れた時の処理
-            function execCodeBlur(e) {
-                if (e.target.value == "") {
-                    emp14.value = "";
-                    com14.value = "";
-                    return;
-                }
-                searchForNameByCode(e);
-            }
-
-            // コード入力ボックスでエンターを押した時の処理
-            function execCodeChanged(e) {
-                if (e == null) return;
-                // ボックスが空白なら処理しない
-                if (e.target.value == "") {
-                    emp14.value = "";
-                    com14.value = "";
-                    return;
-                }
-                if(e.key === 'Enter'){
-                    e.preventDefault();
-                    execCodeBlur(e);
-                }
-            }
-
-            // コードから[employee]を取得して、名前と会社名を表示
-            async function searchForNameByCode(e) {
-                e.preventDefault();
-                if (code14 == null || emp14 == null || com14 == null) return;
-                if (code14.value == "" || isNaN(code14.value)) {
-                    emp14.value = "";
-                    com14.value = "";
-                    return;
-                }
-
-                const entity = await getEmployeeByCode(Number(code14.value));
-
-                if (entity != null && entity.employee_id > 0) {
-                    emp14.value = entity.full_name;
-                    com14.value = entity.company_name;
-                    regBtn14.focus();
-                } else {
-                    code14.value = "";
-                    emp14.value = "";
-                    com14.value = "";
-                    openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
-                }                
+                //     // 保存処理
+                //     const resultResponse = await postFetch("/employee/save", JSON.stringify(formdata), token, "application/json");
+                //     const result = await resultResponse.json();
+                //     if (result.success) {
+                //         let tableId;
+                //         switch (formdata.category) {
+                //             case categoryEmployeeCode:
+                //                 tableId = "table-01-content";
+                //                 break;
+                //             case categoryParttimeCode:
+                //                 tableId = "table-02-content";
+                //                 break;
+                //             default:
+                //                 break;
+                //         }
+                //         // 画面更新
+                //         openMsgDialog("msg-dialog", result.message, "blue");
+                //         await execUpdate();
+                //         // 追加・変更行に移動
+                //         scrollIntoTableList(tableId, result.id);
+                //     } else {
+                //         openMsgDialog("msg-dialog", result.message, "red");
+                //     }
+                    // ダイアログを閉じる
+                    closeFormDialog('form-dialog-01');
+                // }
             }
 
 /******************************************************************************************************* ダウンロード */
@@ -383,7 +716,16 @@
                 let result;
                 switch (tab) {
                     case "01":
-                        result = await downloadCsv('table-01-content', '/order/download/csv');
+                        result = await downloadCsv('table-01-content', '/order/item/download/csv');
+                        break;
+                    case "02":
+                        result = await downloadCsv('table-02-content', '/order/item/download/csv');
+                        break;
+                    case "03":
+                        result = await downloadCsv('table-03-content', '/order/item/download/csv');
+                        break;
+                    case "04":
+                        result = await downloadCsv('table-04-content', '/order/item/download/csv');
                         break;
                     default:
                         break;
@@ -472,22 +814,22 @@
                 //     await getAddress(e, 'order-postal-code', 'order-full-address');                                                                                                                                                                                                                                                                                                                                                       ;
                 // });
 
-                // const form = document.getElementById('form-dialog-01');
-                const form = document.querySelector('.tab-panel[data-panel="02"]');
-                // 発荷主コンボボックス
-                const companyArea = form.querySelector('select[name="company02"]');
-                createComboBoxWithTop(companyArea, companyComboList, "");
-                // 運送会社コンボボックス
-                const transportArea = form.querySelector('select[name="shipping-company02"]');
-                createComboBoxWithTop(transportArea, transportComboList, "");
-                // setComboboxSelected(transportArea, entity.shipping_company_id);
-                // 分類コンボボックス
-                const classificationArea = form.querySelector('select[name="classification02"]');
-                createComboBox(classificationArea, classificationComboList);
-                // setComboboxSelected(classificationArea, entity.classification);
+                // // const form = document.getElementById('form-dialog-01');
+                // const form = document.querySelector('.tab-panel[data-panel="02"]');
+                // // 発荷主コンボボックス
+                // const companyArea = form.querySelector('select[name="company02"]');
+                // createComboBoxWithTop(companyArea, companyComboList, "");
+                // // 運送会社コンボボックス
+                // const transportArea = form.querySelector('select[name="shipping-company02"]');
+                // createComboBoxWithTop(transportArea, transportComboList, "");
+                // // setComboboxSelected(transportArea, entity.shipping_company_id);
+                // // 分類コンボボックス
+                // const classificationArea = form.querySelector('select[name="classification02"]');
+                // createComboBox(classificationArea, classificationComboList);
+                // // setComboboxSelected(classificationArea, entity.classification);
 
-//                 // エンターフォーカス処理をイベントリスナーに登録する
-//                 setEnterFocus("form-01");
+                // // エンターフォーカス処理をイベントリスナーに登録する
+                // setEnterFocus("form-01");
 
                 // 画面更新
                 await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
@@ -503,17 +845,17 @@
                     tabMenu.addEventListener('click', tabSwitch);
                 })
                                 
-//                 // テキストエリアを常に最終行に移動させる
-//                 const textarea = document.getElementById('remarks');
-//                 textarea.addEventListener('input', () => {
-//                     textarea.scrollTop = textarea.scrollHeight;
-//                 });
-//                 textarea.addEventListener('keydown', (e) => {
-//                     if (e.altKey && e.key === 'Enter') {
-//                         e.preventDefault();
-//                         textarea.scrollTop = textarea.scrollHeight;
-//                     }
-//                 });
+                // // テキストエリアを常に最終行に移動させる
+                // const textarea = document.getElementById('remarks');
+                // textarea.addEventListener('input', () => {
+                //     textarea.scrollTop = textarea.scrollHeight;
+                // });
+                // textarea.addEventListener('keydown', (e) => {
+                //     if (e.altKey && e.key === 'Enter') {
+                //         e.preventDefault();
+                //         textarea.scrollTop = textarea.scrollHeight;
+                //     }
+                // });
 
                 execSpecifyPeriod("today", 'start-date01', 'end-date01');
 

@@ -115,6 +115,10 @@ public class SalesPageController {
         mv.addObject("classificationComboList", classificationComboList);
 
         mv.addObject("deleteCode", Enums.state.DELETE.getCode());
+        mv.addObject("goodsCode", Enums.ItemClass.GOODS.getCode());
+        mv.addObject("materialsCode", Enums.ItemClass.MATERIALS.getCode());
+        mv.addObject("equipmentCode", Enums.ItemClass.EQUIPMENT.getCode());
+        mv.addObject("returnsCode", Enums.ItemClass.RETURNS.getCode());
 
         // 履歴保存
         historyService.saveHistory(userName, "order_items", "閲覧", 0, "");

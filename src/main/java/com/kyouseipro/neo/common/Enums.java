@@ -287,7 +287,8 @@ public class Enums {
     public enum ItemClass implements CodeEnum {
         GOODS(1, "商品"),
         MATERIALS(2, "材料"),
-        EQUIPMENT(3, "備品");
+        EQUIPMENT(3, "備品"),
+        RETURNS(4, "返品");
 
         private int num;
         private String str;
