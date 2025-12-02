@@ -317,57 +317,73 @@
                     switch (tab) {
                         case "01":
                             entity.classification = goodsCode;
-                            setForm01Content(entity);
                             break;
                         case "02":
                             entity.classification = materialsCode;
-                            setForm02Content(entity);
                             break;
                         case "03":
                             entity.classification = equipmentCode;
-                            setForm03Content(entity);
                             break;
                         case "04":
                             entity.classification = returnsCode;
-                            setForm04Content(entity);
                             break;
                         default:
                             break;
                     }
                 }
 
+                const panel = self.closest('.tab-panel');
+                const tab = panel.dataset.panel;
+                switch (tab) {
+                    case "01":
+                        setForm01Content(entity);
+                        break;
+                    case "02":
+                        setForm02Content(entity);
+                        break;
+                    case "03":
+                        setForm03Content(entity);
+                        break;
+                    case "04":
+                        setForm04Content(entity);
+                        break;
+                    default:
+                        break;
+                }
+
                 // スピナー消去
                 processingEnd();
             }
 
+            //商品
             function setForm01Content(entity) {
-                // const form = document.getElementById('form-dialog-01');
-                // form.querySelector('[name="order-item-id"]').value = entity.order_item_id;
-                // if (entity.arrivalt_date == "9999-12-31") {
-                //     form.querySelector('[name="arrival-date11"]').value = "";
-                // } else {
-                //     form.querySelector('[name="arrival-date11"]').value = entity.arrival_date;
-                // }
-                // form.querySelector('[name="order-id11"]').value = entity.order_id;
+                const form = document.getElementById('form-dialog-01');
+                form.querySelector('[name="order-item-id"]').value = entity.order_item_id;
+                if (entity.arrivalt_date == "9999-12-31") {
+                    form.querySelector('[name="arrival-date11"]').value = "";
+                } else {
+                    form.querySelector('[name="arrival-date11"]').value = entity.arrival_date;
+                }
+                form.querySelector('[name="order-id11"]').value = entity.order_id;
                 // form.querySelector('[name="company11"]').value = entity.company_id;
-                // form.querySelector('[name="delivery_address11"]').value = entity.delivery_address;                
-                // form.querySelector('[name="inspector-name11"]').value = entity.inspector_name;
+                form.querySelector('[name="delivery_address11"]').value = entity.delivery_address;                
+                form.querySelector('[name="inspector-name11"]').value = entity.inspector_name;
                 // form.querySelector('[name="shippng-company11"]').value = entity.shipping_company_id;
-                // form.querySelector('[name="document_number11"]').value = entity.document_number;
-                // form.querySelector('[name="item_maker11"]').value = entity.item_maker;
-                // form.querySelector('[name="item_name11"]').value = entity.item_name;
-                // form.querySelector('[name="item_model11"]').value = entity.item_model;
-                // form.querySelector('[name="item_quantity11"]').value = entity.item_quantity;
+                form.querySelector('[name="document_number11"]').value = entity.document_number;
+                form.querySelector('[name="item_maker11"]').value = entity.item_maker;
+                form.querySelector('[name="item_name11"]').value = entity.item_name;
+                form.querySelector('[name="item_model11"]').value = entity.item_model;
+                form.querySelector('[name="item_quantity11"]').value = entity.item_quantity;
                 // form.querySelector('[name="item_payment11"]').value = entity.item_payment;
                 // form.querySelector('[name="buyer-name11"]').value = entity.buyer_name;
                 // form.querySelector('[name="classification11"]').value = entity.classification;
-                // form.querySelector('[name="remarks11"]').value = entity.remarks;
-                // form.querySelector('[name="version11"]').value = entity.version;
+                form.querySelector('[name="remarks11"]').value = entity.remarks;
+                form.querySelector('[name="version11"]').value = entity.version;
 
-                // // 荷主コンボボックス
-                // const companyArea = form.querySelector('select[name="company11"]');
-                // createComboBoxWithTop(companyArea, companyComboList, "");
-                // setComboboxSelected(companyArea, entity.company_id);
+                // 荷主コンボボックス
+                const companyArea = form.querySelector('select[name="company11"]');
+                createComboBoxWithTop(companyArea, companyComboList, "");
+                setComboboxSelected(companyArea, entity.company_id);
                 // // 運送会社コンボボックス
                 // const shippingCompanyArea = form.querySelector('select[name="shipping-company11"]');
                 // createComboBoxWithTop(shippingCompanyArea, shippingCompanyComboList, "");
