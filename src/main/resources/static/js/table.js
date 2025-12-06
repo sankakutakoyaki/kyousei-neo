@@ -114,6 +114,23 @@ function detachmentCheckedToAllRow(tableId, state) {
 }
 
 /**
+ * すべて選択ボタンをオフにする
+ * @param {*} tableId 
+ * @returns 
+ */
+function turnOffAllCheckBtn(tableId) {
+    let tbl;
+    if(tableId instanceof HTMLElement) {
+        tbl = tableId;
+    } else {
+        tbl = document.getElementById(tableId);
+    }
+    if (tbl == null) return;
+    const header = tbl.closest('.normal-table');
+    header.querySelector('[name="all-chk-btn"]').checked = false
+}
+
+/**
  * すべて選択ボタンがチェックされた時の処理
  * @param {*} tableId 
  * @param {*} self 

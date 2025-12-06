@@ -968,7 +968,7 @@
             // テーブルリスト画面を更新する
             async function updateTableDisplay(tableId, footerId, searchId, list) {
                 // フィルター処理
-                const result = filterDisplay(searchId, list);
+                const result = filterDisplay(searchId, list);console.log(result)
                 // リスト画面を初期化
                 deleteElements(tableId);
                 // リスト作成
@@ -977,6 +977,8 @@
                 createTableFooter(footerId, list);
                 // チェックボタン押下時の処理を登録する
                 registCheckButtonClicked(tableId);
+                // すべて選択ボタンをオフにする
+                turnOffAllCheckBtn(tableId);
                 // テーブルのソートをリセットする
                 resetSortable(tableId);
                 // スクロール時のページトップボタン処理を登録する
@@ -1031,7 +1033,7 @@
                 code14.addEventListener('blur', function (e) { execCodeBlur(e); });
 
                 // regBtn14.addEventListener('keydown', function (e) { execRegistBtnKeyDown(e); });
-                regBtn14.addEventListener('keydown', function () { execRegistStaff(); });
+                regBtn14.addEventListener('keydown', function (e) { if(e.key === 'Enter'){ execRegistStaff(); }});
 
                 // 検索ボックス入力時の処理
                 document.getElementById('search-box-01').addEventListener('search', async function(e) {

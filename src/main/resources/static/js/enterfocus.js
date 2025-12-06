@@ -25,8 +25,8 @@ function filterTabFocusElements(nodeList) {
         }
 
         // <a><input><select><textarea><button>または正のtabindex属性を持つ場合は対象
-        // const targetTags = ["a", "input", "select", "textarea", "button"];
-        const targetTags = ["a", "input", "select", "textarea"];
+        const targetTags = ["a", "input", "select", "textarea", "button"];
+        // const targetTags = ["a", "input", "select", "textarea"];
         return targetTags.includes(target.tagName.toLowerCase()) || (target.hasAttribute("tabindex") && target.tabIndex >= 0)
     });
 }
@@ -86,6 +86,13 @@ function setEnterFocus(areaId) {
 
                 // onclick属性が設定された要素でのAlt+Enter
                 if (event.target.onclick !== null && event.altKey) {
+                    // 通常のキーイベント(クリック)
+                    event.target.click();
+                    return;
+                }
+
+                // onclick属性が設定されたbutton要素でのEnter
+                if (event.target.tagName.toLowerCase() === "button") {
                     // 通常のキーイベント(クリック)
                     event.target.click();
                     return;

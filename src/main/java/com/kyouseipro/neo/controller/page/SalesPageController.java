@@ -109,8 +109,10 @@ public class SalesPageController {
         // コンボボックスアイテム取得
         List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorList();
         mv.addObject("companyComboList", companyComboList);
-        List<SimpleData> transportComboList = comboBoxService.getCompanyListByCategory(Enums.clientCategory.TRANSPORT.getCode());
-        mv.addObject("transportComboList", transportComboList);
+        List<SimpleData> shippingCompanyComboList = comboBoxService.getCompanyListByCategory(Enums.clientCategory.TRANSPORT.getCode());
+        mv.addObject("shippingCompanyComboList", shippingCompanyComboList);
+        List<SimpleData> supplierComboList = comboBoxService.getCompanyListByCategory(Enums.clientCategory.SUPPLIER.getCode());
+        mv.addObject("supplierComboList", supplierComboList);
         List<SimpleData> classificationComboList = comboBoxService.getItemClass();
         mv.addObject("classificationComboList", classificationComboList);
 

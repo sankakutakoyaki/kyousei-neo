@@ -7,13 +7,10 @@
     overflow: hidden;
 }
 
-.table-area main {
-    overflow: hidden;
-}
-
 .tab-panel {
     overflow: hidden;
     height: 100%;
+    max-width: 90rem;
 }
 
 .tab-panel header {
@@ -23,21 +20,13 @@
     column-gap: 2rem;
 }
 
-:is(.tab-panel[data-panel="01"]) header>.flex-area:first-child {
+:is(.tab-panel[data-panel="01"], .tab-panel[data-panel="02"], .tab-panel[data-panel="03"], .tab-panel[data-panel="04"]) header>.flex-area:first-child {
     display: grid;
     grid-template-columns: 1fr auto;
     margin-bottom: 1rem;
 }
 
-:is(.tab-panel[data-panel="01"]) .table-area {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    margin-top: 2rem;
-    overflow: hidden;
-    /* max-width: 90rem; */
-}
-
-.tab-panel[data-panel="01"] header>.flex-area:nth-child(2) {
+:is(.tab-panel[data-panel="01"], .tab-panel[data-panel="02"], .tab-panel[data-panel="03"], .tab-panel[data-panel="04"]) header>.flex-area:nth-child(2) {
     display: grid;
     grid-template-columns: auto auto auto auto 1fr;
     margin-bottom: 1rem;
@@ -70,130 +59,139 @@
     }
 }
 
-#table-01 tr {
-    grid-template-columns: 3rem 8rem 4rem 1fr 1fr 3rem 10rem 1fr;
-}
 
-#form-01.dialog-content {
-    overflow: hidden;
-    height: 100%;
-}
+/******************************************************************************************************* table */
 
-#form-01 .normal-table .scroll-area {
-    overflow: auto;
-    height: 100%;
-}
-
-#form-01 .tab-panel .table-area {
+:is(.tab-panel[data-panel="01"], .tab-panel[data-panel="02"], .tab-panel[data-panel="03"], .tab-panel[data-panel="04"]) .table-area {
     display: grid;
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto 1fr auto;
     margin-top: 2rem;
+    overflow: auto;
+}
+
+#table-01 tr {
+    grid-template-columns: 3rem 10rem 15rem 1fr 4rem 15rem 1fr;
+}
+
+#table-02 tr {
+    grid-template-columns: 3rem 10rem 10rem 10rem 15rem 4rem 6rem 1fr;
+}
+
+#table-03 tr {
+    grid-template-columns: 3rem 10rem 10rem 10rem 4rem 15rem 6rem 1fr;
+}
+
+#table-04 tr {
+    grid-template-columns: 3rem 10rem 10rem 10rem 4rem 15rem 6rem 1fr;
+}
+
+#table-11 tr {
+    grid-template-columns: 10rem 12rem 12rem 4rem 12rem 1fr 3rem;
+}
+
+#table-12 tr {
+    grid-template-columns: 10rem 10rem 10rem 1fr 4rem 5rem 1fr 3rem;
+}
+
+#table-13 tr {
+    grid-template-columns: 10rem 10rem 10rem 4rem 15rem 1fr 3rem;
+}
+
+#table-14 tr {
+    grid-template-columns: 10rem 10rem 10rem 4rem 15rem 1fr 3rem;
+}
+
+/******************************************************************************************************* form */
+
+:is(#form-01, #form-02, #form-03, #form-04).dialog-content {
+    height: 100%;
+    width: 80rem;
+}
+
+:is(#form-01, #form-02, #form-03, #form-04) .normal-table {
+    height: 25rem;
+    width: 100%;
+}
+
+:is(#form-01, #form-02, #form-03, #form-04) .normal-table .scroll-area {
+    overflow: auto;
+    min-height: 15rem;
+}
+
+:is(#form-01, #form-02, #form-03, #form-04) .table-area {
+    display: grid;
+    grid-template-rows: auto auto auto auto auto 1fr;
     overflow: hidden;
 }
 
-.form-dialog>.dialog-main {
-    min-width: 50rem;
-    grid-template-rows: auto 40rem auto;
-}
-
-.tab-panel[data-panel="11"]>.flex-area {
-    margin-top: .5rem;
-}
-
-.tab-panel[data-panel="11"] {
-    margin-top: 2rem;
-    max-width: 90rem;
-    grid-template-rows: auto auto auto auto auto auto 1fr;
+#form-dialog-01 .table-area{
+    width: 100%;
     & >.flex-area:nth-of-type(1) {
         display: grid;
-        grid-template-columns: auto minmax(10rem, auto) 10rem;
+        grid-template-columns: 6rem 10rem auto auto 1fr ;
         width: 100%;
     }
     & >.flex-area:nth-of-type(2) {
         display: grid;
-        grid-template-columns: auto auto 1fr;
+        grid-template-columns: 12rem 1fr 1fr 4rem 12rem;
     }
     & >.flex-area:nth-of-type(3) {
         display: grid;
-        grid-template-columns: auto;
-        width: 100%;
-    }
-    & >.flex-area:nth-of-type(4) {
-        display: grid;
-        grid-template-columns: 8rem 1fr;
-        width: 100%;
-    }
-    & >.flex-area:nth-of-type(5) {
-        display: grid;
-        grid-template-columns: 10rem 10rem 1fr;
-        width: 100%;
-    }
-    & >.flex-area:nth-of-type(6) {
-        display: grid;
-        grid-template-columns: 1fr;
-        width: 100%;
-        & textarea {
-            height: 7rem;
-            overflow: auto;
-            line-height: 1.5;
-        }
-    }
-}
-
-/* 
-
-
-
-#table-12 tr {
-    grid-template-columns: 10rem 10rem 1fr 4rem 3rem;
-    height: 3rem;
-}
-
-#table-13 tr {
-    grid-template-columns: 1fr 6rem 4rem 5rem 3rem;
-    height: 3rem;
-    & >td:nth-of-type(4) {
-        margin-right: 2rem;
-    }
-}
-
-#table-14 tr {
-    grid-template-columns: 6rem 10rem 1fr 3rem;
-    height: 3rem;
-}
-
-
-
-
-
-.tab-panel[data-panel="12"] {
-    height: 100%;
-    & >.table-area>.flex-area:nth-of-type(1) {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        width: 100%;
-    }
-    & >.table-area>.flex-area:nth-of-type(2) {
-        display: grid;
-        grid-template-columns: 1fr 5rem 5rem;
+        grid-template-columns: auto 1fr 6rem;
         width: 100%;
     }
 }
 
-.tab-panel[data-panel="13"] {
+#form-dialog-02 .table-area{
     width: 100%;
-    height: 100%;
-    & >.table-area>.flex-area:nth-of-type(1) {
+    & >.flex-area:nth-of-type(1) {
         display: grid;
-        grid-template-columns: 6rem 1fr 6rem 4rem 6rem;
+        grid-template-columns: 6rem 10rem auto auto 1fr ;
+        width: 100%;
+    }
+    & >.flex-area:nth-of-type(2) {
+        display: grid;
+        grid-template-columns: 12rem 1fr 1fr 4rem 12rem;
+    }
+    & >.flex-area:nth-of-type(3) {
+        display: grid;
+        grid-template-columns: 6rem 10rem 10rem 1fr 6rem;
         width: 100%;
     }
 }
 
-.tab-panel[data-panel="14"] {
-    & >.table-area>.flex-area:nth-of-type(1) {
+#form-dialog-03 .table-area{
+    width: 100%;
+    & >.flex-area:nth-of-type(1) {
         display: grid;
-        grid-template-columns: 5rem 12rem 1fr auto;
+        grid-template-columns: 6rem 10rem auto auto 1fr ;
         width: 100%;
     }
-} */
+    & >.flex-area:nth-of-type(2) {
+        display: grid;
+        grid-template-columns: 12rem 1fr 1fr 4rem 12rem;
+    }
+    & >.flex-area:nth-of-type(3) {
+        display: grid;
+        grid-template-columns: auto 1fr 6rem;
+        width: 100%;
+    }
+}
+
+#form-dialog-04 .table-area{
+    width: 100%;
+    & >.flex-area:nth-of-type(1) {
+        display: grid;
+        grid-template-columns: 6rem 10rem auto auto 1fr ;
+        width: 100%;
+    }
+    & >.flex-area:nth-of-type(2) {
+        display: grid;
+        grid-template-columns: 12rem 1fr 1fr 4rem 12rem;
+    }
+    & >.flex-area:nth-of-type(3) {
+        display: grid;
+        grid-template-columns: auto 1fr 6rem;
+        width: 100%;
+    }
+}

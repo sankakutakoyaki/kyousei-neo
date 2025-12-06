@@ -285,6 +285,7 @@ public class Enums {
      * @return 1.商品 2.材料 3.備品 4.返品
      */
     public enum ItemClass implements CodeEnum {
+        NULL(0, ""),
         GOODS(1, "商品"),
         MATERIALS(2, "材料"),
         EQUIPMENT(3, "備品"),

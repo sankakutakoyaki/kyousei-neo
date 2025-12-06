@@ -16,7 +16,7 @@
     <div th:fragment="salesFragment" th:remove="tag">
         <div class="hamburger-item sp-style" onclick="moveLinkPage('/');hamburgerClose()"><img th:src="@{/icons/home.png}"><span>ホーム</span></div>
         <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/order');hamburgerClose()"><img th:src="@{/icons/sales.png}"><span>受注</span></div>
-        <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/goods');hamburgerClose()"><img th:src="@{/icons/shopping.png}"><span>商品</span></div>
+        <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/goods');hamburgerClose()"><img th:src="@{/icons/shopping.png}"><span>入荷</span></div>
         <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/client');hamburgerClose()"><img th:src="@{/icons/buillding.png}"><span>取引先</span></div>
         <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/license');hamburgerClose()"><img th:src="@{/icons/license.png}"><span>許認可</span></div>
     </div>

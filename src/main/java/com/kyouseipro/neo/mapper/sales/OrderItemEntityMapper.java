@@ -26,6 +26,7 @@ public class OrderItemEntityMapper {
         entity.setItem_quantity(rs.getInt("item_quantity"));
         entity.setItem_payment(rs.getInt("item_payment"));
         entity.setBuyer_id(rs.getInt("buyer_id"));
+        entity.setBuyer_company_name(rs.getString("buyer_company_name"));
         entity.setBuyer_name(rs.getString("buyer_name"));
         entity.setRemarks(rs.getString("remarks"));
         int classification = rs.getInt("classification");

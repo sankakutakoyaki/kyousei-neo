@@ -5,21 +5,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.sales.OrderEntity;
 import com.kyouseipro.neo.entity.sales.OrderItemEntity;
-import com.kyouseipro.neo.entity.sales.OrderListEntity;
-import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
-import com.kyouseipro.neo.mapper.sales.OrderEntityMapper;
 import com.kyouseipro.neo.mapper.sales.OrderItemEntityMapper;
-import com.kyouseipro.neo.mapper.sales.OrderListEntityMapper;
-import com.kyouseipro.neo.query.parameter.qualification.QualificationsParameterBinder;
 import com.kyouseipro.neo.query.parameter.sales.OrderItemParameterBinder;
-import com.kyouseipro.neo.query.parameter.sales.OrderListParameterBinder;
-import com.kyouseipro.neo.query.parameter.sales.OrderParameterBinder;
-import com.kyouseipro.neo.query.sql.qualification.QualificationsSqlBuilder;
 import com.kyouseipro.neo.query.sql.sales.OrderItemSqlBuilder;
-import com.kyouseipro.neo.query.sql.sales.OrderListSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -71,6 +60,52 @@ public class OrderItemRepository {
         return sqlRepository.findAll(
             sql,
             ps -> OrderItemParameterBinder.bindFindByBetweenOrderItemEntity(ps, start, end),
+            OrderItemEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+
+    /**
+     * 新規作成。
+     * @param itemEntity
+     * @param editor
+     * @return 新規IDを返す。
+     */
+    public Integer saveOrderItemList(String sql, List<OrderItemEntity> itemList, String editor) {
+
+        return sqlRepository.execute(
+            sql,
+            (pstmt, emp) -> OrderItemParameterBinder.bindSaveOrderItemListParameters(pstmt, itemList, editor),
+            rs -> rs.next() ? rs.getInt("order_item_id") : null,
+            itemList
+        );
+    }
+
+    /**
+     * 削除。
+     * @param ids
+     * @param editor
+     * @return 成功件数を返す。
+     */
+    public Integer deleteOrderItemByIds(String sql, List<Integer> ids, String editor) {
+
+        return sqlRepository.executeUpdate(
+            sql,
+            ps -> OrderItemParameterBinder.bindDeleteForIds(ps, ids, editor)
+        );
+        // return result; // 成功件数。0なら削除なし
+    }
+
+    /**
+     * CSVファイルをダウンロードする。
+     * @param ids
+     * @param editor
+     * @return Idsで選択したEntityリストを返す。
+     */
+    public List<OrderItemEntity> downloadCsvOrderItemByIds(String sql, List<Integer> ids, String editor) {
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> OrderItemParameterBinder.bindDownloadCsvForIds(ps, ids),
             OrderItemEntityMapper::map // ← ここで ResultSet を map
         );
     }
