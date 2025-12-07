@@ -30,6 +30,17 @@ public class OfficeListRepository {
         );
     }
 
+    // 全件取得
+    public List<OfficeListEntity> findAllOrderByKana() {
+        String sql = OfficeListSqlBuilder.buildFindAllOrderByKanaSql();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> OfficeListParameterBinder.bindFindAll(ps, null),
+            OfficeListEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+
     // コンボボックス用リスト取得
     public List<SimpleData> findAllComboOffice() {
         String sql = OfficeListSqlBuilder.buildFindAllComboOfficeSql();

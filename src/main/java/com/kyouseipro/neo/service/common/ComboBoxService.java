@@ -149,6 +149,10 @@ public class ComboBoxService {
         return officeListRepository.findAll();
     }
 
+    public List<OfficeListEntity> getOfficeListOrderByKana() {
+        return officeListRepository.findAllOrderByKana();
+    }
+
     public List<StaffListEntity> getSalesStaffList() {
         return staffListRepository.findBySalesStaff();
     }

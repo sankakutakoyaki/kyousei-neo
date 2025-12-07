@@ -44,7 +44,7 @@ public class OrderParameterBinder {
 
         for (OrderItemEntity orderItemEntity : o.getItem_list()) {
             OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, orderItemEntity, editor, index, true);
-            index = index + 8;
+            index = index + 19;
         }
     }
 
@@ -92,10 +92,10 @@ public class OrderParameterBinder {
                 // 更新か新規かで分岐
                 if (orderItemEntity.getOrder_item_id() > 0){
                     OrderItemParameterBinder.bindUpdateOrderItemParameters(pstmt, orderItemEntity, editor, index);
-                    index = index + 19;
+                    index = index + 20;
                 } else {
                     OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, orderItemEntity, editor, index, false);
-                    index = index + 18;
+                    index = index + 19;
                 }
             }
         }

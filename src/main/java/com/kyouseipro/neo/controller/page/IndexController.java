@@ -151,4 +151,29 @@ public class IndexController {
 		
         return mv;
     }
+
+	/**
+	 * リサイクル
+	 * @param mv
+	 * @return
+	 */
+	@GetMapping("/recycle")
+	@ResponseBody
+	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
+	public ModelAndView getRecycle(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+		mv.setViewName("layouts/main");
+		mv.addObject("title", "リサイクル");
+        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/menu :: recycleFragment");
+        mv.addObject("bodyFragmentName", "contents/index/recycle :: bodyFragment");
+        mv.addObject("insertCss", "/css/recycle/recycle.css");
+		// ユーザー名
+		String userName = principal.getAttribute("preferred_username");
+		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		mv.addObject("entity", entity);
+
+		historyService.saveHistory(userName, "recycle", "閲覧", 200, "");
+		
+        return mv;
+    }
 }

@@ -67,7 +67,7 @@ public class SalesPageController {
         // コンボボックスアイテム取得
         List<SimpleData> primeConstractorComboList = comboBoxService.getPrimeConstractorList();
         mv.addObject("primeConstractorComboList", primeConstractorComboList);
-        List<OfficeListEntity> officeList = comboBoxService.getOfficeList();
+        List<OfficeListEntity> officeList = comboBoxService.getOfficeListOrderByKana();
         mv.addObject("officeList", officeList);
         List<StaffListEntity> salesStaffList = comboBoxService.getSalesStaffList();
         mv.addObject("salesStaffList", salesStaffList);
@@ -85,7 +85,7 @@ public class SalesPageController {
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
 	public ModelAndView getGoods(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
-        mv.addObject("title", "商品");
+        mv.addObject("title", "入荷");
         mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
 		mv.addObject("sidebarFragmentName", "fragments/menu :: salesFragment");
         mv.addObject("bodyFragmentName", "contents/sales/goods :: bodyFragment");
@@ -98,9 +98,6 @@ public class SalesPageController {
 
         // // 初期化されたエンティティ
         mv.addObject("formEntity", new OrderItemEntity());
-        // mv.addObject("itemEntity", new OrderItemEntity());
-        // mv.addObject("staffEntity", new DeliveryStaffEntity());
-        // mv.addObject("workEntity", new WorkContentEntity());
 
         // 初期表示用受注リスト取得
         List<OrderItemEntity> origin = orderItemService.getBetweenOrderItemEntity(LocalDate.now(), LocalDate.now());
@@ -115,6 +112,8 @@ public class SalesPageController {
         mv.addObject("supplierComboList", supplierComboList);
         List<SimpleData> classificationComboList = comboBoxService.getItemClass();
         mv.addObject("classificationComboList", classificationComboList);
+        List<OfficeListEntity> officeList = comboBoxService.getOfficeListOrderByKana();
+        mv.addObject("officeList", officeList);
 
         mv.addObject("deleteCode", Enums.state.DELETE.getCode());
         mv.addObject("goodsCode", Enums.ItemClass.GOODS.getCode());

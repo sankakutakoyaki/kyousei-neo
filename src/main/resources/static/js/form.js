@@ -17,6 +17,22 @@ function createComboBox(selectArea, items) {
 }
 
 /**
+ * コンボボックスを作成する
+ * @param {*} selectArea 
+ * @param {*} items SimpleData
+ * @returns 
+ */
+function createComboBoxValueString(selectArea, items) {
+    deleteElements(selectArea);
+    if (selectArea == null) return;
+    items.forEach(function (item) {
+        if (item.number != null) {
+            selectArea.insertAdjacentHTML('beforeend', '<option value="' + item.number + '">' + item.text + '</option>');
+        }
+    })
+}
+
+/**
  * 先頭に空白をつけたコンボボックスを作成する
  * @param {*} selectArea 
  * @param {*} items SimpleData

@@ -13,6 +13,8 @@ public class OrderItemEntityMapper {
         entity.setOrder_id(rs.getInt("order_id"));
         entity.setCompany_id(rs.getInt("company_id"));
         entity.setCompany_name(rs.getString("company_name"));
+        entity.setOffice_id(rs.getInt("office_id"));
+        entity.setOffice_name(rs.getString("office_name"));
         entity.setDelivery_address(rs.getString("delivery_address"));
         entity.setArrival_date(rs.getDate("arrival_date").toLocalDate());
         entity.setInspector_id(rs.getInt("inspector_id"));

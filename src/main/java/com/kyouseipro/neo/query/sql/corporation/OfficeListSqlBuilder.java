@@ -14,6 +14,12 @@ public class OfficeListSqlBuilder {
             " WHERE NOT (o.state = ?);";
     }
 
+    public static String buildFindAllOrderByKanaSql() {
+        return
+            basicSelectString() +
+            " WHERE NOT (o.state = ?) ORDER BY name_kana;";
+    }
+
     public static String buildFindAllComboOfficeSql() {
         return "SELECT office_id as number, name as text FROM offices WHERE NOT (state = ?) ORDER BY name_kana;";
     }

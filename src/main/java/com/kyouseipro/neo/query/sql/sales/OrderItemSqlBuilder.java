@@ -7,7 +7,7 @@ public class OrderItemSqlBuilder {
     private static String buildLogTableSql(String rowTableName) {
         return
             "DECLARE " + rowTableName + " TABLE (" +
-            "  order_item_id INT, order_id INT, company_id INT, delivery_address NVARCHAR(255), arrival_date DATE," +
+            "  order_item_id INT, order_id INT, company_id INT, office_id INT, delivery_address NVARCHAR(255), arrival_date DATE," +
             "  inspector_id INT, shipping_company_id INT, document_number NVARCHAR(255)," +
             "  item_maker NVARCHAR(255), item_name NVARCHAR(255), item_model NVARCHAR(255), item_quantity INT, item_payment INT," +
             "  buyer_id INT, remarks NVARCHAR(255), classification INT," +
@@ -18,13 +18,13 @@ public class OrderItemSqlBuilder {
     private static String buildInsertLogSql(String rowTableName, String processName) {
         return
             "INSERT INTO order_items_log (" +
-            "  order_item_id, editor, process, log_date, order_id, company_id, delivery_address, arrival_date," +
+            "  order_item_id, editor, process, log_date, order_id, company_id, office_id, delivery_address, arrival_date," +
             "  inspector_id, shipping_company_id, document_number," +
             "  item_maker, item_name, item_model, item_quantity, item_payment," +
             "  buyer_id, remarks, classification," +
             "  version, state" +
             ") " +
-            "SELECT order_item_id, ?, '" + processName + "', CURRENT_TIMESTAMP, order_id, company_id, delivery_address, arrival_date," +
+            "SELECT order_item_id, ?, '" + processName + "', CURRENT_TIMESTAMP, order_id, company_id, office_id, delivery_address, arrival_date," +
             "  inspector_id, shipping_company_id, document_number," +
             "  item_maker, item_name, item_model, item_quantity, item_payment," +
             "  buyer_id, remarks, classification," +
@@ -34,7 +34,7 @@ public class OrderItemSqlBuilder {
 
     private static String buildOutputLogSql() {
         return
-            "OUTPUT INSERTED.order_item_id, INSERTED.order_id, INSERTED.company_id, INSERTED.delivery_address, INSERTED.arrival_date," +
+            "OUTPUT INSERTED.order_item_id, INSERTED.order_id, INSERTED.company_id, INSERTED.office_id, INSERTED.delivery_address, INSERTED.arrival_date," +
             "  INSERTED.inspector_id, INSERTED.shipping_company_id, INSERTED.document_number," +
             "  INSERTED.item_maker, INSERTED.item_name, INSERTED.item_model, INSERTED.item_quantity, INSERTED.item_payment," +
             "  INSERTED.buyer_id, INSERTED.remarks, INSERTED.classification," +
@@ -47,14 +47,14 @@ public class OrderItemSqlBuilder {
             buildLogTableSql(rowTableName) +
 
             "INSERT INTO order_items (" +
-            " order_id, company_id, delivery_address, arrival_date, inspector_id, shipping_company_id, document_number," +
+            " order_id, company_id, office_id, delivery_address, arrival_date, inspector_id, shipping_company_id, document_number," +
             " item_maker, item_name, item_model, item_quantity, item_payment, buyer_id, remarks, classification," +
             " version, state" +
             ") " +
 
             buildOutputLogSql() + "INTO " + rowTableName + " " +
 
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ? ,? ,? ,? ,? ,? ,? ,? ,? ,?); " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
             buildInsertLogSql(rowTableName, "INSERT") +
 
@@ -67,14 +67,14 @@ public class OrderItemSqlBuilder {
             buildLogTableSql(rowTableName) +
 
             "INSERT INTO order_items (" +
-            " order_id, company_id, delivery_address, arrival_date, inspector_id, shipping_company_id, document_number," +
+            " order_id, company_id, office_id, delivery_address, arrival_date, inspector_id, shipping_company_id, document_number," +
             " item_maker, item_name, item_model, item_quantity, item_payment, buyer_id, remarks, classification," +
             " version, state" +
             ") " +
 
             buildOutputLogSql() + "INTO " + rowTableName + " " +
 
-            "VALUES (@NEW_ID, ?, ?, ?, ?, ?, ?, ? ,? ,? ,? ,? ,? ,? ,? ,? ,?); " +
+            "VALUES (@NEW_ID, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
             buildInsertLogSql(rowTableName, "INSERT") +
 
@@ -87,7 +87,7 @@ public class OrderItemSqlBuilder {
             buildLogTableSql(rowTableName) +
 
             "UPDATE order_items SET " +
-            "  order_id=?, company_id=?, delivery_address=?, arrival_date=?, inspector_id=?, shipping_company_id=?, document_number=?," +
+            "  order_id=?, company_id=?, office_id=?, delivery_address=?, arrival_date=?, inspector_id=?, shipping_company_id=?, document_number=?," +
             "  item_maker=?, item_name=?, item_model=?, item_quantity=?, item_payment=?, buyer_id=?, remarks=?, classification=?," +
             "  version=?, state=? " +
             
@@ -135,7 +135,7 @@ public class OrderItemSqlBuilder {
 
     private static String baseSelectString() {
         return
-            "SELECT oi.order_item_id, oi.order_id, oi.company_id, c1.name as company_name, oi.delivery_address, oi.arrival_date," +
+            "SELECT oi.order_item_id, oi.order_id, oi.company_id, c1.name as company_name, oi.office_id, o.name as office_name, oi.delivery_address, oi.arrival_date," +
             " oi.inspector_id, e1.full_name as inspector_name, oi.shipping_company_id, c2.name as shipping_company_name, oi.document_number," +
             " oi.item_maker, oi.item_name, oi.item_model, oi.item_quantity, oi.item_payment," +
             " oi.buyer_id, e2.full_name as buyer_name, c3.name as buyer_company_name, oi.remarks, oi.classification," +
@@ -144,7 +144,8 @@ public class OrderItemSqlBuilder {
             " LEFT OUTER JOIN companies c2 ON c2.company_id = oi.shipping_company_id AND NOT (c2.state = ?)" +
             " LEFT OUTER JOIN employees e1 ON e1.employee_id = oi.inspector_id AND NOT (e1.state = ?)" +
             " LEFT OUTER JOIN employees e2 ON e2.employee_id = oi.buyer_id AND NOT (e2.state = ?)" +
-            " LEFT OUTER JOIN companies c3 ON c3.company_id = e2.company_id AND NOT (c3.state = ?)";
+            " LEFT OUTER JOIN companies c3 ON c3.company_id = e2.company_id AND NOT (c3.state = ?)" +
+            " LEFT OUTER JOIN offices o ON o.office_id = oi.office_id AND NOT (o.state = ?)";
     }
 
     public static String buildFindByIdSql() {

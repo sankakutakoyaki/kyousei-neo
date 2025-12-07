@@ -160,9 +160,10 @@
             const returnsCode = /*[[${returnsCode}]]*/;
             const companyComboList = /*[[${companyComboList}]]*/;
             const shippingCompanyComboList = /*[[${shippingCompanyComboList}]]*/;
-            const transportComboList = /*[[${transportComboList}]]*/;
+            // const transportComboList = /*[[${transportComboList}]]*/;
             const supplierComboList = /*[[${supplierComboList}]]*/;
             const classificationComboList = /*[[${classificationComboList}]]*/;
+            const officeList = /*[[${officeList}]]*/;
             let origin = /*[[${origin}]]*/; // 初期リスト記憶用
             let origin01 = [];
             let origin02 = [];
@@ -287,17 +288,17 @@
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.item_name ?? "") + '</span><br><span>' + (item.item_model ?? "") + '</span></td>');
                 // 数量
                 newRow.insertAdjacentHTML('beforeend', '<td name="quantity-cell" class="text-right"><span>' + (item.item_quantity ?? "0") + '</span></td>');
-                // 発荷主 お届け先
-                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.company_name ?? "") + '</span><br><span>' + (item.delivery_address ?? "") + '</span></td>');
-                // 備考
-                newRow.insertAdjacentHTML('beforeend', '<td name="remarks-cell"><span>' + (item.remarks ?? "") + '</span></td>');
+                // 発荷主 支店
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.company_name ?? "") + '</span><br><span>' + (item.office_name ?? "") + '</span></td>');
+                // 備考 お届け先
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.remarks ?? "") + '</span><br><span>' + (item.delivery_address ?? "") + '</span></td>');
             }
             
             function createTab02Row(newRow, item) {
                 // 入荷日 検品者
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.arrival_date == '9999-12-31' ? "": item.arrival_date) + '</span><br><span>' + (item.inspector_name ?? "") + '</span></td>');
-                // 購入先 伝票番号
-                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.company_name ?? "") + '</span><br><span>' + (item.document_number ?? "") + '</span></td>');
+                // 仕入先 支店
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.company_name ?? "") + '</span><br><span>' + (item.office_name ?? "") + '</span></td>');
                 // 購入者
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.buyer_company_name ?? "") + '</span><br><span>' + (item.buyer_name ?? "") + '</span></td>');
                 // 商品名 型式
@@ -306,8 +307,8 @@
                 newRow.insertAdjacentHTML('beforeend', '<td class="text-right"><span>' + (item.item_quantity ?? "0") + '</span></td>');
                 // 単価
                 newRow.insertAdjacentHTML('beforeend', '<td class="text-right"><span>' + (item.item_payment ?? "0") + '</span></td>');
-                // 備考
-                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.remarks ?? "") + '</span></td>');
+                // 備考 伝票番号
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.remarks ?? "") + '</span><br><span>' + (item.document_number ?? "") + '</span></td>');
             }
 
             function createTab03Row(newRow, item) {
@@ -318,11 +319,11 @@
                 // 商品名 型式
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.item_name ?? "") + '</span><br><span>' + (item.item_model ?? "") + '</span></td>');
                 // 数量
-                newRow.insertAdjacentHTML('beforeend', '<td name="quantity-cell" class="text-right"><span>' + (item.item_quantity ?? "") + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td class="text-right"><span>' + (item.item_quantity ?? "") + '</span></td>');
                 // 発荷主
-                newRow.insertAdjacentHTML('beforeend', '<td name="company-cell"><span>' + (item.company_name ?? "") + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.company_name ?? "") + '</span>><br><span>' + (item.office_name ?? "") + '</span></td>');
                 // 備考
-                newRow.insertAdjacentHTML('beforeend', '<td name="remarks-cell"><span>' + (item.remarks ?? "") + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.remarks ?? "") + '</span></td>');
             }
 
             function createTab04Row(newRow, item) {
@@ -333,11 +334,11 @@
                 // 商品名 型式
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.item_name ?? "") + '</span><br><span>' + (item.item_model ?? "") + '</span></td>');
                 // 数量
-                newRow.insertAdjacentHTML('beforeend', '<td name="quantity-cell" class="text-right"><span>' + (item.item_quantity ?? "") + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td class="text-right"><span>' + (item.item_quantity ?? "") + '</span></td>');
                 // 取引先
-                newRow.insertAdjacentHTML('beforeend', '<td name="company-cell"><span>' + (item.company_name ?? "") + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.company_name ?? "") + '</span><br><span>' + (item.office_name ?? "") + '</span></td>');
                 // 備考
-                newRow.insertAdjacentHTML('beforeend', '<td name="remarks-cell"><span>' + (item.remarks ?? "") + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.remarks ?? "") + '</span></td>');
             }
 
             function createTable01Row(newRow, item) {
@@ -560,9 +561,11 @@
                     form.querySelector('[name="remarks"]').value = entity.remarks;
                 }
                 
+                let selectId = 0;  
                 // 荷主コンボボックス
                 if (form.querySelector('select[name="company"]') != null) {
                     const companyArea = form.querySelector('select[name="company"]');
+                    selectId = companyArea.value;
                     switch(tab) {
                         case "01":
                             createComboBoxWithTop(companyArea, companyComboList, "");
@@ -579,20 +582,35 @@
                         default:
                             break;
                     }
-                    
-                    setComboboxSelected(companyArea, entity.company_id);                    
+                    createComboBoxWithTop(companyArea, companyComboList, "");
+                    setComboboxSelected(companyArea, entity.company_id);
+                    companyArea.onchange = function() { createOfficeComboBox(form) };
+                }
+
+                // 支店コンボボックス
+                if (form.querySelector('select[name="office"]') != null) {
+                    const officeArea = form.querySelector('select[name="office"]');
+                    const officeComboList = officeList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
+                    createComboBox(officeArea, officeComboList);
                 }
 
                 // 運送会社コンボボックス
-                if (form.querySelector('select[name="shipping-company"]') != null) {
-                    const shippingCompanyArea = form.querySelector('select[name="shipping-company"]');
-                    createComboBoxWithTop(shippingCompanyArea, shippingCompanyComboList, "");
-                    setComboboxSelected(shippingCompanyArea, entity.shipping_company_id);                    
-                }
+                const shippingCompanyArea = form.querySelector('select[name="shipping-company"]');
+                createComboBoxWithTop(shippingCompanyArea, shippingCompanyComboList, "");
+                setComboboxSelected(shippingCompanyArea, entity.shipping_company_id);
 
                 form.querySelector('[name="inspector-id"]').focus();
             }
 
+            // 選択した会社の支店をコンボボックスに登録する
+            function createOfficeComboBox(form) {
+                const companyArea = form.querySelector('select[name="company"]');
+                const officeArea = form.querySelector('select[name="office"]');
+
+                const selectId = companyArea.value;  
+                const officeComboList = officeList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
+                createComboBoxWithTop(officeArea, officeComboList, "");
+            }
             // //商品
             // function setForm01Content(entity) {
             //     itemList = [];
@@ -981,6 +999,13 @@
                     const selectCompany = form.querySelector('[name="company"]');
                     const companyName = selectCompany.options[selectCompany.selectedIndex].text;
                     formdata.company_name = companyName;
+                }
+
+                if (formData.get('office') != null) {
+                    formdata.office_id = formData.get('office');
+                    const selectOffice = form.querySelector('[name="office"]');
+                    const officeName = selectOffice.options[selectOffice.selectedIndex].text;
+                    formdata.office_name = officeName;
                 }
 
                 if (formData.get('delivery-address') != null) {

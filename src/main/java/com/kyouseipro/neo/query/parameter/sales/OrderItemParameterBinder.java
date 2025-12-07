@@ -19,6 +19,7 @@ public class OrderItemParameterBinder {
             pstmt.setInt(index++, o.getOrder_id());
         }
         pstmt.setInt(index++, o.getCompany_id());
+        pstmt.setInt(index++, o.getOffice_id());
         pstmt.setString(index++, o.getDelivery_address());
         if (o.getArrival_date() != null) {
             pstmt.setDate(index++, java.sql.Date.valueOf(o.getArrival_date()));
@@ -46,6 +47,7 @@ public class OrderItemParameterBinder {
     public static void bindUpdateOrderItemParameters(PreparedStatement pstmt, OrderItemEntity o, String editor, int index) throws SQLException {
         pstmt.setInt(index++, o.getOrder_id());
         pstmt.setInt(index++, o.getCompany_id());
+        pstmt.setInt(index++, o.getOffice_id());
         pstmt.setString(index++, o.getDelivery_address());
         if (o.getArrival_date() != null) {
             pstmt.setDate(index++, java.sql.Date.valueOf(o.getArrival_date()));
@@ -77,6 +79,7 @@ public class OrderItemParameterBinder {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, orderItemId);
         ps.setInt(index++, Enums.state.DELETE.getCode());
     }
@@ -93,6 +96,7 @@ public class OrderItemParameterBinder {
 
     public static void bindFindAllByOrderId(PreparedStatement ps, int id) throws SQLException {
         int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -117,6 +121,7 @@ public class OrderItemParameterBinder {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setString(index++, start.toString());
         ps.setString(index++, end.toString());
         ps.setString(index++, start.toString());
@@ -134,10 +139,10 @@ public class OrderItemParameterBinder {
                 // 更新か新規かで分岐
                 if (entity.getOrder_item_id() > 0){
                     OrderItemParameterBinder.bindUpdateOrderItemParameters(pstmt, entity, editor, index);
-                    index = index + 19;
+                    index = index + 20;
                 } else {
                     OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, entity, editor, index, false);
-                    index = index + 18;
+                    index = index + 19;
                 }
             }
         }
@@ -155,6 +160,7 @@ public class OrderItemParameterBinder {
 
     public static void bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
