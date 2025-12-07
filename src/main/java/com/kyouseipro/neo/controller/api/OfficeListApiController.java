@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
-import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.corporation.OfficeListService;
 

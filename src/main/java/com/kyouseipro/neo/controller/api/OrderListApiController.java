@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.kyouseipro.neo.entity.sales.OrderEntity;
 import com.kyouseipro.neo.entity.sales.OrderListEntity;
 import com.kyouseipro.neo.service.sales.OrderListService;
 
