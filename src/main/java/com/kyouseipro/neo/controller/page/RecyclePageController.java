@@ -1,5 +1,8 @@
 package com.kyouseipro.neo.controller.page;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -9,9 +12,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
+import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
+import com.kyouseipro.neo.entity.recycle.RecycleEntity;
+import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
+import com.kyouseipro.neo.service.recycle.RecycleService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +27,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RecyclePageController {
     private final EmployeeService employeeService;
+    private final RecycleService recycleService;
     private final HistoryService historyService;
+    private final ComboBoxService comboBoxService;
 
 	@GetMapping("/recycle/regist")
 	@ResponseBody
@@ -37,21 +47,20 @@ public class RecyclePageController {
 		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
 		mv.addObject("user", user);
 
-        // // 初期化されたエンティティ
-        // mv.addObject("formEntity", new OrderEntity());
+        // 初期化されたエンティティ
+        mv.addObject("formEntity", new RecycleEntity());
         // mv.addObject("itemEntity", new OrderItemEntity());
         // mv.addObject("staffEntity", new DeliveryStaffEntity());
         // mv.addObject("workEntity", new WorkContentEntity());
 
-        // // 初期表示用受注リスト取得
-        // List<OrderListEntity> origin = orderListService.getBetweenOrderEntity(LocalDate.now(), LocalDate.now());
-        // mv.addObject("origin", origin);
-
-        // // コンボボックスアイテム取得
-        // List<SimpleData> primeConstractorComboList = comboBoxService.getPrimeConstractorList();
-        // mv.addObject("primeConstractorComboList", primeConstractorComboList);
-        // List<OfficeListEntity> officeList = comboBoxService.getOfficeList();
-        // mv.addObject("officeList", officeList);
+        // 初期表示用リスト取得
+        List<RecycleEntity> origin = recycleService.getBetweenRecycleEntity(LocalDate.now(), LocalDate.now(), "regist");
+        mv.addObject("origin", origin);
+        // コンボボックスアイテム取得
+        List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorList();
+        mv.addObject("companyComboList", companyComboList);
+        List<OfficeListEntity> officeList = comboBoxService.getOfficeList();
+        mv.addObject("officeList", officeList);
         // List<StaffListEntity> salesStaffList = comboBoxService.getSalesStaffList();
         // mv.addObject("salesStaffList", salesStaffList);
 

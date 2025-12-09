@@ -12,8 +12,10 @@ public class RecycleEntity implements CsvExportable {
     private int recycle_id;
     private String number;//　お問合せ管理票番号
     private int maker_id;//　メーカー
+    private int maker_code;
     private String maker_name;
     private int item_id;//　品目・料金区分
+    private int item_code;
     private String item_name;
     private LocalDate use_date;//　使用日
     private LocalDate delivery_date;//　引渡日
@@ -31,16 +33,16 @@ public class RecycleEntity implements CsvExportable {
 
     // CSVヘッダーを返す static メソッド（必須ではないですが慣例的に付ける）
     public static String getCsvHeader() {
-        return "ID,";
+        return "ID,お問合せ管理票番号,コード,製造業者等名,コード,品目・料金区分,使用日,引渡日,発送日,ロス処理日,小売業者,支店,リサイクル料,処分場";
     }
 
     @Override
     public String toCsvRow() {
         return Utilities.escapeCsv(String.valueOf(recycle_id)) + "," +
                Utilities.escapeCsv(number) + "," +
-               Utilities.escapeCsv(String.valueOf(maker_id)) + "," +
+               Utilities.escapeCsv(String.valueOf(maker_code)) + "," +
                Utilities.escapeCsv(maker_name) + "," +
-               Utilities.escapeCsv(String.valueOf(item_id)) + "," +
+               Utilities.escapeCsv(String.valueOf(item_code)) + "," +
                Utilities.escapeCsv(item_name) + "," + 
                Utilities.escapeCsv(String.valueOf(use_date)) + "," +
                Utilities.escapeCsv(String.valueOf(delivery_date)) + "," +
