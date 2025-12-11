@@ -26,14 +26,19 @@ public class RecycleItemSqlBuilder {
 
     private static String baseSelectString() {
         return
-            "SELECT ri.recycle_item_id, ri.code, ri.name, ri,version, ri.state FROM recycle_item ri";
+            "SELECT ri.recycle_item_id, ri.code, ri.name, ri.version, ri.state FROM recycle_items ri";
     }
 
     public static String buildFindByIdSql() {
         return 
             baseSelectString() + " WHERE ri.recycle_item_id = ? AND NOT (ri.state = ?)";
     }
-    
+
+    public static String buildFindByCodeSql() {
+        return 
+            baseSelectString() + " WHERE ri.code = ? AND NOT (ri.state = ?)";
+    }
+
     public static String buildDownloadCsvRecycleItemForIdsSql(int count) {
         String placeholders = Utilities.generatePlaceholders(count);
         return 

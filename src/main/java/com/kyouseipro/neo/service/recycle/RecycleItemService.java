@@ -4,11 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.recycle.RecycleItemEntity;
-import com.kyouseipro.neo.query.sql.recycle.RecycleItemSqlBuilder;
 import com.kyouseipro.neo.repository.recycle.RecycleItemRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,9 +23,22 @@ public class RecycleItemService {
      * @param id リサイクルID
      * @return RecycleEntity または null
      */
-    public RecycleItemEntity getRecycleItemById(String sql, int id) {
+    public RecycleItemEntity getRecycleItemById(int id) {
         // String sql = OrderSqlBuilder.buildFindByIdSql();
-        return recycleItemRepository.findById(sql, id);
+        return recycleItemRepository.findById(id);
+    }
+
+    /**
+     * 指定されたCodeのリサイクル情報を取得します。
+     * 論理削除されている場合は null を返します。
+     *
+     * @param code
+     * @return RecycleEntity または null
+     */
+    public RecycleItemEntity getRecycleItemByCode(int code) {
+        // String sql = OrderSqlBuilder.buildFindByIdSql();
+        return recycleItemRepository.findByCode(code);
+
     }
 
     /**
@@ -40,9 +51,9 @@ public class RecycleItemService {
     */
     public Integer saveRecycleItem(RecycleItemEntity entity) {
         if (entity.getRecycle_item_id() > 0) {
-            return recycleItemRepository.updateRecycleItem(RecycleItemSqlBuilder.buildUpdateRecycleItemSql(), entity);
+            return recycleItemRepository.updateRecycleItem(entity);
         } else {
-            return recycleItemRepository.insertRecycleItem(RecycleItemSqlBuilder.buildInsertRecycleItemSql(), entity);
+            return recycleItemRepository.insertRecycleItem(entity);
         }
     }
 
@@ -52,9 +63,7 @@ public class RecycleItemService {
      * @return
      */
     public Integer deleteRecycleItemByIds(List<SimpleData> list) {
-        List<Integer> recycleItemIds = Utilities.createSequenceByIds(list);
-        String sql = RecycleItemSqlBuilder.buildDeleteRecycleItemForIdsSql(recycleItemIds.size());
-        return recycleItemRepository.deleteRecycleItemByIds(sql, recycleItemIds);
+        return recycleItemRepository.deleteRecycleItemByIds(list);
     }
 
     /**
@@ -63,9 +72,7 @@ public class RecycleItemService {
      * @return
      */
     public String downloadCsvRecycleItemByIds(List<SimpleData> list) {
-        List<Integer> recycleItemIds = Utilities.createSequenceByIds(list);
-        String sql = RecycleItemSqlBuilder.buildDownloadCsvRecycleItemForIdsSql(recycleItemIds.size());
-        List<RecycleItemEntity> recycles = recycleItemRepository.downloadCsvRecycleItemByIds(sql, recycleItemIds);
+        List<RecycleItemEntity> recycles = recycleItemRepository.downloadCsvRecycleItemByIds(list);
         return CsvExporter.export(recycles, RecycleItemEntity.class);
     }
 }

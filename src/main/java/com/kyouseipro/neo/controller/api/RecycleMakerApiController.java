@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.recycle.RecycleMakerEntity;
-import com.kyouseipro.neo.query.sql.recycle.RecycleMakerSqlBuilder;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.recycle.RecycleMakerService;
 
@@ -32,9 +31,29 @@ public class RecycleMakerApiController {
      */
     @PostMapping("/recycle/maker/get/id")
 	@ResponseBody
-    public RecycleMakerEntity getEntityById(@RequestParam int id) {
-        String sql = RecycleMakerSqlBuilder.buildFindByIdSql();
-        return recycleMakerService.getRecycleMakerById(sql, id);
+    public ResponseEntity getEntityById(@RequestParam int id) {
+        RecycleMakerEntity entity = recycleMakerService.getRecycleMakerById(id);
+        if (entity != null) {
+            return ResponseEntity.ok(entity);
+        } else {
+            return ResponseEntity.ofNullable(null);
+        }
+    }
+
+    /**
+     * CodeからEntityを取得する
+     * @param ID
+     * @return 
+     */
+    @PostMapping("/recycle/maker/get/code")
+	@ResponseBody
+    public ResponseEntity getEntityByCode(@RequestParam int code) {
+        RecycleMakerEntity entity = recycleMakerService.getRecycleMakerByCode(code);
+        if (entity != null) {
+            return ResponseEntity.ok(entity);
+        } else {
+            return ResponseEntity.ofNullable(null);
+        }
     }
 
     /**

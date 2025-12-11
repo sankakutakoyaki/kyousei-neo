@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.sales.OrderItemEntity;
-import com.kyouseipro.neo.query.sql.sales.OrderItemSqlBuilder;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.sales.OrderItemService;
 
@@ -38,8 +37,7 @@ public class OrderItemApiController {
     @PostMapping("/order/item/get/id")
 	@ResponseBody
     public OrderItemEntity getEntityById(@RequestParam int id) {
-        String sql = OrderItemSqlBuilder.buildFindByIdSql();
-        return orderItemService.getOrderItemById(sql, id);
+        return orderItemService.getOrderItemById(id);
     }
 
     /**

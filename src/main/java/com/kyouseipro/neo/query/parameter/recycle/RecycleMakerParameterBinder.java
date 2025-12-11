@@ -33,6 +33,12 @@ public class RecycleMakerParameterBinder {
         ps.setInt(index++, Enums.state.DELETE.getCode());
     }
 
+    public static void bindFindByCode(PreparedStatement ps, Integer code) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, code);
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+    }
+
     public static void bindDeleteRecycleMakerParameters(PreparedStatement ps, int id) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());

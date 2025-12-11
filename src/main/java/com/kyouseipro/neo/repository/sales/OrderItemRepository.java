@@ -5,10 +5,14 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.common.Utilities;
+import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.sales.OrderItemEntity;
 import com.kyouseipro.neo.mapper.sales.OrderItemEntityMapper;
 import com.kyouseipro.neo.query.parameter.sales.OrderItemParameterBinder;
 import com.kyouseipro.neo.query.sql.sales.OrderItemSqlBuilder;
+import com.kyouseipro.neo.query.sql.sales.OrderSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +27,9 @@ public class OrderItemRepository {
      * @param orderId
      * @return IDから取得したEntityをかえす。
      */
-    public OrderItemEntity findById(String sql, int orderItemId) {
+    public OrderItemEntity findById(int orderItemId) {
+        String sql = OrderSqlBuilder.buildFindByIdSql();
+
         return sqlRepository.execute(
             sql,
             (pstmt, comp) -> OrderItemParameterBinder.bindFindById(pstmt, comp),
@@ -70,7 +76,21 @@ public class OrderItemRepository {
      * @param editor
      * @return 新規IDを返す。
      */
-    public Integer saveOrderItemList(String sql, List<OrderItemEntity> itemList, String editor) {
+    public Integer saveOrderItemList(List<OrderItemEntity> itemList, String editor) {
+        String sql = "";
+        int index = 1;
+
+        for (OrderItemEntity entity : itemList) {
+            if (entity.getState() == Enums.state.DELETE.getCode()) {
+                sql += OrderItemSqlBuilder.buildDeleteOrderItemSql(index++);
+            } else {
+                if (entity.getOrder_item_id() > 0) {
+                    sql += OrderItemSqlBuilder.buildUpdateOrderItemSql(index++);
+                } else {
+                    sql += OrderItemSqlBuilder.buildInsertOrderItemSql(index++);
+                }
+            }
+        }
 
         return sqlRepository.execute(
             sql,
@@ -86,11 +106,13 @@ public class OrderItemRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public Integer deleteOrderItemByIds(String sql, List<Integer> ids, String editor) {
+    public Integer deleteOrderItemByIds(List<SimpleData> ids, String editor) {
+        List<Integer> orderItemIds = Utilities.createSequenceByIds(ids);
+        String sql = OrderItemSqlBuilder.buildDeleteOrderItemForIdsSql(orderItemIds.size());
 
         return sqlRepository.executeUpdate(
             sql,
-            ps -> OrderItemParameterBinder.bindDeleteForIds(ps, ids, editor)
+            ps -> OrderItemParameterBinder.bindDeleteForIds(ps, orderItemIds, editor)
         );
         // return result; // 成功件数。0なら削除なし
     }
@@ -101,11 +123,13 @@ public class OrderItemRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<OrderItemEntity> downloadCsvOrderItemByIds(String sql, List<Integer> ids, String editor) {
+    public List<OrderItemEntity> downloadCsvOrderItemByIds(List<SimpleData> ids, String editor) {
+        List<Integer> orderIds = Utilities.createSequenceByIds(ids);
+        String sql = OrderItemSqlBuilder.buildDownloadCsvOrderItemForIdsSql(orderIds.size());
 
         return sqlRepository.findAll(
             sql,
-            ps -> OrderItemParameterBinder.bindDownloadCsvForIds(ps, ids),
+            ps -> OrderItemParameterBinder.bindDownloadCsvForIds(ps, orderIds),
             OrderItemEntityMapper::map // ← ここで ResultSet を map
         );
     }

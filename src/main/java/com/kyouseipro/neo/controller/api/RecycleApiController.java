@@ -1,5 +1,7 @@
 package com.kyouseipro.neo.controller.api;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
-import com.kyouseipro.neo.query.sql.recycle.RecycleSqlBuilder;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.recycle.RecycleService;
 
@@ -30,6 +31,7 @@ public class RecycleApiController {
     private final RecycleService recycleService;
     private final HistoryService historyService;
     private final ObjectMapper objectMapper;
+
     /**
      * IDからEntityを取得する
      * @param ID
@@ -37,9 +39,30 @@ public class RecycleApiController {
      */
     @PostMapping("/recycle/get/id")
 	@ResponseBody
-    public RecycleEntity getEntityById(@RequestParam int id) {
-        String sql = RecycleSqlBuilder.buildFindByIdSql();
-        return recycleService.getRecycleById(sql, id);
+    public ResponseEntity getEntityById(@RequestParam int id) {
+        RecycleEntity entity = recycleService.getRecycleById(id);
+        if (entity != null) {
+            return ResponseEntity.ok(entity);
+        } else {
+            return ResponseEntity.ofNullable(null);
+        }
+    }
+
+        
+    /**
+     * NumberからEntityを取得する
+     * @param ID
+     * @return 
+     */
+    @PostMapping("/recycle/exists/number")
+	@ResponseBody
+    public ResponseEntity getEntityByNumber(@RequestParam String number) {
+        RecycleEntity entity = recycleService.existsRecycleByNumber(number);
+        if (entity != null) {
+            return ResponseEntity.ok(entity);
+        } else {
+            return ResponseEntity.ofNullable(null);
+        }
     }
 
     /**

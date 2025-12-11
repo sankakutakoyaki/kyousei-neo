@@ -9,8 +9,9 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
 
 public class RecycleParameterBinder {
-    public static void bindInsertRecycleParameters(PreparedStatement pstmt, RecycleEntity r, String editor, int index, boolean isNew) throws SQLException {
+    public static void bindInsertRecycleParameters(PreparedStatement pstmt, RecycleEntity r, String editor, int index) throws SQLException {
         pstmt.setString(index++, r.getNumber());
+        pstmt.setString(index++, r.getMolding_number());
         pstmt.setInt(index++, r.getMaker_id());
         pstmt.setInt(index++, r.getItem_id());
         if (r.getUse_date() != null) {
@@ -35,7 +36,7 @@ public class RecycleParameterBinder {
         }
         pstmt.setInt(index++, r.getCompany_id());
         pstmt.setInt(index++, r.getOffice_id());
-        pstmt.setInt(index++, r.getRecycle_fee());
+        pstmt.setInt(index++, r.getRecycling_fee());
         pstmt.setInt(index++, r.getDisposal_site_id());
 
         pstmt.setInt(index++, r.getVersion());
@@ -46,6 +47,7 @@ public class RecycleParameterBinder {
 
     public static void bindUpdateRecycleParameters(PreparedStatement pstmt, RecycleEntity r, String editor, int index) throws SQLException {
         pstmt.setString(index++, r.getNumber());
+        pstmt.setString(index++, r.getMolding_number());
         pstmt.setInt(index++, r.getMaker_id());
         pstmt.setInt(index++, r.getItem_id());
         if (r.getUse_date() != null) {
@@ -70,12 +72,13 @@ public class RecycleParameterBinder {
         }
         pstmt.setInt(index++, r.getCompany_id());
         pstmt.setInt(index++, r.getOffice_id());
-        pstmt.setInt(index++, r.getRecycle_fee());
+        pstmt.setInt(index++, r.getRecycling_fee());
         pstmt.setInt(index++, r.getDisposal_site_id());
 
         pstmt.setInt(index++, r.getVersion());
         pstmt.setInt(index++, r.getState());
 
+        pstmt.setInt(index++, r.getRecycle_id());
         pstmt.setString(index++, editor);
     }
 
@@ -97,6 +100,13 @@ public class RecycleParameterBinder {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setString(index++, number);
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+    }
+
+
+    public static void bindExistsByNumber(PreparedStatement ps, String number) throws SQLException {
+        int index = 1;
         ps.setString(index++, number);
         ps.setInt(index++, Enums.state.DELETE.getCode());
     }
@@ -124,20 +134,20 @@ public class RecycleParameterBinder {
     public static void bindSaveRecycleListParameters(PreparedStatement pstmt, List<RecycleEntity> list, String editor) throws SQLException {
         int index = 1;
         for (RecycleEntity entity : list) {
-            // 削除の場合
-            if (entity.getState() == Enums.state.DELETE.getCode()) {
-                RecycleParameterBinder.bindDeleteRecycleParameters(pstmt, entity.getRecycle_id(), editor, index);
-                index = index + 3;
-            } else {
+            // // 削除の場合
+            // if (entity.getState() == Enums.state.DELETE.getCode()) {
+            //     RecycleParameterBinder.bindDeleteRecycleParameters(pstmt, entity.getRecycle_id(), editor, index);
+            //     index = index + 3;
+            // } else {
                 // 更新か新規かで分岐
                 if (entity.getRecycle_id() > 0){
                     RecycleParameterBinder.bindUpdateRecycleParameters(pstmt, entity, editor, index);
-                    index = index + 14;
+                    index = index + 16;
                 } else {
-                    RecycleParameterBinder.bindInsertRecycleParameters(pstmt, entity, editor, index, false);
-                    index = index + 13;
+                    RecycleParameterBinder.bindInsertRecycleParameters(pstmt, entity, editor, index);
+                    index = index + 15;
                 }
-            }
+            // }
         }
     }
 

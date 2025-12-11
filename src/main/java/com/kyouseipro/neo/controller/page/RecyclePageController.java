@@ -54,7 +54,7 @@ public class RecyclePageController {
         // mv.addObject("workEntity", new WorkContentEntity());
 
         // 初期表示用リスト取得
-        List<RecycleEntity> origin = recycleService.getBetweenRecycleEntity(LocalDate.now(), LocalDate.now(), "regist");
+        List<RecycleEntity> origin = recycleService.getBetweenRecycleEntity(LocalDate.now(), LocalDate.now(), "delivery");
         mv.addObject("origin", origin);
         // コンボボックスアイテム取得
         List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorList();

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.recycle.RecycleItemEntity;
-import com.kyouseipro.neo.query.sql.recycle.RecycleItemSqlBuilder;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.recycle.RecycleItemService;
 
@@ -32,9 +31,31 @@ public class RecycleItemApiController {
      */
     @PostMapping("/recycle/item/get/id")
 	@ResponseBody
-    public RecycleItemEntity getEntityById(@RequestParam int id) {
-        String sql = RecycleItemSqlBuilder.buildFindByIdSql();
-        return recycleItemService.getRecycleItemById(sql, id);
+    public ResponseEntity getEntityById(@RequestParam int id) {
+        // return recycleItemService.getRecycleItemById(sql, id);
+        RecycleItemEntity entity = recycleItemService.getRecycleItemById(id);
+        if (entity != null) {
+            return ResponseEntity.ok(entity);
+        } else {
+            return ResponseEntity.ofNullable(null);
+        }
+    }
+
+    /**
+     * CodeからEntityを取得する
+     * @param ID
+     * @return 
+     */
+    @PostMapping("/recycle/item/get/code")
+	@ResponseBody
+    public ResponseEntity getEntityByCode(@RequestParam int code) {
+        // return recycleItemService.getRecycleItemByCode(sql, code);
+        RecycleItemEntity entity = recycleItemService.getRecycleItemByCode(code);
+        if (entity != null) {
+            return ResponseEntity.ok(entity);
+        } else {
+            return ResponseEntity.ofNullable(null);
+        }
     }
 
     /**

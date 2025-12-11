@@ -95,18 +95,19 @@ async function getAddress(event, elmId, targetId) {
         const data = "postal_code=" + encodeURIComponent(code);
         const resultResponse = await postFetch('/address/get/postalcode', data, token, 'application/x-www-form-urlencoded');
         const result = await resultResponse.json();
-        // 定型に修正した郵便番号を郵便番号入力ボックスに代入
-        const targetElm = document.getElementById(targetId);
-        sourceElm.value = result.postal_code;
-        // targetElm.focus();
-        // 検索結果によって処理を分岐
-        if (result.address_id > 0) {
-            targetElm.value = result.prefecture + result.city + result.town;
-            targetElm.setSelectionRange(targetElm.value.length, targetElm.value.length);
-        } else {
-            targetElm.value = "";
+        if (resultResponse.ok) {
+            // 定型に修正した郵便番号を郵便番号入力ボックスに代入
+            const targetElm = document.getElementById(targetId);
+            sourceElm.value = result.postal_code;
+            // targetElm.focus();
+            // 検索結果によって処理を分岐
+            if (result.address_id > 0) {
+                targetElm.value = result.prefecture + result.city + result.town;
+                targetElm.setSelectionRange(targetElm.value.length, targetElm.value.length);
+            } else {
+                targetElm.value = "";
+            }
         }
-        
     }
     // }
 }
@@ -132,5 +133,49 @@ async function getEmployeeByCode(code) {
     const url = '/employee/get/id';
     const contentType = 'application/x-www-form-urlencoded';
     const resultResponse = await postFetch(url, data, token, contentType);
-    return await resultResponse.json();
+    if (resultResponse.ok) {
+        return await resultResponse.json();
+    } else {
+        return null;
+    }
+}
+
+// コードからrecycleを取得
+async function existsRecycleByNumber(number) {
+    const data = "number=" + encodeURIComponent(number);
+    const url = '/recycle/exists/number';
+    const contentType = 'application/x-www-form-urlencoded';
+    const resultResponse = await postFetch(url, data, token, contentType);
+    if (resultResponse.ok) {
+        return await resultResponse.json();
+    } else {
+        return null;
+    }
+}
+
+// コードからrecycle_makerを取得
+async function getMakerByCode(code) {
+    const data = "code=" + encodeURIComponent(parseInt(code));
+    const url = '/recycle/maker/get/code';
+    const contentType = 'application/x-www-form-urlencoded';
+    const resultResponse = await postFetch(url, data, token, contentType);
+    if (resultResponse.ok) {
+        return await resultResponse.json();
+    } else {
+        return null;
+    }
+}
+
+
+// コードからrecycle_itemを取得
+async function getItemByCode(code) {
+    const data = "code=" + encodeURIComponent(parseInt(code));
+    const url = '/recycle/item/get/code';
+    const contentType = 'application/x-www-form-urlencoded';
+    const resultResponse = await postFetch(url, data, token, contentType);
+    if (resultResponse.ok) {
+        return await resultResponse.json();
+    } else {
+        return null;
+    }
 }

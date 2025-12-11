@@ -60,17 +60,41 @@
 
     <form id="form-01" class="dialog-content" th:fragment="form01Fragment()">
         <div class="table-area">
+            <input id="recycle-id11" name="recycle-id" type="hidden" value="">
+            <input id="version11" name="version" type="hidden" value="">
+            <input id="maker-id11" name="maker-id" type="hidden" value="">
+            <input id="item-id11" name="item-id" type="hidden" value="">
+            <input id="recycling-fee11" name="recycling-fee" type="hidden" value="">
+            <input id="molding-number11" name="molding-number" type="hidden" value="">
+
+            <div class="flex-area">
+                <div class="form-parts">
+                    <label>小売業者</label>
+                    <select tabindex="11" id="company11" name="company"
+                        class="normal-select"></select>
+                </div>
+                <div class="form-parts">
+                    <label></label>
+                    <select tabindex="12" id="office11" name="office"
+                        class="normal-select"></select>
+                </div>
+            </div>
             <div class="flex-area">
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
-                    <input tabindex="11" id="number11" name="number" class="normal-input" type="text"
+                    <input tabindex="13" id="number11" name="number" class="normal-input" type="text"
                         value="" onfocus="this.select();">
+                </div>
+                <div class="form-parts">
+                    <label>使用日</label>
+                    <input tabindex="14" id="use-date11" name="use-date" class="normal-input" type="date" value=""
+                        onfocus="this.select();">
                 </div>
             </div>
             <div class="flex-area">
                 <div class="form-parts">
                     <label>製造業者等名</label>
-                    <input tabindex="12" id="maker-code11" name="maker-code" class="normal-input" type="text"
+                    <input tabindex="15" id="maker-code11" name="maker-code" class="normal-input" type="text"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -79,13 +103,8 @@
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
-                    <label></label>
-                    <input id="maker-id11" name="maker-id" class="normal-input" type="hidden" readonly
-                        value="" onfocus="this.select();">
-                </div>
-                <div class="form-parts">
                     <label>品目・料金区分</label>
-                    <input tabindex="13" id="item-code11" name="item-code" class="normal-input" type="text"
+                    <input tabindex="16" id="item-code11" name="item-code" class="normal-input" type="text"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -95,36 +114,8 @@
                 </div>
                 <div class="form-parts">
                     <label></label>
-                    <input id="item-id11" name="item-id" class="normal-input" type="hidden" readonly
-                        value="" onfocus="this.select();">
-                </div>
-                <div class="form-parts">
-                    <label>リサイクル料</label>
-                    <input tabindex="14" id="recycling-fee11" name="recycling-fee" class="normal-input text-right"
-                        type="text" value="" onfocus="this.select();">
-                </div>
-            </div>
-            <div class="flex-area">
-                <div class="form-parts">
-                    <label>使用日</label>
-                    <input tabindex="15" id="use-date11" name="use-date" class="normal-input" type="date" value=""
-                        onfocus="this.select();">
-                </div>
-                <div class="form-parts">
-                    <label>小売業者</label>
-                    <select tabindex="16" id="company11" name="company"
-                        class="normal-select"></select>
-                </div>
-                <div class="form-parts">
-                    <label></label>
-                    <select tabindex="17" id="office11" name="office"
-                        class="normal-select"></select>
-                </div>
-
-                <div class="form-parts">
-                    <label></label>
-                    <button tabindex="18" id="regist-btn11" class="normal-btn ok" type="button"
-                        onclick="execRegistItem(this)"><span>登録</span></button>
+                    <button tabindex="17" id="regist-btn11" class="normal-btn ok" type="button"
+                        onclick="execRegistItem(this, 'regist')"><span>登録</span></button>
                 </div>
             </div>
 
@@ -134,22 +125,25 @@
     
     <form id="form-02" class="dialog-content" th:fragment="form02Fragment()">
         <div class="table-area">
+            <input id="recycle-id12" name="recycle-id" type="hidden" value="">
+            <input id="version12" name="version" type="hidden" value="">
+            <input id="molding-number12" name="molding-number" type="hidden" value="">
+
             <div class="flex-area">
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
                     <input tabindex="21" id="number12" name="number" class="normal-input" type="text"
                         value="" onfocus="this.select();">
                 </div>
-            </div>
                 <div class="form-parts">
                     <label>引渡日</label>
-                    <input tabindex="22" id="delivery-date11" name="delivery-date" class="normal-input" type="date" value=""
+                    <input tabindex="22" id="delivery-date12" name="delivery-date" class="normal-input" type="date" value=""
                         onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label></label>
                     <button tabindex="23" id="regist-btn12" class="normal-btn ok" type="button"
-                        onclick="execRegistItem(this)"><span>登録</span></button>
+                        onclick="execRegistItem(this, 'delivery')"><span>登録</span></button>
                 </div>
             </div>
 
@@ -159,22 +153,25 @@
 
     <form id="form-03" class="dialog-content" th:fragment="form03Fragment()">
         <div class="table-area">
+            <input id="recycle-id13" name="recycle-id" type="hidden" value="">
+            <input id="version13" name="version" type="hidden" value="">
+            <input id="molding-number13" name="molding-number" type="hidden" value="">
+
             <div class="flex-area">
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
                     <input tabindex="31" id="number13" name="number" class="normal-input" type="text"
                         value="" onfocus="this.select();">
                 </div>
-            </div>
                 <div class="form-parts">
-                    <label>引渡日</label>
-                    <input tabindex="32" id="shipping-date11" name="shipping-date" class="normal-input" type="date" value=""
+                    <label>発送日</label>
+                    <input tabindex="32" id="shipping-date13" name="shipping-date" class="normal-input" type="date" value=""
                         onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label></label>
                     <button tabindex="33" id="regist-btn13" class="normal-btn ok" type="button"
-                        onclick="execRegistItem(this)"><span>登録</span></button>
+                        onclick="execRegistItem(this, 'shipping')"><span>登録</span></button>
                 </div>
             </div>
 
@@ -184,22 +181,25 @@
 
     <form id="form-04" class="dialog-content" th:fragment="form04Fragment()">
         <div class="table-area">
+            <input id="recycle-id14" name="recycle-id" type="hidden" value="">
+            <input id="version14" name="version" type="hidden" value="">
+            <input id="molding-number14" name="molding-number" type="hidden" value="">
+
             <div class="flex-area">
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
                     <input tabindex="41" id="number14" name="number" class="normal-input" type="text"
                         value="" onfocus="this.select();">
                 </div>
-            </div>
                 <div class="form-parts">
-                    <label>引渡日</label>
-                    <input tabindex="42" id="shipping-date11" name="shipping-date" class="normal-input" type="date" value=""
+                    <label>ロス処理日</label>
+                    <input tabindex="42" id="loss-date14" name="loss-date" class="normal-input" type="date" value=""
                         onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label></label>
                     <button tabindex="43" id="regist-btn14" class="normal-btn ok" type="button"
-                        onclick="execRegistItem(this)"><span>登録</span></button>
+                        onclick="execRegistItem(this, 'loss')"><span>登録</span></button>
                 </div>
             </div>
 
@@ -209,6 +209,13 @@
 
     <form id="form-05" class="dialog-content" th:fragment="form05Fragment()">
         <div class="table-area">
+            <input id="recycle-id15" name="recycle-id" type="hidden" value="">
+            <input id="version15" name="version" type="hidden" value="">
+            <input id="maker-id15" name="maker-id" type="hidden" value="">
+            <input id="item-id15" name="item-id" type="hidden" value="">
+            <input id="recycling-fee15" name="recycling-fee" type="hidden" value="">
+            <input id="molding-number15" name="molding-number" type="hidden" value="">
+
             <div class="flex-area">
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
@@ -228,11 +235,6 @@
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
-                    <label></label>
-                    <input id="maker-id15" name="maker-id" class="normal-input" type="hidden" readonly
-                        value="" onfocus="this.select();">
-                </div>
-                <div class="form-parts">
                     <label>品目・料金区分</label>
                     <input tabindex="53" id="item-code15" name="item-code" class="normal-input" type="text"
                         value="" onfocus="this.select();">
@@ -240,11 +242,6 @@
                 <div class="form-parts">
                     <label></label>
                     <input id="item-name15" name="item-name" class="normal-input" type="text" readonly
-                        value="" onfocus="this.select();">
-                </div>
-                <div class="form-parts">
-                    <label></label>
-                    <input id="item-id15" name="item-id" class="normal-input" type="hidden" readonly
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -289,7 +286,7 @@
                 <div class="form-parts">
                     <label></label>
                     <button tabindex="61" id="regist-btn15" class="normal-btn ok" type="button"
-                        onclick="execRegistItem(this)"><span>登録</span></button>
+                        onclick="execRegistItem(this, 'edit')"><span>登録</span></button>
                 </div>
             </div>
         </div>
@@ -312,8 +309,9 @@
     <main th:fragment="main11Fragment(tableId, scrollId)">
         <table th:id="${tableId}" class="normal-table">
             <tr name="table-header" class="pc-style">
-                <th><span>お問合せ管理票番号</span></th>
-                <th><span>使用日</span>
+                <th><span>お問合せ管理票番号</span><br><span>使用日</span></th>
+                <th><span>小売業者</span></th>
+                <th><span>製造業者等名</span><br><span>品目・料金区分</span></th>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>
         </table>
@@ -324,7 +322,7 @@
         <table th:id="${tableId}" class="normal-table">
             <tr name="table-header" class="pc-style">
                 <th><span>お問合せ管理票番号</span></th>
-                <th><span>使用日</span>
+                <th><span>引渡日</span>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>
         </table>
@@ -335,7 +333,7 @@
         <table th:id="${tableId}" class="normal-table">
             <tr name="table-header" class="pc-style">
                 <th><span>お問合せ管理票番号</span></th>
-                <th><span>引渡日</span>
+                <th><span>発送日</span>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>
         </table>

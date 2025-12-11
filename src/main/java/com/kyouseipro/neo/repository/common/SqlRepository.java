@@ -73,7 +73,7 @@ public class SqlRepository {
     ) {
         try (Connection conn = DriverManager.getConnection(url, userName, password);
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                
             binder.bind(pstmt, entity);
 
             boolean hasResultSet = pstmt.execute();

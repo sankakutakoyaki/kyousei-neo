@@ -48,8 +48,10 @@ public class FileController {
      */
     @PostMapping("/address/get/postalcode")
 	@ResponseBody
-    public AddressEntity getAddressFromPostalCode(@RequestParam String postal_code) {
-        return fileService.getAddressByPostalCode(postal_code);
+    public ResponseEntity getAddressFromPostalCode(@RequestParam String postal_code) {
+        // return fileService.getAddressByPostalCode(postal_code);
+        AddressEntity entity = fileService.getAddressByPostalCode(postal_code);
+        return ResponseEntity.ok(entity);
         // StringBuilder sb = new StringBuilder("SELECT * From address WHERE postal_code = '" + postal_code + "';");
         // SqlData sqlData = new SqlData();
         // sqlData.setData(sb.toString(), new AddressEntity());

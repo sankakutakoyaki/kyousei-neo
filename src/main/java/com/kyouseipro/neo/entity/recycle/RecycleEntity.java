@@ -11,6 +11,7 @@ import lombok.Data;
 public class RecycleEntity implements CsvExportable {
     private int recycle_id;
     private String number;//　お問合せ管理票番号
+    private String molding_number;//　成形後の管理票番号
     private int maker_id;//　メーカー
     private int maker_code;
     private String maker_name;
@@ -25,7 +26,7 @@ public class RecycleEntity implements CsvExportable {
     private String company_name;
     private int office_id;
     private String office_name;
-    private int recycle_fee;//　法定リサイクル料
+    private int recycling_fee;//　法定リサイクル料
     private int disposal_site_id;//　処分場
     private String disposal_site_name;
     private int version;
@@ -39,7 +40,7 @@ public class RecycleEntity implements CsvExportable {
     @Override
     public String toCsvRow() {
         return Utilities.escapeCsv(String.valueOf(recycle_id)) + "," +
-               Utilities.escapeCsv(number) + "," +
+               Utilities.escapeCsv(molding_number) + "," +
                Utilities.escapeCsv(String.valueOf(maker_code)) + "," +
                Utilities.escapeCsv(maker_name) + "," +
                Utilities.escapeCsv(String.valueOf(item_code)) + "," +
@@ -50,7 +51,7 @@ public class RecycleEntity implements CsvExportable {
                Utilities.escapeCsv(String.valueOf(loss_date)) + "," +
                Utilities.escapeCsv(company_name) + "," +
                Utilities.escapeCsv(office_name) + "," +
-               Utilities.escapeCsv(String.valueOf(recycle_fee)) + "," +
+               Utilities.escapeCsv(String.valueOf(recycling_fee)) + "," +
                Utilities.escapeCsv(String.valueOf(disposal_site_name));
     }
 }
