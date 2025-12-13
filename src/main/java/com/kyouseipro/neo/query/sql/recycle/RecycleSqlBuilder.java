@@ -7,7 +7,7 @@ public class RecycleSqlBuilder {
     private static String buildLogTableSql(String rowTableName) {
         return
             "DECLARE " + rowTableName + " TABLE (" +
-            "  recycle_id INT, number NVARCHAR(255), molding_number NVARCHAR(255), maker_id INT, item_id INT, use_date DATE, delivery_date DATE, shipping_date DATE, loss_date DATE," +
+            "  recycle_id INT, recycle_number NVARCHAR(255), molding_number NVARCHAR(255), maker_id INT, item_id INT, use_date DATE, delivery_date DATE, shipping_date DATE, loss_date DATE," +
             "  company_id INT, office_id INT, recycling_fee INT, disposal_site_id INT, version INT, state INT" +
             "); ";
     }
@@ -16,18 +16,18 @@ public class RecycleSqlBuilder {
         return
             "INSERT INTO recycles_log (" +
             "  recycle_id, editor, process, log_date," +
-            "  number, molding_number, maker_id, item_id, use_date, delivery_date, shipping_date, loss_date," +
+            "  recycle_number, molding_number, maker_id, item_id, use_date, delivery_date, shipping_date, loss_date," +
             "  company_id, office_id, recycling_fee, disposal_site_id, version, state" +
             ") " +
             "SELECT recycle_id, ?, '" + processName + "', CURRENT_TIMESTAMP," +
-            "  number, molding_number, maker_id, item_id, use_date, delivery_date, shipping_date, loss_date," +
+            "  recycle_number, molding_number, maker_id, item_id, use_date, delivery_date, shipping_date, loss_date," +
             "  company_id, office_id, recycling_fee, disposal_site_id, version, state" +
             "  FROM " + rowTableName + ";";
     }
 
     private static String buildOutputLogSql() {
         return
-            "OUTPUT INSERTED.recycle_id, INSERTED.number, INSERTED.molding_number, INSERTED.maker_id, INSERTED.item_id," +
+            "OUTPUT INSERTED.recycle_id, INSERTED.recycle_number, INSERTED.molding_number, INSERTED.maker_id, INSERTED.item_id," +
             "  INSERTED.use_date, INSERTED.delivery_date, INSERTED.shipping_date, INSERTED.loss_date," +
             "  INSERTED.company_id, INSERTED.office_id, INSERTED.recycling_fee, INSERTED.disposal_site_id," +
             "  INSERTED.version, INSERTED.state ";
@@ -39,7 +39,7 @@ public class RecycleSqlBuilder {
             buildLogTableSql(rowTableName) +
 
             "INSERT INTO recycles (" +
-            " number, molding_number, maker_id, item_id, use_date, delivery_date, shipping_date, loss_date," +
+            " recycle_number, molding_number, maker_id, item_id, use_date, delivery_date, shipping_date, loss_date," +
             " company_id, office_id, recycling_fee, disposal_site_id, version, state" +
             ") " +
 
@@ -58,7 +58,7 @@ public class RecycleSqlBuilder {
             buildLogTableSql(rowTableName) +
 
             "UPDATE recycles SET " +
-            " number=?, molding_number=?, maker_id=?, item_id=?, use_date=?, delivery_date=?, shipping_date=?, loss_date=?," +
+            " recycle_number=?, molding_number=?, maker_id=?, item_id=?, use_date=?, delivery_date=?, shipping_date=?, loss_date=?," +
             " company_id=?, office_id=?, recycling_fee=?, disposal_site_id=?, version=?, state=? " +
             
             buildOutputLogSql() + "INTO " + rowTableName + " " +
@@ -95,7 +95,7 @@ public class RecycleSqlBuilder {
             "UPDATE recycles SET state = ? " +
 
             buildOutputLogSql() + "INTO @DeletedRows " +
-            
+
             "WHERE recycle_id IN (" + placeholders + ") AND NOT (state = ?); " +
 
             buildInsertLogSql("@DeletedRows", "DELETE") +
@@ -105,7 +105,7 @@ public class RecycleSqlBuilder {
 
     private static String baseSelectString() {
         return
-            "SELECT r.recycle_id, r.number, r.molding_number, r.maker_id, rm.name as maker_name, r.item_id, ri.name as item_name," +
+            "SELECT r.recycle_id, r.recycle_number, r.molding_number, r.maker_id, rm.name as maker_name, r.item_id, ri.name as item_name," +
             " r.use_date, r.delivery_date, r.shipping_date, r.loss_date," +
             " r.company_id, r.office_id, c1.name as company_name, o.name as office_name," +
             " r.recycling_fee, r.disposal_site_id, c2.name as disposal_site_name, r.version, r.state" +
@@ -124,13 +124,28 @@ public class RecycleSqlBuilder {
 
     public static String buildFindByNumberSql() {
         return 
-            baseSelectString() + " WHERE r.number = ? AND NOT (r.state = ?)";
+            baseSelectString() + " WHERE r.recycle_number = ? AND NOT (r.state = ?)";
     }
    
     public static String buildExistsByNumberSql() {
         return 
-            "SELECT r.recycle_id, r.number FROM recycles r WHERE r.number = ? AND NOT (r.state = ?)";
+            baseSelectString() + " WHERE r.recycle_number = ? AND NOT (r.state = ?)";
     }
+
+    // public static String buildExistsByDeliveryNumberSql() {
+    //     return 
+    //         "SELECT recycle_id as number, recycle_number as text FROM recycles WHERE recycle_number = ? AND NOT (state = ?) AND delivery_date != '9999-12-31'";
+    // }
+
+    // public static String buildExistsByShippingNumberSql() {
+    //     return 
+    //         "SELECT recycle_id as number, recycle_number as text FROM recycles WHERE recycle_number = ? AND NOT (state = ?) AND shipping_date != '9999-12-31'";
+    // }
+
+    // public static String buildExistsByLossNumberSql() {
+    //     return 
+    //         "SELECT recycle_id as number, recycle_number as text FROM recycles WHERE recycle_number = ? AND NOT (state = ?) AND loss_date != '9999-12-31'";
+    // }
 
     public static String buildDownloadCsvRecycleForIdsSql(int count) {
         String placeholders = Utilities.generatePlaceholders(count);
@@ -142,10 +157,26 @@ public class RecycleSqlBuilder {
         return 
             baseSelectString() +
             " WHERE NOT (r.state = ?) AND " +
-            "((r." + col + "_date >= ? AND r." + col + "_date <= ?) OR " +
-            "(r." + col + "_date >= ? AND r." + col + "_date <= '9999-12-31') OR " +
-            "(r." + col + "_date >= '9999-12-31' AND r." + col + "_date <= ?) OR " +
-            "(r." + col + "_date >= '9999-12-31' AND r." + col + "_date <= '9999-12-31'))";
+            " r." + col + "_date >= ? AND r." + col + "_date < ?";
+
+            // " WHERE NOT (r.state = ?) AND " +
+            // "((r." + col + "_date >= ? AND r." + col + "_date <= ?) OR " +
+            // "(r." + col + "_date >= ? AND r." + col + "_date <= '9999-12-31') OR " +
+            // "(r." + col + "_date >= '9999-12-31' AND r." + col + "_date <= ?) OR " +
+            // "(r." + col + "_date >= '9999-12-31' AND r." + col + "_date <= '9999-12-31'))";
     }
+
+    // public static String buildFindByBetweenRecycleLossEntity() {
+    //     return 
+    //         baseSelectString() +
+    //         " WHERE NOT (r.state = ?) AND " +
+    //         " r.loss_date >= ? AND r.loss_date <= ?";
+
+    //         // " WHERE NOT (r.state = ?) AND " +
+    //         // "((r." + col + "_date >= ? AND r." + col + "_date <= ?) OR " +
+    //         // "(r." + col + "_date >= ? AND r." + col + "_date <= '9999-12-31') OR " +
+    //         // "(r." + col + "_date >= '9999-12-31' AND r." + col + "_date <= ?) OR " +
+    //         // "(r." + col + "_date >= '9999-12-31' AND r." + col + "_date <= '9999-12-31'))";
+    // }
 }
 

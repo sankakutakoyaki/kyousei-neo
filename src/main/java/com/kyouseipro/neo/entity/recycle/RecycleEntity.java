@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class RecycleEntity implements CsvExportable {
     private int recycle_id;
-    private String number;//　お問合せ管理票番号
+    private String recycle_number;//　お問合せ管理票番号
     private String molding_number;//　成形後の管理票番号
     private int maker_id;//　メーカー
     private int maker_code;

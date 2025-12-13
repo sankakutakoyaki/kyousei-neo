@@ -36,10 +36,14 @@ public class RecycleService {
      * @param number リサイクルID
      * @return RecycleEntity または null
      */
-    public RecycleEntity existsRecycleByNumber(String number) {
-        // String sql = OrderSqlBuilder.buildFindByIdSql();
-        return recycleRepository.existsByNumber(number);
+    public RecycleEntity existsRecycleByNumber(String str) {
+        // return existsRepository.existsRecycleByNumber(str);
+        return recycleRepository.existsRecycleByNumber(str);
     }
+    // public RecycleEntity existsRecycleByNumber(String number) {
+    //     // String sql = OrderSqlBuilder.buildFindByIdSql();
+    //     return recycleRepository.existsByNumber(number);
+    // }
 
     /**
      * 

@@ -98,7 +98,7 @@ function openMsgDialog(dialogId, msg, color) {
  * @param {ダイアログのID名} dialogId 
  * @param {イベント} e 
  */
-function closeMsgDialog(dialogId, e) {
+function closeMsgDialog(dialogId, e, focusId) {
     if (e != null) {
         e.preventDefault();
     }
@@ -120,4 +120,10 @@ function closeMsgDialog(dialogId, e) {
     // autofocus属性が付いているアイテムをフォーカスする
     const focusBox = document.querySelector('input[autofocus]');
     if (focusBox != null) focusBox.focus();
+}
+
+function setFocusElement(msgId, elm) {
+    const dialog = document.getElementById(msgId);
+    const btn =dialog.querySelector('button[name="focus-btn');
+    btn.addEventListener('click', function () { elm.focus(); });
 }

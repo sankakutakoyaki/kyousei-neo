@@ -9,7 +9,7 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
-import com.kyouseipro.neo.mapper.recycle.RecycleEntityExistsMapper;
+import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
 import com.kyouseipro.neo.mapper.recycle.RecycleEntityMapper;
 import com.kyouseipro.neo.query.parameter.recycle.RecycleParameterBinder;
 import com.kyouseipro.neo.query.sql.recycle.RecycleSqlBuilder;
@@ -44,11 +44,6 @@ public class RecycleRepository {
      * @param editor
      * @return
      */
-    /**
-     * IDによる取得。
-     * @param orderId
-     * @return IDから取得したEntityをかえす。
-     */
     public RecycleEntity findByNumber(String number) {
         String sql = RecycleSqlBuilder.buildFindByNumberSql();
         
@@ -65,14 +60,30 @@ public class RecycleRepository {
      * @param number
      * @return。
      */
-    public RecycleEntity existsByNumber(String number) {
+    public RecycleEntity existsRecycleByNumber(String str) {
+        // String sql = "";
+        // switch (col) {
+        //     case "regist":
+        //         sql = RecycleSqlBuilder.buildExistsByNumberSql();
+        //         break;
+        //     case "delivery":
+        //         sql = RecycleSqlBuilder.buildExistsByDeliveryNumberSql();
+        //         break;
+        //     case "shipping":
+        //         sql = RecycleSqlBuilder.buildExistsByShippingNumberSql();
+        //         break;
+        //     case "loss":
+        //         sql = RecycleSqlBuilder.buildExistsByLossNumberSql();
+        //         break;        
+        //     default:
+        //         break;
+        // }
         String sql = RecycleSqlBuilder.buildExistsByNumberSql();
-        
         return sqlRepository.execute(
             sql,
             (pstmt, comp) -> RecycleParameterBinder.bindExistsByNumber(pstmt, comp),
-            rs -> rs.next() ? RecycleEntityExistsMapper.map(rs) : null,
-            number
+            rs -> rs.next() ? RecycleEntityMapper.map(rs) : null,
+            str
         );
     }
 
@@ -83,6 +94,13 @@ public class RecycleRepository {
      * @return
      */
     public List<RecycleEntity> findByEntityFromBetweenDate(LocalDate start, LocalDate end, String col) {
+        // String sql = "";
+        // if (col == "loss") {
+        //     sql = RecycleSqlBuilder.buildFindByBetweenRecycleLossEntity();
+        // } else {
+        //     sql = RecycleSqlBuilder.buildFindByBetweenRecycleEntity(col);
+        // }
+
         String sql = RecycleSqlBuilder.buildFindByBetweenRecycleEntity(col);
 
         return sqlRepository.findAll(

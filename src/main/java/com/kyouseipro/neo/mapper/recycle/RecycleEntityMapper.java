@@ -9,7 +9,7 @@ public class RecycleEntityMapper {
     public static RecycleEntity map(ResultSet rs) throws SQLException {
         RecycleEntity entity = new RecycleEntity();
         entity.setRecycle_id(rs.getInt("recycle_id"));
-        entity.setNumber(rs.getString("number"));
+        entity.setRecycle_number(rs.getString("recycle_number"));
         entity.setMolding_number(rs.getString("molding_number"));
         entity.setMaker_id(rs.getInt("maker_id"));
         entity.setMaker_name(rs.getString("maker_name"));

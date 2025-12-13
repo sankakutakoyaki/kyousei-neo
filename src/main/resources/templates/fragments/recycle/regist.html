@@ -27,11 +27,11 @@
                     <img title="作成・登録" src="/icons/close.png">
                     <span>ロス</span>
                 </div>
-                <div class="img-btn" onclick="execDelete(this)">
+                <div class="img-btn" onclick="execDelete01(this)">
                     <img title="削除" src="/icons/dust.png">
                     <span>削除</span>
                 </div>
-                <div class="img-btn" onclick="execDownloadCsv(this)">
+                <div class="img-btn" onclick="execDownloadCsv01(this)">
                     <img title="ダウンロード" src="/icons/download.png">
                     <span>取得</span>
                 </div>
@@ -47,7 +47,7 @@
                 <input id="start-date01" class="normal-input date-area" type="date" value="" onfocus="this.select();" onchange="checkDateChanged(this)">
                 <span class="pc-style">〜</span>
                 <input id="end-date01" class="normal-input date-area" type="date" value="" onfocus="this.select();" onchange="checkDateChanged(this)">
-                <button id="date-search-btn01" class="normal-btn ok" type="button" onclick="execDate01Search()">
+                <button id="date-search-btn01" class="normal-btn ok" type="button" onclick="execDate01Search('table-01-content')">
                     <span>検索</span>
                 </button>                    
             </div>
@@ -70,7 +70,7 @@
             <div class="flex-area">
                 <div class="form-parts">
                     <label>小売業者</label>
-                    <select tabindex="11" id="company11" name="company"
+                    <select tabindex="11" id="company11" name="company" autofocus
                         class="normal-select"></select>
                 </div>
                 <div class="form-parts">
@@ -81,14 +81,14 @@
             </div>
             <div class="flex-area">
                 <div class="form-parts">
-                    <label>お問合せ管理票番号</label>
-                    <input tabindex="13" id="number11" name="number" class="normal-input" type="text"
-                        value="" onfocus="this.select();">
+                    <label>使用日</label>
+                    <input tabindex="13" id="use-date11" name="use-date" class="normal-input" type="date" value=""
+                        onfocus="this.select();">
                 </div>
                 <div class="form-parts">
-                    <label>使用日</label>
-                    <input tabindex="14" id="use-date11" name="use-date" class="normal-input" type="date" value=""
-                        onfocus="this.select();">
+                    <label>お問合せ管理票番号</label>
+                    <input tabindex="14" id="number11" name="recycle_number" class="normal-input" type="text"
+                        value="" onfocus="this.select();">
                 </div>
             </div>
             <div class="flex-area">
@@ -128,17 +128,18 @@
             <input id="recycle-id12" name="recycle-id" type="hidden" value="">
             <input id="version12" name="version" type="hidden" value="">
             <input id="molding-number12" name="molding-number" type="hidden" value="">
+            <input id="use-date12" name="use-date" type="hidden" value="">
 
             <div class="flex-area">
                 <div class="form-parts">
-                    <label>お問合せ管理票番号</label>
-                    <input tabindex="21" id="number12" name="number" class="normal-input" type="text"
-                        value="" onfocus="this.select();">
+                    <label>引渡日</label>
+                    <input tabindex="21" id="delivery-date12" name="delivery-date" class="normal-input" type="date" value="" autofocus
+                        onfocus="this.select();">
                 </div>
                 <div class="form-parts">
-                    <label>引渡日</label>
-                    <input tabindex="22" id="delivery-date12" name="delivery-date" class="normal-input" type="date" value=""
-                        onfocus="this.select();">
+                    <label>お問合せ管理票番号</label>
+                    <input tabindex="22" id="number12" name="recycle_number" class="normal-input" type="text"
+                        value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label></label>
@@ -156,17 +157,19 @@
             <input id="recycle-id13" name="recycle-id" type="hidden" value="">
             <input id="version13" name="version" type="hidden" value="">
             <input id="molding-number13" name="molding-number" type="hidden" value="">
+            <input id="use-date13" name="use-date" type="hidden" value="">
+            <input id="delivery-date13" name="delivery-date" type="hidden" value="">
 
             <div class="flex-area">
                 <div class="form-parts">
-                    <label>お問合せ管理票番号</label>
-                    <input tabindex="31" id="number13" name="number" class="normal-input" type="text"
-                        value="" onfocus="this.select();">
+                    <label>発送日</label>
+                    <input tabindex="31" id="shipping-date13" name="shipping-date" class="normal-input" type="date" value="" autofocus
+                        onfocus="this.select();">
                 </div>
                 <div class="form-parts">
-                    <label>発送日</label>
-                    <input tabindex="32" id="shipping-date13" name="shipping-date" class="normal-input" type="date" value=""
-                        onfocus="this.select();">
+                    <label>お問合せ管理票番号</label>
+                    <input tabindex="32" id="number13" name="recycle_number" class="normal-input" type="text"
+                        value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label></label>
@@ -187,14 +190,14 @@
 
             <div class="flex-area">
                 <div class="form-parts">
-                    <label>お問合せ管理票番号</label>
-                    <input tabindex="41" id="number14" name="number" class="normal-input" type="text"
-                        value="" onfocus="this.select();">
+                    <label>ロス処理日</label>
+                    <input tabindex="41" id="loss-date14" name="loss-date" class="normal-input" type="date" value="" autofocus
+                        onfocus="this.select();">
                 </div>
                 <div class="form-parts">
-                    <label>ロス処理日</label>
-                    <input tabindex="42" id="loss-date14" name="loss-date" class="normal-input" type="date" value=""
-                        onfocus="this.select();">
+                    <label>お問合せ管理票番号</label>
+                    <input tabindex="42" id="number14" name="recycle_number" class="normal-input" type="text"
+                        value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label></label>
@@ -219,7 +222,7 @@
             <div class="flex-area">
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
-                    <input tabindex="51" id="number15" name="number" class="normal-input" type="text"
+                    <input tabindex="51" id="number15" name="recycle_number" class="normal-input" type="text" autofocus
                         value="" onfocus="this.select();">
                 </div>
             </div>
@@ -298,6 +301,7 @@
                 <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
                 <th><span>お問合せ管理票番号</span></th>
                 <th><span>使用日</span><br><span>引渡日</span></th>
+                <th><span>発送日</span><br><span>ロス処理日</span></th>
                 <th><span>小売業者</span></th>
                 <th><span>製造業者等名</span><br><span>品目・料金区分</span></th>
             </tr>
@@ -321,8 +325,8 @@
     <main th:fragment="main12Fragment(tableId, scrollId)">
         <table th:id="${tableId}" class="normal-table">
             <tr name="table-header" class="pc-style">
+                <th><span>引渡日</span></th>
                 <th><span>お問合せ管理票番号</span></th>
-                <th><span>引渡日</span>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>
         </table>
@@ -332,8 +336,8 @@
     <main th:fragment="main13Fragment(tableId, scrollId)">
         <table th:id="${tableId}" class="normal-table">
             <tr name="table-header" class="pc-style">
+                <th><span>発送日</span></th>
                 <th><span>お問合せ管理票番号</span></th>
-                <th><span>発送日</span>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>
         </table>
@@ -344,8 +348,8 @@
     <main th:fragment="main14Fragment(tableId, scrollId)">
         <table th:id="${tableId}" class="normal-table">
             <tr name="table-header" class="pc-style">
+                <th><span>ロス処理日</span></th>
                 <th><span>お問合せ管理票番号</span></th>
-                <th><span>ロス処理日</span>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>
         </table>

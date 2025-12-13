@@ -2,7 +2,9 @@ package com.kyouseipro.neo.query.parameter.recycle;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
@@ -10,7 +12,7 @@ import com.kyouseipro.neo.entity.recycle.RecycleEntity;
 
 public class RecycleParameterBinder {
     public static void bindInsertRecycleParameters(PreparedStatement pstmt, RecycleEntity r, String editor, int index) throws SQLException {
-        pstmt.setString(index++, r.getNumber());
+        pstmt.setString(index++, r.getRecycle_number());
         pstmt.setString(index++, r.getMolding_number());
         pstmt.setInt(index++, r.getMaker_id());
         pstmt.setInt(index++, r.getItem_id());
@@ -46,7 +48,7 @@ public class RecycleParameterBinder {
     }
 
     public static void bindUpdateRecycleParameters(PreparedStatement pstmt, RecycleEntity r, String editor, int index) throws SQLException {
-        pstmt.setString(index++, r.getNumber());
+        pstmt.setString(index++, r.getRecycle_number());
         pstmt.setString(index++, r.getMolding_number());
         pstmt.setInt(index++, r.getMaker_id());
         pstmt.setInt(index++, r.getItem_id());
@@ -107,6 +109,11 @@ public class RecycleParameterBinder {
 
     public static void bindExistsByNumber(PreparedStatement ps, String number) throws SQLException {
         int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setString(index++, number);
         ps.setInt(index++, Enums.state.DELETE.getCode());
     }
@@ -118,6 +125,8 @@ public class RecycleParameterBinder {
     }
 
     public static void bindFindByBetweenRecycleEntity(PreparedStatement ps, LocalDate start, LocalDate end) throws SQLException {
+        LocalDateTime from = start.atStartOfDay();
+        LocalDateTime to   = end.plusDays(1).atStartOfDay();
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -125,29 +134,26 @@ public class RecycleParameterBinder {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setString(index++, start.toString());
-        ps.setString(index++, end.toString());
-        ps.setString(index++, start.toString());
-        ps.setString(index++, end.toString());
+
+        ps.setTimestamp(index++, Timestamp.valueOf(from));
+        ps.setTimestamp(index++, Timestamp.valueOf(to));
+
+        // ps.setString(index++, start.toString());
+        // ps.setString(index++, end.toString());
+        // ps.setString(index++, start.toString());
+        // ps.setString(index++, end.toString());
     }
 
     public static void bindSaveRecycleListParameters(PreparedStatement pstmt, List<RecycleEntity> list, String editor) throws SQLException {
         int index = 1;
         for (RecycleEntity entity : list) {
-            // // 削除の場合
-            // if (entity.getState() == Enums.state.DELETE.getCode()) {
-            //     RecycleParameterBinder.bindDeleteRecycleParameters(pstmt, entity.getRecycle_id(), editor, index);
-            //     index = index + 3;
-            // } else {
-                // 更新か新規かで分岐
-                if (entity.getRecycle_id() > 0){
-                    RecycleParameterBinder.bindUpdateRecycleParameters(pstmt, entity, editor, index);
-                    index = index + 16;
-                } else {
-                    RecycleParameterBinder.bindInsertRecycleParameters(pstmt, entity, editor, index);
-                    index = index + 15;
-                }
-            // }
+            if (entity.getRecycle_id() > 0){
+                RecycleParameterBinder.bindUpdateRecycleParameters(pstmt, entity, editor, index);
+                index = index + 16;
+            } else {
+                RecycleParameterBinder.bindInsertRecycleParameters(pstmt, entity, editor, index);
+                index = index + 15;
+            }
         }
     }
 

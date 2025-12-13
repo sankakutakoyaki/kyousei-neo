@@ -280,3 +280,26 @@ function execSpecifyPeriod(str, startId, endId) {
             break;
     }
 }
+
+// 会社コンボボックスを登録する
+function setCompanyComboBox(form, entity, companyList, officeList) {
+    const companyArea = form.querySelector('select[name="company"]');
+    createComboBoxWithTop(companyArea, companyList, "");
+    setComboboxSelected(companyArea, entity.company_id);  
+    if (entity.company_id > 0) {
+        const officeArea = form.querySelector('select[name="office"]');
+        createComboBoxWithTop(officeArea, officeList, "");
+        setComboboxSelected(officeArea, entity.office_id);                    
+    }
+    companyArea.onchange = function() { createOfficeComboBox(form, officeList) };
+}
+
+// 選択した会社の支店をコンボボックスに登録する
+function createOfficeComboBox(form, officeList) {
+    const companyArea = form.querySelector('select[name="company"]');
+    const officeArea = form.querySelector('select[name="office"]');
+
+    const selectId = companyArea.value;  
+    const officeComboList = officeList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
+    createComboBoxWithTop(officeArea, officeComboList, "");
+}

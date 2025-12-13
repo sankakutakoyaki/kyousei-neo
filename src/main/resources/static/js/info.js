@@ -129,10 +129,14 @@ async function getLoacation() {
 
 // コードからemployeeを取得
 async function getEmployeeByCode(code) {
+    // スピナー表示
+    startProcessing();
     const data = "id=" + encodeURIComponent(parseInt(code));
     const url = '/employee/get/id';
     const contentType = 'application/x-www-form-urlencoded';
     const resultResponse = await postFetch(url, data, token, contentType);
+    // スピナー消去
+    processingEnd();
     if (resultResponse.ok) {
         return await resultResponse.json();
     } else {
@@ -140,12 +144,16 @@ async function getEmployeeByCode(code) {
     }
 }
 
-// コードからrecycleを取得
+// Numberからrecycleを取得
 async function existsRecycleByNumber(number) {
-    const data = "number=" + encodeURIComponent(number);
+    // スピナー表示
+    startProcessing();
+    const data = "num=" + encodeURIComponent(number);
     const url = '/recycle/exists/number';
     const contentType = 'application/x-www-form-urlencoded';
     const resultResponse = await postFetch(url, data, token, contentType);
+    // スピナー消去
+    processingEnd();
     if (resultResponse.ok) {
         return await resultResponse.json();
     } else {
@@ -153,12 +161,17 @@ async function existsRecycleByNumber(number) {
     }
 }
 
+
 // コードからrecycle_makerを取得
 async function getMakerByCode(code) {
+    // スピナー表示
+    startProcessing();
     const data = "code=" + encodeURIComponent(parseInt(code));
     const url = '/recycle/maker/get/code';
     const contentType = 'application/x-www-form-urlencoded';
     const resultResponse = await postFetch(url, data, token, contentType);
+    // スピナー消去
+    processingEnd();
     if (resultResponse.ok) {
         return await resultResponse.json();
     } else {
@@ -166,13 +179,16 @@ async function getMakerByCode(code) {
     }
 }
 
-
 // コードからrecycle_itemを取得
 async function getItemByCode(code) {
+    // スピナー表示
+    startProcessing();
     const data = "code=" + encodeURIComponent(parseInt(code));
     const url = '/recycle/item/get/code';
     const contentType = 'application/x-www-form-urlencoded';
     const resultResponse = await postFetch(url, data, token, contentType);
+    // スピナー消去
+    processingEnd();
     if (resultResponse.ok) {
         return await resultResponse.json();
     } else {

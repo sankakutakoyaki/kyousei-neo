@@ -3,8 +3,10 @@
 .table-area {
     display: grid;
     grid-template-rows: auto 1fr auto;
-    margin-top: 2rem;
+    padding-top: 2rem;
     overflow: auto;
+    width: 80rem;
+    height: 100%;
 }
 
 .table-area header {
@@ -58,23 +60,27 @@
     }
 }
 
+/* #table-01-content {
+    max-height: 60%;
+} */
+
 #table-01 tr {
-    grid-template-columns: 3rem 15rem 10rem 1fr 1fr;
+    grid-template-columns: 3rem 12rem 8rem 8rem 1fr 21rem;
 }
 
 #table-11 tr {
-    grid-template-columns: 15rem 1fr 1fr 3rem;
+    grid-template-columns: 12rem 1fr 1fr 3rem;
 }
 
 :is(#table-12, #table-13, #table-14) tr {
-    grid-template-columns: 12rem 8rem 3rem;
+    grid-template-columns: 8rem 12rem 3rem;
 }
 
 /******************************************************************************************************* form */
 
 :is(#form-01, #form-05).dialog-content {
     height: 100%;
-    width: 60rem;
+    width: 70rem;
 }
 
 :is(#form-02, #form-03, #form-04).dialog-content {
@@ -108,7 +114,7 @@
     }
     & >.flex-area:nth-of-type(2) {
         display: grid;
-        grid-template-columns: 15rem auto 1fr;
+        grid-template-columns: auto 15rem 1fr;
     }
     & >.flex-area:nth-of-type(3) {
         display: grid;
@@ -121,7 +127,7 @@
     width: 100%;
     & >.flex-area:nth-of-type(1) {
         display: grid;
-        grid-template-columns: 15rem auto 6rem 1fr ;
+        grid-template-columns: auto 15rem 6rem 1fr ;
         width: 100%;
     }
 }
@@ -130,7 +136,7 @@
     width: 100%;
     & >.flex-area:nth-of-type(1) {
         display: grid;
-        grid-template-columns: 15rem auto 6rem 1fr ;
+        grid-template-columns: auto 15rem 6rem 1fr ;
         width: 100%;
     }
 }
@@ -139,7 +145,7 @@
     width: 100%;
     & >.flex-area:nth-of-type(1) {
         display: grid;
-        grid-template-columns: 15rem auto 6rem 1fr ;
+        grid-template-columns: auto 15rem 6rem 1fr ;
         width: 100%;
     }
 }
