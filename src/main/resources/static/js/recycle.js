@@ -144,3 +144,32 @@ function setInsertFormData(formData) {
 
     return formdata;
 }
+
+function setDateUpdateFormData(formData) {
+    let formdata = {};
+
+    formdata.recycle_number = formData.get('recycle_number');
+    formdata.molding_number = formData.get('molding-number');
+
+    if (formData.get('use-date') != null) {
+        if (formData.get('use-date') != "") {
+            formdata.date = formData.get('use-date');
+        }
+    } else if (formData.get('delivery-date') != null) {
+        if (formData.get('delivery-date') != "") {
+            formdata.date = formData.get('delivery-date');
+        }
+    } else if (formData.get('shipping-date') != null) {
+        if (formData.get('shipping-date') != "") {
+            formdata.date = formData.get('shipping-date');
+        }
+    } else if (formData.get('loss-date') != null) {
+        if (formData.get('loss-date') != "") {
+            formdata.date = formData.get('loss-date');
+        }
+    } else {
+        formdata.date = "9999-12-31";
+    }
+
+    return formdata;
+}

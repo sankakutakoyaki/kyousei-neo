@@ -269,34 +269,34 @@
                 // 製造業者等名　品目・料金区分
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.maker_name ?? "") + '</span><br><span>' + (item.item_name ?? "") + '</span></td>');
                 // 削除ボタン
-                newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.order_item_id + ')"><img src="/icons/dust.png"></div></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycle_id + ')"><img src="/icons/dust.png"></div></td>');
             }
 
             function createTable12Row(newRow, item) {
                 // 引渡日
-                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.delivery_date == '9999-12-31' ? "-----": item.delivery_date) + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.date == '9999-12-31' ? "-----": item.date) + '</span></td>');
                 // お問合せ管理票番号
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.molding_number ?? "") + '</span></span></td>');
                 // 削除ボタン
-                newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.order_item_id + ')"><img src="/icons/dust.png"></div></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycle_id + ')"><img src="/icons/dust.png"></div></td>');
             }
 
             function createTable13Row(newRow, item) {
                 // 発送日
-                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.shipping_date == '9999-12-31' ? "-----": item.shipping_date) + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.date == '9999-12-31' ? "-----": item.date) + '</span></td>');
                 // お問合せ管理票番号
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.molding_number ?? "") + '</span></span></td>');
                 // 削除ボタン
-                newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.order_item_id + ')"><img src="/icons/dust.png"></div></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycle_id + ')"><img src="/icons/dust.png"></div></td>');
             }
 
             function createTable14Row(newRow, item) {
                 // ロス処理日
-                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.loss_date == '9999-12-31' ? "-----": item.loss_date) + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.date == '9999-12-31' ? "-----": item.date) + '</span></td>');
                 // お問合せ管理票番号
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.molding_number ?? "") + '</span></span></td>');
                 // 削除ボタン
-                newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.order_item_id + ')"><img src="/icons/dust.png"></div></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycle_id + ')"><img src="/icons/dust.png"></div></td>');
             }
 
 /******************************************************************************************************* 入力画面 */
@@ -510,7 +510,7 @@
                         if (formDataCheck(form, str) == false) {
                             return;
                         }
-                        formdata = setInsertFormData(new FormData(form));
+                        formdata = setDateUpdateFormData(new FormData(form));
                         break;
                     case "shipping":
                         document.getElementById('regist-btn13').focus();
@@ -519,7 +519,7 @@
                         if (formDataCheck(form, str) == false) {
                             return;
                         }
-                        formdata = setInsertFormData(new FormData(form));
+                        formdata = setDateUpdateFormData(new FormData(form));
                         break;
                     case "loss":
                         document.getElementById('regist-btn14').focus();
@@ -528,7 +528,7 @@
                         if (formDataCheck(form, str) == false) {
                             return;
                         }
-                        formdata = setInsertFormData(new FormData(form));
+                        formdata = setDateUpdateFormData(new FormData(form));
                         break;
                     default:
                         break;
