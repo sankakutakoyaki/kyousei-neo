@@ -381,6 +381,8 @@ function moldingNumber(numberBox) {
 }
 
 function removeEdgeA(number) {
+    number = number.toLowerCase();
+
     if (number.startsWith('a') && number.endsWith('a')) {
         return number.slice(1, -1);
     }
