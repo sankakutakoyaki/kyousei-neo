@@ -226,25 +226,163 @@ async function searchForNameByMakerCode(form, itemCode, itemName, itemId) {
     }
 }
 
-// コードから[item]を取得して、名前を表示
-async function searchForNameByItemCode(form, itemCode, itemName, itemId) {
-    // if (e.currentTarget == null) return;
-    // const form = e.currentTarget.closest('.dialog-content');
-    let code = 0;
-    const codeBtn = form.querySelector('input[name="item-code"]');
+// // コードから[item]を取得して、名前を表示
+// async function searchForNameByItemCode(form, itemCode, itemName, itemId) {
+//     // if (e.currentTarget == null) return;
+//     // const form = e.currentTarget.closest('.dialog-content');
+//     let code = 0;
+//     const codeBtn = form.querySelector('input[name="item-code"]');
 
-    if (itemCode.value == "" || isNaN(itemCode11.value)) {
-        itemCode.value = "";
-        itemName.value = "";
-        itemId.value = "";
-        code = itemCode.value;
+//     if (itemCode.value == "" || isNaN(itemCode11.value)) {
+//         itemCode.value = "";
+//         itemName.value = "";
+//         itemId.value = "";
+//         code = itemCode.value;
 
-        if (itemCode.value == "" || isNaN(itemCode.value)) {
-            itemCode.value = "";
-            itemName.value = "";
-            itemId.value = "";
-            return;
-        }
-        code = itemCode.value;
+//         if (itemCode.value == "" || isNaN(itemCode.value)) {
+//             itemCode.value = "";
+//             itemName.value = "";
+//             itemId.value = "";
+//             return;
+//         }
+//         code = itemCode.value;
+//     }
+// }
+
+
+// お問合せ管理票番号を取得して検証
+async function searchForExistByNumber(form, list, numberBox, recycleId, moldingId, versionId, str) {
+    const numberBtn = form.querySelector('input[name="recycle-number"]');
+    const number = checkNumber(numberBox); 
+
+    if (number == "") {
+        clearNumber(numberBox);
+        return;   
     }
+
+    const item = list.find(value => value.recyle_number == number);
+    if (item != null) {
+        clearNumber(numberBox);
+        openMsgDialog("msg-dialog", "その番号は、リストに存在します", 'red');
+        setFocusElement("msg-dialog", numberBtn);
+        return;
+    }
+
+    const entity = await existsRecycleByNumber(number);
+
+    if (entity != null && entity.loss_date != "9999-12-31") {
+        clearNumber(numberBox);
+        openMsgDialog("msg-dialog", "その番号は、ロス処理済みです", 'red');
+        setFocusElement("msg-dialog", numberBtn);
+    } else {
+        processNumberAfterCheck(entity, number, str, numberBox, recycleId, moldingId, versionId, numberBtn);
+    }
+}
+
+function processNumberAfterCheck(entity, number, str, numberBox, recycleId, moldingId, versionId, numberBtn) {
+    switch (str) {
+        case "regist":
+            if (entity != null && entity.recycle_id > 0) {
+                clearNumber(numberBox);
+                openMsgDialog("msg-dialog", "その番号は、すでに登録されています", 'red');
+                setFocusElement("msg-dialog", numberBtn);
+                return;
+            } else {
+                recycleId.value = "";
+                versionId.value = "";
+                moldingId.value = moldingNumber(numberBox);
+                if (moldingId.value != "") numberBox.value = number;
+            }
+            break;
+        case "delivery":
+            if (entity == null) {
+                clearNumber(numberBox);
+                openMsgDialog("msg-dialog", "その番号は、使用登録されていません", 'red');
+                setFocusElement("msg-dialog", numberBtn);
+                return;
+            } else if (entity.delivery_date != "9999-12-31") {
+                clearNumber(numberBox);
+                openMsgDialog("msg-dialog", "その番号は、引渡しされています", 'red');
+                setFocusElement("msg-dialog", numberBtn);
+                return;
+            } else {
+                recycleId.value = entity.recycle_id;
+                versionId.value = entity.version;
+                moldingId.value = moldingNumber(numberBox);
+                if (moldingId.value != "") numberBox.value = number;
+            }
+            break;
+        case "shipping":
+            if (entity == null) {
+                clearNumber(numberBox);
+                openMsgDialog("msg-dialog", "その番号は、使用登録されていません", 'red');
+                setFocusElement("msg-dialog", numberBtn);
+                return;
+            } else if (entity.delivery_date == "9999-12-31") {
+                clearNumber(numberBox);
+                openMsgDialog("msg-dialog", "その番号は、引渡しされていません", 'red');
+                setFocusElement("msg-dialog", numberBtn);
+                return
+            } else if (entity.shipping_date != "9999-12-31") {
+                clearNumber(numberBox);
+                openMsgDialog("msg-dialog", "その番号は、発送されています", 'red');
+                setFocusElement("msg-dialog", numberBtn);
+                return;
+            } else {
+                recycleId.value = entity.recycle_id;
+                versionId.value = entity.version;
+                moldingId.value = moldingNumber(numberBox);
+                if (moldingId.value != "") numberBox.value = number;
+            }
+            break;
+        case "loss":
+            if (entity != null) {
+                recycleId.value = entity.recycle_id;
+                versionId.value = entity.version;
+            } else {
+                recycleId.value = 0;
+                versionId.value = 0;
+            }
+            moldingId.value = moldingNumber(numberBox);
+            if (moldingId.value != "") numberBox.value = number;
+            break;
+        default:
+            break;
+    }
+}
+
+function clearNumber(numberBox) {
+    if (numberBox != null) {
+        numberBox.value = "";
+    }
+}
+
+function checkNumber(numberBox) {
+    if (numberBox != null) {
+        const num = numberBox.value;
+        const number = removeEdgeA(num);
+        // 文字列で13桁かチェック
+        if (typeof number !== "string" || number.length !== 13 || !/^\d+$/.test(number)) {
+            return "";
+        }
+        return number;
+    } else {
+        return "";
+    }
+}
+
+function moldingNumber(numberBox) {
+    const number = checkNumber(numberBox);
+    // 正しい場合のみ成形
+    if (number == "") {
+        return "";
+    }
+    return number.replace(/(\d{4})(\d{8})(\d{1})/, "$1-$2-$3");
+}
+
+function removeEdgeA(number) {
+    if (number.startsWith('a') && number.endsWith('a')) {
+        return number.slice(1, -1);
+    }
+    return number;
 }

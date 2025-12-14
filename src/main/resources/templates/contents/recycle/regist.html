@@ -506,52 +506,33 @@
 
                 switch (str) {
                     case "regist":
-                        document.getElementById('regist-btn11').focus();
-                        form = document.getElementById('form-01');
+                        regBtnId = 'regist-btn11';
+                        formId = 'form-01';
                         tableId = "table-11-content";
                         footerId = "footer-11";
-                        if (formDataCheck(form, str) == false) {
-                            return;
-                        }
-                        formdata = setInsertFormData(form);
                         break;
                     case "delivery":
-                        document.getElementById('regist-btn12').focus();
-                        form = document.getElementById('form-02');
+                        regBtnId = 'regist-btn12';
+                        formId = 'form-02';
                         tableId = "table-12-content";
                         footerId = "footer-12";
-                        if (formDataCheck(form, str) == false) {
-                            return;
-                        }
-                        formdata = setDateUpdateFormData(form);
                         break;
                     case "shipping":
-                        document.getElementById('regist-btn13').focus();
-                        form = document.getElementById('form-03');
+                        regBtnId = 'regist-btn13';
+                        formId = 'form-03';
                         tableId = "table-13-content";
                         footerId = "footer-13";
-                        if (formDataCheck(form, str) == false) {
-                            return;
-                        }
-                        formdata = setDateUpdateFormData(form);
                         break;
                     case "loss":
-                        document.getElementById('regist-btn14').focus();
-                        form = document.getElementById('form-04');
+                        regBtnId = 'regist-btn14';
+                        formId = 'form-04';
                         tableId = "table-14-content";
                         footerId = "footer-14";
-                        if (formDataCheck(form, str) == false) {
-                            return;
-                        }
-                        formdata = setDateUpdateFormData(form);
                         break;
                     default:
                         break;
                 }
-
-                // const formData = new FormData(form);
-
-                // formdata = setInsertFormData(formData);
+                createFormdata(regBtnId, formId, tableId, footerId, str);
 
                 itemList.push(formdata);
 
@@ -560,6 +541,30 @@
                 resetFormInput(form, str);
             }
 
+            function createFormdata(regBtnId, formId, tableId, footerId, str) {
+                document.getElementById(regBtnId).focus();
+                form = document.getElementById(formId);
+                if (formDataCheck(form, str) == false) {
+                    return;
+                }
+                switch (str) {
+                    case "regist":
+                        formdata = setInsertFormData(form);
+                        break;
+                    case "delivery":
+                        formdata = setDateUpdateFormData(form);
+                        break;
+                    case "shipping":
+                        formdata = setDateUpdateFormData(form);
+                        break;
+                    case "loss":
+                        formdata = setDateUpdateFormData(form);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            
             // 入力フォームの内容をリセットする
             function resetFormInput(form, str) {
                 form.querySelector('[name="recycle-number"]').value = "";
@@ -845,7 +850,6 @@
                 if (e.currentTarget == null) return;
                 const form = e.currentTarget.closest('.dialog-content');
 
-                // searchForNameByMakerCode(e, str);
                 let itemCode = "";
                 let itemName = "";
                 let itemId = "";
@@ -933,182 +937,178 @@
             //     }
             // }
 
-            function execNumberBlur(e, str) {
+            async function execNumberBlur(e, str) {
                 e.preventDefault();
-                searchForExistByNumber(e, str);
-            }
-
-            // お問合せ管理票番号を取得して検証
-            async function searchForExistByNumber(e, str) {
                 if (e.currentTarget == null) return;
                 const form = e.currentTarget.closest('.dialog-content');
-                let number = 0;
-                const numberBtn = form.querySelector('input[name="recycle-number"]');
+                let numberBox = "";
+                let recycleId = "";
+                let moldingId = "";
+                let versionId = "";
                 switch (str) {
                     case "regist":
-                        number = number11.value;
+                        numberBox = number11;
+                        recycleId = recycleId11;
+                        moldingId = moldingNumber11;
+                        versionId = version11;
                         break;
                     case "delivery":
-                        number = number12.value;
+                        numberBox = number12;
+                        recycleId = recycleId12;
+                        moldingId = moldingNumber12;
+                        versionId = version12;
                         break;
                     case "shipping":
-                        number = number13.value;
+                        numberBox = number13;
+                        recycleId = recycleId13;
+                        moldingId = moldingNumber13;
+                        versionId = version13;
                         break;
                     case "loss":
-                        number = number14.value;
+                        numberBox = number14;
+                        recycleId = recycleId14;
+                        moldingId = moldingNumber14;
+                        versionId = version14;
                         break;
                     case "edit":
-                        number = number15.value;
+                        numberBox = number15;
+                        recycleId = recycleId15;
+                        moldingId = moldingNumber15;
+                        versionId = version15;
                         break;
                     default:
                         break;
                 }
+                await searchForExistByNumber(form, itemList, numberBox, recycleId, moldingId, versionId, str);
+            }
 
-                if (number == "") return;
-                if (checkNumber(number) == "") {
-                    clearNumber(str);
-                    return;   
-                }
+            // // お問合せ管理票番号を取得して検証
+            // async function searchForExistByNumber(e, str) {
+                // if (e.currentTarget == null) return;
+                // const form = e.currentTarget.closest('.dialog-content');
+            //     let number = 0;
+            //     const numberBtn = form.querySelector('input[name="recycle-number"]');
+            //     switch (str) {
+            //         case "regist":
+            //             number = number11.value;
+            //             break;
+            //         case "delivery":
+            //             number = number12.value;
+            //             break;
+            //         case "shipping":
+            //             number = number13.value;
+            //             break;
+            //         case "loss":
+            //             number = number14.value;
+            //             break;
+            //         case "edit":
+            //             number = number15.value;
+            //             break;
+            //         default:
+            //             break;
+            //     }
 
-                const item = itemList.find(value => value.number == number);
-                if (item != null) {
-                    clearNumber(str);
-                    openMsgDialog("msg-dialog", "その番号は、リストに存在します", 'red');
-                    setFocusElement("msg-dialog", numberBtn);
-                    return;
-                }
+            //     if (number == "") return;
+            //     if (checkNumber(number) == "") {
+            //         clearNumber(str);
+            //         return;   
+            //     }
 
-                // const loss = await existsRecycleByNumber(number);
-                // if (loss != null && loss.number > 0) {
+            //     const item = itemList.find(value => value.number == number);
+            //     if (item != null) {
+            //         clearNumber(str);
+            //         openMsgDialog("msg-dialog", "その番号は、リストに存在します", 'red');
+            //         setFocusElement("msg-dialog", numberBtn);
+            //         return;
+            //     }
+
+            //     // const loss = await existsRecycleByNumber(number);
+            //     // if (loss != null && loss.number > 0) {
+            //     //     clearNumber(str);
+            //     //     openMsgDialog("msg-dialog", "その番号は、ロス処理されています", 'red');
+            //     //     setFocusElement("msg-dialog", numberBtn);
+            //     //     return;
+            //     // }
+
+                // const entity = await existsRecycleByNumber(number);
+
+                // if (entity != null && entity.loss_date != "9999-12-31") {
                 //     clearNumber(str);
-                //     openMsgDialog("msg-dialog", "その番号は、ロス処理されています", 'red');
+                //     openMsgDialog("msg-dialog", "その番号は、ロス処理済みです", 'red');
                 //     setFocusElement("msg-dialog", numberBtn);
                 //     return;
+                // } else {
+                //     switch (str) {
+                //         case "regist":
+                //             if (entity != null && entity.recycle_id > 0) {
+                //                 clearNumber(str);
+                //                 openMsgDialog("msg-dialog", "その番号は、すでに登録されています", 'red');
+                //                 setFocusElement("msg-dialog", numberBtn);
+                //                 return;
+                //             } else {
+                //                 recycleId11.value = "";
+                //                 version11.value = "";
+                //                 moldingNumber11.value = moldingNumber(number);
+                //                 if (moldingNumber11.value != "") number11.value = number;
+                //             }
+                //             break;
+                //         case "delivery":
+                //             if (entity == null) {
+                //                 clearNumber(str);
+                //                 openMsgDialog("msg-dialog", "その番号は、使用登録されていません", 'red');
+                //                 setFocusElement("msg-dialog", numberBtn);
+                //                 return;
+                //             } else if (entity.delivery_date != "9999-12-31") {
+                //                 clearNumber(str);
+                //                 openMsgDialog("msg-dialog", "その番号は、引渡しされています", 'red');
+                //                 setFocusElement("msg-dialog", numberBtn);
+                //                 return;
+                //             } else {
+                //                 recycleId12.value = entity.recycle_id;
+                //                 version12.value = entity.version;
+                //                 moldingNumber12.value = moldingNumber(number);
+                //                 if (moldingNumber12.value != "") number12.value = number;
+                //             }
+                //             break;
+                //         case "shipping":
+                //             if (entity == null) {
+                //                 clearNumber(str);
+                //                 openMsgDialog("msg-dialog", "その番号は、使用登録されていません", 'red');
+                //                 setFocusElement("msg-dialog", numberBtn);
+                //                 return;
+                //             } else if (entity.delivery_date == "9999-12-31") {
+                //                 clearNumber(str);
+                //                 openMsgDialog("msg-dialog", "その番号は、引渡しされていません", 'red');
+                //                 setFocusElement("msg-dialog", numberBtn);
+                //                 return
+                //             } else if (entity.shipping_date != "9999-12-31") {
+                //                 clearNumber(str);
+                //                 openMsgDialog("msg-dialog", "その番号は、発送されています", 'red');
+                //                 setFocusElement("msg-dialog", numberBtn);
+                //                 return;
+                //             } else {
+                //                 recycleId13.value = entity.recycle_id;
+                //                 version13.value = entity.version;
+                //                 moldingNumber13.value = moldingNumber(number);
+                //                 if (moldingNumber13.value != "") number13.value = number;
+                //             }
+                //             break;
+                //         case "loss":
+                //             if (entity != null) {
+                //                 recycleId14.value = entity.recycle_id;
+                //                 version14.value = entity.version;
+                //             } else {
+                //                 recycleId14.value = 0;
+                //                 version14.value = 0;
+                //             }
+                //             moldingNumber14.value = moldingNumber(number);
+                //             if (moldingNumber14.value != "") number14.value = number;
+                //             break;
+                //         default:
+                //             break;
+                //     }
                 // }
-
-                const entity = await existsRecycleByNumber(number);
-
-                if (entity != null && entity.loss_date != "9999-12-31") {
-                    clearNumber(str);
-                    openMsgDialog("msg-dialog", "その番号は、ロス処理済みです", 'red');
-                    setFocusElement("msg-dialog", numberBtn);
-                    return;
-                } else {
-                    switch (str) {
-                        case "regist":
-                            if (entity != null && entity.recycle_id > 0) {
-                                clearNumber(str);
-                                openMsgDialog("msg-dialog", "その番号は、すでに登録されています", 'red');
-                                setFocusElement("msg-dialog", numberBtn);
-                                return;
-                            } else {
-                                recycleId11.value = "";
-                                version11.value = "";
-                                moldingNumber11.value = moldingNumber(number);
-                                if (moldingNumber11.value != "") number11.value = number;
-                            }
-                            break;
-                        case "delivery":
-                            if (entity == null) {
-                                clearNumber(str);
-                                openMsgDialog("msg-dialog", "その番号は、使用登録されていません", 'red');
-                                setFocusElement("msg-dialog", numberBtn);
-                                return;
-                            } else if (entity.delivery_date != "9999-12-31") {
-                                clearNumber(str);
-                                openMsgDialog("msg-dialog", "その番号は、引渡しされています", 'red');
-                                setFocusElement("msg-dialog", numberBtn);
-                                return;
-                            } else {
-                                recycleId12.value = entity.recycle_id;
-                                version12.value = entity.version;
-                                moldingNumber12.value = moldingNumber(number);
-                                if (moldingNumber12.value != "") number12.value = number;
-                            }
-                            break;
-                        case "shipping":
-                            if (entity == null) {
-                                clearNumber(str);
-                                openMsgDialog("msg-dialog", "その番号は、使用登録されていません", 'red');
-                                setFocusElement("msg-dialog", numberBtn);
-                                return;
-                            } else if (entity.delivery_date == "9999-12-31") {
-                                clearNumber(str);
-                                openMsgDialog("msg-dialog", "その番号は、引渡しされていません", 'red');
-                                setFocusElement("msg-dialog", numberBtn);
-                                return
-                            } else if (entity.shipping_date != "9999-12-31") {
-                                clearNumber(str);
-                                openMsgDialog("msg-dialog", "その番号は、発送されています", 'red');
-                                setFocusElement("msg-dialog", numberBtn);
-                                return;
-                            } else {
-                                recycleId13.value = entity.recycle_id;
-                                version13.value = entity.version;
-                                moldingNumber13.value = moldingNumber(number);
-                                if (moldingNumber13.value != "") number13.value = number;
-                            }
-                            break;
-                        case "loss":
-                            if (entity != null) {
-                                recycleId14.value = entity.recycle_id;
-                                version14.value = entity.version;
-                            } else {
-                                recycleId14.value = 0;
-                                version14.value = 0;
-                            }
-                            moldingNumber14.value = moldingNumber(number);
-                            if (moldingNumber14.value != "") number14.value = number;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-
-            function clearNumber(str) {
-                switch (str) {
-                    case "regist":
-                        number11.value = "";
-                        number11.focus();
-                        break;
-                    case "delivery":
-                        number12.value = "";
-                        number12.focus();
-                        break;
-                    case "shipping":
-                        number13.value = "";
-                        number14.focus();
-                        break;
-                    case "loss":
-                        number14.value = "";
-                        number14.focus();
-                        break;
-                    case "edit":
-                        number15.value = "";
-                        number15.focus();
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            function checkNumber(num) {
-                // 文字列で13桁かチェック
-                if (typeof num !== "string" || num.length !== 13 || !/^\d+$/.test(num)) {
-                    return "";
-                }
-                return num;
-            }
-
-            function moldingNumber(num) {
-                const number = checkNumber(num);
-                // 正しい場合のみ成形
-                if (number == "") {
-                    return "";
-                }
-                return num.replace(/(\d{4})(\d{8})(\d{1})/, "$1-$2-$3");
-            }
+            // }
 
 /******************************************************************************************************* 初期化時 */
 
