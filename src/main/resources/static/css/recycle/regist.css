@@ -76,6 +76,10 @@
     grid-template-columns: 8rem 1fr 3rem;
 }
 
+#table-01 tr[data-valid="true"] {
+    background-color: orangered;
+}
+
 /******************************************************************************************************* form */
 
 :is(#form-01, #form-05).dialog-content {
@@ -114,7 +118,7 @@
     }
     & >.flex-area:nth-of-type(2) {
         display: grid;
-        grid-template-columns: auto 15rem 1fr;
+        grid-template-columns: auto 12rem 1fr;
     }
     & >.flex-area:nth-of-type(3) {
         display: grid;
@@ -127,7 +131,7 @@
     width: 100%;
     & >.flex-area:nth-of-type(1) {
         display: grid;
-        grid-template-columns: auto 15rem 6rem 1fr ;
+        grid-template-columns: auto 12rem 6rem 1fr ;
         width: 100%;
     }
 }
@@ -136,7 +140,7 @@
     width: 100%;
     & >.flex-area:nth-of-type(1) {
         display: grid;
-        grid-template-columns: auto 15rem 6rem 1fr ;
+        grid-template-columns: auto 12rem 6rem 1fr ;
         width: 100%;
     }
 }
@@ -145,7 +149,7 @@
     width: 100%;
     & >.flex-area:nth-of-type(1) {
         display: grid;
-        grid-template-columns: auto 15rem 6rem 1fr ;
+        grid-template-columns: auto 12rem 6rem 1fr ;
         width: 100%;
     }
 }
@@ -163,7 +167,7 @@
     }
     & >.flex-area:nth-of-type(3) {
         display: grid;
-        grid-template-columns: auto 15rem 1fr 6rem;
+        grid-template-columns: auto 12rem 1fr 6rem;
         width: 100%;
     }
 }

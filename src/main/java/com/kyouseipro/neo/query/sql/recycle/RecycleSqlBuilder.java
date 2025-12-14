@@ -86,6 +86,24 @@ public class RecycleSqlBuilder {
             "SELECT recycle_id FROM " + rowTableName + ";";
     }
 
+    public static String buildInsertRecycleDateSql(int index) {
+        String rowTableName = "@InsertedRows" + index;
+        return
+            buildLogTableSql(rowTableName) +
+
+            "INSERT INTO recycles (" +
+            " recycle_number, molding_number, loss_date, update_date" +
+            ") " +
+
+            buildOutputLogSql() + "INTO " + rowTableName + " " +
+
+            "VALUES (?, ?, ?, ?); " +
+
+            buildInsertLogSql(rowTableName, "INSERT") +
+
+            "SELECT recycle_id FROM " + rowTableName + ";";
+    }
+
     public static String buildDeleteRecycleSql(int index) {
         String rowTableName = "@UpdatedRows" + index;
         return

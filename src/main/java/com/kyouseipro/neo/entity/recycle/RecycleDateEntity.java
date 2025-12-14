@@ -8,5 +8,6 @@ import lombok.Data;
 public class RecycleDateEntity {
     private int recycle_id;
     private String recycle_number;
+    private String molding_number;
     private LocalDate date;
 }

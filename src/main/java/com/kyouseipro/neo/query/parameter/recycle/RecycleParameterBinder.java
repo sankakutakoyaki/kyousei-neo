@@ -127,6 +127,14 @@ public class RecycleParameterBinder {
         ps.setString(index, editor);
     }
 
+    public static void bindInsertRecycleDateParameters(PreparedStatement ps, RecycleDateEntity r, String editor, int index) throws SQLException {
+        ps.setString(index++, r.getRecycle_number());
+        ps.setString(index++, r.getMolding_number());
+        ps.setDate(index++, java.sql.Date.valueOf(r.getDate()));
+        ps.setTimestamp(index++, Timestamp.valueOf(LocalDateTime.now()));
+        ps.setString(index, editor);
+    }
+
     public static void bindDeleteRecycleParameters(PreparedStatement ps, int id, String editor, int index) throws SQLException {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, id);
@@ -169,8 +177,14 @@ public class RecycleParameterBinder {
     public static void bindUpdateRecycleDateListParameters(PreparedStatement pstmt, List<RecycleDateEntity> list, String editor) throws SQLException {
         int index = 1;
         for (RecycleDateEntity entity : list) {
-            RecycleParameterBinder.bindUpdateRecycleDateParameters(pstmt, entity.getRecycle_id(), entity.getDate(), editor, index);
-            index = index + 3;
+            if (entity.getRecycle_id() > 0){
+                RecycleParameterBinder.bindUpdateRecycleDateParameters(pstmt, entity.getRecycle_id(), entity.getDate(), editor, index);
+                index = index + 3;
+            } else {
+                RecycleParameterBinder.bindInsertRecycleDateParameters(pstmt, entity, editor, index);
+                index = index + 6;
+            }
+
         }
     }
 

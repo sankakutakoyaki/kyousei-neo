@@ -5,7 +5,7 @@ async function existsRecycleByNumber(number) {
     // スピナー表示
     startProcessing();
     const data = "num=" + encodeURIComponent(number);
-    const url = '/recycle/exists/number';
+    const url = "/recycle/exists/number";
     const contentType = 'application/x-www-form-urlencoded';
     const resultResponse = await postFetch(url, data, token, contentType);
     // スピナー消去
@@ -52,7 +52,8 @@ async function getItemByCode(code) {
     }
 }
 
-function setInsertFormData(formData) {
+function setInsertFormData(form) {
+    const formData = new FormData(form);
     const formdata = structuredClone(formEntity);
 
     if (formData.get('recycle-id') > 0) {
@@ -145,7 +146,8 @@ function setInsertFormData(formData) {
     return formdata;
 }
 
-function setDateUpdateFormData(formData) {
+function setDateUpdateFormData(form) {
+    const formData = new FormData(form);
     let formdata = {};
 
     formdata.recycle_id = formData.get('recycle-id');
@@ -165,4 +167,84 @@ function setDateUpdateFormData(formData) {
     }
 
     return formdata;
+}
+
+// コードから[maker]を取得して、名前を表示
+async function searchForNameByMakerCode(form, makerCode, makerName, makerId) {
+    // if (e.currentTarget == null) return;
+    // const form = e.currentTarget.closest('.dialog-content');
+    let code = 0;
+    const makerBtn = form.querySelector('input[name="maker-code"]');
+    if (makerCode.value == "" || isNaN(makerCode.value)) {
+        makerCode.value = "";
+        makerName.value = "";
+        makerId.value = "";
+        return;
+    }
+    code = makerCode.value;
+
+    const entity = await getMakerByCode(Number(code));
+
+    if (entity != null && entity.recycle_maker_id > 0) {
+        makerName.value = entity.name;
+        makerId.value = entity.recycle_maker_id;
+    } else {
+        makerCode.value = "";
+        makerName.value = "";
+        makerId.value = "";
+        openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
+        setFocusElement("msg-dialog", makerBtn);
+    }
+}
+
+// コードから[item]を取得して、名前を表示
+async function searchForNameByMakerCode(form, itemCode, itemName, itemId) {
+    // if (e.currentTarget == null) return;
+    // const form = e.currentTarget.closest('.dialog-content');
+    let code = 0;
+    const codeBtn = form.querySelector('input[name="item-code"]')
+    if (itemCode.value == "" || isNaN(itemCode.value)) {
+        itemCode.value = "";
+        itemName.value = "";
+        itemId.value = "";
+        return;
+    }
+    code = itemCode.value;
+
+    const entity = await getItemByCode(Number(code));
+
+    if (entity != null && entity.recycle_item_id > 0) {
+        itemName.value = entity.name;
+        itemId.value = entity.recycle_item_id;
+    } else {
+        itemCode.value = "";
+        itemName.value = "";
+        itemId.value = "";
+        itemCode.focus();
+        openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
+        setFocusElement("msg-dialog", codeBtn);
+    }
+}
+
+// コードから[item]を取得して、名前を表示
+async function searchForNameByItemCode(form, itemCode, itemName, itemId) {
+    // if (e.currentTarget == null) return;
+    // const form = e.currentTarget.closest('.dialog-content');
+    let code = 0;
+    const codeBtn = form.querySelector('input[name="item-code"]');
+
+    if (itemCode.value == "" || isNaN(itemCode11.value)) {
+        itemCode.value = "";
+        itemName.value = "";
+        itemId.value = "";
+        code = itemCode.value;
+
+        if (itemCode.value == "" || isNaN(itemCode.value)) {
+            itemCode.value = "";
+            itemName.value = "";
+            itemId.value = "";
+            return;
+        }
+        code = itemCode.value;
+    }
 }

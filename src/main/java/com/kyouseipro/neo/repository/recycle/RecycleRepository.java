@@ -146,8 +146,12 @@ public class RecycleRepository {
         String sql = "";
         int index = 1;
 
-        for (int i = 0; i < itemList.size(); i++) {
-            sql += RecycleSqlBuilder.buildUpdateRecycleDateSql(index++, type);
+        for (RecycleDateEntity entity : itemList) {
+            if (entity.getRecycle_id() == 0) {
+                sql += RecycleSqlBuilder.buildInsertRecycleDateSql(index++);
+            } else {
+                sql += RecycleSqlBuilder.buildUpdateRecycleDateSql(index++, type);
+            }
         }
 
         return sqlRepository.execute(
