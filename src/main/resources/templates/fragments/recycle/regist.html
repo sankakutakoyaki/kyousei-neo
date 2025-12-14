@@ -87,7 +87,7 @@
                 </div>
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
-                    <input tabindex="14" id="number11" name="recycle_number" class="normal-input" type="text"
+                    <input tabindex="14" id="number11" name="recycle-number" class="normal-input" type="text"
                         value="" onfocus="this.select();">
                 </div>
             </div>
@@ -120,6 +120,10 @@
             </div>
 
             <main th:replace="~{fragments/recycle/regist :: main11Fragment('table-11', 'table-11-content')}"></main>
+
+            <!-- フッター -->
+            <footer id="footer-11" class="pc-style"
+                th:insert="~{fragments/recycle/regist :: footerFragment()}"></footer>
         </div>
     </form>
     
@@ -128,7 +132,6 @@
             <input id="recycle-id12" name="recycle-id" type="hidden" value="">
             <input id="version12" name="version" type="hidden" value="">
             <input id="molding-number12" name="molding-number" type="hidden" value="">
-            <input id="use-date12" name="use-date" type="hidden" value="">
 
             <div class="flex-area">
                 <div class="form-parts">
@@ -138,7 +141,7 @@
                 </div>
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
-                    <input tabindex="22" id="number12" name="recycle_number" class="normal-input" type="text"
+                    <input tabindex="22" id="number12" name="recycle-number" class="normal-input" type="text"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -149,6 +152,10 @@
             </div>
 
             <main th:replace="~{fragments/recycle/regist :: main12Fragment('table-12', 'table-12-content')}"></main>
+
+            <!-- フッター -->
+            <footer id="footer-12" class="pc-style"
+                th:insert="~{fragments/recycle/regist :: footerFragment()}"></footer>
         </div>
     </form>
 
@@ -157,8 +164,6 @@
             <input id="recycle-id13" name="recycle-id" type="hidden" value="">
             <input id="version13" name="version" type="hidden" value="">
             <input id="molding-number13" name="molding-number" type="hidden" value="">
-            <input id="use-date13" name="use-date" type="hidden" value="">
-            <input id="delivery-date13" name="delivery-date" type="hidden" value="">
 
             <div class="flex-area">
                 <div class="form-parts">
@@ -168,7 +173,7 @@
                 </div>
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
-                    <input tabindex="32" id="number13" name="recycle_number" class="normal-input" type="text"
+                    <input tabindex="32" id="number13" name="recycle-number" class="normal-input" type="text"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -179,6 +184,10 @@
             </div>
 
             <main th:replace="~{fragments/recycle/regist :: main13Fragment('table-13', 'table-13-content')}"></main>
+
+            <!-- フッター -->
+            <footer id="footer-13" class="pc-style"
+                th:insert="~{fragments/recycle/regist :: footerFragment()}"></footer>
         </div>
     </form>
 
@@ -196,7 +205,7 @@
                 </div>
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
-                    <input tabindex="42" id="number14" name="recycle_number" class="normal-input" type="text"
+                    <input tabindex="42" id="number14" name="recycle-number" class="normal-input" type="text"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -207,6 +216,10 @@
             </div>
 
             <main th:replace="~{fragments/recycle/regist :: main14Fragment('table-14', 'table-14-content')}"></main>
+
+            <!-- フッター -->
+            <footer id="footer-14" class="pc-style"
+                th:insert="~{fragments/recycle/regist :: footerFragment()}"></footer>
         </div>
     </form>
 
@@ -222,14 +235,14 @@
             <div class="flex-area">
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
-                    <input tabindex="51" id="number15" name="recycle_number" class="normal-input" type="text" autofocus
+                    <input tabindex="51" id="number15" name="recycle-number" class="normal-input" type="text" readonly
                         value="" onfocus="this.select();">
                 </div>
             </div>
             <div class="flex-area">
                 <div class="form-parts">
                     <label>製造業者等名</label>
-                    <input tabindex="52" id="maker-code15" name="maker-code" class="normal-input" type="text"
+                    <input tabindex="52" id="maker-code15" name="maker-code" class="normal-input" type="text" autofocus
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">

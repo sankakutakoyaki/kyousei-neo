@@ -63,7 +63,7 @@ function setInsertFormData(formData) {
     }
     formdata.state = 0;
     formdata.version = formData.get('version');
-    formdata.recycle_number = formData.get('recycle_number');
+    formdata.recycle_number = formData.get('recycle-number');
     formdata.molding_number = formData.get('molding-number');
     
     formdata.use_date = "9999-12-31";
@@ -148,25 +148,18 @@ function setInsertFormData(formData) {
 function setDateUpdateFormData(formData) {
     let formdata = {};
 
-    formdata.recycle_number = formData.get('recycle_number');
+    formdata.recycle_id = formData.get('recycle-id');
+    formdata.recycle_number = formData.get('recycle-number');
     formdata.molding_number = formData.get('molding-number');
 
-    if (formData.get('use-date') != null) {
-        if (formData.get('use-date') != "") {
-            formdata.date = formData.get('use-date');
-        }
-    } else if (formData.get('delivery-date') != null) {
-        if (formData.get('delivery-date') != "") {
-            formdata.date = formData.get('delivery-date');
-        }
-    } else if (formData.get('shipping-date') != null) {
-        if (formData.get('shipping-date') != "") {
-            formdata.date = formData.get('shipping-date');
-        }
-    } else if (formData.get('loss-date') != null) {
-        if (formData.get('loss-date') != "") {
-            formdata.date = formData.get('loss-date');
-        }
+    if (formData.get('use-date') != null && formData.get('use-date') != "") {
+        formdata.date = formData.get('use-date');
+    } else if (formData.get('delivery-date') != null && formData.get('delivery-date') != "") {
+        formdata.date = formData.get('delivery-date');
+    } else if (formData.get('shipping-date') != null && formData.get('shipping-date') != "") {
+        formdata.date = formData.get('shipping-date');
+    } else if (formData.get('loss-date') != null && formData.get('loss-date') != "") {
+        formdata.date = formData.get('loss-date');
     } else {
         formdata.date = "9999-12-31";
     }

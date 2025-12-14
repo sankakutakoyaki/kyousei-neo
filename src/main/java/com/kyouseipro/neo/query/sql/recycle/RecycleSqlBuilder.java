@@ -59,11 +59,27 @@ public class RecycleSqlBuilder {
 
             "UPDATE recycles SET " +
             " recycle_number=?, molding_number=?, maker_id=?, item_id=?, use_date=?, delivery_date=?, shipping_date=?, loss_date=?," +
-            " company_id=?, office_id=?, recycling_fee=?, disposal_site_id=?, version=?, state=? " +
+            " company_id=?, office_id=?, recycling_fee=?, disposal_site_id=?, version=?, state=? , update_date=?" +
             
             buildOutputLogSql() + "INTO " + rowTableName + " " +
 
             "WHERE recycle_id=?; " +
+
+            buildInsertLogSql(rowTableName, "UPDATE") +
+
+            "SELECT recycle_id FROM " + rowTableName + ";";
+    }
+
+    public static String buildUpdateRecycleDateSql(int index, String type) {
+        String rowTableName = "@UpdatedRows" + index;
+        return
+            buildLogTableSql(rowTableName) +
+
+            "UPDATE recycles SET " + type + "_date=?, update_date=? " +
+
+            buildOutputLogSql() + "INTO " + rowTableName  + " " +
+            
+            "WHERE recycle_id = ? ; " +
 
             buildInsertLogSql(rowTableName, "UPDATE") +
 

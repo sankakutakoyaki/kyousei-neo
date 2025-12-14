@@ -37,7 +37,7 @@
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
                         <button class="normal-btn ok" type="button"
-                            onclick="execSave('form-dialog-01', 'table-01-content')"><span>保存</span></button>
+                            onclick="execSave('form-dialog-01', 'table-01-content', 'regist')"><span>保存</span></button>
                     </div>
                 </div>
             </div>
@@ -54,7 +54,7 @@
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-02', event)"><span>キャンセル</span></button>
                         <button class="normal-btn ok" type="button"
-                            onclick="execSave('form-dialog-02', 'table-01-content')"><span>保存</span></button>
+                            onclick="execSave('form-dialog-02', 'table-01-content', 'delivery')"><span>保存</span></button>
                     </div>
                 </div>
             </div>
@@ -71,7 +71,7 @@
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-03', event)"><span>キャンセル</span></button>
                         <button class="normal-btn ok" type="button"
-                            onclick="execSave('form-dialog-03', 'table-01-content')"><span>保存</span></button>
+                            onclick="execSave('form-dialog-03', 'table-01-content', 'shipping')"><span>保存</span></button>
                     </div>
                 </div>
             </div>
@@ -88,7 +88,7 @@
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-04', event)"><span>キャンセル</span></button>
                         <button class="normal-btn ok" type="button"
-                            onclick="execSave('form-dialog-04', 'table-01-content')"><span>保存</span></button>
+                            onclick="execSave('form-dialog-04', 'table-01-content', 'loss')"><span>保存</span></button>
                     </div>
                 </div>
             </div>
@@ -106,7 +106,7 @@
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-05', event)"><span>キャンセル</span></button>
                         <button class="normal-btn ok" type="button"
-                            onclick="execSave('form-dialog-05', 'table-01-content')"><span>保存</span></button>
+                            onclick="execSave('form-dialog-05', 'table-01-content', 'edit')"><span>保存</span></button>
                     </div>
                 </div>
             </div>
@@ -161,6 +161,11 @@
             const deliveryDate15 = document.getElementById('delivery-date15');
             const shippingDate15 = document.getElementById('shipping-date15');
             const lossDate15 = document.getElementById('loss-date15');
+            const recycleId11 = document.getElementById('recycle-id11');
+            const recycleId12 = document.getElementById('recycle-id12');
+            const recycleId13 = document.getElementById('recycle-id13');
+            const recycleId14 = document.getElementById('recycle-id14');
+            const recycleId15 = document.getElementById('recycle-id15');
             // const buyerId12 = document.getElementById('buyer-id12');
             // const buyerCompanyName12 = document.getElementById('buyer-company-name12');
             // const buyerName12 = document.getElementById('buyer-name12');
@@ -374,7 +379,7 @@
             function setFormContent(form, entity, str) {
                 form.querySelector('[name="recycle-id"]').value = entity.recycle_id;
                 form.querySelector('[name="version"]').value = entity.version;
-                form.querySelector('[name="recycle_number"]').value = entity.recycle_number;
+                form.querySelector('[name="recycle-number"]').value = entity.recycle_number;
                 form.querySelector('[name="molding-number"]').value = entity.molding_number;
                 form.querySelector('[name="maker-code"]').value = entity.maker_id;
                 form.querySelector('[name="maker-name"]').value = entity.maker_name;
@@ -470,16 +475,16 @@
                 
                 switch (str) {
                     case "regist":
-                        await updateFormTableDisplay("table-11-content");
+                        await updateFormTableDisplay("table-11-content", "footer-11", itemList);
                         break;
                     case "delivery":
-                        await updateFormTableDisplay("table-12-content");
+                        await updateFormTableDisplay("table-12-content", "footer-12", itemList);
                         break;
                     case "shipping":
-                        await updateFormTableDisplay("table-13-content");
+                        await updateFormTableDisplay("table-13-content", "footer-13", itemList);
                         break;
                     case "loss":
-                        await updateFormTableDisplay("table-14-content");
+                        await updateFormTableDisplay("table-14-content", "footer-14", itemList);
                         break;
                     default:
                         break;
@@ -490,6 +495,7 @@
 
             async function execRegistItem(self, str) {
                 let tableId = "";
+                let footerId = "";
                 let form = [];
                 let formdata = [];
 
@@ -498,6 +504,7 @@
                         document.getElementById('regist-btn11').focus();
                         form = document.getElementById('form-01');
                         tableId = "table-11-content";
+                        footerId = "footer-11";
                         if (formDataCheck(form, str) == false) {
                             return;
                         }
@@ -507,6 +514,7 @@
                         document.getElementById('regist-btn12').focus();
                         form = document.getElementById('form-02');
                         tableId = "table-12-content";
+                        footerId = "footer-12";
                         if (formDataCheck(form, str) == false) {
                             return;
                         }
@@ -516,6 +524,7 @@
                         document.getElementById('regist-btn13').focus();
                         form = document.getElementById('form-03');
                         tableId = "table-13-content";
+                        footerId = "footer-13";
                         if (formDataCheck(form, str) == false) {
                             return;
                         }
@@ -525,6 +534,7 @@
                         document.getElementById('regist-btn14').focus();
                         form = document.getElementById('form-04');
                         tableId = "table-14-content";
+                        footerId = "footer-14";
                         if (formDataCheck(form, str) == false) {
                             return;
                         }
@@ -540,14 +550,14 @@
 
                 itemList.push(formdata);
 
-                await updateFormTableDisplay(tableId, itemList);
+                await updateFormTableDisplay(tableId, footerId, itemList);
                 scrollIntoTableList(tableId, itemId);
                 resetFormInput(form, str);
             }
 
             // 入力フォームの内容をリセットする
             function resetFormInput(form, str) {
-                form.querySelector('[name="recycle_number"]').value = "";
+                form.querySelector('[name="recycle-number"]').value = "";
                 form.querySelector('[name="molding-number"]').value = "";
 
                 switch (str) {
@@ -580,13 +590,13 @@
                     default:
                         break;
                 }
-                form.querySelector('input[name="recycle_number"]').focus();
+                form.querySelector('input[name="recycle-number"]').focus();
             }
 
             // 入力チェック
             function formDataCheck(form, str) {
                 let msg = "";
-                const num = form.querySelector('input[name="recycle_number"]');
+                const num = form.querySelector('input[name="recycle-number"]');
                 if (num.value == 0) msg += '\nお問合せ管理票番号を入力して下さい';
 
                 switch (str) {
@@ -626,12 +636,12 @@
 /******************************************************************************************************* 保存 */
 
             // 保存処理
-            async function execSave(formId, tableId) {
+            async function execSave(formId, tableId, str) {
                 // スピナー表示
                 startProcessing();
 
                 // 保存処理
-                const resultResponse = await postFetch("/recycle/save", JSON.stringify({list:itemList}), token, "application/json");
+                const resultResponse = await postFetch("/recycle/save/" + str, JSON.stringify({list:itemList}), token, "application/json");
                 const result = await resultResponse.json();
                 if (result.success) {
                     // const tbl = document.getElementById(tableId);
@@ -683,11 +693,13 @@
             }
 
             // テーブルリスト画面を更新する
-            async function updateFormTableDisplay(tableId, list) {
+            async function updateFormTableDisplay(tableId, footerId, list) {
                 // リスト画面を初期化
                 deleteElements(tableId);
                 // リスト作成
                 createFormTableContent(tableId, list);
+                // フッター作成
+                createTableFooter(footerId, list);
                 // スクロール時のページトップボタン処理を登録する
                 setPageTopButton(tableId);
                 // テーブルにスクロールバーが表示されたときの処理を登録する
@@ -724,11 +736,11 @@
                 return await resultResponse.json();
             }
 
-            async function execDate01Search(tableId) {
-                origin = await getRecyclesBetween("start-date01", "end-date01", "/recycle/get/between");
-                // 画面更新
-                await updateTableDisplay(tableId, "footer-01", "search-box-01", origin);
-            }
+            // async function execDate01Search(tableId) {
+            //     origin = await getRecyclesBetween("start-date01", "end-date01", "/recycle/get/between");
+            //     // 画面更新
+            //     await updateTableDisplay(tableId, "footer-01", "search-box-01", origin);
+            // }
 
 /******************************************************************************************************* コード入力時の処理 */
             // コード入力ボックスからフォーカスが外れた時の処理
@@ -884,7 +896,7 @@
                 if (e.currentTarget == null) return;
                 const form = e.currentTarget.closest('.dialog-content');
                 let number = 0;
-                const numberBtn = form.querySelector('input[name="recycle_number"]');
+                const numberBtn = form.querySelector('input[name="recycle-number"]');
                 switch (str) {
                     case "regist":
                         number = number11.value;
@@ -943,6 +955,8 @@
                                 setFocusElement("msg-dialog", numberBtn);
                                 return;
                             } else {
+                                recycleId11.value = entity.recycle_id;
+                                version11.value = entity.version;
                                 moldingNumber11.value = moldingNumber(number);
                                 if (moldingNumber11.value != "") number11.value = number;
                             }
@@ -959,6 +973,8 @@
                                 setFocusElement("msg-dialog", numberBtn);
                                 return;
                             } else {
+                                recycleId12.value = entity.recycle_id;
+                                version12.value = entity.version;
                                 moldingNumber12.value = moldingNumber(number);
                                 if (moldingNumber12.value != "") number12.value = number;
                             }
@@ -980,17 +996,17 @@
                                 setFocusElement("msg-dialog", numberBtn);
                                 return;
                             } else {
+                                recycleId13.value = entity.recycle_id;
+                                version13.value = entity.version;
                                 moldingNmber13.value = moldingNumber(number);
                                 if (moldingNumber13.value != "") number13.value = number;
                             }
                             break;
                         case "loss":
+                            recycleId14.value = entity.recycle_id;
+                            version14.value = entity.version;
                             moldingNumber14.value = moldingNumber(number);
                             if (moldingNumber14.value != "") number14.value = number;
-                            break;
-                        case "edit":
-                            moldingNumber15.value = moldingNumber(number);
-                            if (moldingNumber15.value != "") number15.value = number;
                             break;
                         default:
                             break;

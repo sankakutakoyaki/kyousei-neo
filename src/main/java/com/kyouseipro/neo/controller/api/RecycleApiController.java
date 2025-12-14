@@ -10,6 +10,8 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +21,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.recycle.RecycleDateEntity;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.recycle.RecycleService;
@@ -38,12 +41,6 @@ public class RecycleApiController {
     @PostMapping("/recycle/exists/number")
     @ResponseBody
     public ResponseEntity existsEntityByNumbe(@RequestParam String num) {
-        // SimpleData entity = recycleService.existsRecycleByNumber(num);
-        // if (entity != null) {
-        //     return ResponseEntity.ok(entity);
-        // } else {
-        //     return ResponseEntity.ofNullable(null);
-        // }
         RecycleEntity entity = recycleService.existsRecycleByNumber(num);
         if (entity != null) {
             return ResponseEntity.ok(entity);
@@ -52,6 +49,13 @@ public class RecycleApiController {
         }
     }
 
+    /**
+     * 
+     * @param start
+     * @param end
+     * @param col
+     * @return
+     */
     @PostMapping("/recycle/get/between")
     @ResponseBody
     public List<RecycleEntity> getBetweenEntity(@RequestParam LocalDate start, @RequestParam LocalDate end, @RequestParam String col) {
@@ -59,17 +63,40 @@ public class RecycleApiController {
         return list;
     }
 
-        /**
+    /**
      * 情報を保存する
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/recycle/save")
+    @PostMapping("/recycle/save/{type}")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> saveRecycleItem(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> saveRecycleItem(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
         String userName = principal.getAttribute("preferred_username");
-        List<RecycleEntity> itemList = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleEntity>>() {});
-        Integer id = recycleService.saveRecycle(itemList, userName);
+        Integer id = 0;
+        switch (type) {
+            case "regist":
+                List<RecycleEntity> itemList1 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleEntity>>() {});
+                id = recycleService.saveRecycle(itemList1, userName);
+                break;
+            case "delivery":
+                List<RecycleDateEntity> itemList2 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
+                id = recycleService.updateRecycleDate(itemList2, userName, type);
+                break;
+            case "shipping":
+                List<RecycleDateEntity> itemList3 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
+                id = recycleService.updateRecycleDate(itemList3, userName, type);
+                break;
+            case "loss":
+                List<RecycleDateEntity> itemList4 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
+                id = recycleService.updateRecycleDate(itemList4, userName, type);
+                break;
+            case "edit":
+                List<RecycleEntity> itemList5 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleEntity>>() {});
+                id = recycleService.saveRecycle(itemList5, userName);
+                break;
+            default:
+                break;
+        }
         if (id != null && id > 0) {
             historyService.saveHistory(userName, "recycles", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));

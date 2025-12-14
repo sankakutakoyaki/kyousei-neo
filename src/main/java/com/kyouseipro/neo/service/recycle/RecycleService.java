@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.recycle.RecycleDateEntity;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
 import com.kyouseipro.neo.repository.recycle.RecycleRepository;
 
@@ -83,6 +84,18 @@ public class RecycleService {
         //     }
         // }
         return recycleRepository.saveRecycleList(itemList, editor);
+    }
+
+    /**
+     * 日付情報を登録・更新します。
+     * IDが０の時は登録・０以上の時は更新します。
+     * 
+     * @param entity
+     * @param editor
+     * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
+    */
+    public Integer updateRecycleDate(List<RecycleDateEntity> itemList, String editor, String type) {
+        return recycleRepository.updateRecycleDateList(itemList, editor, type);
     }
 
     /**

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.recycle.RecycleDateEntity;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
 import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
 import com.kyouseipro.neo.mapper.recycle.RecycleEntityMapper;
@@ -94,15 +95,9 @@ public class RecycleRepository {
      * @return
      */
     public List<RecycleEntity> findByEntityFromBetweenDate(LocalDate start, LocalDate end, String col) {
-        // String sql = "";
-        // if (col == "loss") {
-        //     sql = RecycleSqlBuilder.buildFindByBetweenRecycleLossEntity();
-        // } else {
-        //     sql = RecycleSqlBuilder.buildFindByBetweenRecycleEntity(col);
-        // }
-
+        if ("regist".equals(col)) { col = "update"; }
         String sql = RecycleSqlBuilder.buildFindByBetweenRecycleEntity(col);
-
+        
         return sqlRepository.findAll(
             sql,
             ps -> RecycleParameterBinder.bindFindByBetweenRecycleEntity(ps, start, end),
@@ -135,6 +130,29 @@ public class RecycleRepository {
         return sqlRepository.execute(
             sql,
             (pstmt, emp) -> RecycleParameterBinder.bindSaveRecycleListParameters(pstmt, itemList, editor),
+            rs -> rs.next() ? rs.getInt("recycle_id") : null,
+            itemList
+        );
+    }
+
+    /**
+     * 日付の更新
+     * @param itemList
+     * @param editor
+     * @param type
+     * @return
+     */
+    public Integer updateRecycleDateList(List<RecycleDateEntity> itemList, String editor, String type) {
+        String sql = "";
+        int index = 1;
+
+        for (int i = 0; i < itemList.size(); i++) {
+            sql += RecycleSqlBuilder.buildUpdateRecycleDateSql(index++, type);
+        }
+
+        return sqlRepository.execute(
+            sql,
+            (pstmt, emp) -> RecycleParameterBinder.bindUpdateRecycleDateListParameters(pstmt, itemList, editor),
             rs -> rs.next() ? rs.getInt("recycle_id") : null,
             itemList
         );
