@@ -2,14 +2,14 @@
 
 // Numberからrecycleを取得
 async function existsRecycleByNumber(number) {
-    // スピナー表示
-    startProcessing();
+    // // スピナー表示
+    // startProcessing();
     const data = "num=" + encodeURIComponent(number);
     const url = "/recycle/exists/number";
     const contentType = 'application/x-www-form-urlencoded';
     const resultResponse = await postFetch(url, data, token, contentType);
-    // スピナー消去
-    processingEnd();
+    // // スピナー消去
+    // processingEnd();
     if (resultResponse.ok) {
         return await resultResponse.json();
     } else {
@@ -20,14 +20,14 @@ async function existsRecycleByNumber(number) {
 
 // コードからrecycle_makerを取得
 async function getMakerByCode(code) {
-    // スピナー表示
-    startProcessing();
+    // // スピナー表示
+    // startProcessing();
     const data = "code=" + encodeURIComponent(parseInt(code));
     const url = '/recycle/maker/get/code';
     const contentType = 'application/x-www-form-urlencoded';
     const resultResponse = await postFetch(url, data, token, contentType);
-    // スピナー消去
-    processingEnd();
+    // // スピナー消去
+    // processingEnd();
     if (resultResponse.ok) {
         return await resultResponse.json();
     } else {
@@ -37,14 +37,14 @@ async function getMakerByCode(code) {
 
 // コードからrecycle_itemを取得
 async function getItemByCode(code) {
-    // スピナー表示
-    startProcessing();
+    // // スピナー表示
+    // startProcessing();
     const data = "code=" + encodeURIComponent(parseInt(code));
     const url = '/recycle/item/get/code';
     const contentType = 'application/x-www-form-urlencoded';
     const resultResponse = await postFetch(url, data, token, contentType);
-    // スピナー消去
-    processingEnd();
+    // // スピナー消去
+    // processingEnd();
     if (resultResponse.ok) {
         return await resultResponse.json();
     } else {
@@ -171,8 +171,6 @@ function setDateUpdateFormData(form) {
 
 // コードから[maker]を取得して、名前を表示
 async function searchForNameByMakerCode(form, makerCode, makerName, makerId) {
-    // if (e.currentTarget == null) return;
-    // const form = e.currentTarget.closest('.dialog-content');
     let code = 0;
     const makerBtn = form.querySelector('input[name="maker-code"]');
     if (makerCode.value == "" || isNaN(makerCode.value)) {
@@ -198,9 +196,7 @@ async function searchForNameByMakerCode(form, makerCode, makerName, makerId) {
 }
 
 // コードから[item]を取得して、名前を表示
-async function searchForNameByMakerCode(form, itemCode, itemName, itemId) {
-    // if (e.currentTarget == null) return;
-    // const form = e.currentTarget.closest('.dialog-content');
+async function searchForNameByItemCode(form, itemCode, itemName, itemId) {
     let code = 0;
     const codeBtn = form.querySelector('input[name="item-code"]')
     if (itemCode.value == "" || isNaN(itemCode.value)) {
@@ -225,30 +221,6 @@ async function searchForNameByMakerCode(form, itemCode, itemName, itemId) {
         setFocusElement("msg-dialog", codeBtn);
     }
 }
-
-// // コードから[item]を取得して、名前を表示
-// async function searchForNameByItemCode(form, itemCode, itemName, itemId) {
-//     // if (e.currentTarget == null) return;
-//     // const form = e.currentTarget.closest('.dialog-content');
-//     let code = 0;
-//     const codeBtn = form.querySelector('input[name="item-code"]');
-
-//     if (itemCode.value == "" || isNaN(itemCode11.value)) {
-//         itemCode.value = "";
-//         itemName.value = "";
-//         itemId.value = "";
-//         code = itemCode.value;
-
-//         if (itemCode.value == "" || isNaN(itemCode.value)) {
-//             itemCode.value = "";
-//             itemName.value = "";
-//             itemId.value = "";
-//             return;
-//         }
-//         code = itemCode.value;
-//     }
-// }
-
 
 // お問合せ管理票番号を取得して検証
 async function searchForExistByNumber(form, list, numberBox, recycleId, moldingId, versionId, str) {

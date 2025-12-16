@@ -499,10 +499,10 @@
 /******************************************************************************************************* 登録 */
 
             async function execRegistItem(self, str) {
+                let regBtnId = "";
+                let formId = "";
                 let tableId = "";
                 let footerId = "";
-                let form = [];
-                let formdata = [];
 
                 switch (str) {
                     case "regist":
@@ -532,7 +532,12 @@
                     default:
                         break;
                 }
-                createFormdata(regBtnId, formId, tableId, footerId, str);
+                const form = document.getElementById(formId);
+                if (formDataCheck(form, str) == false) {
+                    return;
+                }
+
+                createFormdata(form, regBtnId, tableId, footerId, str);
 
                 itemList.push(formdata);
 
@@ -541,12 +546,9 @@
                 resetFormInput(form, str);
             }
 
-            function createFormdata(regBtnId, formId, tableId, footerId, str) {
+            function createFormdata(form, regBtnId, tableId, footerId, str) {
                 document.getElementById(regBtnId).focus();
-                form = document.getElementById(formId);
-                if (formDataCheck(form, str) == false) {
-                    return;
-                }
+
                 switch (str) {
                     case "regist":
                         formdata = setInsertFormData(form);
