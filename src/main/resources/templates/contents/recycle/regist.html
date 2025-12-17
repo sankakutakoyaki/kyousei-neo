@@ -460,9 +460,10 @@
 
 /******************************************************************************************************* 削除 */
 
-            async function execDelete01(tableId) {
+            async function execDelete01(tableId, self) {
                 // スピナー表示
                 startProcessing();
+
                 const result = await deleteTablelist('table-01-content', '/recycle/delete');
 
                 if (result.success) {                
@@ -708,8 +709,8 @@
 
 /******************************************************************************************************* ダウンロード */
 
-            async function execDownloadCsv01(self) {
-                await downloadCsv('table-01-content', '/recycle/download/csv');
+            async function execDownloadCsv01(tableId, self) {
+                await downloadCsv(tableId, '/recycle/download/csv');
             }
 
 /******************************************************************************************************* 画面更新 */
