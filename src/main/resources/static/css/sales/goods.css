@@ -59,7 +59,6 @@
     }
 }
 
-
 /******************************************************************************************************* table */
 
 :is(.tab-panel[data-panel="01"], .tab-panel[data-panel="02"], .tab-panel[data-panel="03"], .tab-panel[data-panel="04"]) .table-area {

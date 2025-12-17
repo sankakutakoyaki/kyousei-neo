@@ -170,39 +170,34 @@ function toggleScrollbar(element, className = 'has-scrollbar') {
  * @param {*} reverse 
  */
 function sortTable(table, col, reverse) {
-    // テーブルのtbodyを取得
-    // tbody内のすべての行を配列に変換
     const tbody = table.tBodies[1]; // 0はヘッダー
     const tr = Array.prototype.slice.call(tbody.rows);
-    
+
     tr.sort(function(a, b) {
         const aValue = a.cells[col].textContent.trim();
         const bValue = b.cells[col].textContent.trim();
-    
-        // 数値に変換できるか判定
-        const aNum = parseFloat(aValue);
-        const bNum = parseFloat(bValue);
+
+        // カンマを削除して数値に変換
+        const aNum = parseFloat(aValue.replace(/,/g, ''));
+        const bNum = parseFloat(bValue.replace(/,/g, ''));
         const isANumber = !isNaN(aNum);
         const isBNumber = !isNaN(bNum);
-    
+
         let result = 0;
-    
+
         if (isANumber && isBNumber) {
-            // 両方とも数値 → 数値で比較
-            result = aNum - bNum;
+            result = aNum - bNum;  // 数値で比較
         } else {
-            // どちらか文字列 → 小文字にして文字列で比較
             const aStr = aValue.toLowerCase();
             const bStr = bValue.toLowerCase();
             if (aStr < bStr) result = -1;
             else if (aStr > bStr) result = 1;
             else result = 0;
         }
-        // 昇順 or 降順
+
         return reverse ? result : -result;
     });
 
-    // ソートされた行をテーブルに再配置
     tr.forEach(function(row) {
         tbody.appendChild(row);
     });

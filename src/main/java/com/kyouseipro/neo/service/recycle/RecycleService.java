@@ -55,7 +55,14 @@ public class RecycleService {
     public RecycleEntity getRecycleByNumber(String number) {
         return recycleRepository.findByNumber(number);
     }
-
+    
+    /**
+     * 
+     * @param start
+     * @param end
+     * @param col
+     * @return
+     */
     public List<RecycleEntity> getBetweenRecycleEntity(LocalDate start, LocalDate end, String col) {
         return recycleRepository.findByEntityFromBetweenDate(start, end, col);
     }
