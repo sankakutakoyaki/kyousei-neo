@@ -173,7 +173,7 @@ public class RecycleParameterBinder {
             }
         }
     }
-
+    
     public static void bindUpdateRecycleDateListParameters(PreparedStatement pstmt, List<RecycleDateEntity> list, String editor) throws SQLException {
         int index = 1;
         for (RecycleDateEntity entity : list) {

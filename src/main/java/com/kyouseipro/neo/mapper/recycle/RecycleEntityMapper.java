@@ -12,8 +12,10 @@ public class RecycleEntityMapper {
         entity.setRecycle_number(rs.getString("recycle_number"));
         entity.setMolding_number(rs.getString("molding_number"));
         entity.setMaker_id(rs.getInt("maker_id"));
+        entity.setMaker_code(rs.getInt("maker_code"));
         entity.setMaker_name(rs.getString("maker_name"));
         entity.setItem_id(rs.getInt("item_id"));
+        entity.setItem_code(rs.getInt("item_code"));
         entity.setItem_name(rs.getString("item_name"));
         entity.setUse_date(rs.getDate("use_date").toLocalDate());
         entity.setDelivery_date(rs.getDate("delivery_date").toLocalDate());

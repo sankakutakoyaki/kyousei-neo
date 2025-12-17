@@ -93,18 +93,8 @@
             </div>
             <div class="flex-area">
                 <div class="form-parts">
-                    <label>製造業者等名</label>
-                    <input tabindex="15" id="maker-code11" name="maker-code" class="normal-input" type="text"
-                        value="" onfocus="this.select();">
-                </div>
-                <div class="form-parts">
-                    <label></label>
-                    <input id="maker-name11" name="maker-name" class="normal-input" type="text" readonly
-                        value="" onfocus="this.select();">
-                </div>
-                <div class="form-parts">
                     <label>品目・料金区分</label>
-                    <input tabindex="16" id="item-code11" name="item-code" class="normal-input" type="text"
+                    <input tabindex="15" id="item-code11" name="item-code" class="normal-input" type="text"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -113,8 +103,18 @@
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
+                    <label>製造業者等名</label>
+                    <input tabindex="16" id="maker-code11" name="maker-code" class="normal-input" type="text"
+                        value="" onfocus="this.select();">
+                </div>
+                <div class="form-parts">
                     <label></label>
-                    <button tabindex="17" id="regist-btn11" class="normal-btn ok" type="button"
+                    <input id="maker-name11" name="maker-name" class="normal-input" type="text" readonly
+                        value="" onfocus="this.select();">
+                </div>
+                <div class="form-parts">
+                    <label></label>
+                    <button tabindex="17" id="regist-btn11" name="regist-btn" class="normal-btn ok" type="button"
                         onclick="execRegistItem(this, 'regist')"><span>登録</span></button>
                 </div>
             </div>
@@ -146,7 +146,7 @@
                 </div>
                 <div class="form-parts">
                     <label></label>
-                    <button tabindex="23" id="regist-btn12" class="normal-btn ok" type="button"
+                    <button tabindex="23" id="regist-btn12" name="regist-btn" class="normal-btn ok" type="button"
                         onclick="execRegistItem(this, 'delivery')"><span>登録</span></button>
                 </div>
             </div>
@@ -178,7 +178,7 @@
                 </div>
                 <div class="form-parts">
                     <label></label>
-                    <button tabindex="33" id="regist-btn13" class="normal-btn ok" type="button"
+                    <button tabindex="33" id="regist-btn13" name="regist-btn" class="normal-btn ok" type="button"
                         onclick="execRegistItem(this, 'shipping')"><span>登録</span></button>
                 </div>
             </div>
@@ -210,7 +210,7 @@
                 </div>
                 <div class="form-parts">
                     <label></label>
-                    <button tabindex="43" id="regist-btn14" class="normal-btn ok" type="button"
+                    <button tabindex="43" id="regist-btn14" name="regist-btn" class="normal-btn ok" type="button"
                         onclick="execRegistItem(this, 'loss')"><span>登録</span></button>
                 </div>
             </div>
@@ -230,34 +230,36 @@
             <input id="maker-id15" name="maker-id" type="hidden" value="">
             <input id="item-id15" name="item-id" type="hidden" value="">
             <input id="recycling-fee15" name="recycling-fee" type="hidden" value="">
-            <input id="molding-number15" name="molding-number" type="hidden" value="">
+            <input id="number15" name="recycle-number" type="hidden" value="">
 
             <div class="flex-area">
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
-                    <input tabindex="51" id="number15" name="recycle-number" class="normal-input" type="text" readonly
+                    <input tabindex="51" id="molding-number15" name="molding-number" class="normal-input" type="text" readonly
+                        value="" onfocus="this.select();">
+                </div>
+            </div>
+            <div class="flex-area">
+                <div class="form-parts">
+                    <label>品目・料金区分</label>
+                    <input tabindex="52" id="item-code15" name="item-code" class="normal-input" type="text" autofocus
+                        value="" onfocus="this.select();">
+                </div>
+                <div class="form-parts">
+                    <label></label>
+                    <input id="item-name15" name="item-name" class="normal-input" type="text" readonly
                         value="" onfocus="this.select();">
                 </div>
             </div>
             <div class="flex-area">
                 <div class="form-parts">
                     <label>製造業者等名</label>
-                    <input tabindex="52" id="maker-code15" name="maker-code" class="normal-input" type="text" autofocus
+                    <input tabindex="53" id="maker-code15" name="maker-code" class="normal-input" type="text"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label></label>
                     <input id="maker-name15" name="maker-name" class="normal-input" type="text" readonly
-                        value="" onfocus="this.select();">
-                </div>
-                <div class="form-parts">
-                    <label>品目・料金区分</label>
-                    <input tabindex="53" id="item-code15" name="item-code" class="normal-input" type="text"
-                        value="" onfocus="this.select();">
-                </div>
-                <div class="form-parts">
-                    <label></label>
-                    <input id="item-name15" name="item-name" class="normal-input" type="text" readonly
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -294,15 +296,12 @@
                     <select tabindex="59" id="company15" name="company"
                         class="normal-select"></select>
                 </div>
+            </div>
+            <div class="flex-area">
                 <div class="form-parts">
-                    <label></label>
+                    <label>支店</label>
                     <select tabindex="60" id="office15" name="office"
                         class="normal-select"></select>
-                </div>
-                <div class="form-parts">
-                    <label></label>
-                    <button tabindex="61" id="regist-btn15" class="normal-btn ok" type="button"
-                        onclick="execRegistItem(this, 'edit')"><span>登録</span></button>
                 </div>
             </div>
         </div>

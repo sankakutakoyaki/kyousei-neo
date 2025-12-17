@@ -139,7 +139,8 @@ public class RecycleSqlBuilder {
 
     private static String baseSelectString() {
         return
-            "SELECT r.recycle_id, r.recycle_number, r.molding_number, r.maker_id, rm.name as maker_name, r.item_id, ri.name as item_name," +
+            "SELECT r.recycle_id, r.recycle_number, r.molding_number, " +
+            " r.maker_id, rm.code as maker_code, rm.name as maker_name, r.item_id, ri.code as item_code, ri.name as item_name," +
             " r.use_date, r.delivery_date, r.shipping_date, r.loss_date," +
             " r.company_id, r.office_id, c1.name as company_name, o.name as office_name," +
             " r.recycling_fee, r.disposal_site_id, c2.name as disposal_site_name, r.version, r.state" +

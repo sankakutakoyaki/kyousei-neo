@@ -106,7 +106,7 @@
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-05', event)"><span>キャンセル</span></button>
                         <button class="normal-btn ok" type="button"
-                            onclick="execSave('form-dialog-05', 'table-01-content', 'edit')"><span>保存</span></button>
+                            onclick="execUpdate('table-01-content', 'edit')"><span>保存</span></button>
                     </div>
                 </div>
             </div>
@@ -346,21 +346,25 @@
                             formDialogId = "form-dialog-01";
                             formId = "form-01";
                             useDate11.value = "";
+                            await updateFormTableDisplay("table-11-content", "footer-11", itemList);
                             break;
                         case "delivery":
                             formDialogId = "form-dialog-02";
                             formId = "form-02";
                             deliveryDate12.value = "";
+                            await updateFormTableDisplay("table-12-content", "footer-12", itemList);
                             break;
                         case "shipping":
                             formDialogId = "form-dialog-03";
                             formId = "form-03";
                             shippingDate13.value = "";
+                            await updateFormTableDisplay("table-13-content", "footer-13", itemList);
                             break;
                         case "loss":
                             formDialogId = "form-dialog-04";
                             formId = "form-04";
                             lossDate14.value = "";
+                            await updateFormTableDisplay("table-14-content", "footer-14", itemList);
                             break;
                         default:
                             break;
@@ -386,13 +390,13 @@
                 form.querySelector('[name="version"]').value = entity.version;
                 form.querySelector('[name="recycle-number"]').value = entity.recycle_number;
                 form.querySelector('[name="molding-number"]').value = entity.molding_number;
-                form.querySelector('[name="maker-code"]').value = entity.maker_id;
+                form.querySelector('[name="maker-code"]').value = entity.maker_code;
                 form.querySelector('[name="maker-name"]').value = entity.maker_name;
                 form.querySelector('[name="maker-id"]').value = entity.maker_id;
-                form.querySelector('[name="item-code"]').value = entity.item_id;
+                form.querySelector('[name="item-code"]').value = entity.item_code;
                 form.querySelector('[name="item-name"]').value = entity.item_name;
                 form.querySelector('[name="item-id"]').value = entity.item_id;
-                form.querySelector('[name="recycle-fee"]').value = entity.recycling_fee;
+                form.querySelector('[name="recycling-fee"]').value = entity.recycling_fee;
 
                 if (entity.use_date == "9999-12-31") {
                     form.querySelector('[name="use-date"]').value = "";
@@ -423,10 +427,12 @@
 
                 // 処分場コンボボックス
                 const disposalSiteArea = form.querySelector('select[name="disposal-site"]');
-                createComboBoxWithTop(disposalSiteArea, disposalSiteComboList, "");
-                setComboboxSelected(disposalSiteArea, entity.disposal_site_id); 
+                if (disposalSiteArea != null) {
+                    createComboBoxWithTop(disposalSiteArea, disposalSiteComboList, "");
+                    setComboboxSelected(disposalSiteArea, entity.disposal_site_id); 
+                }
 
-                form.querySelector('[autofocus"]').focus();
+                form.querySelector('[autofocus]').focus();
             }
 
             // // 製造業者等名コンボボックスを登録する
@@ -662,11 +668,39 @@
                     await execDate01Search(tableId);
                     // 追加・変更行に移動
                     scrollIntoTableList(tableId, result.id);
+                    // itemList = [];
                 } else {
                     openMsgDialog("msg-dialog", result.message, "red");
                 }
                 // ダイアログを閉じる
                 closeFormDialog(formId);
+
+                // スピナー消去
+                processingEnd();
+            }
+
+            // 更新処理
+            async function execUpdate(tableId, str) {
+                const form = document.getElementById("form-05");
+                if (formDataCheck(form, str) == false) {
+                    return;
+                }
+
+                // スピナー表示
+                startProcessing();
+
+                formdata = setInsertFormData(form);
+                const resultResponse = await postFetch("/recycle/save/" + str, JSON.stringify({entity:formdata}), token, "application/json");
+                const result = await resultResponse.json();
+                if (result.success) {
+                    // 画面更新
+                    openMsgDialog("msg-dialog", result.message, "blue");
+                    await execDate01Search(tableId);
+                } else {
+                    openMsgDialog("msg-dialog", result.message, "red");
+                }
+                // ダイアログを閉じる
+                closeFormDialog("form-dialog-05");
 
                 // スピナー消去
                 processingEnd();

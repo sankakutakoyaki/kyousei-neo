@@ -87,6 +87,18 @@ public class RecycleService {
     }
 
     /**
+     * リサイクル情報を更新します。
+     * IDが０の時は登録・０以上の時は更新します。
+     * 
+     * @param entity
+     * @param editor
+     * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
+    */
+    public Integer updateRecycle(RecycleEntity entity, String editor) {
+        return recycleRepository.updateRecycle(entity, editor);
+    }
+
+    /**
      * 日付情報を登録・更新します。
      * IDが０の時は登録・０以上の時は更新します。
      * 

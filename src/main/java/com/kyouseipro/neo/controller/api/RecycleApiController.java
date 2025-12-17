@@ -34,6 +34,22 @@ public class RecycleApiController {
     private final ObjectMapper objectMapper;
 
     /**
+     * IDからEntityを取得する
+     * @param ID
+     * @return 
+     */
+    @PostMapping("/recycle/get/id")
+	@ResponseBody
+    public ResponseEntity getEntityById(@RequestParam int id) {
+        RecycleEntity entity = recycleService.getRecycleById(id);
+        if (entity != null) {
+            return ResponseEntity.ok(entity);
+        } else {
+            return ResponseEntity.ofNullable(null);
+        }
+    }
+
+    /**
      * 
      * @param str
      * @return
@@ -91,8 +107,8 @@ public class RecycleApiController {
                 id = recycleService.updateRecycleDate(itemList4, userName, type);
                 break;
             case "edit":
-                List<RecycleEntity> itemList5 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleEntity>>() {});
-                id = recycleService.saveRecycle(itemList5, userName);
+                RecycleEntity entity = objectMapper.convertValue(body.get("entity"), new TypeReference<RecycleEntity>() {});
+                id = recycleService.updateRecycle(entity, userName);
                 break;
             default:
                 break;

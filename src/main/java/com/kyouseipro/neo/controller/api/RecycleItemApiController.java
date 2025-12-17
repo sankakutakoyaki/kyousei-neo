@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class RecycleItemApiController {
     private final RecycleItemService recycleItemService;
     private final HistoryService historyService;
+    
     /**
      * IDからEntityを取得する
      * @param ID

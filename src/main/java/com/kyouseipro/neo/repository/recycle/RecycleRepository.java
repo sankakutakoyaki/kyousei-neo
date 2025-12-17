@@ -136,6 +136,24 @@ public class RecycleRepository {
     }
 
     /**
+     * 更新。
+     * @param entity
+     * @param editor
+     * @return 新規IDを返す。
+     */
+    public Integer updateRecycle(RecycleEntity entity, String editor) {
+        int index = 1;
+        String sql = RecycleSqlBuilder.buildUpdateRecycleSql(index);
+
+        return sqlRepository.execute(
+            sql,
+            (pstmt, emp) -> RecycleParameterBinder.bindUpdateRecycleParameters(pstmt, entity, editor, index),
+            rs -> rs.next() ? rs.getInt("recycle_id") : null,
+            entity
+        );
+    }
+
+    /**
      * 日付の更新
      * @param itemList
      * @param editor

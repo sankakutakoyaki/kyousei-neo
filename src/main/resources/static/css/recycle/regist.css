@@ -82,7 +82,7 @@
 
 /******************************************************************************************************* form */
 
-:is(#form-01, #form-05).dialog-content {
+:is(#form-01).dialog-content {
     height: 100%;
     width: 70rem;
 }
@@ -90,6 +90,11 @@
 :is(#form-02, #form-03, #form-04).dialog-content {
     height: 100%;
     width: 40rem;
+}
+
+:is(#form-05).dialog-content {
+    height: 100%;
+    /* width: 30rem; */
 }
 
 :is(#form-01, #form-02, #form-03, #form-04, #form-05) .normal-table {
@@ -104,7 +109,7 @@
 
 :is(#form-01, #form-02, #form-03, #form-04, #form-05) .table-area {
     display: grid;
-    /* grid-template-rows: auto auto auto auto auto 1fr; */
+    row-gap: .5rem;
     overflow: hidden;
     margin-top: 0;
 }
@@ -122,7 +127,7 @@
     }
     & >.flex-area:nth-of-type(3) {
         display: grid;
-        grid-template-columns: 5rem 1fr 5rem 1fr 6rem;
+        grid-template-columns: 6rem 1fr 6rem 1fr 6rem;
         width: 100%;
     }
 }
@@ -158,16 +163,31 @@
     width: 100%;
     & >.flex-area:nth-of-type(1) {
         display: grid;
-        grid-template-columns: 6rem 10rem auto auto 1fr ;
+        grid-template-columns: 10rem 1fr ;
         width: 100%;
     }
     & >.flex-area:nth-of-type(2) {
         display: grid;
-        grid-template-columns: 12rem 1fr 1fr 4rem 12rem;
+        grid-template-columns: 6rem 1fr 6rem;
     }
     & >.flex-area:nth-of-type(3) {
         display: grid;
-        grid-template-columns: auto 12rem 1fr 6rem;
+        grid-template-columns: 6rem 1fr 6rem;
+        width: 100%;
+    }
+    & >.flex-area:nth-of-type(4) {
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+        width: 100%;
+    }
+    & >.flex-area:nth-of-type(5) {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+    }
+    & >.flex-area:nth-of-type(6) {
+        display: grid;
+        grid-template-columns: 1fr;
         width: 100%;
     }
 }

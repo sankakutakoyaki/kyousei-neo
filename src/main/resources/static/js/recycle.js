@@ -225,6 +225,7 @@ async function searchForNameByItemCode(form, itemCode, itemName, itemId) {
 // お問合せ管理票番号を取得して検証
 async function searchForExistByNumber(form, list, numberBox, recycleId, moldingId, versionId, str) {
     const numberBtn = form.querySelector('input[name="recycle-number"]');
+    const regBtn = form.querySelector('button[name="regist-btn"]');
     const number = checkNumber(numberBox); 
 
     if (number == "") {
@@ -247,11 +248,11 @@ async function searchForExistByNumber(form, list, numberBox, recycleId, moldingI
         openMsgDialog("msg-dialog", "その番号は、ロス処理済みです", 'red');
         setFocusElement("msg-dialog", numberBtn);
     } else {
-        processNumberAfterCheck(entity, number, str, numberBox, recycleId, moldingId, versionId, numberBtn);
+        processNumberAfterCheck(entity, number, str, numberBox, recycleId, moldingId, versionId, numberBtn, regBtn);
     }
 }
 
-function processNumberAfterCheck(entity, number, str, numberBox, recycleId, moldingId, versionId, numberBtn) {
+function processNumberAfterCheck(entity, number, str, numberBox, recycleId, moldingId, versionId, numberBtn, regBtn) {
     switch (str) {
         case "regist":
             if (entity != null && entity.recycle_id > 0) {
@@ -282,6 +283,7 @@ function processNumberAfterCheck(entity, number, str, numberBox, recycleId, mold
                 versionId.value = entity.version;
                 moldingId.value = moldingNumber(numberBox);
                 if (moldingId.value != "") numberBox.value = number;
+                regBtn.click();
             }
             break;
         case "shipping":
@@ -305,6 +307,7 @@ function processNumberAfterCheck(entity, number, str, numberBox, recycleId, mold
                 versionId.value = entity.version;
                 moldingId.value = moldingNumber(numberBox);
                 if (moldingId.value != "") numberBox.value = number;
+                regBtn.click();
             }
             break;
         case "loss":
@@ -317,6 +320,7 @@ function processNumberAfterCheck(entity, number, str, numberBox, recycleId, mold
             }
             moldingId.value = moldingNumber(numberBox);
             if (moldingId.value != "") numberBox.value = number;
+            regBtn.click();
             break;
         default:
             break;
