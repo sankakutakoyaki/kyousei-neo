@@ -49,20 +49,22 @@ public class RecyclePageController {
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new RecycleEntity());
-        // mv.addObject("itemEntity", new OrderItemEntity());
-        // mv.addObject("staffEntity", new DeliveryStaffEntity());
-        // mv.addObject("workEntity", new WorkContentEntity());
 
         // 初期表示用リスト取得
         List<RecycleEntity> origin = recycleService.getBetweenRecycleEntity(LocalDate.now(), LocalDate.now(), "regist");
         mv.addObject("origin", origin);
         // コンボボックスアイテム取得
         List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorList();
+        // 自社を取得
+        List<SimpleData> ownList = comboBoxService.getOwnCompanyList();
+        // 自社を先頭に追加
+        for (SimpleData simpleData : ownList) {
+            companyComboList.add(0, simpleData);
+        }
         mv.addObject("companyComboList", companyComboList);
+        // 支店リストを取得
         List<OfficeListEntity> officeComboList = comboBoxService.getOfficeList();
         mv.addObject("officeComboList", officeComboList);
-        // List<StaffListEntity> salesStaffList = comboBoxService.getSalesStaffList();
-        // mv.addObject("salesStaffList", salesStaffList);
 
         mv.addObject("deleteCode", Enums.state.DELETE.getCode());
 
