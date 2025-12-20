@@ -323,14 +323,18 @@
                     const data = "id=" + encodeURIComponent(parseInt(id));
                     const resultResponse = await postFetch('/recycle/get/id', data, token, 'application/x-www-form-urlencoded');
                     const result = await resultResponse.json();
+
+                    let form = document.getElementById("form-dialog-05");
+
                     if (result.recycle_id == 0) {
                         openMsgDialog("msg-dialog", "データがありません", "red");
+                        
                         processingEnd();
                         return;
                     }
                     entity = structuredClone(result);
                     openFormDialog("form-dialog-05"); 
-                    form = document.getElementById("form-dialog-05");
+                    // form = document.getElementById("form-dialog-05");
                     resetFormInput(form, str);
                     setFormContent(form, entity);
                     setEnterFocus("form-05");

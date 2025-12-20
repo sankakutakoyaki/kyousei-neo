@@ -513,6 +513,25 @@
                     formdata.remarks = formData.get('remarks').trim();
                     formdata.version = formData.get('version');
 
+                    itemList.forEach(item => { 
+                        if (item.order_item_id === -1) {
+                            item.order_item_id = 0;
+                        }
+                    });
+                    staffList.forEach(staff => { 
+                        if (staff.delivery_staff_id === -1) {
+                            staff.delivery_staff_id = 0;
+                        }
+                    });
+                    workList.forEach(work => { 
+                        if (work.work_content_id === -1) {
+                            work.work_content_id = 0;
+                        }
+                    });
+                    // itemList = itemList.filter(item => item.order_item_id >= 0);
+                    // staffList = staffList.filter(item => item.delivery_staff_id >= 0);
+                    // workList = workList.filter(item => item.work_content_id >= 0);
+
                     // 保存処理
                     const resultResponse = await postFetch("/order/save", JSON.stringify({orderEntity:formdata, itemEntityList:itemList, staffEntityList:staffList, workEntityList:workList}), token, "application/json");
                     const result = await resultResponse.json();
@@ -624,6 +643,7 @@
                 // エラーが一つ以上あればエラーメッセージダイアログを表示する
                 if (msg != "") {
                     openMsgDialog("msg-dialog", msg, "red");
+                    setFocusElement("msg-dialog", maker12);
                     return false;
                 }
                 return true;
@@ -736,6 +756,7 @@
                 // エラーが一つ以上あればエラーメッセージダイアログを表示する
                 if (msg != "") {
                     openMsgDialog("msg-dialsog", msg, "red");
+                    setFocusElement("msg-dialog", code13);
                     return false;
                 }
                 return true;
@@ -842,6 +863,7 @@
                 // エラーが一つ以上あればエラーメッセージダイアログを表示する
                 if (msg != "") {
                     openMsgDialog("msg-dialog", msg, "red");
+                    setFocusElement("msg-dialog", code14);
                     return false;
                 }
                 return true;
@@ -1033,7 +1055,7 @@
                 code14.addEventListener('blur', function (e) { execCodeBlur(e); });
 
                 // regBtn14.addEventListener('keydown', function (e) { execRegistBtnKeyDown(e); });
-                regBtn14.addEventListener('keydown', function (e) { if(e.key === 'Enter'){ execRegistStaff(); }});
+                // regBtn14.addEventListener('keydown', function (e) { if(e.key === 'Enter'){ execRegistStaff(); }});
 
                 // 検索ボックス入力時の処理
                 document.getElementById('search-box-01').addEventListener('search', async function(e) {

@@ -8,16 +8,12 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.sales.DeliveryStaffEntity;
 import com.kyouseipro.neo.entity.sales.OrderEntity;
 import com.kyouseipro.neo.entity.sales.OrderItemEntity;
+import com.kyouseipro.neo.entity.sales.WorkContentEntity;
 
 public class OrderParameterBinder {
     public static void bindInsertOrderParameters(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
         int index = 1;
         pstmt.setString(index++, o.getRequest_number());
-        // if (o.getOrder_date() != null) {
-        //     pstmt.setDate(index++, java.sql.Date.valueOf(o.getOrder_date()));
-        // } else {
-        //     pstmt.setNull(index++, java.sql.Types.DATE);
-        // }
         if (o.getStart_date() != null) {
             pstmt.setDate(index++, java.sql.Date.valueOf(o.getStart_date()));
         } else {
@@ -44,19 +40,25 @@ public class OrderParameterBinder {
 
         for (OrderItemEntity orderItemEntity : o.getItem_list()) {
             OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, orderItemEntity, editor, index, true);
-            index = index + 19;
+            index = index + 18;
         }
+
+        for (WorkContentEntity workContentEntity : o.getWork_list()) {
+            WorkContentParameterBinder.bindInsertWorkContentParameters(pstmt, workContentEntity, editor, index, true);
+            index = index + 6;
+        }
+
+        for (DeliveryStaffEntity deliveryStaffEntity : o.getStaff_list()) {
+            DeliveryStaffParameterBinder.bindInsertDeliveryStaffParameters(pstmt, deliveryStaffEntity, editor, index, true);
+            index = index + 4;
+        }
+
     }
 
     public static void bindUpdateOrderParameters(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
         int index = 1;
-        pstmt.setInt(index++, o.getOrder_id());
+        // pstmt.setInt(index++, o.getOrder_id());
         pstmt.setString(index++, o.getRequest_number());
-        // if (o.getOrder_date() != null) {
-        //     pstmt.setDate(index++, java.sql.Date.valueOf(o.getOrder_date()));
-        // } else {
-        //     pstmt.setNull(index++, java.sql.Types.DATE);
-        // }
         if (o.getStart_date() != null) {
             pstmt.setDate(index++, java.sql.Date.valueOf(o.getStart_date()));
         } else {
@@ -83,40 +85,62 @@ public class OrderParameterBinder {
         pstmt.setString(index++, editor);          // ログ用
 
         // 商品リスト
-        for (OrderItemEntity orderItemEntity : o.getItem_list()) {
-            // 削除の場合
-            if (orderItemEntity.getState() == Enums.state.DELETE.getCode()) {
-                OrderItemParameterBinder.bindDeleteOrderItemParameters(pstmt, orderItemEntity.getOrder_item_id(), editor, index);
-                index = index + 3;
-            } else {
-                // 更新か新規かで分岐
-                if (orderItemEntity.getOrder_item_id() > 0){
-                    OrderItemParameterBinder.bindUpdateOrderItemParameters(pstmt, orderItemEntity, editor, index);
-                    index = index + 20;
-                } else {
-                    OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, orderItemEntity, editor, index, false);
-                    index = index + 19;
-                }
-            }
-        }
+        index = OrderItemParameterBinder.setSaveOrderItemListParameters(pstmt, o.getItem_list(), editor, index);
+        // // 商品リスト
+        // for (OrderItemEntity orderItemEntity : o.getItem_list()) {
+        //     // 削除の場合
+        //     if (orderItemEntity.getState() == Enums.state.DELETE.getCode()) {
+        //         OrderItemParameterBinder.bindDeleteOrderItemParameters(pstmt, orderItemEntity.getOrder_item_id(), editor, index);
+        //         index = index + 3;
+        //     } else {
+        //         // 更新か新規かで分岐
+        //         if (orderItemEntity.getOrder_item_id() > 0){
+        //             OrderItemParameterBinder.bindUpdateOrderItemParameters(pstmt, orderItemEntity, editor, index);
+        //             index = index + 20;
+        //         } else {
+        //             OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, orderItemEntity, editor, index, false);
+        //             index = index + 19;
+        //         }
+        //     }
+        // }
+
+        // 作業リスト
+        WorkContentParameterBinder.setSaveWorkContentListParameters(pstmt, o.getWork_list(), editor, index);
+        // for (WorkContentEntity workContentEntity : o.getWork_list()) {
+        //     // 削除の場合
+        //     if (workContentEntity.getState() == Enums.state.DELETE.getCode()) {
+        //         WorkContentParameterBinder.bindDeleteWorkContentParameters(pstmt, workContentEntity.getWork_content_id(), editor, index);
+        //         index = index + 3;
+        //     } else {
+        //         // 更新か新規かで分岐
+        //         if (workContentEntity.getWork_content_id() > 0){
+        //             WorkContentParameterBinder.bindUpdateOrderItemParameters(pstmt, workContentEntity, editor, index);
+        //             index = index + 8;
+        //         } else {
+        //             WorkContentParameterBinder.bindInsertWorkContentParameters(pstmt, workContentEntity, editor, index, false);
+        //             index = index + 7;
+        //         }
+        //     }
+        // }
 
         // 配送担当リスト
-        for (DeliveryStaffEntity deliveryStaffEntity : o.getStaff_list()) {
-            // 削除の場合
-            if (deliveryStaffEntity.getState() == Enums.state.DELETE.getCode()) {
-                DeliveryStaffParameterBinder.bindDeleteDeliveryStaffParameters(pstmt, deliveryStaffEntity.getDelivery_staff_id(), editor, index);
-                index = index + 3;
-            } else {
-                // 更新か新規かで分岐
-                if (deliveryStaffEntity.getDelivery_staff_id() > 0){
-                    DeliveryStaffParameterBinder.bindUpdateDeliveryStaffParameters(pstmt, deliveryStaffEntity, editor, index);
-                    index = index + 6;
-                } else {
-                    DeliveryStaffParameterBinder.bindInsertDeliveryStaffParameters(pstmt, deliveryStaffEntity, editor, index, false);
-                    index = index + 5;
-                }
-            }
-        }
+        DeliveryStaffParameterBinder.setSaveDeliveryStaffListParameters(pstmt, o.getStaff_list(), editor, index);
+        // for (DeliveryStaffEntity deliveryStaffEntity : o.getStaff_list()) {
+        //     // 削除の場合
+        //     if (deliveryStaffEntity.getState() == Enums.state.DELETE.getCode()) {
+        //         DeliveryStaffParameterBinder.bindDeleteDeliveryStaffParameters(pstmt, deliveryStaffEntity.getDelivery_staff_id(), editor, index);
+        //         index = index + 3;
+        //     } else {
+        //         // 更新か新規かで分岐
+        //         if (deliveryStaffEntity.getDelivery_staff_id() > 0){
+        //             DeliveryStaffParameterBinder.bindUpdateDeliveryStaffParameters(pstmt, deliveryStaffEntity, editor, index);
+        //             index = index + 6;
+        //         } else {
+        //             DeliveryStaffParameterBinder.bindInsertDeliveryStaffParameters(pstmt, deliveryStaffEntity, editor, index, false);
+        //             index = index + 5;
+        //         }
+        //     }
+        // }
     }
 
     public static void bindFindById(PreparedStatement ps, Integer orderId) throws SQLException {

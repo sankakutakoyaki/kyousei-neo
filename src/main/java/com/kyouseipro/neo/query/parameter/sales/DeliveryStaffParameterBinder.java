@@ -2,9 +2,11 @@ package com.kyouseipro.neo.query.parameter.sales;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.sales.DeliveryStaffEntity;
+import com.kyouseipro.neo.entity.sales.OrderItemEntity;
 
 public class DeliveryStaffParameterBinder {
     public static void bindInsertDeliveryStaffParameters(PreparedStatement pstmt, DeliveryStaffEntity d, String editor, int index, boolean isNew) throws SQLException {
@@ -80,4 +82,24 @@ public class DeliveryStaffParameterBinder {
     //     }
     //     ps.setInt(index++, Enums.state.DELETE.getCode()); // AND NOT (state = ?)
     // }
+
+    public static int setSaveDeliveryStaffListParameters(PreparedStatement pstmt, List<DeliveryStaffEntity> list, String editor, int index) throws SQLException {
+        for (DeliveryStaffEntity deliveryStaffEntity : list) {
+            // 削除の場合
+            if (deliveryStaffEntity.getState() == Enums.state.DELETE.getCode()) {
+                DeliveryStaffParameterBinder.bindDeleteDeliveryStaffParameters(pstmt, deliveryStaffEntity.getDelivery_staff_id(), editor, index);
+                index = index + 3;
+            } else {
+                // 更新か新規かで分岐
+                if (deliveryStaffEntity.getDelivery_staff_id() > 0){
+                    DeliveryStaffParameterBinder.bindUpdateDeliveryStaffParameters(pstmt, deliveryStaffEntity, editor, index);
+                    index = index + 6;
+                } else {
+                    DeliveryStaffParameterBinder.bindInsertDeliveryStaffParameters(pstmt, deliveryStaffEntity, editor, index, false);
+                    index = index + 5;
+                }
+            }
+        }
+        return index;
+    }
 }

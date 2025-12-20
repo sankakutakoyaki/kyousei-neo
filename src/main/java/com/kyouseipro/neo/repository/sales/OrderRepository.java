@@ -94,6 +94,9 @@ public class OrderRepository {
                          String editor) {
 
         String sql = buildSaveOrderSql(entity, items, staffs, works);
+        entity.setItem_list(items);
+        entity.setStaff_list(staffs);
+        entity.setWork_list(works);
         // return sqlRepository.executeUpdate(sql, ps -> 
         //         OrderParameterBinder.bindSaveOrder(ps, entity, items, staffs, works, editor)
         // );
@@ -122,41 +125,92 @@ public class OrderRepository {
 
         // 商品
         for (OrderItemEntity item : items) {
-            sql.append(resolveItemSql(item, entity.getOrder_id() > 0, index));
+            sql.append(resolveItemSql(item, entity.getOrder_id() > 0, index++));
+            // SimpleData simpleData = resolveItemSql(item, entity.getOrder_id() > 0, index);
+            // sql.append(simpleData.getText());
+            // index = simpleData.getNumber();
         }
 
         // 作業
         for (WorkContentEntity work : works) {
-            sql.append(resolveWorkSql(work, entity.getOrder_id() > 0, index));
+            sql.append(resolveWorkSql(work, entity.getOrder_id() > 0, index++));
+            // SimpleData simpleData = resolveWorkSql(work, entity.getOrder_id() > 0, index);
+            // sql.append(simpleData.getText());
+            // index = simpleData.getNumber();
         }
 
         // 配送スタッフ
         for (DeliveryStaffEntity staff : staffs) {
-            sql.append(resolveStaffSql(staff, entity.getOrder_id() > 0, index));
+            sql.append(resolveStaffSql(staff, entity.getOrder_id() > 0, index++));
+            // SimpleData simpleData = resolveStaffSql(staff, entity.getOrder_id() > 0, index);
+            // sql.append(simpleData.getText());
+            // index = simpleData.getNumber();
         }
 
         return sql.toString();
     }
 
     private String resolveItemSql(OrderItemEntity e, boolean isUpdate, int index) {
-        if (e.getState() == Enums.state.DELETE.getCode()) return OrderItemSqlBuilder.buildDeleteOrderItemSql(index++);
-        if (isUpdate && e.getOrder_item_id() > 0) return OrderItemSqlBuilder.buildUpdateOrderItemSql(index++);
-        if (isUpdate) return OrderItemSqlBuilder.buildInsertOrderItemSql(index++);
-        return OrderItemSqlBuilder.buildInsertOrderItemByNewOrderSql(index++);
+        if (e.getState() == Enums.state.DELETE.getCode()) return OrderItemSqlBuilder.buildDeleteOrderItemSql(index);
+        if (isUpdate && e.getOrder_item_id() > 0) return OrderItemSqlBuilder.buildUpdateOrderItemSql(index);
+        if (isUpdate) return OrderItemSqlBuilder.buildInsertOrderItemSql(index);
+        return OrderItemSqlBuilder.buildInsertOrderItemByNewOrderSql(index);
+        // String sql;
+        // if (e.getState() == Enums.state.DELETE.getCode()) {
+        //     sql = OrderItemSqlBuilder.buildDeleteOrderItemSql(index++);
+        // } else if (isUpdate && e.getOrder_item_id() > 0) {
+        //     sql = OrderItemSqlBuilder.buildUpdateOrderItemSql(index++);
+        // } else if (isUpdate) {
+        //     sql = OrderItemSqlBuilder.buildInsertOrderItemSql(index++);
+        // } else {
+        //     sql = OrderItemSqlBuilder.buildInsertOrderItemByNewOrderSql(index++);
+        // }
+        // SimpleData simpleData = new SimpleData();
+        // simpleData.setNumber(index);
+        // simpleData.setText(sql);
+        // return simpleData;
     }
 
     private String resolveWorkSql(WorkContentEntity e, boolean isUpdate, int index) {
-        if (e.getState() == Enums.state.DELETE.getCode()) return WorkContentSqlBuilder.buildDeleteWorkContentSql(index++);
-        if (isUpdate && e.getWork_content_id() > 0) return WorkContentSqlBuilder.buildUpdateWorkContentSql(index++);
-        if (isUpdate) return WorkContentSqlBuilder.buildInsertWorkContentSql(index++);
-        return WorkContentSqlBuilder.buildInsertWorkContentByNewOrderSql(index++);
+        if (e.getState() == Enums.state.DELETE.getCode()) return WorkContentSqlBuilder.buildDeleteWorkContentSql(index);
+        if (isUpdate && e.getWork_content_id() > 0) return WorkContentSqlBuilder.buildUpdateWorkContentSql(index);
+        if (isUpdate) return WorkContentSqlBuilder.buildInsertWorkContentSql(index);
+        return WorkContentSqlBuilder.buildInsertWorkContentByNewOrderSql(index);
+        // String sql;
+        // if (e.getState() == Enums.state.DELETE.getCode()) {
+        //     sql = WorkContentSqlBuilder.buildDeleteWorkContentSql(index);
+        // } else if (isUpdate && e.getWork_content_id() > 0) {
+        //     sql = WorkContentSqlBuilder.buildUpdateWorkContentSql(index);
+        // } else if (isUpdate) {
+        //     sql = WorkContentSqlBuilder.buildInsertWorkContentSql(index);
+        // } else {
+        //     sql = WorkContentSqlBuilder.buildInsertWorkContentByNewOrderSql(index);
+        // }
+        // SimpleData simpleData = new SimpleData();
+        // simpleData.setNumber(index);
+        // simpleData.setText(sql);
+        // return simpleData;
     }
 
     private String resolveStaffSql(DeliveryStaffEntity e, boolean isUpdate, int index) {
-        if (e.getState() == Enums.state.DELETE.getCode()) return DeliveryStaffSqlBuilder.buildDeleteDeliveryStaffSql(index++);
-        if (isUpdate && e.getDelivery_staff_id() > 0) return DeliveryStaffSqlBuilder.buildUpdateDeliveryStaffSql(index++);
-        if (isUpdate) return DeliveryStaffSqlBuilder.buildInsertDeliveryStaffSql(index++);
-        return DeliveryStaffSqlBuilder.buildInsertDeliveryStaffByNewOrderSql(index++);
+        if (e.getState() == Enums.state.DELETE.getCode()) return DeliveryStaffSqlBuilder.buildDeleteDeliveryStaffSql(index);
+        if (isUpdate && e.getDelivery_staff_id() > 0) return DeliveryStaffSqlBuilder.buildUpdateDeliveryStaffSql(index);
+        if (isUpdate) return DeliveryStaffSqlBuilder.buildInsertDeliveryStaffSql(index);
+        return DeliveryStaffSqlBuilder.buildInsertDeliveryStaffByNewOrderSql(index);
+        // String sql;
+        // if (e.getState() == Enums.state.DELETE.getCode()) {
+        //     sql = DeliveryStaffSqlBuilder.buildDeleteDeliveryStaffSql(index);
+        // } else if (isUpdate && e.getDelivery_staff_id() > 0) {
+        //     sql = DeliveryStaffSqlBuilder.buildUpdateDeliveryStaffSql(index);
+        // } else if (isUpdate) {
+        //     sql = DeliveryStaffSqlBuilder.buildInsertDeliveryStaffSql(index);
+        // } else {
+        //     sql = DeliveryStaffSqlBuilder.buildInsertDeliveryStaffByNewOrderSql(index);
+        // }
+        // SimpleData simpleData = new SimpleData();
+        // simpleData.setNumber(index);
+        // simpleData.setText(sql);
+        // return simpleData;
     }
 
     /**

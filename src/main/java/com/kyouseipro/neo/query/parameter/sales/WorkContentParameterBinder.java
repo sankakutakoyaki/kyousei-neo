@@ -2,8 +2,10 @@ package com.kyouseipro.neo.query.parameter.sales;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.sales.OrderItemEntity;
 import com.kyouseipro.neo.entity.sales.WorkContentEntity;
 
 public class WorkContentParameterBinder {
@@ -44,5 +46,25 @@ public class WorkContentParameterBinder {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, id);
         ps.setString(index, editor);
+    }
+
+    public static int setSaveWorkContentListParameters(PreparedStatement pstmt, List<WorkContentEntity> list, String editor, int index) throws SQLException {
+        for (WorkContentEntity workContentEntity : list) {
+            // 削除の場合
+            if (workContentEntity.getState() == Enums.state.DELETE.getCode()) {
+                WorkContentParameterBinder.bindDeleteWorkContentParameters(pstmt, workContentEntity.getWork_content_id(), editor, index);
+                index = index + 3;
+            } else {
+                // 更新か新規かで分岐
+                if (workContentEntity.getWork_content_id() > 0){
+                    WorkContentParameterBinder.bindUpdateOrderItemParameters(pstmt, workContentEntity, editor, index);
+                    index = index + 8;
+                } else {
+                    WorkContentParameterBinder.bindInsertWorkContentParameters(pstmt, workContentEntity, editor, index, false);
+                    index = index + 7;
+                }
+            }
+        }
+        return index;
     }
 }

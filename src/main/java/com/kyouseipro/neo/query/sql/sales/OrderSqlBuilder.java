@@ -57,14 +57,15 @@ public class OrderSqlBuilder {
             buildInsertLogSql("@InsertedRows", "INSERT") +
 
             "SELECT order_id FROM @InsertedRows;" +
-            "DECLARE @NEW_ID int; SET @NEW_ID = @@IDENTITY;";
+            // "DECLARE @NEW_ID int; SET @NEW_ID = @@IDENTITY;";
+            "DECLARE @NEW_ID int; SELECT @NEW_ID = order_id FROM @InsertedRows;";
     }
 
     public static String buildUpdateOrderSql() {
         return
             buildLogTableSql("@UpdatedRows") +
 
-            "DECLARE @NEW_ID int; SET @NEW_ID = ?;" +
+            // "DECLARE @NEW_ID int; SET @NEW_ID = ?;" +
             "UPDATE orders SET " +
             "  request_number=?, start_date=?, end_date=?, " +
             "  prime_constractor_id=?, prime_constractor_office_id=?, " +

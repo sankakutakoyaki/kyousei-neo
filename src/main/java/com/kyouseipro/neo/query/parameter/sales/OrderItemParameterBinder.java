@@ -6,15 +6,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.common.Enums.state;
 import com.kyouseipro.neo.entity.sales.OrderItemEntity;
 
 public class OrderItemParameterBinder {
     public static void bindInsertOrderItemParameters(PreparedStatement pstmt, OrderItemEntity o, String editor, int index, boolean isNew) throws SQLException {
-        // int index = 1;
-        // pstmt.setInt(index++, o.getOrder_id());
-        // if (o.getOrder_id() > 0){
-        //     pstmt.setInt(index++, o.getOrder_id());
-        // }
         if (isNew == false) {
             pstmt.setInt(index++, o.getOrder_id());
         }
@@ -69,6 +65,7 @@ public class OrderItemParameterBinder {
         pstmt.setInt(index++, o.getVersion());
         pstmt.setInt(index++, o.getState());
 
+        pstmt.setInt(index++, o.getOrder_item_id()); // WHERE句
         pstmt.setString(index++, editor);
     }
 
@@ -130,6 +127,26 @@ public class OrderItemParameterBinder {
 
     public static void bindSaveOrderItemListParameters(PreparedStatement pstmt, List<OrderItemEntity> list, String editor) throws SQLException {
         int index = 1;
+        setSaveOrderItemListParameters(pstmt, list, editor, index);
+        // for (OrderItemEntity entity : list) {
+        //     // 削除の場合
+        //     if (entity.getState() == Enums.state.DELETE.getCode()) {
+        //         OrderItemParameterBinder.bindDeleteOrderItemParameters(pstmt, entity.getOrder_item_id(), editor, index);
+        //         index = index + 3;
+        //     } else {
+        //         // 更新か新規かで分岐
+        //         if (entity.getOrder_item_id() > 0){
+        //             OrderItemParameterBinder.bindUpdateOrderItemParameters(pstmt, entity, editor, index);
+        //             index = index + 20;
+        //         } else {
+        //             OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, entity, editor, index, false);
+        //             index = index + 19;
+        //         }
+        //     }
+        // }
+    }
+
+    public static int setSaveOrderItemListParameters(PreparedStatement pstmt, List<OrderItemEntity> list, String editor, int index) throws SQLException {
         for (OrderItemEntity entity : list) {
             // 削除の場合
             if (entity.getState() == Enums.state.DELETE.getCode()) {
@@ -146,6 +163,7 @@ public class OrderItemParameterBinder {
                 }
             }
         }
+        return index;
     }
 
     public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
