@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.controller.api;
+package com.kyouseipro.neo.controller.api.qualification;
 
 import java.util.List;
 

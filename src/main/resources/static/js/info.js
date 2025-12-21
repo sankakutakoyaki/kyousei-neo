@@ -127,12 +127,10 @@ async function getLoacation() {
     }
 }
 
-// コードからemployeeを取得
-async function getEmployeeByCode(code) {
+async function getEntityByCode(url, code) {
     // スピナー表示
     startProcessing();
     const data = "id=" + encodeURIComponent(parseInt(code));
-    const url = '/employee/get/id';
     const contentType = 'application/x-www-form-urlencoded';
     const resultResponse = await postFetch(url, data, token, contentType);
     // スピナー消去
@@ -142,4 +140,27 @@ async function getEmployeeByCode(code) {
     } else {
         return null;
     }
+}
+
+// コードからemployeeを取得
+async function getEmployeeByCode(code) {
+    getEntityByCode("/employee/get/id", code);
+    // // スピナー表示
+    // startProcessing();
+    // const data = "id=" + encodeURIComponent(parseInt(code));
+    // const url = '/employee/get/id';
+    // const contentType = 'application/x-www-form-urlencoded';
+    // const resultResponse = await postFetch(url, data, token, contentType);
+    // // スピナー消去
+    // processingEnd();
+    // if (resultResponse.ok) {
+    //     return await resultResponse.json();
+    // } else {
+    //     return null;
+    // }
+}
+
+// コードからwork_itemを取得
+async function getWorkContentByCode(code) {
+    getEntityByCode("/work_content/get/id", code);
 }

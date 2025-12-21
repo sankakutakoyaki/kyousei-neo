@@ -7,16 +7,20 @@ import com.kyouseipro.neo.common.Enums;
 
 public class EmployeeListParameterBinder {
     
-    public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.state.DELETE.getCode());
-        ps.setInt(3, Enums.state.DELETE.getCode());
+    public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
     }
 
-    public static void bindFindAllByCategoryId(PreparedStatement ps, Integer categoryId) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.state.DELETE.getCode());
-        ps.setInt(3, Enums.state.DELETE.getCode());
-        ps.setInt(4, categoryId);
+    public static int bindFindAllByCategoryId(PreparedStatement ps, Integer categoryId) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, categoryId);
+        return index;
     }
 }

@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.controller.api;
+package com.kyouseipro.neo.controller.api.personnel;
 
 import java.util.List;
 
@@ -13,50 +13,38 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.recycle.RecycleItemEntity;
+import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.recycle.RecycleItemService;
+import com.kyouseipro.neo.service.personnel.WorkingConditionsService;
 
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class RecycleItemApiController {
-    private final RecycleItemService recycleItemService;
+public class WorkingConditionsApiController {
+    private final WorkingConditionsService workingConditionsService;
     private final HistoryService historyService;
-    
+
     /**
      * IDからEntityを取得する
      * @param ID
      * @return 
      */
-    @PostMapping("/recycle/item/get/id")
+    @PostMapping("/working_conditions/get/id")
 	@ResponseBody
-    public ResponseEntity getEntityById(@RequestParam int id) {
-        // return recycleItemService.getRecycleItemById(sql, id);
-        RecycleItemEntity entity = recycleItemService.getRecycleItemById(id);
-        if (entity != null) {
-            return ResponseEntity.ok(entity);
-        } else {
-            return ResponseEntity.ofNullable(null);
-        }
+    public WorkingConditionsEntity getEntityById(@RequestParam int id) {
+            return workingConditionsService.getWorkingConditionsById(id);
     }
 
     /**
-     * CodeからEntityを取得する
+     * EmployeeIDからEntityを取得する
      * @param ID
      * @return 
      */
-    @PostMapping("/recycle/item/get/code")
+    @PostMapping("/working_conditions/get/employeeid")
 	@ResponseBody
-    public ResponseEntity getEntityByCode(@RequestParam int code) {
-        // return recycleItemService.getRecycleItemByCode(sql, code);
-        RecycleItemEntity entity = recycleItemService.getRecycleItemByCode(code);
-        if (entity != null) {
-            return ResponseEntity.ok(entity);
-        } else {
-            return ResponseEntity.ofNullable(null);
-        }
+    public WorkingConditionsEntity getEntityByEmployeeId(@RequestParam int id) {
+            return workingConditionsService.getWorkingConditionsByEmployeeId(id);
     }
 
     /**
@@ -64,16 +52,16 @@ public class RecycleItemApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/recycle/item/save")
+    @PostMapping("/working_conditions/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> saveRecycleItem(@RequestBody RecycleItemEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> saveEntity(@RequestBody WorkingConditionsEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = recycleItemService.saveRecycleItem(entity);
+        Integer id = workingConditionsService.saveWorkingConditions(entity, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "recycle_items", "保存", 200, "成功");
+            historyService.saveHistory(userName, "working_conditions", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
-            historyService.saveHistory(userName, "recycle_items", "保存", 400, "失敗");
+            historyService.saveHistory(userName, "working_conditions", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -83,16 +71,16 @@ public class RecycleItemApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/recycle/item/delete")
+    @PostMapping("/working_conditions/delete")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = recycleItemService.deleteRecycleItemByIds(ids);
+        Integer id = workingConditionsService.deleteWorkingConditionsByIds(ids, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "recycle_items", "削除", 200, "成功");
+            historyService.saveHistory(userName, "working_conditions", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
-            historyService.saveHistory(userName, "recycle_items", "削除", 400, "失敗");
+            historyService.saveHistory(userName, "working_conditions", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -102,11 +90,11 @@ public class RecycleItemApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/recycle/item/download/csv")
+    @PostMapping("/working_conditions/download/csv")
 	@ResponseBody
     public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        historyService.saveHistory(userName, "recycle_items", "ダウンロード", 0, "");
-        return recycleItemService.downloadCsvRecycleItemByIds(ids);
+        historyService.saveHistory(userName, "working_conditions", "ダウンロード", 0, "");
+        return workingConditionsService.downloadCsvWorkingConditionsByIds(ids, userName);
     }
 }

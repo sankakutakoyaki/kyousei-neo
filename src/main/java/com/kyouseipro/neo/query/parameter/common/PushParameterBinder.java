@@ -7,19 +7,25 @@ import com.kyouseipro.neo.entity.data.SubscriptionRequest;
 
 public class PushParameterBinder {
 
-    public static void bindFindByEndpoint(PreparedStatement ps, String endpoint) throws SQLException {
-        ps.setString(1, endpoint);
+    public static int bindFindByEndpoint(PreparedStatement ps, String endpoint) throws SQLException {
+        int index = 1;
+        ps.setString(index++, endpoint);
+        return index;
     }
 
-    public static void bindInsertSubscriptionParameters(PreparedStatement pstmt, SubscriptionRequest s, String editor) throws SQLException {
-        pstmt.setString(1, s.getEndpoint());
-        pstmt.setString(2, s.getP256dh());
-        pstmt.setString(3, s.getAuth());
+    public static int bindInsertSubscriptionParameters(PreparedStatement pstmt, SubscriptionRequest s, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setString(index++, s.getEndpoint());
+        pstmt.setString(index++, s.getP256dh());
+        pstmt.setString(index++, s.getAuth());
 
-        pstmt.setString(4, editor);
+        pstmt.setString(index++, editor);
+        return index;
     }
 
-    public static void bindDeleteSubscriptionForEndpoint(PreparedStatement pstmt, String endpoint, String editor) throws SQLException {
-        pstmt.setString(1, endpoint);
+    public static int bindDeleteSubscriptionForEndpoint(PreparedStatement pstmt, String endpoint, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setString(index++, endpoint);
+        return index;
     }
 }

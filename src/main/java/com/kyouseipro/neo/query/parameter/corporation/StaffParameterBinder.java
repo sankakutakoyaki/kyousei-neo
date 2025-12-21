@@ -9,65 +9,73 @@ import com.kyouseipro.neo.entity.corporation.StaffEntity;
 
 public class StaffParameterBinder {
 
-    public static void bindInsertStaffParameters(PreparedStatement pstmt, StaffEntity staff, String editor) throws SQLException {
-        pstmt.setInt(1, staff.getCompany_id());
-        pstmt.setInt(2, staff.getOffice_id());
-        pstmt.setString(3, staff.getName());
-        pstmt.setString(4, staff.getName_kana());
-        pstmt.setString(5, staff.getPhone_number());
-        pstmt.setString(6, staff.getEmail());
-        pstmt.setInt(7, staff.getVersion());
-        pstmt.setInt(8, staff.getState());
+    public static int bindInsertStaffParameters(PreparedStatement pstmt, StaffEntity staff, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setInt(index++, staff.getCompany_id());
+        pstmt.setInt(index++, staff.getOffice_id());
+        pstmt.setString(index++, staff.getName());
+        pstmt.setString(index++, staff.getName_kana());
+        pstmt.setString(index++, staff.getPhone_number());
+        pstmt.setString(index++, staff.getEmail());
+        pstmt.setInt(index++, staff.getVersion());
+        pstmt.setInt(index++, staff.getState());
 
-        pstmt.setString(9, editor);
+        pstmt.setString(index++, editor);
+        return index;
     }
 
-    public static void bindUpdateStaffParameters(PreparedStatement pstmt, StaffEntity staff, String editor) throws SQLException {
-        pstmt.setInt(1, staff.getCompany_id());
-        pstmt.setInt(2, staff.getOffice_id());
-        pstmt.setString(3, staff.getName());
-        pstmt.setString(4, staff.getName_kana());
-        pstmt.setString(5, staff.getPhone_number());
-        pstmt.setString(6, staff.getEmail());
-        pstmt.setInt(7, staff.getVersion());
-        pstmt.setInt(8, staff.getState());
+    public static int bindUpdateStaffParameters(PreparedStatement pstmt, StaffEntity staff, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setInt(index++, staff.getCompany_id());
+        pstmt.setInt(index++, staff.getOffice_id());
+        pstmt.setString(index++, staff.getName());
+        pstmt.setString(index++, staff.getName_kana());
+        pstmt.setString(index++, staff.getPhone_number());
+        pstmt.setString(index++, staff.getEmail());
+        pstmt.setInt(index++, staff.getVersion());
+        pstmt.setInt(index++, staff.getState());
 
-        pstmt.setInt(9, staff.getStaff_id());
-
-        pstmt.setString(10, editor);
+        pstmt.setInt(index++, staff.getStaff_id());
+        pstmt.setString(index++, editor);
+        return index;
     }
 
-    public static void bindFindById(PreparedStatement ps, Integer staffId) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.state.DELETE.getCode());
-        ps.setInt(3, Enums.state.DELETE.getCode());
-        ps.setInt(4, staffId);
-        
+    public static int bindFindById(PreparedStatement ps, Integer staffId) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, staffId);
+        return index;
     }
 
-    public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.state.DELETE.getCode());
-        ps.setInt(3, Enums.state.DELETE.getCode());
+    public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
     }
 
-    public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
             ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
         }
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
-        ps.setString(index, editor);
+        ps.setString(index++, editor);
+        return index;
     }
 
-    public static void bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 2. SET state = ?
         for (Integer id : ids) {
             ps.setInt(index++, id); // 3. company_id IN (?, ?, ?)
         }
-        ps.setInt(index, Enums.state.DELETE.getCode()); // 4. AND NOT (state = ?)
+        ps.setInt(index++, Enums.state.DELETE.getCode()); // 4. AND NOT (state = ?)
+        return index;
     }
 }

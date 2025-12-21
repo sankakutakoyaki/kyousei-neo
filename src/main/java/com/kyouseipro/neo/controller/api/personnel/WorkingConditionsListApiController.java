@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.controller.api;
+package com.kyouseipro.neo.controller.api.personnel;
 
 import java.util.List;
 

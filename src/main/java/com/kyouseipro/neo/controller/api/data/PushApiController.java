@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.controller.api;
+package com.kyouseipro.neo.controller.api.data;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;

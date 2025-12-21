@@ -223,7 +223,7 @@
                                     <div class="flex-area">
                                         <div class="form-parts">
                                             <label>コード</label>
-                                            <input id="code14" name="code" class="normal-input" type="text" value=""
+                                            <input tabindex="41" id="code14" name="code" class="normal-input" type="text" value=""
                                                 onfocus="this.select();">
                                         </div>
                                         <div class="form-parts">
@@ -238,7 +238,7 @@
                                         </div>
                                         <div class="form-parts">
                                             <label></label>
-                                            <button id="regist-btn14" class="normal-btn ok" type="button"
+                                            <button tabindex="42" id="regist-btn14" class="normal-btn ok" type="button"
                                                 onclick="execRegistStaff()"><span>登録</span></button>
                                         </div>
                                     </div>
@@ -295,7 +295,7 @@
             const code14 = document.getElementById('code14');
             const emp14 = document.getElementById('emp14');
             const com14 = document.getElementById('com14');
-            const regBtn14 = document.getElementById('regist-btn14');
+            // const regBtn14 = document.getElementById('regist-btn14');
 
 /******************************************************************************************************* 入力画面 */
 
@@ -922,7 +922,7 @@
             }
 
             // コード入力ボックスからフォーカスが外れた時の処理
-            function execCodeBlur(e) {
+            function execCode14Blur(e) {
                 if (e.target.value == "") {
                     emp14.value = "";
                     com14.value = "";
@@ -932,7 +932,7 @@
             }
 
             // コード入力ボックスでエンターを押した時の処理
-            function execCodeChanged(e) {
+            function execCode14Changed(e) {
                 if (e == null) return;
                 // ボックスが空白なら処理しない
                 if (e.target.value == "") {
@@ -961,12 +961,51 @@
                 if (entity != null && entity.employee_id > 0) {
                     emp14.value = entity.full_name;
                     com14.value = entity.company_name;
-                    regBtn14.focus();
+                    // regBtn14.focus();
                 } else {
                     code14.value = "";
                     emp14.value = "";
                     com14.value = "";
                     openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
+                    setFocusElement("msg-dialog", code14);
+                }                
+            }
+
+            // コード入力ボックスからフォーカスが外れた時の処理
+            function execCode13Blur(e) {
+                if (e.target.value == "") {
+                    cont13.value = "";
+                    quan13.value = "";
+                    pay13.value = "";
+                    return;
+                }
+                searchForContentByCode(e);
+            }
+
+            // コードから[work_content]を取得して、名前と料金を表示
+            async function searchForContentByCode(e) {
+                e.preventDefault();
+                if (code13 == null || cont13 == null || quan13 == null || pay13 == null) return;
+                if (code13.value == "" || isNaN(code13.value)) {
+                    cont13.value = "";
+                    quan13.value = "";
+                    pay13.value = "";
+                    return;
+                }
+
+                const entity = await getWorkContentByCode(Number(code13.value));
+
+                if (entity != null && entity.work_item_id > 0) {
+                    cont13.value = entity.name;
+                    pay13.value = entity.payment;
+                    // regBtn14.focus();
+                } else {
+                    code13.value = "";
+                    cont13.value = "";
+                    quan13.value = "";
+                    pay13.value = "";
+                    openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
+                    setFocusElement("msg-dialog", code13);
                 }                
             }
 
@@ -1050,9 +1089,9 @@
                 startProcessing();
 
                 // 配送員登録画面のコード入力ボックスでエンターキーが押された時の処理を登録
-                code14.addEventListener('keydown', function (e) { execCodeChanged(e); });
+                code14.addEventListener('keydown', function (e) { execCode14Changed(e); });
                 // 配送員登録画面のコード入力ボックスのフォーカスが外れた時の処理を登録
-                code14.addEventListener('blur', function (e) { execCodeBlur(e); });
+                code14.addEventListener('blur', function (e) { execCode14Blur(e); });
 
                 // regBtn14.addEventListener('keydown', function (e) { execRegistBtnKeyDown(e); });
                 // regBtn14.addEventListener('keydown', function (e) { if(e.key === 'Enter'){ execRegistStaff(); }});

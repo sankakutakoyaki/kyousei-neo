@@ -11,7 +11,7 @@ import com.kyouseipro.neo.entity.sales.OrderItemEntity;
 import com.kyouseipro.neo.entity.sales.WorkContentEntity;
 
 public class OrderParameterBinder {
-    public static void bindInsertOrderParameters(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
+    public static int bindInsertOrderParameters(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
         int index = 1;
         pstmt.setString(index++, o.getRequest_number());
         if (o.getStart_date() != null) {
@@ -39,25 +39,24 @@ public class OrderParameterBinder {
         pstmt.setString(index++, editor);
 
         for (OrderItemEntity orderItemEntity : o.getItem_list()) {
-            OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, orderItemEntity, editor, index, true);
-            index = index + 18;
+            index = OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, orderItemEntity, editor, index, true);
+            // index = index + 18;
         }
 
         for (WorkContentEntity workContentEntity : o.getWork_list()) {
-            WorkContentParameterBinder.bindInsertWorkContentParameters(pstmt, workContentEntity, editor, index, true);
-            index = index + 6;
+            index = WorkContentParameterBinder.bindInsertWorkContentParameters(pstmt, workContentEntity, editor, index, true);
+            // index = index + 6;
         }
 
         for (DeliveryStaffEntity deliveryStaffEntity : o.getStaff_list()) {
-            DeliveryStaffParameterBinder.bindInsertDeliveryStaffParameters(pstmt, deliveryStaffEntity, editor, index, true);
-            index = index + 4;
+            index = DeliveryStaffParameterBinder.bindInsertDeliveryStaffParameters(pstmt, deliveryStaffEntity, editor, index, true);
+            // index = index + 4;
         }
-
+        return index;
     }
 
-    public static void bindUpdateOrderParameters(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
+    public static int bindUpdateOrderParameters(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
         int index = 1;
-        // pstmt.setInt(index++, o.getOrder_id());
         pstmt.setString(index++, o.getRequest_number());
         if (o.getStart_date() != null) {
             pstmt.setDate(index++, java.sql.Date.valueOf(o.getStart_date()));
@@ -86,84 +85,31 @@ public class OrderParameterBinder {
 
         // 商品リスト
         index = OrderItemParameterBinder.setSaveOrderItemListParameters(pstmt, o.getItem_list(), editor, index);
-        // // 商品リスト
-        // for (OrderItemEntity orderItemEntity : o.getItem_list()) {
-        //     // 削除の場合
-        //     if (orderItemEntity.getState() == Enums.state.DELETE.getCode()) {
-        //         OrderItemParameterBinder.bindDeleteOrderItemParameters(pstmt, orderItemEntity.getOrder_item_id(), editor, index);
-        //         index = index + 3;
-        //     } else {
-        //         // 更新か新規かで分岐
-        //         if (orderItemEntity.getOrder_item_id() > 0){
-        //             OrderItemParameterBinder.bindUpdateOrderItemParameters(pstmt, orderItemEntity, editor, index);
-        //             index = index + 20;
-        //         } else {
-        //             OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, orderItemEntity, editor, index, false);
-        //             index = index + 19;
-        //         }
-        //     }
-        // }
-
         // 作業リスト
-        WorkContentParameterBinder.setSaveWorkContentListParameters(pstmt, o.getWork_list(), editor, index);
-        // for (WorkContentEntity workContentEntity : o.getWork_list()) {
-        //     // 削除の場合
-        //     if (workContentEntity.getState() == Enums.state.DELETE.getCode()) {
-        //         WorkContentParameterBinder.bindDeleteWorkContentParameters(pstmt, workContentEntity.getWork_content_id(), editor, index);
-        //         index = index + 3;
-        //     } else {
-        //         // 更新か新規かで分岐
-        //         if (workContentEntity.getWork_content_id() > 0){
-        //             WorkContentParameterBinder.bindUpdateOrderItemParameters(pstmt, workContentEntity, editor, index);
-        //             index = index + 8;
-        //         } else {
-        //             WorkContentParameterBinder.bindInsertWorkContentParameters(pstmt, workContentEntity, editor, index, false);
-        //             index = index + 7;
-        //         }
-        //     }
-        // }
-
+        index = WorkContentParameterBinder.setSaveWorkContentListParameters(pstmt, o.getWork_list(), editor, index);
         // 配送担当リスト
-        DeliveryStaffParameterBinder.setSaveDeliveryStaffListParameters(pstmt, o.getStaff_list(), editor, index);
-        // for (DeliveryStaffEntity deliveryStaffEntity : o.getStaff_list()) {
-        //     // 削除の場合
-        //     if (deliveryStaffEntity.getState() == Enums.state.DELETE.getCode()) {
-        //         DeliveryStaffParameterBinder.bindDeleteDeliveryStaffParameters(pstmt, deliveryStaffEntity.getDelivery_staff_id(), editor, index);
-        //         index = index + 3;
-        //     } else {
-        //         // 更新か新規かで分岐
-        //         if (deliveryStaffEntity.getDelivery_staff_id() > 0){
-        //             DeliveryStaffParameterBinder.bindUpdateDeliveryStaffParameters(pstmt, deliveryStaffEntity, editor, index);
-        //             index = index + 6;
-        //         } else {
-        //             DeliveryStaffParameterBinder.bindInsertDeliveryStaffParameters(pstmt, deliveryStaffEntity, editor, index, false);
-        //             index = index + 5;
-        //         }
-        //     }
-        // }
+        index = DeliveryStaffParameterBinder.setSaveDeliveryStaffListParameters(pstmt, o.getStaff_list(), editor, index);
+        return index;
     }
 
-    public static void bindFindById(PreparedStatement ps, Integer orderId) throws SQLException {
+    public static int bindFindById(PreparedStatement ps, Integer orderId) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, orderId);
         ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
     }
 
-    // public static void bindFindByAccount(PreparedStatement ps, String account) throws SQLException {
-    //     ps.setString(1, account);
-    //     ps.setInt(2, Enums.state.DELETE.getCode());
-    // }
-
-    public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
+    public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
     }
 
-    public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
@@ -171,9 +117,10 @@ public class OrderParameterBinder {
         }
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
         ps.setString(index, editor); // 4. log
+        return index;
     }
 
-    public static void bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -181,5 +128,6 @@ public class OrderParameterBinder {
             ps.setInt(index++, id); // company_id IN (?, ?, ?)
         }
         ps.setInt(index++, Enums.state.DELETE.getCode()); // AND NOT (state = ?)
+        return index;
     }
 }

@@ -6,11 +6,13 @@ import java.sql.SQLException;
 import com.kyouseipro.neo.entity.document.HistoryEntity;
 
 public class HistoryParameterBinder {
-    public static void bindInsertHistoryParameters(PreparedStatement pstmt, HistoryEntity history, String editor) throws SQLException {
-        pstmt.setString(1, history.getUser_name());
-        pstmt.setString(2, history.getTable_name());
-        pstmt.setString(3, history.getAction());
-        pstmt.setInt(4, history.getResult_code());
-        pstmt.setString(5, history.getResult_message());
+    public static int bindInsertHistoryParameters(PreparedStatement pstmt, HistoryEntity history, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setString(index++, history.getUser_name());
+        pstmt.setString(index++, history.getTable_name());
+        pstmt.setString(index++, history.getAction());
+        pstmt.setInt(index++, history.getResult_code());
+        pstmt.setString(index++, history.getResult_message());
+        return index;
     }
 }

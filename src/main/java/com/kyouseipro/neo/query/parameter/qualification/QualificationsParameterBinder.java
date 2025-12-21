@@ -10,79 +10,94 @@ import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
 
 public class QualificationsParameterBinder {
 
-    public static void bindInsertQualificationsParameters(PreparedStatement pstmt, QualificationsEntity q, String editor) throws SQLException {
-        pstmt.setInt(1, q.getOwner_id());
-        pstmt.setInt(2, q.getOwner_category());
-        pstmt.setInt(3, q.getQualification_master_id());
-        pstmt.setString(4, q.getNumber());
-        pstmt.setDate(5, Date.valueOf(q.getAcquisition_date()));
-        pstmt.setDate(6, Date.valueOf(q.getExpiry_date()));
-        pstmt.setInt(7, q.getVersion());
-        pstmt.setInt(8, q.getState());
+    public static int bindInsertQualificationsParameters(PreparedStatement pstmt, QualificationsEntity q, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setInt(index++, q.getOwner_id());
+        pstmt.setInt(index++, q.getOwner_category());
+        pstmt.setInt(index++, q.getQualification_master_id());
+        pstmt.setString(index++, q.getNumber());
+        pstmt.setDate(index++, Date.valueOf(q.getAcquisition_date()));
+        pstmt.setDate(index++, Date.valueOf(q.getExpiry_date()));
+        pstmt.setInt(index++, q.getVersion());
+        pstmt.setInt(index++, q.getState());
 
-        pstmt.setString(9, editor);
+        pstmt.setString(index++, editor);
+        return index;
     }
 
-    public static void bindUpdateQualificationsParameters(PreparedStatement pstmt, QualificationsEntity q, String editor) throws SQLException {
-        pstmt.setInt(1, q.getOwner_id());
-        pstmt.setInt(2, q.getOwner_category());
-        pstmt.setInt(3, q.getQualification_master_id());
-        pstmt.setString(4, q.getNumber());
-        pstmt.setDate(5, Date.valueOf(q.getAcquisition_date()));
-        pstmt.setDate(6, Date.valueOf(q.getExpiry_date()));
-        pstmt.setInt(7, q.getVersion());
-        pstmt.setInt(8, q.getState());
+    public static int bindUpdateQualificationsParameters(PreparedStatement pstmt, QualificationsEntity q, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setInt(index++, q.getOwner_id());
+        pstmt.setInt(index++, q.getOwner_category());
+        pstmt.setInt(index++, q.getQualification_master_id());
+        pstmt.setString(index++, q.getNumber());
+        pstmt.setDate(index++, Date.valueOf(q.getAcquisition_date()));
+        pstmt.setDate(index++, Date.valueOf(q.getExpiry_date()));
+        pstmt.setInt(index++, q.getVersion());
+        pstmt.setInt(index++, q.getState());
 
-        pstmt.setInt(9, q.getQualifications_id());
+        pstmt.setInt(index++, q.getQualifications_id());
 
-        pstmt.setString(10, editor);
+        pstmt.setString(index++, editor);
+        return index;
     }
 
-    public static void bindDeleteQualificationsParameters(PreparedStatement pstmt, int id, String editor) throws SQLException {
-        pstmt.setInt(1, Enums.state.DELETE.getCode());
-        pstmt.setInt(2, id);
+    public static int bindDeleteQualificationsParameters(PreparedStatement pstmt, int id, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setInt(index++, Enums.state.DELETE.getCode());
+        pstmt.setInt(index++, id);
 
-        pstmt.setString(3, editor);
+        pstmt.setString(index++, editor);
+        return index;
     }
 
-    public static void bindFindByIdForEmployee(PreparedStatement ps, Integer employeeId) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.state.DELETE.getCode());
-        ps.setInt(3, Enums.state.DELETE.getCode());
-        ps.setInt(4, employeeId);
+    public static int bindFindByIdForEmployee(PreparedStatement ps, Integer employeeId) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, employeeId);
+        return index;
     }
 
-    public static void bindFindByIdForCompany(PreparedStatement ps, Integer companyId) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.state.DELETE.getCode());
-        ps.setInt(3, Enums.state.DELETE.getCode());
-        ps.setInt(4, companyId);
-        ps.setInt(5, Enums.clientCategory.PARTNER.getCode());
-        ps.setInt(6, Enums.clientCategory.PARTNER.getCode());
+    public static int bindFindByIdForCompany(PreparedStatement ps, Integer companyId) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, companyId);
+        ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
+        ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
+        return index;
     }
 
-    public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.state.DELETE.getCode());
-        ps.setInt(3, Enums.state.DELETE.getCode());
+    public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
     }
 
-    public static void bindFindAllEmployeeStatus(PreparedStatement ps, Void unused) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.state.DELETE.getCode());
-        ps.setInt(3, Enums.state.DELETE.getCode());
-        // ps.setInt(4, 0);
+    public static int bindFindAllEmployeeStatus(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
     }
 
-    public static void bindFindAllCompanyStatus(PreparedStatement ps, Void unused) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.clientCategory.PARTNER.getCode());
-        ps.setInt(3, Enums.state.DELETE.getCode());
-        ps.setInt(4, Enums.state.DELETE.getCode());
-        ps.setInt(5, Enums.clientCategory.PARTNER.getCode());
+    public static int bindFindAllCompanyStatus(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
+        return index;
     }
 
-    public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
@@ -90,17 +105,21 @@ public class QualificationsParameterBinder {
         }
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
         ps.setString(index, editor);
+        return index;
     }
 
-    public static void bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         for (Integer id : ids) {
             ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
         }
         ps.setInt(index, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        return index;
     }
 
-    public static void bindFindAllCombo(PreparedStatement ps, Void unused) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
+    public static int bindFindAllCombo(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
     }
 }

@@ -1,6 +1,7 @@
-package com.kyouseipro.neo.controller.api;
+package com.kyouseipro.neo.controller.api.recycle;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,27 +14,47 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
+import com.kyouseipro.neo.entity.recycle.RecycleMakerEntity;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.personnel.EmployeeService;
+import com.kyouseipro.neo.service.recycle.RecycleMakerService;
 
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class EmployeeApiController {
-    private final EmployeeService employeeService;
+public class RecycleMakerApiController {
+    private final RecycleMakerService recycleMakerService;
     private final HistoryService historyService;
-
     /**
      * IDからEntityを取得する
      * @param ID
      * @return 
      */
-    @PostMapping("/employee/get/id")
+    @PostMapping("/recycle/maker/get/id")
 	@ResponseBody
-    public EmployeeEntity getEntityById(@RequestParam int id) {
-        return employeeService.getEmployeeById(id);
+    public ResponseEntity getEntityById(@RequestParam int id) {
+        RecycleMakerEntity entity = recycleMakerService.getRecycleMakerById(id);
+        if (entity != null) {
+            return ResponseEntity.ok(entity);
+        } else {
+            return ResponseEntity.ofNullable(null);
+        }
+    }
+
+    /**
+     * CodeからEntityを取得する
+     * @param ID
+     * @return 
+     */
+    @PostMapping("/recycle/maker/get/code")
+	@ResponseBody
+    public ResponseEntity getEntityByCode(@RequestParam int code) {
+        RecycleMakerEntity entity = recycleMakerService.getRecycleMakerByCode(code);
+        if (entity != null) {
+            return ResponseEntity.ok(entity);
+        } else {
+            return ResponseEntity.ofNullable(null);
+        }
     }
 
     /**
@@ -41,16 +62,16 @@ public class EmployeeApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/employee/save")
+    @PostMapping("/recycle/maker/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> saveEmployee(@RequestBody EmployeeEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> saveRecycleMaker(@RequestBody RecycleMakerEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = employeeService.saveEmployee(entity, userName);
+        Integer id = recycleMakerService.saveRecycleMaker(entity);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "employees", "保存", 200, "成功");
+            historyService.saveHistory(userName, "recycle_makers", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
-            historyService.saveHistory(userName, "employees", "保存", 400, "失敗");
+            historyService.saveHistory(userName, "recycle_makers", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -60,16 +81,16 @@ public class EmployeeApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/employee/delete")
+    @PostMapping("/recycle/maker/delete")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = employeeService.deleteEmployeeByIds(ids, userName);
+        Integer id = recycleMakerService.deleteRecycleMakerByIds(ids);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "employees", "削除", 200, "成功");
+            historyService.saveHistory(userName, "recycle_makers", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
-            historyService.saveHistory(userName, "employees", "削除", 400, "失敗");
+            historyService.saveHistory(userName, "recycle_makers", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -79,21 +100,11 @@ public class EmployeeApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/employee/download/csv")
+    @PostMapping("/recycle/maker/download/csv")
 	@ResponseBody
     public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        historyService.saveHistory(userName, "employees", "ダウンロード", 0, "");
-        return employeeService.downloadCsvEmployeeByIds(ids, userName);
+        historyService.saveHistory(userName, "recycle_makers", "ダウンロード", 0, "");
+        return recycleMakerService.downloadCsvRecycleMakerByIds(ids);
     }
-
-    // /**
-    //  * すべてのコンボボックス用取引先情報を取得する
-    //  * @return
-    //  */
-    // @GetMapping("/employee/get/combo")
-	// @ResponseBody
-    // public List<EmployeeEntity> getEmployeeCombo() {
-    //     return comboBoxService.getClient();
-    // }
 }

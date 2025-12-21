@@ -9,73 +9,84 @@ import com.kyouseipro.neo.entity.corporation.OfficeEntity;
 
 public class OfficeParameterBinder {
 
-    public static void bindInsertOfficeParameters(PreparedStatement pstmt, OfficeEntity office, String editor) throws SQLException {
-        pstmt.setInt(1, office.getCompany_id());
-        pstmt.setString(2, office.getName());
-        pstmt.setString(3, office.getName_kana());
-        pstmt.setString(4, office.getTel_number());
-        pstmt.setString(5, office.getFax_number());
-        pstmt.setString(6, office.getPostal_code());
-        pstmt.setString(7, office.getFull_address());
-        pstmt.setString(8, office.getEmail());
-        pstmt.setString(9, office.getWeb_address());
-        pstmt.setInt(10, office.getVersion());
-        pstmt.setInt(11, office.getState());
+    public static int bindInsertOfficeParameters(PreparedStatement pstmt, OfficeEntity office, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setInt(index++, office.getCompany_id());
+        pstmt.setString(index++, office.getName());
+        pstmt.setString(index++, office.getName_kana());
+        pstmt.setString(index++, office.getTel_number());
+        pstmt.setString(index++, office.getFax_number());
+        pstmt.setString(index++, office.getPostal_code());
+        pstmt.setString(index++, office.getFull_address());
+        pstmt.setString(index++, office.getEmail());
+        pstmt.setString(index++, office.getWeb_address());
+        pstmt.setInt(index++, office.getVersion());
+        pstmt.setInt(index++, office.getState());
 
-        pstmt.setString(12, editor);
+        pstmt.setString(index++, editor);
+        return index;
     }
 
-    public static void bindUpdateOfficeParameters(PreparedStatement pstmt, OfficeEntity office, String editor) throws SQLException {
-        pstmt.setInt(1, office.getCompany_id());
-        pstmt.setString(2, office.getName());
-        pstmt.setString(3, office.getName_kana());
-        pstmt.setString(4, office.getTel_number());
-        pstmt.setString(5, office.getFax_number());
-        pstmt.setString(6, office.getPostal_code());
-        pstmt.setString(7, office.getFull_address());
-        pstmt.setString(8, office.getEmail());
-        pstmt.setString(9, office.getWeb_address());
-        pstmt.setInt(10, office.getVersion());
-        pstmt.setInt(11, office.getState());
+    public static int bindUpdateOfficeParameters(PreparedStatement pstmt, OfficeEntity office, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setInt(index++, office.getCompany_id());
+        pstmt.setString(index++, office.getName());
+        pstmt.setString(index++, office.getName_kana());
+        pstmt.setString(index++, office.getTel_number());
+        pstmt.setString(index++, office.getFax_number());
+        pstmt.setString(index++, office.getPostal_code());
+        pstmt.setString(index++, office.getFull_address());
+        pstmt.setString(index++, office.getEmail());
+        pstmt.setString(index++, office.getWeb_address());
+        pstmt.setInt(index++, office.getVersion());
+        pstmt.setInt(index++, office.getState());
 
-        pstmt.setInt(12, office.getOffice_id());  // WHERE句
-
-        pstmt.setString(13, editor);
+        pstmt.setInt(index++, office.getOffice_id());  // WHERE句
+        pstmt.setString(index++, editor);
+        return index;
     }
 
-    public static void bindFindById(PreparedStatement ps, Integer officeId) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.state.DELETE.getCode());
-        ps.setInt(3, officeId);
+    public static int bindFindById(PreparedStatement ps, Integer officeId) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, officeId);
+        return index;
     }
 
-    public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
+    public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
     }
 
-    public static void bindFindAllClient(PreparedStatement ps, Void unused) throws SQLException {        
-        ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.state.DELETE.getCode());
-        ps.setInt(3, 0);
+    public static int bindFindAllClient(PreparedStatement ps, Void unused) throws SQLException {     
+        int index = 1;   
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, 0);
+        return index;
     }
 
-    public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
             ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
         }
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
-        ps.setString(index, editor);
+        ps.setString(index++, editor);
+        return index;
     }
 
-    public static void bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
             ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
         }
-        ps.setInt(index, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        return index;
     }
 }
 

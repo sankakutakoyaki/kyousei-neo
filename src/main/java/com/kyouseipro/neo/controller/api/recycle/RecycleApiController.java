@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.controller.api;
+package com.kyouseipro.neo.controller.api.recycle;
 
 import java.time.LocalDate;
 import java.util.List;

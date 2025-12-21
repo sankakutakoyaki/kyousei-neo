@@ -10,59 +10,64 @@ import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
 
 public class WorkingConditionsParameterBinder {
 
-    public static void bindInsertParameters(PreparedStatement pstmt, WorkingConditionsEntity w, String editor) throws SQLException {
-        pstmt.setInt(1, w.getEmployee_id());
-        // pstmt.setInt(2, w.getCode());
-        // pstmt.setInt(3, w.getCategory());
-        pstmt.setInt(2, w.getPayment_method());
-        pstmt.setInt(3, w.getPay_type());
-        pstmt.setInt(4, w.getBase_salary());
-        pstmt.setInt(5, w.getTrans_cost());
-        pstmt.setTime(6, Time.valueOf(w.getBasic_start_time()));
-        pstmt.setTime(7, Time.valueOf(w.getBasic_end_time()));
-        pstmt.setInt(8, w.getVersion());
-        pstmt.setInt(9, w.getState());
+    public static int bindInsertParameters(PreparedStatement pstmt, WorkingConditionsEntity w, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setInt(index++, w.getEmployee_id());
+        pstmt.setInt(index++, w.getPayment_method());
+        pstmt.setInt(index++, w.getPay_type());
+        pstmt.setInt(index++, w.getBase_salary());
+        pstmt.setInt(index++, w.getTrans_cost());
+        pstmt.setTime(index++, Time.valueOf(w.getBasic_start_time()));
+        pstmt.setTime(index++, Time.valueOf(w.getBasic_end_time()));
+        pstmt.setInt(index++, w.getVersion());
+        pstmt.setInt(index++, w.getState());
 
-        pstmt.setString(10, editor);
+        pstmt.setString(index++, editor);
+        return index;
     }
 
-    public static void bindUpdateParameters(PreparedStatement pstmt, WorkingConditionsEntity w, String editor) throws SQLException {
-        pstmt.setInt(1, w.getEmployee_id());
-        // pstmt.setInt(2, w.getCode());
-        // pstmt.setInt(3, w.getCategory());
-        pstmt.setInt(2, w.getPayment_method());
-        pstmt.setInt(3, w.getPay_type());
-        pstmt.setInt(4, w.getBase_salary());
-        pstmt.setInt(5, w.getTrans_cost());
-        pstmt.setTime(6, Time.valueOf(w.getBasic_start_time()));
-        pstmt.setTime(7, Time.valueOf(w.getBasic_end_time()));
-        pstmt.setInt(8, w.getVersion());
-        pstmt.setInt(9, w.getState());
+    public static int bindUpdateParameters(PreparedStatement pstmt, WorkingConditionsEntity w, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setInt(index++, w.getEmployee_id());
+        pstmt.setInt(index++, w.getPayment_method());
+        pstmt.setInt(index++, w.getPay_type());
+        pstmt.setInt(index++, w.getBase_salary());
+        pstmt.setInt(index++, w.getTrans_cost());
+        pstmt.setTime(index++, Time.valueOf(w.getBasic_start_time()));
+        pstmt.setTime(index++, Time.valueOf(w.getBasic_end_time()));
+        pstmt.setInt(index++, w.getVersion());
+        pstmt.setInt(index++, w.getState());
 
-        pstmt.setInt(10, w.getWorking_conditions_id());
-
-        pstmt.setString(11, editor);
+        pstmt.setInt(index++, w.getWorking_conditions_id());
+        pstmt.setString(index++, editor);
+        return index;
     }
 
-    public static void bindFindById(PreparedStatement ps, Integer workingConditionsId) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.state.DELETE.getCode());
-        ps.setInt(3, Enums.state.DELETE.getCode());
-        ps.setInt(4, workingConditionsId);        
+    public static int bindFindById(PreparedStatement ps, Integer workingConditionsId) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, workingConditionsId);
+        return index;
     }
 
-    public static void bindFindByEmployeeId(PreparedStatement ps, Integer employeeId) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
-        ps.setInt(2, Enums.state.DELETE.getCode());
-        ps.setInt(3, Enums.state.DELETE.getCode());
-        ps.setInt(4, employeeId);        
+    public static int bindFindByEmployeeId(PreparedStatement ps, Integer employeeId) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, employeeId);
+        return index;
     }
 
-    public static void bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
-        ps.setInt(1, Enums.state.DELETE.getCode());
+    public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
     }
 
-    public static void bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
@@ -70,9 +75,10 @@ public class WorkingConditionsParameterBinder {
         }
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
         ps.setString(index, editor);
+        return index;
     }
 
-    public static void bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
@@ -80,5 +86,6 @@ public class WorkingConditionsParameterBinder {
             ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
         }
         ps.setInt(index, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        return index;
     }
 }
