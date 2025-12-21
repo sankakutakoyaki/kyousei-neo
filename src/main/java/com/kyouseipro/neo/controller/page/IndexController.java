@@ -153,26 +153,51 @@ public class IndexController {
     }
 
 	/**
-	 * リサイクル
+	 * 管理
 	 * @param mv
 	 * @return
 	 */
-	@GetMapping("/recycle")
+	@GetMapping("/management")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getRecycle(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getManagement(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
-		mv.addObject("title", "リサイクル");
+		mv.addObject("title", "管理");
         mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: recycleFragment");
-        mv.addObject("bodyFragmentName", "contents/index/recycle :: bodyFragment");
-        mv.addObject("insertCss", "/css/recycle/recycle.css");
+		mv.addObject("sidebarFragmentName", "fragments/menu :: managementFragment");
+        mv.addObject("bodyFragmentName", "contents/index/management :: bodyFragment");
+        mv.addObject("insertCss", "/css/management/management.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
 		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
 		mv.addObject("entity", entity);
 
-		historyService.saveHistory(userName, "recycle", "閲覧", 200, "");
+		historyService.saveHistory(userName, "management", "閲覧", 200, "");
+		
+        return mv;
+    }
+
+	/**
+	 * 登録
+	 * @param mv
+	 * @return
+	 */
+	@GetMapping("/regist")
+	@ResponseBody
+	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
+	public ModelAndView getRegistration(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+		mv.setViewName("layouts/main");
+		mv.addObject("title", "登録");
+        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/menu :: registFragment");
+        mv.addObject("bodyFragmentName", "contents/index/regist :: bodyFragment");
+        mv.addObject("insertCss", "/css/regist/regist.css");
+		// ユーザー名
+		String userName = principal.getAttribute("preferred_username");
+		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		mv.addObject("entity", entity);
+
+		historyService.saveHistory(userName, "management", "閲覧", 200, "");
 		
         return mv;
     }

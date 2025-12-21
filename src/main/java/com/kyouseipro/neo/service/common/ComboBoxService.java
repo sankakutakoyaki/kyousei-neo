@@ -12,7 +12,8 @@ import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.repository.corporation.CompanyListRepository;
 import com.kyouseipro.neo.repository.corporation.OfficeListRepository;
 import com.kyouseipro.neo.repository.corporation.StaffListRepository;
-import com.kyouseipro.neo.repository.qualification.QualificationsRepository;
+import com.kyouseipro.neo.repository.management.qualification.QualificationsRepository;
+import com.kyouseipro.neo.repository.regist.WorkItemRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +24,7 @@ public class ComboBoxService {
     private final OfficeListRepository officeListRepository;
     private final StaffListRepository staffListRepository;
     private final QualificationsRepository qualificationsRepository;
+    private final WorkItemRepository workItemRepository;
 
     /**
      * 性別のリスト
@@ -167,6 +169,10 @@ public class ComboBoxService {
 
     public List<SimpleData> getLicenseMaster() {
         return qualificationsRepository.findAllComboByLicense();
+    }
+
+    public List<SimpleData> getWorkItemParentCategoryList() {
+        return workItemRepository.findParentCategoryCombo();
     }
 
 

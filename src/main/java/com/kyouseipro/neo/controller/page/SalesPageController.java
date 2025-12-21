@@ -147,12 +147,6 @@ public class SalesPageController {
 		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
 		mv.addObject("user", user);
 
-    //     // 初期化されたエンティティ
-    //     mv.addObject("formEntity", new OrderEntity());
-    //     mv.addObject("itemEntity", new OrderItemEntity());
-    //     mv.addObject("staffEntity", new DeliveryStaffEntity());
-    //     mv.addObject("workEntity", new WorkContentEntity());
-
         LocalDate now = LocalDate.now();
         LocalDate monthStart = now.withDayOfMonth(1);
         LocalDate monthEnd   = now.withDayOfMonth(now.lengthOfMonth());
@@ -162,15 +156,6 @@ public class SalesPageController {
 
         List<String> storeNames = origin01.stream().map(KsSalesEntity::getStore_name).filter(Objects::nonNull).distinct().toList();
         mv.addObject("storeComboList01", storeNames);
-    //     // コンボボックスアイテム取得
-    //     List<SimpleData> primeConstractorComboList = comboBoxService.getPrimeConstractorList();
-    //     mv.addObject("primeConstractorComboList", primeConstractorComboList);
-    //     List<OfficeListEntity> officeList = comboBoxService.getOfficeListOrderByKana();
-    //     mv.addObject("officeList", officeList);
-    //     List<StaffListEntity> salesStaffList = comboBoxService.getSalesStaffList();
-    //     mv.addObject("salesStaffList", salesStaffList);
-
-    //     mv.addObject("deleteCode", Enums.state.DELETE.getCode());
 
         // 履歴保存
         historyService.saveHistory(userName, "ks_sales", "閲覧", 0, "");

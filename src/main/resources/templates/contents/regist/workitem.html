@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- 本体 -->
+    <div class="normal-content" th:fragment="bodyFragment">
+        <!-- ハンバーガー -->
+        <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+        <!-- サイドバー -->
+        <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
+        <!-- ボディ -->
+        <div class="normal-body">
+            <div class="table-area">
+                <!-- ヘッダー -->
+                <header th:replace="~{fragments/management/workitem :: header01Fragment('search-box-01')}">
+                </header>
+                <!-- コンテンツ -->
+                <main th:replace="~{fragments/management/workitem :: main01Fragment('table-01', 'table-01-content')}">
+                </main>
+                <!-- フッター -->
+                <footer id="footer-01" class="pc-style"
+                    th:insert="~{fragments/management/workitem :: footerFragment()}"></footer>
+            </div>
+        </div>
+        <div id="form-dialog-area">
+            <!-- フォーム画面をここに記入する -->
+            <div id="form-dialog-01" class="form-dialog none">
+                <div class="dialog-main">
+                    <div class="dialog-header"><span></span>
+                        <div class="img-btn" onclick="closeFormDialog('form-dialog-01', event)"><img title="閉じる"
+                                src="/icons/close-s.png"></div>
+                    </div>
+
+                    <form th:replace="~{fragments/management/workitem :: form01Fragment()}"></form>
+
+                    <div class="dialog-footer">
+                        <button class="normal-btn frameless" type="button"
+                            onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
+                        <button class="normal-btn ok" type="button"
+                            onclick="execSave('form-dialog-01', 'table-01-content')"><span>保存</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="msg-dialog-area">
+            <div th:replace="~{fragments/dialog :: messageFragment}"></div>
+        </div>
+        <script th:src="@{/js/table.js}"></script>
+        <script th:src="@{/js/info.js}"></script>
+        <script th:src="@{/js/file.js}"></script>
+        <script th:src="@{/js/enterfocus.js}"></script>
+        <script th:src="@{/js/recycle.js}"></script>
+        <script type="text/JavaScript" th:inline="JavaScript">
+            const token = /*[[${_csrf.token}]]*/;
+            const user = /*[[${user}]]*/;
+            const formEntity = /*[[${formEntity}]]*/;
+            const deleteCode = /*[[${deleteCode}]]*/;
+            const categoryComboList = /*[[${categoryComboList}]]*/;
+            let origin = /*[[${origin}]]*/; // 初期リスト記憶用
+            let itemList = [];
+
+/******************************************************************************************************* 入力画面 */
+
+            // リスト画面の本体部分を作成する
+            function createTableContent(tableId, list) {
+                const tbl = document.getElementById(tableId);
+                list.forEach(function (item) {
+                    let newRow = tbl.insertRow();
+                    // ID（Post送信用）
+                    newRow.setAttribute('name', 'data-row');
+                    newRow.setAttribute('data-id', item.recycle_id);
+                    // シングルクリック時の処理
+                    newRow.onclick = function (e) {
+                        if (!e.currentTarget.classList.contains('selected')){
+                            // すべての行の選択状態を解除する
+                            detachmentSelectClassToAllRow(tbl, false);
+                            // 選択した行にセレクトクラスを付与する
+                            const result = addSelectClassToRow(e.currentTarget);
+                        } else {
+                            // 選択済みの要素をクリックした時の処理
+                            const clickedTd = e.target.closest("td");
+                            // 取得したTDの処理
+                        }
+                    }
+                    // ダブルクリック時の処理
+                    newRow.ondblclick = function (e) { 
+                        // チェックボックスの動作を停止させる
+                        e.preventDefault();
+                        // 選択済みの場合
+                        if (!e.currentTarget.classList.contains('selected')){
+                            // すべての行の選択状態を解除する
+                            detachmentSelectClassToAllRow(tableId, false);
+                            // 選択した行にセレクトクラスを付与する
+                            const result = addSelectClassToRow(e.currentTarget);
+                        }
+                        execEdit(item.work_item_id, this);
+                    }
+                    createTable01Row(newRow, item);
+                });
+            }
+
+            // リスト画面の本体部分を作成する
+            function createFormTableContent(tableId, list) {
+                if (list == null) return;
+                const tbl = document.getElementById(tableId);
+                list.forEach(function (item) {
+                    if (item.state != deleteCode) {
+                        let newRow = tbl.insertRow();
+                        // ID（Post送信用）
+                        newRow.setAttribute('name', 'data-row');
+                        newRow.setAttribute('data-id', item.work_item_id);
+                    }
+                });
+            }
+
+/******************************************************************************************************* テーブル行作成 */
+
+            // テーブル行を作成する
+            function createTable01Row(newRow, item) {
+                // 選択用チェックボックス
+                newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
+                // 分類
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.category_name ?? "-----") + '</span></td>');
+                // コード
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.code ?? "") + '</span></td>');
+                // 作業項目
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.name ?? "-----") + '</span></td>');
+            }
+
+            function createTable11Row(newRow, item) {
+                // 分類
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.category_name ?? "-----") + '</span></td>');
+                // コード
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.code ?? "") + '</span></td>');
+                // 作業項目
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.name ?? "-----") + '</span></td>');
+                // 削除ボタン
+                newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycle_id + ')"><img src="/icons/dust.png"></div></td>');
+            }
+
+/******************************************************************************************************* 入力画面 */
+
+             // 登録画面を開く
+             async function execCreate(id, self) {
+                openFormDialog("form-dialog-01"); 
+                form = document.getElementById("form-dialog-01");
+                resetForm01Input(form);
+                setEnterFocus("form-01");
+            }
+
+            // 編集画面を開く
+            async function execEdit(id, self) {
+                // スピナー表示
+                startProcessing();
+
+                // 選択されたIDのエンティティを取得
+                const data = "id=" + encodeURIComponent(parseInt(id));
+                const resultResponse = await postFetch('/work/item/get/id', data, token, 'application/x-www-form-urlencoded');
+                const result = await resultResponse.json();
+                    
+                processingEnd();
+
+                if (result.work_item_id == 0) {
+                    openMsgDialog("msg-dialog", "データがありません", "red");
+                    return;
+                }
+
+                const entity = structuredClone(result);
+                openFormDialog("form-dialog-02"); 
+                const form = document.getElementById("form-dialog-02");
+                resetFormInput(form);
+                setForm02Content(form, entity);
+                setEnterFocus("form-02");
+             }
+
+            // コンテンツ部分作成
+            function setForm02Content(form, entity, str) {
+                form.querySelector('[name="work-item-id"]').value = entity.work_item_id;
+                form.querySelector('[name="version"]').value = entity.version;
+                form.querySelector('[name="category1"]').value = entity.category1;
+                form.querySelector('[name="category2"]').value = entity.category2;
+                form.querySelector('[name="content"]').value = entity.name;
+
+                form.querySelector('[autofocus]').focus();
+            }
+
+/******************************************************************************************************* 削除 */
+
+            async function execDelete01(tableId, self) {
+                // スピナー表示
+                startProcessing();
+                const result = await deleteTablelist('table-01-content', '/work/item/delete');
+
+                if (result.success) {                
+                    await execDate01Search(tableId);
+                    openMsgDialog("msg-dialog", result.message, "blue");
+                } else {
+                    openMsgDialog("msg-dialog", result.message, "red");
+                }
+
+                // スピナー消去
+                processingEnd();
+            }
+
+            async function deleteItem(self, id) {
+                if (id < 0) {
+                    itemList = itemList.filter(value => value.work_item_id != id);
+                } else {
+                    const item = itemList.find(value => value.work_item_id == id);
+                    item.state = deleteCode;
+                }
+                await updateFormTableDisplay("table-11-content", "footer-11", itemList);
+            }
+
+/******************************************************************************************************* 登録 */
+
+            async function execRegistItem(self, str) {
+                const form = document.getElementById("form-01");
+                if (formDataCheck(form) == false) {
+                    return;
+                }
+                
+                let formdata = createFormdata(form);
+                itemList.push(formdata);
+
+                const tableId = "table-11-content";
+                const footerId = "footer-11";
+                await updateFormTableDisplay(tableId, footerId, itemList);
+                scrollIntoTableList(tableId, itemId);
+                resetForm01Input(form);
+            }
+
+            function createFormdata(form) {
+                const formData = new FormData(form);
+                const formdata = structuredClone(formEntity);
+
+                if (formData.get('work-item-id') != null) {
+                    formdata.code = formData.get('work-item-id');
+                }
+
+                if (formData.get('version') != null) {
+                    formdata.code = formData.get('version');
+                }
+
+                if (formData.get('category') != null) {
+                    formdata.category1 = formData.get('category');
+                    const selectCategory = form.querySelector('[name="category"]');
+                    const categoryName = selectCategory.options[selectCategory.selectedIndex].text;
+                    formdata.category_name = categoryName;
+                }
+
+                if (formData.get('code') != null) {
+                    formdata.code = formData.get('code');
+                }
+
+                if (formData.get('content') != null) {
+                    formdata.name = formData.get('content');
+                }
+
+                return formdata;
+            }
+            
+            // 入力フォームの内容をリセットする
+            function resetForm01Input(form) {
+                form.querySelector('[name="category"]').value = 0;
+                form.querySelector('[name="code"]').value = "";
+                form.querySelector('[name="content"]').value = "";
+                form.querySelector('select[name="category"]').focus();
+            }
+
+            function resetForm02Input(form) {
+                form.querySelector('[name="work-item-id"]').value = "";
+                form.querySelector('[name="version"]').value = "";
+                form.querySelector('[name="category"]').value = 0;
+                form.querySelector('[name="code"]').value = "";
+                form.querySelector('[name="content"]').value = "";
+                form.querySelector('select[name="category"]').focus();
+            }
+
+            // 入力チェック
+            function formDataCheck(form) {
+                let msg = "";
+                if (form.querySelector('select[name="category"]').value == 0) msg += '\n分類を選択して下さい';
+                if (form.querySelector('input[name="code"]').value == "") msg += '\nコードを入力して下さい';
+                if (form.querySelector('input[name="content"]').value == "") msg += '\n作業項目を入力して下さい';
+
+                // エラーが一つ以上あればエラーメッセージダイアログを表示する
+                if (msg != "") {
+                    openMsgDialog("msg-dialog", msg, "red");
+                    return false;
+                }
+                return true;
+            }
+
+/******************************************************************************************************* 保存 */
+
+            // 保存処理
+            async function execSave(formId, tableId) {
+                // スピナー表示
+                startProcessing();
+
+                // 保存処理
+                const resultResponse = await postFetch("/work/item/save/" + str, JSON.stringify({list:itemList}), token, "application/json");
+                const result = await resultResponse.json();
+                if (result.success) {
+                    // 画面更新
+                    openMsgDialog("msg-dialog", result.message, "blue");
+                    await execDate01Search(tableId);
+                    // 追加・変更行に移動
+                    scrollIntoTableList(tableId, result.id);
+                    // itemList = [];
+                } else {
+                    openMsgDialog("msg-dialog", result.message, "red");
+                }
+                // ダイアログを閉じる
+                closeFormDialog(formId);
+
+                // スピナー消去
+                processingEnd();
+            }
+
+            async function execSaveEdit(self) {
+                const form = document.getElementById("form-02");
+                if (formDataCheck(form) == false) {
+                    return;
+                }
+                let formdata = createFormdata(form);
+                itemList = [];
+                itemList.push(formdata);
+
+                execSave("form-dialog-02", "table-01-content");
+            }
+
+/******************************************************************************************************* ダウンロード */
+
+            async function execDownloadCsv01(tableId, self) {
+                await downloadCsv(tableId, '/work/item/download/csv');
+            }
+
+/******************************************************************************************************* 画面更新 */
+
+            // テーブルリスト画面を更新する
+            async function updateTableDisplay(tableId, footerId, searchId, list) {
+                // フィルター処理
+                const result = filterDisplay(searchId, list);
+                // リスト画面を初期化
+                deleteElements(tableId);
+                // リスト作成
+                createTableContent(tableId, result);
+                // フッター作成
+                createTableFooter(footerId, list);
+                // チェックボタン押下時の処理を登録する
+                registCheckButtonClicked(tableId);
+                // すべて選択ボタンをオフにする
+                turnOffAllCheckBtn(tableId);
+                // テーブルのソートをリセットする
+                resetSortable(tableId);
+                // スクロール時のページトップボタン処理を登録する
+                setPageTopButton(tableId);
+                // テーブルにスクロールバーが表示されたときの処理を登録する
+                document.querySelectorAll('.scroll-area').forEach(el => {
+                    toggleScrollbar(el);
+                });
+            }
+
+            // テーブルリスト画面を更新する
+            async function updateFormTableDisplay(tableId, footerId, list) {
+                // リスト画面を初期化
+                deleteElements(tableId);
+                // リスト作成
+                createFormTableContent(tableId, list);
+                // フッター作成
+                createTableFooter(footerId, list);
+                // スクロール時のページトップボタン処理を登録する
+                setPageTopButton(tableId);
+                // テーブルにスクロールバーが表示されたときの処理を登録する
+                document.querySelectorAll('.scroll-area').forEach(el => {
+                    toggleScrollbar(el);
+                });
+            }
+
+            async function execFilterDisplay(tableId) {
+                await updateTableDisplay(tableId, "footer-01", "search-box-01", origin);
+            }
+
+/******************************************************************************************************* 初期化時 */
+
+            // ページ読み込み後の処理
+            window.addEventListener("load", async () => {
+                // スピナー表示
+                startProcessing();
+
+                // カテゴリーコンボボックス
+                const category11Area = document.getElementById('category11')
+                createComboBoxWithTop(category11Area, categoryComboList, "");
+                const category12Area = document.getElementById('category12')
+                createComboBoxWithTop(category12Area, categoryComboList, "");
+
+                // 検索ボックス入力時の処理
+                document.getElementById('search-box-01').addEventListener('search', async function(e) {
+                    await execFilterDisplay("table-01-content");
+                }, false);
+
+                // 画面更新
+                await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+
+                // スピナー消去
+                processingEnd();
+            });
+        </script>
+    </div>
+
+</body>

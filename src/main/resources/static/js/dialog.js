@@ -125,5 +125,8 @@ function closeMsgDialog(dialogId, e, focusId) {
 function setFocusElement(msgId, elm) {
     const dialog = document.getElementById(msgId);
     const btn =dialog.querySelector('button[name="focus-btn');
-    btn.addEventListener('click', function () { elm.focus(); });
+    // btn.addEventListener('click', function () { elm.focus(); });
+    btn.onclick = () => {
+        elm.focus();
+    };
 }

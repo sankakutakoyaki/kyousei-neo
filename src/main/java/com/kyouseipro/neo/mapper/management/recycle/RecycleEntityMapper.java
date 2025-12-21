@@ -1,0 +1,35 @@
+package com.kyouseipro.neo.mapper.management.recycle;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import com.kyouseipro.neo.entity.management.recycle.RecycleEntity;
+
+public class RecycleEntityMapper {
+    public static RecycleEntity map(ResultSet rs) throws SQLException {
+        RecycleEntity entity = new RecycleEntity();
+        entity.setRecycle_id(rs.getInt("recycle_id"));
+        entity.setRecycle_number(rs.getString("recycle_number"));
+        entity.setMolding_number(rs.getString("molding_number"));
+        entity.setMaker_id(rs.getInt("maker_id"));
+        entity.setMaker_code(rs.getInt("maker_code"));
+        entity.setMaker_name(rs.getString("maker_name"));
+        entity.setItem_id(rs.getInt("item_id"));
+        entity.setItem_code(rs.getInt("item_code"));
+        entity.setItem_name(rs.getString("item_name"));
+        entity.setUse_date(rs.getDate("use_date").toLocalDate());
+        entity.setDelivery_date(rs.getDate("delivery_date").toLocalDate());
+        entity.setShipping_date(rs.getDate("shipping_date").toLocalDate());
+        entity.setLoss_date(rs.getDate("loss_date").toLocalDate());
+        entity.setCompany_id(rs.getInt("company_id"));
+        entity.setCompany_name(rs.getString("company_name"));
+        entity.setOffice_id(rs.getInt("office_id"));
+        entity.setOffice_name(rs.getString("office_name"));
+        entity.setRecycling_fee(rs.getInt("recycling_fee"));
+        entity.setDisposal_site_id(rs.getInt("disposal_site_id"));
+        entity.setDisposal_site_name(rs.getString("disposal_site_name"));
+        entity.setVersion(rs.getInt("version"));
+        entity.setState(rs.getInt("state"));
+        return entity;
+    }
+}

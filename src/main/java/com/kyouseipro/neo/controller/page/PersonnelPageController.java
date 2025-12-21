@@ -1,0 +1,218 @@
+package com.kyouseipro.neo.controller.page;
+
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
+import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.management.qualification.QualificationsEntity;
+import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
+import com.kyouseipro.neo.entity.personnel.EmployeeListEntity;
+import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
+import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
+import com.kyouseipro.neo.entity.personnel.WorkingConditionsListEntity;
+import com.kyouseipro.neo.service.common.ComboBoxService;
+import com.kyouseipro.neo.service.document.HistoryService;
+import com.kyouseipro.neo.service.management.qualification.QualificationsService;
+import com.kyouseipro.neo.service.personnel.EmployeeListService;
+import com.kyouseipro.neo.service.personnel.EmployeeService;
+import com.kyouseipro.neo.service.personnel.WorkingConditionsListService;
+
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequiredArgsConstructor
+public class PersonnelPageController {
+    private final EmployeeService employeeService;
+    private final EmployeeListService employeeListService;
+    private final QualificationsService qualificationsService;
+    private final WorkingConditionsListService workingConditionsListService;
+    private final ComboBoxService comboBoxService;
+    private final HistoryService historyService;
+
+    /**
+	 * 従業員
+	 * @param mv
+	 * @return
+	 */
+	@GetMapping("/employee")
+	@ResponseBody
+	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
+	public ModelAndView getEmployee(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+		mv.setViewName("layouts/main");
+        mv.addObject("title", "従業員");
+        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
+        mv.addObject("bodyFragmentName", "contents/personnel/employee :: bodyFragment");
+        mv.addObject("insertCss", "/css/personnel/employee.css");
+
+		// ユーザー名
+		String userName = principal.getAttribute("preferred_username");
+		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
+		mv.addObject("user", user);
+
+        // 初期化されたエンティティ
+        mv.addObject("formEntity", new EmployeeEntity());
+
+        // 初期表示用従業員リスト取得
+        List<EmployeeListEntity> origin = employeeListService.getEmployeeList();
+        mv.addObject("origin", origin);
+
+        // コンボボックスアイテム取得
+        List<SimpleData> companyComboList = comboBoxService.getOwnCompanyList();
+        mv.addObject("companyComboList", companyComboList);
+        // List<SimpleData> clientComboList = comboBoxService.getClientList();
+        // mv.addObject("clientComboList", clientComboList);
+        List<OfficeListEntity> officeList = comboBoxService.getOfficeList();
+        mv.addObject("officeList", officeList);
+        List<SimpleData> employeeCategoryComboList = comboBoxService.getEmployeeCategory();
+        mv.addObject("employeeCategoryComboList", employeeCategoryComboList);
+        List<SimpleData> genderComboList = comboBoxService.getGender();
+        mv.addObject("genderComboList", genderComboList);
+        List<SimpleData> bloodTypeComboList = comboBoxService.getBloodType();
+        mv.addObject("bloodTypeComboList", bloodTypeComboList);
+        List<SimpleData> paymentMethodComboList = comboBoxService.getPaymentMethod();
+        mv.addObject("paymentMethodComboList", paymentMethodComboList);
+        List<SimpleData> payTypeComboList = comboBoxService.getPayType();
+        mv.addObject("payTypeComboList", payTypeComboList);
+
+        // 保存用コード
+        mv.addObject("categoryEmployeeCode", Enums.employeeCategory.FULLTIME.getCode());
+        mv.addObject("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
+
+        // 履歴保存
+        historyService.saveHistory(userName, "employee", "閲覧", 0, "");
+		
+        return mv;
+    }
+
+    /**
+	 * 資格
+	 * @param mv
+	 * @return
+	 */
+	@GetMapping("/qualifications")
+	@ResponseBody
+	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
+	public ModelAndView getQualifications(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+		mv.setViewName("layouts/main");
+        mv.addObject("title", "資格");
+        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
+        mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
+        mv.addObject("bodyFragmentName", "contents/management/qualifications :: bodyFragment");
+        mv.addObject("insertCss", "/css/management/qualifications.css");
+
+		// ユーザー名
+		String userName = principal.getAttribute("preferred_username");
+		EmployeeEntity user = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		mv.addObject("user", user);
+
+        // 初期化されたエンティティ
+        mv.addObject("formEntity", new QualificationsEntity());
+        // 初期表示用資格情報リスト取得
+        List<QualificationsEntity> qualificationsOrigin = qualificationsService.getEmployeeQualificationsList();
+        mv.addObject("origin", qualificationsOrigin);
+        // コンボボックスアイテム取得
+        List<SimpleData> qualificationComboList = comboBoxService.getQualificationMaster();
+        mv.addObject("qualificationComboList", qualificationComboList);
+
+        // mv.addObject("url", "/qualifications/get/id");
+        mv.addObject("url", "/employee/get/id");
+        mv.addObject("owner_category", 0);
+        // 履歴保存
+        historyService.saveHistory(userName, "qualifications", "閲覧", 200, "");
+		
+        return mv;
+    }
+
+    /**
+     * 打刻一覧画面を呼び出す
+     * @param mv
+     * @param token
+     * @return ModelAndView
+     */
+	@GetMapping("/timeworks")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
+	public ModelAndView showList(ModelAndView mv, OAuth2AuthenticationToken token, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+        mv.setViewName("layouts/main");
+        mv.addObject("title", "勤怠");
+        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
+        mv.addObject("bodyFragmentName", "contents/personnel/timeworks :: bodyFragment");
+        mv.addObject("insertCss", "/css/personnel/timeworks.css");
+
+        // ユーザー名
+        String userName = principal.getAttribute("preferred_username");
+        mv.addObject("username", userName);
+        // 勤怠データ新規・更新用
+        TimeworksListEntity entity = new TimeworksListEntity();
+        mv.addObject("entity", entity);
+        // 初期表示用営業所ID
+        mv.addObject("officeId", session.getAttribute("officeId") == null ? "1000" : session.getAttribute("officeId").toString());
+        // 営業所リスト
+        List<SimpleData> officeList = comboBoxService.getSimpleOfficeList();
+        mv.addObject("officeList", officeList);
+        // 初期表示用従業員リスト取得
+        List<EmployeeListEntity> employeeList = employeeListService.getEmployeeList();
+        mv.addObject("employeeList", employeeList);
+        // 完了コードを取得
+        mv.addObject("completeNum", Enums.state.COMPLETE.getCode());
+        // 履歴保存
+        historyService.saveHistory(userName, "timeworks", "閲覧", 200, "");
+	    return mv;
+	}
+
+    /**
+	 * 勤務条件
+	 * @param mv
+	 * @return
+	 */
+	@GetMapping("/working_conditions")
+	@ResponseBody
+	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
+	public ModelAndView getWorkingConditions(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+		mv.setViewName("layouts/main");
+        mv.addObject("title", "勤務条件");
+        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
+        mv.addObject("bodyFragmentName", "contents/personnel/working_conditions :: bodyFragment");
+        mv.addObject("insertCss", "/css/personnel/working_conditions.css");
+
+		// ユーザー名
+		String userName = principal.getAttribute("preferred_username");
+		EmployeeEntity user = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		mv.addObject("user", user);
+
+        // 初期化されたエンティティ
+        mv.addObject("formEntity", new WorkingConditionsEntity());
+
+        // 初期表示用従業員リスト取得
+        List<WorkingConditionsListEntity> origin = workingConditionsListService.getWorkingConditionsList();
+        mv.addObject("origin", origin);
+
+        // コンボボックスアイテム取得
+        List<SimpleData> paymentMethodComboList = comboBoxService.getPaymentMethod();
+        mv.addObject("paymentMethodComboList", paymentMethodComboList);
+        List<SimpleData> payTypeComboList = comboBoxService.getPayType();
+        mv.addObject("payTypeComboList", payTypeComboList);
+
+        // 保存用コード
+        mv.addObject("categoryEmployeeCode", Enums.employeeCategory.FULLTIME.getCode());
+        mv.addObject("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
+
+        // 履歴保存
+        historyService.saveHistory(userName, "working_conditions", "閲覧", 200, "");
+		
+        return mv;
+    }
+}
