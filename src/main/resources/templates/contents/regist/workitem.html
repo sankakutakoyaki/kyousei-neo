@@ -12,14 +12,14 @@
         <div class="normal-body">
             <div class="table-area">
                 <!-- ヘッダー -->
-                <header th:replace="~{fragments/management/workitem :: header01Fragment('search-box-01')}">
+                <header th:replace="~{fragments/regist/workitem :: header01Fragment('search-box-01')}">
                 </header>
                 <!-- コンテンツ -->
-                <main th:replace="~{fragments/management/workitem :: main01Fragment('table-01', 'table-01-content')}">
+                <main th:replace="~{fragments/regist/workitem :: main01Fragment('table-01', 'table-01-content')}">
                 </main>
                 <!-- フッター -->
                 <footer id="footer-01" class="pc-style"
-                    th:insert="~{fragments/management/workitem :: footerFragment()}"></footer>
+                    th:insert="~{fragments/regist/workitem :: footerFragment()}"></footer>
             </div>
         </div>
         <div id="form-dialog-area">
@@ -31,7 +31,7 @@
                                 src="/icons/close-s.png"></div>
                     </div>
 
-                    <form th:replace="~{fragments/management/workitem :: form01Fragment()}"></form>
+                    <form th:replace="~{fragments/regist/workitem :: form01Fragment()}"></form>
 
                     <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
