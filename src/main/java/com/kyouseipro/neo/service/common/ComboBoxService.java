@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.annotation.SimpleObjectIdResolver;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.corporation.StaffListEntity;
@@ -143,6 +144,11 @@ public class ComboBoxService {
         return companyListRepository.findAllComboPrimeConstractor();
     }
 
+    public List<SimpleData> getPrimeConstractorListAddTopOfOwnCompany() {
+        List<SimpleData> companyList = companyListRepository.findAllComboPrimeConstractor();
+        return addOwnCompanyTopOfComboList(companyList);
+    }
+
     public List<SimpleData> getCompanyListByCategory(int category) {
         return companyListRepository.findAllComboByCategory(category);
     }
@@ -175,6 +181,15 @@ public class ComboBoxService {
         return workItemRepository.findParentCategoryCombo();
     }
 
+    public List<SimpleData> addOwnCompanyTopOfComboList(List<SimpleData> list) {
+        // 自社を取得
+        List<SimpleData> ownList = getOwnCompanyList();
+        // 自社を先頭に追加
+        for (SimpleData simpleData : ownList) {
+            list.add(0, simpleData);
+        }
+        return list;        
+    }
 
     // /**
     //  * すべての会社リスト

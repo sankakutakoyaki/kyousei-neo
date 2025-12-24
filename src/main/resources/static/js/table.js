@@ -426,3 +426,39 @@ async function deleteTablelist(tableId, url) {
         return await resultResponse.json();
     }
 }
+
+// クリックしたTDを編集可能にする
+function tdEnableEdit(newRow) {
+    newRow.addEventListener('click', function (e) {
+        const td = e.target.closest('td.editable');
+        if (!td) return;
+
+        // すでに編集状態なら何もしない
+        if (td.querySelector('input')) return;
+
+        const currentValue = td.textContent.trim();
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.classList.add('normal-input');
+        input.value = currentValue === '-----' ? '' : currentValue;
+        input.style.width = '100%';
+
+        td.textContent = '';
+        td.appendChild(input);
+        // フォーカス時に全選択
+        input.addEventListener('focus', function () {
+            this.select();
+        });
+        input.focus();
+
+        function save() {
+            td.textContent = input.value || currentValue;
+        }
+
+        input.addEventListener('blur', save);
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') input.blur();
+        });
+    });
+}

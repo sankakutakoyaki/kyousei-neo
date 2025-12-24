@@ -26,6 +26,6 @@ public class WorkPriceEntity implements CsvExportable  {
         return Utilities.escapeCsv(String.valueOf(work_price_id)) + "," +
                Utilities.escapeCsv(work_item_name) + "," +
                Utilities.escapeCsv(company_name) + "," +
-               Utilities.escapeCsv(String.valueOf(price)) + ",";
+               Utilities.escapeCsv(String.valueOf(price));
     }
 }

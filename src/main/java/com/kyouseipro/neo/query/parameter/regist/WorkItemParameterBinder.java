@@ -77,4 +77,14 @@ public class WorkItemParameterBinder {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }
+
+    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        for (Integer id : ids) {
+            ps.setInt(index++, id); // id IN (?, ?, ?)
+        }
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
+    }
 }

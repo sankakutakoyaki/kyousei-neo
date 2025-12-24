@@ -64,10 +64,10 @@ public class WorkItemApiController {
         String userName = principal.getAttribute("preferred_username");
         Integer id = workItemService.saveWorkItem(entity, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "employees", "保存", 200, "成功");
+            historyService.saveHistory(userName, "work_items", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
-            historyService.saveHistory(userName, "employees", "保存", 400, "失敗");
+            historyService.saveHistory(userName, "work_items", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -83,11 +83,24 @@ public class WorkItemApiController {
         String userName = principal.getAttribute("preferred_username");
         Integer id = workItemService.deleteWorkItemByIds(ids, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "order_items", "削除", 200, "成功");
+            historyService.saveHistory(userName, "work_items", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
-            historyService.saveHistory(userName, "order_items", "削除", 400, "失敗");
+            historyService.saveHistory(userName, "work_items", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
+    }
+
+    /**
+     * IDリストからCSV用データを取得する
+     * @param IDS
+     * @return 
+     */
+    @PostMapping("/work/item/download/csv")
+	@ResponseBody
+    public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+        String userName = principal.getAttribute("preferred_username");
+        historyService.saveHistory(userName, "work_items", "ダウンロード", 0, "");
+        return workItemService.downloadCsvWorkItemByIds(ids);
     }
 }

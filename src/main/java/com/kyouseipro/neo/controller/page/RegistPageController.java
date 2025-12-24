@@ -105,7 +105,7 @@ public class RegistPageController {
         mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
 		mv.addObject("sidebarFragmentName", "fragments/menu :: registFragment");
         mv.addObject("bodyFragmentName", "contents/regist/workitem :: bodyFragment");
-        mv.addObject("insertCss", "/css/regist/work_item.css");
+        mv.addObject("insertCss", "/css/regist/workitem.css");
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
@@ -117,6 +117,8 @@ public class RegistPageController {
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得
+        // List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorListAddTopOfOwnCompany();
+        // mv.addObject("companyComboList", companyComboList);
         List<SimpleData> categoryComboList = comboBoxService.getWorkItemParentCategoryList();
         mv.addObject("categoryComboList", categoryComboList);
 
@@ -127,6 +129,43 @@ public class RegistPageController {
 
         // 履歴保存
         historyService.saveHistory(userName, "work_item", "閲覧", 0, "");
+		
+        return mv;
+    }
+
+    @GetMapping("/work/price")
+	@ResponseBody
+	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
+	public ModelAndView getWorkPrice(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+		mv.setViewName("layouts/main");
+        mv.addObject("title", "作業料金");
+        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/menu :: registFragment");
+        mv.addObject("bodyFragmentName", "contents/regist/workprice :: bodyFragment");
+        mv.addObject("insertCss", "/css/regist/workprice.css");
+
+		// ユーザー名
+		String userName = principal.getAttribute("preferred_username");
+		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
+		mv.addObject("user", user);
+
+        // // 初期表示用受注リスト取得
+        // List<WorkItemEntity> origin = workItemService.getList();
+        // mv.addObject("origin", origin);
+
+        // // コンボボックスアイテム取得
+        // List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorListAddTopOfOwnCompany();
+        // mv.addObject("companyComboList", companyComboList);
+        // List<SimpleData> categoryComboList = comboBoxService.getWorkItemParentCategoryList();
+        // mv.addObject("categoryComboList", categoryComboList);
+
+        // // 初期化されたエンティティ
+        // mv.addObject("formEntity", new WorkItemEntity());
+
+        // mv.addObject("deleteCode", Enums.state.DELETE.getCode());
+
+        // // 履歴保存
+        // historyService.saveHistory(userName, "work_item", "閲覧", 0, "");
 		
         return mv;
     }

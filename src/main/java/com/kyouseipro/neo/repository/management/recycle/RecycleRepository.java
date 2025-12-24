@@ -10,7 +10,6 @@ import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.management.recycle.RecycleDateEntity;
 import com.kyouseipro.neo.entity.management.recycle.RecycleEntity;
-import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
 import com.kyouseipro.neo.mapper.management.recycle.RecycleEntityMapper;
 import com.kyouseipro.neo.query.parameter.management.recycle.RecycleParameterBinder;
 import com.kyouseipro.neo.query.sql.management.recycle.RecycleSqlBuilder;

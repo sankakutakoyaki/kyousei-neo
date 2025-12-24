@@ -11,6 +11,7 @@ public class WorkItemEntityMapper {
         entity.setWork_item_id(rs.getInt("work_item_id"));
         entity.setCode(rs.getInt("code"));
         entity.setCategory_id(rs.getInt("category_id"));
+        entity.setCategory_code(rs.getInt("category_code"));
         entity.setCategory_name(rs.getString("category_name"));
         entity.setName(rs.getString("name"));
         entity.setVersion(rs.getInt("version"));

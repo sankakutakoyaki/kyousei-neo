@@ -44,9 +44,9 @@ public class WorkPriceService {
     */
     public Integer saveWorkPrice(WorkPriceEntity item, String editor) {
         if (item.getWork_price_id() > 0) {
-            return workPriceRepository.updateWorkPrice(item, 1);
+            return workPriceRepository.updateWorkPrice(item, editor);
         } else {
-            return workPriceRepository.insertWorkPrice(item, 1);
+            return workPriceRepository.insertWorkPrice(item, editor);
         }        
     }
 
@@ -67,5 +67,15 @@ public class WorkPriceService {
     public String downloadCsvOrderByIds(List<SimpleData> list, String userName) {
         List<WorkPriceEntity> workPrices = workPriceRepository.downloadCsvWorkPriceByIds(list, userName);
         return CsvExporter.export(workPrices, WorkPriceEntity.class);
+    }
+
+    /**
+     * IDからCsv用文字列を取得
+     * @param ids
+     * @return
+     */
+    public String downloadCsvWorkPriceByIds(List<SimpleData> list) {
+        List<WorkPriceEntity> recycles = workPriceRepository.downloadCsvWorkPriceByIds(list);
+        return CsvExporter.export(recycles, WorkPriceEntity.class);
     }
 }

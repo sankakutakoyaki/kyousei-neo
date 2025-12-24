@@ -9,9 +9,7 @@ import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.regist.WorkItemEntity;
 import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
 import com.kyouseipro.neo.mapper.regist.WorkItemEntityMapper;
-import com.kyouseipro.neo.query.parameter.management.qualification.QualificationsParameterBinder;
 import com.kyouseipro.neo.query.parameter.regist.WorkItemParameterBinder;
-import com.kyouseipro.neo.query.sql.management.qualification.QualificationsSqlBuilder;
 import com.kyouseipro.neo.query.sql.regist.WorkItemSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
@@ -75,11 +73,12 @@ public class WorkItemRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    public Integer insertWorkItem(WorkItemEntity entity, int index) {
+    public Integer insertWorkItem(WorkItemEntity entity, String editor) {
+        int index = 1;
         String sql = WorkItemSqlBuilder.buildInsertWorkItemSql(index);
         return sqlRepository.execute(
             sql,
-            (pstmt, emp) -> WorkItemParameterBinder.bindInsertWorkItemParameters(pstmt, entity, sql, index),
+            (pstmt, emp) -> WorkItemParameterBinder.bindInsertWorkItemParameters(pstmt, entity, editor, index),
             rs -> rs.next() ? rs.getInt("work_item_id") : null,
             entity
         );
@@ -90,12 +89,13 @@ public class WorkItemRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    public Integer updateWorkItem(WorkItemEntity entity, int index) {
+    public Integer updateWorkItem(WorkItemEntity entity, String editor) {
+        int index = 1;
         String sql = WorkItemSqlBuilder.buildUpdateWorkItemSql(index);
 
         Integer result = sqlRepository.executeUpdate(
             sql,
-            pstmt -> WorkItemParameterBinder.bindUpdateWorkItemParameters(pstmt, entity, sql, index)
+            pstmt -> WorkItemParameterBinder.bindUpdateWorkItemParameters(pstmt, entity, editor, index)
         );
 
         return result; // 成功件数。0なら削除なし
@@ -109,6 +109,23 @@ public class WorkItemRepository {
             sql,
             ps -> WorkItemParameterBinder.bindFindParentCategoryCombo(ps),
             SimpleDataMapper::map
+        );
+    }
+
+    /**
+     * CSVファイルをダウンロードする。
+     * @param ids
+     * @param editor
+     * @return Idsで選択したEntityリストを返す。
+     */
+    public List<WorkItemEntity> downloadCsvWorkItemByIds(List<SimpleData> ids) {
+        List<Integer> workItemIds = Utilities.createSequenceByIds(ids);
+        String sql = WorkItemSqlBuilder.buildDownloadCsvWorkItemForIdsSql(workItemIds.size());
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> WorkItemParameterBinder.bindDownloadCsvForIds(ps, workItemIds),
+            WorkItemEntityMapper::map // ← ここで ResultSet を map
         );
     }
 }

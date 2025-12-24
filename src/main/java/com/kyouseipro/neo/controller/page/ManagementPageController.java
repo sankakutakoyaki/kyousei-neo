@@ -57,13 +57,7 @@ public class ManagementPageController {
         List<RecycleEntity> origin = recycleService.getBetweenRecycleEntity(LocalDate.now(), LocalDate.now(), "regist");
         mv.addObject("origin", origin);
         // コンボボックスアイテム取得
-        List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorList();
-        // 自社を取得
-        List<SimpleData> ownList = comboBoxService.getOwnCompanyList();
-        // 自社を先頭に追加
-        for (SimpleData simpleData : ownList) {
-            companyComboList.add(0, simpleData);
-        }
+        List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorListAddTopOfOwnCompany();
         mv.addObject("companyComboList", companyComboList);
         // 支店リストを取得
         List<OfficeListEntity> officeComboList = comboBoxService.getOfficeList();

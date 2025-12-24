@@ -12,14 +12,14 @@
         <div class="normal-body">
             <div class="table-area">
                 <!-- ヘッダー -->
-                <header th:replace="~{fragments/regist/workitem :: header01Fragment('search-box-01')}">
+                <header th:replace="~{fragments/regist/workprice :: header01Fragment('search-box-01')}">
                 </header>
                 <!-- コンテンツ -->
-                <main th:replace="~{fragments/regist/workitem :: main01Fragment('table-01', 'table-01-content')}">
+                <main th:replace="~{fragments/regist/workprice :: main01Fragment('table-01', 'table-01-content')}">
                 </main>
                 <!-- フッター -->
                 <footer id="footer-01" class="pc-style"
-                    th:insert="~{fragments/regist/workitem :: footerFragment()}"></footer>
+                    th:insert="~{fragments/regist/workprice :: footerFragment()}"></footer>
             </div>
         </div>
         <div id="form-dialog-area">
@@ -31,7 +31,7 @@
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
             const user = /*[[${user}]]*/;
-            // const companyComboList = /*[[${companyComboList}]]*/;
+            const companyComboList = /*[[${companyComboList}]]*/;
             const categoryComboList = /*[[${categoryComboList}]]*/;
             let origin = /*[[${origin}]]*/; // 初期リスト記憶用
         </script>
@@ -39,7 +39,7 @@
         <script th:src="@{/js/info.js}"></script>
         <script th:src="@{/js/file.js}"></script>
         <script th:src="@{/js/enterfocus.js}"></script>
-        <script th:src="@{/js/regist/workitem.js}"></script>
+        <script th:src="@{/js/regist/workprice.js}"></script>
     </div>
 
 </body>

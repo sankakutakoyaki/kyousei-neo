@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.regist.WorkItemEntity;
 import com.kyouseipro.neo.repository.regist.WorkItemRepository;
@@ -52,9 +53,9 @@ public class WorkItemService {
     */
     public Integer saveWorkItem(WorkItemEntity item, String editor) {
         if (item.getWork_item_id() > 0) {
-            return workItemRepository.updateWorkItem(item, 1);
+            return workItemRepository.updateWorkItem(item, editor);
         } else {
-            return workItemRepository.insertWorkItem(item, 1);
+            return workItemRepository.insertWorkItem(item, editor);
         }
         
     }
@@ -66,5 +67,15 @@ public class WorkItemService {
      */
     public Integer deleteWorkItemByIds(List<SimpleData> list, String userName) {
         return workItemRepository.deleteWorkItemByIds(list, userName);
+    }
+
+    /**
+     * IDからCsv用文字列を取得
+     * @param ids
+     * @return
+     */
+    public String downloadCsvWorkItemByIds(List<SimpleData> list) {
+        List<WorkItemEntity> recycles = workItemRepository.downloadCsvWorkItemByIds(list);
+        return CsvExporter.export(recycles, WorkItemEntity.class);
     }
 }

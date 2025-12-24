@@ -75,7 +75,7 @@ public class WorkItemSqlBuilder {
 
     private static String baseSelectString() {
         return
-            "SELECT w.work_item_id, w.code, w.category_id, wc.name as category_name, w.name, w.version, w.state FROM work_items w" +
+            "SELECT w.work_item_id, w.code, w.category_id, wc.code as category_code, wc.name as category_name, w.name, w.version, w.state FROM work_items w" +
             " LEFT OUTER JOIN work_item_categories wc ON wc.work_item_category_id = w.category_id AND NOT (wc.state = ?)";
     }
 
@@ -86,15 +86,21 @@ public class WorkItemSqlBuilder {
 
     public static String buildFindAllSql() {
         return 
-            baseSelectString() + " WHERE NOT (w.state = ?)";
+            baseSelectString() + " WHERE NOT (w.state = ?) ORDER BY category_id, code";
     }
 
     public static String buildFindAllByCategoryIdSql() {
         return 
-            baseSelectString() + " WHERE w.category_id = ? AND NOT (w.state = ?)";
+            baseSelectString() + " WHERE w.category_id = ? AND NOT (w.state = ?) ORDER BY category_id, code";
     }
 
     public static String buildFindParentCategoryComboSql() {
         return "SELECT work_item_category_id as number, name as text FROM work_item_categories WHERE NOT (state = ?) ORDER BY code;";
+    }
+
+    public static String buildDownloadCsvWorkItemForIdsSql(int count) {
+        String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
+        return 
+            baseSelectString() + " WHERE w.work_item_id IN (" + placeholders + ") AND NOT (w.state = ?)";
     }
 }

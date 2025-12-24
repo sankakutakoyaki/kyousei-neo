@@ -90,11 +90,12 @@ public class WorkPriceRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    public Integer insertWorkPrice(WorkPriceEntity entity, int index) {
+    public Integer insertWorkPrice(WorkPriceEntity entity, String editor) {
+        int index = 1;
         String sql = WorkPriceSqlBuilder.buildInsertWorkPriceSql(index);
         return sqlRepository.execute(
             sql,
-            (pstmt, emp) -> WorkPriceParameterBinder.bindInsertWorkPriceParameters(pstmt, entity, sql, index),
+            (pstmt, emp) -> WorkPriceParameterBinder.bindInsertWorkPriceParameters(pstmt, entity, editor, index),
             rs -> rs.next() ? rs.getInt("work_price_id") : null,
             entity
         );
@@ -105,14 +106,32 @@ public class WorkPriceRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    public Integer updateWorkPrice(WorkPriceEntity entity, int index) {
+    public Integer updateWorkPrice(WorkPriceEntity entity, String editor) {
+        int index = 1;
         String sql = WorkPriceSqlBuilder.buildUpdateWorkPriceSql(index);
 
         Integer result = sqlRepository.executeUpdate(
             sql,
-            pstmt -> WorkPriceParameterBinder.bindUpdateWorkPriceParameters(pstmt, entity, sql, index)
+            pstmt -> WorkPriceParameterBinder.bindUpdateWorkPriceParameters(pstmt, entity, editor, index)
         );
 
         return result; // 成功件数。0なら削除なし
+    }
+
+    /**
+     * CSVファイルをダウンロードする。
+     * @param ids
+     * @param editor
+     * @return Idsで選択したEntityリストを返す。
+     */
+    public List<WorkPriceEntity> downloadCsvWorkPriceByIds(List<SimpleData> ids) {
+        List<Integer> workPriceIds = Utilities.createSequenceByIds(ids);
+        String sql = WorkPriceSqlBuilder.buildDownloadCsvWorkPriceForIdsSql(workPriceIds.size());
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> WorkPriceParameterBinder.bindDownloadCsvForIds(ps, workPriceIds),
+            WorkPriceEntityMapper::map // ← ここで ResultSet を map
+        );
     }
 }
