@@ -20,6 +20,7 @@ public class CompanyParameterBinder {
         pstmt.setString(index++, company.getFull_address());
         pstmt.setString(index++, company.getEmail());
         pstmt.setString(index++, company.getWeb_address());
+        pstmt.setInt(index++, company.getIs_original_price());
         pstmt.setInt(index++, company.getVersion());
         pstmt.setInt(index++, company.getState());
 
@@ -38,6 +39,7 @@ public class CompanyParameterBinder {
         pstmt.setString(index++, company.getFull_address());
         pstmt.setString(index++, company.getEmail());
         pstmt.setString(index++, company.getWeb_address());
+        pstmt.setInt(index++, company.getIs_original_price());
         pstmt.setInt(index++, company.getVersion());
         pstmt.setInt(index++, company.getState());
 

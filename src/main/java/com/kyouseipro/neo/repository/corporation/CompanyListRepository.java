@@ -96,6 +96,17 @@ public class CompanyListRepository {
         );
     }
 
+    // 料金表コンボボックス用リスト取得
+    public List<SimpleData> findAllComboPrimeConstractorHasOriginalPrice() {
+        String sql = CompanyListSqlBuilder.buildFindAllComboPrimeConstractorHasOriginalPriceSql();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> CompanyListParameterBinder.bindFindAllComboPrimeConstractorHasOriginalPrice(ps, null),
+            SimpleDataMapper::map
+        );
+    }
+
     // コンボボックス用リスト取得
     public List<SimpleData> findAllComboByCategory(int category) {
         String sql = CompanyListSqlBuilder.buildFindAllComboByCategorySql();

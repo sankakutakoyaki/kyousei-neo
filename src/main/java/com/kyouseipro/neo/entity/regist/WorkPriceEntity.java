@@ -10,8 +10,11 @@ public class WorkPriceEntity implements CsvExportable  {
     private int work_price_id;
     private int work_item_id;
     private String work_item_name;
+    private int full_code;
     private int company_id;
     private String company_name;
+    private int category_id;
+    private String category_name;
     private int price;
     private int version;
     private int state;

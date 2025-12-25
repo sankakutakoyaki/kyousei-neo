@@ -54,6 +54,14 @@ public class CompanyListParameterBinder {
         return index;
     }
 
+    public static int bindFindAllComboPrimeConstractorHasOriginalPrice(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.clientCategory.SHIPPER.getCode());
+        ps.setInt(index++, Enums.yesOrNo.YES.getCode());
+        return index;
+    }
+
     public static int bindFindAllComboByCategory(PreparedStatement ps, int category) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());

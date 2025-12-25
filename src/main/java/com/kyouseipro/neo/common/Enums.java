@@ -313,4 +313,36 @@ public class Enums {
             return Utilities.enumValueOf(Enums.ItemClass.class, num).getDescription();
         }
     }
+
+    /**
+     * 有無
+     * 
+     * @return 0.なし　1.有り
+     */
+    public enum yesOrNo implements CodeEnum {
+        NO(0, ""),
+        YES(1, "有り");
+
+        private int num;
+        private String str;
+
+        private yesOrNo(int num, String str) {
+            this.num = num;
+            this.str = str;
+        }
+
+        @Override
+        public int getCode() {
+            return this.num;
+        }
+
+        @Override
+        public String getDescription() {
+            return this.str;
+        }
+
+        public static String getDescriptionByNum(int num) {
+            return Utilities.enumValueOf(Enums.yesOrNo.class, num).getDescription();
+        }
+    }
 }

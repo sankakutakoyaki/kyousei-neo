@@ -27,11 +27,12 @@ public class WorkPriceService {
     }
 
     /**
-     * リストを取得
+     * 荷主IDで指定した料金表を取得
+     * @param id
      * @return
      */
-    public List<WorkPriceEntity> getList() {
-        return workPriceRepository.findAll();
+    public List<WorkPriceEntity> getListByCompanyId(int id) {
+        return workPriceRepository.findAllByCompanyId(id);
     }
 
     /**
@@ -48,15 +49,6 @@ public class WorkPriceService {
         } else {
             return workPriceRepository.insertWorkPrice(item, editor);
         }        
-    }
-
-    /**
-     * IDからOrderItemを削除
-     * @param ids
-     * @return
-     */
-    public Integer deleteWorkPriceByIds(List<SimpleData> list, String userName) {
-        return workPriceRepository.deleteWorkPriceByIds(list, userName);
     }
 
     /**

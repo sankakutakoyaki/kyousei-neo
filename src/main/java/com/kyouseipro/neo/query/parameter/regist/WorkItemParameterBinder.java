@@ -10,16 +10,19 @@ import com.kyouseipro.neo.entity.regist.WorkItemEntity;
 public class WorkItemParameterBinder {
     public static int bindInsertWorkItemParameters(PreparedStatement pstmt, WorkItemEntity w, String editor, int index) throws SQLException {
         pstmt.setInt(index++, w.getCode());
+        pstmt.setInt(index++, w.getCode());
         pstmt.setInt(index++, w.getCategory_id());
         pstmt.setString(index++, w.getName());
         pstmt.setInt(index++, w.getVersion());
         pstmt.setInt(index++, w.getState());
 
+        pstmt.setInt(index++, w.getCategory_id());
         pstmt.setString(index++, editor);
         return index;
     }
 
     public static int bindUpdateWorkItemParameters(PreparedStatement pstmt, WorkItemEntity w, String editor, int index) throws SQLException {
+        pstmt.setInt(index++, w.getCode());
         pstmt.setInt(index++, w.getCode());
         pstmt.setInt(index++, w.getCategory_id());
         pstmt.setString(index++, w.getName());

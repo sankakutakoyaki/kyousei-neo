@@ -9,7 +9,6 @@ import java.util.stream.IntStream;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.interfaceis.CodeEnum;
 import com.kyouseipro.neo.interfaceis.CsvExportable;
-import com.kyouseipro.neo.service.common.ComboBoxService;
 
 public class Utilities {
     /**
@@ -86,5 +85,10 @@ public class Utilities {
             sb.append(String.join(",", item.toCsvRow())).append("\n");
         }
         return sb.toString();
+    }
+
+    // 自社のcompanny_idを返す
+    public static int getOwnCompanyId() {
+        return 1000;
     }
 }

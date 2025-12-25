@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
 import com.kyouseipro.neo.entity.corporation.OfficeEntity;
@@ -20,6 +21,7 @@ import com.kyouseipro.neo.entity.corporation.StaffListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.regist.WorkItemEntity;
+import com.kyouseipro.neo.entity.regist.WorkPriceEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.corporation.CompanyListService;
 import com.kyouseipro.neo.service.corporation.OfficeListService;
@@ -27,6 +29,7 @@ import com.kyouseipro.neo.service.corporation.StaffListService;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 import com.kyouseipro.neo.service.regist.WorkItemService;
+import com.kyouseipro.neo.service.regist.WorkPriceService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,6 +41,7 @@ public class RegistPageController {
     private final OfficeListService officeListService;
     private final StaffListService staffListService;
     private final WorkItemService workItemService;
+    private final WorkPriceService workPriceService;
     private final ComboBoxService comboBoxService;
     private final HistoryService historyService;
 
@@ -122,10 +126,10 @@ public class RegistPageController {
         List<SimpleData> categoryComboList = comboBoxService.getWorkItemParentCategoryList();
         mv.addObject("categoryComboList", categoryComboList);
 
-        // 初期化されたエンティティ
-        mv.addObject("formEntity", new WorkItemEntity());
+        // // 初期化されたエンティティ
+        // mv.addObject("formEntity", new WorkItemEntity());
 
-        mv.addObject("deleteCode", Enums.state.DELETE.getCode());
+        mv.addObject("ownCompanyId", Utilities.getOwnCompanyId());
 
         // 履歴保存
         historyService.saveHistory(userName, "work_item", "閲覧", 0, "");
@@ -149,23 +153,18 @@ public class RegistPageController {
 		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
 		mv.addObject("user", user);
 
-        // // 初期表示用受注リスト取得
-        // List<WorkItemEntity> origin = workItemService.getList();
-        // mv.addObject("origin", origin);
+        // 初期表示用受注リスト取得
+        List<WorkPriceEntity> origin = workPriceService.getListByCompanyId(Utilities.getOwnCompanyId());
+        mv.addObject("origin", origin);
 
-        // // コンボボックスアイテム取得
-        // List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorListAddTopOfOwnCompany();
-        // mv.addObject("companyComboList", companyComboList);
-        // List<SimpleData> categoryComboList = comboBoxService.getWorkItemParentCategoryList();
-        // mv.addObject("categoryComboList", categoryComboList);
+        // コンボボックスアイテム取得
+        List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorListAddTopOfOwnCompanyHasOriginalPrice();
+        mv.addObject("companyComboList", companyComboList);
+        List<SimpleData> categoryComboList = comboBoxService.getWorkItemParentCategoryList();
+        mv.addObject("categoryComboList", categoryComboList);
 
-        // // 初期化されたエンティティ
-        // mv.addObject("formEntity", new WorkItemEntity());
-
-        // mv.addObject("deleteCode", Enums.state.DELETE.getCode());
-
-        // // 履歴保存
-        // historyService.saveHistory(userName, "work_item", "閲覧", 0, "");
+        // 履歴保存
+        historyService.saveHistory(userName, "work_price", "閲覧", 0, "");
 		
         return mv;
     }

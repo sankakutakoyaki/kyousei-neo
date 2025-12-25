@@ -182,12 +182,19 @@
                                 <input tabindex="8" name="web-address" class="normal-input" type="url" value=""
                                     placeholder="例）example@kyouseibin.com" onfocus="this.select();">
                             </div>
+                            <div class="form-parts" name="priceArea">
+                                <label>料金表</label>
+                                <select tabindex="9" name="price" class="normal-select">
+                                    <option value="0"></option>
+                                    <option value="1">有</option>
+                                </select>
+                            </div>
                         </div>
                     </form>
                     <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
-                        <button tabindex="9" class="normal-btn ok" type="button"
+                        <button tabindex="10" class="normal-btn ok" type="button"
                             onclick="execSave(this)"><span>保存</span></button>
                     </div>
                 </div>
@@ -519,11 +526,17 @@
                         form.querySelector('[name="full-address"]').value = entity.full_address;
                         form.querySelector('[name="web-address"]').value = entity.web_address;
                         switch (tab) {
+                            case "02":
+                                form.querySelector('[name="category"]').value = entity.category;
+                                form.querySelector('[name="price"]').value = entity.is_original_price;
+                                form.querySelector('[name="priceArea"]').style.display = "";
+                                break;
                             case "05":
                                 form.querySelector('[name="office-id"]').value = entity.office_id;
                                 break;
                             default:
                                 form.querySelector('[name="category"]').value = entity.category;
+                                form.querySelector('[name="priceArea"]').style.display = "none";
                                 break;
                         }
                         break;
@@ -587,6 +600,11 @@
                     formdata.name_kana = formData.get('name-kana').trim();
                     formdata.email = formData.get('email').trim();                    
                     formdata.version = Number(formData.get('version'));
+                    if (formData.get('price') != null) {
+                        formdata.is_original_price = formData.get('price');
+                    } else {
+                        formdata.is_original_price = 0;
+                    }
 
                     formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
 

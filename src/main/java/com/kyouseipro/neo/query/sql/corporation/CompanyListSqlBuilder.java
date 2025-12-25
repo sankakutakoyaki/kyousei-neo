@@ -26,6 +26,10 @@ public class CompanyListSqlBuilder {
         return "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana, category;";
     }
 
+    public static String buildFindAllComboPrimeConstractorHasOriginalPriceSql() {
+        return "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? AND is_original_price = ? ORDER BY name_kana, category;";
+    }
+
     public static String buildFindAllComboByCategorySql() {
         return "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ?;";
     }

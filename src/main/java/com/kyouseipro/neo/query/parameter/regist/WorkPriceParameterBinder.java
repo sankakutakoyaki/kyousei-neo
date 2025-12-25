@@ -26,57 +26,43 @@ public class WorkPriceParameterBinder {
         pstmt.setInt(index++, w.getVersion());
         pstmt.setInt(index++, w.getState());
 
-        pstmt.setInt(index++, w.getWork_item_id()); // WHERE句
+        pstmt.setInt(index++, w.getWork_price_id()); // WHERE句
         pstmt.setString(index++, editor);          // ログ用
         return index;
     }
 
     public static int bindFindById(PreparedStatement ps, int id) throws SQLException {
         int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, id);
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }
 
-    public static int bindFindAll(PreparedStatement ps) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
 
     public static int bindFindAllByCompanyId(PreparedStatement ps, int id) throws SQLException {
         int index = 1;
         ps.setInt(index++, id);
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
-
-    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
-        for (Integer id : ids) {
-            ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
-        }
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
-        ps.setString(index, editor); // 4. log
-        return index;
-    }
-
-    public static int bindDeleteWorkPriceParameters(PreparedStatement ps, int id, String editor, int index) throws SQLException {
+        ps.setInt(index++, id);
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, id);
-        ps.setString(index, editor);
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }
 
     public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
-        // ps.setInt(index++, Enums.state.DELETE.getCode());
-        // ps.setInt(index++, Enums.state.DELETE.getCode());
-        // for (Integer id : ids) {
-        //     ps.setInt(index++, id); // company_id IN (?, ?, ?)
-        // }
-        // ps.setInt(index++, Enums.state.DELETE.getCode()); // AND NOT (state = ?)
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        for (Integer id : ids) {
+            ps.setInt(index++, id); // company_id IN (?, ?, ?)
+        }
+        ps.setInt(index++, Enums.state.DELETE.getCode()); // AND NOT (state = ?)
         return index;
     }
 }

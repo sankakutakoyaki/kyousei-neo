@@ -9,7 +9,7 @@ public class CompanySqlBuilder {
             "DECLARE " + rowTableName + " TABLE (" +
             "  company_id INT, category NVARCHAR(255), name NVARCHAR(255), name_kana NVARCHAR(255), " +
             "  tel_number NVARCHAR(255), fax_number NVARCHAR(255), postal_code NVARCHAR(255), " +
-            "  full_address NVARCHAR(255), email NVARCHAR(255), web_address NVARCHAR(255), " +
+            "  full_address NVARCHAR(255), email NVARCHAR(255), web_address NVARCHAR(255), is_original_price INT, " +
             "  version INT, state INT" +
             "); ";
     }
@@ -18,17 +18,17 @@ public class CompanySqlBuilder {
         return
             "OUTPUT INSERTED.company_id, INSERTED.category, INSERTED.name, INSERTED.name_kana, " +
             "INSERTED.tel_number, INSERTED.fax_number, INSERTED.postal_code, INSERTED.full_address, " +
-            "INSERTED.email, INSERTED.web_address, INSERTED.version, INSERTED.state ";
+            "INSERTED.email, INSERTED.web_address, INSERTED.is_original_price, INSERTED.version, INSERTED.state ";
     }
 
     private static String buildInsertLogSql(String rowTableName, String processName) {
         return
             "INSERT INTO companies_log (" +
             "  company_id, editor, process, log_date, category, name, name_kana, tel_number, fax_number, " +
-            "  postal_code, full_address, email, web_address, version, state" +
+            "  postal_code, full_address, email, web_address, is_original_price, version, state" +
             ") " +
             "SELECT company_id, ?, '" + processName + "', CURRENT_TIMESTAMP, category, name, name_kana, tel_number, fax_number, " +
-            "  postal_code, full_address, email, web_address, version, state " +
+            "  postal_code, full_address, email, web_address, is_original_price, version, state " +
             "FROM " + rowTableName + ";";
     }
 
@@ -38,10 +38,10 @@ public class CompanySqlBuilder {
 
             "INSERT INTO companies (" +
             "  category, name, name_kana, tel_number, fax_number, postal_code, full_address, " +
-            "  email, web_address, version, state" +
+            "  email, web_address, is_original_price, version, state" +
             ") " +
             buildOutputLogSql() + "INTO @Inserted " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
             buildInsertLogSql("@Inserted", "INSERT") +
             "SELECT company_id FROM @Inserted;";
@@ -53,7 +53,7 @@ public class CompanySqlBuilder {
 
             "UPDATE companies SET " +
             "  category=?, name=?, name_kana=?, tel_number=?, fax_number=?, postal_code=?, " +
-            "  full_address=?, email=?, web_address=?, version=?, state=? " +
+            "  full_address=?, email=?, web_address=?, is_original_price=?, version=?, state=? " +
             buildOutputLogSql() + "INTO @Updated " +
             "WHERE company_id=?; " +
 

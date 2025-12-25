@@ -9,6 +9,7 @@ public class WorkItemEntityMapper {
     public static WorkItemEntity map(ResultSet rs) throws SQLException {
         WorkItemEntity entity = new WorkItemEntity();
         entity.setWork_item_id(rs.getInt("work_item_id"));
+        entity.setFull_code(rs.getInt("full_code"));
         entity.setCode(rs.getInt("code"));
         entity.setCategory_id(rs.getInt("category_id"));
         entity.setCategory_code(rs.getInt("category_code"));

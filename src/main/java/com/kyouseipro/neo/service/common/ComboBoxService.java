@@ -149,6 +149,11 @@ public class ComboBoxService {
         return addOwnCompanyTopOfComboList(companyList);
     }
 
+    public List<SimpleData> getPrimeConstractorListAddTopOfOwnCompanyHasOriginalPrice() {
+        List<SimpleData> companyList = companyListRepository.findAllComboPrimeConstractorHasOriginalPrice();
+        return addOwnCompanyTopOfComboList(companyList);
+    }
+
     public List<SimpleData> getCompanyListByCategory(int category) {
         return companyListRepository.findAllComboByCategory(category);
     }

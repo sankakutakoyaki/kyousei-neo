@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 public class WorkItemEntity implements CsvExportable {
     private int work_item_id;
+    private int full_code;
     private int code;
     private int category_id;
     private int category_code;
@@ -23,7 +24,8 @@ public class WorkItemEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.format("%02d", category_code) + String.format("%02d", code)) + "," +
+        // return Utilities.escapeCsv(String.format("%02d", category_code) + String.format("%02d", code)) + "," +
+        return Utilities.escapeCsv(String.valueOf(full_code)) + "," +
                Utilities.escapeCsv(category_name) + "," +
                Utilities.escapeCsv(name);
     }

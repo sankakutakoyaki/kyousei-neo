@@ -5,11 +5,8 @@ function createTableContent(tableId, list) {
     const tbl = document.getElementById(tableId);
     list.forEach(function (item) {
         let newRow = tbl.insertRow();
-        // ID（Post送信用）
         newRow.setAttribute('name', 'data-row');
         newRow.setAttribute('data-id', item.work_price_id);
-        newRow.setAttribute('data-work', item.work_item_id);
-        newRow.setAttribute('data-com', item.company_id);
         tdChangeEdit(newRow);
         tdEnableEdit(newRow);
         createTable01Row(newRow, item);
@@ -23,13 +20,13 @@ function createTable01Row(newRow, item) {
     // 選択用チェックボックス
     newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
     // コード
-    newRow.insertAdjacentHTML('beforeend', '<td class="text-right">' + (String(item.category_code).padStart(2, '0') + String(item.code).padStart(2, '0') ?? "") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td class="text-right">' + (item.full_code ?? "-----") + '</td>');
     // 分類
     newRow.insertAdjacentHTML('beforeend', '<td>' + (item.category_name ?? "-----") + '</td>');
     // 作業項目
-    newRow.insertAdjacentHTML('beforeend', '<td data-col="itemname" class="editable">' + (item.name ?? "-----") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td>' + (item.work_item_name ?? "-----") + '</td>');
     // 料金
-    newRow.insertAdjacentHTML('beforeend', '<td>' + (item.price ?? "0") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td class="editable text-right">' + (item.price ?? 0).toLocaleString('ja-JP') + '</td>');
     // 荷主
     newRow.insertAdjacentHTML('beforeend', '<td>' + (item.company_name ?? "-----") + '</td>');
 }
@@ -43,80 +40,13 @@ function tdChangeEdit(newRow) {
         const td = input.closest('td.editable');
         const row = td.closest('tr');
         const id = row.dataset.id;
-        const work = row.dataset.work;
-        const com = row.dataset.com;
 
         let ent = origin.find(value => value.work_price_id == id);
         if (ent != null) {
             ent.price = Number(input.value);
-        } else {
-
+            execSave(ent);
         }
-        execSave(ent);
     });
-}
-
-// リスト内に同じコードがないかチェック
-function existsSameCode(categoryId, code) {
-    return origin.some(item =>
-        item.category_id === categoryId &&
-        item.code === code
-    );
-}
-
-// リスト内に同じ作業名がないかチェック
-function existsSameName(categoryId, name) {
-    return origin.some(item =>
-        item.category_id === categoryId &&
-        item.name.trim() === name.trim()
-    );
-}
-
-// リスト内のコード最大値を取得
-function createMaxCode(list, selectId) {
-    return list.reduce((max, item) => {
-        if (item.category_id === selectId) {
-            return Math.max(max, item.code);
-        }
-        return max;
-    }, 0) + 1;
-}
-
-// 数字が被らなように名前を作成する
-function createUniqueName(itemList, categoryId, baseName = '新しい項目') {
-    const usedNumbers = itemList
-        .filter(item => item.category_id === categoryId)
-        .map(item => {
-            const m = item.name?.match(/^新しい項目\((\d+)\)$/);
-            return m ? Number(m[1]) : null;
-        })
-        .filter(n => n !== null);
-
-    let num = 1;
-    while (usedNumbers.includes(num)) {
-        num++;
-    }
-    return `${baseName}(${num})`;
-}
-
-/******************************************************************************************************* 削除 */
-
-async function execDelete(tableId, footerId, searchId, url, self) {
-    // スピナー表示
-    startProcessing();
-    const result = await deleteTablelist(tableId, url);
-
-    if (result.success) {                
-        await execUpdate();
-        const list = getCategoryFilterList();
-        await updateTableDisplay(tableId, footerId, searchId, list);
-        openMsgDialog("msg-dialog", result.message, "blue");
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
-    }
-
-    // スピナー消去
-    processingEnd();
 }
 
 /******************************************************************************************************* 保存 */
@@ -127,7 +57,7 @@ async function execSave(ent) {
     startProcessing();
 
     // 保存処理
-    const resultResponse = await postFetch("/work/item/save", JSON.stringify(ent), token, "application/json");
+    const resultResponse = await postFetch("/work/price/save", JSON.stringify(ent), token, "application/json");
     const result = await resultResponse.json();
     if (result.success) {
         // 画面更新
@@ -136,7 +66,6 @@ async function execSave(ent) {
         await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
         // 追加・変更行に移動
         scrollIntoTableList("table-01-content", result.id);
-        // itemList = [];
     } else {
         openMsgDialog("msg-dialog", result.message, "red");
     }
@@ -158,31 +87,45 @@ async function execUpdate() {
     // スピナー表示
     startProcessing();
 
-    const resultResponse = await fetch('/work/item/get/list');
+    const companyCombo = document.getElementById('company1');
+    const data = "id=" + encodeURIComponent(parseInt(companyCombo.value));
+    const resultResponse = await postFetch('/work/price/get/list/companyid', data, token, 'application/x-www-form-urlencoded');
     origin = await resultResponse.json();
 
     // スピナー消去
     processingEnd();
 }
 
+// 荷主フィルター選択時の処理
+function getCompanyFilterList(list) {
+    const companyCombo = document.getElementById('company1');
+    if (Number(companyCombo.value) === 0) {
+        return list;
+    } else {
+        return list.filter(value => value.company_id === Number(companyCombo.value));
+    }
+}
+
 // カテゴリーフィルター選択時の処理
-function getCategoryFilterList() {
+function getCategoryFilterList(list) {
     const categoryCombo = document.getElementById('category1');
     if (Number(categoryCombo.value) === 0) {
-        return origin;
+        return list;
     } else {
-        return origin.filter(value => value.category_id === Number(categoryCombo.value));
+        return list.filter(value => value.category_id === Number(categoryCombo.value));
     }
 }
 
 // テーブルリスト画面を更新する
-async function updateTableDisplay(tableId, footerId, searchId, list) {
+async function updateTableDisplay(tableId, footerId, searchId) {
     // フィルター処理
-    const result = filterDisplay(searchId, list);
+    let list = origin;
+    list = getCategoryFilterList(list);
+    list = filterDisplay(searchId, list);
     // リスト画面を初期化
     deleteElements(tableId);
     // リスト作成
-    createTableContent(tableId, result);
+    createTableContent(tableId, list);
     // フッター作成
     createTableFooter(footerId, list);
     // チェックボタン押下時の処理を登録する
@@ -207,23 +150,25 @@ window.addEventListener("load", async () => {
     startProcessing();
 
     // コンボボックス
-    // const company1Area = document.getElementById('company1')
-    // createComboBox(company1Area, companyComboList);
+    const company1Area = document.getElementById('company1')
+    createComboBox(company1Area, companyComboList);
+    company1Area.onchange = async function() {
+        await execUpdate();
+        await updateTableDisplay("table-01-content", "footer-01", "search-box-01");
+    };
     const category1Area = document.getElementById('category1')
     createComboBoxWithTop(category1Area, categoryComboList, "");
-    category1Area.onchange = function(e) {
-        const list = getCategoryFilterList();
-        updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+    category1Area.onchange = async function() {
+        await updateTableDisplay("table-01-content", "footer-01", "search-box-01");
     };
 
     // 検索ボックス入力時の処理
-    document.getElementById('search-box-01').addEventListener('search', async function(e) {
-        const list = getCategoryFilterList();
-        updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+    document.getElementById('search-box-01').addEventListener('search', async function() {
+        await updateTableDisplay("table-01-content", "footer-01", "search-box-01");
     }, false);
 
     // 画面更新
-    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+    await updateTableDisplay("table-01-content", "footer-01", "search-box-01");
 
     // スピナー消去
     processingEnd();

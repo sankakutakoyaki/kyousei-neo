@@ -75,28 +75,33 @@ public class WorkPriceSqlBuilder {
 
     private static String baseSelectString() {
         return
-            "SELECT w.work_price_id, w.work_item_id, w.company_id, w.price, w.version, w.state FROM work_prices w";
+            "SELECT wi.work_item_id, wi.full_code, wi.name as work_item_name, wi.version, wi.state, " +
+            "wp.price, wp.work_price_id, wp.company_id as company_id, c.name as company_name, " +
+            "wi.category_id, wc.name as category_name FROM work_items wi " +
+            "LEFT JOIN work_prices wp ON wp.work_item_id = wi.work_item_id AND NOT (wp.state = ?) " +
+            "LEFT JOIN companies c ON c.company_id = wp.company_id AND NOT (c.state = ?) " +
+            "LEFT JOIN work_item_categories wc ON wc.work_item_category_id = wi.category_id AND NOT (wc.state = ?) ";
     }
-
     
     public static String buildFindByIdSql() {
         return 
             baseSelectString() + " WHERE w.work_price_id = ? AND NOT (w.state = ?)";
     }
 
-    public static String buildFindAllSql() {
-        return 
-            baseSelectString() + " WHERE NOT (w.state = ?)";
-    }
-
     public static String buildFindAllByCompanyIdSql() {
-        return 
-            baseSelectString() + " WHERE w.company_id = ? AND NOT (w.state = ?)";
+        return
+            "SELECT wi.work_item_id, wi.full_code, wi.name as work_item_name, wi.version, wi.state, " +
+            "wp.price, wp.work_price_id, COALESCE(NULLIF(wp.company_id, 0), ?) AS company_id, c.name as company_name, " +
+            "wi.category_id, wc.name as category_name FROM work_items wi " +
+            "LEFT JOIN work_prices wp ON wp.work_item_id = wi.work_item_id AND wp.company_id = ? AND NOT (wp.state = ?) " +
+            "LEFT JOIN companies c ON c.company_id = COALESCE(NULLIF(wp.company_id, 0), ?) AND NOT (c.state = ?) " +
+            "LEFT JOIN work_item_categories wc ON wc.work_item_category_id = wi.category_id AND NOT (wc.state = ?) " +
+            "WHERE NOT(wi.state = ?) ORDER BY wi.category_id, wi.code;";
     }
 
     public static String buildDownloadCsvWorkPriceForIdsSql(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
-        return 
-            baseSelectString() + " WHERE w.work_price_id IN (" + placeholders + ") AND NOT (w.state = ?)";
+        return
+            baseSelectString() + "WHERE w.work_price_id IN (" + placeholders + ") AND NOT (w.state = ?)";
     }
 }

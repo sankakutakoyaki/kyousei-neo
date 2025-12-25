@@ -5,45 +5,72 @@ import com.kyouseipro.neo.common.Utilities;
 public class WorkItemSqlBuilder {
     private static String buildLogTableSql(String rowTableName) {
         return
-            "DECLARE " + rowTableName + " TABLE (work_item_id INT, code INT, category_id INT, name NVARCHAR(255), version INT, state INT);";
+            "DECLARE " + rowTableName + " TABLE (work_item_id INT, full_code INT, code INT, category_id INT, name NVARCHAR(255), version INT, state INT);";
     }
 
     private static String buildInsertLogSql(String rowTableName, String processName) {
         return
-            "INSERT INTO work_items_log (work_item_id, editor, process, log_date, code, category_id, name, version, state) " +
-            "SELECT work_item_id, ?, '" + processName + "', CURRENT_TIMESTAMP, code, category_id, name, version, state " +
+            "INSERT INTO work_items_log (work_item_id, editor, process, log_date, full_code, code, category_id, name, version, state) " +
+            "SELECT work_item_id, ?, '" + processName + "', CURRENT_TIMESTAMP, full_code, code, category_id, name, version, state " +
             "FROM " + rowTableName + ";";
     }
 
     private static String buildOutputLogSql() {
         return
-            "OUTPUT INSERTED.work_item_id, INSERTED.code, INSERTED.category_id, INSERTED.name, INSERTED.version, INSERTED.state ";
+            "OUTPUT INSERTED.work_item_id, INSERTED.full_code, INSERTED.code, INSERTED.category_id, INSERTED.name, INSERTED.version, INSERTED.state ";
     }
 
     public static String buildInsertWorkItemSql(int index) {
         String rowTableName = "@InsertedRows" + index;
-        return
-            buildLogTableSql(rowTableName) +
-            "INSERT INTO work_items (code, category_id, name, version, state) " +
+            return
+                buildLogTableSql(rowTableName) +
 
-            buildOutputLogSql() + "INTO " + rowTableName + " " +
-            "VALUES (?, ?, ?, ?, ?); " +
+                "INSERT INTO work_items (full_code, code, category_id, name, version, state) " +
+                buildOutputLogSql() + "INTO " + rowTableName + " " +
+                "SELECT " +
+                "RIGHT('00' + CAST(c.code AS VARCHAR(2)), 2) + RIGHT('00' + CAST(? AS VARCHAR(2)), 2), " +
+                "?, ?, ?, ?, ? " +
+                "FROM work_item_categories c WHERE c.work_item_category_id = ?; " +
 
-            buildInsertLogSql(rowTableName, "INSERT") +
-            "SELECT work_item_id FROM " + rowTableName + ";";
+                buildInsertLogSql(rowTableName, "INSERT") +
+                "SELECT work_item_id FROM " + rowTableName + ";";
+        // return
+        //     buildLogTableSql(rowTableName) +
+        //     "INSERT INTO work_items (full_code, code, category_id, name, version, state) " +
+        //     "SELECT RIGHT('00' + CAST(c.code AS VARCHAR(2)), 2) + RIGHT('00' + CAST(? AS VARCHAR(2)), 2), ?, ?, ?, ?, ? " +
+        //     "FROM work_item_categories c WHERE c.category_id = ?;" +
+
+        //     buildOutputLogSql() + "INTO " + rowTableName + " " +
+        //     "VALUES (?, ?, ?, ?, ?, ?); " +
+
+        //     buildInsertLogSql(rowTableName, "INSERT") +
+        //     "SELECT work_item_id FROM " + rowTableName + ";";
     }
 
     public static String buildUpdateWorkItemSql(int index) {
         String rowTableName = "@UpdatedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
-            "UPDATE work_items SET code=?, category_id=?, name=?, version=?, state=? " +
-            
-            buildOutputLogSql() + "INTO " + rowTableName + " " +
-            "WHERE work_item_id=?; " +
+                buildLogTableSql(rowTableName) +
 
-            buildInsertLogSql(rowTableName, "UPDATE") +
-            "SELECT work_item_id FROM " + rowTableName + ";";
+                "UPDATE wi SET " +
+                "full_code = LEFT(CAST(wi.full_code AS VARCHAR(4)), 2) " +
+                "           + RIGHT('00' + CAST(? AS VARCHAR(2)), 2), " +
+                "code=?, category_id=?, name=?, version=?, state=? " +
+
+                buildOutputLogSql() + "INTO " + rowTableName + " " +
+
+                "FROM work_items wi WHERE wi.work_item_id = ?; " +
+
+                buildInsertLogSql(rowTableName, "UPDATE") +
+                "SELECT work_item_id FROM " + rowTableName + ";";
+            // buildLogTableSql(rowTableName) +
+            // "UPDATE work_items SET full_code=?, code=?, category_id=?, name=?, version=?, state=? " +
+            
+            // buildOutputLogSql() + "INTO " + rowTableName + " " +
+            // "WHERE work_item_id=?; " +
+
+            // buildInsertLogSql(rowTableName, "UPDATE") +
+            // "SELECT work_item_id FROM " + rowTableName + ";";
     }
 
     public static String buildDeleteWorkItemSql(int index) {
@@ -75,7 +102,7 @@ public class WorkItemSqlBuilder {
 
     private static String baseSelectString() {
         return
-            "SELECT w.work_item_id, w.code, w.category_id, wc.code as category_code, wc.name as category_name, w.name, w.version, w.state FROM work_items w" +
+            "SELECT w.work_item_id, w.full_code, w.code, w.category_id, wc.code as category_code, wc.name as category_name, w.name, w.version, w.state FROM work_items w" +
             " LEFT OUTER JOIN work_item_categories wc ON wc.work_item_category_id = w.category_id AND NOT (wc.state = ?)";
     }
 
@@ -86,12 +113,12 @@ public class WorkItemSqlBuilder {
 
     public static String buildFindAllSql() {
         return 
-            baseSelectString() + " WHERE NOT (w.state = ?) ORDER BY category_id, code";
+            baseSelectString() + " WHERE NOT (w.state = ?) ORDER BY w.full_code";
     }
 
     public static String buildFindAllByCategoryIdSql() {
         return 
-            baseSelectString() + " WHERE w.category_id = ? AND NOT (w.state = ?) ORDER BY category_id, code";
+            baseSelectString() + " WHERE w.category_id = ? AND NOT (w.state = ?) ORDER BY w.full_code";
     }
 
     public static String buildFindParentCategoryComboSql() {

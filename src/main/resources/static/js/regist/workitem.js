@@ -22,7 +22,7 @@ function createTable01Row(newRow, item) {
     // 選択用チェックボックス
     newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
     // コード
-    newRow.insertAdjacentHTML('beforeend', '<td class="text-right">' + (String(item.category_code).padStart(2, '0') + String(item.code).padStart(2, '0') ?? "") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td class="text-right">' + (item.full_code ?? "") + '</td>');
     // 分類
     newRow.insertAdjacentHTML('beforeend', '<td>' + (item.category_name ?? "-----") + '</td>');
     // コード

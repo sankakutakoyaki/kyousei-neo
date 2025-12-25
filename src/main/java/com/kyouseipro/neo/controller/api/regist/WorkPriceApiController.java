@@ -37,15 +37,15 @@ public class WorkPriceApiController {
         return workPriceService.getWorkPriceById(id);
     }
 
-
     /**
-     * Listを取得する
+     * company_idで料金表を取得する
+     * @param id
      * @return
      */
-    @GetMapping("/work/price/get/list")
+    @PostMapping("/work/price/get/list/companyid")
 	@ResponseBody
-    public List<WorkPriceEntity> getWorkItemList() {
-        return workPriceService.getList();
+    public List<WorkPriceEntity> getEntityByCompanyId(@RequestParam int id) {
+        return workPriceService.getListByCompanyId(id);
     }
 
     /**
@@ -68,24 +68,24 @@ public class WorkPriceApiController {
         }
     }
 
-    /**
-     * IDリストのEntityを削除する
-     * @param IDS
-     * @return 
-     */
-    @PostMapping("/work/price/delete")
-	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteWorkPriceByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        Integer id = workPriceService.deleteWorkPriceByIds(ids, userName);
-        if (id != null && id > 0) {
-            historyService.saveHistory(userName, "work_prices", "削除", 200, "成功");
-            return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
-        } else {
-            historyService.saveHistory(userName, "work_prices", "削除", 400, "失敗");
-            return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
-        }
-    }
+    // /**
+    //  * IDリストのEntityを削除する
+    //  * @param IDS
+    //  * @return 
+    //  */
+    // @PostMapping("/work/price/delete")
+	// @ResponseBody
+    // public ResponseEntity<ApiResponse<Integer>> deleteWorkPriceByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     Integer id = workPriceService.deleteWorkPriceByIds(ids, userName);
+    //     if (id != null && id > 0) {
+    //         historyService.saveHistory(userName, "work_prices", "削除", 200, "成功");
+    //         return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
+    //     } else {
+    //         historyService.saveHistory(userName, "work_prices", "削除", 400, "失敗");
+    //         return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
+    //     }
+    // }
 
     /**
      * IDリストからCSV用データを取得する

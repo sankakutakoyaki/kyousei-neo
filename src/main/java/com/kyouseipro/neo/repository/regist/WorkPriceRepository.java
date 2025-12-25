@@ -30,16 +30,6 @@ public class WorkPriceRepository {
         );
     }
 
-    public List<WorkPriceEntity> findAll() {
-        String sql = WorkPriceSqlBuilder.buildFindAllSql();
-
-        return sqlRepository.findAll(
-            sql,
-            ps -> WorkPriceParameterBinder.bindFindAll(ps),
-            WorkPriceEntityMapper::map // ← ここで ResultSet を map
-        );
-    }
-
     public List<WorkPriceEntity> findAllByCompanyId(int id) {
         String sql = WorkPriceSqlBuilder.buildFindAllByCompanyIdSql();
 
@@ -48,23 +38,6 @@ public class WorkPriceRepository {
             ps -> WorkPriceParameterBinder.bindFindAllByCompanyId(ps, id),
             WorkPriceEntityMapper::map // ← ここで ResultSet を map
         );
-    }
-
-    /**
-     * 削除。
-     * @param ids
-     * @param editor
-     * @return 成功件数を返す。
-     */
-    public Integer deleteWorkPriceByIds(List<SimpleData> ids, String editor) {
-        List<Integer> workPriceIds = Utilities.createSequenceByIds(ids);
-        String sql = WorkPriceSqlBuilder.buildDeleteWorkPriceForIdsSql(workPriceIds.size());
-
-        return sqlRepository.executeUpdate(
-            sql,
-            ps -> WorkPriceParameterBinder.bindDeleteForIds(ps, workPriceIds, editor)
-        );
-        // return result; // 成功件数。0なら削除なし
     }
 
     /**

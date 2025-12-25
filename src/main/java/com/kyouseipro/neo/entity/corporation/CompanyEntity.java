@@ -17,6 +17,7 @@ public class CompanyEntity implements CsvExportable {
     private String full_address;
     private String email;
     private String web_address;
+    private int is_original_price;
     private int version;
     private int state;
 

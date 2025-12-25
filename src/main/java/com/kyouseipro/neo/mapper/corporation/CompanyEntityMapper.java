@@ -18,6 +18,7 @@ public class CompanyEntityMapper {
         entity.setFull_address(rs.getString("full_address"));
         entity.setEmail(rs.getString("email"));
         entity.setWeb_address(rs.getString("web_address"));
+        entity.setIs_original_price(rs.getInt("is_original_price"));
         entity.setVersion(rs.getInt("version"));
         entity.setState(rs.getInt("state"));
         return entity;

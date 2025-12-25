@@ -306,7 +306,7 @@
                 // 数量
                 newRow.insertAdjacentHTML('beforeend', '<td class="text-right"><span>' + (item.item_quantity ?? "0") + '</span></td>');
                 // 単価
-                newRow.insertAdjacentHTML('beforeend', '<td class="text-right"><span>' + (item.item_payment ?? "0") + '</span></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td class="text-right"><span>' + (item.payment ?? 0).toLocaleString('ja-JP') + '</span></td>');
                 // 備考 伝票番号
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.remarks ?? "") + '</span><br><span>' + (item.document_number ?? "") + '</span></td>');
             }
