@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.entity.sales.DeliveryStaffEntity;
+import com.kyouseipro.neo.entity.order.DeliveryStaffEntity;
 
 public class DeliveryStaffParameterBinder {
     public static int bindInsertDeliveryStaffParameters(PreparedStatement pstmt, DeliveryStaffEntity d, String editor, int index, boolean isNew) throws SQLException {

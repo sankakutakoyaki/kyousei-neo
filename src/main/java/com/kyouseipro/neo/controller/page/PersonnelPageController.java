@@ -14,7 +14,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.management.qualification.QualificationsEntity;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.EmployeeListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
@@ -22,7 +21,6 @@ import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
 import com.kyouseipro.neo.entity.personnel.WorkingConditionsListEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.management.qualification.QualificationsService;
 import com.kyouseipro.neo.service.personnel.EmployeeListService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 import com.kyouseipro.neo.service.personnel.WorkingConditionsListService;
@@ -35,7 +33,6 @@ import lombok.RequiredArgsConstructor;
 public class PersonnelPageController {
     private final EmployeeService employeeService;
     private final EmployeeListService employeeListService;
-    private final QualificationsService qualificationsService;
     private final WorkingConditionsListService workingConditionsListService;
     private final ComboBoxService comboBoxService;
     private final HistoryService historyService;
@@ -92,45 +89,6 @@ public class PersonnelPageController {
 
         // 履歴保存
         historyService.saveHistory(userName, "employee", "閲覧", 0, "");
-		
-        return mv;
-    }
-
-    /**
-	 * 資格
-	 * @param mv
-	 * @return
-	 */
-	@GetMapping("/qualifications")
-	@ResponseBody
-	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getQualifications(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
-		mv.setViewName("layouts/main");
-        mv.addObject("title", "資格");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-        mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
-        mv.addObject("bodyFragmentName", "contents/management/qualifications :: bodyFragment");
-        mv.addObject("insertCss", "/css/management/qualifications.css");
-
-		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
-		mv.addObject("user", user);
-
-        // 初期化されたエンティティ
-        mv.addObject("formEntity", new QualificationsEntity());
-        // 初期表示用資格情報リスト取得
-        List<QualificationsEntity> qualificationsOrigin = qualificationsService.getEmployeeQualificationsList();
-        mv.addObject("origin", qualificationsOrigin);
-        // コンボボックスアイテム取得
-        List<SimpleData> qualificationComboList = comboBoxService.getQualificationMaster();
-        mv.addObject("qualificationComboList", qualificationComboList);
-
-        // mv.addObject("url", "/qualifications/get/id");
-        mv.addObject("url", "/employee/get/id");
-        mv.addObject("owner_category", 0);
-        // 履歴保存
-        historyService.saveHistory(userName, "qualifications", "閲覧", 200, "");
 		
         return mv;
     }

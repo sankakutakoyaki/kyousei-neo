@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.entity.sales.KsSalesEntity;
-import com.kyouseipro.neo.mapper.sales.KsSalesStaffEntityMapper;
+import com.kyouseipro.neo.entity.ks.KsSalesEntity;
+import com.kyouseipro.neo.mapper.ks.KsSalesStaffEntityMapper;
 import com.kyouseipro.neo.query.parameter.sales.KsSalesParameterBinder;
 import com.kyouseipro.neo.query.sql.sales.KsSalesSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;

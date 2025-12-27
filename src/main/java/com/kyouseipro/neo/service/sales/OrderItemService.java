@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.sales.OrderItemEntity;
+import com.kyouseipro.neo.entity.order.OrderItemEntity;
 import com.kyouseipro.neo.repository.sales.OrderItemRepository;
 
 import lombok.RequiredArgsConstructor;

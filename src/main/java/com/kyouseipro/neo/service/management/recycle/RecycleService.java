@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.management.recycle.RecycleDateEntity;
-import com.kyouseipro.neo.entity.management.recycle.RecycleEntity;
+import com.kyouseipro.neo.entity.recycle.RecycleDateEntity;
+import com.kyouseipro.neo.entity.recycle.RecycleEntity;
 import com.kyouseipro.neo.repository.management.recycle.RecycleRepository;
 
 import lombok.RequiredArgsConstructor;

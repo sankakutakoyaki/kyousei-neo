@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.kyouseipro.neo.entity.management.qualification.QualificationFilesEntity;
+import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
 import com.kyouseipro.neo.interfaceis.FileUpload;
 import com.kyouseipro.neo.repository.management.qualification.QualificationFilesRepository;
 

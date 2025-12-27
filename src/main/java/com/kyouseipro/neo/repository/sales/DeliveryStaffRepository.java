@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.entity.sales.DeliveryStaffEntity;
-import com.kyouseipro.neo.mapper.sales.DeliveryStaffEntityMapper;
+import com.kyouseipro.neo.entity.order.DeliveryStaffEntity;
+import com.kyouseipro.neo.mapper.order.DeliveryStaffEntityMapper;
 import com.kyouseipro.neo.query.parameter.sales.DeliveryStaffParameterBinder;
 import com.kyouseipro.neo.query.sql.sales.DeliveryStaffSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;

@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.entity.sales.WorkContentEntity;
-import com.kyouseipro.neo.mapper.sales.WorkContentEntityMapper;
+import com.kyouseipro.neo.entity.order.WorkContentEntity;
+import com.kyouseipro.neo.mapper.order.WorkContentEntityMapper;
 import com.kyouseipro.neo.query.parameter.sales.WorkContentParameterBinder;
 import com.kyouseipro.neo.query.sql.sales.WorkContentSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;

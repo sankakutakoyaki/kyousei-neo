@@ -8,10 +8,10 @@ import org.springframework.stereotype.Repository;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.management.recycle.RecycleDateEntity;
-import com.kyouseipro.neo.entity.management.recycle.RecycleEntity;
-import com.kyouseipro.neo.mapper.management.recycle.RecycleEntityMapper;
-import com.kyouseipro.neo.query.parameter.management.recycle.RecycleParameterBinder;
+import com.kyouseipro.neo.entity.recycle.RecycleDateEntity;
+import com.kyouseipro.neo.entity.recycle.RecycleEntity;
+import com.kyouseipro.neo.mapper.recycle.RecycleEntityMapper;
+import com.kyouseipro.neo.query.parameter.recycle.RecycleParameterBinder;
 import com.kyouseipro.neo.query.sql.management.recycle.RecycleSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 

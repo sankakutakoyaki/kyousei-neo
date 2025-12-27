@@ -5,10 +5,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.entity.sales.DeliveryStaffEntity;
-import com.kyouseipro.neo.entity.sales.OrderEntity;
-import com.kyouseipro.neo.entity.sales.OrderItemEntity;
-import com.kyouseipro.neo.entity.sales.WorkContentEntity;
+import com.kyouseipro.neo.entity.order.DeliveryStaffEntity;
+import com.kyouseipro.neo.entity.order.OrderEntity;
+import com.kyouseipro.neo.entity.order.OrderItemEntity;
+import com.kyouseipro.neo.entity.order.WorkContentEntity;
 
 public class OrderParameterBinder {
     public static int bindInsertOrderParameters(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {

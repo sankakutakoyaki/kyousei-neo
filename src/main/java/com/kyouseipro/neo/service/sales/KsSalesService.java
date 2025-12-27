@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.kyouseipro.neo.entity.sales.KsSalesEntity;
+import com.kyouseipro.neo.entity.ks.KsSalesEntity;
 import com.kyouseipro.neo.repository.sales.KsSalesRepository;
 
 import lombok.RequiredArgsConstructor;

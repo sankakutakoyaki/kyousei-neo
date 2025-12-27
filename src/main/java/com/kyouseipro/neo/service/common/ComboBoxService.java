@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.annotation.SimpleObjectIdResolver;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.corporation.StaffListEntity;

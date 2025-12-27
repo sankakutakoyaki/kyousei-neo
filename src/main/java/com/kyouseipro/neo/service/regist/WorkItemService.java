@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.regist.WorkItemEntity;
+import com.kyouseipro.neo.entity.work.WorkItemEntity;
 import com.kyouseipro.neo.repository.regist.WorkItemRepository;
 
 import lombok.RequiredArgsConstructor;

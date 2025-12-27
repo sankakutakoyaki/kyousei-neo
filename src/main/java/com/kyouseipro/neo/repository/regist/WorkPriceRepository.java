@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.regist.WorkPriceEntity;
-import com.kyouseipro.neo.mapper.regist.WorkPriceEntityMapper;
-import com.kyouseipro.neo.query.parameter.regist.WorkPriceParameterBinder;
+import com.kyouseipro.neo.entity.work.WorkPriceEntity;
+import com.kyouseipro.neo.mapper.work.WorkPriceEntityMapper;
+import com.kyouseipro.neo.query.parameter.work.WorkPriceParameterBinder;
 import com.kyouseipro.neo.query.sql.regist.WorkPriceSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 

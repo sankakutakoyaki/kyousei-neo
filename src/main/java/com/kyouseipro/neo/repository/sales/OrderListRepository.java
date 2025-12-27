@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.entity.sales.OrderListEntity;
-import com.kyouseipro.neo.mapper.sales.OrderListEntityMapper;
+import com.kyouseipro.neo.entity.order.OrderListEntity;
+import com.kyouseipro.neo.mapper.order.OrderListEntityMapper;
 import com.kyouseipro.neo.query.parameter.sales.OrderListParameterBinder;
 import com.kyouseipro.neo.query.sql.sales.OrderListSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;

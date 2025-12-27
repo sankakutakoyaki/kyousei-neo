@@ -28,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kyouseipro.neo.component.UploadConfig;
 import com.kyouseipro.neo.entity.common.AddressEntity;
 import com.kyouseipro.neo.entity.data.ApiResponse;
-import com.kyouseipro.neo.entity.management.qualification.QualificationFilesEntity;
+import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
 import com.kyouseipro.neo.interfaceis.FileUpload;
 import com.kyouseipro.neo.service.document.FileService;
 import com.kyouseipro.neo.service.management.qualification.QualificationFilesService;

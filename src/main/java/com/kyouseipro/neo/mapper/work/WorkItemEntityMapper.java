@@ -1,0 +1,22 @@
+package com.kyouseipro.neo.mapper.work;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import com.kyouseipro.neo.entity.work.WorkItemEntity;
+
+public class WorkItemEntityMapper {
+    public static WorkItemEntity map(ResultSet rs) throws SQLException {
+        WorkItemEntity entity = new WorkItemEntity();
+        entity.setWork_item_id(rs.getInt("work_item_id"));
+        entity.setFull_code(rs.getInt("full_code"));
+        entity.setCode(rs.getInt("code"));
+        entity.setCategory_id(rs.getInt("category_id"));
+        entity.setCategory_code(rs.getInt("category_code"));
+        entity.setCategory_name(rs.getString("category_name"));
+        entity.setName(rs.getString("name"));
+        entity.setVersion(rs.getInt("version"));
+        entity.setState(rs.getInt("state"));
+        return entity;
+    }
+}

@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.entity.sales.OrderItemEntity;
+import com.kyouseipro.neo.entity.order.OrderItemEntity;
 
 public class OrderItemParameterBinder {
     public static int bindInsertOrderItemParameters(PreparedStatement pstmt, OrderItemEntity o, String editor, int index, boolean isNew) throws SQLException {

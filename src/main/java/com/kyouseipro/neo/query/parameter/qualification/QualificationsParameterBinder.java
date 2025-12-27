@@ -1,0 +1,125 @@
+package com.kyouseipro.neo.query.parameter.qualification;
+
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+
+import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
+
+public class QualificationsParameterBinder {
+
+    public static int bindInsertQualificationsParameters(PreparedStatement pstmt, QualificationsEntity q, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setInt(index++, q.getOwner_id());
+        pstmt.setInt(index++, q.getOwner_category());
+        pstmt.setInt(index++, q.getQualification_master_id());
+        pstmt.setString(index++, q.getNumber());
+        pstmt.setDate(index++, Date.valueOf(q.getAcquisition_date()));
+        pstmt.setDate(index++, Date.valueOf(q.getExpiry_date()));
+        pstmt.setInt(index++, q.getVersion());
+        pstmt.setInt(index++, q.getState());
+
+        pstmt.setString(index++, editor);
+        return index;
+    }
+
+    public static int bindUpdateQualificationsParameters(PreparedStatement pstmt, QualificationsEntity q, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setInt(index++, q.getOwner_id());
+        pstmt.setInt(index++, q.getOwner_category());
+        pstmt.setInt(index++, q.getQualification_master_id());
+        pstmt.setString(index++, q.getNumber());
+        pstmt.setDate(index++, Date.valueOf(q.getAcquisition_date()));
+        pstmt.setDate(index++, Date.valueOf(q.getExpiry_date()));
+        pstmt.setInt(index++, q.getVersion());
+        pstmt.setInt(index++, q.getState());
+
+        pstmt.setInt(index++, q.getQualifications_id());
+
+        pstmt.setString(index++, editor);
+        return index;
+    }
+
+    public static int bindDeleteQualificationsParameters(PreparedStatement pstmt, int id, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setInt(index++, Enums.state.DELETE.getCode());
+        pstmt.setInt(index++, id);
+
+        pstmt.setString(index++, editor);
+        return index;
+    }
+
+    public static int bindFindByIdForEmployee(PreparedStatement ps, Integer employeeId) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, employeeId);
+        return index;
+    }
+
+    public static int bindFindByIdForCompany(PreparedStatement ps, Integer companyId) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, companyId);
+        ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
+        ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
+        return index;
+    }
+
+    public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
+    }
+
+    public static int bindFindAllEmployeeStatus(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
+    }
+
+    public static int bindFindAllCompanyStatus(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
+        return index;
+    }
+
+    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
+        for (Integer id : ids) {
+            ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
+        }
+        ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        ps.setString(index, editor);
+        return index;
+    }
+
+    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+        int index = 1;
+        for (Integer id : ids) {
+            ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
+        }
+        ps.setInt(index, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        return index;
+    }
+
+    public static int bindFindAllCombo(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
+    }
+}

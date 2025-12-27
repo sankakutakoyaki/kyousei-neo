@@ -6,11 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.management.qualification.QualificationsEntity;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
+import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
 import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
-import com.kyouseipro.neo.mapper.management.qualification.QualificationsEntityMapper;
-import com.kyouseipro.neo.query.parameter.management.qualification.QualificationsParameterBinder;
+import com.kyouseipro.neo.mapper.qualification.QualificationsEntityMapper;
+import com.kyouseipro.neo.query.parameter.qualification.QualificationsParameterBinder;
 import com.kyouseipro.neo.query.sql.management.qualification.QualificationsSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 import com.kyouseipro.neo.repository.personnel.EmployeeRepository;

@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.entity.management.qualification.QualificationFilesEntity;
+import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
 import com.kyouseipro.neo.interfaceis.FileUpload;
-import com.kyouseipro.neo.mapper.management.qualification.QualificationFilesEntityMapper;
-import com.kyouseipro.neo.query.parameter.management.qualification.QualificationFilesParameterBinder;
+import com.kyouseipro.neo.mapper.qualification.QualificationFilesEntityMapper;
+import com.kyouseipro.neo.query.parameter.qualification.QualificationFilesParameterBinder;
 import com.kyouseipro.neo.query.sql.management.qualification.QualificationFilesSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 

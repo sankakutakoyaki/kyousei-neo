@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.management.recycle.RecycleMakerEntity;
-import com.kyouseipro.neo.mapper.management.recycle.RecycleMakerEntityMapper;
-import com.kyouseipro.neo.query.parameter.management.recycle.RecycleMakerParameterBinder;
+import com.kyouseipro.neo.entity.recycle.RecycleMakerEntity;
+import com.kyouseipro.neo.mapper.recycle.RecycleMakerEntityMapper;
+import com.kyouseipro.neo.query.parameter.recycle.RecycleMakerParameterBinder;
 import com.kyouseipro.neo.query.sql.management.recycle.RecycleMakerSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
