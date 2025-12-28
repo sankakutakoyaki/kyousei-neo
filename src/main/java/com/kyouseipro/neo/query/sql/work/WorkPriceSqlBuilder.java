@@ -40,7 +40,7 @@ public class WorkPriceSqlBuilder {
             "UPDATE work_prices SET work_item_id=?, company_id=?, price=?, version=?, state=? " +
             
             buildOutputLog() + "INTO " + rowTableName + " " +
-            "WHERE work_price_id=?; " +
+            "WHERE work_price_id=? AND version=?; " +
 
             buildInsertLog(rowTableName, "UPDATE") +
             "SELECT work_price_id FROM " + rowTableName + ";";

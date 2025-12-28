@@ -31,14 +31,14 @@ public class RecyclePageController {
     private final HistoryService historyService;
     private final ComboBoxService comboBoxService;
 
-	@GetMapping("/recycle")
+	@GetMapping("/recycle/regist")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getOrder(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getRecycle(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "登録");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/common/menu :: managementFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: recycleFragment");
         mv.addObject("bodyFragmentName", "contents/recycle/recycle :: bodyFragment");
         mv.addObject("insertCss", "/css/recycle/recycle.css");
 
@@ -61,6 +61,43 @@ public class RecyclePageController {
         mv.addObject("officeComboList", officeComboList);
 
         mv.addObject("deleteCode", Enums.state.DELETE.getCode());
+
+        // 履歴保存
+        historyService.save(userName, "recycle", "閲覧", 0, "");
+		
+        return mv;
+    }
+
+	@GetMapping("/recycle/maker")
+	@ResponseBody
+	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
+	public ModelAndView getMaker(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+		mv.setViewName("layouts/main");
+        mv.addObject("title", "登録");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: recycleFragment");
+        mv.addObject("bodyFragmentName", "contents/recycle/maker :: bodyFragment");
+        mv.addObject("insertCss", "/css/recycle/maker.css");
+
+		// ユーザー名
+		String userName = principal.getAttribute("preferred_username");
+		EmployeeEntity user = employeeService.getByAccount(userName);
+		mv.addObject("user", user);
+
+        // // 初期化されたエンティティ
+        // mv.addObject("formEntity", new RecycleEntity());
+
+        // // 初期表示用リスト取得
+        // List<RecycleEntity> origin = recycleService.getBetween(LocalDate.now(), LocalDate.now(), "regist");
+        // mv.addObject("origin", origin);
+        // // コンボボックスアイテム取得
+        // List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorListAddTopOfOwnCompany();
+        // mv.addObject("companyComboList", companyComboList);
+        // // 支店リストを取得
+        // List<OfficeListEntity> officeComboList = comboBoxService.getOfficeList();
+        // mv.addObject("officeComboList", officeComboList);
+
+        // mv.addObject("deleteCode", Enums.state.DELETE.getCode());
 
         // 履歴保存
         historyService.save(userName, "recycle", "閲覧", 0, "");

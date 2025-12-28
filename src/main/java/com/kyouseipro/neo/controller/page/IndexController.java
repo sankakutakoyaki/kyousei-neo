@@ -107,6 +107,31 @@ public class IndexController {
 	 * @param mv
 	 * @return
 	 */
+	@GetMapping("/list")
+	@ResponseBody
+	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
+	public ModelAndView getList(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+		mv.setViewName("layouts/main");
+		mv.addObject("title", "一覧");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: listFragment");
+        mv.addObject("bodyFragmentName", "contents/index/list :: bodyFragment");
+        mv.addObject("insertCss", "/css/index/list.css");
+		// ユーザー名
+		String userName = principal.getAttribute("preferred_username");
+		EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
+		mv.addObject("entity", entity);
+
+		historyService.save(userName, "list", "閲覧", 200, "");
+		
+        return mv;
+    }	
+	
+	/**
+	 * 営業
+	 * @param mv
+	 * @return
+	 */
 	@GetMapping("/sales")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
@@ -198,6 +223,31 @@ public class IndexController {
 		mv.addObject("entity", entity);
 
 		historyService.save(userName, "management", "閲覧", 200, "");
+		
+        return mv;
+    }
+
+	/**
+	 * リサイクル
+	 * @param mv
+	 * @return
+	 */
+	@GetMapping("/recycle")
+	@ResponseBody
+	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
+	public ModelAndView getRecycle(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+		mv.setViewName("layouts/main");
+		mv.addObject("title", "リサイクル");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: recycleFragment");
+        mv.addObject("bodyFragmentName", "contents/index/recycle :: bodyFragment");
+        mv.addObject("insertCss", "/css/index/recycle.css");
+		// ユーザー名
+		String userName = principal.getAttribute("preferred_username");
+		EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
+		mv.addObject("entity", entity);
+
+		historyService.save(userName, "recycle", "閲覧", 200, "");
 		
         return mv;
     }

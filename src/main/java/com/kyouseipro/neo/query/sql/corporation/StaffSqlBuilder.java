@@ -51,7 +51,7 @@ public class StaffSqlBuilder {
             "UPDATE staffs SET " +
             "  company_id=?, office_id=?, name=?, name_kana=?, phone_number=?, email=?, version=?, state=? " +
             buildOutputLog() + "INTO @Updated " +
-            "WHERE staff_id=?; " +
+            "WHERE staff_id=? AND version=?; " +
 
             buildInsertLog("@Updated", "UPDATE") +
             "SELECT staff_id FROM @Updated;";

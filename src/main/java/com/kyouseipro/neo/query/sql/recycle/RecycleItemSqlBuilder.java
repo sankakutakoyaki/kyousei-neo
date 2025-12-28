@@ -10,7 +10,7 @@ public class RecycleItemSqlBuilder {
 
     public static String buildUpdate() {
         return
-            "UPDATE recycle_items SET code=?, name=?, version=?, state=? WHERE recycle_item_id=?;";
+            "UPDATE recycle_items SET code=?, name=?, version=?, state=? WHERE recycle_item_id=? AND version=?;";
     }
 
     public static String buildDelete() {

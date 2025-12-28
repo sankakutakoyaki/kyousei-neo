@@ -24,9 +24,11 @@ public class DeliveryStaffParameterBinder {
         pstmt.setInt(index++, d.getOrder_id());
         pstmt.setInt(index++, d.getEmployee_id());
         pstmt.setInt(index++, d.getVersion());
-        pstmt.setInt(index++, d.getState());
+        pstmt.setInt(index++, d.getState() +1);
 
         pstmt.setInt(index++, d.getDelivery_staff_id()); // WHERE句
+        pstmt.setInt(index++, d.getVersion());
+        
         pstmt.setString(index++, editor);          // ログ用
         return index;
     }

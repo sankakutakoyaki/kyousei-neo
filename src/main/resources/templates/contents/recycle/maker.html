@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- 本体 -->
+    <div class="normal-content" th:fragment="bodyFragment">
+        <!-- ハンバーガー -->
+        <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
+        <!-- サイドバー -->
+        <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
+        <!-- ボディ -->
+        <div class="normal-body">
+            <div class="table-area">
+                <!-- ヘッダー -->
+                <header
+                    th:replace="~{fragments/recycle/maker:: header01Fragment('search-box-01')}">
+                </header>
+                <!-- コンテンツ -->
+                <main
+                    th:replace="~{fragments/recycle/maker :: main01Fragment('table-01', 'table-01-content')}">
+                </main>
+                <!-- フッター -->
+                <footer id="footer-01" class="pc-style"
+                    th:insert="~{fragments/recycle/maker :: footer01Fragment()}"></footer>
+            </div>
+        </div>
+        <div id="form-dialog-area">
+            <!-- フォーム画面をここに記入する -->
+            <div id="form-dialog-01" class="form-dialog none">
+                <div class="dialog-main">
+                    <div class="dialog-header"><span></span>
+                        <div class="img-btn" onclick="closeFormDialog('form-dialog-01', event)"><img title="閉じる"
+                                src="/icons/close-s.png"></div>
+                    </div>
+
+                    <form th:replace="~{fragments/recycle/maker :: form01Fragment()}"></form>
+
+                    <div class="dialog-footer">
+                        <button class="normal-btn frameless" type="button"
+                            onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
+                        <button tabindex="7" class="normal-btn ok" type="button"
+                            onclick="execSave()"><span>保存</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="msg-dialog-area">
+            <div th:replace="~{fragments/common/dialog :: messageFragment}"></div>
+        </div>
+        <script type="text/JavaScript" th:inline="JavaScript">
+            const token = /*[[${_csrf.token}]]*/;
+            const user = /*[[${user}]]*/;
+            // const formEntity = /*[[${formEntity}]]*/;
+            // const categoryEmployeeCode = /*[[${categoryEmployeeCode}]]*/;
+            // const categoryParttimeCode = /*[[${categoryParttimeCode}]]*/;
+            // const paymentMethodComboList = /*[[${paymentMethodComboList}]]*/;
+            // const payTypeComboList = /*[[${payTypeComboList}]]*/;
+            let origin = /*[[${origin}]]*/; // 初期リスト記憶用
+        </script>
+        <script th:src="@{/js/recycle/maker.js}"></script>
+    </div>
+
+</body>

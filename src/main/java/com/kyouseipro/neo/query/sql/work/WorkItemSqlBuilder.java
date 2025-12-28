@@ -48,7 +48,7 @@ public class WorkItemSqlBuilder {
 
                 buildOutputLog() + "INTO " + rowTableName + " " +
 
-                "FROM work_items wi WHERE wi.work_item_id = ?; " +
+                "FROM work_items wi WHERE wi.work_item_id = ? AND wi.version=?; " +
 
                 buildInsertLog(rowTableName, "UPDATE") +
                 "SELECT work_item_id FROM " + rowTableName + ";";

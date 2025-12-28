@@ -56,7 +56,7 @@ public class OfficeSqlBuilder {
             "  company_id=?, name=?, name_kana=?, tel_number=?, fax_number=?, " +
             "  postal_code=?, full_address=?, email=?, web_address=?, version=?, state=? " +
             buildOutputLog() + "INTO @Updated " +
-            "WHERE office_id=?; " +
+            "WHERE office_id=? AND version=?; " +
 
             buildInsertLog("@Updated", "UPDATE") +
             "SELECT office_id FROM @Updated;";

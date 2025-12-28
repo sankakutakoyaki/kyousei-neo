@@ -79,11 +79,12 @@ public class RecycleParameterBinder {
         pstmt.setInt(index++, r.getRecycling_fee());
         pstmt.setInt(index++, r.getDisposal_site_id());
 
-        pstmt.setInt(index++, r.getVersion());
+        pstmt.setInt(index++, r.getVersion() +1);
         pstmt.setInt(index++, r.getState());
         pstmt.setTimestamp(index++, Timestamp.valueOf(LocalDateTime.now()));
 
         pstmt.setInt(index++, r.getRecycle_id());
+        pstmt.setInt(index++, r.getVersion());
         pstmt.setString(index++, editor);
         return index;
     }

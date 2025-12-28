@@ -33,9 +33,11 @@ public class StaffParameterBinder {
         pstmt.setString(index++, staff.getPhone_number());
         pstmt.setString(index++, staff.getEmail());
         pstmt.setInt(index++, staff.getVersion());
-        pstmt.setInt(index++, staff.getState());
+        pstmt.setInt(index++, staff.getState() +1);
 
         pstmt.setInt(index++, staff.getStaff_id());
+        pstmt.setInt(index++, staff.getVersion());
+        
         pstmt.setString(index++, editor);
         return index;
     }

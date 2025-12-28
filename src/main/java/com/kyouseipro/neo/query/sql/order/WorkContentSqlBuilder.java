@@ -78,7 +78,7 @@ public class WorkContentSqlBuilder {
             
             buildOutputLog() + "INTO " + rowTableName + " " +
 
-            "WHERE work_content_id=?; " +
+            "WHERE work_content_id=? AND version=?; " +
 
             buildInsertLog(rowTableName, "UPDATE") +
 

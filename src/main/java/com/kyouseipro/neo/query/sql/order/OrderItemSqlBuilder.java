@@ -93,7 +93,7 @@ public class OrderItemSqlBuilder {
             
             buildOutputLog() + "INTO " + rowTableName + " " +
 
-            "WHERE order_item_id=?; " +
+            "WHERE order_item_id=? AND version=?; " +
 
             buildInsertLog(rowTableName, "UPDATE") +
 

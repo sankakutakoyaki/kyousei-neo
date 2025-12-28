@@ -29,10 +29,11 @@ public class WorkContentParameterBinder {
         pstmt.setInt(index++, w.getWork_quantity());
         pstmt.setInt(index++, w.getWork_payment());
 
-        pstmt.setInt(index++, w.getVersion());
+        pstmt.setInt(index++, w.getVersion() +1);
         pstmt.setInt(index++, w.getState());
 
         pstmt.setInt(index++, w.getWork_content_id()); // WHERE句
+        pstmt.setInt(index++, w.getVersion());
         pstmt.setString(index++, editor);          // ログ用
         return index;
     }

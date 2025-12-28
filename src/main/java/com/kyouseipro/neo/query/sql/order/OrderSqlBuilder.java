@@ -74,7 +74,7 @@ public class OrderSqlBuilder {
             
             buildOutputLog() + "INTO @UpdatedRows " +
 
-            "WHERE order_id=?; " +
+            "WHERE order_id=? AND version=?; " +
 
             buildInsertLog("@UpdatedRows", "UPDATE") +
 

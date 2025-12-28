@@ -35,10 +35,11 @@ public class WorkingConditionsParameterBinder {
         pstmt.setInt(index++, w.getTrans_cost());
         pstmt.setTime(index++, Time.valueOf(w.getBasic_start_time()));
         pstmt.setTime(index++, Time.valueOf(w.getBasic_end_time()));
-        pstmt.setInt(index++, w.getVersion());
+        pstmt.setInt(index++, w.getVersion() +1);
         pstmt.setInt(index++, w.getState());
 
         pstmt.setInt(index++, w.getWorking_conditions_id());
+        pstmt.setInt(index++, w.getVersion());
         pstmt.setString(index++, editor);
         return index;
     }

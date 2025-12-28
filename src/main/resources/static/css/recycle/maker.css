@@ -1,0 +1,88 @@
+@charset "UTF-8";
+
+.table-area {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding-top: 2rem;
+    overflow: auto;
+    max-width: 80rem;
+    height: 100%;
+}
+
+.table-area header {
+    display: grid;
+    grid-template-columns: 1fr;
+    position: relative;
+    column-gap: 2rem;
+}
+
+.table-area header>.flex-area:first-child {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    margin-bottom: 1rem;
+}
+
+.table-area header>.flex-area:nth-child(2) {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto auto auto auto auto auto auto auto 1fr;
+    margin-bottom: 1rem;
+}
+
+#table-01 tr {
+    grid-template-columns: 3rem 6rem 1fr 1fr 8rem;
+}
+
+/******************************************************************************************************* form */
+
+:is(#form-01).dialog-content {
+    height: 100%;
+    width: 40rem;
+    & >.flex-area:nth-of-type(1) {
+        display: grid;
+        grid-template-columns: 5rem 7rem 1fr ;
+        width: 100%;
+    }
+    & >.flex-area:nth-of-type(2) {
+        display: grid;
+        grid-template-columns: 1fr 1fr ;
+        width: 100%;
+    }
+    & >.flex-area:nth-of-type(3) {
+        display: grid;
+        grid-template-columns: 15rem 6rem 6rem 6rem;
+        width: 100%;
+        height: 4rem;
+        text-align: center;
+        font-weight: bold;
+        border-bottom: 1px solid var(--br);
+        margin-bottom: .8rem;
+        & label {
+            font-size: 1rem;
+        }
+    }
+    & >.flex-area:nth-of-type(4) {
+        display: grid;
+        grid-template-columns: 15rem 6rem 6rem 6rem;
+        width: 100%;
+    }
+    & >.flex-area:nth-of-type(5) {
+        display: grid;
+        grid-template-columns: 15rem 6rem 6rem 6rem;
+        width: 100%;
+    }
+    & >.flex-area:nth-of-type(6) {
+        display: grid;
+        grid-template-columns: 15rem 6rem 6rem 6rem;
+        width: 100%;
+    }
+    & >.flex-area:nth-of-type(7) {
+        display: grid;
+        grid-template-columns: 15rem 6rem 6rem 6rem;
+        width: 100%;
+    }
+    & >.flex-area:nth-of-type(8) {
+        display: grid;
+        grid-template-columns: 15rem 6rem 6rem 6rem;
+        width: 100%;
+    }
+}

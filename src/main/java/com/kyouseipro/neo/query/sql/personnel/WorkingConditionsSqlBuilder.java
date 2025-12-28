@@ -54,7 +54,7 @@ public class WorkingConditionsSqlBuilder {
             "  employee_id=?, payment_method=?, pay_type=?, base_salary=?, trans_cost=?, " +
             "  basic_start_time=?, basic_end_time=?, version=?, state=? " +
             buildOutputLog() + "INTO @Updated " +
-            "WHERE working_conditions_id=?; " +
+            "WHERE working_conditions_id=? AND version=?; " +
 
             buildInsertLog("@Updated", "UPDATE") +
             "SELECT working_conditions_id FROM @Updated;";

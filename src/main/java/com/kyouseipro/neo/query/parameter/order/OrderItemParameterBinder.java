@@ -62,10 +62,12 @@ public class OrderItemParameterBinder {
         pstmt.setString(index++, o.getRemarks());
         pstmt.setInt(index++, o.getClassification());
 
-        pstmt.setInt(index++, o.getVersion());
+        pstmt.setInt(index++, o.getVersion() +1);
         pstmt.setInt(index++, o.getState());
 
         pstmt.setInt(index++, o.getOrder_item_id()); // WHERE句
+        pstmt.setInt(index++, o.getVersion());
+
         pstmt.setString(index++, editor);
         return index;
     }

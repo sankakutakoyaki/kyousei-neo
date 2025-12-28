@@ -21,9 +21,10 @@ public class RecycleItemParameterBinder {
         int index = 1;
         pstmt.setInt(index++, r.getCode());
         pstmt.setString(index++, r.getName());
-        pstmt.setInt(index++, r.getVersion());
+        pstmt.setInt(index++, r.getVersion() +1);
         pstmt.setInt(index++, r.getState());
         pstmt.setInt(index++, r.getRecycle_item_id());
+        pstmt.setInt(index++, r.getVersion());
         return index;
     }
 

@@ -47,7 +47,7 @@ public class QualificationsSqlBuilder {
 
             "UPDATE qualifications SET owner_id=?, owner_category=?, qualification_master_id=?, number=?, acquisition_date=?, expiry_date=?, version=?, state=? " +
             buildOutputLog() + "INTO @Updated " +
-            "WHERE qualifications_id=?; " +
+            "WHERE qualifications_id=? AND version=?; " +
 
             buildInsertLog("@Updated", "UPDATE") +
             "SELECT qualifications_id FROM @Updated;";

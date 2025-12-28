@@ -67,7 +67,7 @@ public class EmployeeSqlBuilder {
             
             buildOutputLog() + "INTO @UpdatedRows " +
 
-            "WHERE employee_id=?; " +
+            "WHERE employee_id=? AND version=?; " +
 
             buildInsertLog("@UpdatedRows", "UPDATE") +
 

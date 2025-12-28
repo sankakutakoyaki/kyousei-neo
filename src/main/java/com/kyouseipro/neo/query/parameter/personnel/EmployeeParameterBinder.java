@@ -81,10 +81,11 @@ public class EmployeeParameterBinder {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
 
-        pstmt.setInt(index++, e.getVersion());
+        pstmt.setInt(index++, e.getVersion() +1);
         pstmt.setInt(index++, e.getState());
 
         pstmt.setInt(index++, e.getEmployee_id()); // WHERE句
+        pstmt.setInt(index++, e.getVersion());
         pstmt.setString(index++, editor);          // ログ用
         return index;
     }

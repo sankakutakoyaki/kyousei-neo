@@ -40,17 +40,14 @@ public class OrderParameterBinder {
 
         for (OrderItemEntity orderItemEntity : o.getItem_list()) {
             index = OrderItemParameterBinder.bindInsert(pstmt, orderItemEntity, editor, index, true);
-            // index = index + 18;
         }
 
         for (WorkContentEntity workContentEntity : o.getWork_list()) {
             index = WorkContentParameterBinder.bindInsert(pstmt, workContentEntity, editor, index, true);
-            // index = index + 6;
         }
 
         for (DeliveryStaffEntity deliveryStaffEntity : o.getStaff_list()) {
             index = DeliveryStaffParameterBinder.bindInsert(pstmt, deliveryStaffEntity, editor, index, true);
-            // index = index + 4;
         }
         return index;
     }
@@ -77,10 +74,11 @@ public class OrderParameterBinder {
         pstmt.setString(index++, o.getContact_information2());
         pstmt.setString(index++, o.getRemarks());
 
-        pstmt.setInt(index++, o.getVersion());
+        pstmt.setInt(index++, o.getVersion() +1);
         pstmt.setInt(index++, o.getState());
 
         pstmt.setInt(index++, o.getOrder_id()); // WHERE句
+        pstmt.setInt(index++, o.getVersion());
         pstmt.setString(index++, editor);          // ログ用
 
         // 商品リスト

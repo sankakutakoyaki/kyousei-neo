@@ -71,7 +71,7 @@ public class DeliveryStaffSqlBuilder {
             
             buildOutputLog() + "INTO " + rowTableName + " " +
 
-            "WHERE delivery_staff_id=?; " +
+            "WHERE delivery_staff_id=? AND version=?; " +
 
             buildInsertLog(rowTableName, "UPDATE") +
 

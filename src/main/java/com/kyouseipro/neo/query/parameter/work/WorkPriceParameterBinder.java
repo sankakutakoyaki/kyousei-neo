@@ -23,10 +23,11 @@ public class WorkPriceParameterBinder {
         pstmt.setInt(index++, w.getWork_item_id());
         pstmt.setInt(index++, w.getCompany_id());
         pstmt.setInt(index++, w.getPrice());
-        pstmt.setInt(index++, w.getVersion());
+        pstmt.setInt(index++, w.getVersion() +1);
         pstmt.setInt(index++, w.getState());
 
         pstmt.setInt(index++, w.getWork_price_id()); // WHERE句
+        pstmt.setInt(index++, w.getVersion());
         pstmt.setString(index++, editor);          // ログ用
         return index;
     }

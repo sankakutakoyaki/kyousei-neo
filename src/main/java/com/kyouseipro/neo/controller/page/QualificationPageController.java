@@ -41,7 +41,7 @@ public class QualificationPageController {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "資格");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-        mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
+        mv.addObject("sidebarFragmentName", "fragments/common/menu :: managementFragment");
         mv.addObject("bodyFragmentName", "contents/qualifications/qualifications :: bodyFragment");
         mv.addObject("insertCss", "/css/qualifications/qualifications.css");
 

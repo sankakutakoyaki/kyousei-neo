@@ -63,7 +63,7 @@ public class RecycleSqlBuilder {
             
             buildOutputLog() + "INTO " + rowTableName + " " +
 
-            "WHERE recycle_id=?; " +
+            "WHERE recycle_id=? AND version=?; " +
 
             buildInsertLog(rowTableName, "UPDATE") +
 

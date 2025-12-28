@@ -38,10 +38,12 @@ public class OfficeParameterBinder {
         pstmt.setString(index++, office.getFull_address());
         pstmt.setString(index++, office.getEmail());
         pstmt.setString(index++, office.getWeb_address());
-        pstmt.setInt(index++, office.getVersion());
+        pstmt.setInt(index++, office.getVersion() +1);
         pstmt.setInt(index++, office.getState());
 
         pstmt.setInt(index++, office.getOffice_id());  // WHERE句
+        pstmt.setInt(index++, office.getVersion());
+        
         pstmt.setString(index++, editor);
         return index;
     }

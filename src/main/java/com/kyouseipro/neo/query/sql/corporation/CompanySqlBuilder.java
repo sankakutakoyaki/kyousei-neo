@@ -55,7 +55,7 @@ public class CompanySqlBuilder {
             "  category=?, name=?, name_kana=?, tel_number=?, fax_number=?, postal_code=?, " +
             "  full_address=?, email=?, web_address=?, is_original_price=?, version=?, state=? " +
             buildOutputLog() + "INTO @Updated " +
-            "WHERE company_id=?; " +
+            "WHERE company_id=? AND version=?; " +
 
             buildInsertLog("@Updated", "UPDATE") +
             "SELECT company_id FROM @Updated;";

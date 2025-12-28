@@ -33,10 +33,11 @@ public class QualificationsParameterBinder {
         pstmt.setString(index++, q.getNumber());
         pstmt.setDate(index++, Date.valueOf(q.getAcquisition_date()));
         pstmt.setDate(index++, Date.valueOf(q.getExpiry_date()));
-        pstmt.setInt(index++, q.getVersion());
+        pstmt.setInt(index++, q.getVersion() +1);
         pstmt.setInt(index++, q.getState());
 
         pstmt.setInt(index++, q.getQualifications_id());
+        pstmt.setInt(index++, q.getVersion());
 
         pstmt.setString(index++, editor);
         return index;

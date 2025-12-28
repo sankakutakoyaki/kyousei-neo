@@ -26,10 +26,11 @@ public class WorkItemParameterBinder {
         pstmt.setInt(index++, w.getCode());
         pstmt.setInt(index++, w.getCategory_id());
         pstmt.setString(index++, w.getName());
-        pstmt.setInt(index++, w.getVersion());
+        pstmt.setInt(index++, w.getVersion() +1);
         pstmt.setInt(index++, w.getState());
 
         pstmt.setInt(index++, w.getWork_item_id()); // WHERE句
+        pstmt.setInt(index++, w.getVersion());
         pstmt.setString(index++, editor);          // ログ用
         return index;
     }

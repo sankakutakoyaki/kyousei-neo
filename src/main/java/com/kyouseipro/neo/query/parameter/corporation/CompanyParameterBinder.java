@@ -40,10 +40,11 @@ public class CompanyParameterBinder {
         pstmt.setString(index++, company.getEmail());
         pstmt.setString(index++, company.getWeb_address());
         pstmt.setInt(index++, company.getIs_original_price());
-        pstmt.setInt(index++, company.getVersion());
+        pstmt.setInt(index++, company.getVersion() +1);
         pstmt.setInt(index++, company.getState());
 
         pstmt.setInt(index++, company.getCompany_id());  // WHERE句用ID
+        pstmt.setInt(index++, company.getVersion());
 
         pstmt.setString(index++, editor);  // ログ用エディタ
         return index;
