@@ -9,7 +9,7 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.order.OrderItemEntity;
 
 public class OrderItemParameterBinder {
-    public static int bindInsertOrderItemParameters(PreparedStatement pstmt, OrderItemEntity o, String editor, int index, boolean isNew) throws SQLException {
+    public static int bindInsert(PreparedStatement pstmt, OrderItemEntity o, String editor, int index, boolean isNew) throws SQLException {
         if (isNew == false) {
             pstmt.setInt(index++, o.getOrder_id());
         }
@@ -40,7 +40,7 @@ public class OrderItemParameterBinder {
         return index;
     }
 
-    public static int bindUpdateOrderItemParameters(PreparedStatement pstmt, OrderItemEntity o, String editor, int index) throws SQLException {
+    public static int bindUpdate(PreparedStatement pstmt, OrderItemEntity o, String editor, int index) throws SQLException {
         pstmt.setInt(index++, o.getOrder_id());
         pstmt.setInt(index++, o.getCompany_id());
         pstmt.setInt(index++, o.getOffice_id());
@@ -96,7 +96,7 @@ public class OrderItemParameterBinder {
         return index;
     }
 
-    public static int bindDeleteOrderItemParameters(PreparedStatement ps, int id, String editor, int index) throws SQLException {
+    public static int bindDelete(PreparedStatement ps, int id, String editor, int index) throws SQLException {
         // int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, id);
@@ -104,7 +104,7 @@ public class OrderItemParameterBinder {
         return index;
     }
 
-    public static int bindFindByBetweenOrderItemEntity(PreparedStatement ps, LocalDate start, LocalDate end) throws SQLException {
+    public static int bindFindByBetween(PreparedStatement ps, LocalDate start, LocalDate end) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -120,33 +120,30 @@ public class OrderItemParameterBinder {
         return index;
     }
 
-    public static int bindSaveOrderItemListParameters(PreparedStatement pstmt, List<OrderItemEntity> list, String editor) throws SQLException {
+    public static int bindSave(PreparedStatement pstmt, List<OrderItemEntity> list, String editor) throws SQLException {
         int index = 1;
-        index = setSaveOrderItemListParameters(pstmt, list, editor, index);
+        index = setSave(pstmt, list, editor, index);
         return index;
     }
 
-    public static int setSaveOrderItemListParameters(PreparedStatement pstmt, List<OrderItemEntity> list, String editor, int index) throws SQLException {
+    public static int setSave(PreparedStatement pstmt, List<OrderItemEntity> list, String editor, int index) throws SQLException {
         for (OrderItemEntity entity : list) {
             // 削除の場合
             if (entity.getState() == Enums.state.DELETE.getCode()) {
-                index = OrderItemParameterBinder.bindDeleteOrderItemParameters(pstmt, entity.getOrder_item_id(), editor, index);
-                // index = index + 3;
+                index = OrderItemParameterBinder.bindDelete(pstmt, entity.getOrder_item_id(), editor, index);
             } else {
                 // 更新か新規かで分岐
                 if (entity.getOrder_item_id() > 0){
-                    index = OrderItemParameterBinder.bindUpdateOrderItemParameters(pstmt, entity, editor, index);
-                    // index = index + 20;
+                    index = OrderItemParameterBinder.bindUpdate(pstmt, entity, editor, index);
                 } else {
-                    index = OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, entity, editor, index, false);
-                    // index = index + 19;
+                    index = OrderItemParameterBinder.bindInsert(pstmt, entity, editor, index, false);
                 }
             }
         }
         return index;
     }
 
-    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+    public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
@@ -157,7 +154,7 @@ public class OrderItemParameterBinder {
         return index;
     }
 
-    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());

@@ -8,7 +8,7 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.work.WorkPriceEntity;
 
 public class WorkPriceParameterBinder {
-    public static int bindInsertWorkPriceParameters(PreparedStatement pstmt, WorkPriceEntity w, String editor, int index) throws SQLException {
+    public static int bindInsert(PreparedStatement pstmt, WorkPriceEntity w, String editor, int index) throws SQLException {
         pstmt.setInt(index++, w.getWork_item_id());
         pstmt.setInt(index++, w.getCompany_id());
         pstmt.setInt(index++, w.getPrice());
@@ -19,7 +19,7 @@ public class WorkPriceParameterBinder {
         return index;
     }
 
-    public static int bindUpdateWorkPriceParameters(PreparedStatement pstmt, WorkPriceEntity w, String editor, int index) throws SQLException {
+    public static int bindUpdate(PreparedStatement pstmt, WorkPriceEntity w, String editor, int index) throws SQLException {
         pstmt.setInt(index++, w.getWork_item_id());
         pstmt.setInt(index++, w.getCompany_id());
         pstmt.setInt(index++, w.getPrice());

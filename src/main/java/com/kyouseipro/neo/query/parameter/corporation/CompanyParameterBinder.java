@@ -9,7 +9,7 @@ import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 
 public class CompanyParameterBinder {
 
-    public static int bindInsertCompanyParameters(PreparedStatement pstmt, CompanyEntity company, String editor) throws SQLException {
+    public static int bindInsert(PreparedStatement pstmt, CompanyEntity company, String editor) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, company.getCategory());
         pstmt.setString(index++, company.getName());
@@ -28,7 +28,7 @@ public class CompanyParameterBinder {
         return index;
     }
 
-    public static int bindUpdateCompanyParameters(PreparedStatement pstmt, CompanyEntity company, String editor) throws SQLException {
+    public static int bindUpdate(PreparedStatement pstmt, CompanyEntity company, String editor) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, company.getCategory());
         pstmt.setString(index++, company.getName());
@@ -69,7 +69,7 @@ public class CompanyParameterBinder {
         return index;
     }
 
-    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+    public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
@@ -80,7 +80,7 @@ public class CompanyParameterBinder {
         return index;
     }
 
-    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         for (Integer id : ids) {
             ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)

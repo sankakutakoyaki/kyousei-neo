@@ -18,7 +18,7 @@ public class DeliveryStaffRepository {
     private final SqlRepository sqlRepository;
     
     public List<DeliveryStaffEntity> findAllByOrderId(int id, String editor) {
-        String sql = DeliveryStaffSqlBuilder.buildFindAllByOrderIdSql();
+        String sql = DeliveryStaffSqlBuilder.buildFindAllByOrderId();
 
         return sqlRepository.findAll(
             sql,

@@ -27,8 +27,8 @@ public class CompanyListApiController {
      */
     @GetMapping("/company/get/list")
 	@ResponseBody
-    public List<CompanyListEntity> getEntityList() {
-        return companyListService.getCompanyList();
+    public List<CompanyListEntity> getList() {
+        return companyListService.getList();
     }
 
     /**
@@ -37,7 +37,7 @@ public class CompanyListApiController {
      */
     @GetMapping("/client/get/list")
 	@ResponseBody
-    public List<CompanyListEntity> getEntityListForClient() {
+    public List<CompanyListEntity> getClientList() {
         return companyListService.getClientList();
     }
 
@@ -47,8 +47,8 @@ public class CompanyListApiController {
      */
     @PostMapping("/company/get/list/category")
 	@ResponseBody
-    public List<CompanyListEntity> getEntityListByCategory(@RequestParam int category) {
-        return companyListService.getCompanyListByCategory(category);
+    public List<CompanyListEntity> getListByCategoryId(@RequestParam int category) {
+        return companyListService.getListByCategoryId(category);
     }
 
     /**
@@ -57,7 +57,7 @@ public class CompanyListApiController {
      */
     @GetMapping("/client/get/combo")
 	@ResponseBody
-    public List<SimpleData> getComboForClient() {
+    public List<SimpleData> getClientCombo() {
         return comboBoxService.getClientList();
     }
 }

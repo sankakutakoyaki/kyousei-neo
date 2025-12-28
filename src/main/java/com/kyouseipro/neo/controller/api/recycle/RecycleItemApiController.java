@@ -32,9 +32,8 @@ public class RecycleItemApiController {
      */
     @PostMapping("/recycle/item/get/id")
 	@ResponseBody
-    public ResponseEntity getEntityById(@RequestParam int id) {
-        // return recycleItemService.getRecycleItemById(sql, id);
-        RecycleItemEntity entity = recycleItemService.getRecycleItemById(id);
+    public ResponseEntity getById(@RequestParam int id) {
+        RecycleItemEntity entity = recycleItemService.getById(id);
         if (entity != null) {
             return ResponseEntity.ok(entity);
         } else {
@@ -49,9 +48,8 @@ public class RecycleItemApiController {
      */
     @PostMapping("/recycle/item/get/code")
 	@ResponseBody
-    public ResponseEntity getEntityByCode(@RequestParam int code) {
-        // return recycleItemService.getRecycleItemByCode(sql, code);
-        RecycleItemEntity entity = recycleItemService.getRecycleItemByCode(code);
+    public ResponseEntity getByCode(@RequestParam int code) {
+        RecycleItemEntity entity = recycleItemService.getByCode(code);
         if (entity != null) {
             return ResponseEntity.ok(entity);
         } else {
@@ -66,14 +64,14 @@ public class RecycleItemApiController {
      */
     @PostMapping("/recycle/item/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> saveRecycleItem(@RequestBody RecycleItemEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody RecycleItemEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = recycleItemService.saveRecycleItem(entity);
+        Integer id = recycleItemService.save(entity);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "recycle_items", "保存", 200, "成功");
+            historyService.save(userName, "recycle_items", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
-            historyService.saveHistory(userName, "recycle_items", "保存", 400, "失敗");
+            historyService.save(userName, "recycle_items", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -85,14 +83,14 @@ public class RecycleItemApiController {
      */
     @PostMapping("/recycle/item/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = recycleItemService.deleteRecycleItemByIds(ids);
+        Integer id = recycleItemService.deleteByIds(ids);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "recycle_items", "削除", 200, "成功");
+            historyService.save(userName, "recycle_items", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
-            historyService.saveHistory(userName, "recycle_items", "削除", 400, "失敗");
+            historyService.save(userName, "recycle_items", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -104,9 +102,9 @@ public class RecycleItemApiController {
      */
     @PostMapping("/recycle/item/download/csv")
 	@ResponseBody
-    public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        historyService.saveHistory(userName, "recycle_items", "ダウンロード", 0, "");
-        return recycleItemService.downloadCsvRecycleItemByIds(ids);
+        historyService.save(userName, "recycle_items", "ダウンロード", 0, "");
+        return recycleItemService.downloadCsvByIds(ids);
     }
 }

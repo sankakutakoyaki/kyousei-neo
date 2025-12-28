@@ -29,10 +29,4 @@ public class OfficeListParameterBinder {
         ps.setInt(index++, categoryId);
         return index;
     }
-
-    public static int bindFindAllComboOffice(PreparedStatement ps, Integer categoryId) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
 }

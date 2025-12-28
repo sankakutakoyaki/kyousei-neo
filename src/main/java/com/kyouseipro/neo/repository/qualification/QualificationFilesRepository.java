@@ -18,47 +18,30 @@ import lombok.RequiredArgsConstructor;
 public class QualificationFilesRepository {
     private final SqlRepository sqlRepository;
 
-    public Integer insertQualificationFiles(List<FileUpload> entities, String editor, Integer id) {
-        String sql = QualificationFilesSqlBuilder.buildInsertQualificationFilesSql(entities.size());
+    public Integer insert(List<FileUpload> entities, String editor, Integer id) {
+        String sql = QualificationFilesSqlBuilder.buildInsert(entities.size());
         return sqlRepository.executeUpdate(
             sql,
-            ps -> QualificationFilesParameterBinder.bindInsertQualificationFilesParameters(ps, entities, editor, id)
+            ps -> QualificationFilesParameterBinder.bindInsert(ps, entities, editor, id)
         );
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, ent) -> QualificationFilesParameterBinder.bindInsertQualificationFilesParameters(pstmt, ent, editor),
-        //     rs -> rs.next() ? rs.getInt("qualifications_files_id") : null,
-        //     entities
-        // );
     }
 
-    // public Integer updateQualificationFiles(QualificationFilesEntity entity, String editor) {
-    //     String sql = QualificationFilesSqlBuilder.buildUpdateQualificationFilesSql();
-
-    //     return sqlRepository.execute(
-    //         sql,
-    //         (pstmt, ent) -> QualificationFilesParameterBinder.bindUpdateQualificationFilesParameters(pstmt, ent, editor),
-    //         rs -> rs.next() ? rs.getInt("qualifications_files_id") : null,
-    //         entity
-    //     );
-    // }
-
-    public Integer deleteQualificationFilesByUrl(String url, String editor) {
-        String sql = QualificationFilesSqlBuilder.buildDeleteQualificationFilesSql();
+    public Integer delete(String url, String editor) {
+        String sql = QualificationFilesSqlBuilder.buildDelete();
 
         return sqlRepository.executeUpdate(
             sql,
-            ps -> QualificationFilesParameterBinder.bindDeleteQualificationFilesParameters(ps, url, editor)
+            ps -> QualificationFilesParameterBinder.bindDelete(ps, url, editor)
         );
     }
 
     // IDによる取得
-    public QualificationFilesEntity findByQualificationsFilesId(Integer qualificationFilesId) {
-        String sql = QualificationFilesSqlBuilder.buildFindByQualificationsFilesIdSql();
+    public QualificationFilesEntity findById(Integer qualificationFilesId) {
+        String sql = QualificationFilesSqlBuilder.buildFindById();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, comp) -> QualificationFilesParameterBinder.bindFindByQualificationsFIlesId(pstmt, comp),
+            (pstmt, comp) -> QualificationFilesParameterBinder.bindFindById(pstmt, comp),
             rs -> rs.next() ? QualificationFilesEntityMapper.map(rs) : null,
             qualificationFilesId
         );
@@ -66,7 +49,7 @@ public class QualificationFilesRepository {
 
     // 資格IDによる取得
     public List<QualificationFilesEntity> findByQualificationsId(Integer qualificationsId) {
-        String sql = QualificationFilesSqlBuilder.buildFindAllByQualificationsIdSql();
+        String sql = QualificationFilesSqlBuilder.buildFindAllByQualificationsId();
 
         return sqlRepository.findAll(
             sql,

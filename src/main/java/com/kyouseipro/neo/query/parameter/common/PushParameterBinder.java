@@ -13,7 +13,7 @@ public class PushParameterBinder {
         return index;
     }
 
-    public static int bindInsertSubscriptionParameters(PreparedStatement pstmt, SubscriptionRequest s, String editor) throws SQLException {
+    public static int bindInsertSubscription(PreparedStatement pstmt, SubscriptionRequest s, String editor) throws SQLException {
         int index = 1;
         pstmt.setString(index++, s.getEndpoint());
         pstmt.setString(index++, s.getP256dh());

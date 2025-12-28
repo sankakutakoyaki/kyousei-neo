@@ -44,7 +44,7 @@ public class IndexController {
 		mv.addObject("insertCss", "/css/index/home.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
 		mv.addObject("entity", entity);
 		if (entity != null) {
 			mv.addObject("employeeId", entity.getEmployee_id());
@@ -79,7 +79,7 @@ public class IndexController {
 					break;
 			}
 		}
-		historyService.saveHistory(userName, "", "ログイン", 200, "ログインしました。");
+		historyService.save(userName, "", "ログイン", 200, "ログインしました。");
         return mv;
     }
 	
@@ -97,7 +97,7 @@ public class IndexController {
 		String redirectUrl = "https://www.kyouseipro.com/";
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		historyService.saveHistory(userName, "", "ログアウト", 200, "ログアウトしました。");
+		historyService.save(userName, "", "ログアウト", 200, "ログアウトしました。");
 
 		response.sendRedirect(endSessionEndpoint + "?post_logout_redirect_uri=" + URLEncoder.encode(redirectUrl, "UTF-8"));
     }
@@ -119,10 +119,10 @@ public class IndexController {
         mv.addObject("insertCss", "/css/index/sales.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
 		mv.addObject("entity", entity);
 
-		historyService.saveHistory(userName, "sales", "閲覧", 200, "");
+		historyService.save(userName, "sales", "閲覧", 200, "");
 		
         return mv;
     }
@@ -144,10 +144,10 @@ public class IndexController {
         mv.addObject("insertCss", "/css/index/personnel.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
 		mv.addObject("entity", entity);
 
-		historyService.saveHistory(userName, "personnel", "閲覧", 200, "");
+		historyService.save(userName, "personnel", "閲覧", 200, "");
 		
         return mv;
     }
@@ -169,10 +169,10 @@ public class IndexController {
         mv.addObject("insertCss", "/css/index/management.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
 		mv.addObject("entity", entity);
 
-		historyService.saveHistory(userName, "management", "閲覧", 200, "");
+		historyService.save(userName, "management", "閲覧", 200, "");
 		
         return mv;
     }
@@ -194,10 +194,10 @@ public class IndexController {
         mv.addObject("insertCss", "/css/index/regist.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
 		mv.addObject("entity", entity);
 
-		historyService.saveHistory(userName, "management", "閲覧", 200, "");
+		historyService.save(userName, "management", "閲覧", 200, "");
 		
         return mv;
     }

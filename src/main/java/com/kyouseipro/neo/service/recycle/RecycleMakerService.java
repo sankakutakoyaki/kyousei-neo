@@ -23,8 +23,7 @@ public class RecycleMakerService {
      * @param id リサイクルID
      * @return RecycleEntity または null
      */
-    public RecycleMakerEntity getRecycleMakerById(int id) {
-        // String sql = OrderSqlBuilder.buildFindByIdSql();
+    public RecycleMakerEntity getById(int id) {
         return recycleMakerRepository.findById(id);
     }
 
@@ -35,8 +34,7 @@ public class RecycleMakerService {
      * @param code
      * @return RecycleEntity または null
      */
-    public RecycleMakerEntity getRecycleMakerByCode(int code) {
-        // String sql = OrderSqlBuilder.buildFindByIdSql();
+    public RecycleMakerEntity getByCode(int code) {
         return recycleMakerRepository.findByCode(code);
     }
 
@@ -48,11 +46,11 @@ public class RecycleMakerService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer saveRecycleMaker(RecycleMakerEntity entity) {
+    public Integer save(RecycleMakerEntity entity) {
         if (entity.getRecycle_maker_id() > 0) {
-            return recycleMakerRepository.updateRecycleMaker(entity);
+            return recycleMakerRepository.update(entity);
         } else {
-            return recycleMakerRepository.insertRecycleMaker(entity);
+            return recycleMakerRepository.insert(entity);
         }
     }
 
@@ -61,8 +59,8 @@ public class RecycleMakerService {
      * @param ids
      * @return
      */
-    public Integer deleteRecycleMakerByIds(List<SimpleData> list) {
-        return recycleMakerRepository.deleteRecycleMakerByIds(list);
+    public Integer deleteByIds(List<SimpleData> list) {
+        return recycleMakerRepository.deleteByIds(list);
     }
 
     /**
@@ -70,8 +68,8 @@ public class RecycleMakerService {
      * @param ids
      * @return
      */
-    public String downloadCsvRecycleMakerByIds(List<SimpleData> list) {
-        List<RecycleMakerEntity> recycles = recycleMakerRepository.downloadCsvRecycleMakerByIds(list);
+    public String downloadCsvByIds(List<SimpleData> list) {
+        List<RecycleMakerEntity> recycles = recycleMakerRepository.downloadCsvByIds(list);
         return CsvExporter.export(recycles, RecycleMakerEntity.class);
     }
 }

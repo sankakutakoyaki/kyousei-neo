@@ -18,7 +18,7 @@ public class WorkContentRepository {
     private final SqlRepository sqlRepository;
     
     public List<WorkContentEntity> findAllByOrderId(int id, String editor) {
-        String sql = WorkContentSqlBuilder.buildFindAllByOrderIdSql();
+        String sql = WorkContentSqlBuilder.buildFindAllByOrderId();
 
         return sqlRepository.findAll(
             sql,

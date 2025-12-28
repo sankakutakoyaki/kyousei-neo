@@ -4,14 +4,14 @@ import com.kyouseipro.neo.common.Utilities;
 
 public class DeliveryStaffSqlBuilder {
 
-    private static String buildLogTableSql(String rowTableName) {
+    private static String buildLogTable(String rowTableName) {
         return
             "DECLARE " + rowTableName + " TABLE (" +
             "  delivery_staff_id INT, order_id INT, employee_id INT, version INT, state INT" +
             "); ";
     }
 
-    private static String buildInsertLogSql(String rowTableName, String processName) {
+    private static String buildInsertLog(String rowTableName, String processName) {
         return
             "INSERT INTO delivery_staffs_log (" +
             "  delivery_staff_id, editor, process, log_date, order_id, employee_id, version, state" +
@@ -20,76 +20,76 @@ public class DeliveryStaffSqlBuilder {
             "FROM " + rowTableName + ";";
     }
 
-    private static String buildOutputLogSql() {
+    private static String buildOutputLog() {
         return
             "OUTPUT INSERTED.delivery_staff_id, INSERTED.order_id, INSERTED.employee_id, INSERTED.version, INSERTED.state ";
     }
 
-    public static String buildInsertDeliveryStaffSql(int index) {
+    public static String buildInsert(int index) {
         String rowTableName = "@InsertedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "INSERT INTO delivery_staffs (" +
             " order_id, employee_id, version, state" +
             ") " +
 
-            buildOutputLogSql() + "INTO " + rowTableName+ " " +
+            buildOutputLog() + "INTO " + rowTableName+ " " +
 
             "VALUES (?, ?, ?, ?); " +
 
-            buildInsertLogSql(rowTableName, "INSERT") +
+            buildInsertLog(rowTableName, "INSERT") +
 
             "SELECT delivery_staff_id FROM " + rowTableName + ";";
     }
 
-    public static String buildInsertDeliveryStaffByNewOrderSql(int index) {
+    public static String buildInsertByNewOrder(int index) {
         String rowTableName = "@InsertedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "INSERT INTO delivery_staffs (" +
             " order_id, employee_id, version, state" +
             ") " +
 
-            buildOutputLogSql() + "INTO " + rowTableName+ " " +
+            buildOutputLog() + "INTO " + rowTableName+ " " +
 
             "VALUES (@NEW_ID, ?, ?, ?); " +
 
-            buildInsertLogSql(rowTableName, "INSERT") +
+            buildInsertLog(rowTableName, "INSERT") +
 
             "SELECT delivery_staff_id FROM " + rowTableName + ";";
     }
 
-    public static String buildUpdateDeliveryStaffSql(int index) {
+    public static String buildUpdate(int index) {
         String rowTableName = "@UpdatedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "UPDATE delivery_staffs SET " +
             "  order_id=?, employee_id=?, version=?, state=? " +
             
-            buildOutputLogSql() + "INTO " + rowTableName + " " +
+            buildOutputLog() + "INTO " + rowTableName + " " +
 
             "WHERE delivery_staff_id=?; " +
 
-            buildInsertLogSql(rowTableName, "UPDATE") +
+            buildInsertLog(rowTableName, "UPDATE") +
 
             "SELECT delivery_staff_id FROM " + rowTableName + ";";
     }
 
-    public static String buildDeleteDeliveryStaffSql(int index) {
+    public static String buildDelete(int index) {
         String rowTableName = "@UpdatedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "UPDATE delivery_staffs SET state = ? " +
 
-            buildOutputLogSql() + "INTO " + rowTableName  + " " +
+            buildOutputLog() + "INTO " + rowTableName  + " " +
             
             "WHERE delivery_staff_id = ? ; " +
 
-            buildInsertLogSql(rowTableName, "DELETE") +
+            buildInsertLog(rowTableName, "DELETE") +
 
             "SELECT delivery_staff_id FROM " + rowTableName + ";";
     }
@@ -103,22 +103,22 @@ public class DeliveryStaffSqlBuilder {
             " LEFT OUTER JOIN companies c ON e.company_id = c.company_id AND NOT (c.state = ?)" +
             " LEFT OUTER JOIN offices o ON e.office_id = o.office_id AND NOT (o.state = ?)";
     }
-    public static String buildFindByIdSql() {
+    public static String buildFindById() {
         return 
             baseSelectString() + " WHERE ds.delivery_staff_id = ? AND NOT (ds.state = ?)";
     }
 
-    public static String buildFindAllSql() {
+    public static String buildFindAll() {
         return 
             baseSelectString() + " WHERE NOT (ds.state = ?)";
     }
 
-    public static String buildFindAllByOrderIdSql() {
+    public static String buildFindAllByOrderId() {
         return 
             baseSelectString() + " WHERE ds.order_id = ? AND NOT (ds.state = ?)";
     }
 
-    public static String buildDownloadCsvOrderItemForIdsSql(int count) {
+    public static String buildDownloadCsvByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return 
             baseSelectString() + " WHERE ds.delivery_staff_id IN (" + placeholders + ") AND NOT (ds.state = ?)";

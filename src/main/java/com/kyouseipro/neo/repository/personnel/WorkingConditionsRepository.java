@@ -20,57 +20,57 @@ public class WorkingConditionsRepository {
     private final SqlRepository sqlRepository;
 
     // INSERT
-    public Integer insertWorkingConditions(WorkingConditionsEntity w, String editor) {
-        String sql = WorkingConditionsSqlBuilder.buildInsertSql();
+    public Integer insert(WorkingConditionsEntity w, String editor) {
+        String sql = WorkingConditionsSqlBuilder.buildInsert();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, entity) -> WorkingConditionsParameterBinder.bindInsertParameters(pstmt, entity, editor),
+            (pstmt, entity) -> WorkingConditionsParameterBinder.bindInsert(pstmt, entity, editor),
             rs -> rs.next() ? rs.getInt("working_conditions_id") : null,
             w
         );
     }
 
     // UPDATE
-    public Integer updateWorkingConditions(WorkingConditionsEntity w, String editor) {
-        String sql = WorkingConditionsSqlBuilder.buildUpdateSql();
+    public Integer update(WorkingConditionsEntity w, String editor) {
+        String sql = WorkingConditionsSqlBuilder.buildUpdate();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, entity) -> WorkingConditionsParameterBinder.bindUpdateParameters(pstmt, entity, editor),
+            (pstmt, entity) -> WorkingConditionsParameterBinder.bindUpdate(pstmt, entity, editor),
             rs -> rs.next() ? rs.getInt("working_conditions_id") : null,
             w
         );
     }
 
     // DELETE
-    public int deleteWorkingConditionsByIds(List<SimpleData> ids, String editor) {
+    public int deleteByIds(List<SimpleData> ids, String editor) {
         List<Integer> workingConditionsIds = Utilities.createSequenceByIds(ids);
-        String sql = WorkingConditionsSqlBuilder.buildDeleteWorkingConditionsForIdsSql(workingConditionsIds.size());
+        String sql = WorkingConditionsSqlBuilder.buildDeleteByIds(workingConditionsIds.size());
 
         int result = sqlRepository.executeUpdate(
             sql,
-            ps -> WorkingConditionsParameterBinder.bindDeleteForIds(ps, workingConditionsIds, editor)
+            ps -> WorkingConditionsParameterBinder.bindDeleteByIds(ps, workingConditionsIds, editor)
         );
 
         return result; // 成功件数。0なら削除なし
     }
 
     // CSV
-    public List<WorkingConditionsEntity> downloadCsvWorkingConditionsByIds(List<SimpleData> ids, String editor) {
+    public List<WorkingConditionsEntity> downloadCsvByIds(List<SimpleData> ids, String editor) {
         List<Integer> workingConditionsIds = Utilities.createSequenceByIds(ids);
-        String sql = WorkingConditionsSqlBuilder.buildDownloadCsvWorkingConditionsForIdsSql(workingConditionsIds.size());
+        String sql = WorkingConditionsSqlBuilder.buildDownloadCsvByIds(workingConditionsIds.size());
 
         return sqlRepository.findAll(
             sql,
-            ps -> WorkingConditionsParameterBinder.bindDownloadCsvForIds(ps, workingConditionsIds),
+            ps -> WorkingConditionsParameterBinder.bindDownloadCsvByIds(ps, workingConditionsIds),
             WorkingConditionsEntityMapper::map // ← ここで ResultSet を map
         );
     }
 
     // IDによる取得
     public WorkingConditionsEntity findById(int workingConditionsId) {
-        String sql = WorkingConditionsSqlBuilder.buildFindByIdSql();
+        String sql = WorkingConditionsSqlBuilder.buildFindById();
 
         return sqlRepository.execute(
             sql,
@@ -82,7 +82,7 @@ public class WorkingConditionsRepository {
 
     // IDによる取得
     public WorkingConditionsEntity findByEmployeeId(int employeeId) {
-        String sql = WorkingConditionsSqlBuilder.buildFindByEmployeeIdSql();
+        String sql = WorkingConditionsSqlBuilder.buildFindByEmployeeId();
 
         return sqlRepository.execute(
             sql,
@@ -94,7 +94,7 @@ public class WorkingConditionsRepository {
 
     // 全件取得
     public List<WorkingConditionsEntity> findAll() {
-        String sql = WorkingConditionsSqlBuilder.buildFindAllSql();
+        String sql = WorkingConditionsSqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,

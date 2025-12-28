@@ -4,7 +4,7 @@ import com.kyouseipro.neo.common.Utilities;
 
 public class QualificationsSqlBuilder {
 
-    private static String buildLogTableSql(String rowTableName) {
+    private static String buildLogTable(String rowTableName) {
         return
             "DECLARE " + rowTableName + " TABLE (" +
             "  qualifications_id INT, owner_id INT, owner_category INT, qualification_master_id INT, number NVARCHAR(255), " +
@@ -12,7 +12,7 @@ public class QualificationsSqlBuilder {
             "); ";
     }
 
-    private static String buildInsertLogSql(String rowTableName, String processName) {
+    private static String buildInsertLog(String rowTableName, String processName) {
         return
             "INSERT INTO qualifications_log (" +
             "  qualifications_id, editor, process, log_date, owner_id, owner_category, qualification_master_id, number, " +
@@ -23,69 +23,69 @@ public class QualificationsSqlBuilder {
             "FROM " + rowTableName + ";";
     }
 
-    private static String buildOutputLogSql() {
+    private static String buildOutputLog() {
         return
             "OUTPUT INSERTED.qualifications_id, INSERTED.owner_id, INSERTED.owner_category, INSERTED.qualification_master_id, " +
             "  INSERTED.number, INSERTED.acquisition_date, INSERTED.expiry_date, INSERTED.version, INSERTED.state ";
     }
 
-    public static String buildInsertQualificationsSql() {
+    public static String buildInsert() {
         return
-            buildLogTableSql("@Inserted") +
+            buildLogTable("@Inserted") +
 
             "INSERT INTO qualifications (owner_id, owner_category, qualification_master_id, number, acquisition_date, expiry_date, version, state) " +
-            buildOutputLogSql() + "INTO @Inserted " +
+            buildOutputLog() + "INTO @Inserted " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?); " +
 
-            buildInsertLogSql("@Inserted", "INSERT") +
+            buildInsertLog("@Inserted", "INSERT") +
             "SELECT qualifications_id FROM @Inserted;";
     }
 
-    public static String buildUpdateQualificationsSql() {
+    public static String buildUpdate() {
         return
-            buildLogTableSql("@Updated") +
+            buildLogTable("@Updated") +
 
             "UPDATE qualifications SET owner_id=?, owner_category=?, qualification_master_id=?, number=?, acquisition_date=?, expiry_date=?, version=?, state=? " +
-            buildOutputLogSql() + "INTO @Updated " +
+            buildOutputLog() + "INTO @Updated " +
             "WHERE qualifications_id=?; " +
 
-            buildInsertLogSql("@Updated", "UPDATE") +
+            buildInsertLog("@Updated", "UPDATE") +
             "SELECT qualifications_id FROM @Updated;";
     }
 
-    public static String buildDeleteQualificationsForIdsSql(int count) {
+    public static String buildDeleteByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count);
 
         return
-            buildLogTableSql("@Deleted") +
+            buildLogTable("@Deleted") +
 
             "UPDATE qualifications SET state = ? " +
-            buildOutputLogSql() + "INTO @Deleted " +
+            buildOutputLog() + "INTO @Deleted " +
             "WHERE qualifications_id IN (" + placeholders + ") AND NOT (state = ?);" +
 
-            buildInsertLogSql("@Deleted", "DELETE") +
+            buildInsertLog("@Deleted", "DELETE") +
             "SELECT qualifications_id FROM @Deleted;";
     }
 
-    public static String buildDeleteQualificationsSql() {
+    public static String buildDelete() {
         return
-            buildLogTableSql("@Deleted") +
+            buildLogTable("@Deleted") +
 
             "UPDATE qualifications SET state=? " +
-            buildOutputLogSql() + "INTO @Deleted " +
+            buildOutputLog() + "INTO @Deleted " +
             "WHERE qualifications_id=?; " +
 
-            buildInsertLogSql("@Deleted", "DELETE") +
+            buildInsertLog("@Deleted", "DELETE") +
             "SELECT qualifications_id FROM @Deleted;";
     }
 
-    public static String buildFindByIdForEmployeeSql() {
+    public static String buildFindByIdForEmployee() {
         return
             baseEmployeeStatusSelectString() +
             " WHERE NOT (q.state = ?) AND q.owner_id = ? AND q.owner_category = ? ORDER BY qm.code";
     }
 
-    public static String buildFindByIdForCompanySql() {
+    public static String buildFindByIdForCompany() {
         return
             baseCompanyStatusSelectString() +
             " WHERE NOT (q.state = ?) AND q.owner_id = ? AND q.owner_category = ? ORDER BY qm.code";
@@ -127,19 +127,16 @@ public class QualificationsSqlBuilder {
             " CROSS JOIN qualification_master qm" +
             " LEFT JOIN qualifications q ON q.owner_id = c.company_id AND q.qualification_master_id = qm.qualification_master_id" +
             " AND NOT (q.state = ?) AND owner_category = ?";
-    //     sb.append(" WHERE NOT (c.state = " + Enums.state.DELETE.getCode() + ") AND c.category = " + Enums.clientCategory.PARTNER.getCode() + " AND qm.category_name = '許可'");
-    //     sb.append(" ORDER BY qm.qualification_master_id, c.company_id");
-    //     return sb.toString();
     }
 
-    public static String buildFindAllEmployeeIdSql() {
+    public static String buildFindAllByEmployeeId() {
         return  
             baseEmployeeSelectString() +
             " WHERE NOT (q.state = ?) AND e.employee_id = ? AND q.owner_category = 0" +
             " ORDER BY qm.code";
     }
 
-    public static String buildFindAllCompanyIdSql() {
+    public static String buildFindAllByCompanyId() {
         return  
             baseCompanySelectString() +
             " WHERE NOT (q.state = ?) AND c.company_id = ? AND c.category = ? AND q.owner_category = ?" +
@@ -147,14 +144,14 @@ public class QualificationsSqlBuilder {
             " ORDER BY qm.code";
     }
 
-    public static String buildFindAllEmployeeStatusSql() {
+    public static String buildFindAllByEmployeeStatus() {
         return  
             baseEmployeeStatusSelectString() +
             " WHERE NOT (qm.state = ?) AND NOT (e.state = ?)" +
             " ORDER BY qm.code, e.employee_id";
     }
 
-    public static String buildFindAllCompanyStatusSql() {
+    public static String buildFindAllByCompanyStatus() {
         return  
             baseCompanyStatusSelectString() +
             " WHERE NOT (c.state = ?) AND NOT (qm.state = ?) AND c.category = ?" +
@@ -163,16 +160,16 @@ public class QualificationsSqlBuilder {
     }
 
 
-    public static String buildDownloadCsvQualificationsForIdsSql(int count) {
+    public static String buildDownloadCsvByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return "SELECT * FROM qualifications WHERE qualifications_id IN (" + placeholders + ") \" + NOT (state = ?)";
     }
 
-    public static String buildFindAllComboQualificationMasterSql() {
+    public static String buildFindAllByQualificationMasterCombo() {
         return "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = ?) ORDER BY code;";
     }
 
-    public static String buildFindAllComboLicenseMasterSql() {
+    public static String buildFindAllByLicenseMasterCombo() {
         return "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = ?) AND category_name = '許可' ORDER BY code;";
     }
 }

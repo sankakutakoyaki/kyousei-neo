@@ -55,14 +55,14 @@ public class PersonnelPageController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = employeeService.getByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new EmployeeEntity());
 
         // 初期表示用従業員リスト取得
-        List<EmployeeListEntity> origin = employeeListService.getEmployeeList();
+        List<EmployeeListEntity> origin = employeeListService.getList();
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得
@@ -88,7 +88,7 @@ public class PersonnelPageController {
         mv.addObject("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
 
         // 履歴保存
-        historyService.saveHistory(userName, "employee", "閲覧", 0, "");
+        historyService.save(userName, "employee", "閲覧", 0, "");
 		
         return mv;
     }
@@ -121,12 +121,12 @@ public class PersonnelPageController {
         List<SimpleData> officeList = comboBoxService.getSimpleOfficeList();
         mv.addObject("officeList", officeList);
         // 初期表示用従業員リスト取得
-        List<EmployeeListEntity> employeeList = employeeListService.getEmployeeList();
+        List<EmployeeListEntity> employeeList = employeeListService.getList();
         mv.addObject("employeeList", employeeList);
         // 完了コードを取得
         mv.addObject("completeNum", Enums.state.COMPLETE.getCode());
         // 履歴保存
-        historyService.saveHistory(userName, "timeworks", "閲覧", 200, "");
+        historyService.save(userName, "timeworks", "閲覧", 200, "");
 	    return mv;
 	}
 
@@ -148,14 +148,14 @@ public class PersonnelPageController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = (EmployeeEntity) employeeService.getByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new WorkingConditionsEntity());
 
         // 初期表示用従業員リスト取得
-        List<WorkingConditionsListEntity> origin = workingConditionsListService.getWorkingConditionsList();
+        List<WorkingConditionsListEntity> origin = workingConditionsListService.getList();
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得
@@ -169,7 +169,7 @@ public class PersonnelPageController {
         mv.addObject("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
 
         // 履歴保存
-        historyService.saveHistory(userName, "working_conditions", "閲覧", 200, "");
+        historyService.save(userName, "working_conditions", "閲覧", 200, "");
 		
         return mv;
     }

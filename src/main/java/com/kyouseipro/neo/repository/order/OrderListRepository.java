@@ -23,7 +23,7 @@ public class OrderListRepository {
      * @return
      */
     public List<OrderListEntity> findAll() {
-        String sql = OrderListSqlBuilder.buildFindAllSql();
+        String sql = OrderListSqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,
@@ -37,12 +37,12 @@ public class OrderListRepository {
      * @param date
      * @return
      */
-    public List<OrderListEntity> findByEntityFromBetweenDate(LocalDate start, LocalDate end) {
-        String sql = OrderListSqlBuilder.buildFindByBetweenOrderListEntity();
+    public List<OrderListEntity> findByBetween(LocalDate start, LocalDate end) {
+        String sql = OrderListSqlBuilder.buildFindByBetween();
 
         return sqlRepository.findAll(
             sql,
-            ps -> OrderListParameterBinder.bindFindByBetweenOrderListEntity(ps, start, end),
+            ps -> OrderListParameterBinder.bindFindByBetween(ps, start, end),
             OrderListEntityMapper::map // ← ここで ResultSet を map
         );
     }

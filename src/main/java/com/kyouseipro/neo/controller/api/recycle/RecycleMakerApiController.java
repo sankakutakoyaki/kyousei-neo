@@ -31,8 +31,8 @@ public class RecycleMakerApiController {
      */
     @PostMapping("/recycle/maker/get/id")
 	@ResponseBody
-    public ResponseEntity getEntityById(@RequestParam int id) {
-        RecycleMakerEntity entity = recycleMakerService.getRecycleMakerById(id);
+    public ResponseEntity getById(@RequestParam int id) {
+        RecycleMakerEntity entity = recycleMakerService.getById(id);
         if (entity != null) {
             return ResponseEntity.ok(entity);
         } else {
@@ -47,8 +47,8 @@ public class RecycleMakerApiController {
      */
     @PostMapping("/recycle/maker/get/code")
 	@ResponseBody
-    public ResponseEntity getEntityByCode(@RequestParam int code) {
-        RecycleMakerEntity entity = recycleMakerService.getRecycleMakerByCode(code);
+    public ResponseEntity getByCode(@RequestParam int code) {
+        RecycleMakerEntity entity = recycleMakerService.getByCode(code);
         if (entity != null) {
             return ResponseEntity.ok(entity);
         } else {
@@ -63,14 +63,14 @@ public class RecycleMakerApiController {
      */
     @PostMapping("/recycle/maker/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> saveRecycleMaker(@RequestBody RecycleMakerEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody RecycleMakerEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = recycleMakerService.saveRecycleMaker(entity);
+        Integer id = recycleMakerService.save(entity);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "recycle_makers", "保存", 200, "成功");
+            historyService.save(userName, "recycle_makers", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
-            historyService.saveHistory(userName, "recycle_makers", "保存", 400, "失敗");
+            historyService.save(userName, "recycle_makers", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -82,14 +82,14 @@ public class RecycleMakerApiController {
      */
     @PostMapping("/recycle/maker/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = recycleMakerService.deleteRecycleMakerByIds(ids);
+        Integer id = recycleMakerService.deleteByIds(ids);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "recycle_makers", "削除", 200, "成功");
+            historyService.save(userName, "recycle_makers", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
-            historyService.saveHistory(userName, "recycle_makers", "削除", 400, "失敗");
+            historyService.save(userName, "recycle_makers", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -101,9 +101,9 @@ public class RecycleMakerApiController {
      */
     @PostMapping("/recycle/maker/download/csv")
 	@ResponseBody
-    public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        historyService.saveHistory(userName, "recycle_makers", "ダウンロード", 0, "");
-        return recycleMakerService.downloadCsvRecycleMakerByIds(ids);
+        historyService.save(userName, "recycle_makers", "ダウンロード", 0, "");
+        return recycleMakerService.downloadCsvByIds(ids);
     }
 }

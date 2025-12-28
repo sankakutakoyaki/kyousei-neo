@@ -10,7 +10,7 @@ import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
 
 public class QualificationsParameterBinder {
 
-    public static int bindInsertQualificationsParameters(PreparedStatement pstmt, QualificationsEntity q, String editor) throws SQLException {
+    public static int bindInsert(PreparedStatement pstmt, QualificationsEntity q, String editor) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, q.getOwner_id());
         pstmt.setInt(index++, q.getOwner_category());
@@ -25,7 +25,7 @@ public class QualificationsParameterBinder {
         return index;
     }
 
-    public static int bindUpdateQualificationsParameters(PreparedStatement pstmt, QualificationsEntity q, String editor) throws SQLException {
+    public static int bindUpdate(PreparedStatement pstmt, QualificationsEntity q, String editor) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, q.getOwner_id());
         pstmt.setInt(index++, q.getOwner_category());
@@ -42,7 +42,7 @@ public class QualificationsParameterBinder {
         return index;
     }
 
-    public static int bindDeleteQualificationsParameters(PreparedStatement pstmt, int id, String editor) throws SQLException {
+    public static int bindDelete(PreparedStatement pstmt, int id, String editor) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, Enums.state.DELETE.getCode());
         pstmt.setInt(index++, id);
@@ -51,7 +51,7 @@ public class QualificationsParameterBinder {
         return index;
     }
 
-    public static int bindFindByIdForEmployee(PreparedStatement ps, Integer employeeId) throws SQLException {
+    public static int bindFindAllByEmployeeId(PreparedStatement ps, Integer employeeId) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -60,7 +60,7 @@ public class QualificationsParameterBinder {
         return index;
     }
 
-    public static int bindFindByIdForCompany(PreparedStatement ps, Integer companyId) throws SQLException {
+    public static int bindFindAllByCompanyId(PreparedStatement ps, Integer companyId) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -79,7 +79,7 @@ public class QualificationsParameterBinder {
         return index;
     }
 
-    public static int bindFindAllEmployeeStatus(PreparedStatement ps, Void unused) throws SQLException {
+    public static int bindFindAllByEmployeeStatus(PreparedStatement ps, Void unused) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -87,7 +87,7 @@ public class QualificationsParameterBinder {
         return index;
     }
 
-    public static int bindFindAllCompanyStatus(PreparedStatement ps, Void unused) throws SQLException {
+    public static int bindFindAllByCompanyStatus(PreparedStatement ps, Void unused) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
@@ -117,7 +117,13 @@ public class QualificationsParameterBinder {
         return index;
     }
 
-    public static int bindFindAllCombo(PreparedStatement ps, Void unused) throws SQLException {
+    public static int bindFindAllByQualificationMasterCombo(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
+    }
+
+    public static int bindFindAllByLicenseMasterCombo(PreparedStatement ps, Void unused) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;

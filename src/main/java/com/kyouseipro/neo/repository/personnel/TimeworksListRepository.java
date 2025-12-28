@@ -8,12 +8,8 @@ import org.springframework.stereotype.Repository;
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
-import com.kyouseipro.neo.entity.personnel.PaidHolidayEntity;
-import com.kyouseipro.neo.entity.personnel.PaidHolidayListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksSummaryEntity;
-import com.kyouseipro.neo.mapper.personnel.PaidHolidayEntityMapper;
-import com.kyouseipro.neo.mapper.personnel.PaidHolidayListEntityMapper;
 import com.kyouseipro.neo.mapper.personnel.TimeworksListEntityMapper;
 import com.kyouseipro.neo.mapper.personnel.TimeworksSummaryEntityMapper;
 import com.kyouseipro.neo.query.parameter.personnel.TimeworksListParameterBinder;
@@ -33,14 +29,14 @@ public class TimeworksListRepository {
      * @param employeeId
      * @return IDから取得した今日の日付のEntityをかえす。
      */
-    public TimeworksListEntity findByTodaysEntityByEmployeeId(int employeeId) {
-        String sql = TimeworksListSqlBuilder.buildFindByTodaysEntityByEmployeeId();
+    public TimeworksListEntity findByTodaysByEmployeeId(int employeeId) {
+        String sql = TimeworksListSqlBuilder.buildFindByTodaysByEmployeeId();
         EmployeeEntity entity = employeeRepository.findById(employeeId);
         int id = entity.getEmployee_id();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, comp) -> TimeworksListParameterBinder.bindFindByTodaysEntityByEmployeeId(pstmt, comp),
+            (pstmt, comp) -> TimeworksListParameterBinder.bindFindByTodaysByEmployeeId(pstmt, comp),
             rs -> rs.next() ? TimeworksListEntityMapper.map(rs) : null,
             id
         );
@@ -51,14 +47,14 @@ public class TimeworksListRepository {
      * @param date
      * @return
      */
-    public List<TimeworksListEntity> findByEmployeeIdFromBetweenDate(int employeeId, LocalDate start, LocalDate end) {
-        String sql = TimeworksListSqlBuilder.buildFindByBetweenEntityByEmployeeId();
+    public List<TimeworksListEntity> findByBetweenByEmployeeId(int employeeId, LocalDate start, LocalDate end) {
+        String sql = TimeworksListSqlBuilder.buildFindByBetweenByEmployeeId();
         EmployeeEntity entity = employeeRepository.findById(employeeId);
         int id = entity.getEmployee_id();
 
         return sqlRepository.findAll(
             sql,
-            ps -> TimeworksListParameterBinder.bindFindByBetweenEntityByEmployeeId(ps, id, start, end),
+            ps -> TimeworksListParameterBinder.bindFindByBetweenByEmployeeId(ps, id, start, end),
             TimeworksListEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -68,14 +64,14 @@ public class TimeworksListRepository {
      * @param date
      * @return
      */
-    public List<TimeworksListEntity> findAllByEmployeeIdFromBetweenDate(int employeeId, LocalDate start, LocalDate end) {
-        String sql = TimeworksListSqlBuilder.buildFindAllByBetweenEntityByEmployeeId();
+    public List<TimeworksListEntity> findAllByBetweenByEmployeeId(int employeeId, LocalDate start, LocalDate end) {
+        String sql = TimeworksListSqlBuilder.buildFindAllByBetweenByEmployeeId();
         EmployeeEntity entity = employeeRepository.findById(employeeId);
         int id = entity.getEmployee_id();
 
         return sqlRepository.findAll(
             sql,
-            ps -> TimeworksListParameterBinder.bindFindAllByBetweenEntityByEmployeeId(ps, id, start, end),
+            ps -> TimeworksListParameterBinder.bindFindAllByBetweenByEmployeeId(ps, id, start, end),
             TimeworksListEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -85,12 +81,12 @@ public class TimeworksListRepository {
      * @param date
      * @return
      */
-    public List<TimeworksSummaryEntity> findByEntityFromBetweenDate(LocalDate start, LocalDate end) {
-        String sql = TimeworksListSqlBuilder.buildFindByBetweenSummaryEntity();
+    public List<TimeworksSummaryEntity> findByBetweenSummary(LocalDate start, LocalDate end) {
+        String sql = TimeworksListSqlBuilder.buildFindByBetweenSummary();
 
         return sqlRepository.findAll(
             sql,
-            ps -> TimeworksListParameterBinder.bindFindByBetweenSummaryEntity(ps, start, end),
+            ps -> TimeworksListParameterBinder.bindFindByBetweenSummary(ps, start, end),
             TimeworksSummaryEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -100,45 +96,13 @@ public class TimeworksListRepository {
      * @param date
      * @return
      */
-    public List<TimeworksSummaryEntity> findByOfficeIdFromBetweenDate(int id, LocalDate start, LocalDate end) {
-        String sql = TimeworksListSqlBuilder.buildFindByBetweenSummaryEntityByOfficeId();
+    public List<TimeworksSummaryEntity> findByBetweenSummaryByOfficeId(int id, LocalDate start, LocalDate end) {
+        String sql = TimeworksListSqlBuilder.buildFindByBetweenSummaryByOfficeId();
 
         return sqlRepository.findAll(
             sql,
-            ps -> TimeworksListParameterBinder.bindFindByBetweenSummaryEntityByOfficeId(ps, id, start, end),
+            ps -> TimeworksListParameterBinder.bindFindByBetweenSummaryByOfficeId(ps, id, start, end),
             TimeworksSummaryEntityMapper::map // ← ここで ResultSet を map
-        );
-    }
-
-    /**
-     * 年指定でIDで指定した営業所の勤怠情報を取得
-     * @param year
-     * @return
-     */
-    public List<PaidHolidayListEntity> findPaidHolidayByOfficeIdFromYear(int id, String year) {
-        String sql = TimeworksListSqlBuilder.buildFindPaidHolidayByOfficeIdFromYear();
-
-        return sqlRepository.findAll(
-            sql,
-            ps -> TimeworksListParameterBinder.bindFindPaidHolidayEntityByOfficeIdFromYear(ps, id, year),
-            PaidHolidayListEntityMapper::map // ← ここで ResultSet を map
-        );
-    }
-
-    /**
-     * 年指定でIDで指定した従業員の有給リストを取得
-     * @param year
-     * @return
-     */
-    public List<PaidHolidayEntity> findPaidHolidayByEmployeeIdFromYear(int employeeId, String year) {
-        String sql = TimeworksListSqlBuilder.buildFindPaidHolidayByEmployeeIdFromYear();
-        EmployeeEntity entity = employeeRepository.findById(employeeId);
-        int id = entity.getEmployee_id();
-
-        return sqlRepository.findAll(
-            sql,
-            ps -> TimeworksListParameterBinder.bindFindPaidHolidayEntityByEmployeeIdFromYear(ps, id, year),
-            PaidHolidayEntityMapper::map // ← ここで ResultSet を map
         );
     }
 
@@ -148,7 +112,7 @@ public class TimeworksListRepository {
      * @return
      */
     public List<TimeworksListEntity> findByDate(LocalDate date) {
-        String sql = TimeworksListSqlBuilder.buildFindByDateSql();
+        String sql = TimeworksListSqlBuilder.buildFindByDate();
 
         return sqlRepository.findAll(
             sql,
@@ -163,29 +127,12 @@ public class TimeworksListRepository {
      * @param editor
      * @return
      */
-    public Integer insertPaidHolidayByEmployeeId(PaidHolidayEntity p, String editor) {
-        String sql = TimeworksListSqlBuilder.buildInsertPaidHolidaySql();
+    public Integer insert(TimeworksListEntity t, String editor) {
+        String sql = TimeworksListSqlBuilder.buildInsert();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, entity) -> TimeworksListParameterBinder.bindInsertPaidHolidayParameters(pstmt, entity, editor),
-            rs -> rs.next() ? rs.getInt("paid_holiday_id") : null,
-            p
-        );
-    }
-
-    /**
-     * INSERT
-     * @param t
-     * @param editor
-     * @return
-     */
-    public Integer insertTimeworks(TimeworksListEntity t, String editor) {
-        String sql = TimeworksListSqlBuilder.buildInsertSql();
-
-        return sqlRepository.execute(
-            sql,
-            (pstmt, entity) -> TimeworksListParameterBinder.bindInsertParameters(pstmt, entity, editor),
+            (pstmt, entity) -> TimeworksListParameterBinder.bindInsert(pstmt, entity, editor),
             rs -> rs.next() ? rs.getInt("timeworks_id") : null,
             t
         );
@@ -197,12 +144,12 @@ public class TimeworksListRepository {
      * @param editor
      * @return
      */
-    public Integer updateTimeworks(TimeworksListEntity t, String editor) {
-        String sql = TimeworksListSqlBuilder.buildUpdateSql();
+    public Integer update(TimeworksListEntity t, String editor) {
+        String sql = TimeworksListSqlBuilder.buildUpdate();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, entity) -> TimeworksListParameterBinder.bindUpdateParameters(pstmt, entity, editor),
+            (pstmt, entity) -> TimeworksListParameterBinder.bindUpdate(pstmt, entity, editor),
             rs -> rs.next() ? rs.getInt("timeworks_id") : null,
             t
         );
@@ -215,11 +162,11 @@ public class TimeworksListRepository {
      * @return
      */
     public Integer reverseConfirm(int id, String editor) {
-        String sql = TimeworksListSqlBuilder.buildReverseConfirmSql();
+        String sql = TimeworksListSqlBuilder.buildReverseConfirm();
 
        Integer result = sqlRepository.executeUpdate(
             sql,
-            ps -> TimeworksListParameterBinder.bindReverseConfirmParameters(ps, id, editor)
+            ps -> TimeworksListParameterBinder.bindReverseConfirm(ps, id, editor)
         );
         
         return result; // 成功件数。0なら削除なし
@@ -231,47 +178,16 @@ public class TimeworksListRepository {
      * @param editor
      * @return
      */
-    public Integer updateTimeworksList(List<TimeworksListEntity> list, String editor) {
-        // if (list.size() == 0) return 0;
-
-        // String sql = "";
-        // for (int i = 0; i < list.size(); i++) {
-        //     sql += TimeworksListSqlBuilder.buildUpdateSql();
-        // }
-
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, entities) -> TimeworksListParameterBinder.bindUpdateListParameters(pstmt, entities, editor),
-        //     rs -> rs.next() ? rs.getInt("timeworks_id") : null,
-        //     list
-        // );
-        // public int updateTimeworksList(List<TimeworksListEntity> list, String editor) {
+    public Integer updateList(List<TimeworksListEntity> list, String editor) {
         if (list.isEmpty()) return 0;
 
-        String sql = TimeworksListSqlBuilder.buildUpdateSql(); // UPDATE ... WHERE id = ?
+        String sql = TimeworksListSqlBuilder.buildUpdate(); // UPDATE ... WHERE id = ?
 
         return sqlRepository.executeBatch(
             sql,
-            (pstmt, entity) -> TimeworksListParameterBinder.bindUpdateParameters(pstmt, entity, editor),
+            (pstmt, entity) -> TimeworksListParameterBinder.bindUpdate(pstmt, entity, editor),
             list
         );
-    }
-
-    /**
-     * DELETE
-     * @param w
-     * @param editor
-     * @return
-     */
-    public Integer deletePaidHolidayEntityById(int id, String editor) {
-        String sql = TimeworksListSqlBuilder.buildDeletePaidHolidaySql();
-
-        Integer result = sqlRepository.executeUpdate(
-            sql,
-            ps -> TimeworksListParameterBinder.bindDeletePaidHolidayParameters(ps, id, editor)
-        );
-
-        return result; // 成功件数。0なら削除なし
     }
 
     /**
@@ -280,13 +196,13 @@ public class TimeworksListRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<TimeworksListEntity> downloadCsvByIds(List<SimpleData> ids, String start, String end, String editor) {
+    public List<TimeworksListEntity> downloadCsvByIdsFromBetween(List<SimpleData> ids, String start, String end, String editor) {
         List<Integer> employeeIds = Utilities.createSequenceByIds(ids);
-        String sql = TimeworksListSqlBuilder.buildDownloadCsvForIdsSql(employeeIds.size());
+        String sql = TimeworksListSqlBuilder.buildDownloadCsvForIdsFromBetween(employeeIds.size());
 
         return sqlRepository.findAll(
             sql,
-            ps -> TimeworksListParameterBinder.bindDownloadCsvForIds(ps, employeeIds, start, end),
+            ps -> TimeworksListParameterBinder.bindDownloadCsvByIdsFromBetween(ps, employeeIds, start, end),
             TimeworksListEntityMapper::map // ← ここで ResultSet を map
         );
     }

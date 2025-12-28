@@ -32,8 +32,8 @@ public class OfficeApiController {
      */
     @PostMapping("/office/get/id")
 	@ResponseBody
-    public OfficeEntity getEntityById(@RequestParam int id) {
-        return officeService.getOfficeById(id);
+    public OfficeEntity getById(@RequestParam int id) {
+        return officeService.getById(id);
     }
 
     /**
@@ -43,14 +43,14 @@ public class OfficeApiController {
      */
     @PostMapping("/office/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> saveEntity(@RequestBody OfficeEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody OfficeEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = officeService.saveOffice(entity, userName);
+        Integer id = officeService.save(entity, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "offices", "保存", 200, "成功");
+            historyService.save(userName, "offices", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
-            historyService.saveHistory(userName, "offices", "保存", 400, "失敗");
+            historyService.save(userName, "offices", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -62,14 +62,14 @@ public class OfficeApiController {
      */
     @PostMapping("/office/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = officeService.deleteOfficeByIds(ids, userName);
+        Integer id = officeService.deleteByIds(ids, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "offices", "削除", 200, "成功");
+            historyService.save(userName, "offices", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
-            historyService.saveHistory(userName, "offices", "削除", 200, "失敗");
+            historyService.save(userName, "offices", "削除", 200, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -81,9 +81,9 @@ public class OfficeApiController {
      */
     @PostMapping("/office/download/csv")
 	@ResponseBody
-    public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        historyService.saveHistory(userName, "offices", "ダウンロード", 0, "");
-        return officeService.downloadCsvOfficeByIds(ids, userName);
+        historyService.save(userName, "offices", "ダウンロード", 0, "");
+        return officeService.downloadCsvByIds(ids, userName);
     }
 }

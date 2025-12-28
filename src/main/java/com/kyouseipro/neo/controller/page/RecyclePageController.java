@@ -44,14 +44,14 @@ public class RecyclePageController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = employeeService.getByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new RecycleEntity());
 
         // 初期表示用リスト取得
-        List<RecycleEntity> origin = recycleService.getBetweenRecycleEntity(LocalDate.now(), LocalDate.now(), "regist");
+        List<RecycleEntity> origin = recycleService.getBetween(LocalDate.now(), LocalDate.now(), "regist");
         mv.addObject("origin", origin);
         // コンボボックスアイテム取得
         List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorListAddTopOfOwnCompany();
@@ -63,7 +63,7 @@ public class RecyclePageController {
         mv.addObject("deleteCode", Enums.state.DELETE.getCode());
 
         // 履歴保存
-        historyService.saveHistory(userName, "recycle", "閲覧", 0, "");
+        historyService.save(userName, "recycle", "閲覧", 0, "");
 		
         return mv;
     }

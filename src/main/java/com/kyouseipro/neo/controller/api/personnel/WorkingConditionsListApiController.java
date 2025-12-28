@@ -24,8 +24,8 @@ public class WorkingConditionsListApiController {
      */
     @GetMapping("/working_conditions/get/list")
 	@ResponseBody
-    public List<WorkingConditionsListEntity> getEntityList() {
-        return workingConditionsListService.getWorkingConditionsList();
+    public List<WorkingConditionsListEntity> getList() {
+        return workingConditionsListService.getList();
     }
 
     /**
@@ -34,8 +34,7 @@ public class WorkingConditionsListApiController {
      */
     @PostMapping("/working_conditions/get/list/category")
 	@ResponseBody
-    public List<WorkingConditionsListEntity> getEntityListByCategory(@RequestParam int category) {
-        return workingConditionsListService.getWorkingConditionsListByCategory(category);
+    public List<WorkingConditionsListEntity> getListByCategoryId(@RequestParam int category) {
+        return workingConditionsListService.getListByCategoryId(category);
     }
-
 }

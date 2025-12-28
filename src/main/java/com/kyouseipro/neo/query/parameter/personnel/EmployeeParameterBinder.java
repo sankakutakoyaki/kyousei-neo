@@ -8,7 +8,7 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 
 public class EmployeeParameterBinder {
-    public static int bindInsertEmployeeParameters(PreparedStatement pstmt, EmployeeEntity e, String editor) throws SQLException {
+    public static int bindInsert(PreparedStatement pstmt, EmployeeEntity e, String editor) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, e.getCompany_id());
         pstmt.setInt(index++, e.getOffice_id());
@@ -48,7 +48,7 @@ public class EmployeeParameterBinder {
         return index;
     }
 
-    public static int bindUpdateEmployeeParameters(PreparedStatement pstmt, EmployeeEntity e, String editor) throws SQLException {
+    public static int bindUpdate(PreparedStatement pstmt, EmployeeEntity e, String editor) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, e.getCompany_id());
         pstmt.setInt(index++, e.getOffice_id());
@@ -89,11 +89,20 @@ public class EmployeeParameterBinder {
         return index;
     }
 
-    public static int bindFindById(PreparedStatement ps, Integer employeeId) throws SQLException {
+    public static int bindFindById(PreparedStatement ps, Integer id) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, employeeId);
+        ps.setInt(index++, id);
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
+    }
+
+    public static int bindFindByCode(PreparedStatement ps, Integer code) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, code);
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }
@@ -115,7 +124,7 @@ public class EmployeeParameterBinder {
         return index;
     }
 
-    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+    public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
@@ -126,7 +135,7 @@ public class EmployeeParameterBinder {
         return index;
     }
 
-    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         for (Integer id : ids) {
             ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)

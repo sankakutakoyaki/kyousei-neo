@@ -4,7 +4,7 @@ import com.kyouseipro.neo.common.Utilities;
 
 public class OrderItemSqlBuilder {
 
-    private static String buildLogTableSql(String rowTableName) {
+    private static String buildLogTable(String rowTableName) {
         return
             "DECLARE " + rowTableName + " TABLE (" +
             "  order_item_id INT, order_id INT, company_id INT, office_id INT, delivery_address NVARCHAR(255), arrival_date DATE," +
@@ -15,7 +15,7 @@ public class OrderItemSqlBuilder {
             "); ";
     }
 
-    private static String buildInsertLogSql(String rowTableName, String processName) {
+    private static String buildInsertLog(String rowTableName, String processName) {
         return
             "INSERT INTO order_items_log (" +
             "  order_item_id, editor, process, log_date, order_id, company_id, office_id, delivery_address, arrival_date," +
@@ -32,7 +32,7 @@ public class OrderItemSqlBuilder {
             "FROM " + rowTableName + ";";
     }
 
-    private static String buildOutputLogSql() {
+    private static String buildOutputLog() {
         return
             "OUTPUT INSERTED.order_item_id, INSERTED.order_id, INSERTED.company_id, INSERTED.office_id, INSERTED.delivery_address, INSERTED.arrival_date," +
             "  INSERTED.inspector_id, INSERTED.shipping_company_id, INSERTED.document_number," +
@@ -41,10 +41,10 @@ public class OrderItemSqlBuilder {
             "  INSERTED.version, INSERTED.state ";
     }
 
-    public static String buildInsertOrderItemSql(int index) {
+    public static String buildInsert(int index) {
         String rowTableName = "@InsertedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "INSERT INTO order_items (" +
             " order_id, company_id, office_id, delivery_address, arrival_date, inspector_id, shipping_company_id, document_number," +
@@ -52,19 +52,19 @@ public class OrderItemSqlBuilder {
             " version, state" +
             ") " +
 
-            buildOutputLogSql() + "INTO " + rowTableName + " " +
+            buildOutputLog() + "INTO " + rowTableName + " " +
 
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
-            buildInsertLogSql(rowTableName, "INSERT") +
+            buildInsertLog(rowTableName, "INSERT") +
 
             "SELECT order_item_id FROM " + rowTableName + ";";
     }
 
-    public static String buildInsertOrderItemByNewOrderSql(int index) {
+    public static String buildInsertByNewOrder(int index) {
         String rowTableName = "@InsertedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "INSERT INTO order_items (" +
             " order_id, company_id, office_id, delivery_address, arrival_date, inspector_id, shipping_company_id, document_number," +
@@ -72,63 +72,63 @@ public class OrderItemSqlBuilder {
             " version, state" +
             ") " +
 
-            buildOutputLogSql() + "INTO " + rowTableName + " " +
+            buildOutputLog() + "INTO " + rowTableName + " " +
 
             "VALUES (@NEW_ID, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
-            buildInsertLogSql(rowTableName, "INSERT") +
+            buildInsertLog(rowTableName, "INSERT") +
 
             "SELECT order_item_id FROM " + rowTableName + ";";
     }
 
-    public static String buildUpdateOrderItemSql(int index) {
+    public static String buildUpdate(int index) {
         String rowTableName = "@UpdatedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "UPDATE order_items SET " +
             "  order_id=?, company_id=?, office_id=?, delivery_address=?, arrival_date=?, inspector_id=?, shipping_company_id=?, document_number=?," +
             "  item_maker=?, item_name=?, item_model=?, item_quantity=?, item_payment=?, buyer_id=?, remarks=?, classification=?," +
             "  version=?, state=? " +
             
-            buildOutputLogSql() + "INTO " + rowTableName + " " +
+            buildOutputLog() + "INTO " + rowTableName + " " +
 
             "WHERE order_item_id=?; " +
 
-            buildInsertLogSql(rowTableName, "UPDATE") +
+            buildInsertLog(rowTableName, "UPDATE") +
 
             "SELECT order_item_id FROM " + rowTableName + ";";
     }
 
-    public static String buildDeleteOrderItemSql(int index) {
+    public static String buildDelete(int index) {
         String rowTableName = "@UpdatedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "UPDATE order_items SET state = ? " +
 
-            buildOutputLogSql() + "INTO " + rowTableName  + " " +
+            buildOutputLog() + "INTO " + rowTableName  + " " +
             
             "WHERE order_item_id = ? ; " +
 
-            buildInsertLogSql(rowTableName, "DELETE") +
+            buildInsertLog(rowTableName, "DELETE") +
 
             "SELECT order_item_id FROM " + rowTableName + ";";
     }
 
-    public static String buildDeleteOrderItemForIdsSql(int count) {
+    public static String buildDeleteByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ..., ?"
 
         return
-            buildLogTableSql("@DeletedRows") +
+            buildLogTable("@DeletedRows") +
 
             "UPDATE order_items SET state = ? " +
 
-            buildOutputLogSql() + "INTO @DeletedRows " +
+            buildOutputLog() + "INTO @DeletedRows " +
             
             "WHERE order_item_id IN (" + placeholders + ") AND NOT (state = ?); " +
 
-            buildInsertLogSql("@DeletedRows", "DELETE") +
+            buildInsertLog("@DeletedRows", "DELETE") +
 
             "SELECT order_item_id FROM @DeletedRows;";
     }
@@ -148,28 +148,23 @@ public class OrderItemSqlBuilder {
             " LEFT OUTER JOIN offices o ON o.office_id = oi.office_id AND NOT (o.state = ?)";
     }
 
-    public static String buildFindByIdSql() {
+    public static String buildFindById() {
         return 
             baseSelectString() + " WHERE oi.order_item_id = ? AND NOT (oi.state = ?)";
     }
 
-    // public static String buildFindAllSql() {
-    //     return 
-    //         baseSelectString() + " WHERE NOT (oi.state = ?)";
-    // }
-
-    public static String buildFindAllByOrderIdSql() {
+    public static String buildFindAllByOrderId() {
         return 
             baseSelectString() + " WHERE oi.order_id = ? AND NOT (oi.state = ?)";
     }
 
-    public static String buildDownloadCsvOrderItemForIdsSql(int count) {
+    public static String buildDownloadCsvByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count);
         return 
             baseSelectString() + " WHERE oi.order_item_id IN (" + placeholders + ") AND NOT (oi.state = ?)";
     }
 
-    public static String buildFindByBetweenOrderItemEntity() {
+    public static String buildFindByBetween() {
         return 
             baseSelectString() +
             " WHERE NOT (oi.state = ?) AND " +

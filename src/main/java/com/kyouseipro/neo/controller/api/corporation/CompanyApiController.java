@@ -32,8 +32,8 @@ public class CompanyApiController {
      */
     @PostMapping("/company/get/id")
 	@ResponseBody
-    public CompanyEntity getEntityById(@RequestParam int id) {
-        return companyService.getCompanyById(id);
+    public CompanyEntity getById(@RequestParam int id) {
+        return companyService.getById(id);
     }
 
 
@@ -44,14 +44,14 @@ public class CompanyApiController {
      */
     @PostMapping("/company/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> saveEntity(@RequestBody CompanyEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody CompanyEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = companyService.saveCompany(entity, userName);
+        Integer id = companyService.save(entity, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "companies", "保存", 200, "成功");
+            historyService.save(userName, "companies", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
-            historyService.saveHistory(userName, "companies", "保存", 400, "失敗");
+            historyService.save(userName, "companies", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -63,14 +63,14 @@ public class CompanyApiController {
      */
     @PostMapping("/company/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = companyService.deleteCompanyByIds(ids, userName);
+        Integer id = companyService.deleteByIds(ids, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "companies", "削除", 200, "成功");
+            historyService.save(userName, "companies", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
-            historyService.saveHistory(userName, "companies", "保存", 200, "失敗");
+            historyService.save(userName, "companies", "保存", 200, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -82,19 +82,9 @@ public class CompanyApiController {
      */
     @PostMapping("/company/download/csv")
 	@ResponseBody
-    public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        historyService.saveHistory(userName, "companies", "ダウンロード", 0, "");
-        return companyService.downloadCsvCompanyByIds(ids, userName);
+        historyService.save(userName, "companies", "ダウンロード", 0, "");
+        return companyService.downloadCsvByIds(ids, userName);
     }
-
-    // /**
-    //  * すべてのコンボボックス用取引先情報を取得する
-    //  * @return
-    //  */
-    // @GetMapping("/company/get/combo")
-	// @ResponseBody
-    // public List<CompanyEntity> getCompanyCombo() {
-    //     return comboBoxService.getClient();
-    // }
 }

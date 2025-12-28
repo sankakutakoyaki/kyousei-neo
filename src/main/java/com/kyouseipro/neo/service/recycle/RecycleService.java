@@ -25,8 +25,7 @@ public class RecycleService {
      * @param id リサイクルID
      * @return RecycleEntity または null
      */
-    public RecycleEntity getRecycleById(int id) {
-        // String sql = OrderSqlBuilder.buildFindByIdSql();
+    public RecycleEntity getById(int id) {
         return recycleRepository.findById(id);
     }
 
@@ -37,14 +36,9 @@ public class RecycleService {
      * @param number リサイクルID
      * @return RecycleEntity または null
      */
-    public RecycleEntity existsRecycleByNumber(String str) {
-        // return existsRepository.existsRecycleByNumber(str);
-        return recycleRepository.existsRecycleByNumber(str);
+    public RecycleEntity existsByNumber(String str) {
+        return recycleRepository.existsByNumber(str);
     }
-    // public RecycleEntity existsRecycleByNumber(String number) {
-    //     // String sql = OrderSqlBuilder.buildFindByIdSql();
-    //     return recycleRepository.existsByNumber(number);
-    // }
 
     /**
      * 
@@ -52,7 +46,7 @@ public class RecycleService {
      * @param number
      * @return
      */
-    public RecycleEntity getRecycleByNumber(String number) {
+    public RecycleEntity getByNumber(String number) {
         return recycleRepository.findByNumber(number);
     }
     
@@ -63,8 +57,8 @@ public class RecycleService {
      * @param col
      * @return
      */
-    public List<RecycleEntity> getBetweenRecycleEntity(LocalDate start, LocalDate end, String col) {
-        return recycleRepository.findByEntityFromBetweenDate(start, end, col);
+    public List<RecycleEntity> getBetween(LocalDate start, LocalDate end, String col) {
+        return recycleRepository.findByBetween(start, end, col);
     }
 
     /**
@@ -75,22 +69,8 @@ public class RecycleService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer saveRecycle(List<RecycleEntity> itemList, String editor) {
-        // String sql = "";
-        // int index = 1;
-
-        // for (RecycleEntity entity : itemList) {
-        //     if (entity.getState() == Enums.state.DELETE.getCode()) {
-        //         sql += RecycleSqlBuilder.buildDeleteRecycleSql(index++);
-        //     } else {
-        //         if (entity.getRecycle_id() > 0) {
-        //             sql += RecycleSqlBuilder.buildUpdateRecycleSql(index++);
-        //         } else {
-        //             sql += RecycleSqlBuilder.buildInsertRecycleSql(index++);
-        //         }
-        //     }
-        // }
-        return recycleRepository.saveRecycleList(itemList, editor);
+    public Integer save(List<RecycleEntity> itemList, String editor) {
+        return recycleRepository.save(itemList, editor);
     }
 
     /**
@@ -101,8 +81,8 @@ public class RecycleService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer updateRecycle(RecycleEntity entity, String editor) {
-        return recycleRepository.updateRecycle(entity, editor);
+    public Integer update(RecycleEntity entity, String editor) {
+        return recycleRepository.update(entity, editor);
     }
 
     /**
@@ -113,8 +93,8 @@ public class RecycleService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer updateRecycleDate(List<RecycleDateEntity> itemList, String editor, String type) {
-        return recycleRepository.updateRecycleDateList(itemList, editor, type);
+    public Integer updateForDate(List<RecycleDateEntity> itemList, String editor, String type) {
+        return recycleRepository.updateForDate(itemList, editor, type);
     }
 
     /**
@@ -122,10 +102,8 @@ public class RecycleService {
      * @param ids
      * @return
      */
-    public Integer deleteRecycleByIds(List<SimpleData> list, String userName) {
-        // List<Integer> recycleIds = Utilities.createSequenceByIds(list);
-        // String sql = RecycleSqlBuilder.buildDeleteRecycleForIdsSql(recycleIds.size());
-        return recycleRepository.deleteRecycleByIds(list, userName);
+    public Integer deleteByIds(List<SimpleData> list, String userName) {
+        return recycleRepository.deleteByIds(list, userName);
     }
 
     /**
@@ -133,10 +111,8 @@ public class RecycleService {
      * @param ids
      * @return
      */
-    public String downloadCsvRecycleByIds(List<SimpleData> list, String userName) {
-        // List<Integer> recycleIds = Utilities.createSequenceByIds(list);
-        // String sql = RecycleSqlBuilder.buildDownloadCsvRecycleForIdsSql(recycleIds.size());
-        List<RecycleEntity> recycles = recycleRepository.downloadCsvRecycleByIds(list, userName);
+    public String downloadCsvByIds(List<SimpleData> list, String userName) {
+        List<RecycleEntity> recycles = recycleRepository.downloadCsvByIds(list, userName);
         return CsvExporter.export(recycles, RecycleEntity.class);
     }
 }

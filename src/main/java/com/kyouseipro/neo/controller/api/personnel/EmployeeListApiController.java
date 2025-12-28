@@ -24,8 +24,8 @@ public class EmployeeListApiController {
      */
     @GetMapping("/employee/get/list")
 	@ResponseBody
-    public List<EmployeeListEntity> getEntityList() {
-        return employeeListService.getEmployeeList();
+    public List<EmployeeListEntity> getList() {
+        return employeeListService.getList();
     }
 
     /**
@@ -34,7 +34,7 @@ public class EmployeeListApiController {
      */
     @PostMapping("/employee/get/list/category")
 	@ResponseBody
-    public List<EmployeeListEntity> getEntityListByCategory(@RequestParam int category) {
-        return employeeListService.getEmployeeListByCategory(category);
+    public List<EmployeeListEntity> getListByCategoryId(@RequestParam int category) {
+        return employeeListService.getListByCategoryId(category);
     }
 }

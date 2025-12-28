@@ -31,7 +31,7 @@ public class QualificationFilesService {
      * @return
      */
     public Integer deleteQualificationsFilesByUrl(String url, String userName) {
-        return qualificationFilesRepository.deleteQualificationFilesByUrl(url, userName);
+        return qualificationFilesRepository.delete(url, userName);
     }
 
     /**
@@ -41,6 +41,6 @@ public class QualificationFilesService {
      * @return
     */
     public Integer saveQualificationsFiles(List<FileUpload> entities, String editor, Integer id) {
-        return qualificationFilesRepository.insertQualificationFiles(entities, editor, id);
+        return qualificationFilesRepository.insert(entities, editor, id);
     }
 }

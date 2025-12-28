@@ -21,7 +21,7 @@ public class KsSalesService {
      * @param col
      * @return
      */
-    public List<KsSalesEntity> getBetweenKsSalesEntity(LocalDate start, LocalDate end, String type) {
-        return ksSalesRepository.findByEntityFromBetween(start, end, type);
+    public List<KsSalesEntity> getAllFromBetween(LocalDate start, LocalDate end, String type) {
+        return ksSalesRepository.findByAllFromBetween(start, end, type);
     }
 }

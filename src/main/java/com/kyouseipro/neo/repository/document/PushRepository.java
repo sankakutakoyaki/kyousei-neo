@@ -23,7 +23,7 @@ public class PushRepository {
      * @return　見つからなければNullを返す
      */
     public SubscriptionRequest findByEndpoint(String endpoint){
-        String sql = PushSqlBuilder.buildFindByEndpointSql();
+        String sql = PushSqlBuilder.buildFindByEndpoint();
 
         return sqlRepositry.execute(
             sql,
@@ -39,11 +39,11 @@ public class PushRepository {
      * @return
      */
     public Integer save(SubscriptionRequest subscription, String editor){
-        String sql = PushSqlBuilder.buildInsertSubscriptionSql();
+        String sql = PushSqlBuilder.buildInsertSubscription();
 
         return sqlRepositry.execute(
             sql,
-            (pstmt, sub) -> PushParameterBinder.bindInsertSubscriptionParameters(pstmt, sub, editor),
+            (pstmt, sub) -> PushParameterBinder.bindInsertSubscription(pstmt, sub, editor),
             rs -> rs.next() ? rs.getInt("subscrioption_id") : null,
             subscription
         );
@@ -54,7 +54,7 @@ public class PushRepository {
      * @return
      */
     public List<SubscriptionRequest> findAll() {
-        String sql = PushSqlBuilder.buildFindAllSql();
+        String sql = PushSqlBuilder.buildFindAll();
 
         return sqlRepositry.findAll(
             sql,
@@ -70,7 +70,7 @@ public class PushRepository {
      * @return
      */
     public Integer deleteByEndpoint(String endpoint, String editor){
-        String sql = PushSqlBuilder.buildDeleteSubscriptionForEndpointSql();
+        String sql = PushSqlBuilder.buildDeleteSubscriptionForEndpoint();
 
         Integer result = sqlRepositry.executeUpdate(
             sql,

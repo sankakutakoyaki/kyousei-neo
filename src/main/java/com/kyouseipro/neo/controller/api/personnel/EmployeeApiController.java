@@ -32,8 +32,8 @@ public class EmployeeApiController {
      */
     @PostMapping("/employee/get/id")
 	@ResponseBody
-    public EmployeeEntity getEntityById(@RequestParam int id) {
-        return employeeService.getEmployeeById(id);
+    public EmployeeEntity getById(@RequestParam int id) {
+        return employeeService.getById(id);
     }
 
     /**
@@ -43,14 +43,14 @@ public class EmployeeApiController {
      */
     @PostMapping("/employee/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> saveEmployee(@RequestBody EmployeeEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody EmployeeEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = employeeService.saveEmployee(entity, userName);
+        Integer id = employeeService.save(entity, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "employees", "保存", 200, "成功");
+            historyService.save(userName, "employees", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
-            historyService.saveHistory(userName, "employees", "保存", 400, "失敗");
+            historyService.save(userName, "employees", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -62,14 +62,14 @@ public class EmployeeApiController {
      */
     @PostMapping("/employee/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = employeeService.deleteEmployeeByIds(ids, userName);
+        Integer id = employeeService.deleteByIds(ids, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "employees", "削除", 200, "成功");
+            historyService.save(userName, "employees", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
-            historyService.saveHistory(userName, "employees", "削除", 400, "失敗");
+            historyService.save(userName, "employees", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -81,19 +81,9 @@ public class EmployeeApiController {
      */
     @PostMapping("/employee/download/csv")
 	@ResponseBody
-    public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        historyService.saveHistory(userName, "employees", "ダウンロード", 0, "");
-        return employeeService.downloadCsvEmployeeByIds(ids, userName);
+        historyService.save(userName, "employees", "ダウンロード", 0, "");
+        return employeeService.downloadCsvByIds(ids, userName);
     }
-
-    // /**
-    //  * すべてのコンボボックス用取引先情報を取得する
-    //  * @return
-    //  */
-    // @GetMapping("/employee/get/combo")
-	// @ResponseBody
-    // public List<EmployeeEntity> getEmployeeCombo() {
-    //     return comboBoxService.getClient();
-    // }
 }

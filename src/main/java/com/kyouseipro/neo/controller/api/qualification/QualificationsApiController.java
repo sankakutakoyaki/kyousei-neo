@@ -32,26 +32,14 @@ public class QualificationsApiController {
      */
     @PostMapping("/qualifications/get/id")
 	@ResponseBody
-    public List<QualificationsEntity> getQualificationsById(@RequestParam int id, @RequestParam int category) {
+    public List<QualificationsEntity> getById(@RequestParam int id, @RequestParam int category) {
         switch (category) {
             case 0:
-                return qualificationsService.getQualificationsByIdForEmployee(id);
+                return qualificationsService.getByEmployeeId(id);
             default:
-                return qualificationsService.getQualificationsByIdForCompany(id);
+                return qualificationsService.getByCompanyId(id);
         }
-        // return qualificationsService.getQualificationsByIdForEmployee(id);
     }
-
-    // /**
-    //  * IDから情報を取得する
-    //  * @param ID
-    //  * @return 
-    //  */
-    // @PostMapping("/license/get/id")
-	// @ResponseBody
-    // public List<QualificationsEntity> getQualificationsByIdForCompany(@RequestParam int id) {
-    //     return qualificationsService.getQualificationsByIdForCompany(id);
-    // }
 
     /**
      * 情報を保存する
@@ -60,9 +48,9 @@ public class QualificationsApiController {
      */
     @PostMapping("/qualifications/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> saveEntity(@RequestBody QualificationsEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody QualificationsEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = qualificationsService.saveQualifications(entity, userName);
+        Integer id = qualificationsService.save(entity, userName);
         if (id != null && id > 0) {
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
@@ -77,14 +65,14 @@ public class QualificationsApiController {
      */
     @PostMapping("/qualifications/delete/id")
     @ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteEntityById(@RequestParam int id, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> deleteById(@RequestParam int id, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer result = qualificationsService.deleteQualificationsById(id, userName);
+        Integer result = qualificationsService.deleteById(id, userName);
         if (result != null && result > 0) {
-            historyService.saveHistory(userName, "qualifications", "削除", 200, "成功");
+            historyService.save(userName, "qualifications", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("削除しました。", result));
         } else {
-            historyService.saveHistory(userName, "qualifications", "削除", 400, "失敗");
+            historyService.save(userName, "qualifications", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -95,8 +83,8 @@ public class QualificationsApiController {
      */
     @GetMapping("/qualifications/get")
 	@ResponseBody
-    public List<QualificationsEntity> getQualificationsListForEmployee() {
-        return qualificationsService.getEmployeeQualificationsList();
+    public List<QualificationsEntity> getListForEmployee() {
+        return qualificationsService.getListForEmployee();
     }
 
     /**
@@ -105,7 +93,7 @@ public class QualificationsApiController {
      */
     @GetMapping("/license/get")
 	@ResponseBody
-    public List<QualificationsEntity> getQualificationsListForCompany() {
-        return qualificationsService.getCompanyQualificationsList();
+    public List<QualificationsEntity> getListForCompany() {
+        return qualificationsService.getListFroCompany();
     }
 }

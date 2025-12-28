@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import com.kyouseipro.neo.entity.document.HistoryEntity;
 
 public class HistoryParameterBinder {
-    public static int bindInsertHistoryParameters(PreparedStatement pstmt, HistoryEntity history, String editor) throws SQLException {
+    public static int bindInsert(PreparedStatement pstmt, HistoryEntity history, String editor) throws SQLException {
         int index = 1;
         pstmt.setString(index++, history.getUser_name());
         pstmt.setString(index++, history.getTable_name());

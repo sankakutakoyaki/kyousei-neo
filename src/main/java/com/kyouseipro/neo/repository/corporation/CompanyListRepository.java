@@ -21,7 +21,7 @@ public class CompanyListRepository {
 
     // 全件取得
     public List<CompanyListEntity> findAll() {
-        String sql = CompanyListSqlBuilder.buildFindAllSql();
+        String sql = CompanyListSqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,
@@ -32,7 +32,7 @@ public class CompanyListRepository {
 
     // 全件取得
     public List<CompanyListEntity> findAllClient() {
-        String sql = CompanyListSqlBuilder.buildFindAllClientSql();
+        String sql = CompanyListSqlBuilder.buildFindAllClient();
 
         return sqlRepository.findAll(
             sql,
@@ -43,7 +43,7 @@ public class CompanyListRepository {
 
     // 全件取得
     public List<CompanyListEntity> findByCategoryId(int categoryId) {
-        String sql = CompanyListSqlBuilder.buildFindAllClientSql();
+        String sql = CompanyListSqlBuilder.buildFindAllClient();
 
         return sqlRepository.findAll(
             sql,
@@ -54,7 +54,7 @@ public class CompanyListRepository {
 
     // コンボボックス用リスト取得
     public List<SimpleData> findAllComboOwnCompany() {
-        String sql = CompanyListSqlBuilder.buildFindAllComboOwnCompanySql();
+        String sql = CompanyListSqlBuilder.buildFindAllComboOwnCompany();
 
         return sqlRepository.findAll(
             sql,
@@ -64,52 +64,52 @@ public class CompanyListRepository {
     }
 
     // コンボボックス用リスト取得
-    public List<SimpleData> findAllComboCompany() {
-        String sql = CompanyListSqlBuilder.buildFindAllComboCompanySql();
+    public List<SimpleData> findAllCombo() {
+        String sql = CompanyListSqlBuilder.buildFindAllCombo();
 
         return sqlRepository.findAll(
             sql,
-            ps -> CompanyListParameterBinder.bindFindAllComboCompany(ps, null),
+            ps -> CompanyListParameterBinder.bindFindAllCombo(ps, null),
             SimpleDataMapper::map
         );
     }
 
     // コンボボックス用リスト取得
-    public List<SimpleData> findAllComboClient() {
-        String sql = CompanyListSqlBuilder.buildFindAllComboClientSql();
+    public List<SimpleData> findAllClientCombo() {
+        String sql = CompanyListSqlBuilder.buildFindAllClientCombo();
 
         return sqlRepository.findAll(
             sql,
-            ps -> CompanyListParameterBinder.bindFindAllComboClient(ps, null),
+            ps -> CompanyListParameterBinder.bindFindAllClientCombo(ps, null),
             SimpleDataMapper::map
         );
     }
 
     // コンボボックス用リスト取得
-    public List<SimpleData> findAllComboPrimeConstractor() {
-        String sql = CompanyListSqlBuilder.buildFindAllComboPrimeConstractorSql();
+    public List<SimpleData> findAllPrimeConstractorCombo() {
+        String sql = CompanyListSqlBuilder.buildFindAllPrimeConstractorCombo();
 
         return sqlRepository.findAll(
             sql,
-            ps -> CompanyListParameterBinder.bindFindAllComboPrimeConstractor(ps, null),
+            ps -> CompanyListParameterBinder.bindFindAllPrimeConstractorCombo(ps, null),
             SimpleDataMapper::map
         );
     }
 
     // 料金表コンボボックス用リスト取得
-    public List<SimpleData> findAllComboPrimeConstractorHasOriginalPrice() {
-        String sql = CompanyListSqlBuilder.buildFindAllComboPrimeConstractorHasOriginalPriceSql();
+    public List<SimpleData> findAllPrimeConstractorComboHasOriginalPrice() {
+        String sql = CompanyListSqlBuilder.buildFindAllPrimeConstractorComboHasOriginalPrice();
 
         return sqlRepository.findAll(
             sql,
-            ps -> CompanyListParameterBinder.bindFindAllComboPrimeConstractorHasOriginalPrice(ps, null),
+            ps -> CompanyListParameterBinder.bindFindAllPrimeConstractorComboHasOriginalPrice(ps, null),
             SimpleDataMapper::map
         );
     }
 
     // コンボボックス用リスト取得
     public List<SimpleData> findAllComboByCategory(int category) {
-        String sql = CompanyListSqlBuilder.buildFindAllComboByCategorySql();
+        String sql = CompanyListSqlBuilder.buildFindAllComboByCategory();
 
         return sqlRepository.findAll(
             sql,

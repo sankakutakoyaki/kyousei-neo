@@ -20,17 +20,6 @@ import lombok.RequiredArgsConstructor;
 public class TimeworksListService {
     private final TimeworksListRepository timeworksListRepository;
 
-    // /**
-    //  * 指定された従業員IDの勤怠情報を取得します。
-    //  * 論理削除されている場合は null を返します。
-    //  *
-    //  * @param id 従業員ID
-    //  * @return TimeworksListEntity または null
-    //  */
-    // public TimeworksListEntity getEmployeeById(int id) {
-    //     return timeworksListRepository.findById(id);
-    // }
-
     /**
      * 今日の前従業員勤怠データを取得する
      * 
@@ -48,8 +37,8 @@ public class TimeworksListService {
      * @param id 従業員ID
      * @return TimeworksListEntity または null
      */
-    public TimeworksListEntity getTodaysEntityByEmployeeId(int id) {
-        return timeworksListRepository.findByTodaysEntityByEmployeeId(id);
+    public TimeworksListEntity getTodaysByEmployeeId(int id) {
+        return timeworksListRepository.findByTodaysByEmployeeId(id);
     }
 
     /**
@@ -59,8 +48,8 @@ public class TimeworksListService {
      * @param id 従業員ID
      * @return TimeworksListEntity または null
      */
-    public List<TimeworksListEntity> getBetweenEntityByEmployeeId(int id, LocalDate start, LocalDate end) {
-        return timeworksListRepository.findByEmployeeIdFromBetweenDate(id, start, end);
+    public List<TimeworksListEntity> getBetweenByEmployeeId(int id, LocalDate start, LocalDate end) {
+        return timeworksListRepository.findByBetweenByEmployeeId(id, start, end);
     }
 
     /**
@@ -70,8 +59,8 @@ public class TimeworksListService {
      * @param id 従業員ID
      * @return TimeworksListEntity または null
      */
-    public List<TimeworksListEntity> getBetweenAllEntityByEmployeeId(int id, LocalDate start, LocalDate end) {
-        return timeworksListRepository.findAllByEmployeeIdFromBetweenDate(id, start, end);
+    public List<TimeworksListEntity> getBetweenAllByEmployeeId(int id, LocalDate start, LocalDate end) {
+        return timeworksListRepository.findAllByBetweenByEmployeeId(id, start, end);
     }
 
     /**
@@ -81,8 +70,8 @@ public class TimeworksListService {
      * @param id 営業所ID
      * @return TimeworksSummaryListEntity または null
      */
-    public List<TimeworksSummaryEntity> getBetweenSummaryEntity(LocalDate start, LocalDate end) {
-        return timeworksListRepository.findByEntityFromBetweenDate(start, end);
+    public List<TimeworksSummaryEntity> getBetweenSummary(LocalDate start, LocalDate end) {
+        return timeworksListRepository.findByBetweenSummary(start, end);
     }
 
     /**
@@ -92,51 +81,8 @@ public class TimeworksListService {
      * @param id 営業所ID
      * @return TimeworksSummaryEntity または null
      */
-    public List<TimeworksSummaryEntity> getBetweenSummaryEntityByOfficeId(int id, LocalDate start, LocalDate end) {
-        return timeworksListRepository.findByOfficeIdFromBetweenDate(id, start, end);
-    }
-
-
-    /**
-     * 指定された営業所IDの指定した年の勤怠情報概要を取得します。
-     * 論理削除されている場合は null を返します。
-     *
-     * @param id 営業所ID
-     * @return PaidHolidayListEntity または null
-     */
-    public List<PaidHolidayListEntity> getPaidHolidayEntityFromYear(int id, String year) {
-        return timeworksListRepository.findPaidHolidayByOfficeIdFromYear(id, year);
-    }
-
-    /**
-     * 指定された従業員IDの指定した年の有給リストを取得します。
-     * 論理削除されている場合は null を返します。
-     *
-     * @param id 従業員ID
-     * @return PaidHolidayEntity または null
-     */
-    public List<PaidHolidayEntity> getPaidHolidayEntityByEmployeeId(int id, String year) {
-        return timeworksListRepository.findPaidHolidayByEmployeeIdFromYear(id, year);
-    }
-
-    /**
-     * 従業員の有給申請情報を保存します。
-     *
-     * @param entity 従業員の有給申請データ
-     * @return
-     */
-    public Integer savePaidHolidayEntityByEmployeeId(PaidHolidayEntity entity, String editor) {
-        return timeworksListRepository.insertPaidHolidayByEmployeeId(entity, editor);
-    }
-
-    /**
-     * 従業員の有給申請情報を削除します。
-     *
-     * @param id 従業員の有給申請ID
-     * @return
-     */
-    public Integer deletePaidHolidayEntityById(int id, String editor) {
-        return timeworksListRepository.deletePaidHolidayEntityById(id, editor);
+    public List<TimeworksSummaryEntity> getBetweenSummaryByOfficeId(int id, LocalDate start, LocalDate end) {
+        return timeworksListRepository.findByBetweenSummaryByOfficeId(id, start, end);
     }
 
     /**
@@ -145,11 +91,11 @@ public class TimeworksListService {
      * @param entity 従業員の勤怠データ
      * @return
      */
-    public Integer saveTodaysTimeworks(TimeworksListEntity entity, String editor) {
+    public Integer save(TimeworksListEntity entity, String editor) {
         if (entity.getTimeworks_id() > 0) {
-            return timeworksListRepository.updateTimeworks(entity, editor);
+            return timeworksListRepository.update(entity, editor);
         } else {
-            return timeworksListRepository.insertTimeworks(entity, editor);
+            return timeworksListRepository.insert(entity, editor);
         }
     }
 
@@ -169,8 +115,8 @@ public class TimeworksListService {
      * @param list 修正した従業員の勤怠データリスト
      * @return
      */
-    public Integer updateTimeworksList(List<TimeworksListEntity> list, String editor) {
-        return timeworksListRepository.updateTimeworksList(list, editor);
+    public Integer updateList(List<TimeworksListEntity> list, String editor) {
+        return timeworksListRepository.updateList(list, editor);
     }
 
     /**
@@ -178,8 +124,8 @@ public class TimeworksListService {
      * @param ids
      * @return
      */
-    public String downloadCsvByIds(List<SimpleData> list, String start, String end, String userName) {
-        List<TimeworksListEntity> items = timeworksListRepository.downloadCsvByIds(list, start, end, userName);
+    public String downloadCsvByIdsFromBetween(List<SimpleData> list, String start, String end, String userName) {
+        List<TimeworksListEntity> items = timeworksListRepository.downloadCsvByIdsFromBetween(list, start, end, userName);
         return CsvExporter.export(items, TimeworksListEntity.class);
     }
 }

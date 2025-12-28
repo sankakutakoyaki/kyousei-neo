@@ -22,7 +22,7 @@ public class WorkItemService {
      * @param id 受注ID
      * @return OrderEntity または null
      */
-    public WorkItemEntity getWorkItemById(int id) {
+    public WorkItemEntity getById(int id) {
         return workItemRepository.findById(id);
     }
 
@@ -31,7 +31,7 @@ public class WorkItemService {
      * @param id
      * @return
      */
-    public List<WorkItemEntity> getWorkItemByCategoryId(int id) {
+    public List<WorkItemEntity> getByCategoryId(int id) {
         return workItemRepository.findAllByCategoryId(id);
     }
 
@@ -51,11 +51,11 @@ public class WorkItemService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer saveWorkItem(WorkItemEntity item, String editor) {
+    public Integer save(WorkItemEntity item, String editor) {
         if (item.getWork_item_id() > 0) {
-            return workItemRepository.updateWorkItem(item, editor);
+            return workItemRepository.update(item, editor);
         } else {
-            return workItemRepository.insertWorkItem(item, editor);
+            return workItemRepository.insert(item, editor);
         }
         
     }
@@ -65,8 +65,8 @@ public class WorkItemService {
      * @param ids
      * @return
      */
-    public Integer deleteWorkItemByIds(List<SimpleData> list, String userName) {
-        return workItemRepository.deleteWorkItemByIds(list, userName);
+    public Integer deleteByIds(List<SimpleData> list, String userName) {
+        return workItemRepository.deleteByIds(list, userName);
     }
 
     /**
@@ -74,8 +74,8 @@ public class WorkItemService {
      * @param ids
      * @return
      */
-    public String downloadCsvWorkItemByIds(List<SimpleData> list) {
-        List<WorkItemEntity> recycles = workItemRepository.downloadCsvWorkItemByIds(list);
+    public String downloadCsvByIds(List<SimpleData> list) {
+        List<WorkItemEntity> recycles = workItemRepository.downloadCsvByIds(list);
         return CsvExporter.export(recycles, WorkItemEntity.class);
     }
 }

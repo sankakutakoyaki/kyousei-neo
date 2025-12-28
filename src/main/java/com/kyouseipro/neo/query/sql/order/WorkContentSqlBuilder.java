@@ -4,7 +4,7 @@ import com.kyouseipro.neo.common.Utilities;
 
 public class WorkContentSqlBuilder {
 
-    private static String buildLogTableSql(String rowTableName) {
+    private static String buildLogTable(String rowTableName) {
         return
             "DECLARE " + rowTableName + " TABLE (" +
             "  work_content_id INT, order_id INT, work_content NVARCHAR(255), work_quantity INT, work_payment INT, " +
@@ -12,7 +12,7 @@ public class WorkContentSqlBuilder {
             "); ";
     }
 
-    private static String buildInsertLogSql(String rowTableName, String processName) {
+    private static String buildInsertLog(String rowTableName, String processName) {
         return
             "INSERT INTO work_contents_log (" +
             "  work_content_id, editor, process, log_date, order_id, work_content, work_quantity, work_payment, " +
@@ -23,80 +23,80 @@ public class WorkContentSqlBuilder {
             "FROM " + rowTableName + ";";
     }
 
-    private static String buildOutputLogSql() {
+    private static String buildOutputLog() {
         return
             "OUTPUT INSERTED.work_content_id, INSERTED.order_id, INSERTED.work_content, INSERTED.work_quantity, INSERTED.work_payment, " +
             "  INSERTED.version, INSERTED.state ";
     }
 
-    public static String buildInsertWorkContentSql(int index) {
+    public static String buildInsert(int index) {
         String rowTableName = "@InsertedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "INSERT INTO work_contents (" +
             " order_id, work_content, work_quantity, work_payment, " +
             " version, state" +
             ") " +
 
-            buildOutputLogSql() + "INTO " + rowTableName + " " +
+            buildOutputLog() + "INTO " + rowTableName + " " +
 
             "VALUES (?, ?, ?, ?, ?, ?); " +
 
-            buildInsertLogSql(rowTableName, "INSERT") +
+            buildInsertLog(rowTableName, "INSERT") +
 
             "SELECT work_content_id FROM " + rowTableName + ";";
     }
 
-    public static String buildInsertWorkContentByNewOrderSql(int index) {
+    public static String buildInsertByNewOrder(int index) {
         String rowTableName = "@InsertedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "INSERT INTO work_contents (" +
             " order_id, work_content, work_quantity, work_payment, " +
             " version, state" +
             ") " +
 
-            buildOutputLogSql() + "INTO " + rowTableName + " " +
+            buildOutputLog() + "INTO " + rowTableName + " " +
 
             "VALUES (@NEW_ID, ?, ?, ?, ?, ?); " +
 
-            buildInsertLogSql(rowTableName, "INSERT") +
+            buildInsertLog(rowTableName, "INSERT") +
 
             "SELECT work_content_id FROM " + rowTableName + ";";
     }
 
-    public static String buildUpdateWorkContentSql(int index) {
+    public static String buildUpdate(int index) {
         String rowTableName = "@UpdatedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "UPDATE work_contents SET " +
             "  order_id=?, work_content=?, work_quantity=?, work_payment=?, " +
             "  version=?, state=? " +
             
-            buildOutputLogSql() + "INTO " + rowTableName + " " +
+            buildOutputLog() + "INTO " + rowTableName + " " +
 
             "WHERE work_content_id=?; " +
 
-            buildInsertLogSql(rowTableName, "UPDATE") +
+            buildInsertLog(rowTableName, "UPDATE") +
 
             "SELECT work_content_id FROM " + rowTableName + ";";
     }
 
-    public static String buildDeleteWorkContentSql(int index) {
+    public static String buildDelete(int index) {
         String rowTableName = "@UpdatedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "UPDATE work_contents SET state = ? " +
 
-            buildOutputLogSql() + "INTO " + rowTableName  + " " +
+            buildOutputLog() + "INTO " + rowTableName  + " " +
             
             "WHERE work_content_id = ? ; " +
 
-            buildInsertLogSql(rowTableName, "DELETE") +
+            buildInsertLog(rowTableName, "DELETE") +
 
             "SELECT work_content_id FROM " + rowTableName + ";";
     }
@@ -106,22 +106,22 @@ public class WorkContentSqlBuilder {
             "SELECT wc.work_content_id, wc.order_id, wc.work_content, wc.work_quantity, wc.work_payment," +
             " wc.version, wc.state FROM work_contents wc";
     }
-    public static String buildFindByIdSql() {
+    public static String buildFindById() {
         return 
             baseSelectString() + " WHERE wc.work_content_id = ? AND NOT (wc.state = ?)";
     }
 
-    public static String buildFindAllSql() {
+    public static String buildFindAll() {
         return 
             baseSelectString() + " WHERE NOT (wc.state = ?)";
     }
 
-    public static String buildFindAllByOrderIdSql() {
+    public static String buildFindAllByOrderId() {
         return 
             baseSelectString() + " WHERE wc.order_id = ? AND NOT (wc.state = ?)";
     }
 
-    public static String buildDownloadCsvWorkContentForIdsSql(int count) {
+    public static String buildDownloadCsvByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return 
             baseSelectString() + " WHERE wc.work_content_id IN (" + placeholders + ") AND NOT (wc.state = ?)";

@@ -16,7 +16,7 @@ public class AddressRepository {
 
     // IDによる取得
     public AddressEntity findByPostalCode(String postalCode) {
-        String sql = AddressSqlBuilder.buildFindByPostalCodeSql();
+        String sql = AddressSqlBuilder.buildFindByPostalCode();
 
         return sqlRepository.execute(
             sql,

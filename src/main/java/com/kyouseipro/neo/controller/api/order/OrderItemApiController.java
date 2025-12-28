@@ -36,8 +36,8 @@ public class OrderItemApiController {
      */
     @PostMapping("/order/item/get/id")
 	@ResponseBody
-    public OrderItemEntity getEntityById(@RequestParam int id) {
-        return orderItemService.getOrderItemById(id);
+    public OrderItemEntity getById(@RequestParam int id) {
+        return orderItemService.getById(id);
     }
 
     /**
@@ -48,10 +48,10 @@ public class OrderItemApiController {
      */
     @PostMapping("/order/item/get/between")
 	@ResponseBody
-    public List<OrderItemEntity> getBetweenAllEntity(
+    public List<OrderItemEntity> getBetween(
                 @RequestParam LocalDate start,
                 @RequestParam LocalDate end) {
-        List<OrderItemEntity> list = orderItemService.getBetweenOrderItemEntity(start, end);
+        List<OrderItemEntity> list = orderItemService.getBetween(start, end);
         return list;
     }
 
@@ -62,15 +62,15 @@ public class OrderItemApiController {
      */
     @PostMapping("/order/item/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> saveOrder(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
         List<OrderItemEntity> itemList = objectMapper.convertValue(body.get("list"), new TypeReference<List<OrderItemEntity>>() {});
-        Integer id = orderItemService.saveOrderItem(itemList, userName);
+        Integer id = orderItemService.save(itemList, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "orders", "保存", 200, "成功");
+            historyService.save(userName, "orders", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
-            historyService.saveHistory(userName, "orders", "保存", 400, "失敗");
+            historyService.save(userName, "orders", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -82,14 +82,14 @@ public class OrderItemApiController {
      */
     @PostMapping("/order/item/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = orderItemService.deleteOrderItemByIds(ids, userName);
+        Integer id = orderItemService.deleteByIds(ids, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "order_items", "削除", 200, "成功");
+            historyService.save(userName, "order_items", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
-            historyService.saveHistory(userName, "order_items", "削除", 400, "失敗");
+            historyService.save(userName, "order_items", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -101,9 +101,9 @@ public class OrderItemApiController {
      */
     @PostMapping("/order/item/download/csv")
 	@ResponseBody
-    public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        historyService.saveHistory(userName, "orders_item", "ダウンロード", 0, "");
-        return orderItemService.downloadCsvOrderByIds(ids, userName);
+        historyService.save(userName, "orders_item", "ダウンロード", 0, "");
+        return orderItemService.downloadCsvByIds(ids, userName);
     }
 }

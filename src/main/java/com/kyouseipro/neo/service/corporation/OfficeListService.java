@@ -18,7 +18,7 @@ public class OfficeListService {
      * すべてのOfficeを取得
      * @return
      */
-    public List<OfficeListEntity> getOfficeList() {
+    public List<OfficeListEntity> getList() {
         return officeListRepository.findAll();
         // StringBuilder sb = new StringBuilder();
         // sb.append(OfficeListEntity.selectString());
@@ -46,7 +46,7 @@ public class OfficeListService {
      * カテゴリー別のOfficeを取得
      * @return
      */
-    public List<OfficeListEntity> getOfficeListByCategory(int category) {
+    public List<OfficeListEntity> getListByCategoryId(int category) {
         return officeListRepository.findByCategoryId(category);
         // StringBuilder sb = new StringBuilder();
         // sb.append(OfficeListEntity.selectString());

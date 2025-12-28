@@ -32,8 +32,8 @@ public class StaffApiController {
      */
     @PostMapping("/staff/get/id")
 	@ResponseBody
-    public StaffEntity getEntityById(@RequestParam int id) {
-        return staffService.getStaffById(id);
+    public StaffEntity getById(@RequestParam int id) {
+        return staffService.getById(id);
     }
    
     /**
@@ -43,14 +43,14 @@ public class StaffApiController {
      */
     @PostMapping("/staff/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> saveEntity(@RequestBody StaffEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody StaffEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = staffService.saveStaff(entity, userName);
+        Integer id = staffService.save(entity, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "staffs", "保存", 200, "成功");
+            historyService.save(userName, "staffs", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
-            historyService.saveHistory(userName, "staffs", "保存", 400, "失敗");
+            historyService.save(userName, "staffs", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -62,14 +62,14 @@ public class StaffApiController {
      */
     @PostMapping("/staff/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = staffService.deleteStaffByIds(ids, userName);
+        Integer id = staffService.deleteByIds(ids, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "staffs", "削除", 200, "成功");
+            historyService.save(userName, "staffs", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
-            historyService.saveHistory(userName, "staffs", "削除", 400, "失敗");
+            historyService.save(userName, "staffs", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -81,9 +81,9 @@ public class StaffApiController {
      */
     @PostMapping("/staff/download/csv")
 	@ResponseBody
-    public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        historyService.saveHistory(userName, "staffs", "ダウンロード", 0, "");
-        return staffService.downloadCsvStaffByIds(ids, userName);
+        historyService.save(userName, "staffs", "ダウンロード", 0, "");
+        return staffService.downloadCsvByIds(ids, userName);
     }
 }

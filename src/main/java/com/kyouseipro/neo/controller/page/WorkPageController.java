@@ -45,7 +45,7 @@ public class WorkPageController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = employeeService.getByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期表示用受注リスト取得
@@ -59,7 +59,7 @@ public class WorkPageController {
         mv.addObject("ownCompanyId", Utilities.getOwnCompanyId());
 
         // 履歴保存
-        historyService.saveHistory(userName, "work_item", "閲覧", 0, "");
+        historyService.save(userName, "work_item", "閲覧", 0, "");
 		
         return mv;
     }
@@ -77,7 +77,7 @@ public class WorkPageController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = employeeService.getByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期表示用受注リスト取得
@@ -91,7 +91,7 @@ public class WorkPageController {
         mv.addObject("categoryComboList", categoryComboList);
 
         // 履歴保存
-        historyService.saveHistory(userName, "work_price", "閲覧", 0, "");
+        historyService.save(userName, "work_price", "閲覧", 0, "");
 		
         return mv;
     }

@@ -4,7 +4,7 @@ import com.kyouseipro.neo.common.Utilities;
 
 public class WorkingConditionsSqlBuilder {
 
-    private static String buildLogTableSql(String rowTableName) {
+    private static String buildLogTable(String rowTableName) {
         return
             "DECLARE " + rowTableName + " TABLE (" +
             "  working_conditions_id INT, employee_id INT, " +
@@ -13,7 +13,7 @@ public class WorkingConditionsSqlBuilder {
             "); ";
     }
 
-    private static String buildInsertLogSql(String rowTableName, String processName) {
+    private static String buildInsertLog(String rowTableName, String processName) {
         return
             "INSERT INTO working_conditions_log (" +
             "  working_conditions_id, editor, process, log_date, employee_id, payment_method, " +
@@ -24,65 +24,65 @@ public class WorkingConditionsSqlBuilder {
             "FROM " + rowTableName + ";";
     }
 
-    private static String buildOutputLogSql() {
+    private static String buildOutputLog() {
         return
             "OUTPUT INSERTED.working_conditions_id, INSERTED.employee_id, " +
             "  INSERTED.payment_method, INSERTED.pay_type, INSERTED.base_salary, INSERTED.trans_cost, " +
             "  INSERTED.basic_start_time, INSERTED.basic_end_time, INSERTED.version, INSERTED.state ";
     }
 
-    public static String buildInsertSql() {
+    public static String buildInsert() {
         return
-            buildLogTableSql("@Inserted") +
+            buildLogTable("@Inserted") +
 
             "INSERT INTO working_conditions (" +
             "  employee_id, payment_method, pay_type, base_salary, trans_cost, " +
             "  basic_start_time, basic_end_time, version, state" +
             ") " +
-            buildOutputLogSql() + "INTO @Inserted " +
+            buildOutputLog() + "INTO @Inserted " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
-            buildInsertLogSql("@Inserted", "INSERT") +
+            buildInsertLog("@Inserted", "INSERT") +
             "SELECT working_conditions_id FROM @Inserted;";
     }
 
-    public static String buildUpdateSql() {
+    public static String buildUpdate() {
         return
-            buildLogTableSql("@Updated") +
+            buildLogTable("@Updated") +
 
             "UPDATE working_conditions SET " +
             "  employee_id=?, payment_method=?, pay_type=?, base_salary=?, trans_cost=?, " +
             "  basic_start_time=?, basic_end_time=?, version=?, state=? " +
-            buildOutputLogSql() + "INTO @Updated " +
+            buildOutputLog() + "INTO @Updated " +
             "WHERE working_conditions_id=?; " +
 
-            buildInsertLogSql("@Updated", "UPDATE") +
+            buildInsertLog("@Updated", "UPDATE") +
             "SELECT working_conditions_id FROM @Updated;";
     }
 
-    public static String buildDeleteWorkingConditionsForIdsSql(int count) {
+    public static String buildDeleteByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count);
 
         return
-            buildLogTableSql("@Deleted") +
+            buildLogTable("@Deleted") +
 
             "UPDATE working_conditions SET state = ? " +
-            buildOutputLogSql() + "INTO @Deleted " +
+            buildOutputLog() + "INTO @Deleted " +
             "WHERE working_conditions_id IN (" + placeholders + ") AND NOT (state = ?); " +
 
-            buildInsertLogSql("@Deleted", "DELETE") +
+            buildInsertLog("@Deleted", "DELETE") +
             "SELECT working_conditions_id FROM @Deleted;";
     }
 
-    public static String buildDeleteWorkingConditionsSql() {
+    public static String buildDelete() {
         return
-            buildLogTableSql("@Deleted") +
+            buildLogTable("@Deleted") +
 
             "UPDATE working_conditions SET state = ? " +
-            buildOutputLogSql() + "INTO @Deleted " +
+            buildOutputLog() + "INTO @Deleted " +
             "WHERE working_conditions_id = ?; " +
 
-            buildInsertLogSql("@Deleted", "DELETE") +
+            buildInsertLog("@Deleted", "DELETE") +
             "SELECT working_conditions_id FROM @Deleted;";
     }
 
@@ -96,25 +96,25 @@ public class WorkingConditionsSqlBuilder {
             " LEFT OUTER JOIN offices o ON o.office_id = e.office_id AND NOT (o.state = ?)";
     }
 
-    public static String buildFindByIdSql() {
+    public static String buildFindById() {
         return
             basicSelectString() +
             " WHERE NOT (e.state = ?) AND w.working_conditions_id = ?";
     }
 
-    public static String buildFindByEmployeeIdSql() {
+    public static String buildFindByEmployeeId() {
         return
             basicSelectString() +
             " WHERE NOT (e.state = ?) AND e.employee_id = ?";
     }
 
-    public static String buildFindAllSql() {
+    public static String buildFindAll() {
         return
             basicSelectString() +
             " WHERE NOT (e.state = ?)";
     }
 
-    public static String buildDownloadCsvWorkingConditionsForIdsSql(int count) {
+    public static String buildDownloadCsvByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return
             basicSelectString() + 

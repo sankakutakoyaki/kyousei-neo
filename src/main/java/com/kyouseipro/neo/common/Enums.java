@@ -345,4 +345,38 @@ public class Enums {
             return Utilities.enumValueOf(Enums.yesOrNo.class, num).getDescription();
         }
     }
+
+    /**
+     * 自社営業所
+     * 
+     * @return 0.本社　1.大阪　2.和歌山　3.尼崎
+     */
+    public enum ownOffice implements CodeEnum {
+        MAIN(0, "本社"),
+        OSAKA(1, "大阪"),
+        WAKAYAMA(2, "和歌山"),
+        AMAGASAKI(3, "尼崎");
+
+        private int num;
+        private String str;
+
+        private ownOffice(int num, String str) {
+            this.num = num;
+            this.str = str;
+        }
+
+        @Override
+        public int getCode() {
+            return this.num;
+        }
+
+        @Override
+        public String getDescription() {
+            return this.str;
+        }
+
+        public static String getDescriptionByNum(int num) {
+            return Utilities.enumValueOf(Enums.yesOrNo.class, num).getDescription();
+        }
+    }
 }

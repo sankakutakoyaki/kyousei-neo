@@ -23,8 +23,7 @@ public class RecycleItemService {
      * @param id リサイクルID
      * @return RecycleEntity または null
      */
-    public RecycleItemEntity getRecycleItemById(int id) {
-        // String sql = OrderSqlBuilder.buildFindByIdSql();
+    public RecycleItemEntity getById(int id) {
         return recycleItemRepository.findById(id);
     }
 
@@ -35,8 +34,7 @@ public class RecycleItemService {
      * @param code
      * @return RecycleEntity または null
      */
-    public RecycleItemEntity getRecycleItemByCode(int code) {
-        // String sql = OrderSqlBuilder.buildFindByIdSql();
+    public RecycleItemEntity getByCode(int code) {
         return recycleItemRepository.findByCode(code);
 
     }
@@ -49,11 +47,11 @@ public class RecycleItemService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer saveRecycleItem(RecycleItemEntity entity) {
+    public Integer save(RecycleItemEntity entity) {
         if (entity.getRecycle_item_id() > 0) {
-            return recycleItemRepository.updateRecycleItem(entity);
+            return recycleItemRepository.update(entity);
         } else {
-            return recycleItemRepository.insertRecycleItem(entity);
+            return recycleItemRepository.insert(entity);
         }
     }
 
@@ -62,8 +60,8 @@ public class RecycleItemService {
      * @param ids
      * @return
      */
-    public Integer deleteRecycleItemByIds(List<SimpleData> list) {
-        return recycleItemRepository.deleteRecycleItemByIds(list);
+    public Integer deleteByIds(List<SimpleData> list) {
+        return recycleItemRepository.deleteByIds(list);
     }
 
     /**
@@ -71,8 +69,8 @@ public class RecycleItemService {
      * @param ids
      * @return
      */
-    public String downloadCsvRecycleItemByIds(List<SimpleData> list) {
-        List<RecycleItemEntity> recycles = recycleItemRepository.downloadCsvRecycleItemByIds(list);
+    public String downloadCsvByIds(List<SimpleData> list) {
+        List<RecycleItemEntity> recycles = recycleItemRepository.downloadCsvByIds(list);
         return CsvExporter.export(recycles, RecycleItemEntity.class);
     }
 }

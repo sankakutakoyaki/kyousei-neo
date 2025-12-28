@@ -4,7 +4,7 @@ import com.kyouseipro.neo.common.Utilities;
 
 public class OfficeSqlBuilder {
 
-    private static String buildLogTableSql(String rowTableName) {
+    private static String buildLogTable(String rowTableName) {
         return
             "DECLARE " + rowTableName + " TABLE (" +
             "  office_id INT, company_id INT, name NVARCHAR(255), name_kana NVARCHAR(255), " +
@@ -14,14 +14,14 @@ public class OfficeSqlBuilder {
             "); ";
     }
 
-    private static String buildOutputLogSql() {
+    private static String buildOutputLog() {
         return
             "OUTPUT INSERTED.office_id, INSERTED.company_id, INSERTED.name, INSERTED.name_kana, " +
             "INSERTED.tel_number, INSERTED.fax_number, INSERTED.postal_code, INSERTED.full_address, " +
             "INSERTED.email, INSERTED.web_address, INSERTED.version, INSERTED.state ";
     }
 
-    private static String buildInsertLogSql(String rowTableName, String processName) {
+    private static String buildInsertLog(String rowTableName, String processName) {
         return
             "INSERT INTO offices_log (" +
             "  office_id, editor, process, log_date, company_id, name, name_kana, tel_number, fax_number, " +
@@ -33,46 +33,46 @@ public class OfficeSqlBuilder {
             "FROM " + rowTableName + ";";
     }
 
-    public static String buildInsertOfficeSql() {
+    public static String buildInsert() {
         return
-            buildLogTableSql("@Inserted") +
+            buildLogTable("@Inserted") +
 
             "INSERT INTO offices (" +
             "  company_id, name, name_kana, tel_number, fax_number, " +
             "  postal_code, full_address, email, web_address, version, state" +
             ") " +
-            buildOutputLogSql() + "INTO @Inserted " +
+            buildOutputLog() + "INTO @Inserted " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
-            buildInsertLogSql("@Inserted", "INSERT") +
+            buildInsertLog("@Inserted", "INSERT") +
             "SELECT office_id FROM @Inserted;";
     }
 
-    public static String buildUpdateOfficeSql() {
+    public static String buildUpdate() {
         return
-            buildLogTableSql("@Updated") +
+            buildLogTable("@Updated") +
 
             "UPDATE offices SET " +
             "  company_id=?, name=?, name_kana=?, tel_number=?, fax_number=?, " +
             "  postal_code=?, full_address=?, email=?, web_address=?, version=?, state=? " +
-            buildOutputLogSql() + "INTO @Updated " +
+            buildOutputLog() + "INTO @Updated " +
             "WHERE office_id=?; " +
 
-            buildInsertLogSql("@Updated", "UPDATE") +
+            buildInsertLog("@Updated", "UPDATE") +
             "SELECT office_id FROM @Updated;";
     }
 
-    public static String buildDeleteOfficeForIdsSql(int count) {
+    public static String buildDeleteByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count);
 
         return
-            buildLogTableSql("@Deleted") +
+            buildLogTable("@Deleted") +
 
             "UPDATE offices SET state = ? " +
-            buildOutputLogSql() + "INTO @Deleted " +
+            buildOutputLog() + "INTO @Deleted " +
             "WHERE office_id IN (" + placeholders + ") AND NOT (state = ?); " +
 
-            buildInsertLogSql("@Deleted", "DELETE") +
+            buildInsertLog("@Deleted", "DELETE") +
             "SELECT office_id FROM @Deleted;";
     }
 
@@ -82,25 +82,25 @@ public class OfficeSqlBuilder {
             " INNER JOIN companies c ON c.company_id = o.company_id AND NOT (c.state = ?)";
     }
 
-    public static String buildFindByIdSql() {
+    public static String buildFindById() {
         return
             baseSelectString() +
             " WHERE NOT (o.state = ?) AND o.office_id = ?";
     }
 
-    public static String buildFindAllSql() {
+    public static String buildFindAll() {
         return
             baseSelectString() +
             " WHERE NOT (o.state = ?)";
     }
 
-    public static String buildFindAllClientSql() {
+    public static String buildFindAllClient() {
         return 
             baseSelectString() + 
             " WHERE NOT (o.state = ?) AND NOT (c.category = ?)";
     }
 
-    public static String buildDownloadCsvOfficeForIdsSql(int count) {
+    public static String buildDownloadCsvByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return
             baseSelectString() +

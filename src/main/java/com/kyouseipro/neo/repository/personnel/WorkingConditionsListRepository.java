@@ -19,7 +19,7 @@ public class WorkingConditionsListRepository {
 
     // 全件取得
     public List<WorkingConditionsListEntity> findAll() {
-        String sql = WorkingConditionsListSqlBuilder.buildFindAllSql();
+        String sql = WorkingConditionsListSqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,
@@ -30,7 +30,7 @@ public class WorkingConditionsListRepository {
 
     // 全件取得
     public List<WorkingConditionsListEntity> findByCategoryId(int categoryId) {
-        String sql = WorkingConditionsListSqlBuilder.buildFindAllByCategoryIdSql();
+        String sql = WorkingConditionsListSqlBuilder.buildFindAllByCategoryId();
 
         return sqlRepository.findAll(
             sql,

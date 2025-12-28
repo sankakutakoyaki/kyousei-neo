@@ -20,56 +20,56 @@ public class StaffRepository {
     private final SqlRepository sqlRepository;
 
     // 新規登録
-    public Integer insertStaff(StaffEntity staff, String editor) {
-        String sql = StaffSqlBuilder.buildInsertStaffSql();
+    public Integer insert(StaffEntity staff, String editor) {
+        String sql = StaffSqlBuilder.buildInsert();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, entity) -> StaffParameterBinder.bindInsertStaffParameters(pstmt, entity, editor),
+            (pstmt, entity) -> StaffParameterBinder.bindInsert(pstmt, entity, editor),
             rs -> rs.next() ? rs.getInt("staff_id") : null,
             staff
         );
     }
 
     // 更新
-    public Integer updateStaff(StaffEntity staff, String editor) {
-        String sql = StaffSqlBuilder.buildUpdateStaffSql();
+    public Integer update(StaffEntity staff, String editor) {
+        String sql = StaffSqlBuilder.buildUpdate();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, entity) -> StaffParameterBinder.bindUpdateStaffParameters(pstmt, entity, editor),
+            (pstmt, entity) -> StaffParameterBinder.bindUpdate(pstmt, entity, editor),
             rs -> rs.next() ? rs.getInt("staff_id") : null,
             staff
         );
     }
 
 
-    public int deleteStaffByIds(List<SimpleData> ids, String editor) {
+    public int deleteByIds(List<SimpleData> ids, String editor) {
         List<Integer> staffIds = Utilities.createSequenceByIds(ids);
-        String sql = StaffSqlBuilder.buildDeleteStaffForIdsSql(staffIds.size());
+        String sql = StaffSqlBuilder.buildDeleteByIds(staffIds.size());
 
         int result = sqlRepository.executeUpdate(
             sql,
-            ps -> StaffParameterBinder.bindDeleteForIds(ps, staffIds, editor)
+            ps -> StaffParameterBinder.bindDeleteByIds(ps, staffIds, editor)
         );
 
         return result; // 成功件数。0なら削除なし
     }
 
-    public List<StaffEntity> downloadCsvStaffByIds(List<SimpleData> ids, String editor) {
+    public List<StaffEntity> downloadCsvByIds(List<SimpleData> ids, String editor) {
         List<Integer> staffIds = Utilities.createSequenceByIds(ids);
-        String sql = StaffSqlBuilder.buildDownloadCsvStaffForIdsSql(staffIds.size());
+        String sql = StaffSqlBuilder.buildDownloadCsvByIds(staffIds.size());
 
         return sqlRepository.findAll(
             sql,
-            ps -> StaffParameterBinder.bindDownloadCsvForIds(ps, staffIds),
+            ps -> StaffParameterBinder.bindDownloadCsvByIds(ps, staffIds),
             StaffEntityMapper::map // ← ここで ResultSet を map
         );
     }
    
     // IDによる取得
     public StaffEntity findById(int staffId) {
-        String sql = StaffSqlBuilder.buildFindByIdSql();
+        String sql = StaffSqlBuilder.buildFindById();
 
         return sqlRepository.execute(
             sql,
@@ -81,7 +81,7 @@ public class StaffRepository {
 
     // 全件取得
     public List<StaffEntity> findAll() {
-        String sql = StaffSqlBuilder.buildFindAllSql();
+        String sql = StaffSqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,

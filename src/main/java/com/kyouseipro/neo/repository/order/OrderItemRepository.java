@@ -28,7 +28,7 @@ public class OrderItemRepository {
      * @return IDから取得したEntityをかえす。
      */
     public OrderItemEntity findById(int orderItemId) {
-        String sql = OrderSqlBuilder.buildFindByIdSql();
+        String sql = OrderSqlBuilder.buildFindById();
 
         return sqlRepository.execute(
             sql,
@@ -45,7 +45,7 @@ public class OrderItemRepository {
      * @return
      */
     public List<OrderItemEntity> findAllByOrderId(int id, String editor) {
-        String sql = OrderItemSqlBuilder.buildFindAllByOrderIdSql();
+        String sql = OrderItemSqlBuilder.buildFindAllByOrderId();
 
         return sqlRepository.findAll(
             sql,
@@ -60,12 +60,12 @@ public class OrderItemRepository {
      * @param end
      * @return
      */
-    public List<OrderItemEntity> findByEntityFromBetweenDate(LocalDate start, LocalDate end) {
-        String sql = OrderItemSqlBuilder.buildFindByBetweenOrderItemEntity();
+    public List<OrderItemEntity> findByBetweenDate(LocalDate start, LocalDate end) {
+        String sql = OrderItemSqlBuilder.buildFindByBetween();
 
         return sqlRepository.findAll(
             sql,
-            ps -> OrderItemParameterBinder.bindFindByBetweenOrderItemEntity(ps, start, end),
+            ps -> OrderItemParameterBinder.bindFindByBetween(ps, start, end),
             OrderItemEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -76,25 +76,25 @@ public class OrderItemRepository {
      * @param editor
      * @return 新規IDを返す。
      */
-    public Integer saveOrderItemList(List<OrderItemEntity> itemList, String editor) {
+    public Integer save(List<OrderItemEntity> itemList, String editor) {
         String sql = "";
         int index = 1;
 
         for (OrderItemEntity entity : itemList) {
             if (entity.getState() == Enums.state.DELETE.getCode()) {
-                sql += OrderItemSqlBuilder.buildDeleteOrderItemSql(index++);
+                sql += OrderItemSqlBuilder.buildDelete(index++);
             } else {
                 if (entity.getOrder_item_id() > 0) {
-                    sql += OrderItemSqlBuilder.buildUpdateOrderItemSql(index++);
+                    sql += OrderItemSqlBuilder.buildUpdate(index++);
                 } else {
-                    sql += OrderItemSqlBuilder.buildInsertOrderItemSql(index++);
+                    sql += OrderItemSqlBuilder.buildInsert(index++);
                 }
             }
         }
 
         return sqlRepository.execute(
             sql,
-            (pstmt, emp) -> OrderItemParameterBinder.bindSaveOrderItemListParameters(pstmt, itemList, editor),
+            (pstmt, emp) -> OrderItemParameterBinder.bindSave(pstmt, itemList, editor),
             rs -> rs.next() ? rs.getInt("order_item_id") : null,
             itemList
         );
@@ -106,13 +106,13 @@ public class OrderItemRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public Integer deleteOrderItemByIds(List<SimpleData> ids, String editor) {
+    public Integer deleteByIds(List<SimpleData> ids, String editor) {
         List<Integer> orderItemIds = Utilities.createSequenceByIds(ids);
-        String sql = OrderItemSqlBuilder.buildDeleteOrderItemForIdsSql(orderItemIds.size());
+        String sql = OrderItemSqlBuilder.buildDeleteByIds(orderItemIds.size());
 
         return sqlRepository.executeUpdate(
             sql,
-            ps -> OrderItemParameterBinder.bindDeleteForIds(ps, orderItemIds, editor)
+            ps -> OrderItemParameterBinder.bindDeleteByIds(ps, orderItemIds, editor)
         );
         // return result; // 成功件数。0なら削除なし
     }
@@ -123,13 +123,13 @@ public class OrderItemRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<OrderItemEntity> downloadCsvOrderItemByIds(List<SimpleData> ids, String editor) {
+    public List<OrderItemEntity> downloadCsvByIds(List<SimpleData> ids, String editor) {
         List<Integer> orderIds = Utilities.createSequenceByIds(ids);
-        String sql = OrderItemSqlBuilder.buildDownloadCsvOrderItemForIdsSql(orderIds.size());
+        String sql = OrderItemSqlBuilder.buildDownloadCsvByIds(orderIds.size());
 
         return sqlRepository.findAll(
             sql,
-            ps -> OrderItemParameterBinder.bindDownloadCsvForIds(ps, orderIds),
+            ps -> OrderItemParameterBinder.bindDownloadCsvByIds(ps, orderIds),
             OrderItemEntityMapper::map // ← ここで ResultSet を map
         );
     }

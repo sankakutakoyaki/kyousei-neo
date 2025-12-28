@@ -40,21 +40,21 @@ public class KsPageController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = employeeService.getByAccount(userName);
 		mv.addObject("user", user);
 
         LocalDate now = LocalDate.now();
         LocalDate monthStart = now.withDayOfMonth(1);
         LocalDate monthEnd   = now.withDayOfMonth(now.lengthOfMonth());
         // 初期表示用受注リスト取得
-        List<KsSalesEntity> origin01 = ksSalesService.getBetweenKsSalesEntity(monthStart, monthEnd.plusDays(1), "staff");
+        List<KsSalesEntity> origin01 = ksSalesService.getAllFromBetween(monthStart, monthEnd.plusDays(1), "staff");
         mv.addObject("origin01", origin01);
 
         List<String> storeNames = origin01.stream().map(KsSalesEntity::getStore_name).filter(Objects::nonNull).distinct().toList();
         mv.addObject("storeComboList01", storeNames);
 
         // 履歴保存
-        historyService.saveHistory(userName, "ks_sales", "閲覧", 0, "");
+        historyService.save(userName, "ks_sales", "閲覧", 0, "");
 		
         return mv;
     }

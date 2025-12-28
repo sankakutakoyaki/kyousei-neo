@@ -4,7 +4,7 @@ import com.kyouseipro.neo.common.Utilities;
 
 public class EmployeeSqlBuilder {
 
-    private static String buildLogTableSql(String rowTableName) {
+    private static String buildLogTable(String rowTableName) {
         return
             "DECLARE " + rowTableName + " TABLE (" +
             "  employee_id INT, company_id INT, office_id INT, account NVARCHAR(255), code NVARCHAR(255), category NVARCHAR(255), " +
@@ -15,7 +15,7 @@ public class EmployeeSqlBuilder {
             "); ";
     }
 
-    private static String buildInsertLogSql(String rowTableName, String processName) {
+    private static String buildInsertLog(String rowTableName, String processName) {
         return
             "INSERT INTO employees_log (" +
             "  employee_id, editor, process, log_date, company_id, office_id, account, code, category, " +
@@ -28,7 +28,7 @@ public class EmployeeSqlBuilder {
             "FROM " + rowTableName + ";";
     }
 
-    private static String buildOutputLogSql() {
+    private static String buildOutputLog() {
         return
             "OUTPUT INSERTED.employee_id, INSERTED.company_id, INSERTED.office_id, INSERTED.account, INSERTED.code, INSERTED.category, " +
             "  INSERTED.last_name, INSERTED.first_name, INSERTED.last_name_kana, INSERTED.first_name_kana, " +
@@ -37,9 +37,9 @@ public class EmployeeSqlBuilder {
             "  INSERTED.emergency_contact_number, INSERTED.date_of_hire, INSERTED.version, INSERTED.state ";
     }
 
-    public static String buildInsertEmployeeSql() {
+    public static String buildInsert() {
         return
-            buildLogTableSql("@InsertedRows") +
+            buildLogTable("@InsertedRows") +
 
             "INSERT INTO employees (" +
             "  company_id, office_id, account, code, category, last_name, first_name, last_name_kana, first_name_kana, " +
@@ -47,46 +47,46 @@ public class EmployeeSqlBuilder {
             "  emergency_contact_number, date_of_hire, version, state" +
             ") " +
 
-            buildOutputLogSql() + "INTO @InsertedRows " +
+            buildOutputLog() + "INTO @InsertedRows " +
 
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
-            buildInsertLogSql("@InsertedRows", "INSERT") +
+            buildInsertLog("@InsertedRows", "INSERT") +
 
             "SELECT employee_id FROM @InsertedRows;";
     }
 
-    public static String buildUpdateEmployeeSql() {
+    public static String buildUpdate() {
         return
-            buildLogTableSql("@UpdatedRows") +
+            buildLogTable("@UpdatedRows") +
 
             "UPDATE employees SET " +
             "  company_id=?, office_id=?, account=?, code=?, category=?, last_name=?, first_name=?, " +
             "  last_name_kana=?, first_name_kana=?, phone_number=?, postal_code=?, full_address=?, email=?, gender=?, " +
             "  blood_type=?, birthday=?, emergency_contact=?, emergency_contact_number=?, date_of_hire=?, version=?, state=? " +
             
-            buildOutputLogSql() + "INTO @UpdatedRows " +
+            buildOutputLog() + "INTO @UpdatedRows " +
 
             "WHERE employee_id=?; " +
 
-            buildInsertLogSql("@UpdatedRows", "UPDATE") +
+            buildInsertLog("@UpdatedRows", "UPDATE") +
 
             "SELECT employee_id FROM @UpdatedRows;";
     }
 
-    public static String buildDeleteEmployeeForIdsSql(int count) {
+    public static String buildDeleteByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ..., ?"
 
         return
-            buildLogTableSql("@DeletedRows") +
+            buildLogTable("@DeletedRows") +
 
             "UPDATE employees SET state = ? " +
 
-            buildOutputLogSql() + "INTO @DeletedRows " +
+            buildOutputLog() + "INTO @DeletedRows " +
             
             "WHERE employee_id IN (" + placeholders + ") AND NOT (state = ?); " +
 
-            buildInsertLogSql("@DeletedRows", "DELETE") +
+            buildInsertLog("@DeletedRows", "DELETE") +
 
             "SELECT employee_id FROM @DeletedRows;";
     }
@@ -103,23 +103,23 @@ public class EmployeeSqlBuilder {
             " LEFT OUTER JOIN offices o ON o.office_id = e.office_id AND NOT (o.state = ?)";
     }
 
-    public static String buildFindByIdSql() {
+    public static String buildFindById() {
         return baseSelectString() + " WHERE e.employee_id = ? AND NOT (e.state = ?)";
     }
 
-    public static String buildFindByCodeSql() {
+    public static String buildFindByCode() {
         return baseSelectString() + " WHERE e.code = ? AND NOT (e.state = ?)";
     }
 
-    public static String buildFindByAccountSql() {
+    public static String buildFindByAccount() {
         return baseSelectString() + " WHERE e.account = ? AND NOT (e.state = ?)";
     }
 
-    public static String buildFindAllSql() {
+    public static String buildFindAll() {
         return baseSelectString() + " WHERE NOT (e.state = ?)";
     }
 
-    public static String buildDownloadCsvEmployeeForIdsSql(int count) {
+    public static String buildDownloadCsvByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return "SELECT * FROM employees WHERE employee_id IN (" + placeholders + ") AND NOT (state = ?)";
     }

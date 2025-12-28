@@ -18,27 +18,15 @@ public class WorkingConditionsListService {
      * すべてのWorkingConditionsを取得
      * @return
      */
-    public List<WorkingConditionsListEntity> getWorkingConditionsList() {
+    public List<WorkingConditionsListEntity> getList() {
         return workingConditionsListRepository.findAll();
-        // StringBuilder sb = new StringBuilder();
-        // sb.append(CompanyListEntity.selectString());
-        // sb.append(" WHERE NOT (state = " + Enums.state.DELETE.getNum() + ") AND NOT (category = 0);");
-        // SqlData sqlData = new SqlData();
-        // sqlData.setData(sb.toString(), new CompanyListEntity());
-        // return sqlRepository.getEntityList(sqlData);
     }
 
     /**
      * カテゴリー別のWorkingConditionsを取得
      * @return
      */
-    public List<WorkingConditionsListEntity> getWorkingConditionsListByCategory(int category) {
+    public List<WorkingConditionsListEntity> getListByCategoryId(int category) {
         return workingConditionsListRepository.findByCategoryId(category);
-        // StringBuilder sb = new StringBuilder();
-        // sb.append(CompanyListEntity.selectString());
-        // sb.append(" WHERE category = " + category + " AND NOT (state = " + Enums.state.DELETE.getNum() + ");");
-        // SqlData sqlData = new SqlData();
-        // sqlData.setData(sb.toString(), new CompanyListEntity());
-        // return sqlRepository.getEntityList(sqlData);
     }    
 }

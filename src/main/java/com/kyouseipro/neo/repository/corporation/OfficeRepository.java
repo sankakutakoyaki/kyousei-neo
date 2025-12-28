@@ -19,31 +19,31 @@ import lombok.RequiredArgsConstructor;
 public class OfficeRepository {
     private final SqlRepository sqlRepository;
 
-    public Integer insertOffice(OfficeEntity office, String editor) {
-        String sql = OfficeSqlBuilder.buildInsertOfficeSql();
+    public Integer insert(OfficeEntity office, String editor) {
+        String sql = OfficeSqlBuilder.buildInsert();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, off) -> OfficeParameterBinder.bindInsertOfficeParameters(pstmt, off, editor),
+            (pstmt, off) -> OfficeParameterBinder.bindInsert(pstmt, off, editor),
             rs -> rs.next() ? rs.getInt("office_id") : null,
             office
         );
     }
 
-    public Integer updateOffice(OfficeEntity office, String editor) {
-        String sql = OfficeSqlBuilder.buildUpdateOfficeSql();
+    public Integer update(OfficeEntity office, String editor) {
+        String sql = OfficeSqlBuilder.buildUpdate();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, off) -> OfficeParameterBinder.bindUpdateOfficeParameters(pstmt, off, editor),
+            (pstmt, off) -> OfficeParameterBinder.bindUpdate(pstmt, off, editor),
             rs -> rs.next() ? rs.getInt("office_id") : null,
             office
         );
     }
 
-    public int deleteOfficeByIds(List<SimpleData> ids, String editor) {
+    public int deleteByIds(List<SimpleData> ids, String editor) {
         List<Integer> officeIds = Utilities.createSequenceByIds(ids);
-        String sql = OfficeSqlBuilder.buildDeleteOfficeForIdsSql(officeIds.size());
+        String sql = OfficeSqlBuilder.buildDeleteByIds(officeIds.size());
 
         int result = sqlRepository.executeUpdate(
             sql,
@@ -53,9 +53,9 @@ public class OfficeRepository {
         return result; // 成功件数。0なら削除なし
     }
 
-    public List<OfficeEntity> downloadCsvOfficeByIds(List<SimpleData> ids, String editor) {
+    public List<OfficeEntity> downloadCsvByIds(List<SimpleData> ids, String editor) {
         List<Integer> officeIds = Utilities.createSequenceByIds(ids);
-        String sql = OfficeSqlBuilder.buildDownloadCsvOfficeForIdsSql(officeIds.size());
+        String sql = OfficeSqlBuilder.buildDownloadCsvByIds(officeIds.size());
 
         return sqlRepository.findAll(
             sql,
@@ -66,7 +66,7 @@ public class OfficeRepository {
 
     // IDによる取得
     public OfficeEntity findById(int officeId) {
-        String sql = OfficeSqlBuilder.buildFindByIdSql();
+        String sql = OfficeSqlBuilder.buildFindById();
 
         return sqlRepository.execute(
             sql,
@@ -78,7 +78,7 @@ public class OfficeRepository {
 
     // 全件取得
     public List<OfficeEntity> findAll() {
-        String sql = OfficeSqlBuilder.buildFindAllSql();
+        String sql = OfficeSqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,
@@ -89,7 +89,7 @@ public class OfficeRepository {
 
     // 全件取得
     public List<OfficeEntity> findAllClient() {
-        String sql = OfficeSqlBuilder.buildFindAllClientSql();
+        String sql = OfficeSqlBuilder.buildFindAllClient();
 
         return sqlRepository.findAll(
             sql,

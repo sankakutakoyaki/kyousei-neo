@@ -11,7 +11,7 @@ import com.kyouseipro.neo.entity.order.OrderItemEntity;
 import com.kyouseipro.neo.entity.order.WorkContentEntity;
 
 public class OrderParameterBinder {
-    public static int bindInsertOrderParameters(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
+    public static int bindInsert(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
         int index = 1;
         pstmt.setString(index++, o.getRequest_number());
         if (o.getStart_date() != null) {
@@ -39,23 +39,23 @@ public class OrderParameterBinder {
         pstmt.setString(index++, editor);
 
         for (OrderItemEntity orderItemEntity : o.getItem_list()) {
-            index = OrderItemParameterBinder.bindInsertOrderItemParameters(pstmt, orderItemEntity, editor, index, true);
+            index = OrderItemParameterBinder.bindInsert(pstmt, orderItemEntity, editor, index, true);
             // index = index + 18;
         }
 
         for (WorkContentEntity workContentEntity : o.getWork_list()) {
-            index = WorkContentParameterBinder.bindInsertWorkContentParameters(pstmt, workContentEntity, editor, index, true);
+            index = WorkContentParameterBinder.bindInsert(pstmt, workContentEntity, editor, index, true);
             // index = index + 6;
         }
 
         for (DeliveryStaffEntity deliveryStaffEntity : o.getStaff_list()) {
-            index = DeliveryStaffParameterBinder.bindInsertDeliveryStaffParameters(pstmt, deliveryStaffEntity, editor, index, true);
+            index = DeliveryStaffParameterBinder.bindInsert(pstmt, deliveryStaffEntity, editor, index, true);
             // index = index + 4;
         }
         return index;
     }
 
-    public static int bindUpdateOrderParameters(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
+    public static int bindUpdate(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
         int index = 1;
         pstmt.setString(index++, o.getRequest_number());
         if (o.getStart_date() != null) {
@@ -84,11 +84,11 @@ public class OrderParameterBinder {
         pstmt.setString(index++, editor);          // ログ用
 
         // 商品リスト
-        index = OrderItemParameterBinder.setSaveOrderItemListParameters(pstmt, o.getItem_list(), editor, index);
+        index = OrderItemParameterBinder.setSave(pstmt, o.getItem_list(), editor, index);
         // 作業リスト
-        index = WorkContentParameterBinder.setSaveWorkContentListParameters(pstmt, o.getWork_list(), editor, index);
+        index = WorkContentParameterBinder.setSave(pstmt, o.getWork_list(), editor, index);
         // 配送担当リスト
-        index = DeliveryStaffParameterBinder.setSaveDeliveryStaffListParameters(pstmt, o.getStaff_list(), editor, index);
+        index = DeliveryStaffParameterBinder.setSave(pstmt, o.getStaff_list(), editor, index);
         return index;
     }
 
@@ -109,7 +109,7 @@ public class OrderParameterBinder {
         return index;
     }
 
-    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+    public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
@@ -120,7 +120,7 @@ public class OrderParameterBinder {
         return index;
     }
 
-    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());

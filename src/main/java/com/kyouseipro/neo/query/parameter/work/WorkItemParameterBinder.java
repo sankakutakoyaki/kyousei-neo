@@ -8,7 +8,7 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.work.WorkItemEntity;
 
 public class WorkItemParameterBinder {
-    public static int bindInsertWorkItemParameters(PreparedStatement pstmt, WorkItemEntity w, String editor, int index) throws SQLException {
+    public static int bindInsert(PreparedStatement pstmt, WorkItemEntity w, String editor, int index) throws SQLException {
         pstmt.setInt(index++, w.getCode());
         pstmt.setInt(index++, w.getCode());
         pstmt.setInt(index++, w.getCategory_id());
@@ -21,7 +21,7 @@ public class WorkItemParameterBinder {
         return index;
     }
 
-    public static int bindUpdateWorkItemParameters(PreparedStatement pstmt, WorkItemEntity w, String editor, int index) throws SQLException {
+    public static int bindUpdate(PreparedStatement pstmt, WorkItemEntity w, String editor, int index) throws SQLException {
         pstmt.setInt(index++, w.getCode());
         pstmt.setInt(index++, w.getCode());
         pstmt.setInt(index++, w.getCategory_id());
@@ -57,7 +57,7 @@ public class WorkItemParameterBinder {
         return index;
     }
 
-    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+    public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
@@ -68,7 +68,7 @@ public class WorkItemParameterBinder {
         return index;
     }
 
-    public static int bindDeleteWorkItemParameters(PreparedStatement ps, int id, String editor, int index) throws SQLException {
+    public static int bindDelete(PreparedStatement ps, int id, String editor, int index) throws SQLException {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, id);
         ps.setString(index, editor);
@@ -81,7 +81,7 @@ public class WorkItemParameterBinder {
         return index;
     }
 
-    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {

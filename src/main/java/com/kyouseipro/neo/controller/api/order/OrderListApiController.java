@@ -25,8 +25,8 @@ public class OrderListApiController {
      */
     @GetMapping("/order/get/list")
 	@ResponseBody
-    public List<OrderListEntity> getOrderList() {
-        return orderListService.getOrderList();
+    public List<OrderListEntity> getList() {
+        return orderListService.getList();
     }
 
 
@@ -38,10 +38,10 @@ public class OrderListApiController {
      */
     @PostMapping("/order/get/between")
 	@ResponseBody
-    public List<OrderListEntity> getBetweenAllEntity(
+    public List<OrderListEntity> getBetween(
                 @RequestParam LocalDate start,
                 @RequestParam LocalDate end) {
-        List<OrderListEntity> list = orderListService.getBetweenOrderEntity(start, end);
+        List<OrderListEntity> list = orderListService.getBetween(start, end);
         return list;
     }
 }

@@ -19,7 +19,7 @@ public class OrderListService {
      * すべてのOrderを取得
      * @return
      */
-    public List<OrderListEntity> getOrderList() {
+    public List<OrderListEntity> getList() {
         return orderListRepository.findAll();
     }
 
@@ -29,7 +29,7 @@ public class OrderListService {
      * @param end
      * @return
      */
-    public List<OrderListEntity> getBetweenOrderEntity(LocalDate start, LocalDate end) {
-        return orderListRepository.findByEntityFromBetweenDate(start, end);
+    public List<OrderListEntity> getBetween(LocalDate start, LocalDate end) {
+        return orderListRepository.findByBetween(start, end);
     }
 }

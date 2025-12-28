@@ -4,7 +4,7 @@ import com.kyouseipro.neo.common.Utilities;
 
 public class RecycleSqlBuilder {
 
-    private static String buildLogTableSql(String rowTableName) {
+    private static String buildLogTable(String rowTableName) {
         return
             "DECLARE " + rowTableName + " TABLE (" +
             "  recycle_id INT, recycle_number NVARCHAR(255), molding_number NVARCHAR(255), maker_id INT, item_id INT, use_date DATE, delivery_date DATE, shipping_date DATE, loss_date DATE," +
@@ -12,7 +12,7 @@ public class RecycleSqlBuilder {
             "); ";
     }
 
-    private static String buildInsertLogSql(String rowTableName, String processName) {
+    private static String buildInsertLog(String rowTableName, String processName) {
         return
             "INSERT INTO recycles_log (" +
             "  recycle_id, editor, process, log_date," +
@@ -25,7 +25,7 @@ public class RecycleSqlBuilder {
             "  FROM " + rowTableName + ";";
     }
 
-    private static String buildOutputLogSql() {
+    private static String buildOutputLog() {
         return
             "OUTPUT INSERTED.recycle_id, INSERTED.recycle_number, INSERTED.molding_number, INSERTED.maker_id, INSERTED.item_id," +
             "  INSERTED.use_date, INSERTED.delivery_date, INSERTED.shipping_date, INSERTED.loss_date," +
@@ -33,106 +33,106 @@ public class RecycleSqlBuilder {
             "  INSERTED.version, INSERTED.state ";
     }
 
-    public static String buildInsertRecycleSql(int index) {
+    public static String buildInsert(int index) {
         String rowTableName = "@InsertedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "INSERT INTO recycles (" +
             " recycle_number, molding_number, maker_id, item_id, use_date, delivery_date, shipping_date, loss_date," +
             " company_id, office_id, recycling_fee, disposal_site_id, version, state" +
             ") " +
 
-            buildOutputLogSql() + "INTO " + rowTableName + " " +
+            buildOutputLog() + "INTO " + rowTableName + " " +
 
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
-            buildInsertLogSql(rowTableName, "INSERT") +
+            buildInsertLog(rowTableName, "INSERT") +
 
             "SELECT recycle_id FROM " + rowTableName + ";";
     }
 
-    public static String buildUpdateRecycleSql(int index) {
+    public static String buildUpdate(int index) {
         String rowTableName = "@UpdatedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "UPDATE recycles SET " +
             " recycle_number=?, molding_number=?, maker_id=?, item_id=?, use_date=?, delivery_date=?, shipping_date=?, loss_date=?," +
             " company_id=?, office_id=?, recycling_fee=?, disposal_site_id=?, version=?, state=? , update_date=?" +
             
-            buildOutputLogSql() + "INTO " + rowTableName + " " +
+            buildOutputLog() + "INTO " + rowTableName + " " +
 
             "WHERE recycle_id=?; " +
 
-            buildInsertLogSql(rowTableName, "UPDATE") +
+            buildInsertLog(rowTableName, "UPDATE") +
 
             "SELECT recycle_id FROM " + rowTableName + ";";
     }
 
-    public static String buildUpdateRecycleDateSql(int index, String type) {
+    public static String buildUpdateForDate(int index, String type) {
         String rowTableName = "@UpdatedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "UPDATE recycles SET " + type + "_date=?, update_date=? " +
 
-            buildOutputLogSql() + "INTO " + rowTableName  + " " +
+            buildOutputLog() + "INTO " + rowTableName  + " " +
             
             "WHERE recycle_id = ? ; " +
 
-            buildInsertLogSql(rowTableName, "UPDATE") +
+            buildInsertLog(rowTableName, "UPDATE") +
 
             "SELECT recycle_id FROM " + rowTableName + ";";
     }
 
-    public static String buildInsertRecycleDateSql(int index) {
+    public static String buildInsertForDate(int index) {
         String rowTableName = "@InsertedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "INSERT INTO recycles (" +
             " recycle_number, molding_number, loss_date, update_date" +
             ") " +
 
-            buildOutputLogSql() + "INTO " + rowTableName + " " +
+            buildOutputLog() + "INTO " + rowTableName + " " +
 
             "VALUES (?, ?, ?, ?); " +
 
-            buildInsertLogSql(rowTableName, "INSERT") +
+            buildInsertLog(rowTableName, "INSERT") +
 
             "SELECT recycle_id FROM " + rowTableName + ";";
     }
 
-    public static String buildDeleteRecycleSql(int index) {
+    public static String buildDelete(int index) {
         String rowTableName = "@UpdatedRows" + index;
         return
-            buildLogTableSql(rowTableName) +
+            buildLogTable(rowTableName) +
 
             "UPDATE recycles SET state = ? " +
 
-            buildOutputLogSql() + "INTO " + rowTableName  + " " +
+            buildOutputLog() + "INTO " + rowTableName  + " " +
             
             "WHERE recycle_id = ? ; " +
 
-            buildInsertLogSql(rowTableName, "DELETE") +
+            buildInsertLog(rowTableName, "DELETE") +
 
             "SELECT recycle_id FROM " + rowTableName + ";";
     }
 
-    public static String buildDeleteRecycleForIdsSql(int count) {
+    public static String buildDeleteByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ..., ?"
 
         return
-            buildLogTableSql("@DeletedRows") +
+            buildLogTable("@DeletedRows") +
 
             "UPDATE recycles SET state = ? " +
 
-            buildOutputLogSql() + "INTO @DeletedRows " +
+            buildOutputLog() + "INTO @DeletedRows " +
 
             "WHERE recycle_id IN (" + placeholders + ") AND NOT (state = ?); " +
 
-            buildInsertLogSql("@DeletedRows", "DELETE") +
+            buildInsertLog("@DeletedRows", "DELETE") +
 
             "SELECT recycle_id FROM @DeletedRows;";
     }
@@ -152,53 +152,47 @@ public class RecycleSqlBuilder {
             " LEFT OUTER JOIN recycle_items ri ON ri.recycle_item_id = r.item_id AND NOT (ri.state = ?)";
     }
 
-    public static String buildFindByIdSql() {
+    public static String buildFindById() {
         return 
             baseSelectString() + " WHERE r.recycle_id = ? AND NOT (r.state = ?)";
     }
 
-    public static String buildFindByNumberSql() {
+    public static String buildFindByNumber() {
         return 
             baseSelectString() + " WHERE r.recycle_number = ? AND NOT (r.state = ?)";
     }
    
-    public static String buildExistsByNumberSql() {
+    public static String buildExistsByNumber() {
         return 
             baseSelectString() + " WHERE r.recycle_number = ? AND NOT (r.state = ?)";
     }
 
-    // public static String buildExistsByDeliveryNumberSql() {
+    // public static String buildExistsByDeliveryNumber() {
     //     return 
     //         "SELECT recycle_id as number, recycle_number as text FROM recycles WHERE recycle_number = ? AND NOT (state = ?) AND delivery_date != '9999-12-31'";
     // }
 
-    // public static String buildExistsByShippingNumberSql() {
+    // public static String buildExistsByShippingNumber() {
     //     return 
     //         "SELECT recycle_id as number, recycle_number as text FROM recycles WHERE recycle_number = ? AND NOT (state = ?) AND shipping_date != '9999-12-31'";
     // }
 
-    // public static String buildExistsByLossNumberSql() {
+    // public static String buildExistsByLossNumber() {
     //     return 
     //         "SELECT recycle_id as number, recycle_number as text FROM recycles WHERE recycle_number = ? AND NOT (state = ?) AND loss_date != '9999-12-31'";
     // }
 
-    public static String buildDownloadCsvRecycleForIdsSql(int count) {
+    public static String buildDownloadCsvByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count);
         return 
             baseSelectString() + " WHERE r.recycle_id IN (" + placeholders + ") AND NOT (r.state = ?)";
     }
 
-    public static String buildFindByBetweenRecycleEntity(String col) {
+    public static String buildFindByBetween(String col) {
         return 
             baseSelectString() +
             " WHERE NOT (r.state = ?) AND " +
             " r." + col + "_date >= ? AND r." + col + "_date < ?";
-
-            // " WHERE NOT (r.state = ?) AND " +
-            // "((r." + col + "_date >= ? AND r." + col + "_date <= ?) OR " +
-            // "(r." + col + "_date >= ? AND r." + col + "_date <= '9999-12-31') OR " +
-            // "(r." + col + "_date >= '9999-12-31' AND r." + col + "_date <= ?) OR " +
-            // "(r." + col + "_date >= '9999-12-31' AND r." + col + "_date <= '9999-12-31'))";
     }
 
     // public static String buildFindByBetweenRecycleLossEntity() {

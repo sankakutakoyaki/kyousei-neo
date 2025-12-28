@@ -10,12 +10,12 @@ public class EmployeeListSqlBuilder {
             " LEFT OUTER JOIN offices o ON o.office_id = e.office_id AND NOT (o.state = ?)";
     }
 
-    public static String buildFindAllSql() {
+    public static String buildFindAll() {
         return
             baseSelectString() + " WHERE NOT (e.state = ?)";
     }
 
-    public static String buildFindAllByCategoryIdSql() {
+    public static String buildFindAllByCategoryId() {
         return
             baseSelectString() + " WHERE NOT (e.state = ?) AND e.category = ?";
     }

@@ -32,8 +32,8 @@ public class WorkPriceApiController {
      */
     @PostMapping("/work/price/get/id")
 	@ResponseBody
-    public WorkPriceEntity getEntityById(@RequestParam int id) {
-        return workPriceService.getWorkPriceById(id);
+    public WorkPriceEntity getById(@RequestParam int id) {
+        return workPriceService.getById(id);
     }
 
     /**
@@ -57,12 +57,12 @@ public class WorkPriceApiController {
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> saveWorkPrice(@RequestBody WorkPriceEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = workPriceService.saveWorkPrice(entity, userName);
+        Integer id = workPriceService.save(entity, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "work_prices", "保存", 200, "成功");
+            historyService.save(userName, "work_prices", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
-            historyService.saveHistory(userName, "work_prices", "保存", 400, "失敗");
+            historyService.save(userName, "work_prices", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -95,7 +95,7 @@ public class WorkPriceApiController {
 	@ResponseBody
     public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        historyService.saveHistory(userName, "work_prices", "ダウンロード", 0, "");
-        return workPriceService.downloadCsvWorkPriceByIds(ids);
+        historyService.save(userName, "work_prices", "ダウンロード", 0, "");
+        return workPriceService.downloadCsvByIds(ids);
     }
 }

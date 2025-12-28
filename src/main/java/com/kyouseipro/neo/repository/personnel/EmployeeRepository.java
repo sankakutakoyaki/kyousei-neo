@@ -25,12 +25,12 @@ public class EmployeeRepository {
      * @param editor
      * @return 新規IDを返す。
      */
-    public Integer insertEmployee(EmployeeEntity employee, String editor) {
-        String sql = EmployeeSqlBuilder.buildInsertEmployeeSql();
+    public Integer insert(EmployeeEntity employee, String editor) {
+        String sql = EmployeeSqlBuilder.buildInsert();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, emp) -> EmployeeParameterBinder.bindInsertEmployeeParameters(pstmt, emp, editor),
+            (pstmt, emp) -> EmployeeParameterBinder.bindInsert(pstmt, emp, editor),
             rs -> rs.next() ? rs.getInt("employee_id") : null,
             employee
         );
@@ -42,12 +42,12 @@ public class EmployeeRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public Integer updateEmployee(EmployeeEntity employee, String editor) {
-        String sql = EmployeeSqlBuilder.buildUpdateEmployeeSql();
+    public Integer update(EmployeeEntity employee, String editor) {
+        String sql = EmployeeSqlBuilder.buildUpdate();
 
         Integer result = sqlRepository.executeUpdate(
             sql,
-            pstmt -> EmployeeParameterBinder.bindUpdateEmployeeParameters(pstmt, employee, editor)
+            pstmt -> EmployeeParameterBinder.bindUpdate(pstmt, employee, editor)
         );
 
         return result; // 成功件数。0なら削除なし
@@ -59,13 +59,13 @@ public class EmployeeRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public Integer deleteEmployeeByIds(List<SimpleData> ids, String editor) {
+    public Integer deleteByIds(List<SimpleData> ids, String editor) {
         List<Integer> employeeIds = Utilities.createSequenceByIds(ids);
-        String sql = EmployeeSqlBuilder.buildDeleteEmployeeForIdsSql(employeeIds.size());
+        String sql = EmployeeSqlBuilder.buildDeleteByIds(employeeIds.size());
 
         Integer result = sqlRepository.executeUpdate(
             sql,
-            ps -> EmployeeParameterBinder.bindDeleteForIds(ps, employeeIds, editor)
+            ps -> EmployeeParameterBinder.bindDeleteByIds(ps, employeeIds, editor)
         );
 
         return result; // 成功件数。0なら削除なし
@@ -77,13 +77,13 @@ public class EmployeeRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<EmployeeEntity> downloadCsvEmployeeByIds(List<SimpleData> ids, String editor) {
+    public List<EmployeeEntity> downloadCsvByIds(List<SimpleData> ids, String editor) {
         List<Integer> employeeIds = Utilities.createSequenceByIds(ids);
-        String sql = EmployeeSqlBuilder.buildDownloadCsvEmployeeForIdsSql(employeeIds.size());
+        String sql = EmployeeSqlBuilder.buildDownloadCsvByIds(employeeIds.size());
 
         return sqlRepository.findAll(
             sql,
-            ps -> EmployeeParameterBinder.bindDownloadCsvForIds(ps, employeeIds),
+            ps -> EmployeeParameterBinder.bindDownloadCsvByIds(ps, employeeIds),
             EmployeeEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -94,7 +94,7 @@ public class EmployeeRepository {
      * @return IDから取得したEntityをかえす。
      */
     public EmployeeEntity findById(int employeeId) {
-        String sql = EmployeeSqlBuilder.buildFindByIdSql();
+        String sql = EmployeeSqlBuilder.buildFindById();
 
         // 3桁以下のIDは4桁以上に変換する
         if (String.valueOf(Math.abs(employeeId)).length() < 4) {
@@ -116,11 +116,11 @@ public class EmployeeRepository {
      * @return IDから取得したEntityをかえす。
      */
     public EmployeeEntity findByCode(int code) {
-        String sql = EmployeeSqlBuilder.buildFindByCodeSql();
+        String sql = EmployeeSqlBuilder.buildFindByCode();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, comp) -> EmployeeParameterBinder.bindFindById(pstmt, comp),
+            (pstmt, comp) -> EmployeeParameterBinder.bindFindByCode(pstmt, comp),
             rs -> rs.next() ? EmployeeEntityMapper.map(rs) : null,
             code
         );
@@ -132,7 +132,7 @@ public class EmployeeRepository {
      * @return アカウントで指定したEntityを返す。
      */
     public EmployeeEntity findByAccount(String account) {
-        String sql = EmployeeSqlBuilder.buildFindByAccountSql();
+        String sql = EmployeeSqlBuilder.buildFindByAccount();
 
         return sqlRepository.execute(
             sql,
@@ -147,7 +147,7 @@ public class EmployeeRepository {
      * @return 全てのEntityを返す。
      */
     public List<EmployeeEntity> findAll() {
-        String sql = EmployeeSqlBuilder.buildFindAllSql();
+        String sql = EmployeeSqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,

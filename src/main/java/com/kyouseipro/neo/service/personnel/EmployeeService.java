@@ -23,7 +23,7 @@ public class EmployeeService {
      * @param id 従業員ID
      * @return EmployeeEntity または null
      */
-    public EmployeeEntity getEmployeeById(int id) {
+    public EmployeeEntity getById(int id) {
         return employeeRepository.findById(id);
     }
 
@@ -35,11 +35,11 @@ public class EmployeeService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer saveEmployee(EmployeeEntity entity, String editor) {
+    public Integer save(EmployeeEntity entity, String editor) {
         if (entity.getEmployee_id() > 0) {
-            return employeeRepository.updateEmployee(entity, editor);
+            return employeeRepository.update(entity, editor);
         } else {
-            return employeeRepository.insertEmployee(entity, editor);
+            return employeeRepository.insert(entity, editor);
         }
     }
 
@@ -48,7 +48,7 @@ public class EmployeeService {
      * @param account
      * @return
      */
-    public EmployeeEntity getEmployeeByAccount(String account) {
+    public EmployeeEntity getByAccount(String account) {
         return employeeRepository.findByAccount(account);
     }
 
@@ -57,8 +57,8 @@ public class EmployeeService {
      * @param ids
      * @return
      */
-    public Integer deleteEmployeeByIds(List<SimpleData> list, String userName) {
-        return employeeRepository.deleteEmployeeByIds(list, userName);
+    public Integer deleteByIds(List<SimpleData> list, String userName) {
+        return employeeRepository.deleteByIds(list, userName);
     }
 
     /**
@@ -66,8 +66,8 @@ public class EmployeeService {
      * @param ids
      * @return
      */
-    public String downloadCsvEmployeeByIds(List<SimpleData> list, String userName) {
-        List<EmployeeEntity> employees = employeeRepository.downloadCsvEmployeeByIds(list, userName);
+    public String downloadCsvByIds(List<SimpleData> list, String userName) {
+        List<EmployeeEntity> employees = employeeRepository.downloadCsvByIds(list, userName);
         return CsvExporter.export(employees, EmployeeEntity.class);
     }
 }

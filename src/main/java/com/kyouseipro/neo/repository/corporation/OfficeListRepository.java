@@ -21,7 +21,7 @@ public class OfficeListRepository {
 
     // 全件取得
     public List<OfficeListEntity> findAll() {
-        String sql = OfficeListSqlBuilder.buildFindAllSql();
+        String sql = OfficeListSqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,
@@ -32,7 +32,7 @@ public class OfficeListRepository {
 
     // 全件取得
     public List<OfficeListEntity> findAllOrderByKana() {
-        String sql = OfficeListSqlBuilder.buildFindAllOrderByKanaSql();
+        String sql = OfficeListSqlBuilder.buildFindAllOrderByKana();
 
         return sqlRepository.findAll(
             sql,
@@ -42,30 +42,19 @@ public class OfficeListRepository {
     }
 
     // コンボボックス用リスト取得
-    public List<SimpleData> findAllComboOffice() {
-        String sql = OfficeListSqlBuilder.buildFindAllComboOfficeSql();
+    public List<SimpleData> findAllCombo() {
+        String sql = OfficeListSqlBuilder.buildFindAllCombo();
 
         return sqlRepository.findAll(
             sql,
-            ps -> OfficeListParameterBinder.bindFindAllComboOffice(ps, null),
+            ps -> OfficeListParameterBinder.bindFindAllCombo(ps, null),
             SimpleDataMapper::map
         );
     }
 
-    // // 全件取得
-    // public List<OfficeListEntity> findAllClient() {
-    //     String sql = OfficeListSqlBuilder.buildFindAllClientSql();
-
-    //     return sqlRepository.findAll(
-    //         sql,
-    //         ps -> OfficeListParameterBinder.bindFindAllClient(ps, null),
-    //         OfficeListEntityMapper::map
-    //     );
-    // }
-
     // 全件取得
     public List<OfficeListEntity> findByCategoryId(int categoryId) {
-        String sql = OfficeListSqlBuilder.buildFindAllByCategorySql();
+        String sql = OfficeListSqlBuilder.buildFindAllByCategory();
 
         return sqlRepository.findAll(
             sql,
@@ -75,8 +64,8 @@ public class OfficeListRepository {
     }
 
     // コンボボックス用リスト取得
-    public List<SimpleData> findAllCombo() {
-        String sql = OfficeListSqlBuilder.buildFindAllComboClientSql();
+    public List<SimpleData> findAllClientCombo() {
+        String sql = OfficeListSqlBuilder.buildFindAllClientCombo();
 
         return sqlRepository.findAll(
             sql,

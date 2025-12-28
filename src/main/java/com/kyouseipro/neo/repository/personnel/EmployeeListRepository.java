@@ -19,7 +19,7 @@ public class EmployeeListRepository {
 
     // 全件取得
     public List<EmployeeListEntity> findAll() {
-        String sql = EmployeeListSqlBuilder.buildFindAllSql();
+        String sql = EmployeeListSqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,
@@ -30,7 +30,7 @@ public class EmployeeListRepository {
 
     // 全件取得
     public List<EmployeeListEntity> findByCategoryId(int categoryId) {
-        String sql = EmployeeListSqlBuilder.buildFindAllSql();
+        String sql = EmployeeListSqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,

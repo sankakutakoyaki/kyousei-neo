@@ -26,8 +26,8 @@ public class OfficeListApiController {
      */
     @GetMapping("/office/get/list")
 	@ResponseBody
-    public List<OfficeListEntity> getEntityList() {
-        return officeListService.getOfficeList();
+    public List<OfficeListEntity> getList() {
+        return officeListService.getList();
     }
 
     /**
@@ -36,8 +36,8 @@ public class OfficeListApiController {
      */
     @PostMapping("/office/get/list/category")
 	@ResponseBody
-    public List<OfficeListEntity> getEntityListByCategory(@RequestParam int category) {
-        return officeListService.getOfficeListByCategory(category);
+    public List<OfficeListEntity> getListByCategoryId(@RequestParam int category) {
+        return officeListService.getListByCategoryId(category);
     }
 
     /**
@@ -46,7 +46,7 @@ public class OfficeListApiController {
      */
     @GetMapping("/office/get/combo")
 	@ResponseBody
-    public List<OfficeListEntity> getComboForOffice() {
+    public List<OfficeListEntity> getCombo() {
         return comboBoxService.getOfficeList();
     }
 }

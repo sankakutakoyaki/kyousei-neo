@@ -33,14 +33,14 @@ public class WorkItemApiController {
      */
     @PostMapping("/work/item/get/id")
 	@ResponseBody
-    public WorkItemEntity getEntityById(@RequestParam int id) {
-        return workItemService.getWorkItemById(id);
+    public WorkItemEntity getById(@RequestParam int id) {
+        return workItemService.getById(id);
     }
 
     @PostMapping("/work/item/get/category")
 	@ResponseBody
-    public List<WorkItemEntity> getEntityByCategoryId(@RequestParam int id) {
-        return workItemService.getWorkItemByCategoryId(id);
+    public List<WorkItemEntity> getByCategoryId(@RequestParam int id) {
+        return workItemService.getByCategoryId(id);
     }
 
     /**
@@ -49,7 +49,7 @@ public class WorkItemApiController {
      */
     @GetMapping("/work/item/get/list")
 	@ResponseBody
-    public List<WorkItemEntity> getWorkItemList() {
+    public List<WorkItemEntity> getList() {
         return workItemService.getList();
     }
 
@@ -60,14 +60,14 @@ public class WorkItemApiController {
      */
     @PostMapping("/work/item/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> saveWorkItem(@RequestBody WorkItemEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody WorkItemEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = workItemService.saveWorkItem(entity, userName);
+        Integer id = workItemService.save(entity, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "work_items", "保存", 200, "成功");
+            historyService.save(userName, "work_items", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
-            historyService.saveHistory(userName, "work_items", "保存", 400, "失敗");
+            historyService.save(userName, "work_items", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -79,14 +79,14 @@ public class WorkItemApiController {
      */
     @PostMapping("/work/item/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteWorkItemByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = workItemService.deleteWorkItemByIds(ids, userName);
+        Integer id = workItemService.deleteByIds(ids, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "work_items", "削除", 200, "成功");
+            historyService.save(userName, "work_items", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
-            historyService.saveHistory(userName, "work_items", "削除", 400, "失敗");
+            historyService.save(userName, "work_items", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -98,9 +98,9 @@ public class WorkItemApiController {
      */
     @PostMapping("/work/item/download/csv")
 	@ResponseBody
-    public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        historyService.saveHistory(userName, "work_items", "ダウンロード", 0, "");
-        return workItemService.downloadCsvWorkItemByIds(ids);
+        historyService.save(userName, "work_items", "ダウンロード", 0, "");
+        return workItemService.downloadCsvByIds(ids);
     }
 }

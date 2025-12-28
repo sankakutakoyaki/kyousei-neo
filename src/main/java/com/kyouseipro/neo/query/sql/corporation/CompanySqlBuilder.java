@@ -4,7 +4,7 @@ import com.kyouseipro.neo.common.Utilities;
 
 public class CompanySqlBuilder {
 
-    private static String buildLogTableSql(String rowTableName) {
+    private static String buildLogTable(String rowTableName) {
         return
             "DECLARE " + rowTableName + " TABLE (" +
             "  company_id INT, category NVARCHAR(255), name NVARCHAR(255), name_kana NVARCHAR(255), " +
@@ -14,14 +14,14 @@ public class CompanySqlBuilder {
             "); ";
     }
 
-    private static String buildOutputLogSql() {
+    private static String buildOutputLog() {
         return
             "OUTPUT INSERTED.company_id, INSERTED.category, INSERTED.name, INSERTED.name_kana, " +
             "INSERTED.tel_number, INSERTED.fax_number, INSERTED.postal_code, INSERTED.full_address, " +
             "INSERTED.email, INSERTED.web_address, INSERTED.is_original_price, INSERTED.version, INSERTED.state ";
     }
 
-    private static String buildInsertLogSql(String rowTableName, String processName) {
+    private static String buildInsertLog(String rowTableName, String processName) {
         return
             "INSERT INTO companies_log (" +
             "  company_id, editor, process, log_date, category, name, name_kana, tel_number, fax_number, " +
@@ -32,62 +32,62 @@ public class CompanySqlBuilder {
             "FROM " + rowTableName + ";";
     }
 
-    public static String buildInsertCompanySql() {
+    public static String buildInsert() {
         return
-            buildLogTableSql("@Inserted") +
+            buildLogTable("@Inserted") +
 
             "INSERT INTO companies (" +
             "  category, name, name_kana, tel_number, fax_number, postal_code, full_address, " +
             "  email, web_address, is_original_price, version, state" +
             ") " +
-            buildOutputLogSql() + "INTO @Inserted " +
+            buildOutputLog() + "INTO @Inserted " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
-            buildInsertLogSql("@Inserted", "INSERT") +
+            buildInsertLog("@Inserted", "INSERT") +
             "SELECT company_id FROM @Inserted;";
     }
 
-    public static String buildUpdateCompanySql() {
+    public static String buildUpdate() {
         return
-            buildLogTableSql("@Updated") +
+            buildLogTable("@Updated") +
 
             "UPDATE companies SET " +
             "  category=?, name=?, name_kana=?, tel_number=?, fax_number=?, postal_code=?, " +
             "  full_address=?, email=?, web_address=?, is_original_price=?, version=?, state=? " +
-            buildOutputLogSql() + "INTO @Updated " +
+            buildOutputLog() + "INTO @Updated " +
             "WHERE company_id=?; " +
 
-            buildInsertLogSql("@Updated", "UPDATE") +
+            buildInsertLog("@Updated", "UPDATE") +
             "SELECT company_id FROM @Updated;";
     }
 
-    public static String buildDeleteCompanyForIdsSql(int count) {
+    public static String buildDeleteByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count);
 
         return
-            buildLogTableSql("@Deleted") +
+            buildLogTable("@Deleted") +
 
             "UPDATE companies SET state = ? " +
-            buildOutputLogSql() + "INTO @Deleted " +
+            buildOutputLog() + "INTO @Deleted " +
             "WHERE company_id IN (" + placeholders + ") AND NOT (state = ?); " +
 
-            buildInsertLogSql("@Deleted", "DELETE") +
+            buildInsertLog("@Deleted", "DELETE") +
             "SELECT company_id FROM @Deleted;";
     }
 
-    public static String buildFindByIdSql() {
+    public static String buildFindById() {
         return "SELECT * FROM companies WHERE company_id = ? AND NOT (state = ?)";
     }
 
-    public static String buildFindAllSql() {
+    public static String buildFindAll() {
         return "SELECT * FROM companies WHERE NOT (state = ?)";
     }
 
-    public static String buildFindAllClientSql() {
+    public static String buildFindAllClient() {
         return "SELECT * FROM companies WHERE NOT (category = ?) AND NOT (state = ?)";
     }
 
-    public static String buildDownloadCsvCompanyForIdsSql(int count) {
+    public static String buildDownloadCsvByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return "SELECT * FROM companies WHERE company_id IN (" + placeholders + ") AND NOT (state = ?)";
     }

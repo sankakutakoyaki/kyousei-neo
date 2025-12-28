@@ -34,27 +34,27 @@ public class CompanyListParameterBinder {
         return index;
     }
 
-    public static int bindFindAllComboCompany(PreparedStatement ps, Void unused) throws SQLException {
+    public static int bindFindAllCombo(PreparedStatement ps, Void unused) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }
 
-    public static int bindFindAllComboClient(PreparedStatement ps, Void unused) throws SQLException {
+    public static int bindFindAllClientCombo(PreparedStatement ps, Void unused) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, 0);
         return index;
     }
 
-    public static int bindFindAllComboPrimeConstractor(PreparedStatement ps, Void unused) throws SQLException {
+    public static int bindFindAllPrimeConstractorCombo(PreparedStatement ps, Void unused) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.clientCategory.SHIPPER.getCode());
         return index;
     }
 
-    public static int bindFindAllComboPrimeConstractorHasOriginalPrice(PreparedStatement ps, Void unused) throws SQLException {
+    public static int bindFindAllPrimeConstractorComboHasOriginalPrice(PreparedStatement ps, Void unused) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.clientCategory.SHIPPER.getCode());

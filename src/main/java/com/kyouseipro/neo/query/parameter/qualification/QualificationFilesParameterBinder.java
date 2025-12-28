@@ -9,7 +9,7 @@ import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
 import com.kyouseipro.neo.interfaceis.FileUpload;
 
 public class QualificationFilesParameterBinder {
-    public static int bindInsertQualificationFilesParameters(
+    public static int bindInsert(
         PreparedStatement pstmt,
         List<FileUpload> entities,
         String editor,
@@ -30,7 +30,7 @@ public class QualificationFilesParameterBinder {
         return index;
     }
 
-    public static int bindDeleteQualificationFilesParameters(PreparedStatement pstmt, String url, String editor) throws SQLException {
+    public static int bindDelete(PreparedStatement pstmt, String url, String editor) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, Enums.state.DELETE.getCode());
         if (url.equals("/Users/makoto/upload/qualification/2/e1ddff60-9fd6-4eb0-8250-87064c9ff9cf.pdf")){
@@ -42,7 +42,7 @@ public class QualificationFilesParameterBinder {
         return index;
     }
 
-    public static int bindFindByQualificationsFIlesId(PreparedStatement ps, Integer qualificationFilesId) throws SQLException {
+    public static int bindFindById(PreparedStatement ps, Integer qualificationFilesId) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, qualificationFilesId);

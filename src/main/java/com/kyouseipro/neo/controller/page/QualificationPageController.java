@@ -47,13 +47,13 @@ public class QualificationPageController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = (EmployeeEntity) employeeService.getByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new QualificationsEntity());
         // 初期表示用資格情報リスト取得
-        List<QualificationsEntity> qualificationsOrigin = qualificationsService.getEmployeeQualificationsList();
+        List<QualificationsEntity> qualificationsOrigin = qualificationsService.getListForEmployee();
         mv.addObject("origin", qualificationsOrigin);
         // コンボボックスアイテム取得
         List<SimpleData> qualificationComboList = comboBoxService.getQualificationMaster();
@@ -62,7 +62,7 @@ public class QualificationPageController {
         mv.addObject("url", "/employee/get/id");
         mv.addObject("owner_category", 0);
         // 履歴保存
-        historyService.saveHistory(userName, "qualifications", "閲覧", 200, "");
+        historyService.save(userName, "qualifications", "閲覧", 200, "");
 		
         return mv;
     }
@@ -85,14 +85,14 @@ public class QualificationPageController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = (EmployeeEntity) employeeService.getByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new QualificationsEntity());
 
         // 初期表示用資格情報リスト取得
-        List<QualificationsEntity> licensesOrigin = qualificationsService.getCompanyQualificationsList();
+        List<QualificationsEntity> licensesOrigin = qualificationsService.getListFroCompany();
         mv.addObject("origin", licensesOrigin);
         // コンボボックスアイテム取得
         List<SimpleData> licenseComboList = comboBoxService.getLicenseMaster();
@@ -101,7 +101,7 @@ public class QualificationPageController {
         mv.addObject("url", "/company/get/id");
         mv.addObject("owner_category", Enums.clientCategory.PARTNER.getCode());
         // 履歴保存
-        historyService.saveHistory(userName, "qualifications", "閲覧", 200, "");
+        historyService.save(userName, "qualifications", "閲覧", 200, "");
 		
         return mv;
     }

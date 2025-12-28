@@ -32,8 +32,8 @@ public class WorkingConditionsApiController {
      */
     @PostMapping("/working_conditions/get/id")
 	@ResponseBody
-    public WorkingConditionsEntity getEntityById(@RequestParam int id) {
-            return workingConditionsService.getWorkingConditionsById(id);
+    public WorkingConditionsEntity getById(@RequestParam int id) {
+            return workingConditionsService.getById(id);
     }
 
     /**
@@ -43,8 +43,8 @@ public class WorkingConditionsApiController {
      */
     @PostMapping("/working_conditions/get/employeeid")
 	@ResponseBody
-    public WorkingConditionsEntity getEntityByEmployeeId(@RequestParam int id) {
-            return workingConditionsService.getWorkingConditionsByEmployeeId(id);
+    public WorkingConditionsEntity getByEmployeeId(@RequestParam int id) {
+            return workingConditionsService.getByEmployeeId(id);
     }
 
     /**
@@ -54,14 +54,14 @@ public class WorkingConditionsApiController {
      */
     @PostMapping("/working_conditions/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> saveEntity(@RequestBody WorkingConditionsEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody WorkingConditionsEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = workingConditionsService.saveWorkingConditions(entity, userName);
+        Integer id = workingConditionsService.save(entity, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "working_conditions", "保存", 200, "成功");
+            historyService.save(userName, "working_conditions", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
-            historyService.saveHistory(userName, "working_conditions", "保存", 400, "失敗");
+            historyService.save(userName, "working_conditions", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -73,14 +73,14 @@ public class WorkingConditionsApiController {
      */
     @PostMapping("/working_conditions/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = workingConditionsService.deleteWorkingConditionsByIds(ids, userName);
+        Integer id = workingConditionsService.deleteByIds(ids, userName);
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "working_conditions", "削除", 200, "成功");
+            historyService.save(userName, "working_conditions", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
         } else {
-            historyService.saveHistory(userName, "working_conditions", "削除", 400, "失敗");
+            historyService.save(userName, "working_conditions", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
         }
     }
@@ -92,9 +92,9 @@ public class WorkingConditionsApiController {
      */
     @PostMapping("/working_conditions/download/csv")
 	@ResponseBody
-    public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        historyService.saveHistory(userName, "working_conditions", "ダウンロード", 0, "");
-        return workingConditionsService.downloadCsvWorkingConditionsByIds(ids, userName);
+        historyService.save(userName, "working_conditions", "ダウンロード", 0, "");
+        return workingConditionsService.downloadCsvByIds(ids, userName);
     }
 }

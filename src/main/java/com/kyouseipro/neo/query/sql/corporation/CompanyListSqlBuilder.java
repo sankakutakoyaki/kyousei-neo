@@ -2,35 +2,35 @@ package com.kyouseipro.neo.query.sql.corporation;
 
 public class CompanyListSqlBuilder {
     
-    public static String buildFindAllSql() {
+    public static String buildFindAll() {
         return "SELECT company_id, category, name, name_kana, tel_number, email FROM companies WHERE NOT (state = ?)";
     }
 
-    public static String buildFindAllClientSql() {
+    public static String buildFindAllClient() {
         return "SELECT * FROM companies WHERE NOT (state = ?) AND NOT (category = ?)";
     }
 
-    public static String buildFindAllComboOwnCompanySql() {
+    public static String buildFindAllComboOwnCompany() {
         return "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND (category = ?);";
     }
 
-    public static String buildFindAllComboCompanySql() {
+    public static String buildFindAllCombo() {
         return "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) ORDER BY name_kana, category;";
     }
 
-    public static String buildFindAllComboClientSql() {
+    public static String buildFindAllClientCombo() {
         return "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND NOT (category = ?) ORDER BY name_kana, category;";
     }
 
-    public static String buildFindAllComboPrimeConstractorSql() {
+    public static String buildFindAllPrimeConstractorCombo() {
         return "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana, category;";
     }
 
-    public static String buildFindAllComboPrimeConstractorHasOriginalPriceSql() {
+    public static String buildFindAllPrimeConstractorComboHasOriginalPrice() {
         return "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? AND is_original_price = ? ORDER BY name_kana, category;";
     }
 
-    public static String buildFindAllComboByCategorySql() {
+    public static String buildFindAllComboByCategory() {
         return "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ?;";
     }
 }

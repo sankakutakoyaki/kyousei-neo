@@ -4,7 +4,7 @@ import com.kyouseipro.neo.common.Utilities;
 
 public class OrderSqlBuilder {
 
-    private static String buildLogTableSql(String rowTableName) {
+    private static String buildLogTable(String rowTableName) {
         return
             "DECLARE " + rowTableName + " TABLE (" +
             "  order_id INT, request_number NVARCHAR(255), start_date DATE, end_date DATE, " +
@@ -15,7 +15,7 @@ public class OrderSqlBuilder {
             "); ";
     }
 
-    private static String buildInsertLogSql(String rowTableName, String processName) {
+    private static String buildInsertLog(String rowTableName, String processName) {
         return
             "INSERT INTO orders_log (" +
             "  order_id, editor, process, log_date, request_number, start_date, end_date, " +
@@ -30,7 +30,7 @@ public class OrderSqlBuilder {
             "FROM " + rowTableName + ";";
     }
 
-    private static String buildOutputLogSql() {
+    private static String buildOutputLog() {
         return
             "OUTPUT INSERTED.order_id, INSERTED.request_number, INSERTED.start_date, INSERTED.end_date, " +
             "  INSERTED.prime_constractor_id, INSERTED.prime_constractor_office_id, INSERTED.title, " +
@@ -39,9 +39,9 @@ public class OrderSqlBuilder {
             "  INSERTED.version, INSERTED.state ";
     }
 
-    public static String buildInsertOrderSql() {
+    public static String buildInsert() {
         return
-            buildLogTableSql("@InsertedRows") +
+            buildLogTable("@InsertedRows") +
 
             "INSERT INTO orders (" +
             " request_number, start_date, end_date, " +
@@ -50,20 +50,20 @@ public class OrderSqlBuilder {
             " version, state" +
             ") " +
 
-            buildOutputLogSql() + "INTO @InsertedRows " +
+            buildOutputLog() + "INTO @InsertedRows " +
 
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
-            buildInsertLogSql("@InsertedRows", "INSERT") +
+            buildInsertLog("@InsertedRows", "INSERT") +
 
             "SELECT order_id FROM @InsertedRows;" +
             // "DECLARE @NEW_ID int; SET @NEW_ID = @@IDENTITY;";
             "DECLARE @NEW_ID int; SELECT @NEW_ID = order_id FROM @InsertedRows;";
     }
 
-    public static String buildUpdateOrderSql() {
+    public static String buildUpdate() {
         return
-            buildLogTableSql("@UpdatedRows") +
+            buildLogTable("@UpdatedRows") +
 
             // "DECLARE @NEW_ID int; SET @NEW_ID = ?;" +
             "UPDATE orders SET " +
@@ -72,29 +72,29 @@ public class OrderSqlBuilder {
             "  title=?, order_postal_code=?, order_full_address=?, contact_information=?, contact_information2=?, remarks=?, " +
             "  version=?, state=? " +
             
-            buildOutputLogSql() + "INTO @UpdatedRows " +
+            buildOutputLog() + "INTO @UpdatedRows " +
 
             "WHERE order_id=?; " +
 
-            buildInsertLogSql("@UpdatedRows", "UPDATE") +
+            buildInsertLog("@UpdatedRows", "UPDATE") +
 
             "SELECT order_id FROM @UpdatedRows;";
             
     }
 
-    public static String buildDeleteOrderForIdsSql(int count) {
+    public static String buildDeleteByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ..., ?"
 
         return
-            buildLogTableSql("@DeletedRows") +
+            buildLogTable("@DeletedRows") +
 
             "UPDATE orders SET state = ? " +
 
-            buildOutputLogSql() + "INTO @DeletedRows " +
+            buildOutputLog() + "INTO @DeletedRows " +
             
             "WHERE order_id IN (" + placeholders + ") AND NOT (state = ?); " +
 
-            buildInsertLogSql("@DeletedRows", "DELETE") +
+            buildInsertLog("@DeletedRows", "DELETE") +
 
             "SELECT order_id FROM @DeletedRows;";
     }
@@ -109,17 +109,17 @@ public class OrderSqlBuilder {
             " LEFT OUTER JOIN companies c ON c.company_id = ord.prime_constractor_id AND NOT (c.state = ?)" +
             " LEFT OUTER JOIN offices o ON o.office_id = ord.prime_constractor_office_id AND NOT (o.state = ?)";
     }
-    public static String buildFindByIdSql() {
+    public static String buildFindById() {
         return 
             baseSelectString() + " WHERE ord.order_id = ? AND NOT (ord.state = ?)";
     }
 
-    public static String buildFindAllSql() {
+    public static String buildFindAll() {
         return 
             baseSelectString() + " WHERE NOT (ord.state = ?)";
     }
 
-    public static String buildDownloadCsvOrderForIdsSql(int count) {
+    public static String buildDownloadCsvByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return 
             baseSelectString() + " WHERE ord.order_id IN (" + placeholders + ") AND NOT (ord.state = ?)";

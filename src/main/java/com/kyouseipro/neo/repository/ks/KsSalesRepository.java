@@ -24,7 +24,7 @@ public class KsSalesRepository {
      * @param end
      * @return
      */
-    public List<KsSalesEntity> findByEntityFromBetween(LocalDate start, LocalDate end, String type) {
+    public List<KsSalesEntity> findByAllFromBetween(LocalDate start, LocalDate end, String type) {
         String sql = "";
         switch (type) {
             case "staff":

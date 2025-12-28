@@ -12,7 +12,7 @@ import com.kyouseipro.neo.entity.recycle.RecycleDateEntity;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
 
 public class RecycleParameterBinder {
-    public static int bindInsertRecycleParameters(PreparedStatement pstmt, RecycleEntity r, String editor, int index) throws SQLException {
+    public static int bindInsert(PreparedStatement pstmt, RecycleEntity r, String editor, int index) throws SQLException {
         pstmt.setString(index++, r.getRecycle_number());
         pstmt.setString(index++, r.getMolding_number());
         pstmt.setInt(index++, r.getMaker_id());
@@ -49,7 +49,7 @@ public class RecycleParameterBinder {
         return index;
     }
 
-    public static int bindUpdateRecycleParameters(PreparedStatement pstmt, RecycleEntity r, String editor, int index) throws SQLException {
+    public static int bindUpdate(PreparedStatement pstmt, RecycleEntity r, String editor, int index) throws SQLException {
         pstmt.setString(index++, r.getRecycle_number());
         pstmt.setString(index++, r.getMolding_number());
         pstmt.setInt(index++, r.getMaker_id());
@@ -125,7 +125,7 @@ public class RecycleParameterBinder {
         return index;
     }
 
-    public static int bindUpdateRecycleDateParameters(PreparedStatement ps, int id, LocalDate date, String editor, int index) throws SQLException {
+    public static int bindUpdateForDate(PreparedStatement ps, int id, LocalDate date, String editor, int index) throws SQLException {
         ps.setDate(index++, java.sql.Date.valueOf(date));
         ps.setTimestamp(index++, Timestamp.valueOf(LocalDateTime.now()));
         ps.setInt(index++, id);
@@ -133,7 +133,7 @@ public class RecycleParameterBinder {
         return index;
     }
 
-    public static int bindInsertRecycleDateParameters(PreparedStatement ps, RecycleDateEntity r, String editor, int index) throws SQLException {
+    public static int bindInsertForDate(PreparedStatement ps, RecycleDateEntity r, String editor, int index) throws SQLException {
         ps.setString(index++, r.getRecycle_number());
         ps.setString(index++, r.getMolding_number());
         ps.setDate(index++, java.sql.Date.valueOf(r.getDate()));
@@ -142,14 +142,14 @@ public class RecycleParameterBinder {
         return index;
     }
 
-    public static int bindDeleteRecycleParameters(PreparedStatement ps, int id, String editor, int index) throws SQLException {
+    public static int bindDelete(PreparedStatement ps, int id, String editor, int index) throws SQLException {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, id);
         ps.setString(index, editor);
         return index;
     }
 
-    public static int bindFindByBetweenRecycleEntity(PreparedStatement ps, LocalDate start, LocalDate end) throws SQLException {
+    public static int bindFindByBetween(PreparedStatement ps, LocalDate start, LocalDate end) throws SQLException {
         LocalDateTime from = start.atStartOfDay();
         LocalDateTime to   = end.plusDays(1).atStartOfDay();
         int index = 1;
@@ -165,35 +165,31 @@ public class RecycleParameterBinder {
         return index;
     }
 
-    public static int bindSaveRecycleListParameters(PreparedStatement pstmt, List<RecycleEntity> list, String editor) throws SQLException {
+    public static int bindSave(PreparedStatement pstmt, List<RecycleEntity> list, String editor) throws SQLException {
         int index = 1;
         for (RecycleEntity entity : list) {
             if (entity.getRecycle_id() > 0){
-                index = RecycleParameterBinder.bindUpdateRecycleParameters(pstmt, entity, editor, index);
-                // index = index + 16;
+                index = RecycleParameterBinder.bindUpdate(pstmt, entity, editor, index);
             } else {
-                index = RecycleParameterBinder.bindInsertRecycleParameters(pstmt, entity, editor, index);
-                // index = index + 15;
+                index = RecycleParameterBinder.bindInsert(pstmt, entity, editor, index);
             }
         }
         return index;
     }
     
-    public static int bindUpdateRecycleDateListParameters(PreparedStatement pstmt, List<RecycleDateEntity> list, String editor) throws SQLException {
+    public static int bindUpdateForDate(PreparedStatement pstmt, List<RecycleDateEntity> list, String editor) throws SQLException {
         int index = 1;
         for (RecycleDateEntity entity : list) {
             if (entity.getRecycle_id() > 0){
-                index = RecycleParameterBinder.bindUpdateRecycleDateParameters(pstmt, entity.getRecycle_id(), entity.getDate(), editor, index);
-                // index = index + 3;
+                index = RecycleParameterBinder.bindUpdateForDate(pstmt, entity.getRecycle_id(), entity.getDate(), editor, index);
             } else {
-                index = RecycleParameterBinder.bindInsertRecycleDateParameters(pstmt, entity, editor, index);
-                // index = index + 6;
+                index = RecycleParameterBinder.bindInsertForDate(pstmt, entity, editor, index);
             }
         }
         return index;
     }
 
-    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+    public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
@@ -204,7 +200,7 @@ public class RecycleParameterBinder {
         return index;
     }
 
-    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());

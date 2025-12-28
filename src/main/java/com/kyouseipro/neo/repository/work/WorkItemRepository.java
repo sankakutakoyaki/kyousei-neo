@@ -21,7 +21,7 @@ public class WorkItemRepository {
     private final SqlRepository sqlRepository;
 
     public WorkItemEntity findById(int id) {
-        String sql = WorkItemSqlBuilder.buildFindByIdSql();
+        String sql = WorkItemSqlBuilder.buildFindById();
 
         return sqlRepository.execute(
             sql,
@@ -32,7 +32,7 @@ public class WorkItemRepository {
     }
 
     public List<WorkItemEntity> findAll() {
-        String sql = WorkItemSqlBuilder.buildFindAllSql();
+        String sql = WorkItemSqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,
@@ -42,7 +42,7 @@ public class WorkItemRepository {
     }
 
     public List<WorkItemEntity> findAllByCategoryId(int id) {
-        String sql = WorkItemSqlBuilder.buildFindAllByCategoryIdSql();
+        String sql = WorkItemSqlBuilder.buildFindAllByCategoryId();
 
         return sqlRepository.findAll(
             sql,
@@ -57,13 +57,13 @@ public class WorkItemRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public Integer deleteWorkItemByIds(List<SimpleData> ids, String editor) {
+    public Integer deleteByIds(List<SimpleData> ids, String editor) {
         List<Integer> workItemIds = Utilities.createSequenceByIds(ids);
-        String sql = WorkItemSqlBuilder.buildDeleteWorkItemForIdsSql(workItemIds.size());
+        String sql = WorkItemSqlBuilder.buildDeleteByIds(workItemIds.size());
 
         return sqlRepository.executeUpdate(
             sql,
-            ps -> WorkItemParameterBinder.bindDeleteForIds(ps, workItemIds, editor)
+            ps -> WorkItemParameterBinder.bindDeleteByIds(ps, workItemIds, editor)
         );
         // return result; // 成功件数。0なら削除なし
     }
@@ -73,12 +73,12 @@ public class WorkItemRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    public Integer insertWorkItem(WorkItemEntity entity, String editor) {
+    public Integer insert(WorkItemEntity entity, String editor) {
         int index = 1;
-        String sql = WorkItemSqlBuilder.buildInsertWorkItemSql(index);
+        String sql = WorkItemSqlBuilder.buildInsert(index);
         return sqlRepository.execute(
             sql,
-            (pstmt, emp) -> WorkItemParameterBinder.bindInsertWorkItemParameters(pstmt, entity, editor, index),
+            (pstmt, emp) -> WorkItemParameterBinder.bindInsert(pstmt, entity, editor, index),
             rs -> rs.next() ? rs.getInt("work_item_id") : null,
             entity
         );
@@ -89,13 +89,13 @@ public class WorkItemRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    public Integer updateWorkItem(WorkItemEntity entity, String editor) {
+    public Integer update(WorkItemEntity entity, String editor) {
         int index = 1;
-        String sql = WorkItemSqlBuilder.buildUpdateWorkItemSql(index);
+        String sql = WorkItemSqlBuilder.buildUpdate(index);
 
         Integer result = sqlRepository.executeUpdate(
             sql,
-            pstmt -> WorkItemParameterBinder.bindUpdateWorkItemParameters(pstmt, entity, editor, index)
+            pstmt -> WorkItemParameterBinder.bindUpdate(pstmt, entity, editor, index)
         );
 
         return result; // 成功件数。0なら削除なし
@@ -103,7 +103,7 @@ public class WorkItemRepository {
 
     // コンボボックス用リスト取得
     public List<SimpleData> findParentCategoryCombo() {
-        String sql = WorkItemSqlBuilder.buildFindParentCategoryComboSql();
+        String sql = WorkItemSqlBuilder.buildFindParentCategoryCombo();
 
         return sqlRepository.findAll(
             sql,
@@ -118,13 +118,13 @@ public class WorkItemRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<WorkItemEntity> downloadCsvWorkItemByIds(List<SimpleData> ids) {
+    public List<WorkItemEntity> downloadCsvByIds(List<SimpleData> ids) {
         List<Integer> workItemIds = Utilities.createSequenceByIds(ids);
-        String sql = WorkItemSqlBuilder.buildDownloadCsvWorkItemForIdsSql(workItemIds.size());
+        String sql = WorkItemSqlBuilder.buildDownloadCsvByIds(workItemIds.size());
 
         return sqlRepository.findAll(
             sql,
-            ps -> WorkItemParameterBinder.bindDownloadCsvForIds(ps, workItemIds),
+            ps -> WorkItemParameterBinder.bindDownloadCsvByIds(ps, workItemIds),
             WorkItemEntityMapper::map // ← ここで ResultSet を map
         );
     }

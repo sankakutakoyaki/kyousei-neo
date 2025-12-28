@@ -22,7 +22,7 @@ public class WorkPriceService {
      * @param id 受注ID
      * @return OrderEntity または null
      */
-    public WorkPriceEntity getWorkPriceById(int id) {
+    public WorkPriceEntity getById(int id) {
         return workPriceRepository.findById(id);
     }
 
@@ -43,11 +43,11 @@ public class WorkPriceService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer saveWorkPrice(WorkPriceEntity item, String editor) {
+    public Integer save(WorkPriceEntity item, String editor) {
         if (item.getWork_price_id() > 0) {
-            return workPriceRepository.updateWorkPrice(item, editor);
+            return workPriceRepository.update(item, editor);
         } else {
-            return workPriceRepository.insertWorkPrice(item, editor);
+            return workPriceRepository.insert(item, editor);
         }        
     }
 
@@ -56,18 +56,8 @@ public class WorkPriceService {
      * @param ids
      * @return
      */
-    public String downloadCsvOrderByIds(List<SimpleData> list, String userName) {
-        List<WorkPriceEntity> workPrices = workPriceRepository.downloadCsvWorkPriceByIds(list, userName);
+    public String downloadCsvByIds(List<SimpleData> list) {
+        List<WorkPriceEntity> workPrices = workPriceRepository.downloadCsvByIds(list);
         return CsvExporter.export(workPrices, WorkPriceEntity.class);
-    }
-
-    /**
-     * IDからCsv用文字列を取得
-     * @param ids
-     * @return
-     */
-    public String downloadCsvWorkPriceByIds(List<SimpleData> list) {
-        List<WorkPriceEntity> recycles = workPriceRepository.downloadCsvWorkPriceByIds(list);
-        return CsvExporter.export(recycles, WorkPriceEntity.class);
     }
 }

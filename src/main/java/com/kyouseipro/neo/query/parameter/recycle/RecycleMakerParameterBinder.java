@@ -8,7 +8,7 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.recycle.RecycleMakerEntity;
 
 public class RecycleMakerParameterBinder {
-    public static int bindInsertRecycleMakerParameters(PreparedStatement pstmt, RecycleMakerEntity r) throws SQLException {
+    public static int bindInsert(PreparedStatement pstmt, RecycleMakerEntity r) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, r.getCode());
         pstmt.setString(index++, r.getName());
@@ -18,7 +18,7 @@ public class RecycleMakerParameterBinder {
         return index;
     }
 
-    public static int bindUpdateRecycleMakerParameters(PreparedStatement pstmt, RecycleMakerEntity r) throws SQLException {
+    public static int bindUpdate(PreparedStatement pstmt, RecycleMakerEntity r) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, r.getCode());
         pstmt.setString(index++, r.getName());
@@ -43,14 +43,14 @@ public class RecycleMakerParameterBinder {
         return index;
     }
 
-    public static int bindDeleteRecycleMakerParameters(PreparedStatement ps, int id) throws SQLException {
+    public static int bindDelete(PreparedStatement ps, int id) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, id);
         return index;
     }
 
-    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
@@ -60,7 +60,7 @@ public class RecycleMakerParameterBinder {
         return index;
     }
 
-    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         for (Integer id : ids) {
             ps.setInt(index++, id); // id IN (?, ?, ?)

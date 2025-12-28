@@ -2,7 +2,7 @@ package com.kyouseipro.neo.query.sql.qualification;
 
 public class QualificationFilesSqlBuilder {
 
-    private static String buildLogTableSql(String tableName) {
+    private static String buildLogTable(String tableName) {
         return
             "DECLARE " + tableName + " TABLE (" +
             "  qualifications_files_id INT, qualifications_id INT, file_name NVARCHAR(255), " +
@@ -10,13 +10,13 @@ public class QualificationFilesSqlBuilder {
             "); ";
     }
 
-    private static String buildOutputLogSql() {
+    private static String buildOutputLog() {
         return
             "OUTPUT INSERTED.qualifications_files_id, INSERTED.qualifications_id, INSERTED.file_name, " +
             "INSERTED.internal_name, INSERTED.folder_name, INSERTED.version, INSERTED.state ";
     }
 
-    private static String buildInsertLogSql(String tableName, String process) {
+    private static String buildInsertLog(String tableName, String process) {
         return
             "INSERT INTO qualifications_files_log (" +
             "  qualifications_files_id, editor, process, log_date, " +
@@ -27,71 +27,45 @@ public class QualificationFilesSqlBuilder {
             "FROM " + tableName + "; ";
     }
 
-    // public static String buildInsertQualificationFilesSql(int count) {
-    //     return
-    //         buildLogTableSql("@Inserted") +
-
-    //         "INSERT INTO qualifications_files (" +
-    //         "  qualifications_id, file_name, internal_name, folder_name, version, state" +
-    //         ") " +
-    //         buildOutputLogSql() + "INTO @Inserted " +
-    //         "VALUES (?, ?, ?, ?, ?, ?); " +
-
-    //         buildInsertLogSql("@Inserted", "INSERT") +
-    //         "SELECT qualifications_files_id FROM @Inserted;";
-    // }
-    public static String buildInsertQualificationFilesSql(int count) {
+    public static String buildInsert(int count) {
         StringBuilder sqlBuilder = new StringBuilder();
 
         for (int i = 0; i < count; i++) {
             String insertedVar = "@Inserted" + i;
-            sqlBuilder.append(buildLogTableSql(insertedVar));
+            sqlBuilder.append(buildLogTable(insertedVar));
 
             sqlBuilder.append(
                 "INSERT INTO qualifications_files (" +
                 "  qualifications_id, file_name, internal_name, folder_name, version, state" +
                 ") " +
-                buildOutputLogSql() + "INTO " + insertedVar + " " +
+                buildOutputLog() + "INTO " + insertedVar + " " +
                 "VALUES (?, ?, ?, ?, ?, ?); "
             );
 
-            sqlBuilder.append(buildInsertLogSql(insertedVar, "INSERT"));
+            sqlBuilder.append(buildInsertLog(insertedVar, "INSERT"));
             sqlBuilder.append("SELECT qualifications_files_id FROM " + insertedVar + "; ");
         }
 
         return sqlBuilder.toString();
     }
 
-    // public static String buildUpdateQualificationFilesSql() {
-    //     return
-    //         buildLogTableSql("@Updated") +
-
-    //         "UPDATE qualifications_files SET " +
-    //         "  qualifications_id=?, file_name=?, internal_name=?, folder_name=?, version=?, state=? " +
-    //         buildOutputLogSql() + "INTO @Updated " +
-    //         "WHERE qualifications_files_id=?; " +
-
-    //         buildInsertLogSql("@Updated", "UPDATE") +
-    //         "SELECT qualifications_files_id FROM @Updated;";
-    // }
-
-    public static String buildDeleteQualificationFilesSql() {
+    public static String buildDelete() {
         return
-            buildLogTableSql("@Deleted") +
+            buildLogTable("@Deleted") +
 
             "UPDATE qualifications_files SET state=? " +
-            buildOutputLogSql() + "INTO @Deleted " +
+            buildOutputLog() + "INTO @Deleted " +
             "WHERE folder_name=?; " +
 
-            buildInsertLogSql("@Deleted", "DELETE") +
+            buildInsertLog("@Deleted", "DELETE") +
             "SELECT qualifications_files_id FROM @Deleted;";
     }
 
-    public static String buildFindByQualificationsFilesIdSql() {
+    public static String buildFindById() {
         return "SELECT * FROM qualifications_files WHERE NOT (state = ?) AND qualifications_files_id = ?";
     }
 
-    public static String buildFindAllByQualificationsIdSql() {
+    public static String buildFindAllByQualificationsId() {
         return "SELECT * FROM qualifications_files WHERE NOT (state = ?) AND qualifications_id = ?";
     }
 }

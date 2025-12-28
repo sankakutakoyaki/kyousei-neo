@@ -40,8 +40,8 @@ public class RecycleApiController {
      */
     @PostMapping("/recycle/get/id")
 	@ResponseBody
-    public ResponseEntity getEntityById(@RequestParam int id) {
-        RecycleEntity entity = recycleService.getRecycleById(id);
+    public ResponseEntity getById(@RequestParam int id) {
+        RecycleEntity entity = recycleService.getById(id);
         if (entity != null) {
             return ResponseEntity.ok(entity);
         } else {
@@ -56,8 +56,8 @@ public class RecycleApiController {
      */
     @PostMapping("/recycle/exists/number")
     @ResponseBody
-    public ResponseEntity existsEntityByNumbe(@RequestParam String num) {
-        RecycleEntity entity = recycleService.existsRecycleByNumber(num);
+    public ResponseEntity existsByNmbe(@RequestParam String num) {
+        RecycleEntity entity = recycleService.existsByNumber(num);
         if (entity != null) {
             return ResponseEntity.ok(entity);
         } else {
@@ -74,8 +74,8 @@ public class RecycleApiController {
      */
     @PostMapping("/recycle/get/between")
     @ResponseBody
-    public List<RecycleEntity> getBetweenEntity(@RequestParam LocalDate start, @RequestParam LocalDate end, @RequestParam String col) {
-        List<RecycleEntity> list = recycleService.getBetweenRecycleEntity(start, end, col);
+    public List<RecycleEntity> getBetween(@RequestParam LocalDate start, @RequestParam LocalDate end, @RequestParam String col) {
+        List<RecycleEntity> list = recycleService.getBetween(start, end, col);
         return list;
     }
 
@@ -86,38 +86,38 @@ public class RecycleApiController {
      */
     @PostMapping("/recycle/save/{type}")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> saveRecycleItem(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
         String userName = principal.getAttribute("preferred_username");
         Integer id = 0;
         switch (type) {
             case "regist":
                 List<RecycleEntity> itemList1 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleEntity>>() {});
-                id = recycleService.saveRecycle(itemList1, userName);
+                id = recycleService.save(itemList1, userName);
                 break;
             case "delivery":
                 List<RecycleDateEntity> itemList2 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
-                id = recycleService.updateRecycleDate(itemList2, userName, type);
+                id = recycleService.updateForDate(itemList2, userName, type);
                 break;
             case "shipping":
                 List<RecycleDateEntity> itemList3 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
-                id = recycleService.updateRecycleDate(itemList3, userName, type);
+                id = recycleService.updateForDate(itemList3, userName, type);
                 break;
             case "loss":
                 List<RecycleDateEntity> itemList4 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
-                id = recycleService.updateRecycleDate(itemList4, userName, type);
+                id = recycleService.updateForDate(itemList4, userName, type);
                 break;
             case "edit":
                 RecycleEntity entity = objectMapper.convertValue(body.get("entity"), new TypeReference<RecycleEntity>() {});
-                id = recycleService.updateRecycle(entity, userName);
+                id = recycleService.update(entity, userName);
                 break;
             default:
                 break;
         }
         if (id != null && id > 0) {
-            historyService.saveHistory(userName, "recycles", "保存", 200, "成功");
+            historyService.save(userName, "recycles", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {
-            historyService.saveHistory(userName, "recycles", "保存", 400, "失敗");
+            historyService.save(userName, "recycles", "保存", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
         }
     }
@@ -129,14 +129,14 @@ public class RecycleApiController {
      */
     @PostMapping("/recycle/delete")
     @ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_userName");
-        Integer num = recycleService.deleteRecycleByIds(ids, userName);
+        Integer num = recycleService.deleteByIds(ids, userName);
         if (num != null && num > 0) {
-            historyService.saveHistory(userName, "recycels", "削除", 200, "成功");
+            historyService.save(userName, "recycels", "削除", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok(num + "件削除しました。", num));
         } else {
-            historyService.saveHistory(userName, "recycels", "削除", 400, "失敗");
+            historyService.save(userName, "recycels", "削除", 400, "失敗");
             return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました。"));
         }
     }
@@ -148,9 +148,9 @@ public class RecycleApiController {
      */
     @PostMapping("/recycle/download/csv")
 	@ResponseBody
-    public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        historyService.saveHistory(userName, "recycles", "ダウンロード", 0, "");
-        return recycleService.downloadCsvRecycleByIds(ids, userName);
+        historyService.save(userName, "recycles", "ダウンロード", 0, "");
+        return recycleService.downloadCsvByIds(ids, userName);
     }
 }

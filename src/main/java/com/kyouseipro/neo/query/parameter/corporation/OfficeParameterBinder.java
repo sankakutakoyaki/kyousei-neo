@@ -9,7 +9,7 @@ import com.kyouseipro.neo.entity.corporation.OfficeEntity;
 
 public class OfficeParameterBinder {
 
-    public static int bindInsertOfficeParameters(PreparedStatement pstmt, OfficeEntity office, String editor) throws SQLException {
+    public static int bindInsert(PreparedStatement pstmt, OfficeEntity office, String editor) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, office.getCompany_id());
         pstmt.setString(index++, office.getName());
@@ -27,7 +27,7 @@ public class OfficeParameterBinder {
         return index;
     }
 
-    public static int bindUpdateOfficeParameters(PreparedStatement pstmt, OfficeEntity office, String editor) throws SQLException {
+    public static int bindUpdate(PreparedStatement pstmt, OfficeEntity office, String editor) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, office.getCompany_id());
         pstmt.setString(index++, office.getName());

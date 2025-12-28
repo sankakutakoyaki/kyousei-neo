@@ -14,12 +14,12 @@ import lombok.RequiredArgsConstructor;
 public class HistoryRepository {
     private final SqlRepository sqlRepository;
 
-    public Integer insertHistory(HistoryEntity history, String editor) {
-        String sql = HistorySqlBuilder.buildInsertHistorySql();
+    public Integer insert(HistoryEntity history, String editor) {
+        String sql = HistorySqlBuilder.buildInsert();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, his) -> HistoryParameterBinder.bindInsertHistoryParameters(pstmt, his, editor),
+            (pstmt, his) -> HistoryParameterBinder.bindInsert(pstmt, his, editor),
             rs -> rs.next() ? rs.getInt("history_id") : null,
             history
         );

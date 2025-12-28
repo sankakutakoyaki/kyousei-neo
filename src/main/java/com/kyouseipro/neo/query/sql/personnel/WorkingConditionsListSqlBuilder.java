@@ -9,14 +9,14 @@ public class WorkingConditionsListSqlBuilder {
             " LEFT OUTER JOIN working_conditions w ON w.employee_id = e.employee_id AND NOT (w.state = ?)" +
             " LEFT OUTER JOIN offices o ON o.office_id = e.office_id AND NOT (o.state = ?)";
     }
-    public static String buildFindAllSql() {
+    public static String buildFindAll() {
         // return "SELECT * FROM working_conditions WHERE NOT (state = ?)";
         return 
             basicSelectString() +
             " WHERE NOT (e.state = ?)";
     }
 
-    public static String buildFindAllByCategoryIdSql() {
+    public static String buildFindAllByCategoryId() {
         return 
             basicSelectString() +
             " WHERE NOT (e.state = ?) AND e.category = ?;";

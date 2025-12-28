@@ -12,12 +12,12 @@ public class OrderListSqlBuilder {
             " LEFT OUTER JOIN offices o ON o.office_id = ord.prime_constractor_office_id AND NOT (o.state = ?)";
     }
 
-    public static String buildFindAllSql() {
+    public static String buildFindAll() {
         return
             baseSelectString() + " WHERE NOT (ord.state = ?)";
     }
 
-    public static String buildFindByBetweenOrderListEntity() {
+    public static String buildFindByBetween() {
         return 
             baseSelectString() +
             " WHERE NOT (ord.state = ?) AND " +

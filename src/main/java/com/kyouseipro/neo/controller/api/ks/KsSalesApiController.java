@@ -27,8 +27,8 @@ public class KsSalesApiController {
      */
     @PostMapping("/ks/sales/get/between/{type}")
 	@ResponseBody
-    public List<KsSalesEntity> getBetweenAllEntity(@RequestParam LocalDate start, @RequestParam LocalDate end, @PathVariable String type) {
-        List<KsSalesEntity> list = ksSalesService.getBetweenKsSalesEntity(start, end, type);
+    public List<KsSalesEntity> getAllFromBetween(@RequestParam LocalDate start, @RequestParam LocalDate end, @PathVariable String type) {
+        List<KsSalesEntity> list = ksSalesService.getAllFromBetween(start, end, type);
         return list;
     }
 }

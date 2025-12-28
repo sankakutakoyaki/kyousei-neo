@@ -25,7 +25,7 @@ public class RecycleItemRepository {
      * @return IDから取得したEntityをかえす。
      */
     public RecycleItemEntity findById(int recycleItemId) {
-        String sql = RecycleItemSqlBuilder.buildFindByIdSql();
+        String sql = RecycleItemSqlBuilder.buildFindById();
 
         return sqlRepository.execute(
             sql,
@@ -41,7 +41,7 @@ public class RecycleItemRepository {
      * @return IDから取得したEntityをかえす。
      */
     public RecycleItemEntity findByCode(int code) {
-        String sql = RecycleItemSqlBuilder.buildFindByCodeSql();
+        String sql = RecycleItemSqlBuilder.buildFindByCode();
         
         return sqlRepository.execute(
             sql,
@@ -57,9 +57,9 @@ public class RecycleItemRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public Integer deleteRecycleItemByIds(List<SimpleData> ids) {
+    public Integer deleteByIds(List<SimpleData> ids) {
         List<Integer> recycleItemIds = Utilities.createSequenceByIds(ids);
-        String sql = RecycleItemSqlBuilder.buildDeleteRecycleItemForIdsSql(recycleItemIds.size());
+        String sql = RecycleItemSqlBuilder.buildDeleteByIds(recycleItemIds.size());
 
         return sqlRepository.executeUpdate(
             sql,
@@ -74,9 +74,9 @@ public class RecycleItemRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<RecycleItemEntity> downloadCsvRecycleItemByIds(List<SimpleData> ids) {
+    public List<RecycleItemEntity> downloadCsvByIds(List<SimpleData> ids) {
         List<Integer> recycleItemIds = Utilities.createSequenceByIds(ids);
-        String sql = RecycleItemSqlBuilder.buildDownloadCsvRecycleItemForIdsSql(recycleItemIds.size());
+        String sql = RecycleItemSqlBuilder.buildDownloadCsvByIds(recycleItemIds.size());
 
         return sqlRepository.findAll(
             sql,
@@ -90,11 +90,11 @@ public class RecycleItemRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    public Integer insertRecycleItem(RecycleItemEntity entity) {
-        String sql = RecycleItemSqlBuilder.buildInsertRecycleItemSql();
+    public Integer insert(RecycleItemEntity entity) {
+        String sql = RecycleItemSqlBuilder.buildInsert();
         return sqlRepository.execute(
             sql,
-            (pstmt, emp) -> RecycleItemParameterBinder.bindInsertRecycleItemParameters(pstmt, emp),
+            (pstmt, emp) -> RecycleItemParameterBinder.bindInsert(pstmt, emp),
             rs -> rs.next() ? rs.getInt("recycle_maker_id") : null,
             entity
         );
@@ -105,12 +105,12 @@ public class RecycleItemRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    public Integer updateRecycleItem(RecycleItemEntity entity) {
-        String sql = RecycleItemSqlBuilder.buildUpdateRecycleItemSql();
+    public Integer update(RecycleItemEntity entity) {
+        String sql = RecycleItemSqlBuilder.buildUpdate();
 
         Integer result = sqlRepository.executeUpdate(
             sql,
-            pstmt -> RecycleItemParameterBinder.bindUpdateRecycleItemParameters(pstmt, entity)
+            pstmt -> RecycleItemParameterBinder.bindUpdate(pstmt, entity)
         );
 
         return result; // 成功件数。0なら削除なし

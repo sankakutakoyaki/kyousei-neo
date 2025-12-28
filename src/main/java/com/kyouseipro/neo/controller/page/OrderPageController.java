@@ -51,7 +51,7 @@ public class OrderPageController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = employeeService.getByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期化されたエンティティ
@@ -61,7 +61,7 @@ public class OrderPageController {
         mv.addObject("workEntity", new WorkContentEntity());
 
         // 初期表示用受注リスト取得
-        List<OrderListEntity> origin = orderListService.getBetweenOrderEntity(LocalDate.now(), LocalDate.now());
+        List<OrderListEntity> origin = orderListService.getBetween(LocalDate.now(), LocalDate.now());
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得
@@ -75,7 +75,7 @@ public class OrderPageController {
         mv.addObject("deleteCode", Enums.state.DELETE.getCode());
 
         // 履歴保存
-        historyService.saveHistory(userName, "orders", "閲覧", 0, "");
+        historyService.save(userName, "orders", "閲覧", 0, "");
 		
         return mv;
     }
@@ -93,14 +93,14 @@ public class OrderPageController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = employeeService.getByAccount(userName);
 		mv.addObject("user", user);
 
         // // 初期化されたエンティティ
         mv.addObject("formEntity", new OrderItemEntity());
 
         // 初期表示用受注リスト取得
-        List<OrderItemEntity> origin = orderItemService.getBetweenOrderItemEntity(LocalDate.now(), LocalDate.now());
+        List<OrderItemEntity> origin = orderItemService.getBetween(LocalDate.now(), LocalDate.now());
         mv.addObject("origin", origin);
 
         // コンボボックスアイテム取得
@@ -122,7 +122,7 @@ public class OrderPageController {
         mv.addObject("returnsCode", Enums.ItemClass.RETURNS.getCode());
 
         // 履歴保存
-        historyService.saveHistory(userName, "order_items", "閲覧", 0, "");
+        historyService.save(userName, "order_items", "閲覧", 0, "");
 		
         return mv;
     }

@@ -55,7 +55,7 @@ public class CorporationPageController {
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getEmployeeByAccount(userName);
+		EmployeeEntity user = employeeService.getByAccount(userName);
 		mv.addObject("user", user);
 
         // 初期化されたエンティティ
@@ -70,7 +70,7 @@ public class CorporationPageController {
         List<OfficeListEntity> officeOrigin = officeListService.getClientList();
         mv.addObject("officeOrigin", officeOrigin);
         // 初期表示用Staffリスト取得
-        List<StaffListEntity> staffOrigin = staffListService.getStaffList();
+        List<StaffListEntity> staffOrigin = staffListService.getList();
         mv.addObject("staffOrigin", staffOrigin);
 
         // コンボボックスアイテム取得
@@ -87,7 +87,7 @@ public class CorporationPageController {
         mv.addObject("categoryTransportCode", Enums.clientCategory.TRANSPORT.getCode());
 
         // 履歴保存
-        historyService.saveHistory(userName, "companies", "閲覧", 200, "");
+        historyService.save(userName, "companies", "閲覧", 200, "");
 		
         return mv;
     }

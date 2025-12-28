@@ -8,7 +8,7 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.recycle.RecycleItemEntity;
 
 public class RecycleItemParameterBinder {
-    public static int bindInsertRecycleItemParameters(PreparedStatement pstmt, RecycleItemEntity r) throws SQLException {
+    public static int bindInsert(PreparedStatement pstmt, RecycleItemEntity r) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, r.getCode());
         pstmt.setString(index++, r.getName());
@@ -17,7 +17,7 @@ public class RecycleItemParameterBinder {
         return index;
     }
 
-    public static int bindUpdateRecycleItemParameters(PreparedStatement pstmt, RecycleItemEntity r) throws SQLException {
+    public static int bindUpdate(PreparedStatement pstmt, RecycleItemEntity r) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, r.getCode());
         pstmt.setString(index++, r.getName());
@@ -41,7 +41,7 @@ public class RecycleItemParameterBinder {
         return index;
     }
 
-    public static int bindDeleteRecycleItemParameters(PreparedStatement ps, int id) throws SQLException {
+    public static int bindDelete(PreparedStatement ps, int id) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, id);

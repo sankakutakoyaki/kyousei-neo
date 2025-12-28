@@ -19,54 +19,54 @@ import lombok.RequiredArgsConstructor;
 public class CompanyRepository {
     private final SqlRepository sqlRepository;
 
-    public Integer insertCompany(CompanyEntity company, String editor) {
-        String sql = CompanySqlBuilder.buildInsertCompanySql();
+    public Integer insert(CompanyEntity company, String editor) {
+        String sql = CompanySqlBuilder.buildInsert();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, comp) -> CompanyParameterBinder.bindInsertCompanyParameters(pstmt, comp, editor),
+            (pstmt, comp) -> CompanyParameterBinder.bindInsert(pstmt, comp, editor),
             rs -> rs.next() ? rs.getInt("company_id") : null,
             company
         );
     }
 
-    public Integer updateCompany(CompanyEntity company, String editor) {
-        String sql = CompanySqlBuilder.buildUpdateCompanySql();
+    public Integer update(CompanyEntity company, String editor) {
+        String sql = CompanySqlBuilder.buildUpdate();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, comp) -> CompanyParameterBinder.bindUpdateCompanyParameters(pstmt, comp, editor),
+            (pstmt, comp) -> CompanyParameterBinder.bindUpdate(pstmt, comp, editor),
             rs -> rs.next() ? rs.getInt("company_id") : null,
             company
         );
     }
 
-    public int deleteCompanyByIds(List<SimpleData> ids, String editor) {
+    public int deleteByIds(List<SimpleData> ids, String editor) {
         List<Integer> companyIds = Utilities.createSequenceByIds(ids);
-        String sql = CompanySqlBuilder.buildDeleteCompanyForIdsSql(companyIds.size());
+        String sql = CompanySqlBuilder.buildDeleteByIds(companyIds.size());
 
         int result = sqlRepository.executeUpdate(
             sql,
-            ps -> CompanyParameterBinder.bindDeleteForIds(ps, companyIds, editor)
+            ps -> CompanyParameterBinder.bindDeleteByIds(ps, companyIds, editor)
         );
 
         return result; // 成功件数。0なら削除なし
     }
 
-    public List<CompanyEntity> downloadCsvCompanyByIds(List<SimpleData> ids, String editor) {
+    public List<CompanyEntity> downloadCsvByIds(List<SimpleData> ids, String editor) {
         List<Integer> companyIds = Utilities.createSequenceByIds(ids);
-        String sql = CompanySqlBuilder.buildDownloadCsvCompanyForIdsSql(companyIds.size());
+        String sql = CompanySqlBuilder.buildDownloadCsvByIds(companyIds.size());
 
         return sqlRepository.findAll(
             sql,
-            ps -> CompanyParameterBinder.bindDownloadCsvForIds(ps, companyIds),
+            ps -> CompanyParameterBinder.bindDownloadCsvByIds(ps, companyIds),
             CompanyEntityMapper::map // ← ここで ResultSet を map
         );
     }
 
     // IDによる取得
     public CompanyEntity findById(int companyId) {
-        String sql = CompanySqlBuilder.buildFindByIdSql();
+        String sql = CompanySqlBuilder.buildFindById();
 
         return sqlRepository.execute(
             sql,
@@ -78,7 +78,7 @@ public class CompanyRepository {
 
     // 全件取得
     public List<CompanyEntity> findAll() {
-        String sql = CompanySqlBuilder.buildFindAllSql();
+        String sql = CompanySqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,
@@ -89,7 +89,7 @@ public class CompanyRepository {
 
     // 全件取得
     public List<CompanyEntity> findAllClient() {
-        String sql = CompanySqlBuilder.buildFindAllClientSql();
+        String sql = CompanySqlBuilder.buildFindAllClient();
 
         return sqlRepository.findAll(
             sql,

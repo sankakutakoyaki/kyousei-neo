@@ -20,7 +20,7 @@ public class WorkPriceRepository {
     private final SqlRepository sqlRepository;
 
     public WorkPriceEntity findById(int id) {
-        String sql = WorkPriceSqlBuilder.buildFindByIdSql();
+        String sql = WorkPriceSqlBuilder.buildFindById();
 
         return sqlRepository.execute(
             sql,
@@ -31,7 +31,7 @@ public class WorkPriceRepository {
     }
 
     public List<WorkPriceEntity> findAllByCompanyId(int id) {
-        String sql = WorkPriceSqlBuilder.buildFindAllByCompanyIdSql();
+        String sql = WorkPriceSqlBuilder.buildFindAllByCompanyId();
 
         return sqlRepository.findAll(
             sql,
@@ -41,34 +41,16 @@ public class WorkPriceRepository {
     }
 
     /**
-     * CSVファイルをダウンロードする。
-     * @param ids
-     * @param editor
-     * @return Idsで選択したEntityリストを返す。
-     */
-    public List<WorkPriceEntity> downloadCsvWorkPriceByIds(List<SimpleData> ids, String editor) {
-        List<Integer> workPriceIds = Utilities.createSequenceByIds(ids);
-        String sql = WorkPriceSqlBuilder.buildDownloadCsvWorkPriceForIdsSql(workPriceIds.size());
-
-        return sqlRepository.findAll(
-            sql,
-            ps -> WorkPriceParameterBinder.bindDownloadCsvForIds(ps, workPriceIds),
-            WorkPriceEntityMapper::map // ← ここで ResultSet を map
-        );
-    }
-
-
-    /**
      * 新規作成。
      * @param entity
      * @return 新規IDを返す。
      */
-    public Integer insertWorkPrice(WorkPriceEntity entity, String editor) {
+    public Integer insert(WorkPriceEntity entity, String editor) {
         int index = 1;
-        String sql = WorkPriceSqlBuilder.buildInsertWorkPriceSql(index);
+        String sql = WorkPriceSqlBuilder.buildInsert(index);
         return sqlRepository.execute(
             sql,
-            (pstmt, emp) -> WorkPriceParameterBinder.bindInsertWorkPriceParameters(pstmt, entity, editor, index),
+            (pstmt, emp) -> WorkPriceParameterBinder.bindInsert(pstmt, entity, editor, index),
             rs -> rs.next() ? rs.getInt("work_price_id") : null,
             entity
         );
@@ -79,13 +61,13 @@ public class WorkPriceRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    public Integer updateWorkPrice(WorkPriceEntity entity, String editor) {
+    public Integer update(WorkPriceEntity entity, String editor) {
         int index = 1;
-        String sql = WorkPriceSqlBuilder.buildUpdateWorkPriceSql(index);
+        String sql = WorkPriceSqlBuilder.buildUpdate(index);
 
         Integer result = sqlRepository.executeUpdate(
             sql,
-            pstmt -> WorkPriceParameterBinder.bindUpdateWorkPriceParameters(pstmt, entity, editor, index)
+            pstmt -> WorkPriceParameterBinder.bindUpdate(pstmt, entity, editor, index)
         );
 
         return result; // 成功件数。0なら削除なし
@@ -97,9 +79,9 @@ public class WorkPriceRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<WorkPriceEntity> downloadCsvWorkPriceByIds(List<SimpleData> ids) {
+    public List<WorkPriceEntity> downloadCsvByIds(List<SimpleData> ids) {
         List<Integer> workPriceIds = Utilities.createSequenceByIds(ids);
-        String sql = WorkPriceSqlBuilder.buildDownloadCsvWorkPriceForIdsSql(workPriceIds.size());
+        String sql = WorkPriceSqlBuilder.buildDownloadCsvByIds(workPriceIds.size());
 
         return sqlRepository.findAll(
             sql,

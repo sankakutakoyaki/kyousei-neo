@@ -1,7 +1,7 @@
 package com.kyouseipro.neo.query.sql.document;
 
 public class HistorySqlBuilder {
-    public static String buildInsertHistorySql() {
+    public static String buildInsert() {
         return
             "DECLARE @InsertedRows TABLE (history_id INT)" +
             "INSERT INTO history (execution_date, user_name, table_name, action, result_code, result_message)" +

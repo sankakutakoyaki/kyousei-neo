@@ -22,7 +22,7 @@ public class StaffListApiController {
      */
     @GetMapping("/staff/get/list")
 	@ResponseBody
-    public List<StaffListEntity> getEntityList() {
-            return staffListService.getStaffList();
+    public List<StaffListEntity> getList() {
+            return staffListService.getList();
     }
 }

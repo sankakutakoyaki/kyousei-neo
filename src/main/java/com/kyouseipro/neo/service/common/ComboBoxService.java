@@ -132,24 +132,24 @@ public class ComboBoxService {
     }
 
     public List<SimpleData> getCompanyList() {
-        return companyListRepository.findAllComboCompany();
+        return companyListRepository.findAllCombo();
     }
 
     public List<SimpleData> getClientList() {
-        return companyListRepository.findAllComboClient();
+        return companyListRepository.findAllClientCombo();
     }
 
     public List<SimpleData> getPrimeConstractorList() {
-        return companyListRepository.findAllComboPrimeConstractor();
+        return companyListRepository.findAllPrimeConstractorCombo();
     }
 
     public List<SimpleData> getPrimeConstractorListAddTopOfOwnCompany() {
-        List<SimpleData> companyList = companyListRepository.findAllComboPrimeConstractor();
+        List<SimpleData> companyList = companyListRepository.findAllPrimeConstractorCombo();
         return addOwnCompanyTopOfComboList(companyList);
     }
 
     public List<SimpleData> getPrimeConstractorListAddTopOfOwnCompanyHasOriginalPrice() {
-        List<SimpleData> companyList = companyListRepository.findAllComboPrimeConstractorHasOriginalPrice();
+        List<SimpleData> companyList = companyListRepository.findAllPrimeConstractorComboHasOriginalPrice();
         return addOwnCompanyTopOfComboList(companyList);
     }
 
@@ -170,15 +170,15 @@ public class ComboBoxService {
     }
 
     public List<SimpleData> getSimpleOfficeList() {
-        return officeListRepository.findAllComboOffice();
+        return officeListRepository.findAllCombo();
     }
 
     public List<SimpleData> getQualificationMaster() {
-        return qualificationsRepository.findAllCombo();
+        return qualificationsRepository.findAllByQualificationMasterCombo();
     }
 
     public List<SimpleData> getLicenseMaster() {
-        return qualificationsRepository.findAllComboByLicense();
+        return qualificationsRepository.findAllByLicenseMasterCombo();
     }
 
     public List<SimpleData> getWorkItemParentCategoryList() {

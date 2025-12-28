@@ -25,7 +25,7 @@ public class RecycleMakerRepository {
      * @return IDから取得したEntityをかえす。
      */
     public RecycleMakerEntity findById(int recycleMakerId) {
-        String sql = RecycleMakerSqlBuilder.buildFindByIdSql();
+        String sql = RecycleMakerSqlBuilder.buildFindById();
 
         return sqlRepository.execute(
             sql,
@@ -41,7 +41,7 @@ public class RecycleMakerRepository {
      * @return IDから取得したEntityをかえす。
      */
     public RecycleMakerEntity findByCode(int code) {
-        String sql = RecycleMakerSqlBuilder.buildFindByCodeSql();
+        String sql = RecycleMakerSqlBuilder.buildFindByCode();
 
         return sqlRepository.execute(
             sql,
@@ -57,13 +57,13 @@ public class RecycleMakerRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public Integer deleteRecycleMakerByIds(List<SimpleData> ids) {
+    public Integer deleteByIds(List<SimpleData> ids) {
         List<Integer> recycleMakerIds = Utilities.createSequenceByIds(ids);
-        String sql = RecycleMakerSqlBuilder.buildDeleteRecycleMakerForIdsSql(recycleMakerIds.size());
+        String sql = RecycleMakerSqlBuilder.buildDeleteByIds(recycleMakerIds.size());
 
         return sqlRepository.executeUpdate(
             sql,
-            ps -> RecycleMakerParameterBinder.bindDeleteForIds(ps, recycleMakerIds)
+            ps -> RecycleMakerParameterBinder.bindDeleteByIds(ps, recycleMakerIds)
         );
         // return result; // 成功件数。0なら削除なし
     }
@@ -74,13 +74,13 @@ public class RecycleMakerRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<RecycleMakerEntity> downloadCsvRecycleMakerByIds(List<SimpleData> ids) {
+    public List<RecycleMakerEntity> downloadCsvByIds(List<SimpleData> ids) {
         List<Integer> recycleMakerIds = Utilities.createSequenceByIds(ids);
-        String sql = RecycleMakerSqlBuilder.buildDownloadCsvRecycleMakerForIdsSql(recycleMakerIds.size());
+        String sql = RecycleMakerSqlBuilder.buildDownloadCsvByIds(recycleMakerIds.size());
 
         return sqlRepository.findAll(
             sql,
-            ps -> RecycleMakerParameterBinder.bindDownloadCsvForIds(ps, recycleMakerIds),
+            ps -> RecycleMakerParameterBinder.bindDownloadCsvByIds(ps, recycleMakerIds),
             RecycleMakerEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -90,12 +90,12 @@ public class RecycleMakerRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    public Integer insertRecycleMaker(RecycleMakerEntity entity) {
-        String sql = RecycleMakerSqlBuilder.buildInsertRecycleMakerSql();
+    public Integer insert(RecycleMakerEntity entity) {
+        String sql = RecycleMakerSqlBuilder.buildInsert();
 
         return sqlRepository.execute(
             sql,
-            (pstmt, emp) -> RecycleMakerParameterBinder.bindInsertRecycleMakerParameters(pstmt, emp),
+            (pstmt, emp) -> RecycleMakerParameterBinder.bindInsert(pstmt, emp),
             rs -> rs.next() ? rs.getInt("recycle_maker_id") : null,
             entity
         );
@@ -106,12 +106,12 @@ public class RecycleMakerRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    public Integer updateRecycleMaker(RecycleMakerEntity entity) {
-        String sql = RecycleMakerSqlBuilder.buildUpdateRecycleMakerSql();
+    public Integer update(RecycleMakerEntity entity) {
+        String sql = RecycleMakerSqlBuilder.buildUpdate();
 
         Integer result = sqlRepository.executeUpdate(
             sql,
-            pstmt -> RecycleMakerParameterBinder.bindUpdateRecycleMakerParameters(pstmt, entity)
+            pstmt -> RecycleMakerParameterBinder.bindUpdate(pstmt, entity)
         );
 
         return result; // 成功件数。0なら削除なし
