@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.management.qualification.QualificationsService;
+import com.kyouseipro.neo.service.qualification.QualificationsService;
 
 import lombok.RequiredArgsConstructor;
 

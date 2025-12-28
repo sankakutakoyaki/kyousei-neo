@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.ks.KsSalesEntity;
-import com.kyouseipro.neo.service.sales.KsSalesService;
+import com.kyouseipro.neo.service.ks.KsSalesService;
 
 import lombok.RequiredArgsConstructor;
 

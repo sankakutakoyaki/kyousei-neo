@@ -5,7 +5,7 @@
     <!-- 本体 -->
     <div class="normal-content" th:fragment="bodyFragment">
         <!-- ハンバーガー -->
-        <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+        <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
         <!-- サイドバー -->
         <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
         <!-- ボディ -->
@@ -106,12 +106,12 @@
             </div>
         </div>
         <div id="msg-dialog-area">
-            <div th:replace="~{fragments/dialog :: messageFragment}"></div>
+            <div th:replace="~{fragments/common/dialog :: messageFragment}"></div>
         </div>
-        <script th:src="@{/js/table.js}"></script>
+        <!-- <script th:src="@{/js/table.js}"></script>
         <script th:src="@{/js/info.js}"></script>
         <script th:src="@{/js/file.js}"></script>
-        <script th:src="@{/js/enterfocus.js}"></script>
+        <script th:src="@{/js/enterfocus.js}"></script> -->
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
             const user = /*[[${user}]]*/;

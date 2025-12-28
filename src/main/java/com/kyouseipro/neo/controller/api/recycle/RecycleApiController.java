@@ -24,7 +24,7 @@ import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.recycle.RecycleDateEntity;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.management.recycle.RecycleService;
+import com.kyouseipro.neo.service.recycle.RecycleService;
 
 @Controller
 @RequiredArgsConstructor

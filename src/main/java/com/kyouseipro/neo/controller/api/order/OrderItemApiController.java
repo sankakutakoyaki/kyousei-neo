@@ -19,7 +19,7 @@ import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.order.OrderItemEntity;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.sales.OrderItemService;
+import com.kyouseipro.neo.service.order.OrderItemService;
 
 import lombok.RequiredArgsConstructor;
 

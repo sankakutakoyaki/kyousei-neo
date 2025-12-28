@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div class="header-menu" th:fragment="headerFragment">
+        <div class="logo-btn pc-style" th:onclick="moveLinkPage('/')"><span>Kyosei</span></div>
+        <div class="sp-style">
+            <button id="menu-open" class="hamburger-btn-open"><img th:src="@{/icons/hamburger.png}"></button>
+        </div>
+        <div class="header-title pc-style" th:insert="~{fragments/common/menu :: homeFragment}">
+        </div>
+        <div class="user-btn">
+            <div class="pc-style" sec:authorize="hasAuthority('APPROLE_admin')">
+                <span>管理者：</span>
+            </div>
+            <div class="pc-style" sec:authorize="hasAuthority('APPROLE_master')">
+                <span>所長：</span>
+            </div>
+            <div class="pc-style" sec:authorize="hasAuthority('APPROLE_leader')">
+                <span>班長：</span>
+            </div>
+            <div class="pc-style" sec:authorize="hasAuthority('APPROLE_user')">
+                <span>一般：</span>
+            </div>
+            <div class="pc-style" sec:authorize="hasAuthority('APPROLE_office')">
+                <span>営業所：</span>
+            </div>
+            <div class="pc-style" sec:authorize="hasAuthority('APPROLE_staff')">
+                <span>事務：</span>
+            </div> 
+
+            <span sec:authentication="name"></span>
+            <form class="logout-btn" th:action="@{/user/logout}" th:method="post">
+                <button type="submit"><img th:src="@{/icons/logout.png}"></button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 日付移動ボタン -->
+    <div th:fragment="header-month-move-btn-fragment(startId, endId)"  class="flex-area">
+        <button name="prev-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-month', [[${startId}]], [[${endId}]])">
+            <span>前月</span>
+        </button>
+        <button name="this-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('this-month', [[${startId}]], [[${endId}]])">
+            <span>今月</span>
+        </button>
+        <button name="next-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-month', [[${startId}]], [[${endId}]])">
+            <span>次月</span>
+        </button>
+    </div>
+    <!-- 日付移動ボタン -->
+    <div th:fragment="header-day-move-btn-fragment(startId, endId)" class="flex-area">
+        <button name="prev-day-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-day', [[${startId}]], [[${endId}]])">
+            <span>前日</span>
+        </button>
+        <button name="today-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('today', [[${startId}]], [[${endId}]])">
+            <span>今日</span>
+        </button>
+        <button name="next-day-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-day', [[${startId}]], [[${endId}]])">
+            <span>翌日</span>
+        </button>
+    </div>
+    <!-- 日付移動ボタン -->
+    <div th:fragment="header-week-move-btn-fragment(startId, endId)" class="flex-area">
+        <button name="prev-week-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-week', [[${startId}]], [[${endId}]])">
+            <span>前週</span>
+        </button>
+        <button name="this-week-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('this-week', [[${startId}]], [[${endId}]])">
+            <span>今週</span>
+        </button>
+        <button name="next-week-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-week', [[${startId}]], [[${endId}]])">
+            <span>次週</span>
+        </button>
+    </div>
+    <!-- 日付移動ボタン -->
+    <div th:fragment="header-2week-move-btn-fragment(startId, endId)" class="flex-area">
+        <button name="prev-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-month-move', [[${startId}]], [[${endId}]]); execListChange(this)">
+            <img th:src="@{/icons/prev.png}">
+        </button>
+        <button name="prev-2week-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('half-month', [[${startId}]], [[${endId}]]); execListChange(this)">
+            <span>15締め</span>
+        </button>
+        <button name="next-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-month-move', [[${startId}]], [[${endId}]]); execListChange(this)">
+            <img th:src="@{/icons/next.png}">
+        </button>
+        
+        <!-- <button name="this-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('this-month', [[${startId}]], [[${endId}]])">
+            <span>今月</span>
+        </button> -->
+
+        <button name="prev-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-month', [[${startId}]], [[${endId}]]); execListChange(this)">
+            <img th:src="@{/icons/prev.png}">
+        </button>
+        <button name="this-2week-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('end-month', [[${startId}]], [[${endId}]]); execListChange(this)">
+            <span>末締め</span>
+        </button>
+        <button name="next-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-month', [[${startId}]], [[${endId}]]); execListChange(this)">
+            <img th:src="@{/icons/next.png}">
+        </button>
+    </div>
+</body>
+
+</html>

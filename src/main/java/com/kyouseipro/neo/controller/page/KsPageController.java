@@ -15,8 +15,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kyouseipro.neo.entity.ks.KsSalesEntity;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.document.HistoryService;
+import com.kyouseipro.neo.service.ks.KsSalesService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
-import com.kyouseipro.neo.service.sales.KsSalesService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,10 +33,10 @@ public class KsPageController {
 	public ModelAndView getKsSales(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "ケーズ");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: salesFragment");
-        mv.addObject("bodyFragmentName", "contents/sales/ks :: bodyFragment");
-        mv.addObject("insertCss", "/css/sales/ks.css");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: salesFragment");
+        mv.addObject("bodyFragmentName", "contents/ks/ks :: bodyFragment");
+        mv.addObject("insertCss", "/css/ks/ks.css");
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");

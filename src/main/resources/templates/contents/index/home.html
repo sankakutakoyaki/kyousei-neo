@@ -5,7 +5,7 @@
     <!-- 本体 -->
     <div class="normal-content" th:fragment="bodyFragment">
         <!-- サイドバー -->
-        <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+        <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
         <!-- ボディ -->
         <div class="normal-body">
 
@@ -33,13 +33,13 @@
             <!-- フォーム画面をここに記入する -->
         </div>
         <div id="msg-dialog-area">
-            <div th:replace="~{fragments/dialog :: messageFragment}"></div>
+            <div th:replace="~{fragments/common/dialog :: messageFragment}"></div>
         </div>
 
-        <script th:src="@{/js/subscription.js}"></script>
-        <script th:src="@{/js/info.js}"></script>
-        <script th:src="@{/js/timeworks.js}"></script>
-        <script th:src="@{/js/dialog.js}"></script>
+        <!-- <script th:src="@{/js/subscription.js}"></script>
+        <script th:src="@{/js/info.js}"></script> -->
+        <script th:src="@{/js/personnel/timeworks.js}"></script>
+        <!-- <script th:src="@{/js/dialog.js}"></script> -->
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
             const user_name = /*[[${user_name}]]*/;

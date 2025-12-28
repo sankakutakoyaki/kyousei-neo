@@ -12,8 +12,8 @@ import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.repository.corporation.CompanyListRepository;
 import com.kyouseipro.neo.repository.corporation.OfficeListRepository;
 import com.kyouseipro.neo.repository.corporation.StaffListRepository;
-import com.kyouseipro.neo.repository.management.qualification.QualificationsRepository;
-import com.kyouseipro.neo.repository.regist.WorkItemRepository;
+import com.kyouseipro.neo.repository.qualification.QualificationsRepository;
+import com.kyouseipro.neo.repository.work.WorkItemRepository;
 
 import lombok.RequiredArgsConstructor;
 

@@ -15,7 +15,7 @@ import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.work.WorkPriceEntity;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.regist.WorkPriceService;
+import com.kyouseipro.neo.service.work.WorkPriceService;
 
 import lombok.RequiredArgsConstructor;
 

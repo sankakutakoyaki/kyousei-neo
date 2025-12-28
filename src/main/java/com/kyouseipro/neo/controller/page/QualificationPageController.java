@@ -16,8 +16,8 @@ import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.management.qualification.QualificationsService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
+import com.kyouseipro.neo.service.qualification.QualificationsService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -40,10 +40,10 @@ public class QualificationPageController {
 	public ModelAndView getQualifications(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "資格");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-        mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
-        mv.addObject("bodyFragmentName", "contents/management/qualifications :: bodyFragment");
-        mv.addObject("insertCss", "/css/management/qualifications.css");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+        mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
+        mv.addObject("bodyFragmentName", "contents/qualifications/qualifications :: bodyFragment");
+        mv.addObject("insertCss", "/css/qualifications/qualifications.css");
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
@@ -78,10 +78,10 @@ public class QualificationPageController {
 	public ModelAndView getLicense(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "許認可");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-        mv.addObject("sidebarFragmentName", "fragments/menu :: managementFragment");
-        mv.addObject("bodyFragmentName", "contents/management/qualifications :: bodyFragment");
-        mv.addObject("insertCss", "/css/management/qualifications.css");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+        mv.addObject("sidebarFragmentName", "fragments/common/menu :: managementFragment");
+        mv.addObject("bodyFragmentName", "contents/qualifications/qualifications :: bodyFragment");
+        mv.addObject("insertCss", "/css/qualifications/qualifications.css");
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");

@@ -31,7 +31,7 @@ import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
 import com.kyouseipro.neo.interfaceis.FileUpload;
 import com.kyouseipro.neo.service.document.FileService;
-import com.kyouseipro.neo.service.management.qualification.QualificationFilesService;
+import com.kyouseipro.neo.service.qualification.QualificationFilesService;
 
 import lombok.RequiredArgsConstructor;
 

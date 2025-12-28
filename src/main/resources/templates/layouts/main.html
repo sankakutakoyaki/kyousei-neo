@@ -6,21 +6,24 @@
     <meta charset="UTF-8">
     <title th:text="${title}"></title>
     <link th:href="@{kyousei.png}" rel="icon" type="image/x-icon" />
-    <link th:href="@{/css/default.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/common/default.css}" rel="stylesheet" type="text/css">
     <link th:href="@{__${insertCss}__}" rel="stylesheet" type="text/css">
     <link th:href="@{/manifest.json}" rel="manifest" crossorigin="use-credentials">
-    <script src="/js/default.js" defer></script>
-    <script src="/js/dialog.js" defer></script>
-    <script src="/js/form.js" defer></script>
+    <script src="/js/common/default.js" defer></script>
+    <script src="/js/common/dialog.js" defer></script>
+    <script src="/js/common/form.js" defer></script>
+    <script src="/js/common/table.js" defer></script>
+    <script src="/js/common/list.js" defer></script>
+    <script src="/js/common/info.js" defer></script>
+    <script src="/js/common/file.js" defer></script>
+    <script src="/js/common/enterfocus.js" defer></script>
 </head>
 
 <body>
-
     <div id="wrp" class="normal-main">
         <div th:replace="~{__${headerFragmentName}__}"></div>
         <div th:replace="~{__${bodyFragmentName}__}"></div>
     </div>
-
 </body>
 
 </html>

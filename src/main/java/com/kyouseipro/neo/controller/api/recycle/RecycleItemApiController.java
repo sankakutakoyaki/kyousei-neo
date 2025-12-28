@@ -15,7 +15,7 @@ import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.recycle.RecycleItemEntity;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.management.recycle.RecycleItemService;
+import com.kyouseipro.neo.service.recycle.RecycleItemService;
 
 import lombok.RequiredArgsConstructor;
 

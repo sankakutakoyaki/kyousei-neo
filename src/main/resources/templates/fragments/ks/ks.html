@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <header class="form-parts pc-style" th:fragment="header01Fragment(box, start, end)">
+        <div class="flex-area">
+            <!-- 検索ボックス -->
+            <div class="search-box">
+                <input th:id="${box}" type="search" placeholder="検索">
+                <img title="検索" src="/icons/search.png" onclick="execFilterDisplay(this)">
+            </div>
+            <div class="kebab-btns">
+                <!-- ダウンロードボタン -->
+                <div class="img-btn" onclick="execDownloadCsv(this)">
+                    <img title="ダウンロード" src="/icons/download.png">
+                    <span>取得</span>
+                </div>
+            </div>
+            <div>
+                <select id="center-category01" name="center-category" class="normal-select"></select>
+            </div>
+        </div>
+        <!-- 期間指定ボックス -->
+        <div class="flex-area">
+            <div>
+                <input th:id="${start}" class="normal-input date-area" type="date" value="" onfocus="this.select();" onchange="checkDateChanged(this)">
+                <span class="pc-style">〜</span>
+                <input th:id="${end}" class="normal-input date-area" type="date" value="" onfocus="this.select();" onchange="checkDateChanged(this)">
+                <button class="normal-btn ok" type="button" onclick="execDateSearch(this)">
+                    <span>検索</span>
+                </button>                    
+            </div>
+            <!-- 日付移動ボタン -->
+            <div th:replace="~{fragments/common/header::header-month-move-btn-fragment('__${start}__', '__${end}__')}"></div>
+            <div th:replace="~{fragments/common/header::header-day-move-btn-fragment('__${start}__', '__${end}__')}"></div>
+            <div th:replace="~{fragments/common/header::header-week-move-btn-fragment('__${start}__', '__${end}__')}"></div>
+        </div>
+    </header>
+    
+    <main th:fragment="main01Fragment(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table">
+            <tr name="table-header" class="pc-style">
+                <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
+                <th><span>配送センター<span class="sort-arrow"></span></th>
+                <th><span>会社名<span class="sort-arrow"></span></th>
+                <th><span>担当者名<span class="sort-arrow"></span></th>
+                <th><span>金額<span class="sort-arrow"></span></th>
+                <th><span>比率<span class="sort-arrow"></span></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+    <footer th:fragment="footerFragment()" th:remove="tag">
+        <span>0件 : 0000/00/00 00:00 現在</span>
+    </footer>
+</body>
+
+</html>

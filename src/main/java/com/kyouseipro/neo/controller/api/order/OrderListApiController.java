@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.order.OrderListEntity;
-import com.kyouseipro.neo.service.sales.OrderListService;
+import com.kyouseipro.neo.service.order.OrderListService;
 
 import lombok.RequiredArgsConstructor;
 

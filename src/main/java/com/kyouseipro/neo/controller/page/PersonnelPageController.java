@@ -48,8 +48,8 @@ public class PersonnelPageController {
 	public ModelAndView getEmployee(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "従業員");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
         mv.addObject("bodyFragmentName", "contents/personnel/employee :: bodyFragment");
         mv.addObject("insertCss", "/css/personnel/employee.css");
 
@@ -104,8 +104,8 @@ public class PersonnelPageController {
 	public ModelAndView showList(ModelAndView mv, OAuth2AuthenticationToken token, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
         mv.setViewName("layouts/main");
         mv.addObject("title", "勤怠");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
         mv.addObject("bodyFragmentName", "contents/personnel/timeworks :: bodyFragment");
         mv.addObject("insertCss", "/css/personnel/timeworks.css");
 
@@ -141,8 +141,8 @@ public class PersonnelPageController {
 	public ModelAndView getWorkingConditions(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "勤務条件");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
         mv.addObject("bodyFragmentName", "contents/personnel/working_conditions :: bodyFragment");
         mv.addObject("insertCss", "/css/personnel/working_conditions.css");
 

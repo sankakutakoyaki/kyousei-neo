@@ -20,9 +20,9 @@ import com.kyouseipro.neo.entity.order.DeliveryStaffEntity;
 import com.kyouseipro.neo.entity.order.OrderEntity;
 import com.kyouseipro.neo.entity.order.OrderItemEntity;
 import com.kyouseipro.neo.entity.order.WorkContentEntity;
-import com.kyouseipro.neo.query.sql.sales.OrderSqlBuilder;
+import com.kyouseipro.neo.query.sql.order.OrderSqlBuilder;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.sales.OrderService;
+import com.kyouseipro.neo.service.order.OrderService;
 
 import lombok.RequiredArgsConstructor;
 

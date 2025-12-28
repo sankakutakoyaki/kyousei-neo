@@ -5,7 +5,7 @@
     <!-- 本体 -->
     <div class="normal-content" th:fragment="bodyFragment">
         <!-- ハンバーガー -->
-        <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+        <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
         <!-- サイドバー -->
         <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
         <!-- ボディ -->

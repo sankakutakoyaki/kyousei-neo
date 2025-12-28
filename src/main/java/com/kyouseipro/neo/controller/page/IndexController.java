@@ -38,10 +38,10 @@ public class IndexController {
 	public ModelAndView getIndex(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
 		mv.addObject("title", "ホーム");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: homeFragment");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: homeFragment");
         mv.addObject("bodyFragmentName", "contents/index/home :: bodyFragment");
-		mv.addObject("insertCss", "/css/home.css");
+		mv.addObject("insertCss", "/css/index/home.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
 		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
@@ -113,10 +113,10 @@ public class IndexController {
 	public ModelAndView getSales(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
 		mv.addObject("title", "営業");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: salesFragment");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: salesFragment");
         mv.addObject("bodyFragmentName", "contents/index/sales :: bodyFragment");
-        mv.addObject("insertCss", "/css/sales/sales.css");
+        mv.addObject("insertCss", "/css/index/sales.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
 		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
@@ -138,10 +138,10 @@ public class IndexController {
 	public ModelAndView getPersonnel(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
 		mv.addObject("title", "人事");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: personnelFragment");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
         mv.addObject("bodyFragmentName", "contents/index/personnel :: bodyFragment");
-        mv.addObject("insertCss", "/css/personnel/personnel.css");
+        mv.addObject("insertCss", "/css/index/personnel.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
 		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
@@ -163,10 +163,10 @@ public class IndexController {
 	public ModelAndView getManagement(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
 		mv.addObject("title", "管理");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: managementFragment");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: managementFragment");
         mv.addObject("bodyFragmentName", "contents/index/management :: bodyFragment");
-        mv.addObject("insertCss", "/css/management/management.css");
+        mv.addObject("insertCss", "/css/index/management.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
 		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);
@@ -188,10 +188,10 @@ public class IndexController {
 	public ModelAndView getRegistration(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
 		mv.addObject("title", "登録");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: registFragment");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: registFragment");
         mv.addObject("bodyFragmentName", "contents/index/regist :: bodyFragment");
-        mv.addObject("insertCss", "/css/regist/regist.css");
+        mv.addObject("insertCss", "/css/index/regist.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
 		EmployeeEntity entity = (EmployeeEntity) employeeService.getEmployeeByAccount(userName);

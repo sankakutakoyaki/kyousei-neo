@@ -18,8 +18,8 @@ import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.management.recycle.RecycleService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
+import com.kyouseipro.neo.service.recycle.RecycleService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,10 +37,10 @@ public class RecyclePageController {
 	public ModelAndView getOrder(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "登録");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: managementFragment");
-        mv.addObject("bodyFragmentName", "contents/management/recycle :: bodyFragment");
-        mv.addObject("insertCss", "/css/management/recycle.css");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: managementFragment");
+        mv.addObject("bodyFragmentName", "contents/recycle/recycle :: bodyFragment");
+        mv.addObject("insertCss", "/css/recycle/recycle.css");
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");

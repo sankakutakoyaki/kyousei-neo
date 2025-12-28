@@ -48,10 +48,10 @@ public class CorporationPageController {
 	public ModelAndView getClient(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "取引先");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: registFragment");
-        mv.addObject("bodyFragmentName", "contents/regist/client :: bodyFragment");
-        mv.addObject("insertCss", "/css/regist/client.css");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: registFragment");
+        mv.addObject("bodyFragmentName", "contents/corporation/client :: bodyFragment");
+        mv.addObject("insertCss", "/css/corporation/client.css");
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");

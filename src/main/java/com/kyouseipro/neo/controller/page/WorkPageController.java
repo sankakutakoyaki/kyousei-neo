@@ -18,8 +18,8 @@ import com.kyouseipro.neo.entity.work.WorkPriceEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
-import com.kyouseipro.neo.service.regist.WorkItemService;
-import com.kyouseipro.neo.service.regist.WorkPriceService;
+import com.kyouseipro.neo.service.work.WorkItemService;
+import com.kyouseipro.neo.service.work.WorkPriceService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,10 +38,10 @@ public class WorkPageController {
 	public ModelAndView getWorkItem(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "作業項目");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: registFragment");
-        mv.addObject("bodyFragmentName", "contents/regist/workitem :: bodyFragment");
-        mv.addObject("insertCss", "/css/regist/workitem.css");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: registFragment");
+        mv.addObject("bodyFragmentName", "contents/work/workitem :: bodyFragment");
+        mv.addObject("insertCss", "/css/work/workitem.css");
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
@@ -70,10 +70,10 @@ public class WorkPageController {
 	public ModelAndView getWorkPrice(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "作業料金");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: registFragment");
-        mv.addObject("bodyFragmentName", "contents/regist/workprice :: bodyFragment");
-        mv.addObject("insertCss", "/css/regist/workprice.css");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: registFragment");
+        mv.addObject("bodyFragmentName", "contents/work/workprice :: bodyFragment");
+        mv.addObject("insertCss", "/css/work/workprice.css");
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");

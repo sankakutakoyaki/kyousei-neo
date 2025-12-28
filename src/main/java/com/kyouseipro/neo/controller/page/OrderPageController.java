@@ -23,9 +23,9 @@ import com.kyouseipro.neo.entity.order.WorkContentEntity;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.document.HistoryService;
+import com.kyouseipro.neo.service.order.OrderItemService;
+import com.kyouseipro.neo.service.order.OrderListService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
-import com.kyouseipro.neo.service.sales.OrderItemService;
-import com.kyouseipro.neo.service.sales.OrderListService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,10 +44,10 @@ public class OrderPageController {
 	public ModelAndView getOrder(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "受注");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: salesFragment");
-        mv.addObject("bodyFragmentName", "contents/sales/order :: bodyFragment");
-        mv.addObject("insertCss", "/css/sales/order.css");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: salesFragment");
+        mv.addObject("bodyFragmentName", "contents/order/order :: bodyFragment");
+        mv.addObject("insertCss", "/css/order/order.css");
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
@@ -86,10 +86,10 @@ public class OrderPageController {
 	public ModelAndView getGoods(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "入荷");
-        mv.addObject("headerFragmentName", "fragments/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/menu :: salesFragment");
-        mv.addObject("bodyFragmentName", "contents/sales/goods :: bodyFragment");
-        mv.addObject("insertCss", "/css/sales/goods.css");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: salesFragment");
+        mv.addObject("bodyFragmentName", "contents/order/goods :: bodyFragment");
+        mv.addObject("insertCss", "/css/order/goods.css");
 
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
