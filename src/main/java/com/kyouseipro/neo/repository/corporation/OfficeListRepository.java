@@ -47,7 +47,7 @@ public class OfficeListRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> OfficeListParameterBinder.bindFindAllCombo(ps, null),
+            ps -> OfficeListParameterBinder.bindFindAllCombo(ps),
             SimpleDataMapper::map
         );
     }
@@ -69,7 +69,7 @@ public class OfficeListRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> OfficeListParameterBinder.bindFindAllCombo(ps, 0),
+            ps -> OfficeListParameterBinder.bindFindAllClientCombo(ps),
             SimpleDataMapper::map
         );
     }

@@ -24,6 +24,6 @@ public class HistoryService {
      */
     public Integer save(String userName, String tableName, String action, int resultCode, String resultMessage) {
         HistoryEntity entity = HistoryEntityMapper.set(userName, tableName, action, resultCode, resultMessage);
-        return historyRepository.insertHistory(entity, userName);
+        return historyRepository.insert(entity, userName);
     }
 }

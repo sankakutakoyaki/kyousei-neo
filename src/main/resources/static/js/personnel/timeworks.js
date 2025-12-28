@@ -43,3 +43,938 @@ function zeroTimeCheck(self) {
         self.classList.remove("zero-time");
     }
 }
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 時計作成
+function clock() {
+    // 現在の日時・時刻の情報を取得
+    const d = new Date();    
+    // 年を取得
+    let year = d.getFullYear();
+    // 月を取得
+    let month = d.getMonth() + 1;
+    // 日を取得
+    let date = d.getDate();
+    // 曜日を取得
+    let dayNum = d.getDay();
+    const weekday = ["(日)", "(月)", "(火)", "(水)", "(木)", "(金)", "(土)"];
+    let day = weekday[dayNum];
+    // 時を取得
+    let hour = d.getHours();
+    // 分を取得
+    let min = d.getMinutes();
+    // 秒を取得
+    let sec = d.getSeconds();
+
+    // 1桁の場合は0を足して2桁に
+    month = month < 10 ? "0" + month : month;
+    date = date < 10 ? "0" + date : date;
+    hour = hour < 10 ? "0" + hour : hour;
+    min = min < 10 ? "0" + min : min;
+    sec = sec < 10 ? "0" + sec : sec;
+
+    // 日付・時刻の文字列を作成
+    let today = `${year}年${month}月${date}日 ${day}`;
+    let time = `${hour}:${min}:${sec}`;
+
+    // 文字列を出力
+    document.querySelector(".clock-date").innerText = today;
+    document.querySelector(".clock-time").innerText = time;
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 更新処理
+async function updateDisplay(result) {
+    if (result != null && result.data == -1) {
+        openMsgDialog("msg-dialog", result.message, 'red');
+        code.value = "";
+        name.value = "";
+        code.focus();
+        return;
+    }
+
+    startProcessing();
+
+    // リストデータ取得
+    const getResponse = await fetch('/timeworks/get/today');
+    const list01 = await getResponse.json();
+    
+    // 画面更新
+    await updateTableDisplay("table-01-content", "footer-01", list01);
+    
+    if (code == null || name == null) return;
+    code.value = "";
+    name.value = "";
+    code.focus();
+
+    processingEnd();
+}
+
+// テーブルリスト画面を更新する
+function updateTableDisplay(tableId, footerId, list) {
+    // リスト画面を初期化
+    deleteElements(tableId);
+    // リスト作成
+    createTableContent(tableId, list);
+    // フッター作成
+    createTableFooter(footerId, list);
+    // テーブルのソートをリセットする
+    resetSortable(tableId);
+    // テーブルにスクロールバーが表示されたときの処理を登録する
+    document.querySelectorAll('.scroll-area').forEach(el => {
+        toggleScrollbar(el);
+    });
+}
+
+// コードから[timeworks]を取得して、名前を表示
+async function searchForNameByCode(e) {
+    e.preventDefault();
+    if (code == null || name == null) return;
+    if (code.value == "" || isNaN(code.value)) {
+        name.value = "";
+        return;
+    }
+
+    // [id=code]に入力されたコードから[timeworks]を取得して[id=name]に入力する
+    const data = "id=" + encodeURIComponent(parseInt(code.value));
+    const url = '/timeworks/get/today/id';
+    const contentType = 'application/x-www-form-urlencoded';
+    // [timeworks]を取得
+    const resultResponse = await postFetch(url, data, token, contentType);
+    entity = await resultResponse.json();
+    if (entity != null && entity.employee_id > 0) {
+        name.value = entity.full_name;
+        checkTimeWorksStartSaved(entity);
+        return;
+    } else {
+        code.value = ""
+        name.value = "";
+        openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
+        return;
+    }
+}
+
+// コード入力ボックスからフォーカスが外れた時の処理
+function execCodeBlur(e) {
+    if (e.target.value == "") {
+        name.value = "";
+        return;
+    }
+    searchForNameByCode(e);
+}
+
+// コード入力ボックスでエンターを押した時の処理
+function execCodeChanged(e) {
+    if (e == null) return;
+    // ボックスが空白なら処理しない
+    if (e.target.value == "") {
+        name.value = "";
+        return;
+    }
+    if(e.key === 'Enter'){
+        e.preventDefault();
+        // searchForNameByCode(e);
+        execCodeBlur(e);
+    }
+}
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 保存処理
+async function execSave(self) {
+    let changedList = list02.filter(value => (value.state > 0));
+    if (changedList.length == 0) return;
+
+    changedList.forEach(function (item) {
+        // let target = list02.filter(value => (value.timeworks_id == item.timeworks_id));
+        let start = document.querySelector('#table-02-content tr[data-id="' + item.timeworks_id + '"] input[name="start"]');
+        let end = document.querySelector('#table-02-content tr[data-id="' + item.timeworks_id + '"] input[name="end"]');
+        let rest = document.querySelector('#table-02-content tr[data-id="' + item.timeworks_id + '"] input[name="rest"]');
+        item.comp_start_time = start.value;
+        item.comp_end_time = end.value;
+        item.rest_time = rest.value;
+        item.state = 0;
+    });
+    const result = await updateTimeworks(changedList, self);
+    if (result.success) {
+        // 画面更新
+        openMsgDialog("msg-dialog", result.message, "blue");
+        await saveAfterUpdateDisplay();
+    } else {
+        openMsgDialog("msg-dialog", result.message, "red");
+    }
+}
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 確定処理
+async function execConfirm(self) {
+    if (list02.some(value => value?.state > 0)) {
+        openMsgDialog("msg-dialog", "未保存のデータがあります", "red");
+        return;
+    }
+
+    if (list02.some(value => value?.comp_start_time === "00:00:00" || value?.comp_end_time === "00:00:00")) {
+        openMsgDialog("msg-dialog", "未入力のデータがあります", "red");
+        return;
+    }
+
+    list02.forEach(function (item) {
+        item.state = completeNum;
+    });
+    const result = await updateTimeworks(list02, self);
+    if (result.success) {
+        // 画面更新
+        openMsgDialog("msg-dialog", result.message, "blue");
+        await confirmAfterUpdateDisplay();
+    } else {
+        openMsgDialog("msg-dialog", result.message, "red");
+    }
+}
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 保存・確定後の処理
+async function saveAfterUpdateDisplay() {
+    const selectedId = document.querySelector("#employee-list-02 li.selected");
+    if (selectedId != null) {
+        await createEmployeeTimeworksList("02", selectedId.dataset.id);
+
+        const btn = document.getElementById("save-btn02");
+        if (btn != null) {
+            btn.disabled = true;
+            if (btn.classList.contains("ok")){
+                btn.classList.remove("ok");
+            }
+        }
+        const btn2 = document.getElementById("confirm-btn02");
+        if (btn2 != null) {
+            if (list02.length > 0) {
+                btn2.disabled = false;
+                if (!btn2.classList.contains("ok")){
+                    btn2.classList.add("ok");
+                }
+            } else {
+                btn2.disabled = true;
+                if (btn2.classList.contains("ok")){
+                    btn2.classList.remove("ok");
+                }
+            }
+        }
+    }
+}
+
+async function confirmAfterUpdateDisplay() {
+    const selectedId = document.querySelector("#employee-list-02 li.selected");
+    if (selectedId != null) {
+        await createEmployeeTimeworksList("02", selectedId.dataset.id);
+
+        const btn2 = document.getElementById("confirm-btn02");
+        if (btn2 != null) {
+            btn2.disabled = true;
+            if (btn2.classList.contains("ok")){
+                btn2.classList.remove("ok");
+            }
+        }
+    }
+} 
+
+// -------------------------------------------------------------------------------------------------------------------------------------- セル変更処理
+function cellChange(id, self) {
+    self.classList.add("changed");
+    const item = list02.find(value => (value.timeworks_id == Number(id)));
+    if (item != null) item.state = 1; // 変更のフラグ
+    const btn = document.getElementById("save-btn02");
+    if (btn != null) {
+        btn.disabled = false;
+        if (!btn.classList.contains("ok")){
+            btn.classList.add("ok");
+        }
+    }
+    const btn2 = document.getElementById("confirm-btn02");
+    if (btn2 != null) {
+        if (!list02.some(value => value?.state > 0)) {
+            btn2.disabled = false;
+            if (!btn2.classList.contains("ok")){
+                btn2.classList.add("ok");
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 出勤退勤確認
+function checkTimeWorksStartSaved(entity) {
+    if (entity != null) {
+        if (entity.start_time != null) {
+            endBtn.focus();
+        } else {
+            startBtn.focus();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 打刻リスト画面作成
+// function createTable(list) {
+function createTableContent(tableId, list) {
+    const tbl = document.getElementById(tableId);
+    deleteElements(tbl);
+    list.forEach(function (item) {
+        let newRow = tbl.insertRow();
+        // ID（Post送信用）
+        newRow.setAttribute('name', 'data-row');
+        newRow.setAttribute('data-id', item.timeworks_id);
+        // 担当者名
+        newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.full_name + '</span></td>');
+        // 出勤時刻
+        newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.start_time ?? "") + '</span></td>');
+        // 退勤時刻
+        newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.end_time ?? "") + '</span></td>');
+        // 営業所
+        newRow.insertAdjacentHTML('beforeend', '<td class="pc-style"><span>' + (item.office_name ?? "") + '</span></td>');
+    });
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 確定タブ・一覧タブ
+// 従業員選択メニュー作成
+function createEmployeeList(tab) {
+    let sideStr = "";
+    let listStr = "";
+    let tableId = "";
+    let footerId = "";
+    switch(tab){
+        case "02":
+            employeeList02.innerHTML = "";
+            sideStr = "timeworks-sidemenu02"
+            listStr = "#employee-list-02.normal-list>li";
+            tableId = "table-02-content";
+            footerId = "footer-02";
+            break;
+        case "05":
+            employeeList05.innerHTML = "";
+            sideStr = "timeworks-sidemenu05"
+            listStr = "#employee-list-05.normal-list>li";
+            tableId = "table-05-content";
+            footerId = "footer-05";
+            break;
+        default:
+            return;
+    }
+    
+    const form01 = document.getElementById(sideStr);
+    const officeArea = form01.querySelector('select[name="office"]');
+    const list = employeeList.filter(value => value.office_id === Number(officeArea.value));
+    list.forEach(function(item) {
+        const li = document.createElement('li');
+        li.dataset.id = item.employee_id;
+        li.textContent = item.full_name;
+        li.addEventListener('click', () => {
+            // すでに選択されているなら解除して return
+            if (li.classList.contains('selected')) {
+                li.classList.remove('selected');
+                const tbl = document.getElementById(tableId);
+                deleteElements(tbl);
+                createTableFooter(footerId);
+                return;
+            }
+            // 他のliから選択クラスを外す
+            document.querySelectorAll(listStr).forEach(el => el.classList.remove('selected'));
+            // このliに選択クラスを追加
+            li.classList.add('selected');
+            createEmployeeTimeworksList(tab, item.employee_id);
+        });
+        // employeeList02.appendChild(li);
+        switch(tab){
+            case "02":
+                employeeList02.appendChild(li);
+                break;
+            case "05":
+                employeeList05.appendChild(li);
+                break;
+            default:
+                return;
+        }
+    });
+}
+
+// 選択した従業員IDで勤怠情報を取得してリスト作成
+async function createEmployeeTimeworksList(tab, id) {
+    switch(tab) {
+        case "02":
+            list02 = await getEmployeeTimeworksBetween(id, "start-date02", "end-date02", "/timeworks/get/between/id");
+            createBetweenTableContent(tab, list02);
+            break;
+        case "05":
+            list05 = await getEmployeeTimeworksBetween(id, "start-date05", "end-date05", "/timeworks/get/between/id/all");
+            createBetweenTableContent(tab, list05);
+            return;
+        default:
+            return;
+    }
+
+    // エンターフォーカス処理をイベントリスナーに登録する
+    tabFocusElements = createTabFocusElements();
+    setEnterFocus("table-02");
+    const btn2 = document.getElementById("confirm-btn02");
+    if (btn2 != null) {
+        if (list02.length > 0) {
+            btn2.disabled = false;
+            if (!btn2.classList.contains("ok")){
+                btn2.classList.add("ok");
+            }
+        } else {
+            btn2.disabled = true;
+            if (btn2.classList.contains("ok")){
+                btn2.classList.remove("ok");
+            }
+        }
+    }
+}
+
+// 確定・一覧表示用のテーブル作成
+function createBetweenTableContent(tab, list) {
+    let tableStr = "";
+    switch (tab) {
+        case "02":
+            tableStr = "table-02-content";
+            break;
+        case "05":
+            tableStr = "table-05-content";
+            break;
+        default:
+            return;
+    }
+
+    const tbl = document.getElementById(tableStr);
+    deleteElements(tbl);
+    let i = 0;
+    list.forEach(function (item) {
+        let newRow = tbl.insertRow();
+        // ID（Post送信用）
+        newRow.setAttribute('name', 'data-row');
+        newRow.setAttribute('data-id', item.timeworks_id);
+        // 担当者名
+        newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.work_date + '</span></td>');
+
+        switch (tab) {
+            case "02":
+                // 出勤打刻
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.start_time ?? "") + '</span></td>');
+                // 退勤打刻
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.end_time ?? "") + '</span></td>');
+                // 出勤確定
+                i++;
+                let zeroClassStart = item.comp_start_time === "00:00:00" ? " zero-time" : "";
+                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" name="start"' +
+                    ' class="icon-del' + zeroClassStart + '" type="time" step="1" value="' + (item.comp_start_time ?? "") + '"' +
+                    ' onchange="cellChange(' + item.timeworks_id + ', this); zeroTimeCheck(this)"></td>');
+                // 退勤確定
+                i++;
+                let zeroClassEnd = item.comp_end_time === "00:00:00" ? " zero-time" : "";
+                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" name="end"' +
+                    ' class="icon-del' + zeroClassEnd + '" type="time" step="1" value="' + (item.comp_end_time ?? "") + '"' +
+                    ' onchange="cellChange(' + item.timeworks_id + ', this); zeroTimeCheck(this)"></td>'
+                );
+                // 休憩
+                i++;
+                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" name="rest"' +
+                    ' class="icon-del" type="time" value="' + (item.rest_time ?? "") + '"' +
+                    ' onchange="cellChange(' + item.timeworks_id + ', this)"></td>');
+                break;
+            case "05":
+                if (item.situation == "有給") {
+                    newRow.insertAdjacentHTML('beforeend', '<td></td><td></td><td></td><td></td><td></td><td><span>有給</span></td><td></td>');
+                } else {
+                    // 出勤打刻
+                    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.start_time ?? "") + '</span></td>');
+                    // 退勤打刻
+                    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.end_time ?? "") + '</span></td>');
+                    // 出勤確定
+                    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.comp_start_time ?? "") + '</span></td>');
+                    // 退勤確定
+                    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.comp_end_time ?? "") + '</span></td>');
+                    // 休憩
+                    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.rest_time ?? "") + '</span></td>');
+                    // 確定
+                    if (item.state > 0) {
+                        newRow.insertAdjacentHTML('beforeend', '<td><span>確定</span></td>');
+                        // 確定を戻すボタン
+                        newRow.insertAdjacentHTML('beforeend', '<td><div sec:authorize="hasAuthority("APPROLE_admin")"><div onclick="execReverse(' + item.timeworks_id + ')" class="img-btn"><img src="/icons/update.png"></img></div></div></td>');
+                    } else {
+                        newRow.insertAdjacentHTML('beforeend', '<td></td><td></td>');
+                    }       
+                }                   
+            default:
+                break;
+        }
+    });
+    createTableFooter("footer-02", list);
+};
+
+async function execReverse(id) {
+    const data = "id=" + encodeURIComponent(parseInt(id));
+    const contentType = 'application/x-www-form-urlencoded';
+    // List<Timeworks>を取得
+    const resultResponse = await postFetch("/timeworks/confirm/reverse", data, token, contentType);
+    const result = await resultResponse.json();
+    if (result.success) {
+        // 画面更新
+        openMsgDialog("msg-dialog", result.message, "blue");
+        const selectedId = document.querySelector("#employee-list-05 li.selected");
+        if (selectedId != null) await createEmployeeTimeworksList("05", selectedId.dataset.id);
+    } else {
+        openMsgDialog("msg-dialog", result.message, "red");
+    }
+}
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 日付変更
+// 日付ボックスが変更された時の処理
+async function execListChange(self) {
+    const panel = self.closest('.tab-panel');
+    const tab = panel.dataset.panel;
+
+    switch (tab) {
+        case "02":
+            const selectedId = document.querySelector("#employee-list-02 li.selected");
+            if (selectedId != null) {
+                await createEmployeeTimeworksList(tab, selectedId.dataset.id);
+            }
+            break;
+        case "03":
+            const selectedItem = panel.querySelector("[name='office']");
+            if (selectedItem != null) {
+                createTimeworksSummaryList(selectedItem.value);
+            }
+            break;
+        case "05":
+            const selectedId2 = document.querySelector("#employee-list-05 li.selected");
+            if (selectedId2 != null) {
+                await createEmployeeTimeworksList(tab, selectedId2.dataset.id);
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 取得
+// 一覧表示用のリスト取得
+async function getEmployeeTimeworksBetween(id, startId, endId, url) {
+    const start = document.getElementById(startId).value;
+    const end = document.getElementById(endId).value;
+    const data = "id=" + encodeURIComponent(parseInt(id)) + "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end);
+    const contentType = 'application/x-www-form-urlencoded';
+    // List<Timeworks>を取得
+    const resultResponse = await postFetch(url, data, token, contentType);
+    return await resultResponse.json();
+}
+
+// 有給休暇一覧表示用のリスト取得
+async function getEmployeePaidHolidayFromYear(id, year, url) {
+    const data = "id=" + encodeURIComponent(parseInt(id)) + "&year=" + encodeURIComponent(year);
+    const contentType = 'application/x-www-form-urlencoded';
+    // List<Timeworks>を取得
+    const resultResponse = await postFetch(url, data, token, contentType);
+    return await resultResponse.json();
+}
+
+// -------------------------------------------------------------------------------------------------------------------------------------- ダウンロード
+async function execDownloadCsv() {
+    const start = document.getElementById("start-date03").value;
+    const end = document.getElementById("end-date03").value;
+    await downloadCsvByBetweenDate('table-03-content', '/timeworks/download/csv', start, end);
+}
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 出力
+// 選択した営業所IDで従業員の勤怠情報概要を取得してリスト作成
+async function createTimeworksSummaryList(officeId) {
+    list03 = await getEmployeeTimeworksBetween(officeId, "start-date03", "end-date03", "/timeworks/summary/get/between/id");
+    createBetweenTable03Content(list03);
+    // チェックボックスの処理を再登録する
+    registCheckButtonClicked("table-03-content");
+    // エンターフォーカス処理をイベントリスナーに登録する
+    tabFocusElements = createTabFocusElements();
+    setEnterFocus("table-03");
+}
+
+// 出力一覧表示用のテーブル作成
+function createBetweenTable03Content(list) {
+    const tbl = document.getElementById("table-03-content");
+    deleteElements(tbl);
+    let i = 0;
+    list.forEach(function (item) {
+        let newRow = tbl.insertRow();
+        // ID（Post送信用）
+        newRow.setAttribute('name', 'data-row');
+        newRow.setAttribute('data-id', item.employee_id);
+        // チェックセル
+        newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
+        // ID
+        newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.employee_id + '</span></td>');
+        // 担当者名
+        newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.full_name + '</span></td>');
+        // 総出勤日
+        newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.total_working_date + ' 日</span></td>');
+        // 総勤務時間
+        newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.total_working_time + ' 時間</span></td>');
+    });
+    createTableFooter("footer-03", list);
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 有給
+// 選択した営業所IDと年で従業員の勤怠情報概要を取得してリスト作成
+async function createPaidHolidayList(officeId, year) {
+    list04 = await getEmployeePaidHolidayFromYear(officeId, year, "/timeworks/paidholiday/get/year");
+    createTable04Content(list04);
+    // チェックボックスの処理を再登録する
+    registCheckButtonClicked("table-04-content");
+    // エンターフォーカス処理をイベントリスナーに登録する
+    tabFocusElements = createTabFocusElements();
+    setEnterFocus("table-04");
+}
+
+// 出力一覧表示用のテーブル作成
+function createTable04Content(list) {
+    const tbl = document.getElementById("table-04-content");
+    deleteElements(tbl);
+    let i = 0;
+    list.forEach(function (item) {
+        let newRow = tbl.insertRow();
+        // ID（Post送信用）
+        newRow.setAttribute('name', 'data-row');
+        newRow.setAttribute('data-id', item.employee_id);
+        // シングルクリック時の処理
+        newRow.onclick = function (e) {
+            if (!e.currentTarget.classList.contains('selected')){
+                // すべての行の選択状態を解除する
+                detachmentSelectClassToAllRow(tbl, false);
+                // 選択した行にセレクトクラスを付与する
+                const result = addSelectClassToRow(e.currentTarget);
+            } else {
+                // 選択済みの要素をクリックした時の処理
+                const clickedTd = e.target.closest("td");
+                // 取得したTDの処理
+            }
+        }
+        // ダブルクリック時の処理
+        newRow.ondblclick = function (e) { 
+            // チェックボックスの動作を停止させる
+            e.preventDefault();
+            // 選択済みの場合
+            if (!e.currentTarget.classList.contains('selected')){
+                // すべての行の選択状態を解除する
+                detachmentSelectClassToAllRow(tableId, false);
+                // 選択した行にセレクトクラスを付与する
+                const result = addSelectClassToRow(e.currentTarget);
+            }
+            
+            // フォーム入力画面を表示する
+            const year = document.querySelector('div[data-panel="04"] select[name="year"]');
+            displayPaidHolidayList(item.employee_id, year.value);
+        }
+        // ID
+        newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.employee_id + '</span></td>');
+        // 担当者名
+        newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.full_name + '</span></td>');
+        // 使用日数
+        newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.total_days ?? "0") + ' 日</span></td>');
+    });
+    createTableFooter("footer-04", list);
+};
+
+// 申請入力ダイアログを開く ---------------------------------
+function execPaidApplicationEdit() {
+    const form = document.getElementById('form-01');
+    const id = form.querySelector('input[name="employee-id"]');
+    id.value = "";
+    const name = form.querySelector('input[name="employee-name"]');
+    name.value = "";
+    const start = form.querySelector('input[name="start-date"]');
+    start.value = "";
+    const end = form.querySelector('input[name="end-date"]');
+    end.value = "";
+    const reason = form.querySelector('textarea[name="reason"]');
+    reason.value = "";
+    
+    // 入力フォームダイアログを開く
+    openFormDialog("form-dialog-01");
+    code02.focus();
+}
+
+// 新規申請を保存する
+async function execApplication() {
+    const form = document.getElementById('form-01');
+    const formdata = {};
+    // エラーチェック
+    if (formDataCheck(form) == false) {
+        return;
+    } else {
+        const formData = new FormData(form);
+        formdata.employee_id = formData.get('employee-id');
+        formdata.start_date = formData.get('start-date');
+        const end = formData.get('end-date');
+        formdata.end_date = end == "" ? formdata.start_date: end;
+        formdata.reason = formData.get('reason').trim();
+
+        // 保存処理
+        const resultResponse = await postFetch("/timeworks/paidholiday/save", JSON.stringify(formdata), token, "application/json");
+        const result = await resultResponse.json();
+        if (result.success) {
+            // 画面更新
+            openMsgDialog("msg-dialog", result.message, "blue");
+            const office = document.querySelector('div[data-panel="04"] select[name="office"]');
+            const year = document.querySelector('div[data-panel="04"] select[name="year"]');
+            await createPaidHolidayList(office.value, year.value)
+            // 追加・変更行に移動
+            scrollIntoTableList('table-04', result.data);
+        } else {
+            openMsgDialog("msg-dialog", result.message, "red");
+        }
+        // ダイアログを閉じる
+        closeFormDialog('form-dialog-01');
+    }
+}
+
+// 入力チェック
+function formDataCheck(area) {
+    let msg = "";
+    // コードが入力されていないとFalseを返す
+    const account = area.querySelector('input[name="employee_id"]');
+    if (account != null && account.value == "") msg += '\n申請者が入力されていません';
+    const start = area.querySelector('input[name="start-date"]');
+    if (start != null && start.value == "") msg += '\n開始日が入力されていません';
+    const end = area.querySelector('input[name="end-date"]');
+    if (start && end) {
+        const startDate = new Date(start.value);
+        const endDate = new Date(end.value);
+        if (startDate > endDate) {
+            msg += '\n終了日が開始日より前に設定されています';
+        }
+    }
+    // エラーが一つ以上あればエラーメッセージダイアログを表示する
+    if (msg != "") {
+        openMsgDialog("msg-dialog", msg, "red");
+        return false;
+    }
+    return true;
+}
+
+
+// 有給申請リストダイアログを開く ---------------------------------
+async function displayPaidHolidayList(id, year) {
+    openFormDialog("form-dialog-02");
+
+    await createPaidHolidayListByEmployeeId(id, year);
+}
+
+// 選択した従業員IDと年で従業員の勤怠情報概要を取得してリスト作成
+async function createPaidHolidayListByEmployeeId(employeeId, year) {
+    list15 = await getEmployeePaidHolidayFromYear(employeeId, year, "/timeworks/paidholiday/get/employeeid");
+    createTable05Content(list15, year);
+    // チェックボックスの処理を再登録する
+    registCheckButtonClicked("table-15-content");
+    // エンターフォーカス処理をイベントリスナーに登録する
+    tabFocusElements = createTabFocusElements();
+    setEnterFocus("table-15");
+}
+
+// 従業員の申請一覧表示用のテーブル作成
+function createTable05Content(list, year) {
+    const tbl = document.getElementById("table-15-content");
+    deleteElements(tbl);
+    let i = 0;
+    list.forEach(function (item) {
+        let newRow = tbl.insertRow();
+        // ID（Post送信用）
+        newRow.setAttribute('name', 'data-row');
+        newRow.setAttribute('data-id', item.paid_holiday_id);
+        // シングルクリック時の処理
+        newRow.onclick = function (e) {
+            if (!e.currentTarget.classList.contains('selected')){
+                // すべての行の選択状態を解除する
+                detachmentSelectClassToAllRow(tbl, false);
+                // 選択した行にセレクトクラスを付与する
+                const result = addSelectClassToRow(e.currentTarget);
+            } else {
+                // 選択済みの要素をクリックした時の処理
+                const clickedTd = e.target.closest("td");
+                // 取得したTDの処理
+            }
+        }
+        // 開始日
+        newRow.insertAdjacentHTML('beforeend', '<td><input class="icon-del" type="date" value="' + item.start_date + '" disabled></td>');
+        // 終了日
+        newRow.insertAdjacentHTML('beforeend', '<td><input class="icon-del" type="date" value="' + item.end_date + '" disabled></td>');
+        // 事由
+        newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.reason ?? "0") + '</span></td>');
+        // 削除ボタン
+        newRow.insertAdjacentHTML('beforeend', '<td><div onclick="execDeletePaidHolidayByEmployeeId(' + item.paid_holiday_id + ')" class="img-btn"><img src="icons/dust.png"></div></td>');
+    });
+    createTableFooter("footer-04", list);
+};
+
+// 選択した営業所IDと年で従業員の勤怠情報概要を取得してリスト作成
+async function createPaidHolidayList(officeId, year) {
+    list04 = await getEmployeePaidHolidayFromYear(officeId, year, "/timeworks/paidholiday/get/year");
+    createTable04Content(list04);
+    // チェックボックスの処理を再登録する
+    registCheckButtonClicked("table-04-content");
+    // エンターフォーカス処理をイベントリスナーに登録する
+    tabFocusElements = createTabFocusElements();
+    setEnterFocus("table-04");
+}
+
+async function execDeletePaidHolidayByEmployeeId(id) {
+    const data = "id=" + encodeURIComponent(parseInt(id));
+    const url = '/timeworks/paidholiday/delete/id';
+    const contentType = 'application/x-www-form-urlencoded';
+    const resultResponse = await postFetch(url, data, token, contentType);
+    const result = await resultResponse.json();
+
+    if (result.success) {
+        // 画面更新
+        openMsgDialog("msg-dialog", result.message, "blue");
+        const office = document.querySelector('div[data-panel="04"] select[name="office"]');
+        const year = document.querySelector('div[data-panel="04"] select[name="year"]');
+        await createPaidHolidayList(office.value, year.value)
+    } else {
+        openMsgDialog("msg-dialog", result.message, "red");
+    }
+    // ダイアログを閉じる
+    closeFormDialog('form-dialog-02');
+}
+
+// コードから[paid_holiday]を取得して、名前を表示
+async function searchForNameByCodeForPaidHoliday(e) {
+    e.preventDefault();
+    if (code02 == null || name02 == null) return;
+    if (code02.value == "" || isNaN(code02.value)) {
+        name02.value = "";
+        return;
+    }
+
+    // [id=code]に入力されたコードから[employee]を取得して[id=name]に入力する
+    const data = "id=" + encodeURIComponent(parseInt(code02.value));
+    const url = '/employee/get/id';
+    const contentType = 'application/x-www-form-urlencoded';
+    // [employee]を取得
+    const resultResponse = await postFetch(url, data, token, contentType);
+    const entity02 = await resultResponse.json();
+    if (entity02 != null && entity02.employee_id > 0) {
+        name02.value = entity02.full_name;
+        start11.focus();
+        return;
+    } else {
+        code02.value = ""
+        name02.value = "";
+        openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
+        return;
+    }
+}
+
+// コード入力ボックスからフォーカスが外れた時の処理
+function execCode02Blur(e) {
+    if (e.target.value == "") {
+        name02.value = "";
+        return;
+    }
+    searchForNameByCodeForPaidHoliday(e);
+}
+
+// コード入力ボックスでエンターを押した時の処理
+function execCode02Changed(e) {
+    if (e == null) return;
+    // ボックスが空白なら処理しない
+    if (e.target.value == "") {
+        name02.value = "";
+        return;
+    }
+    if(e.key === 'Enter'){
+        e.preventDefault();
+        execCode02Blur(e);
+    }
+}
+
+// -------------------------------------------------------------------------------------------------------------------------------------- 初期化時の処理
+window.addEventListener("load", async () => {
+    // 1秒ごとにclock関数を呼び出す
+    setInterval(clock, 1000);
+    // 打刻画面のコード入力ボックスでエンターキーが押された時の処理を登録
+    document.getElementById('code').addEventListener('keydown', function (e) { execCodeChanged(e); });
+    // 打刻画面のコード入力ボックスのフォーカスが外れた時の処理を登録
+    document.getElementById('code').addEventListener('blur', function (e) { execCodeBlur(e); });
+
+    // 有給申請フォームのコード入力ボックスでエンターキーが押された時の処理を登録
+    document.getElementById('code02').addEventListener('keydown', function (e) { execCode02Changed(e); });
+    // 有給申請フォームのコード入力ボックスのフォーカスが外れた時の処理を登録
+    document.getElementById('code02').addEventListener('blur', function (e) { execCode02Blur(e); });
+
+    const form01 = document.getElementById('timeworks-sidemenu02');
+
+    const officeArea01 = form01.querySelector('select[name="office"]');
+    createComboBox(officeArea01, officeList);
+    setComboboxSelected(officeArea01, officeId);
+    officeArea01.onchange = function() { createEmployeeList("02"); };
+
+    const officeArea02 = document.querySelector('div[data-panel="03"] select[name="office"]');
+    createComboBoxWithTop(officeArea02, officeList, "すべて");
+    setComboboxSelected(officeArea02, officeId);
+    officeArea02.onchange = function() { createTimeworksSummaryList(this.value); };
+
+    const officeArea03 = document.querySelector('div[data-panel="04"] select[name="office"]');
+    createComboBoxWithTop(officeArea03, officeList, "すべて");
+    setComboboxSelected(officeArea03, officeId);
+    officeArea03.onchange = function() { 
+        const year = document.querySelector('div[data-panel="04"] select[name="year"]');
+        createPaidHolidayList(this.value, year.value); 
+    };
+
+    const form02 = document.getElementById('timeworks-sidemenu05');
+    const officeArea04 = form02.querySelector('select[name="office"]');
+    createComboBox(officeArea04, officeList);
+    setComboboxSelected(officeArea04, officeId);
+    officeArea04.onchange = function() { createEmployeeList("05"); };
+
+    const yearArea01 = document.querySelector('div[data-panel="04"] select[name="year"]');
+    createComboBox(yearArea01, yearList);
+    setComboboxSelected(yearArea01, thisYear);
+    yearArea01.onchange = function() {
+        const office = document.querySelector('div[data-panel="04"] select[name="office"]');
+        createPaidHolidayList(office.value, this.value);
+    };
+
+    createEmployeeList("02");
+    createEmployeeList("05");
+
+    // 日付ボックスを設定
+    let monthStr = "";
+    switch (Number(officeId)) {
+        case 1000:
+            monthStr = "half-month";
+            break;
+        case 1001:
+            monthStr = "half-month";
+            break;
+        case 1002:
+            monthStr = "this-month";
+            break;
+        case 1003:
+            monthStr = "this-month";
+            break;
+        default:
+            monthStr = "this-month";
+            break;
+    }
+    execSpecifyPeriod(monthStr, 'start-date02', 'end-date02');
+    execSpecifyPeriod(monthStr, 'start-date03', 'end-date03');
+    execSpecifyPeriod(monthStr, 'start-date05', 'end-date05');
+
+    await updateDisplay();
+    createTimeworksSummaryList(officeId);
+    createPaidHolidayList(officeId, thisYear)
+    createTableFooter("footer-02", null);
+    createTableFooter("footer-03", null);
+    createTableFooter("footer-04", null);
+    createTableFooter("footer-05", null);
+
+    // エンターフォーカス処理をイベントリスナーに登録する
+    setEnterFocus("form-01");
+
+    // タブメニュー処理
+    const tabMenus = document.querySelectorAll('.tab-menu-item');
+    // イベント付加
+    tabMenus.forEach((tabMenu) => {
+        tabMenu.addEventListener('click', tabSwitch);
+    })
+});

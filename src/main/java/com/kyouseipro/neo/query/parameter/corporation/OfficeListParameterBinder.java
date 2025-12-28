@@ -22,11 +22,17 @@ public class OfficeListParameterBinder {
         return index;
     }
 
-    public static int bindFindAllCombo(PreparedStatement ps, Integer categoryId) throws SQLException {
+    public static int bindFindAllCombo(PreparedStatement ps) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
+    }
+
+    public static int bindFindAllClientCombo(PreparedStatement ps) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, categoryId);
+        ps.setInt(index++, Enums.clientCategory.SHIPPER.getCode());
         return index;
     }
 }

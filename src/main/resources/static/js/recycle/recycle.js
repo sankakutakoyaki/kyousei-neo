@@ -364,3 +364,733 @@ function removeEdgeA(number) {
     }
     return number;
 }
+
+/******************************************************************************************************* 入力画面 */
+
+// リスト画面の本体部分を作成する
+function createTableContent(tableId, list) {
+    const tbl = document.getElementById(tableId);
+    list.forEach(function (item) {
+        let newRow = tbl.insertRow();
+        // ID（Post送信用）
+        newRow.setAttribute('name', 'data-row');
+        newRow.setAttribute('data-id', item.recycle_id);
+        if (item.loss_date != "9999-12-31") {
+            newRow.setAttribute('data-valid', true);
+        } else {
+            newRow.setAttribute('data-valid', false);
+        }
+        // シングルクリック時の処理
+        newRow.onclick = function (e) {
+            if (!e.currentTarget.classList.contains('selected')){
+                // すべての行の選択状態を解除する
+                detachmentSelectClassToAllRow(tbl, false);
+                // 選択した行にセレクトクラスを付与する
+                const result = addSelectClassToRow(e.currentTarget);
+            } else {
+                // 選択済みの要素をクリックした時の処理
+                const clickedTd = e.target.closest("td");
+                // 取得したTDの処理
+            }
+        }
+        // ダブルクリック時の処理
+        newRow.ondblclick = function (e) { 
+            // チェックボックスの動作を停止させる
+            e.preventDefault();
+            // 選択済みの場合
+            if (!e.currentTarget.classList.contains('selected')){
+                // すべての行の選択状態を解除する
+                detachmentSelectClassToAllRow(tableId, false);
+                // 選択した行にセレクトクラスを付与する
+                const result = addSelectClassToRow(e.currentTarget);
+            }
+            
+            // フォーム入力画面を表示する
+            execEdit(item.recycle_id, this);
+        }
+
+        createTable01Row(newRow, item);
+    });
+}
+
+// リスト画面の本体部分を作成する
+function createFormTableContent(tableId, list) {
+    if (list == null) return;
+    const tbl = document.getElementById(tableId);
+    list.forEach(function (item) {
+        if (item.state != deleteCode) {
+            let newRow = tbl.insertRow();
+            // ID（Post送信用）
+            newRow.setAttribute('name', 'data-row');
+            newRow.setAttribute('data-id', item.recycle_id);
+
+            switch (tableId) {
+                case "table-11-content":
+                    createTable11Row(newRow, item);
+                    break;
+                case "table-12-content":
+                    createTable12Row(newRow, item);
+                    break;
+                case "table-13-content":
+                    createTable13Row(newRow, item);
+                    break;
+                case "table-14-content":
+                    createTable14Row(newRow, item);
+                    break;
+                default:
+                    break;
+            }                        
+        }
+    });
+}
+
+/******************************************************************************************************* テーブル行作成 */
+
+// テーブル行を作成する
+function createTable01Row(newRow, item) {
+    // 選択用チェックボックス
+    newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
+    // お問合せ管理票番号
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.molding_number ?? "") + '</span></span></td>');
+    // 使用日　引渡日
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.use_date == '9999-12-31' ? "-----": item.use_date) + '</span><br><span>' + (item.delivery_date == '9999-12-31' ? "-----": item.delivery_date) + '</span></td>');
+    // 発送日　ロス処理日
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.shipping_date == '9999-12-31' ? "-----": item.shipping_date) + '</span><br><span>' + (item.loss_date == '9999-12-31' ? "-----": item.loss_date) + '</span></td>');
+    // 小売業者
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.company_name ?? "") + '</span><br><span>' + (item.office_name ?? "") + '</span></td>');
+    // 製造業者等名　品目・料金区分
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.maker_name ?? "") + '</span><br><span>' + (item.item_name ?? "") + '</span></td>');
+}
+
+function createTable11Row(newRow, item) {
+    // お問合せ管理票番号 使用日
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.molding_number ?? "") + '</span><br><span>' + (item.use_date == '9999-12-31' ? "-----": item.use_date) + '</span></td>');
+    // 小売業者
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.company_name ?? "") + '</span><br><span>' + (item.office_name ?? "") + '</span></td>');
+    // 製造業者等名　品目・料金区分
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.maker_name ?? "") + '</span><br><span>' + (item.item_name ?? "") + '</span></td>');
+    // 削除ボタン
+    newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycle_id + ')"><img src="/icons/dust.png"></div></td>');
+}
+
+function createTable12Row(newRow, item) {
+    // 引渡日
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.date == '9999-12-31' ? "-----": item.date) + '</span></td>');
+    // お問合せ管理票番号
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.molding_number ?? "") + '</span></span></td>');
+    // 削除ボタン
+    newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycle_id + ')"><img src="/icons/dust.png"></div></td>');
+}
+
+function createTable13Row(newRow, item) {
+    // 発送日
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.date == '9999-12-31' ? "-----": item.date) + '</span></td>');
+    // お問合せ管理票番号
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.molding_number ?? "") + '</span></span></td>');
+    // 削除ボタン
+    newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycle_id + ')"><img src="/icons/dust.png"></div></td>');
+}
+
+function createTable14Row(newRow, item) {
+    // ロス処理日
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.date == '9999-12-31' ? "-----": item.date) + '</span></td>');
+    // お問合せ管理票番号
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.molding_number ?? "") + '</span></span></td>');
+    // 削除ボタン
+    newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycle_id + ')"><img src="/icons/dust.png"></div></td>');
+}
+
+/******************************************************************************************************* 入力画面 */
+
+// 商品登録画面を開く
+async function execEdit(id, self, str) {
+    // スピナー表示
+    startProcessing();
+
+    itemList = [];
+    let entity = {};
+    if (id > 0) {
+        // 選択されたIDのエンティティを取得
+        const data = "id=" + encodeURIComponent(parseInt(id));
+        const resultResponse = await postFetch('/recycle/get/id', data, token, 'application/x-www-form-urlencoded');
+        const result = await resultResponse.json();
+
+        let form = document.getElementById("form-dialog-05");
+
+        if (result.recycle_id == 0) {
+            openMsgDialog("msg-dialog", "データがありません", "red");
+            
+            processingEnd();
+            return;
+        }
+        entity = structuredClone(result);
+        openFormDialog("form-dialog-05"); 
+        resetFormInput(form, str);
+        setFormContent(form, entity);
+        setEnterFocus("form-05");
+    } else {
+        entity = structuredClone(formEntity);
+
+        let form = "";
+        let formId = "";
+        let formDialogId = "";
+
+        switch (str) {
+            case "regist":
+                formDialogId = "form-dialog-01";
+                formId = "form-01";
+                useDate11.value = "";
+                await updateFormTableDisplay("table-11-content", "footer-11", itemList);
+                break;
+            case "delivery":
+                formDialogId = "form-dialog-02";
+                formId = "form-02";
+                deliveryDate12.value = "";
+                await updateFormTableDisplay("table-12-content", "footer-12", itemList);
+                break;
+            case "shipping":
+                formDialogId = "form-dialog-03";
+                formId = "form-03";
+                shippingDate13.value = "";
+                await updateFormTableDisplay("table-13-content", "footer-13", itemList);
+                break;
+            case "loss":
+                formDialogId = "form-dialog-04";
+                formId = "form-04";
+                lossDate14.value = "";
+                await updateFormTableDisplay("table-14-content", "footer-14", itemList);
+                break;
+            default:
+                break;
+        }
+
+        openFormDialog(formDialogId); 
+        form = document.getElementById(formDialogId);
+        resetFormInput(form, str);
+        setEnterFocus(formId);
+
+        if (str == "regist") {
+            setCompanyComboBox(form, entity, companyComboList, officeComboList);
+        }
+    }
+
+    // スピナー消去
+    processingEnd();
+}
+
+// コンテンツ部分作成
+function setFormContent(form, entity, str) {
+    form.querySelector('[name="recycle-id"]').value = entity.recycle_id;
+    form.querySelector('[name="version"]').value = entity.version;
+    form.querySelector('[name="recycle-number"]').value = entity.recycle_number;
+    form.querySelector('[name="molding-number"]').value = entity.molding_number;
+    form.querySelector('[name="maker-code"]').value = entity.maker_code;
+    form.querySelector('[name="maker-name"]').value = entity.maker_name;
+    form.querySelector('[name="maker-id"]').value = entity.maker_id;
+    form.querySelector('[name="item-code"]').value = entity.item_code;
+    form.querySelector('[name="item-name"]').value = entity.item_name;
+    form.querySelector('[name="item-id"]').value = entity.item_id;
+    form.querySelector('[name="recycling-fee"]').value = entity.recycling_fee;
+
+    if (entity.use_date == "9999-12-31") {
+        form.querySelector('[name="use-date"]').value = "";
+    } else {
+        form.querySelector('[name="use-date"]').value = entity.use_date;
+    }
+
+    if (entity.delivery_date == "9999-12-31") {
+        form.querySelector('[name="delivery-date"]').value = "";
+    } else {
+        form.querySelector('[name="delivery-date"]').value = entity.delivery_date;
+    }
+
+    if (entity.shipping_date == "9999-12-31") {
+        form.querySelector('[name="shipping-date"]').value = "";
+    } else {
+        form.querySelector('[name="shipping-date"]').value = entity.shipping_date;
+    }
+
+    if (entity.loss_date == "9999-12-31") {
+        form.querySelector('[name="loss-date"]').value = "";
+    } else {
+        form.querySelector('[name="loss-date"]').value = entity.loss_date;
+    }
+
+    // 製造業者等名コンボボックス
+    setCompanyComboBox(form, entity, companyComboList, officeComboList);
+
+    // 処分場コンボボックス
+    const disposalSiteArea = form.querySelector('select[name="disposal-site"]');
+    if (disposalSiteArea != null) {
+        createComboBoxWithTop(disposalSiteArea, disposalSiteComboList, "");
+        setComboboxSelected(disposalSiteArea, entity.disposal_site_id); 
+    }
+
+    form.querySelector('[autofocus]').focus();
+}
+
+/******************************************************************************************************* 削除 */
+
+async function execDelete01(tableId, self) {
+    // スピナー表示
+    startProcessing();
+
+    const result = await deleteTablelist('table-01-content', '/recycle/delete');
+
+    if (result.success) {                
+        await execDate01Search(tableId);
+        openMsgDialog("msg-dialog", result.message, "blue");
+    } else {
+        openMsgDialog("msg-dialog", result.message, "red");
+    }
+
+    // スピナー消去
+    processingEnd();
+}
+
+async function deleteItem(self, id, str) {
+    if (id < 0) {
+        itemList = itemList.filter(value => value.recycle_id != id);
+    } else {
+        const item = itemList.find(value => value.recycle_id == id);
+        item.state = deleteCode;
+    }
+    
+    switch (str) {
+        case "regist":
+            await updateFormTableDisplay("table-11-content", "footer-11", itemList);
+            break;
+        case "delivery":
+            await updateFormTableDisplay("table-12-content", "footer-12", itemList);
+            break;
+        case "shipping":
+            await updateFormTableDisplay("table-13-content", "footer-13", itemList);
+            break;
+        case "loss":
+            await updateFormTableDisplay("table-14-content", "footer-14", itemList);
+            break;
+        default:
+            break;
+    }
+}
+
+/******************************************************************************************************* 登録 */
+
+async function execRegistItem(self, str) {
+    let regBtnId = "";
+    let formId = "";
+    let tableId = "";
+    let footerId = "";
+
+    switch (str) {
+        case "regist":
+            regBtnId = 'regist-btn11';
+            formId = 'form-01';
+            tableId = "table-11-content";
+            footerId = "footer-11";
+            break;
+        case "delivery":
+            regBtnId = 'regist-btn12';
+            formId = 'form-02';
+            tableId = "table-12-content";
+            footerId = "footer-12";
+            break;
+        case "shipping":
+            regBtnId = 'regist-btn13';
+            formId = 'form-03';
+            tableId = "table-13-content";
+            footerId = "footer-13";
+            break;
+        case "loss":
+            regBtnId = 'regist-btn14';
+            formId = 'form-04';
+            tableId = "table-14-content";
+            footerId = "footer-14";
+            break;
+        default:
+            break;
+    }
+    const form = document.getElementById(formId);
+    if (formDataCheck(form, str) == false) {
+        return;
+    }
+
+    createFormdata(form, regBtnId, tableId, footerId, str);
+
+    itemList.push(formdata);
+
+    await updateFormTableDisplay(tableId, footerId, itemList);
+    scrollIntoTableList(tableId, itemId);
+    resetFormInput(form, str);
+}
+
+function createFormdata(form, regBtnId, tableId, footerId, str) {
+    document.getElementById(regBtnId).focus();
+
+    switch (str) {
+        case "regist":
+            formdata = setInsertFormData(form);
+            break;
+        case "delivery":
+            formdata = setDateUpdateFormData(form);
+            break;
+        case "shipping":
+            formdata = setDateUpdateFormData(form);
+            break;
+        case "loss":
+            formdata = setDateUpdateFormData(form);
+            break;
+        default:
+            break;
+    }
+}
+
+// 入力フォームの内容をリセットする
+function resetFormInput(form, str) {
+    form.querySelector('[name="recycle-number"]').value = "";
+    form.querySelector('[name="molding-number"]').value = "";
+
+    switch (str) {
+        case "regist":
+            form.querySelector('[name="maker-code"]').value = "";
+            form.querySelector('[name="maker-name"]').value = "";
+            form.querySelector('[name="maker-id"]').value = "";
+            form.querySelector('[name="item-code"]').value = "";
+            form.querySelector('[name="item-name"]').value = "";
+            form.querySelector('[name="item-id"]').value = "";
+            form.querySelector('[name="recycling-fee"]').value = "";
+            break;
+        case "edit":
+            form.querySelector('[name="maker-code"]').value = "";
+            form.querySelector('[name="maker-name"]').value = "";
+            form.querySelector('[name="maker-id"]').value = "";
+            form.querySelector('[name="item-code"]').value = "";
+            form.querySelector('[name="item-name"]').value = "";
+            form.querySelector('[name="item-id"]').value = "";
+            form.querySelector('[name="use-date"]').value = "";
+            form.querySelector('[name="delivery-date"]').value = "";
+            form.querySelector('[name="shipping-date"]').value = "";
+            form.querySelector('[name="loss-date"]').value = "";
+            form.querySelector('[name="company"]').value = 0;
+            form.querySelector('[name="disposal-site"]').value = 0;
+            form.querySelector('[name="recycling-fee"]').value = 0;
+            form.querySelector('[name="version"]').value = 0;
+            form.querySelector('[name="state"]').value = 0;
+            break;
+        default:
+            break;
+    }
+    form.querySelector('input[name="recycle-number"]').focus();
+}
+
+// 入力チェック
+function formDataCheck(form, str) {
+    let msg = "";
+    const num = form.querySelector('input[name="recycle-number"]');
+    if (num.value == 0) msg += '\nお問合せ管理票番号を入力して下さい';
+
+    switch (str) {
+        case "regist":
+            if (form.querySelector('select[name="company"]').value == 0) msg += '\n小売業者を選択して下さい';
+            if (form.querySelector('input[name="maker-code"]').value == "") msg += '\n製造業者等名を選択して下さい';
+            if (form.querySelector('input[name="item-code"]').value == "") msg += '\n品目・料金区分を選択して下さい';
+            if (form.querySelector('input[name="use-date"]').value == "") msg += '\n使用日を入力して下さい';
+            break;
+        case "delivery":
+            if (form.querySelector('input[name="delivery-date"]').value == "") msg += '\n引渡日を入力して下さい';
+            break;
+        case "shipping":
+            if (form.querySelector('input[name="shipping-date"]').value == "") msg += '\n発送日を入力して下さい';
+            break;
+        case "loss":
+            if (form.querySelector('input[name="loss-date"]').value == "") msg += '\nロス処理日を入力して下さい';
+            break;
+        case "edit":
+            if (form.querySelector('select[name="company"]').value == 0) msg += '\n小売業者を選択して下さい';
+            if (form.querySelector('input[name="maker-code"]').value == "") msg += '\n製造業者等名を選択して下さい';
+            if (form.querySelector('input[name="item-code"]').value == "") msg += '\n品目・料金区分を選択して下さい';
+            if (form.querySelector('input[name="use-date"]').value == "") msg += '\n使用日を入力して下さい';
+            break;
+        default:
+            break;
+    }
+
+    // エラーが一つ以上あればエラーメッセージダイアログを表示する
+    if (msg != "") {
+        openMsgDialog("msg-dialog", msg, "red");
+        return false;
+    }
+    return true;
+}
+
+/******************************************************************************************************* 保存 */
+
+// 保存処理
+async function execSave(formId, tableId, str) {
+    // スピナー表示
+    startProcessing();
+
+    // 保存処理
+    const resultResponse = await postFetch("/recycle/save/" + str, JSON.stringify({list:itemList}), token, "application/json");
+    const result = await resultResponse.json();
+    if (result.success) {
+        // 画面更新
+        openMsgDialog("msg-dialog", result.message, "blue");
+        await execDate01Search(tableId);
+        // 追加・変更行に移動
+        scrollIntoTableList(tableId, result.id);
+        // itemList = [];
+    } else {
+        openMsgDialog("msg-dialog", result.message, "red");
+    }
+    // ダイアログを閉じる
+    closeFormDialog(formId);
+
+    // スピナー消去
+    processingEnd();
+}
+
+// 更新処理
+async function execUpdate(tableId, str) {
+    const form = document.getElementById("form-05");
+    if (formDataCheck(form, str) == false) {
+        return;
+    }
+
+    // スピナー表示
+    startProcessing();
+
+    formdata = setInsertFormData(form);
+    const resultResponse = await postFetch("/recycle/save/" + str, JSON.stringify({entity:formdata}), token, "application/json");
+    const result = await resultResponse.json();
+    if (result.success) {
+        // 画面更新
+        openMsgDialog("msg-dialog", result.message, "blue");
+        await execDate01Search(tableId);
+    } else {
+        openMsgDialog("msg-dialog", result.message, "red");
+    }
+    // ダイアログを閉じる
+    closeFormDialog("form-dialog-05");
+
+    // スピナー消去
+    processingEnd();
+}
+
+/******************************************************************************************************* ダウンロード */
+
+async function execDownloadCsv01(tableId, self) {
+    await downloadCsv(tableId, '/recycle/download/csv');
+}
+
+/******************************************************************************************************* 画面更新 */
+
+// テーブルリスト画面を更新する
+async function updateTableDisplay(tableId, footerId, searchId, list) {
+    // フィルター処理
+    const result = filterDisplay(searchId, list);
+    // リスト画面を初期化
+    deleteElements(tableId);
+    // リスト作成
+    createTableContent(tableId, result);
+    // フッター作成
+    createTableFooter(footerId, list);
+    // チェックボタン押下時の処理を登録する
+    registCheckButtonClicked(tableId);
+    // すべて選択ボタンをオフにする
+    turnOffAllCheckBtn(tableId);
+    // テーブルのソートをリセットする
+    resetSortable(tableId);
+    // スクロール時のページトップボタン処理を登録する
+    setPageTopButton(tableId);
+    // テーブルにスクロールバーが表示されたときの処理を登録する
+    document.querySelectorAll('.scroll-area').forEach(el => {
+        toggleScrollbar(el);
+    });
+}
+
+// テーブルリスト画面を更新する
+async function updateFormTableDisplay(tableId, footerId, list) {
+    // リスト画面を初期化
+    deleteElements(tableId);
+    // リスト作成
+    createFormTableContent(tableId, list);
+    // フッター作成
+    createTableFooter(footerId, list);
+    // スクロール時のページトップボタン処理を登録する
+    setPageTopButton(tableId);
+    // テーブルにスクロールバーが表示されたときの処理を登録する
+    document.querySelectorAll('.scroll-area').forEach(el => {
+        toggleScrollbar(el);
+    });
+}
+
+async function execFilterDisplay(tableId) {
+    await updateTableDisplay(tableId, "footer-01", "search-box-01", origin);
+}
+
+async function execDate01Search(tableId) {
+    origin = await getRecyclesBetween("start-date01", "end-date01", "/recycle/get/between");
+    await updateTableDisplay(tableId, "footer-01", "search-box-01", origin);
+}
+
+// 一覧表示用のリスト取得
+async function getRecyclesBetween(startId, endId, url) {
+    // スピナー表示
+    startProcessing();
+
+    const start = document.getElementById(startId).value;
+    const end = document.getElementById(endId).value;
+    const col = document.getElementById('date-category01').value;
+    const data = "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end) + "&col=" + encodeURIComponent(col);
+    const contentType = 'application/x-www-form-urlencoded';
+    // List<Recycle>を取得
+    const resultResponse = await postFetch(url, data, token, contentType);
+
+    // スピナー消去
+    processingEnd();
+
+    return await resultResponse.json();
+}
+
+/******************************************************************************************************* コード入力時の処理 */
+// コード入力ボックスからフォーカスが外れた時の処理
+function execMakerCodeBlur(e, str) {
+    e.preventDefault();
+    if (e.currentTarget == null) return;
+    const form = e.currentTarget.closest('.dialog-content');
+
+    let makerCode = "";
+    let makerName = "";
+    let makerId = "";
+    switch (str) {
+        case "regist":
+            makerCode = makerCode11;
+            makerName = makerName11;
+            makerId = makerId11
+            break;
+        case "edit":
+            makerCode = makerCode15;
+            makerName = makerName15;
+            makerId = makerId15
+            break;
+        default:
+            break;
+    }
+    searchForNameByMakerCode(form, makerCode, makerName, makerId)
+}
+
+function execItemCodeBlur(e, str) {
+    e.preventDefault();
+    if (e.currentTarget == null) return;
+    const form = e.currentTarget.closest('.dialog-content');
+
+    let itemCode = "";
+    let itemName = "";
+    let itemId = "";
+    switch (str) {
+        case "regist":
+            itemCode = itemCode11;
+            itemName = itemName11;
+            itemId = itemId11
+            break;
+        case "edit":
+            itemCode = itemCode15;
+            itemName = itemName15;
+            itemId = itemId15
+            break;
+        default:
+            break;
+    }
+    searchForNameByItemCode(form, itemCode, itemName, itemId)
+}
+
+async function execNumberBlur(e, str) {
+    e.preventDefault();
+    if (e.currentTarget == null) return;
+    const form = e.currentTarget.closest('.dialog-content');
+    let numberBox = "";
+    let recycleId = "";
+    let moldingId = "";
+    let versionId = "";
+    switch (str) {
+        case "regist":
+            numberBox = number11;
+            recycleId = recycleId11;
+            moldingId = moldingNumber11;
+            versionId = version11;
+            break;
+        case "delivery":
+            numberBox = number12;
+            recycleId = recycleId12;
+            moldingId = moldingNumber12;
+            versionId = version12;
+            break;
+        case "shipping":
+            numberBox = number13;
+            recycleId = recycleId13;
+            moldingId = moldingNumber13;
+            versionId = version13;
+            break;
+        case "loss":
+            numberBox = number14;
+            recycleId = recycleId14;
+            moldingId = moldingNumber14;
+            versionId = version14;
+            break;
+        case "edit":
+            numberBox = number15;
+            recycleId = recycleId15;
+            moldingId = moldingNumber15;
+            versionId = version15;
+            break;
+        default:
+            break;
+    }
+    await searchForExistByNumber(form, itemList, numberBox, recycleId, moldingId, versionId, str);
+}
+
+/******************************************************************************************************* 初期化時 */
+
+// ページ読み込み後の処理
+window.addEventListener("load", async () => {
+    // スピナー表示
+    startProcessing();
+
+    // 日付フィルターコンボボックス
+    const dateCategoryArea = document.querySelector('select[name="date-category"]')
+    createComboBoxValueString(dateCategoryArea, dateComboList);
+
+    // お問合せ管理票番号入力ボックスのフォーカスが外れた時の処理を登録
+    number11.addEventListener('blur', function (e) { execNumberBlur(e, 'regist'); });
+    // お問合せ管理票番号入力ボックスのフォーカスが外れた時の処理を登録
+    number12.addEventListener('blur', function (e) { execNumberBlur(e, 'delivery'); });
+    // お問合せ管理票番号入力ボックスのフォーカスが外れた時の処理を登録
+    number13.addEventListener('blur', function (e) { execNumberBlur(e, 'shipping'); });
+    // お問合せ管理票番号入力ボックスのフォーカスが外れた時の処理を登録
+    number14.addEventListener('blur', function (e) { execNumberBlur(e, 'loss'); });
+    // お問合せ管理票番号入力ボックスのフォーカスが外れた時の処理を登録
+    number15.addEventListener('blur', function (e) { execNumberBlur(e, 'edit'); });
+    // メーカーコード入力ボックスのフォーカスが外れた時の処理を登録
+    makerCode11.addEventListener('blur', function (e) { execMakerCodeBlur(e, 'regist'); });
+    // メーカーコード入力ボックスのフォーカスが外れた時の処理を登録
+    makerCode15.addEventListener('blur', function (e) { execMakerCodeBlur(e, 'edit'); });
+    // 品目コード入力ボックスのフォーカスが外れた時の処理を登録
+    itemCode11.addEventListener('blur', function (e) { execItemCodeBlur(e, 'regist'); });
+    // 品目コード入力ボックスのフォーカスが外れた時の処理を登録
+    itemCode15.addEventListener('blur', function (e) { execItemCodeBlur(e, 'edit'); });
+
+    // 検索ボックス入力時の処理
+    document.getElementById('search-box-01').addEventListener('search', async function(e) {
+        await execFilterDisplay("table-01-content");
+    }, false);
+
+    execSpecifyPeriod("today", 'start-date01', 'end-date01');
+
+    // 画面更新
+    // origin01 = origin.filter(value => value.classification == goodsCode);
+    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+
+    // スピナー消去
+    processingEnd();
+});
