@@ -5,12 +5,12 @@ import com.kyouseipro.neo.common.Utilities;
 public class RecycleMakerSqlBuilder {
     public static String buildInsert() {
         return
-            "INSERT INTO recycle_makers (code, name, [group], version, state) OUTPUT INSERTED.recycle_maker_id VALUES (?, ?, ?, ?, ?);";
+            "INSERT INTO recycle_makers (code, name, abbr_name, [group], version, state) OUTPUT INSERTED.recycle_maker_id VALUES (?, ?, ?, ?, ?, ?);";
     }
 
     public static String buildUpdate() {
         return
-            "UPDATE recycle_makers SET code=?, name=?, [group]=?, version=?, state=? WHERE recycle_maker_id=? AND version=?;";
+            "UPDATE recycle_makers SET code=?, name=?, abbr_name=?, [group]=?, version=?, state=? WHERE recycle_maker_id=? AND version=?;";
     }
 
     public static String buildDelete() {
@@ -26,7 +26,8 @@ public class RecycleMakerSqlBuilder {
 
     private static String baseSelectString() {
         return
-            "SELECT rm.recycle_maker_id, rm.code, rm.name, [rm].[group], rm.version, rm.state FROM recycle_makers rm";
+            "SELECT rm.recycle_maker_id, rm.code, rm.name, rm.abbr_name, [rm].[group], rg.name as group_name, rm.version, rm.state FROM recycle_makers rm" +
+            " LEFT OUTER JOIN recycle_groups rg ON rg.recycle_group_id = [rm].[group] AND NOT (rg.state = ?)";
     }
 
     public static String buildFindById() {
@@ -37,6 +38,11 @@ public class RecycleMakerSqlBuilder {
     public static String buildFindByCode() {
         return 
             baseSelectString() + " WHERE rm.code = ? AND NOT (rm.state = ?)";
+    }
+
+    public static String buildFindAll() {
+        return
+            baseSelectString() + " WHERE NOT (rm.state = ?)";
     }
 
     public static String buildDownloadCsvByIds(int count) {

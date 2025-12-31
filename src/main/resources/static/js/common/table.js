@@ -427,38 +427,107 @@ async function deleteTablelist(tableId, url) {
     }
 }
 
+// // クリックしたTDを編集可能にする
+// function tdEnableEdit(newRow) {
+//     newRow.addEventListener('click', function (e) {
+//         const td = e.target.closest('td.editable');
+//         if (!td) return;
+
+//         // すでに編集状態なら何もしない
+//         if (td.querySelector('input')) return;
+
+//         const currentValue = td.textContent.trim();
+
+//         const input = document.createElement('input');
+//         input.type = 'text';
+//         input.classList.add('normal-input');
+//         input.value = currentValue === '-----' ? '' : currentValue;
+//         input.style.width = '100%';
+
+//         td.textContent = '';
+//         td.appendChild(input);
+//         // フォーカス時に全選択
+//         input.addEventListener('focus', function () {
+//             this.select();
+//         });
+//         input.focus();
+
+//         function save() {
+//             td.textContent = input.value || currentValue;
+//         }
+
+//         input.addEventListener('blur', save);
+//         input.addEventListener('keydown', e => {
+//             if (e.key === 'Enter') input.blur();
+//         });
+//     });
+// }
 // クリックしたTDを編集可能にする
 function tdEnableEdit(newRow) {
     newRow.addEventListener('click', function (e) {
         const td = e.target.closest('td.editable');
         if (!td) return;
-
-        // すでに編集状態なら何もしない
-        if (td.querySelector('input')) return;
+        if (td.querySelector('input, select')) return;
 
         const currentValue = td.textContent.trim();
+        const editType = td.dataset.editType || 'text';
 
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.classList.add('normal-input');
-        input.value = currentValue === '-----' ? '' : currentValue;
-        input.style.width = '100%';
+        let editor;
 
-        td.textContent = '';
-        td.appendChild(input);
-        // フォーカス時に全選択
-        input.addEventListener('focus', function () {
-            this.select();
-        });
-        input.focus();
+        if (editType === 'select') {
+            editor = document.createElement('select');
+            editor.classList.add('normal-input');
 
-        function save() {
-            td.textContent = input.value || currentValue;
+            const key = td.dataset.optionsKey;
+            const options = SELECT_OPTIONS[key] || [];
+
+            options.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt.number;
+                option.textContent = opt.text;
+                if (String(opt.number) === td.dataset.value) {
+                    option.selected = true;
+                }
+                editor.appendChild(option);
+            });
+        } else {
+            editor = document.createElement('input');
+            editor.type = 'text';
+            editor.classList.add('normal-input');
+            editor.value = currentValue === '-----' ? '' : currentValue;
         }
 
-        input.addEventListener('blur', save);
-        input.addEventListener('keydown', e => {
-            if (e.key === 'Enter') input.blur();
+        editor.style.width = '100%';
+        td.textContent = '';
+        td.appendChild(editor);
+        editor.focus();
+
+        if (editor instanceof HTMLInputElement) editor.select();
+
+        // ==== イベント ====
+
+        editor.addEventListener('change', () => {
+            handleTdChange(editor);   // ← 保存
+            saveEditor(td, editor, currentValue); // ← 表示
+        });
+
+        editor.addEventListener('blur', () => {
+            saveEditor(td, editor, currentValue);
+        });
+
+        editor.addEventListener('keydown', e => {
+            if (e.key === 'Enter') editor.blur();
         });
     });
+}
+
+function saveEditor(td, editor, currentValue) {
+    if (editor instanceof HTMLSelectElement) {
+        const opt = editor.selectedOptions[0];
+        td.dataset.value = opt.value;
+        td.textContent = opt.textContent;
+    } else {
+        const value = editor.value?.trim();
+        td.textContent = value || currentValue || '-----';
+    }
 }

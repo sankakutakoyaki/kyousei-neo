@@ -26,7 +26,7 @@ function createTable01Row(newRow, item) {
     // 作業項目
     newRow.insertAdjacentHTML('beforeend', '<td>' + (item.work_item_name ?? "-----") + '</td>');
     // 料金
-    newRow.insertAdjacentHTML('beforeend', '<td class="editable text-right">' + (item.price ?? 0).toLocaleString('ja-JP') + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td class="editable text-right" data-edit-type="number">' + (item.price ?? 0).toLocaleString('ja-JP') + '</td>');
     // 荷主
     newRow.insertAdjacentHTML('beforeend', '<td>' + (item.company_name ?? "-----") + '</td>');
 }

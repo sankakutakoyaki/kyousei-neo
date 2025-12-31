@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,6 +56,15 @@ public class RecycleMakerApiController {
             return ResponseEntity.ofNullable(null);
         }
     }
+    /**
+     * EntityListを取得する
+     * @return
+     */
+    @GetMapping("/recycle/maker/get/list")
+	@ResponseBody
+    public List<RecycleMakerEntity> getList() {
+        return recycleMakerService.getList();
+    }
 
     /**
      * 情報を保存する
@@ -66,13 +76,13 @@ public class RecycleMakerApiController {
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody RecycleMakerEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
         Integer id = recycleMakerService.save(entity);
-        if (id != null && id > 0) {
+        // if (id != null && id > 0) {
             historyService.save(userName, "recycle_makers", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
-        } else {
-            historyService.save(userName, "recycle_makers", "保存", 400, "失敗");
-            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
-        }
+        // } else {
+        //     historyService.save(userName, "recycle_makers", "保存", 400, "失敗");
+        //     return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+        // }
     }
 
     /**

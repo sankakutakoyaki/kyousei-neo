@@ -29,14 +29,14 @@
 }
 
 #table-01 tr {
-    grid-template-columns: 3rem 6rem 1fr 1fr 8rem;
+    grid-template-columns: 3rem 6rem 8rem 1fr 1fr;
 }
 
 /******************************************************************************************************* form */
 
 :is(#form-01).dialog-content {
     height: 100%;
-    width: 40rem;
+    width: 30rem;
     & >.flex-area:nth-of-type(1) {
         display: grid;
         grid-template-columns: 5rem 7rem 1fr ;
@@ -44,10 +44,15 @@
     }
     & >.flex-area:nth-of-type(2) {
         display: grid;
-        grid-template-columns: 1fr 1fr ;
+        grid-template-columns: 1fr;
         width: 100%;
     }
     & >.flex-area:nth-of-type(3) {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+    }
+    /* & >.flex-area:nth-of-type(3) {
         display: grid;
         grid-template-columns: 15rem 6rem 6rem 6rem;
         width: 100%;
@@ -84,5 +89,5 @@
         display: grid;
         grid-template-columns: 15rem 6rem 6rem 6rem;
         width: 100%;
-    }
+    } */
 }

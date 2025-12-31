@@ -13,6 +13,7 @@ import com.kyouseipro.neo.repository.corporation.CompanyListRepository;
 import com.kyouseipro.neo.repository.corporation.OfficeListRepository;
 import com.kyouseipro.neo.repository.corporation.StaffListRepository;
 import com.kyouseipro.neo.repository.qualification.QualificationsRepository;
+import com.kyouseipro.neo.repository.recycle.RecycleRepository;
 import com.kyouseipro.neo.repository.work.WorkItemRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class ComboBoxService {
     private final OfficeListRepository officeListRepository;
     private final StaffListRepository staffListRepository;
     private final QualificationsRepository qualificationsRepository;
+    private final RecycleRepository recycleRepository;
     private final WorkItemRepository workItemRepository;
 
     /**
@@ -193,6 +195,10 @@ public class ComboBoxService {
             list.add(0, simpleData);
         }
         return list;        
+    }
+
+    public List<SimpleData> getRecycleGroupList() {
+        return recycleRepository.findGroupCombo();
     }
 
     // /**

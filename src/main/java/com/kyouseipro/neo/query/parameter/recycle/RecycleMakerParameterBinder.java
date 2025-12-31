@@ -12,7 +12,8 @@ public class RecycleMakerParameterBinder {
         int index = 1;
         pstmt.setInt(index++, r.getCode());
         pstmt.setString(index++, r.getName());
-        pstmt.setString(index++, r.getGroup());
+        pstmt.setString(index++, r.getAbbr_name());
+        pstmt.setInt(index++, r.getGroup());
         pstmt.setInt(index++, r.getVersion());
         pstmt.setInt(index++, r.getState());
         return index;
@@ -22,8 +23,9 @@ public class RecycleMakerParameterBinder {
         int index = 1;
         pstmt.setInt(index++, r.getCode());
         pstmt.setString(index++, r.getName());
+        pstmt.setString(index++, r.getAbbr_name());
+        pstmt.setInt(index++, r.getGroup());
         pstmt.setInt(index++, r.getVersion() +1);
-        pstmt.setString(index++, r.getGroup());
         pstmt.setInt(index++, r.getState());
         pstmt.setInt(index++, r.getRecycle_maker_id());
         pstmt.setInt(index++, r.getVersion());
@@ -32,6 +34,7 @@ public class RecycleMakerParameterBinder {
 
     public static int bindFindById(PreparedStatement ps, Integer recycleMakerId) throws SQLException {
         int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, recycleMakerId);
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
@@ -39,7 +42,15 @@ public class RecycleMakerParameterBinder {
 
     public static int bindFindByCode(PreparedStatement ps, Integer code) throws SQLException {
         int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, code);
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
+    }
+
+    public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }

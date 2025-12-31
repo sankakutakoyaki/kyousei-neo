@@ -39,7 +39,7 @@
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
                         <button tabindex="7" class="normal-btn ok" type="button"
-                            onclick="execSave()"><span>保存</span></button>
+                            onclick="execCreate01(this)"><span>作成</span></button>
                     </div>
                 </div>
             </div>
@@ -50,12 +50,13 @@
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
             const user = /*[[${user}]]*/;
-            // const formEntity = /*[[${formEntity}]]*/;
-            // const categoryEmployeeCode = /*[[${categoryEmployeeCode}]]*/;
-            // const categoryParttimeCode = /*[[${categoryParttimeCode}]]*/;
-            // const paymentMethodComboList = /*[[${paymentMethodComboList}]]*/;
-            // const payTypeComboList = /*[[${payTypeComboList}]]*/;
+            const formEntity = /*[[${formEntity}]]*/;
+            const otherCode = /*[[${otherCode}]]*/;
+            const groupComboList = /*[[${groupComboList}]]*/;
             let origin = /*[[${origin}]]*/; // 初期リスト記憶用
+            const SELECT_OPTIONS = {
+                group: groupComboList
+            };
         </script>
         <script th:src="@{/js/recycle/maker.js}"></script>
     </div>

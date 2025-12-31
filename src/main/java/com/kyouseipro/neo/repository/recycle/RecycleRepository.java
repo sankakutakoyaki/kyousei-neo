@@ -10,7 +10,10 @@ import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.recycle.RecycleDateEntity;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
+import com.kyouseipro.neo.mapper.corporation.OfficeEntityMapper;
+import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
 import com.kyouseipro.neo.mapper.recycle.RecycleEntityMapper;
+import com.kyouseipro.neo.query.parameter.corporation.OfficeParameterBinder;
 import com.kyouseipro.neo.query.parameter.recycle.RecycleParameterBinder;
 import com.kyouseipro.neo.query.sql.recycle.RecycleSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
@@ -193,6 +196,16 @@ public class RecycleRepository {
             sql,
             ps -> RecycleParameterBinder.bindDownloadCsvByIds(ps, recycleIds),
             RecycleEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+
+    public List<SimpleData> findGroupCombo() {
+        String sql = RecycleSqlBuilder.buildFindGroupCombo();
+        
+        return sqlRepository.findAll(
+            sql,
+            ps -> RecycleParameterBinder.bindFindGroupCombo(ps, null),
+            SimpleDataMapper::map // ← ここで ResultSet を map
         );
     }
 }

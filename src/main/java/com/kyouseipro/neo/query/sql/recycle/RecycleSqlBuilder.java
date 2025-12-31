@@ -167,10 +167,10 @@ public class RecycleSqlBuilder {
             baseSelectString() + " WHERE r.recycle_number = ? AND NOT (r.state = ?)";
     }
 
-    // public static String buildExistsByDeliveryNumber() {
-    //     return 
-    //         "SELECT recycle_id as number, recycle_number as text FROM recycles WHERE recycle_number = ? AND NOT (state = ?) AND delivery_date != '9999-12-31'";
-    // }
+    public static String buildFindGroupCombo() {
+        return 
+            "SELECT recycle_group_id as number, name as text FROM recycle_groups WHERE NOT (state = ?)";
+    }
 
     // public static String buildExistsByShippingNumber() {
     //     return 

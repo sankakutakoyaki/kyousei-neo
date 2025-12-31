@@ -16,9 +16,11 @@ import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
+import com.kyouseipro.neo.entity.recycle.RecycleMakerEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
+import com.kyouseipro.neo.service.recycle.RecycleMakerService;
 import com.kyouseipro.neo.service.recycle.RecycleService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class RecyclePageController {
     private final EmployeeService employeeService;
     private final RecycleService recycleService;
+    private final RecycleMakerService recycleMakerService;
     private final HistoryService historyService;
     private final ComboBoxService comboBoxService;
 
@@ -84,20 +87,17 @@ public class RecyclePageController {
 		EmployeeEntity user = employeeService.getByAccount(userName);
 		mv.addObject("user", user);
 
-        // // 初期化されたエンティティ
-        // mv.addObject("formEntity", new RecycleEntity());
+        // 初期化されたエンティティ
+        mv.addObject("formEntity", new RecycleMakerEntity());
 
-        // // 初期表示用リスト取得
-        // List<RecycleEntity> origin = recycleService.getBetween(LocalDate.now(), LocalDate.now(), "regist");
-        // mv.addObject("origin", origin);
-        // // コンボボックスアイテム取得
-        // List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorListAddTopOfOwnCompany();
-        // mv.addObject("companyComboList", companyComboList);
-        // // 支店リストを取得
-        // List<OfficeListEntity> officeComboList = comboBoxService.getOfficeList();
-        // mv.addObject("officeComboList", officeComboList);
+        // 初期表示用リスト取得
+        List<RecycleMakerEntity> origin = recycleMakerService.getList();
+        mv.addObject("origin", origin);
+        // コンボボックスアイテム取得
+        List<SimpleData> groupComboList = comboBoxService.getRecycleGroupList();
+        mv.addObject("groupComboList", groupComboList);
 
-        // mv.addObject("deleteCode", Enums.state.DELETE.getCode());
+        mv.addObject("otherCode", 3);
 
         // 履歴保存
         historyService.save(userName, "recycle", "閲覧", 0, "");

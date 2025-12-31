@@ -26,9 +26,9 @@ function createTable01Row(newRow, item) {
     // 分類
     newRow.insertAdjacentHTML('beforeend', '<td>' + (item.category_name ?? "-----") + '</td>');
     // コード
-    newRow.insertAdjacentHTML('beforeend', '<td data-col="itemcode" class="editable text-right">' + (item.code ?? "") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td data-col="itemcode" class="editable text-right" data-edit-type="text">' + (item.code ?? "") + '</td>');
     // 作業項目
-    newRow.insertAdjacentHTML('beforeend', '<td data-col="itemname" class="editable">' + (item.name ?? "-----") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td data-col="itemname" class="editable" data-edit-type="text">' + (item.name ?? "-----") + '</td>');
 }
 
 /******************************************************************************************************* 作成 */
@@ -39,10 +39,15 @@ async function execCreate(self) {
     if (selectCombo.value == 0) return;
 
     const maxCode = createMaxCode(origin, Number(selectCombo.value));
-    const uniqueName = createUniqueName(origin, Number(selectCombo.value));
+    const uniqueName = createUniqueName({
+        list: origin,
+        groupFn: item => item.category_id === Number(selectCombo.value),
+        nameFn: item => item.name,
+        baseName: '新しい項目'
+    });
     
-    const workItem = {'work_item_id':0, 'category_id':selectCombo.value,'code':maxCode ,'name':uniqueName};
-    execSave(workItem);
+    const ent = {'work_item_id':0, 'category_id':selectCombo.value, 'code':maxCode ,'name':uniqueName};
+    execSave(ent);
 }
 
 // TDが変更された時の処理
@@ -106,22 +111,22 @@ function createMaxCode(list, selectId) {
     }, 0) + 1;
 }
 
-// 数字が被らなように名前を作成する
-function createUniqueName(itemList, categoryId, baseName = '新しい項目') {
-    const usedNumbers = itemList
-        .filter(item => item.category_id === categoryId)
-        .map(item => {
-            const m = item.name?.match(/^新しい項目\((\d+)\)$/);
-            return m ? Number(m[1]) : null;
-        })
-        .filter(n => n !== null);
+// // 数字が被らなように名前を作成する
+// function createUniqueName(itemList, categoryId, baseName = '新しい項目') {
+//     const usedNumbers = itemList
+//         .filter(item => item.category_id === categoryId)
+//         .map(item => {
+//             const m = item.name?.match(/^新しい項目\((\d+)\)$/);
+//             return m ? Number(m[1]) : null;
+//         })
+//         .filter(n => n !== null);
 
-    let num = 1;
-    while (usedNumbers.includes(num)) {
-        num++;
-    }
-    return `${baseName}(${num})`;
-}
+//     let num = 1;
+//     while (usedNumbers.includes(num)) {
+//         num++;
+//     }
+//     return `${baseName}(${num})`;
+// }
 
 /******************************************************************************************************* 削除 */
 

@@ -126,6 +126,12 @@ public class RecycleParameterBinder {
         return index;
     }
 
+    public static int bindFindGroupCombo(PreparedStatement ps, String number) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
+    }
+
     public static int bindUpdateForDate(PreparedStatement ps, int id, LocalDate date, String editor, int index) throws SQLException {
         ps.setDate(index++, java.sql.Date.valueOf(date));
         ps.setTimestamp(index++, Timestamp.valueOf(LocalDateTime.now()));

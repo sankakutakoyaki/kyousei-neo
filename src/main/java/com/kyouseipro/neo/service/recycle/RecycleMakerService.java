@@ -1,9 +1,13 @@
 package com.kyouseipro.neo.service.recycle;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.exception.BusinessException;
+import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
+import com.kyouseipro.neo.common.exception.SystemException;
 import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.recycle.RecycleMakerEntity;
@@ -39,6 +43,14 @@ public class RecycleMakerService {
     }
 
     /**
+     * すべてのrecycle_makerを取得
+     * @return
+     */
+    public List<RecycleMakerEntity> getList() {
+        return recycleMakerRepository.findAll();
+    }
+
+    /**
      * リサイクル情報を登録・更新します。
      * IDが０の時は登録・０以上の時は更新します。
      * 
@@ -47,10 +59,30 @@ public class RecycleMakerService {
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
     public Integer save(RecycleMakerEntity entity) {
-        if (entity.getRecycle_maker_id() > 0) {
-            return recycleMakerRepository.update(entity);
-        } else {
+        // // if (entity.getRecycle_maker_id() > 0) {
+        // //     return recycleMakerRepository.update(entity);
+        // // } else {
+        // //     return recycleMakerRepository.insert(entity);
+        // // }
+        try {
             return recycleMakerRepository.insert(entity);
+        } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw new SystemException("保存処理に失敗しました。", e);
+        // }
+            Throwable t = e;
+            while (t != null) {
+                System.out.println(
+                    "class=" + t.getClass().getName() +
+                    (t instanceof SQLException sql
+                        ? " errorCode=" + sql.getErrorCode()
+                        : "")
+                );
+                t = t.getCause();
+            }
+            throw e;
         }
     }
 

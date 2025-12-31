@@ -11,17 +11,17 @@
             </div>
             <div class="kebab-btns">
                 <!-- 新規作成ボタン -->
-                <div class="img-btn" th:onclick="execEdit(0, this)">
+                <div class="img-btn" onclick="execEdit01(this)">
                     <img title="編集" src="/icons/add.png">
                     <span>新規</span>
                 </div>
                 <!-- 削除ボタン -->
-                <div class="img-btn" onclick="execDelete(this)">
+                <div class="img-btn" onclick="execDelete('table-01-content', 'footer-01', 'search-box-01', '/recycle/maker/download/csv', this)">
                     <img title="削除" src="/icons/dust.png">
                     <span>削除</span>
                 </div>
                 <!-- ダウンロードボタン -->
-                <div class="img-btn" onclick="execDownloadCsv(this)">
+                <div class="img-btn" onclick="execDownloadCsv('tabel-01-content', '/recycle/maker/download/csv', this)">
                     <img title="ダウンロード" src="/icons/download.png">
                     <span>取得</span>
                 </div>
@@ -29,6 +29,7 @@
         </div>
         <!-- 期間指定ボックス -->
         <div class="flex-area">
+            <div></div>
             <button class="normal-btn frameless" type="button" onclick="execNumberSearch('1')">
                 <span>1〜99</span>
             </button>
@@ -72,7 +73,7 @@
             </div>
             <div class="form-parts">
                 <label>グループ</label>
-                <select tabindex="2" name="group" class="normal-select"></select>
+                <select tabindex="2" id="maker-group" name="maker-group" class="normal-select"></select>
             </div>
         </div>
         <div class="flex-area">
@@ -80,12 +81,14 @@
                 <label>製造業者等名</label>
                 <input tabindex="3" name="maker-name" class="normal-input" type="text" value="" onfocus="this.select();">
             </div>
+        </div>
+        <div class="flex-area">
             <div class="form-parts">
                 <label>略称</label>
                 <input tabindex="4" name="maker-abbr" class="normal-input" type="text" value="" onfocus="this.select();">
             </div>
         </div>
-        <div class="flex-area">
+        <!-- <div class="flex-area">
             <div class="form-parts">
                 <label>品目</label>
             </div>
@@ -176,7 +179,7 @@
             <div class="form-parts">
                 <label></label>
             </div>
-        </div>
+        </div> -->
     </form>
 
     <main th:fragment="main01Fragment(tableId, scrollId)">
@@ -184,9 +187,9 @@
             <tr name="table-header" class="pc-style">
                 <th th:unless="${isForm}" name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
                 <th><span>コード</span></th>
-                <th><span>製造業者等名</span></th>
                 <th><span>グループ</span></th>
-                <th><span>略称</span></th>
+                <th><span>製造業者等名</span></th>
+                <th><span>略称（リサイクル券記入はこちら）</span></th>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>
         </table>

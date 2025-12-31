@@ -1,10 +1,14 @@
 package com.kyouseipro.neo.repository.recycle;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Utilities;
+import com.kyouseipro.neo.common.exception.BusinessException;
+import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
+import com.kyouseipro.neo.common.exception.SystemException;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.recycle.RecycleMakerEntity;
 import com.kyouseipro.neo.mapper.recycle.RecycleMakerEntityMapper;
@@ -51,6 +55,17 @@ public class RecycleMakerRepository {
         );
     }
 
+    // 全件取得
+    public List<RecycleMakerEntity> findAll() {
+        String sql = RecycleMakerSqlBuilder.buildFindAll();
+
+        return sqlRepository.findAll(
+            sql,
+            ps -> RecycleMakerParameterBinder.bindFindAll(ps, null),
+            RecycleMakerEntityMapper::map // ← ここで ResultSet を map
+        );
+    }
+
     /**
      * 削除。
      * @param ids
@@ -90,16 +105,46 @@ public class RecycleMakerRepository {
      * @param entity
      * @return 新規IDを返す。
      */
+    // public Integer insert(RecycleMakerEntity entity) {
+    //     String sql = RecycleMakerSqlBuilder.buildInsert();
+
+    //     return sqlRepository.execute(
+    //         sql,
+    //         (pstmt, emp) -> RecycleMakerParameterBinder.bindInsert(pstmt, emp),
+    //         rs -> rs.next() ? rs.getInt("recycle_maker_id") : null,
+    //         entity
+    //     );
+    // }
     public Integer insert(RecycleMakerEntity entity) {
         String sql = RecycleMakerSqlBuilder.buildInsert();
 
-        return sqlRepository.execute(
-            sql,
-            (pstmt, emp) -> RecycleMakerParameterBinder.bindInsert(pstmt, emp),
-            rs -> rs.next() ? rs.getInt("recycle_maker_id") : null,
-            entity
-        );
+        try {
+            return sqlRepository.execute(
+                sql,
+                (pstmt, emp) -> RecycleMakerParameterBinder.bindInsert(pstmt, emp),
+                rs -> rs.next() ? rs.getInt("recycle_maker_id") : null,
+                entity
+            );
+
+        } catch (RuntimeException e) {
+            if (SqlExceptionUtil.isDuplicateKey(e)) {
+                throw new BusinessException("このコードはすでに使用されています。");
+            }
+            throw e;
+        }
     }
+    
+    // private boolean isDuplicateKey(Throwable e) {
+    //     Throwable cause = e;
+    //     while (cause != null) {
+    //         if (cause instanceof java.sql.SQLException sqlEx) {
+    //             int code = sqlEx.getErrorCode();
+    //             return code == 2601 || code == 2627;
+    //         }
+    //         cause = cause.getCause();
+    //     }
+    //     return false;
+    // }
 
     /**
      * 更新。

@@ -65,6 +65,36 @@ public class SqlRepository {
         }
     }
 
+    // public <T, R> R execute(
+    //         String sql,
+    //         SqlParameterBinder<T> binder,
+    //         SqlResultExtractor<R> extractor,
+    //         T entity
+    // ) {
+    //     try (Connection conn = DriverManager.getConnection(url, userName, password);
+    //         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                
+    //         binder.bind(pstmt, entity);
+
+    //         boolean hasResultSet = pstmt.execute();
+
+    //         // ★ 複数の結果セットをスキップして、目的の ResultSet にたどり着く
+    //         while (!hasResultSet && pstmt.getUpdateCount() != -1) {
+    //             hasResultSet = pstmt.getMoreResults();
+    //         }
+
+    //         if (hasResultSet) {
+    //             try (ResultSet rs = pstmt.getResultSet()) {
+    //                 return extractor.extract(rs);
+    //             }
+    //         }
+
+    //         return null;
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //         return null;
+    //     }
+    // }
     public <T, R> R execute(
             String sql,
             SqlParameterBinder<T> binder,
@@ -73,12 +103,11 @@ public class SqlRepository {
     ) {
         try (Connection conn = DriverManager.getConnection(url, userName, password);
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                
+
             binder.bind(pstmt, entity);
 
             boolean hasResultSet = pstmt.execute();
 
-            // ★ 複数の結果セットをスキップして、目的の ResultSet にたどり着く
             while (!hasResultSet && pstmt.getUpdateCount() != -1) {
                 hasResultSet = pstmt.getMoreResults();
             }
@@ -90,12 +119,12 @@ public class SqlRepository {
             }
 
             return null;
+
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException("SQL実行エラー", e);
         }
     }
-
+    
     public <T, P> T findOne(
         String sql,
         BiConsumer<PreparedStatement, P> paramSetter,
