@@ -105,16 +105,6 @@ public class RecycleMakerRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    // public Integer insert(RecycleMakerEntity entity) {
-    //     String sql = RecycleMakerSqlBuilder.buildInsert();
-
-    //     return sqlRepository.execute(
-    //         sql,
-    //         (pstmt, emp) -> RecycleMakerParameterBinder.bindInsert(pstmt, emp),
-    //         rs -> rs.next() ? rs.getInt("recycle_maker_id") : null,
-    //         entity
-    //     );
-    // }
     public Integer insert(RecycleMakerEntity entity) {
         String sql = RecycleMakerSqlBuilder.buildInsert();
 
@@ -133,18 +123,6 @@ public class RecycleMakerRepository {
             throw e;
         }
     }
-    
-    // private boolean isDuplicateKey(Throwable e) {
-    //     Throwable cause = e;
-    //     while (cause != null) {
-    //         if (cause instanceof java.sql.SQLException sqlEx) {
-    //             int code = sqlEx.getErrorCode();
-    //             return code == 2601 || code == 2627;
-    //         }
-    //         cause = cause.getCause();
-    //     }
-    //     return false;
-    // }
 
     /**
      * 更新。
@@ -154,11 +132,17 @@ public class RecycleMakerRepository {
     public Integer update(RecycleMakerEntity entity) {
         String sql = RecycleMakerSqlBuilder.buildUpdate();
 
-        Integer result = sqlRepository.executeUpdate(
-            sql,
-            pstmt -> RecycleMakerParameterBinder.bindUpdate(pstmt, entity)
-        );
+        try {
+            return sqlRepository.executeUpdate(
+                sql,
+                pstmt -> RecycleMakerParameterBinder.bindUpdate(pstmt, entity)
+            );
 
-        return result; // 成功件数。0なら削除なし
+        } catch (RuntimeException e) {
+            if (SqlExceptionUtil.isDuplicateKey(e)) {
+                throw new BusinessException("このコードはすでに使用されています。");
+            }
+            throw e;
+        }
     }
 }

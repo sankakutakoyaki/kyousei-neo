@@ -74,15 +74,10 @@ public class RecycleMakerApiController {
     @PostMapping("/recycle/maker/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody RecycleMakerEntity entity, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        Integer id = recycleMakerService.save(entity);
-        // if (id != null && id > 0) {
-            historyService.save(userName, "recycle_makers", "保存", 200, "成功");
-            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
-        // } else {
-        //     historyService.save(userName, "recycle_makers", "保存", 400, "失敗");
-        //     return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
-        // }
+        // String userName = principal.getAttribute("preferred_username");
+        Integer id = recycleMakerService.save(entity, principal.getAttribute("preferred_username"));
+        // historyService.save(userName, "recycle_makers", "保存", 200, "成功");
+        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
     }
 
     /**
