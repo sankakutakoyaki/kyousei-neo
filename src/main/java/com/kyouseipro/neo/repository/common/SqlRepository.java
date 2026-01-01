@@ -8,7 +8,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -35,67 +37,39 @@ public class SqlRepository {
     @Value("${spring.datasource.password}")
     private String password;
 
-    public <T> T execSql(Function<Connection, T> execQuery) {
-        Connection conn = null;
-        try {
-            Class.forName(driverName);
-            conn = DriverManager.getConnection(url, userName, password);
-            conn.setAutoCommit(false);
+    // public <T> T execSql(Function<Connection, T> execQuery) {
+    //     Connection conn = null;
+    //     try {
+    //         Class.forName(driverName);
+    //         conn = DriverManager.getConnection(url, userName, password);
+    //         conn.setAutoCommit(false);
 
-            T result = execQuery.apply(conn);
+    //         T result = execQuery.apply(conn);
 
-            conn.commit();
-            return result;
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException ignore) {}
-            }
-            return null;  // 例外時はnullなど適宜返す
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    // public <T, R> R execute(
-    //         String sql,
-    //         SqlParameterBinder<T> binder,
-    //         SqlResultExtractor<R> extractor,
-    //         T entity
-    // ) {
-    //     try (Connection conn = DriverManager.getConnection(url, userName, password);
-    //         PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                
-    //         binder.bind(pstmt, entity);
-
-    //         boolean hasResultSet = pstmt.execute();
-
-    //         // ★ 複数の結果セットをスキップして、目的の ResultSet にたどり着く
-    //         while (!hasResultSet && pstmt.getUpdateCount() != -1) {
-    //             hasResultSet = pstmt.getMoreResults();
+    //         conn.commit();
+    //         return result;
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         if (conn != null) {
+    //             try {
+    //                 conn.rollback();
+    //             } catch (SQLException ignore) {}
     //         }
-
-    //         if (hasResultSet) {
-    //             try (ResultSet rs = pstmt.getResultSet()) {
-    //                 return extractor.extract(rs);
+    //         return null;  // 例外時はnullなど適宜返す
+    //     } finally {
+    //         if (conn != null) {
+    //             try {
+    //                 conn.close();
+    //             } catch (SQLException e) {
+    //                 e.printStackTrace();
     //             }
     //         }
-
-    //         return null;
-    //     } catch (SQLException e) {
-    //         e.printStackTrace();
-    //         return null;
     //     }
     // }
-    public <T, R> R execute(
+
+    // SQL Server: skip update counts to reach final ResultSet
+
+    public <T, R> Optional<R> executeQuery(
             String sql,
             SqlParameterBinder<T> binder,
             SqlResultExtractor<R> extractor,
@@ -114,82 +88,120 @@ public class SqlRepository {
 
             if (hasResultSet) {
                 try (ResultSet rs = pstmt.getResultSet()) {
-                    return extractor.extract(rs);
+                    return Optional.ofNullable(extractor.extract(rs));
+                    // return extractor.extract(rs);
                 }
             }
 
-            return null;
+            return Optional.empty();
+            // return null;
 
         } catch (SQLException e) {
             throw new RuntimeException("SQL実行エラー", e);
         }
     }
-    
-    public <T, P> T findOne(
+
+    public <T, R> R executeRequired(
+            String sql,
+            SqlParameterBinder<T> binder,
+            SqlResultExtractor<R> extractor,
+            T entity
+    ) {
+        try (Connection conn = DriverManager.getConnection(url, userName, password);
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            binder.bind(pstmt, entity);
+
+            boolean hasResultSet = pstmt.execute();
+
+            while (!hasResultSet && pstmt.getUpdateCount() != -1) {
+                hasResultSet = pstmt.getMoreResults();
+            }
+
+            if (!hasResultSet) {
+                throw new IllegalStateException("結果セットが取得できません");
+            }
+
+            try (ResultSet rs = pstmt.getResultSet()) {
+                R result = extractor.extract(rs);
+                if (result == null) {
+                    throw new IllegalStateException("必須結果が null です");
+                }
+                return result;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("SQL実行エラー", e);
+        }
+    }
+
+    public int executeUpdate(
+        String sql,
+        ThrowingConsumer<PreparedStatement> binder
+    ) {
+        try (Connection conn = DriverManager.getConnection(url, userName, password);
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            binder.accept(ps);
+            return ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("SQL実行エラー", e);
+        }
+    }
+
+    public <T, P> Optional<T> findOne(
         String sql,
         BiConsumer<PreparedStatement, P> paramSetter,
-        Function<ResultSet, T> resultMapper,
+        Function<ResultSet, T> mapper,
         P param
     ) {
         try (Connection conn = DriverManager.getConnection(url, userName, password);
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            // 正しく paramSetter を使う
-            paramSetter.accept(pstmt, param);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return resultMapper.apply(rs);
-                }
-            }
-            return null;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public <T> List<T> findAll(
-        String sql,
-        SQLConsumer<PreparedStatement> parameterSetter,
-        SQLFunction<ResultSet, T> resultMapper
-    ) {
-        List<T> results = new ArrayList<>();
-
-        try (Connection conn = DriverManager.getConnection(url, userName, password);
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            parameterSetter.accept(pstmt);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    results.add(resultMapper.apply(rs));
-                }
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("SQL error during findAll: " + e.getMessage(), e);
-        }
-
-        return results;
-    }
-
-    public int executeUpdate(String sql, ThrowingConsumer<PreparedStatement> binder) {
-        try (Connection conn = DriverManager.getConnection(url, userName, password);
             PreparedStatement ps = conn.prepareStatement(sql)) {
-            binder.accept(ps);
-            return ps.executeUpdate();
+
+            paramSetter.accept(ps, param);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.ofNullable(mapper.apply(rs));
+                }
+                return Optional.empty();
+            }
+
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("SQL error in findOne", e);
+        }
+    }
+
+    public <R> List<R> findAll(
+        String sql,
+        SqlParameterBinder<Void> binder,
+        SqlResultExtractor<R> extractor
+    ) {
+        try (
+            Connection conn = DriverManager.getConnection(url, userName, password);
+            PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
+            binder.bind(ps, null);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                List<R> list = new ArrayList<>();
+                while (rs.next()) {
+                    list.add(extractor.extract(rs));
+                }
+                return list;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("SQL実行エラー", e);
         }
     }
 
     public <T> int executeBatch(
         String sql,
         SQLBiConsumer<PreparedStatement, T> binder,
-        List<T> entities) {
-
+        List<T> entities
+    ) {
         try (Connection conn = DriverManager.getConnection(url, userName, password);
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -205,6 +217,89 @@ public class SqlRepository {
             throw new RuntimeException(e);
         }
     }
+    // public <T> List<T> findAll(
+    //         String sql,
+    //         Consumer<PreparedStatement> paramSetter,
+    //         Function<ResultSet, T> mapper
+    // ) {
+    //     List<T> results = new ArrayList<>();
+
+    //     try (Connection conn = DriverManager.getConnection(url, userName, password);
+    //         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+    //         paramSetter.accept(ps);
+
+    //         try (ResultSet rs = ps.executeQuery()) {
+    //             while (rs.next()) {
+    //                 results.add(mapper.apply(rs));
+    //             }
+    //         }
+
+    //     } catch (SQLException e) {
+    //         throw new RuntimeException("SQL error in findAll", e);
+    //     }
+
+    //     return results;
+    // }
+    // public <T, P> T findOne(
+    //     String sql,
+    //     BiConsumer<PreparedStatement, P> paramSetter,
+    //     Function<ResultSet, T> resultMapper,
+    //     P param
+    // ) {
+    //     try (Connection conn = DriverManager.getConnection(url, userName, password);
+    //         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+    //         // 正しく paramSetter を使う
+    //         paramSetter.accept(pstmt, param);
+
+    //         try (ResultSet rs = pstmt.executeQuery()) {
+    //             if (rs.next()) {
+    //                 return resultMapper.apply(rs);
+    //             }
+    //         }
+    //         return null;
+
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //         return null;
+    //     }
+    // }
+
+    // public <T> List<T> findAll(
+    //     String sql,
+    //     SQLConsumer<PreparedStatement> parameterSetter,
+    //     SQLFunction<ResultSet, T> resultMapper
+    // ) {
+    //     List<T> results = new ArrayList<>();
+
+    //     try (Connection conn = DriverManager.getConnection(url, userName, password);
+    //         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+    //         parameterSetter.accept(pstmt);
+
+    //         try (ResultSet rs = pstmt.executeQuery()) {
+    //             while (rs.next()) {
+    //                 results.add(resultMapper.apply(rs));
+    //             }
+    //         }
+
+    //     } catch (SQLException e) {
+    //         throw new RuntimeException("SQL error during findAll: " + e.getMessage(), e);
+    //     }
+
+    //     return results;
+    // }
+
+    // public int executeUpdate(String sql, ThrowingConsumer<PreparedStatement> binder) {
+    //     try (Connection conn = DriverManager.getConnection(url, userName, password);
+    //         PreparedStatement ps = conn.prepareStatement(sql)) {
+    //         binder.accept(ps);
+    //         return ps.executeUpdate();
+    //     } catch (SQLException e) {
+    //         throw new RuntimeException(e);
+    //     }
+    // }
 
     // public boolean execSql(Function<Connection, Boolean> execQuery) {
     //     Connection conn = null;
