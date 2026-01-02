@@ -70,7 +70,7 @@ public class OfficeParameterBinder {
         return index;
     }
 
-    public static int bindDeleteForIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+    public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {
@@ -81,7 +81,7 @@ public class OfficeParameterBinder {
         return index;
     }
 
-    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
         for (Integer id : ids) {

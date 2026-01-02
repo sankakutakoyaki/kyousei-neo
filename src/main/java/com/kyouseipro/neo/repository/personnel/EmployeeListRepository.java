@@ -17,24 +17,32 @@ import lombok.RequiredArgsConstructor;
 public class EmployeeListRepository {
     private final SqlRepository sqlRepository;
 
-    // 全件取得
+    /**
+     * 全件取得。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
     public List<EmployeeListEntity> findAll() {
         String sql = EmployeeListSqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,
-            ps -> EmployeeListParameterBinder.bindFindAll(ps, null),
+            (ps, v) -> EmployeeListParameterBinder.bindFindAll(ps, null),
             EmployeeListEntityMapper::map // ← ここで ResultSet を map
         );
     }
 
-    // 全件取得
-    public List<EmployeeListEntity> findByCategoryId(int categoryId) {
+    /**
+     * 全件取得（CategoryIDで指定）。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
+    public List<EmployeeListEntity> findByCategoryId(int id) {
         String sql = EmployeeListSqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,
-            ps -> EmployeeListParameterBinder.bindFindAllByCategoryId(ps, categoryId),
+            (ps, v) -> EmployeeListParameterBinder.bindFindAllByCategoryId(ps, id),
             EmployeeListEntityMapper::map // ← ここで ResultSet を map
         );
     }

@@ -24,25 +24,15 @@ public class RecycleMakerRepository {
     
     /**
      * IDによる取得。
-     * @param orderId
-     * @return IDから取得したEntityをかえす。
+     * @param id
+     * @return IDから取得したEntityを返す。
      */
-    // public RecycleMakerEntity findById(int recycleMakerId) {
-    //     String sql = RecycleMakerSqlBuilder.buildFindById();
-
-    //     return sqlRepository.execute(
-    //         sql,
-    //         (pstmt, comp) -> RecycleMakerParameterBinder.bindFindById(pstmt, comp),
-    //         rs -> rs.next() ? RecycleMakerEntityMapper.map(rs) : null,
-    //         recycleMakerId
-    //     );
-    // }
     public Optional<RecycleMakerEntity> findById(int id) {
         String sql = RecycleMakerSqlBuilder.buildFindById();
         
         return sqlRepository.executeQuery(
             sql,
-            (pstmt, e) -> RecycleMakerParameterBinder.bindFindById(pstmt, e),
+            (ps, en) -> RecycleMakerParameterBinder.bindFindById(ps, en),
             rs -> rs.next() ? RecycleMakerEntityMapper.map(rs) : null,
             id
         );
@@ -51,33 +41,24 @@ public class RecycleMakerRepository {
     /**
      * Codeによる取得。
      * @param code
-     * @return IDから取得したEntityをかえす。
+     * @return CODEから取得したEntityを返す。
      */
     public Optional<RecycleMakerEntity> findByCode(int code) {
         String sql = RecycleMakerSqlBuilder.buildFindByCode();
 
         return sqlRepository.executeQuery(
             sql,
-            (pstmt, comp) -> RecycleMakerParameterBinder.bindFindByCode(pstmt, comp),
+            (ps, en) -> RecycleMakerParameterBinder.bindFindByCode(ps, en),
             rs -> rs.next() ? RecycleMakerEntityMapper.map(rs) : null,
             code
         );
     }
 
     /**
-     * RecycleMaker 全件取得。
+     * 全件取得。
      * 0件の場合は空リストを返す。
-     * @return
+     * @return 取得したリストを返す
      */
-    // public List<RecycleMakerEntity> findAll() {
-    //     String sql = RecycleMakerSqlBuilder.buildFindAll();
-
-    //     return sqlRepository.findAll(
-    //         sql,
-    //         ps -> RecycleMakerParameterBinder.bindFindAll(ps, null),
-    //         RecycleMakerEntityMapper::map // ← ここで ResultSet を map
-    //     );
-    // }
     public List<RecycleMakerEntity> findAll() {
         String sql = RecycleMakerSqlBuilder.buildFindAll();
 
@@ -89,102 +70,17 @@ public class RecycleMakerRepository {
     }
 
     /**
-     * 削除。
-     * @param ids
-     * @param editor
-     * @return 成功件数を返す。
-     */
-    // public Integer deleteByIds(List<SimpleData> ids) {
-    //     List<Integer> recycleMakerIds = Utilities.createSequenceByIds(ids);
-    //     String sql = RecycleMakerSqlBuilder.buildDeleteByIds(recycleMakerIds.size());
-
-    //     return sqlRepository.executeUpdate(
-    //         sql,
-    //         ps -> RecycleMakerParameterBinder.bindDeleteByIds(ps, recycleMakerIds)
-    //     );
-    //     // return result; // 成功件数。0なら削除なし
-    // }
-    public int deleteByIds(List<SimpleData> list) {
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = RecycleMakerSqlBuilder.buildDeleteByIds(ids.size());
-
-        if (list == null || list.isEmpty()) {
-            throw new IllegalArgumentException("削除対象が指定されていません");
-        }
-
-        int count = sqlRepository.executeUpdate(
-            sql,
-            ps -> RecycleMakerParameterBinder.bindDeleteByIds(ps, ids)
-        );
-        if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
-        }
-
-        return count;
-    }
-
-    /**
-     * CSVファイルをダウンロードする。
-     * @param ids
-     * @param editor
-     * @return Idsで選択したEntityリストを返す。
-     */
-    // public List<RecycleMakerEntity> downloadCsvByIds(List<SimpleData> ids) {
-    //     List<Integer> recycleMakerIds = Utilities.createSequenceByIds(ids);
-    //     String sql = RecycleMakerSqlBuilder.buildDownloadCsvByIds(recycleMakerIds.size());
-
-    //     return sqlRepository.findAll(
-    //         sql,
-    //         ps -> RecycleMakerParameterBinder.bindDownloadCsvByIds(ps, recycleMakerIds),
-    //         RecycleMakerEntityMapper::map // ← ここで ResultSet を map
-    //     );
-    // }
-    public List<RecycleMakerEntity> downloadCsvByIds(List<SimpleData> ids) {
-
-        if (ids == null || ids.isEmpty()) {
-            throw new IllegalArgumentException("ダウンロード対象が指定されていません");
-        }
-
-        List<Integer> recycleMakerIds = Utilities.createSequenceByIds(ids);
-        String sql = RecycleMakerSqlBuilder.buildDownloadCsvByIds(recycleMakerIds.size());
-
-        return sqlRepository.findAll(
-            sql,
-            (ps, v) -> RecycleMakerParameterBinder.bindDownloadCsvByIds(ps, recycleMakerIds),
-            RecycleMakerEntityMapper::map
-        );
-    }
-
-    /**
      * 新規作成。
      * @param entity
      * @return 新規IDを返す。
      */
-    // public Integer insert(RecycleMakerEntity entity) {
-    //     String sql = RecycleMakerSqlBuilder.buildInsert();
-
-    //     try {
-    //         return sqlRepository.execute(
-    //             sql,
-    //             (pstmt, emp) -> RecycleMakerParameterBinder.bindInsert(pstmt, emp),
-    //             rs -> rs.next() ? rs.getInt("recycle_maker_id") : null,
-    //             entity
-    //         );
-
-    //     } catch (RuntimeException e) {
-    //         if (SqlExceptionUtil.isDuplicateKey(e)) {
-    //             throw new BusinessException("このコードはすでに使用されています。");
-    //         }
-    //         throw e;
-    //     }
-    // }
     public int insert(RecycleMakerEntity entity) {
         String sql = RecycleMakerSqlBuilder.buildInsert();
 
         try {
             return sqlRepository.executeRequired(
                 sql,
-                (pstmt, emp) -> RecycleMakerParameterBinder.bindInsert(pstmt, emp),
+                (ps, en) -> RecycleMakerParameterBinder.bindInsert(ps, en),
                 rs -> {
                     if (!rs.next()) {
                         throw new BusinessException("登録に失敗しました");
@@ -211,20 +107,6 @@ public class RecycleMakerRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    // public Integer update(RecycleMakerEntity entity) {
-    //     try {
-    //         return sqlRepository.executeUpdate(
-    //             sql,
-    //             pstmt -> RecycleMakerParameterBinder.bindUpdate(pstmt, entity)
-    //         );
-
-    //     } catch (RuntimeException e) {
-    //         if (SqlExceptionUtil.isDuplicateKey(e)) {
-    //             throw new BusinessException("このコードはすでに使用されています。");
-    //         }
-    //         throw e;
-    //     }
-    // }
     public int update(RecycleMakerEntity entity) {
         String sql = RecycleMakerSqlBuilder.buildUpdate();
 
@@ -246,5 +128,52 @@ public class RecycleMakerRepository {
             }
             throw e;
         }
+    }
+
+    /**
+     * IDで指定したENTITYを論理削除。
+     * @param list
+     * @param editor
+     * @return 成功件数を返す。
+     */
+    public int deleteByIds(List<SimpleData> list) {
+        List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = RecycleMakerSqlBuilder.buildDeleteByIds(ids.size());
+
+        if (list == null || list.isEmpty()) {
+            throw new IllegalArgumentException("削除対象が指定されていません");
+        }
+
+        int count = sqlRepository.executeUpdate(
+            sql,
+            ps -> RecycleMakerParameterBinder.bindDeleteByIds(ps, ids)
+        );
+        if (count == 0) {
+            throw new BusinessException("削除対象が存在しません");
+        }
+
+        return count;
+    }
+
+    /**
+     * IDで指定したENTITYのCSVファイルをダウンロードする。
+     * @param list
+     * @param editor
+     * @return Idsで選択したEntityリストを返す。
+     */
+    public List<RecycleMakerEntity> downloadCsvByIds(List<SimpleData> list) {
+
+        if (list == null || list.isEmpty()) {
+            throw new IllegalArgumentException("ダウンロード対象が指定されていません");
+        }
+
+        List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = RecycleMakerSqlBuilder.buildDownloadCsvByIds(ids.size());
+
+        return sqlRepository.findAll(
+            sql,
+            (ps, v) -> RecycleMakerParameterBinder.bindDownloadCsvByIds(ps, ids),
+            RecycleMakerEntityMapper::map
+        );
     }
 }

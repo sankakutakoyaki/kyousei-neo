@@ -1,14 +1,31 @@
 /******************************************************************************************************* 画面 */
 
 // リスト画面の本体部分を作成する
-function createTableContent(tableId, list) {
-    const tbl = document.getElementById(tableId);
-    list.forEach(function (item) {
-        let newRow = tbl.insertRow();
-        newRow.setAttribute('name', 'data-row');
-        newRow.setAttribute('data-id', item.recycle_maker_id);
-        tdEnableEdit(newRow);
-        createTable01Row(newRow, item);
+// function createTable01Content(tableId, list) {
+//     const tbl = document.getElementById(tableId);
+//     list.forEach(function (item) {
+//         let newRow = tbl.insertRow();
+//         newRow.setAttribute('name', 'data-row');
+//         newRow.setAttribute('data-id', item.recycle_maker_id);
+//         tdEnableEdit(newRow);
+//         createTable01Row(newRow, item);
+//     });
+// }
+function createTable01Content(tableId, list) {
+    const table = document.getElementById(tableId);
+
+    list.forEach(item => {
+        const row = createSelectableRow({
+            table,
+            item,
+            idKey: "recycle_id",
+            validCheck: item => item.loss_date !== "9999-12-31",
+            onDoubleClick: (item, row) => {
+                execEdit(item.recycle_id, row);
+            }
+        });
+
+        createTable01Row(row, item);
     });
 }
 
@@ -60,51 +77,72 @@ async function execCreate01(self) {
         formdata.name = formData.get('maker-name').trim();
         formdata.abbr_name = formData.get('maker-abbr').trim();
 
-        execSave("table-01-content", "footer-01", "search-box-01", formdata);
+        execSave("table-01-content", "footer-01", "search-box-01", formdata, createTable01Content);
     }
 }
 
 // 入力チェック
 function form01DataCheck(area) {
-    let msg = "";
-    // コードが入力されていない、または不正な値のときFalseを返す
-    const code = area.querySelector('input[name="maker-code"]');
-    if (code != null && code.value == "" && code.value < 0) msg += '\nコードを入力して下さい';
-    if (Number(code.value) > 999 || Number(code.value) < 1) msg += '\nコードは1から999の間で入力して下さい';
-    // グループが選択されていないとFalseを返す
+    // let msg = "";
+    // // コードが入力されていない、または不正な値のときFalseを返す
+    // const code = area.querySelector('input[name="maker-code"]');
+    // if (code != null && code.value == "" && code.value < 0) msg += '\nコードを入力して下さい';
+    // if (Number(code.value) > 999 || Number(code.value) < 1) msg += '\nコードは1から999の間で入力して下さい';
+    // // グループが選択されていないとFalseを返す
+    // const group = area.querySelector('select[name="maker-group"]');
+    // if (group != null && group.value == 0) msg += '\nグループを選択して下さい';
+    // // 製造業者等名チェック
+    // const name = area.querySelector('input[name="maker-name"]');
+    // if (name != null && name.value == "") msg += '\n製造業者等名を入力してくだい';
+    // // 略称チェック
+    // const abbr = area.querySelector('input[name="abbr-name"]');
+    // if (abbr != null && abbr.value == "") msg += '\n略称入力してくだい';
+    // // エラーが一つ以上あればエラーメッセージダイアログを表示する
+    // if (msg != "") {
+    //     openMsgDialog("msg-dialog", msg, "red");
+    //     return false;
+    // }
+    // return true;
+    const errors = [];
+
+    // コードチェック
+    const codeInput = area.querySelector('input[name="maker-code"]');
+    if (codeInput) {
+        const code = Number(codeInput.value);
+
+        if (!codeInput.value) {
+            errors.push("コードを入力してください");
+        } else if (Number.isNaN(code) || code < 1 || code > 999) {
+            errors.push("コードは1〜999の間で入力してください");
+        }
+    }
+
+    // グループチェック
     const group = area.querySelector('select[name="maker-group"]');
-    if (group != null && group.value == 0) msg += '\nグループを選択して下さい';
-    // 製造業者等名チェック
+    if (group && group.value === "0") {
+        errors.push("グループを選択してください");
+    }
+
+    // 製造業者名
     const name = area.querySelector('input[name="maker-name"]');
-    if (name != null && name.value == "") msg += '\n製造業者等名を入力してくだい';
-    // 略称チェック
-    const abbr = area.querySelector('input[name="maker-name"]');
-    if (abbr != null && abbr.value == "") msg += '\n略称入力してくだい';
-    // エラーが一つ以上あればエラーメッセージダイアログを表示する
-    if (msg != "") {
-        openMsgDialog("msg-dialog", msg, "red");
+    if (name && !name.value.trim()) {
+        errors.push("製造業者等名を入力してください");
+    }
+
+    // 略称
+    const abbr = area.querySelector('input[name="maker-abbr"]');
+    if (abbr && !abbr.value.trim()) {
+        errors.push("略称を入力してください");
+    }
+
+    // エラー表示
+    if (errors.length > 0) {
+        openMsgDialog("msg-dialog", errors.join("\n"), "red");
         return false;
     }
+
     return true;
 }
-
-// // 登録する
-// async function execCreate(self) {
-//     // 製造業者等名
-//     const uniqueName1 = createUniqueName({
-//         list: origin,
-//         nameFn: item => item.name,
-//         baseName: '新しい名前'
-//     });
-//     // 略称
-//     const uniqueName2 = createUniqueName({
-//         list: origin,
-//         nameFn: item => item.abbr_name,
-//         baseName: '新しい略称'
-//     });
-//     const ent = {'recycle_maker_id':0, 'code':999, 'group':otherCode, 'name':uniqueName1, 'abbr_name':uniqueName2, 'version':0};
-//     execSave("table-01-content", "footer-01", "search-box-01", ent);
-// }
 
 // 保存する
 function handleTdChange(editor) {
@@ -130,59 +168,42 @@ function handleTdChange(editor) {
             break;
     }
 
-    execSave("table-01-content", "footer-01", "search-box-01", ent);
+    execSave("table-01-content", "footer-01", "search-box-01", ent, createTable01Content);
 }
-
-// // リスト内に同じコードがないかチェック
-// function existsSameCode(code) {
-//     return origin.some(item =>
-//         code != 999 &&
-//         item.code === code
-//     );
-// }
-
-// // リスト内に同じ製造業者等名がないかチェック
-// function existsSameName(name) {
-//     return origin.some(item =>
-//         item.name.trim() === name.trim()
-//     );
-// }
 
 /******************************************************************************************************* 削除 */
 
 async function execDelete(tableId, footerId, searchId, url, self) {
-    // スピナー表示
-    startProcessing();
-    const result = await deleteTablelist(tableId, url);
+    // // スピナー表示
+    // startProcessing();
+    const result = await deleteTablelist(tableId, footerId, searchId, url);
 
-    if (result.success) {                
-        await execUpdate();
-        await updateTableDisplay(tableId, footerId, searchId, list);
-        openMsgDialog("msg-dialog", result.message, "blue");
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
-    }
+    if (!result) return;
 
-    // スピナー消去
-    processingEnd();
+    await updateTableDisplay(tableId, footerId, searchId, origin, createContent);
+    // await execDate01Search(tableId);
+    // openMsgDialog("msg-dialog", result.message, "blue");
+
+    // // スピナー消去
+    // processingEnd();
 }
 
 /******************************************************************************************************* 保存 */
 
 // 保存処理
-async function execSave(tableId, footerId, searchId, ent) {
-    // スピナー表示
-    startProcessing();
+async function execSave(tableId, footerId, searchId, ent, createContent) {
+    // // スピナー表示
+    // startProcessing();
 
     // 保存処理
     const resultResponse = await postFetch("/recycle/maker/save", JSON.stringify(ent), token, "application/json");
     const result = await resultResponse.json();
-console.log(result.message);
-console.log(result.success);
     if (result.success) {
         // 画面更新
         await execUpdate();
-        await updateTableDisplay(tableId, footerId, searchId, origin);
+        // await updateTableDisplay(tableId, footerId, searchId, origin);
+        // await updateTableDisplay({tableId: "table-11-content", footerId: "footer-11", searchId: "search-11", list: itemList, createContent: createRecycleMakerTableContent});
+        await updateTableDisplay(tableId, footerId, searchId, origin, createContent);
         // 追加・変更行に移動
         scrollIntoTableList(tableId, result.id);
         // itemList = [];
@@ -190,8 +211,8 @@ console.log(result.success);
         openMsgDialog("msg-dialog", result.message, "red");
     }
 
-    // スピナー消去
-    processingEnd();
+    // // スピナー消去
+    // processingEnd();
 }
 
 /******************************************************************************************************* ダウンロード */
@@ -204,39 +225,39 @@ async function execDownloadCsv(tableId, url, self) {
 
 // 最新のリストを取得
 async function execUpdate() {
-    // スピナー表示
-    startProcessing();
+    // // スピナー表示
+    // startProcessing();
 
     const resultResponse = await fetch('/recycle/maker/get/list');
     origin = await resultResponse.json();
 
-    // スピナー消去
-    processingEnd();
+    // // スピナー消去
+    // processingEnd();
 }
 
-// テーブルリスト画面を更新する
-async function updateTableDisplay(tableId, footerId, searchId, list) {
-    // フィルター処理
-    const result = filterDisplay(searchId, list);
-    // リスト画面を初期化
-    deleteElements(tableId);
-    // リスト作成
-    createTableContent(tableId, result);
-    // フッター作成
-    createTableFooter(footerId, list);
-    // チェックボタン押下時の処理を登録する
-    registCheckButtonClicked(tableId);
-    // すべて選択ボタンをオフにする
-    turnOffAllCheckBtn(tableId);
-    // テーブルのソートをリセットする
-    resetSortable(tableId);
-    // スクロール時のページトップボタン処理を登録する
-    setPageTopButton(tableId);
-    // テーブルにスクロールバーが表示されたときの処理を登録する
-    document.querySelectorAll('.scroll-area').forEach(el => {
-        toggleScrollbar(el);
-    });
-}
+// // テーブルリスト画面を更新する
+// async function updateTableDisplay(tableId, footerId, searchId, list) {
+//     // フィルター処理
+//     const result = filterDisplay(searchId, list);
+//     // リスト画面を初期化
+//     deleteElements(tableId);
+//     // リスト作成
+//     createTable01Content(tableId, result);
+//     // フッター作成
+//     createTableFooter(footerId, list);
+//     // チェックボタン押下時の処理を登録する
+//     registCheckButtonClicked(tableId);
+//     // すべて選択ボタンをオフにする
+//     turnOffAllCheckBtn(tableId);
+//     // テーブルのソートをリセットする
+//     resetSortable(tableId);
+//     // スクロール時のページトップボタン処理を登録する
+//     setPageTopButton(tableId);
+//     // テーブルにスクロールバーが表示されたときの処理を登録する
+//     document.querySelectorAll('.scroll-area').forEach(el => {
+//         toggleScrollbar(el);
+//     });
+// }
 
 /******************************************************************************************************* 初期化時 */
 
@@ -248,7 +269,7 @@ window.addEventListener("load", async () => {
     // 検索ボックス入力時の処理
     document.getElementById('search-box-01').addEventListener('search', async function(e) {
         const list = getCategoryFilterList();
-        updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+        updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTable01Content);
     }, false);
 
     // 作成フォームのグループコンボボックス
@@ -256,7 +277,7 @@ window.addEventListener("load", async () => {
     createComboBoxWithTop(groupArea, groupComboList, "");
 
     // 画面更新
-    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);
 
     // スピナー消去
     processingEnd();

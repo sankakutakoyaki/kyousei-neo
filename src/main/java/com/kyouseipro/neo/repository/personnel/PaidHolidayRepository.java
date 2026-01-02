@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.exception.BusinessException;
+import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.PaidHolidayEntity;
 import com.kyouseipro.neo.entity.personnel.PaidHolidayListEntity;
@@ -31,7 +33,7 @@ public class PaidHolidayRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> PaidHolidayParameterBinder.bindFindByOfficeIdFromYear(ps, id, year),
+            (ps, v) -> PaidHolidayParameterBinder.bindFindByOfficeIdFromYear(ps, id, year),
             PaidHolidayListEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -41,49 +43,83 @@ public class PaidHolidayRepository {
      * @param year
      * @return
      */
-    public List<PaidHolidayEntity> findByEmployeeIdFromYear(int employeeId, String year) {
+    public List<PaidHolidayEntity> findByEmployeeIdFromYear(int id, String year) {
         String sql = PaidHolidaySqlBuilder.buildFindByEmployeeIdFromYear();
-        EmployeeEntity entity = employeeRepository.findById(employeeId);
-        int id = entity.getEmployee_id();
+        // EmployeeEntity entity = employeeRepository.findById(id);
+
+        EmployeeEntity entity = employeeRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("社員が見つかりません: " + id));
+        int targetId = entity.getEmployee_id();
 
         return sqlRepository.findAll(
             sql,
-            ps -> PaidHolidayParameterBinder.bindFindByEmployeeIdFromYear(ps, id, year),
+            (ps, v) -> PaidHolidayParameterBinder.bindFindByEmployeeIdFromYear(ps, targetId, year),
             PaidHolidayEntityMapper::map // ← ここで ResultSet を map
         );
     }
 
     /**
-     * INSERT
-     * @param t
-     * @param editor
-     * @return
+     * 新規作成。
+     * @param entity
+     * @return 新規IDを返す。
      */
-    public Integer insert(PaidHolidayEntity p, String editor) {
+    public int insert(PaidHolidayEntity entity, String editor) {
         String sql = PaidHolidaySqlBuilder.buildInsert();
 
-        return sqlRepository.execute(
-            sql,
-            (pstmt, entity) -> PaidHolidayParameterBinder.bindInsert(pstmt, entity, editor),
-            rs -> rs.next() ? rs.getInt("paid_holiday_id") : null,
-            p
-        );
+        // return sqlRepository.executeRequired(
+        //     sql,
+        //     (ps, en) -> PaidHolidayParameterBinder.bindInsert(ps, en, editor),
+        //     rs -> rs.next() ? rs.getInt("paid_holiday_id") : null,
+        //     p
+        // );
+        try {
+            return sqlRepository.executeRequired(
+                sql,
+                (ps, en) -> PaidHolidayParameterBinder.bindInsert(ps, en, editor),
+                rs -> {
+                    if (!rs.next()) {
+                        throw new BusinessException("登録に失敗しました");
+                    }
+                    int id = rs.getInt("paid_holiday_id");
+
+                    if (rs.next()) {
+                        throw new IllegalStateException("ID取得結果が複数行です");
+                    }
+                    return id;
+                },
+                entity
+            );
+        } catch (RuntimeException e) {
+            if (SqlExceptionUtil.isDuplicateKey(e)) {
+                throw new BusinessException("このコードはすでに使用されています。");
+            }
+            throw e;
+        }
     }
 
     /**
-     * DELETE
-     * @param w
+     * IDで指定したENTITYを論理削除。
+     * @param list
      * @param editor
-     * @return
+     * @return 成功件数を返す。
      */
-    public Integer delete(int id, String editor) {
+    public int delete(int id, String editor) {
         String sql = PaidHolidaySqlBuilder.buildDelete();
 
-        Integer result = sqlRepository.executeUpdate(
+        // Integer result = sqlRepository.executeUpdate(
+        //     sql,
+        //     ps -> PaidHolidayParameterBinder.bindDelete(ps, id, editor)
+        // );
+
+        // return result; // 成功件数。0なら削除なし
+        int count = sqlRepository.executeUpdate(
             sql,
             ps -> PaidHolidayParameterBinder.bindDelete(ps, id, editor)
         );
+        if (count == 0) {
+            throw new BusinessException("削除対象が存在しません");
+        }
 
-        return result; // 成功件数。0なら削除なし
+        return count;
     }
 }

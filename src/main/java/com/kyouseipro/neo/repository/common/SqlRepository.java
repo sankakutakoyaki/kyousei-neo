@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -18,8 +17,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.function.ThrowingConsumer;
 
 import com.kyouseipro.neo.interfaceis.sql.SQLBiConsumer;
-import com.kyouseipro.neo.interfaceis.sql.SQLConsumer;
-import com.kyouseipro.neo.interfaceis.sql.SQLFunction;
 import com.kyouseipro.neo.interfaceis.sql.SqlParameterBinder;
 import com.kyouseipro.neo.interfaceis.sql.SqlResultExtractor;
 

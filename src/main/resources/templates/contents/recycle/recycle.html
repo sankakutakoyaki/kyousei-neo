@@ -161,6 +161,38 @@
             const recycleId13 = document.getElementById('recycle-id13');
             const recycleId14 = document.getElementById('recycle-id14');
             const recycleId15 = document.getElementById('recycle-id15');
+            const MODE_CONFIG = {
+                regist: {
+                    dialogId: "form-dialog-01",
+                    formId: "form-01",
+                    afterOpen: async (itemList) => {
+                        useDate11.value = "";
+                        await updateFormTableDisplay("table-11-content", "footer-11", itemList);
+                        setCompanyComboBox(form, entity, companyComboList, officeComboList);
+                    }
+                },
+                delivery: {
+                    dialogId: "form-dialog-02",
+                    formId: "form-02",
+                    dateInput: () => deliveryDate12,
+                    tableId: "table-12-content",
+                    footerId: "footer-12"
+                },
+                shipping: {
+                    dialogId: "form-dialog-03",
+                    formId: "form-03",
+                    dateInput: () => shippingDate13,
+                    tableId: "table-13-content",
+                    footerId: "footer-13"
+                },
+                loss: {
+                    dialogId: "form-dialog-04",
+                    formId: "form-04",
+                    dateInput: () => lossDate14,
+                    tableId: "table-14-content",
+                    footerId: "footer-14"
+                }
+            };
         </script>
         <script th:src="@{/js/recycle/recycle.js}"></script>
     </div>

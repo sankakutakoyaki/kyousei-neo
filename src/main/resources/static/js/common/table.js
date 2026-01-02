@@ -10,18 +10,34 @@ function registCheckButtonClicked(tableId) {
     } else {
         tbl = document.getElementById(tableId);
     }
-    if (tbl == null) return;
-    tbl.querySelectorAll('input[name="chk-box"]').forEach(function (value) {
-        value.addEventListener('change', function(e) {
+    // if (tbl == null) return;
+    // tbl.querySelectorAll('input[name="chk-box"]').forEach(function (value) {
+    //     value.addEventListener('change', function(e) {
+    //         const tbl = e.currentTarget.closest('.normal-table');
+    //         const items = tbl.querySelectorAll('[name="chk-box"]');
+    //         const checked = Array.from(items).filter(value => { return value.checked });
+    //         if (checked.length == items.length) {
+    //             tbl.querySelector('[name="all-chk-btn"]').checked = true;
+    //         } else {
+    //             tbl.querySelector('[name="all-chk-btn"]').checked = false
+    //         }
+    //     }, false)
+    // });
+    if (!tbl) return;
+
+    tbl.querySelectorAll('input[name="chk-box"]').forEach(chk => {
+        chk.addEventListener('change', e => {
             const tbl = e.currentTarget.closest('.normal-table');
+            if (!tbl) return;
+
             const items = tbl.querySelectorAll('[name="chk-box"]');
-            const checked = Array.from(items).filter(value => { return value.checked });
-            if (checked.length == items.length) {
-                tbl.querySelector('[name="all-chk-btn"]').checked = true;
-            } else {
-                tbl.querySelector('[name="all-chk-btn"]').checked = false
+            const checked = Array.from(items).filter(v => v.checked);
+
+            const allChk = tbl.querySelector('[name="all-chk-btn"]');
+            if (allChk) {
+                allChk.checked = items.length > 0 && checked.length === items.length;
             }
-        }, false)
+        });
     });
 }
 
@@ -32,6 +48,7 @@ function registCheckButtonClicked(tableId) {
 function createTableFooter(footerId, list) {
     deleteElements(footerId);
     const footer = document.getElementById(footerId);
+    if (!footer) return;
     const num = list == null ? 0: list.length;
     footer.insertAdjacentHTML('beforeend', '<span>' + num + '件 : ' + getNow() + ' 現在</span>');
 }
@@ -126,8 +143,15 @@ function turnOffAllCheckBtn(tableId) {
         tbl = document.getElementById(tableId);
     }
     if (tbl == null) return;
-    const header = tbl.closest('.normal-table');
-    header.querySelector('[name="all-chk-btn"]').checked = false
+
+    const tableRoot = tbl.closest('.normal-table');
+    if (!tableRoot) return;
+
+    const allChk = tableRoot.querySelector('[name="all-chk-btn"]');
+    if (!allChk) return; 
+
+    allChk.checked = false;
+    // header.querySelector('[name="all-chk-btn"]').checked = false
 }
 
 /**
@@ -414,16 +438,16 @@ async function funcDownloadCsv(data, url) {
  * @param {*} tableId 
  * @param {*} url 
  */
-async function deleteTablelist(tableId, url) {
+async function deleteTablelist(tableId, footerId, searchId, url) {
     // 選択された要素を取得する
     const data = getAllSelectedIds(tableId);
     if (data.length == 0) {
         // 選択された要素がなければメッセージを表示して終了
-        // openMsgDialog("msg-dialog", "選択されていません", "red");
         return {"success":false, "message":"選択されていないか、データがありません。"};
     } else {
-        const resultResponse = await postFetch(url, JSON.stringify(data), token, 'application/json');
-        return await resultResponse.json();
+        // const resultResponse = await postFetch(url, JSON.stringify(data), token, 'application/json');
+        // return await resultResponse.json();
+        return await postFetch(url, JSON.stringify(data), token, "application/json");
     }
 }
 
@@ -530,4 +554,96 @@ function saveEditor(td, editor, currentValue) {
         const value = editor.value?.trim();
         td.textContent = value || currentValue || '-----';
     }
+}
+
+async function updateTableDisplay({
+    tableId,
+    footerId,
+    searchId,
+    list,
+    createContent   // ★ 画面ごとの処理
+}) {
+    // フィルター処理
+    const result = filterDisplay(searchId, list);
+
+    // テーブル初期化
+    deleteElements(tableId);
+
+    // ★ 画面ごとのテーブル生成
+    if (typeof createContent === "function") {
+        createContent(tableId, result);
+    }
+
+    // フッター
+    createTableFooter(footerId, list);
+
+    // 共通後処理
+    registCheckButtonClicked(tableId);
+    turnOffAllCheckBtn(tableId);
+    resetSortable(tableId);
+    setPageTopButton(tableId);
+
+    document.querySelectorAll('.scroll-area').forEach(el => {
+        toggleScrollbar(el);
+    });
+}
+// async function updateTableDisplay(tableId, footerId, searchId, list) {
+//     // フィルター処理
+//     const result = filterDisplay(searchId, list);
+//     // リスト画面を初期化
+//     deleteElements(tableId);
+//     // リスト作成
+//     createTableContent(tableId, result);
+//     // フッター作成
+//     createTableFooter(footerId, list);
+//     // チェックボタン押下時の処理を登録する
+//     registCheckButtonClicked(tableId);
+//     // すべて選択ボタンをオフにする
+//     turnOffAllCheckBtn(tableId);
+//     // テーブルのソートをリセットする
+//     resetSortable(tableId);
+//     // スクロール時のページトップボタン処理を登録する
+//     setPageTopButton(tableId);
+//     // テーブルにスクロールバーが表示されたときの処理を登録する
+//     document.querySelectorAll('.scroll-area').forEach(el => {
+//         toggleScrollbar(el);
+//     });
+// }
+
+function createSelectableRow({
+    table,
+    item,
+    idKey,
+    validCheck,
+    onDoubleClick,
+    onSingleClick
+}) {
+    const row = table.insertRow();
+
+    row.setAttribute("name", "data-row");
+    row.dataset.id = item[idKey];
+    row.dataset.valid = validCheck ? validCheck(item) : true;
+
+    // シングルクリック
+    row.onclick = function (e) {
+        if (!row.classList.contains("selected")) {
+            detachmentSelectClassToAllRow(table, false);
+            addSelectClassToRow(row);
+            if (onSingleClick) onSingleClick(item, row, e);
+        }
+    };
+
+    // ダブルクリック
+    row.ondblclick = function (e) {
+        e.preventDefault();
+
+        if (!row.classList.contains("selected")) {
+            detachmentSelectClassToAllRow(table, false);
+            addSelectClassToRow(row);
+        }
+
+        if (onDoubleClick) onDoubleClick(item, row, e);
+    };
+
+    return row;
 }

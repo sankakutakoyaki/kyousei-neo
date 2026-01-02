@@ -2,10 +2,13 @@ package com.kyouseipro.neo.repository.personnel;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Utilities;
+import com.kyouseipro.neo.common.exception.BusinessException;
+import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
@@ -26,19 +29,24 @@ public class TimeworksListRepository {
 
     /**
      * IDによる取得。
-     * @param employeeId
+     * @param id
      * @return IDから取得した今日の日付のEntityをかえす。
      */
-    public TimeworksListEntity findByTodaysByEmployeeId(int employeeId) {
+    public Optional<TimeworksListEntity> findByTodaysByEmployeeId(int id) {
         String sql = TimeworksListSqlBuilder.buildFindByTodaysByEmployeeId();
-        EmployeeEntity entity = employeeRepository.findById(employeeId);
-        int id = entity.getEmployee_id();
+        // EmployeeEntity entity = employeeRepository.findById(id);
 
-        return sqlRepository.execute(
+        // int targetId = id;
+        EmployeeEntity entity = employeeRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("社員が見つかりません: " + id));
+        int targetId = entity.getEmployee_id();
+        // int id = entity.getEmployee_id();
+
+        return sqlRepository.executeQuery(
             sql,
-            (pstmt, comp) -> TimeworksListParameterBinder.bindFindByTodaysByEmployeeId(pstmt, comp),
+            (ps, en) -> TimeworksListParameterBinder.bindFindByTodaysByEmployeeId(ps, en),
             rs -> rs.next() ? TimeworksListEntityMapper.map(rs) : null,
-            id
+            targetId
         );
     }
 
@@ -47,14 +55,17 @@ public class TimeworksListRepository {
      * @param date
      * @return
      */
-    public List<TimeworksListEntity> findByBetweenByEmployeeId(int employeeId, LocalDate start, LocalDate end) {
+    public List<TimeworksListEntity> findByBetweenByEmployeeId(int id, LocalDate start, LocalDate end) {
         String sql = TimeworksListSqlBuilder.buildFindByBetweenByEmployeeId();
-        EmployeeEntity entity = employeeRepository.findById(employeeId);
-        int id = entity.getEmployee_id();
+        // EmployeeEntity entity = employeeRepository.findById(employeeId);
+        // int id = entity.getEmployee_id();
+        EmployeeEntity entity = employeeRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("社員が見つかりません: " + id));
+        int targetId = entity.getEmployee_id();
 
         return sqlRepository.findAll(
             sql,
-            ps -> TimeworksListParameterBinder.bindFindByBetweenByEmployeeId(ps, id, start, end),
+            (ps, v) -> TimeworksListParameterBinder.bindFindByBetweenByEmployeeId(ps, targetId, start, end),
             TimeworksListEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -64,14 +75,17 @@ public class TimeworksListRepository {
      * @param date
      * @return
      */
-    public List<TimeworksListEntity> findAllByBetweenByEmployeeId(int employeeId, LocalDate start, LocalDate end) {
+    public List<TimeworksListEntity> findAllByBetweenByEmployeeId(int id, LocalDate start, LocalDate end) {
         String sql = TimeworksListSqlBuilder.buildFindAllByBetweenByEmployeeId();
-        EmployeeEntity entity = employeeRepository.findById(employeeId);
-        int id = entity.getEmployee_id();
+        // EmployeeEntity entity = employeeRepository.findById(employeeId);
+        // int id = entity.getEmployee_id();
+        EmployeeEntity entity = employeeRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("社員が見つかりません: " + id));
+        int targetId = entity.getEmployee_id();
 
         return sqlRepository.findAll(
             sql,
-            ps -> TimeworksListParameterBinder.bindFindAllByBetweenByEmployeeId(ps, id, start, end),
+            (ps, v) -> TimeworksListParameterBinder.bindFindAllByBetweenByEmployeeId(ps, targetId, start, end),
             TimeworksListEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -86,7 +100,7 @@ public class TimeworksListRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> TimeworksListParameterBinder.bindFindByBetweenSummary(ps, start, end),
+            (ps, v) -> TimeworksListParameterBinder.bindFindByBetweenSummary(ps, start, end),
             TimeworksSummaryEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -101,7 +115,7 @@ public class TimeworksListRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> TimeworksListParameterBinder.bindFindByBetweenSummaryByOfficeId(ps, id, start, end),
+            (ps, v) -> TimeworksListParameterBinder.bindFindByBetweenSummaryByOfficeId(ps, id, start, end),
             TimeworksSummaryEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -116,47 +130,86 @@ public class TimeworksListRepository {
 
         return sqlRepository.findAll(
             sql,
-            ps -> TimeworksListParameterBinder.bindFindByDate(ps, date),
+            (ps, v) -> TimeworksListParameterBinder.bindFindByDate(ps, date),
             TimeworksListEntityMapper::map // ← ここで ResultSet を map
         );
     }
 
     /**
-     * INSERT
-     * @param t
-     * @param editor
-     * @return
+     * 新規作成。
+     * @param entity
+     * @return 新規IDを返す。
      */
-    public Integer insert(TimeworksListEntity t, String editor) {
+    public int insert(TimeworksListEntity entity, String editor) {
         String sql = TimeworksListSqlBuilder.buildInsert();
 
-        return sqlRepository.execute(
-            sql,
-            (pstmt, entity) -> TimeworksListParameterBinder.bindInsert(pstmt, entity, editor),
-            rs -> rs.next() ? rs.getInt("timeworks_id") : null,
-            t
-        );
+        // return sqlRepository.execute(
+        //     sql,
+        //     (pstmt, entity) -> TimeworksListParameterBinder.bindInsert(pstmt, entity, editor),
+        //     rs -> rs.next() ? rs.getInt("timeworks_id") : null,
+        //     t
+        // );
+        try {
+            return sqlRepository.executeRequired(
+                sql,
+                (ps, en) -> TimeworksListParameterBinder.bindInsert(ps, en, editor),
+                rs -> {
+                    if (!rs.next()) {
+                        throw new BusinessException("登録に失敗しました");
+                    }
+                    int id = rs.getInt("timeworks_id");
+
+                    if (rs.next()) {
+                        throw new IllegalStateException("ID取得結果が複数行です");
+                    }
+                    return id;
+                },
+                entity
+            );
+        } catch (RuntimeException e) {
+            if (SqlExceptionUtil.isDuplicateKey(e)) {
+                throw new BusinessException("このコードはすでに使用されています。");
+            }
+            throw e;
+        }
     }
 
     /**
-     * UPDATE
-     * @param w
-     * @param editor
-     * @return
+     * 更新。
+     * @param entity
+     * @return 成功件数を返す。
      */
-    public Integer update(TimeworksListEntity t, String editor) {
+    public int update(TimeworksListEntity entity, String editor) {
         String sql = TimeworksListSqlBuilder.buildUpdate();
 
-        return sqlRepository.execute(
-            sql,
-            (pstmt, entity) -> TimeworksListParameterBinder.bindUpdate(pstmt, entity, editor),
-            rs -> rs.next() ? rs.getInt("timeworks_id") : null,
-            t
-        );
+        // return sqlRepository.execute(
+        //     sql,
+        //     (pstmt, entity) -> TimeworksListParameterBinder.bindUpdate(pstmt, entity, editor),
+        //     rs -> rs.next() ? rs.getInt("timeworks_id") : null,
+        //     t
+        // );
+        try {
+            int count = sqlRepository.executeUpdate(
+                sql,
+                ps -> TimeworksListParameterBinder.bindUpdate(ps, entity, editor)
+            );
+
+            if (count == 0) {
+                throw new BusinessException("更新対象が存在しません");
+            }
+
+            return count;
+
+        } catch (RuntimeException e) {
+            if (SqlExceptionUtil.isDuplicateKey(e)) {
+                throw new BusinessException("このコードはすでに使用されています。");
+            }
+            throw e;
+        }
     }
 
     /**
-     * UPDATE
+     * Stateを新規に変更
      * @param id
      * @param editor
      * @return
@@ -164,46 +217,95 @@ public class TimeworksListRepository {
     public Integer reverseConfirm(int id, String editor) {
         String sql = TimeworksListSqlBuilder.buildReverseConfirm();
 
-       Integer result = sqlRepository.executeUpdate(
-            sql,
-            ps -> TimeworksListParameterBinder.bindReverseConfirm(ps, id, editor)
-        );
+    //    Integer result = sqlRepository.executeUpdate(
+    //         sql,
+    //         ps -> TimeworksListParameterBinder.bindReverseConfirm(ps, id, editor)
+    //     );
         
-        return result; // 成功件数。0なら削除なし
+    //     return result; // 成功件数。0なら削除なし
+        try {
+            int count = sqlRepository.executeUpdate(
+                sql,
+                ps -> TimeworksListParameterBinder.bindReverseConfirm(ps, id, editor)
+            );
+
+            if (count == 0) {
+                throw new BusinessException("更新対象が存在しません");
+            }
+
+            return count;
+
+        } catch (RuntimeException e) {
+            if (SqlExceptionUtil.isDuplicateKey(e)) {
+                throw new BusinessException("このコードはすでに使用されています。");
+            }
+            throw e;
+        }
     }
 
     /**
-     * UPDATE
-     * @param w
+     * まとめて更新
+     * @param list
      * @param editor
      * @return
      */
-    public Integer updateList(List<TimeworksListEntity> list, String editor) {
+    public int updateList(List<TimeworksListEntity> list, String editor) {
         if (list.isEmpty()) return 0;
 
         String sql = TimeworksListSqlBuilder.buildUpdate(); // UPDATE ... WHERE id = ?
 
-        return sqlRepository.executeBatch(
-            sql,
-            (pstmt, entity) -> TimeworksListParameterBinder.bindUpdate(pstmt, entity, editor),
-            list
-        );
+        // return sqlRepository.executeBatch(
+        //     sql,
+        //     (ps, en) -> TimeworksListParameterBinder.bindUpdate(ps, en, editor),
+        //     list
+        // );
+        try {
+            int count = sqlRepository.executeBatch(
+                sql,
+                (ps, en) -> TimeworksListParameterBinder.bindUpdate(ps, en, editor),
+                list
+            );
+
+            if (count == 0) {
+                throw new BusinessException("更新対象が存在しません");
+            }
+
+            return count;
+
+        } catch (RuntimeException e) {
+            if (SqlExceptionUtil.isDuplicateKey(e)) {
+                throw new BusinessException("このコードはすでに使用されています。");
+            }
+            throw e;
+        }
     }
 
     /**
-     * CSVファイルをダウンロードする。
+     * IDで指定したENTITYのCSVファイルをダウンロードする。
      * @param ids
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<TimeworksListEntity> downloadCsvByIdsFromBetween(List<SimpleData> ids, String start, String end, String editor) {
-        List<Integer> employeeIds = Utilities.createSequenceByIds(ids);
-        String sql = TimeworksListSqlBuilder.buildDownloadCsvForIdsFromBetween(employeeIds.size());
+    public List<TimeworksListEntity> downloadCsvByIdsFromBetween(List<SimpleData> list, String start, String end, String editor) {
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        // String sql = TimeworksListSqlBuilder.buildDownloadCsvForIdsFromBetween(ids.size());
+
+        // return sqlRepository.findAll(
+        //     sql,
+        //     (ps, v) -> TimeworksListParameterBinder.bindDownloadCsvByIdsFromBetween(ps, employeeIds, start, end),
+        //     TimeworksListEntityMapper::map // ← ここで ResultSet を map
+        // );
+        if (list == null || list.isEmpty()) {
+            throw new IllegalArgumentException("ダウンロード対象が指定されていません");
+        }
+
+        List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = TimeworksListSqlBuilder.buildDownloadCsvForIdsFromBetween(ids.size());
 
         return sqlRepository.findAll(
             sql,
-            ps -> TimeworksListParameterBinder.bindDownloadCsvByIdsFromBetween(ps, employeeIds, start, end),
-            TimeworksListEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) ->  TimeworksListParameterBinder.bindDownloadCsvByIdsFromBetween(ps, ids, start, end),
+            TimeworksListEntityMapper::map
         );
     }
 }

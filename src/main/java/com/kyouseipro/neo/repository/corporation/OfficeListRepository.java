@@ -19,57 +19,77 @@ import lombok.RequiredArgsConstructor;
 public class OfficeListRepository {
     private final SqlRepository sqlRepository;
 
-    // 全件取得
+    /**
+     * 全件取得。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
     public List<OfficeListEntity> findAll() {
         String sql = OfficeListSqlBuilder.buildFindAll();
 
         return sqlRepository.findAll(
             sql,
-            ps -> OfficeListParameterBinder.bindFindAll(ps, null),
+            (ps, v) -> OfficeListParameterBinder.bindFindAll(ps, null),
             OfficeListEntityMapper::map // ← ここで ResultSet を map
         );
     }
 
-    // 全件取得
+    /**
+     * 全件取得。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す(カナ昇順)
+     */
     public List<OfficeListEntity> findAllOrderByKana() {
         String sql = OfficeListSqlBuilder.buildFindAllOrderByKana();
 
         return sqlRepository.findAll(
             sql,
-            ps -> OfficeListParameterBinder.bindFindAll(ps, null),
+            (ps, v) -> OfficeListParameterBinder.bindFindAll(ps, null),
             OfficeListEntityMapper::map // ← ここで ResultSet を map
         );
     }
 
-    // コンボボックス用リスト取得
+    /**
+     * コンボボックス用リスト取得。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
     public List<SimpleData> findAllCombo() {
         String sql = OfficeListSqlBuilder.buildFindAllCombo();
 
         return sqlRepository.findAll(
             sql,
-            ps -> OfficeListParameterBinder.bindFindAllCombo(ps),
+            (ps, v) -> OfficeListParameterBinder.bindFindAllCombo(ps),
             SimpleDataMapper::map
         );
     }
 
-    // 全件取得
+    /**
+     * コンボボックス用リスト取得（CategoryIDで指定）。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
     public List<OfficeListEntity> findByCategoryId(int categoryId) {
         String sql = OfficeListSqlBuilder.buildFindAllByCategory();
 
         return sqlRepository.findAll(
             sql,
-            ps -> OfficeListParameterBinder.bindFindAllByCategoryId(ps, categoryId),
+            (ps, v) -> OfficeListParameterBinder.bindFindAllByCategoryId(ps, categoryId),
             OfficeListEntityMapper::map // ← ここで ResultSet を map
         );
     }
 
-    // コンボボックス用リスト取得
+    /**
+     * コンボボックス用リスト取得（荷主）。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
     public List<SimpleData> findAllClientCombo() {
         String sql = OfficeListSqlBuilder.buildFindAllClientCombo();
 
         return sqlRepository.findAll(
             sql,
-            ps -> OfficeListParameterBinder.bindFindAllClientCombo(ps),
+            (ps, v) -> OfficeListParameterBinder.bindFindAllClientCombo(ps),
             SimpleDataMapper::map
         );
     }

@@ -531,47 +531,48 @@ async function execEdit(id, self, str) {
     } else {
         entity = structuredClone(formEntity);
 
-        let form = "";
-        let formId = "";
-        let formDialogId = "";
+        openFormByMode("regist", itemList, ORDER_MODE_CONFIG);
+        // let form = "";
+        // let formId = "";
+        // let formDialogId = "";
 
-        switch (str) {
-            case "regist":
-                formDialogId = "form-dialog-01";
-                formId = "form-01";
-                useDate11.value = "";
-                await updateFormTableDisplay("table-11-content", "footer-11", itemList);
-                break;
-            case "delivery":
-                formDialogId = "form-dialog-02";
-                formId = "form-02";
-                deliveryDate12.value = "";
-                await updateFormTableDisplay("table-12-content", "footer-12", itemList);
-                break;
-            case "shipping":
-                formDialogId = "form-dialog-03";
-                formId = "form-03";
-                shippingDate13.value = "";
-                await updateFormTableDisplay("table-13-content", "footer-13", itemList);
-                break;
-            case "loss":
-                formDialogId = "form-dialog-04";
-                formId = "form-04";
-                lossDate14.value = "";
-                await updateFormTableDisplay("table-14-content", "footer-14", itemList);
-                break;
-            default:
-                break;
-        }
+        // switch (str) {
+        //     case "regist":
+        //         formDialogId = "form-dialog-01";
+        //         formId = "form-01";
+        //         useDate11.value = "";
+        //         await updateFormTableDisplay("table-11-content", "footer-11", itemList);
+        //         break;
+        //     case "delivery":
+        //         formDialogId = "form-dialog-02";
+        //         formId = "form-02";
+        //         deliveryDate12.value = "";
+        //         await updateFormTableDisplay("table-12-content", "footer-12", itemList);
+        //         break;
+        //     case "shipping":
+        //         formDialogId = "form-dialog-03";
+        //         formId = "form-03";
+        //         shippingDate13.value = "";
+        //         await updateFormTableDisplay("table-13-content", "footer-13", itemList);
+        //         break;
+        //     case "loss":
+        //         formDialogId = "form-dialog-04";
+        //         formId = "form-04";
+        //         lossDate14.value = "";
+        //         await updateFormTableDisplay("table-14-content", "footer-14", itemList);
+        //         break;
+        //     default:
+        //         break;
+        // }
 
-        openFormDialog(formDialogId); 
-        form = document.getElementById(formDialogId);
-        resetFormInput(form, str);
-        setEnterFocus(formId);
+        // openFormDialog(formDialogId); 
+        // form = document.getElementById(formDialogId);
+        // resetFormInput(form, str);
+        // setEnterFocus(formId);
 
-        if (str == "regist") {
-            setCompanyComboBox(form, entity, companyComboList, officeComboList);
-        }
+        // if (str == "regist") {
+        //     setCompanyComboBox(form, entity, companyComboList, officeComboList);
+        // }
     }
 
     // スピナー消去
@@ -870,6 +871,7 @@ async function execUpdate(tableId, str) {
     } else {
         openMsgDialog("msg-dialog", result.message, "red");
     }
+
     // ダイアログを閉じる
     closeFormDialog("form-dialog-05");
 

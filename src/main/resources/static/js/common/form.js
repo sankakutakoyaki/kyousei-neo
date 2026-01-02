@@ -160,42 +160,42 @@ function checkWebAddress(sourceElm) {
     return true;
 }
 
-/**
- * フォームデータを保存する
- * @param {*} formData 
- * @param {*} url 
- * @returns 
- */
-async function saveFormData(formData, url) {
-    // スピナー表示
-    startProcessing();
+// /**
+//  * フォームデータを保存する
+//  * @param {*} formData 
+//  * @param {*} url 
+//  * @returns 
+//  */
+// async function saveFormData(formData, url) {
+//     // スピナー表示
+//     startProcessing();
 
-    const response = await fetch(url, {
-        headers: {  // リクエストヘッダを追加
-            'X-CSRF-TOKEN': token,
-        },
-        method: "POST",
-        body: formData,
-    });
+//     const response = await fetch(url, {
+//         headers: {  // リクエストヘッダを追加
+//             'X-CSRF-TOKEN': token,
+//         },
+//         method: "POST",
+//         body: formData,
+//     });
 
-    const result = await response.json();
+//     const result = await response.json();
 
-    // // 保存処理
-    // const data = JSON.stringify(formData);
-    // const resultResponse = await postFetch(url, data, token, 'application/json');
-    // const result = await resultResponse.json();
+//     // // 保存処理
+//     // const data = JSON.stringify(formData);
+//     // const resultResponse = await postFetch(url, data, token, 'application/json');
+//     // const result = await resultResponse.json();
 
-    // スピナー消去
-    processingEnd();          
+//     // スピナー消去
+//     processingEnd();          
 
-    if (result.number == 0) {
-        openMsgDialog("msg-dialog", result.text, "red");
-        return 0;
-    } else {
-        openMsgDialog("msg-dialog", result.text, "blue");
-        return result.number;
-    }
-}
+//     if (result.number == 0) {
+//         openMsgDialog("msg-dialog", result.text, "red");
+//         return 0;
+//     } else {
+//         openMsgDialog("msg-dialog", result.text, "blue");
+//         return result.number;
+//     }
+// }
 
 /**
  * 期間指定ボックスを変更する
@@ -302,4 +302,19 @@ function createOfficeComboBox(form, officeList) {
     const selectId = companyArea.value;  
     const officeComboList = officeList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
     createComboBoxWithTop(officeArea, officeComboList, "");
+}
+
+async function openFormByMode(mode, itemList, modeConfig) {
+    const config = modeConfig[mode];
+    if (!config) return;
+
+    openFormDialog(config.dialogId);
+
+    const form = document.getElementById(config.dialogId);
+    resetFormInput(form, mode);
+    setEnterFocus(config.formId);
+
+    if (config.afterOpen) {
+        await config.afterOpen(itemList);
+    }
 }

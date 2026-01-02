@@ -1,5 +1,7 @@
 package com.kyouseipro.neo.repository.common;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.entity.common.AddressEntity;
@@ -15,14 +17,14 @@ public class AddressRepository {
     private final SqlRepository sqlRepository;
 
     // IDによる取得
-    public AddressEntity findByPostalCode(String postalCode) {
+    public Optional<AddressEntity> findByPostalCode(String code) {
         String sql = AddressSqlBuilder.buildFindByPostalCode();
 
-        return sqlRepository.execute(
+        return sqlRepository.executeQuery(
             sql,
-            (pstmt, comp) -> AddressParameterBinder.bindFindByPostalCode(pstmt, comp),
+            (pstmt, en) -> AddressParameterBinder.bindFindByPostalCode(pstmt, en),
             rs -> rs.next() ? AddressEntityMapper.map(rs) : null,
-            postalCode
+            code
         );
     }
 }

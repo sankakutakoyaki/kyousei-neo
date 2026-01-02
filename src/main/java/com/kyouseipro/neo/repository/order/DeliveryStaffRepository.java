@@ -16,13 +16,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DeliveryStaffRepository {
     private final SqlRepository sqlRepository;
-    
+
+    /**
+     * 全件取得（OrderIDで指定）。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
     public List<DeliveryStaffEntity> findAllByOrderId(int id, String editor) {
         String sql = DeliveryStaffSqlBuilder.buildFindAllByOrderId();
 
         return sqlRepository.findAll(
             sql,
-            ps -> DeliveryStaffParameterBinder.bindFindAllByOrderId(ps, id),
+            (ps, v) -> DeliveryStaffParameterBinder.bindFindAllByOrderId(ps, id),
             DeliveryStaffEntityMapper::map // ← ここで ResultSet を map
         );
     }

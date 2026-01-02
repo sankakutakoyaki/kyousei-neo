@@ -16,13 +16,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WorkContentRepository {
     private final SqlRepository sqlRepository;
-    
+
+    /**
+     * 全件取得。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
     public List<WorkContentEntity> findAllByOrderId(int id, String editor) {
         String sql = WorkContentSqlBuilder.buildFindAllByOrderId();
 
         return sqlRepository.findAll(
             sql,
-            ps -> WorkContentParameterBinder.bindFindAllByOrderId(ps, id),
+            (ps, v) -> WorkContentParameterBinder.bindFindAllByOrderId(ps, id),
             WorkContentEntityMapper::map // ← ここで ResultSet を map
         );
     }

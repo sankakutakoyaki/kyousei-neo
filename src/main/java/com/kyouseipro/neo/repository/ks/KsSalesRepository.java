@@ -37,7 +37,7 @@ public class KsSalesRepository {
         
         return sqlRepository.findAll(
             sql,
-            ps -> KsSalesParameterBinder.bindFindByBetween(ps, start, end),
+            (ps, v) -> KsSalesParameterBinder.bindFindByBetween(ps, start, end),
             KsSalesStaffEntityMapper::map // ← ここで ResultSet を map
         );
     }
