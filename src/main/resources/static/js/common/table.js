@@ -556,13 +556,14 @@ function saveEditor(td, editor, currentValue) {
     }
 }
 
-async function updateTableDisplay({
+async function updateTableDisplay(
     tableId,
     footerId,
     searchId,
     list,
     createContent   // ★ 画面ごとの処理
-}) {
+) {
+
     // フィルター処理
     const result = filterDisplay(searchId, list);
 

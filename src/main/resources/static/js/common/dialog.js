@@ -98,7 +98,7 @@ function openMsgDialog(dialogId, msg, color) {
  * @param {ダイアログのID名} dialogId 
  * @param {イベント} e 
  */
-function closeMsgDialog(dialogId, e, focusId) {
+function closeMsgDialog(dialogId, e) {
     if (e != null) {
         e.preventDefault();
     }

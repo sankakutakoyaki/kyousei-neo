@@ -47,7 +47,7 @@ function createTable01Row(newRow, item) {
 
 /******************************************************************************************************* 入力画面 */
 
-// 従業員登録画面を開く
+// 登録画面を開く
 async function execEdit01(self) {
     // フォーム画面を取得
     const form = document.getElementById('form-dialog-01');
@@ -59,7 +59,6 @@ async function execEdit01(self) {
 
     // 入力フォームダイアログを開く
     openFormDialog("form-dialog-01");
-    setFocusElement("msg-dialog", code);
 }
 
 /******************************************************************************************************* 保存 */
@@ -138,6 +137,8 @@ function form01DataCheck(area) {
     // エラー表示
     if (errors.length > 0) {
         openMsgDialog("msg-dialog", errors.join("\n"), "red");
+        const code = form.querySelector('[name="maker-code"]');
+        if (code != null) setFocusElement("msg-dialog", code);
         return false;
     }
 
@@ -173,14 +174,14 @@ function handleTdChange(editor) {
 
 /******************************************************************************************************* 削除 */
 
-async function execDelete(tableId, footerId, searchId, url, self) {
+async function execDelete01(self) {
     // // スピナー表示
     // startProcessing();
-    const result = await deleteTablelist(tableId, footerId, searchId, url);
+    const result = await deleteTablelist('table-01-content', 'footer-01', 'search-box-01', '/recycle/maker/download/csv');
 
     if (!result) return;
 
-    await updateTableDisplay(tableId, footerId, searchId, origin, createContent);
+    await updateTableDisplay('table-01-content', 'footer-01', 'search-box-01', origin, createTable01Content);
     // await execDate01Search(tableId);
     // openMsgDialog("msg-dialog", result.message, "blue");
 
@@ -217,8 +218,8 @@ async function execSave(tableId, footerId, searchId, ent, createContent) {
 
 /******************************************************************************************************* ダウンロード */
 
-async function execDownloadCsv(tableId, url, self) {
-    await downloadCsv(tableId, url);
+async function execDownloadCsv01(self) {
+    await downloadCsv('tabel-01-content', '/recycle/maker/download/csv', );
 }
 
 /******************************************************************************************************* 画面更新 */
@@ -269,7 +270,7 @@ window.addEventListener("load", async () => {
     // 検索ボックス入力時の処理
     document.getElementById('search-box-01').addEventListener('search', async function(e) {
         const list = getCategoryFilterList();
-        updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTable01Content);
+        await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTable01Content);
     }, false);
 
     // 作成フォームのグループコンボボックス
