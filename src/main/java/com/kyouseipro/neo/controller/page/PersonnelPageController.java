@@ -1,10 +1,10 @@
 package com.kyouseipro.neo.controller.page;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +25,7 @@ import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeListService;
 import com.kyouseipro.neo.service.personnel.WorkingConditionsListService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -44,7 +45,7 @@ public class PersonnelPageController extends BaseController {
 	@GetMapping("/employee")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getEmployee(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+	public ModelAndView getEmployee(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "従業員");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -52,6 +53,8 @@ public class PersonnelPageController extends BaseController {
         mv.addObject("bodyFragmentName", "contents/personnel/employee :: bodyFragment");
         mv.addObject("insertCss", "/css/personnel/employee.css");
 
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
 		// ユーザー名
 		// String userName = principal.getAttribute("preferred_username");
 		// EmployeeEntity user = employeeService.getByAccount(userName);
@@ -87,7 +90,7 @@ public class PersonnelPageController extends BaseController {
         mv.addObject("categoryEmployeeCode", Enums.employeeCategory.FULLTIME.getCode());
         mv.addObject("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
 
-        EmployeeEntity user = getLoginUser(session);
+        // EmployeeEntity user = getLoginUser(session);
         historyService.save(user.getAccount(), "employee", "閲覧", 0, "");
 		
         return mv;
@@ -101,7 +104,7 @@ public class PersonnelPageController extends BaseController {
      */
 	@GetMapping("/timeworks")
     @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView showList(ModelAndView mv, OAuth2AuthenticationToken token, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+	public ModelAndView showList(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
         mv.setViewName("layouts/main");
         mv.addObject("title", "勤怠");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -109,6 +112,8 @@ public class PersonnelPageController extends BaseController {
         mv.addObject("bodyFragmentName", "contents/personnel/timeworks :: bodyFragment");
         mv.addObject("insertCss", "/css/personnel/timeworks.css");
 
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
         // ユーザー名
         // String userName = principal.getAttribute("preferred_username");
         // mv.addObject("username", userName);
@@ -126,7 +131,7 @@ public class PersonnelPageController extends BaseController {
         // 完了コードを取得
         mv.addObject("completeNum", Enums.state.COMPLETE.getCode());
 
-        EmployeeEntity user = getLoginUser(session);
+        // EmployeeEntity user = getLoginUser(session);
         mv.addObject("username", user.getAccount());
         historyService.save(user.getAccount(), "timeworks", "閲覧", 200, "");
 	    return mv;
@@ -140,7 +145,7 @@ public class PersonnelPageController extends BaseController {
 	@GetMapping("/working_conditions")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getWorkingConditions(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+	public ModelAndView getWorkingConditions(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "勤務条件");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -148,6 +153,8 @@ public class PersonnelPageController extends BaseController {
         mv.addObject("bodyFragmentName", "contents/personnel/working_conditions :: bodyFragment");
         mv.addObject("insertCss", "/css/personnel/working_conditions.css");
 
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
 		// ユーザー名
 		// String userName = principal.getAttribute("preferred_username");
 		// EmployeeEntity user = employeeService.getByAccount(userName);
@@ -171,7 +178,7 @@ public class PersonnelPageController extends BaseController {
         mv.addObject("categoryEmployeeCode", Enums.employeeCategory.FULLTIME.getCode());
         mv.addObject("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
 
-        EmployeeEntity user = getLoginUser(session);
+        // EmployeeEntity user = getLoginUser(session);
         historyService.save(user.getAccount(), "working_conditions", "閲覧", 200, "");
 		
         return mv;

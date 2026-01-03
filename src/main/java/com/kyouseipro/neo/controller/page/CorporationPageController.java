@@ -1,5 +1,6 @@
 package com.kyouseipro.neo.controller.page;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,6 +27,7 @@ import com.kyouseipro.neo.service.corporation.OfficeListService;
 import com.kyouseipro.neo.service.corporation.StaffListService;
 import com.kyouseipro.neo.service.document.HistoryService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -45,7 +47,7 @@ public class CorporationPageController extends BaseController {
 	@GetMapping("/client")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getClient(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+	public ModelAndView getClient(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "取引先");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -53,6 +55,8 @@ public class CorporationPageController extends BaseController {
         mv.addObject("bodyFragmentName", "contents/corporation/client :: bodyFragment");
         mv.addObject("insertCss", "/css/corporation/client.css");
 
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
 		// // ユーザー名
 		// String userName = principal.getAttribute("preferred_username");
 		// mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
@@ -85,8 +89,8 @@ public class CorporationPageController extends BaseController {
         mv.addObject("categoryServiceCode", Enums.clientCategory.SERVICE.getCode());
         mv.addObject("categoryTransportCode", Enums.clientCategory.TRANSPORT.getCode());
 
-        EmployeeEntity user = getLoginUser(session);
-        // 履歴保存
+        // EmployeeEntity user = getLoginUser(session);
+        // // 履歴保存
         historyService.save(user.getAccount(), "companies", "閲覧", 200, "");
 
         // mv.addObject("user", user);

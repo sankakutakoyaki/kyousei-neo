@@ -1,5 +1,6 @@
 package com.kyouseipro.neo.controller.page;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +22,7 @@ import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.work.WorkItemService;
 import com.kyouseipro.neo.service.work.WorkPriceService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -35,7 +37,7 @@ public class WorkPageController extends BaseController {
     @GetMapping("/work/item")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getWorkItem(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+	public ModelAndView getWorkItem(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "作業項目");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -43,6 +45,8 @@ public class WorkPageController extends BaseController {
         mv.addObject("bodyFragmentName", "contents/work/workitem :: bodyFragment");
         mv.addObject("insertCss", "/css/work/workitem.css");
 
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
 		// ユーザー名
 		// String userName = principal.getAttribute("preferred_username");
 		// EmployeeEntity user = employeeService.getByAccount(userName);
@@ -59,7 +63,7 @@ public class WorkPageController extends BaseController {
 
         mv.addObject("ownCompanyId", Utilities.getOwnCompanyId());
 
-        EmployeeEntity user = getLoginUser(session);
+        // EmployeeEntity user = getLoginUser(session);
         historyService.save(user.getAccount(), "work_item", "閲覧", 0, "");
 		
         return mv;
@@ -68,7 +72,7 @@ public class WorkPageController extends BaseController {
     @GetMapping("/work/price")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getWorkPrice(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+	public ModelAndView getWorkPrice(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "作業料金");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -76,6 +80,8 @@ public class WorkPageController extends BaseController {
         mv.addObject("bodyFragmentName", "contents/work/workprice :: bodyFragment");
         mv.addObject("insertCss", "/css/work/workprice.css");
 
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
 		// ユーザー名
 		// String userName = principal.getAttribute("preferred_username");
 		// EmployeeEntity user = employeeService.getByAccount(userName);
@@ -92,7 +98,7 @@ public class WorkPageController extends BaseController {
         List<SimpleData> categoryComboList = comboBoxService.getWorkItemParentCategoryList();
         mv.addObject("categoryComboList", categoryComboList);
 
-        EmployeeEntity user = getLoginUser(session);
+        // EmployeeEntity user = getLoginUser(session);
         historyService.save(user.getAccount(), "work_price", "閲覧", 0, "");
 		
         return mv;

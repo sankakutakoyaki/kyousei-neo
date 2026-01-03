@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.controller.abstracts.BaseController;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.recycle.RecycleMakerEntity;
@@ -22,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class RecycleMakerApiController {
+public class RecycleMakerApiController extends BaseController {
     private final RecycleMakerService recycleMakerService;
     private final HistoryService historyService;
 
@@ -42,7 +43,6 @@ public class RecycleMakerApiController {
     //     }
     // }
     public ResponseEntity<RecycleMakerEntity> getById(@RequestParam int id) {
-
         return recycleMakerService.getById(id)
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.notFound().build());
@@ -64,7 +64,6 @@ public class RecycleMakerApiController {
     //     }
     // }
     public ResponseEntity<RecycleMakerEntity> getByCode(@RequestParam int code) {
-
         return recycleMakerService.getByCode(code)
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.notFound().build());

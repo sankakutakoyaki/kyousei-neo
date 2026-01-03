@@ -1,5 +1,6 @@
 package com.kyouseipro.neo.controller.page;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.order.OrderItemService;
 import com.kyouseipro.neo.service.order.OrderListService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -41,7 +43,7 @@ public class OrderPageController extends BaseController {
 	@GetMapping("/order")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getOrder(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+	public ModelAndView getOrder(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "受注");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -49,6 +51,8 @@ public class OrderPageController extends BaseController {
         mv.addObject("bodyFragmentName", "contents/order/order :: bodyFragment");
         mv.addObject("insertCss", "/css/order/order.css");
 
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
 		// ユーザー名
 		// String userName = principal.getAttribute("preferred_username");
 		// EmployeeEntity user = employeeService.getByAccount(userName);
@@ -75,7 +79,7 @@ public class OrderPageController extends BaseController {
 
         mv.addObject("deleteCode", Enums.state.DELETE.getCode());
 
-        EmployeeEntity user = getLoginUser(session);
+        // EmployeeEntity user = getLoginUser(session);
         historyService.save(user.getAccount(), "orders", "閲覧", 0, "");
 		
         return mv;
@@ -84,7 +88,7 @@ public class OrderPageController extends BaseController {
     @GetMapping("/goods")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getGoods(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+	public ModelAndView getGoods(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "入荷");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -92,6 +96,8 @@ public class OrderPageController extends BaseController {
         mv.addObject("bodyFragmentName", "contents/order/goods :: bodyFragment");
         mv.addObject("insertCss", "/css/order/goods.css");
 
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
 		// ユーザー名
 		// String userName = principal.getAttribute("preferred_username");
 		// EmployeeEntity user = employeeService.getByAccount(userName);
@@ -123,7 +129,7 @@ public class OrderPageController extends BaseController {
         mv.addObject("equipmentCode", Enums.ItemClass.EQUIPMENT.getCode());
         mv.addObject("returnsCode", Enums.ItemClass.RETURNS.getCode());
 
-        EmployeeEntity user = getLoginUser(session);
+        // EmployeeEntity user = getLoginUser(session);
         historyService.save(user.getAccount(), "order_items", "閲覧", 0, "");
 		
         return mv;

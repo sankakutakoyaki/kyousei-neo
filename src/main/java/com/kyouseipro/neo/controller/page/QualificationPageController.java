@@ -1,5 +1,6 @@
 package com.kyouseipro.neo.controller.page;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +20,7 @@ import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.qualification.QualificationsService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -37,7 +39,7 @@ public class QualificationPageController extends BaseController {
 	@GetMapping("/qualifications")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getQualifications(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+	public ModelAndView getQualifications(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "資格");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -45,6 +47,8 @@ public class QualificationPageController extends BaseController {
         mv.addObject("bodyFragmentName", "contents/qualifications/qualifications :: bodyFragment");
         mv.addObject("insertCss", "/css/qualifications/qualifications.css");
 
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
 		// ユーザー名
 		// String userName = principal.getAttribute("preferred_username");
 		// EmployeeEntity user = employeeService.getByAccount(userName);
@@ -63,7 +67,7 @@ public class QualificationPageController extends BaseController {
         mv.addObject("url", "/employee/get/id");
         mv.addObject("owner_category", 0);
 
-        EmployeeEntity user = getLoginUser(session);
+        // EmployeeEntity user = getLoginUser(session);
         historyService.save(user.getAccount(), "qualifications", "閲覧", 200, "");
 		
         return mv;
@@ -77,7 +81,7 @@ public class QualificationPageController extends BaseController {
 	@GetMapping("/license")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getLicense(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+	public ModelAndView getLicense(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "許認可");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -85,6 +89,8 @@ public class QualificationPageController extends BaseController {
         mv.addObject("bodyFragmentName", "contents/qualifications/qualifications :: bodyFragment");
         mv.addObject("insertCss", "/css/qualifications/qualifications.css");
 
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
 		// ユーザー名
 		// String userName = principal.getAttribute("preferred_username");
 		// EmployeeEntity user = employeeService.getByAccount(userName);
@@ -104,7 +110,7 @@ public class QualificationPageController extends BaseController {
         mv.addObject("url", "/company/get/id");
         mv.addObject("owner_category", Enums.clientCategory.PARTNER.getCode());
 
-        EmployeeEntity user = getLoginUser(session);
+        // EmployeeEntity user = getLoginUser(session);
         historyService.save(user.getAccount(), "qualifications", "閲覧", 200, "");
 		
         return mv;

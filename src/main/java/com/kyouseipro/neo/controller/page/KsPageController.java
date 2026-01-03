@@ -1,5 +1,6 @@
 package com.kyouseipro.neo.controller.page;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +19,7 @@ import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.ks.KsSalesService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +33,7 @@ public class KsPageController extends BaseController {
     @GetMapping("/ks/sales")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getKsSales(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+	public ModelAndView getKsSales(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "ケーズ");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -39,6 +41,8 @@ public class KsPageController extends BaseController {
         mv.addObject("bodyFragmentName", "contents/ks/ks :: bodyFragment");
         mv.addObject("insertCss", "/css/ks/ks.css");
 
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
 		// ユーザー名
 		// String userName = principal.getAttribute("preferred_username");
 		// EmployeeEntity user = employeeService.getByAccount(userName);
@@ -55,7 +59,7 @@ public class KsPageController extends BaseController {
         List<String> storeNames = origin01.stream().map(KsSalesEntity::getStore_name).filter(Objects::nonNull).distinct().toList();
         mv.addObject("storeComboList01", storeNames);
 
-        EmployeeEntity user = getLoginUser(session);
+        // EmployeeEntity user = getLoginUser(session);
         historyService.save(user.getAccount(), "ks_sales", "閲覧", 0, "");
 		
         return mv;

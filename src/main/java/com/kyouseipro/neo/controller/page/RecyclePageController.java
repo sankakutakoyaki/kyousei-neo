@@ -1,5 +1,6 @@
 package com.kyouseipro.neo.controller.page;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.recycle.RecycleMakerService;
 import com.kyouseipro.neo.service.recycle.RecycleService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -37,7 +39,7 @@ public class RecyclePageController extends BaseController {
 	@GetMapping("/recycle/regist")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getRecycle(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+	public ModelAndView getRecycle(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "登録");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -45,6 +47,8 @@ public class RecyclePageController extends BaseController {
         mv.addObject("bodyFragmentName", "contents/recycle/recycle :: bodyFragment");
         mv.addObject("insertCss", "/css/recycle/recycle.css");
 
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
 		// ユーザー名
 		// String userName = principal.getAttribute("preferred_username");
 		// EmployeeEntity user = employeeService.getByAccount(userName);
@@ -66,16 +70,15 @@ public class RecyclePageController extends BaseController {
 
         mv.addObject("deleteCode", Enums.state.DELETE.getCode());
 
-        EmployeeEntity user = getLoginUser(session);
+        // EmployeeEntity user = getLoginUser(session);
         historyService.save(user.getAccount(), "recycle", "閲覧", 0, "");
 		
         return mv;
     }
 
 	@GetMapping("/recycle/maker")
-	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getMaker(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+	public ModelAndView getMaker(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "登録");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -83,11 +86,8 @@ public class RecyclePageController extends BaseController {
         mv.addObject("bodyFragmentName", "contents/recycle/maker :: bodyFragment");
         mv.addObject("insertCss", "/css/recycle/maker.css");
 
-		// ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// EmployeeEntity user = employeeService.getByAccount(userName);
-		// mv.addObject("user", user);
-        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new RecycleMakerEntity());
@@ -101,7 +101,6 @@ public class RecyclePageController extends BaseController {
 
         mv.addObject("otherCode", 3);
 
-        EmployeeEntity user = getLoginUser(session);
         historyService.save(user.getAccount(), "recycle", "閲覧", 0, "");
 		
         return mv;
