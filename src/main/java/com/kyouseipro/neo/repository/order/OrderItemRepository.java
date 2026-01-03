@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.order.OrderItemEntity;
 import com.kyouseipro.neo.mapper.order.OrderItemEntityMapper;
@@ -95,13 +94,13 @@ public class OrderItemRepository {
             }
         }
 
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, emp) -> OrderItemParameterBinder.bindSave(pstmt, itemList, editor),
-        //     rs -> rs.next() ? rs.getInt("order_item_id") : null,
-        //     itemList
-        // );
-        try {
+        // // return sqlRepository.execute(
+        // //     sql,
+        // //     (pstmt, emp) -> OrderItemParameterBinder.bindSave(pstmt, itemList, editor),
+        // //     rs -> rs.next() ? rs.getInt("order_item_id") : null,
+        // //     itemList
+        // // );
+        // try {
             return sqlRepository.executeRequired(
                 sql,
                 (ps, en) -> OrderItemParameterBinder.bindSave(ps, list, editor),
@@ -118,12 +117,12 @@ public class OrderItemRepository {
                 },
                 list
             );
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -151,7 +150,7 @@ public class OrderItemRepository {
             ps -> OrderItemParameterBinder.bindDeleteByIds(ps, ids, editor)
         );
         if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
 
         return count;

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.mapper.corporation.CompanyEntityMapper;
@@ -76,13 +75,13 @@ public class CompanyRepository {
     public int insert(CompanyEntity entity, String editor) {
         String sql = CompanySqlBuilder.buildInsert();
 
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, comp) -> CompanyParameterBinder.bindInsert(pstmt, comp, editor),
-        //     rs -> rs.next() ? rs.getInt("company_id") : null,
-        //     company
-        // );
-        try {
+        // // return sqlRepository.execute(
+        // //     sql,
+        // //     (pstmt, comp) -> CompanyParameterBinder.bindInsert(pstmt, comp, editor),
+        // //     rs -> rs.next() ? rs.getInt("company_id") : null,
+        // //     company
+        // // );
+        // try {
             return sqlRepository.executeRequired(
                 sql,
                 (ps, en) -> CompanyParameterBinder.bindInsert(ps, en, editor),
@@ -99,12 +98,12 @@ public class CompanyRepository {
                 },
                 entity
             );
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -115,30 +114,30 @@ public class CompanyRepository {
     public int update(CompanyEntity entity, String editor) {
         String sql = CompanySqlBuilder.buildUpdate();
 
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, comp) -> CompanyParameterBinder.bindUpdate(pstmt, comp, editor),
-        //     rs -> rs.next() ? rs.getInt("company_id") : null,
-        //     company
-        // );
-        try {
+        // // return sqlRepository.execute(
+        // //     sql,
+        // //     (pstmt, comp) -> CompanyParameterBinder.bindUpdate(pstmt, comp, editor),
+        // //     rs -> rs.next() ? rs.getInt("company_id") : null,
+        // //     company
+        // // );
+        // try {
             int count = sqlRepository.executeUpdate(
                 sql,
                 ps -> CompanyParameterBinder.bindUpdate(ps, entity, editor)
             );
 
             if (count == 0) {
-                throw new BusinessException("更新対象が存在しません");
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
             return count;
 
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -166,7 +165,7 @@ public class CompanyRepository {
             ps -> CompanyParameterBinder.bindDeleteByIds(ps, ids, editor)
         );
         if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
 
         return count;

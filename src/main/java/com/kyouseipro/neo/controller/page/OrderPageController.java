@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.controller.abstracts.BaseController;
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.corporation.StaffListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
@@ -25,23 +26,22 @@ import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.order.OrderItemService;
 import com.kyouseipro.neo.service.order.OrderListService;
-import com.kyouseipro.neo.service.personnel.EmployeeService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class OrderPageController {
+public class OrderPageController extends BaseController {
     private final OrderListService orderListService;
     private final OrderItemService orderItemService;
-    private final EmployeeService employeeService;
     private final ComboBoxService comboBoxService;
     private final HistoryService historyService;
 
 	@GetMapping("/order")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getOrder(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getOrder(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "受注");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -50,9 +50,10 @@ public class OrderPageController {
         mv.addObject("insertCss", "/css/order/order.css");
 
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getByAccount(userName);
-		mv.addObject("user", user);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity user = employeeService.getByAccount(userName);
+		// mv.addObject("user", user);
+        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new OrderEntity());
@@ -74,8 +75,8 @@ public class OrderPageController {
 
         mv.addObject("deleteCode", Enums.state.DELETE.getCode());
 
-        // 履歴保存
-        historyService.save(userName, "orders", "閲覧", 0, "");
+        EmployeeEntity user = getLoginUser(session);
+        historyService.save(user.getAccount(), "orders", "閲覧", 0, "");
 		
         return mv;
     }
@@ -83,7 +84,7 @@ public class OrderPageController {
     @GetMapping("/goods")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getGoods(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getGoods(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "入荷");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -92,9 +93,10 @@ public class OrderPageController {
         mv.addObject("insertCss", "/css/order/goods.css");
 
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getByAccount(userName);
-		mv.addObject("user", user);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity user = employeeService.getByAccount(userName);
+		// mv.addObject("user", user);
+        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
 
         // // 初期化されたエンティティ
         mv.addObject("formEntity", new OrderItemEntity());
@@ -121,8 +123,8 @@ public class OrderPageController {
         mv.addObject("equipmentCode", Enums.ItemClass.EQUIPMENT.getCode());
         mv.addObject("returnsCode", Enums.ItemClass.RETURNS.getCode());
 
-        // 履歴保存
-        historyService.save(userName, "order_items", "閲覧", 0, "");
+        EmployeeEntity user = getLoginUser(session);
+        historyService.save(user.getAccount(), "order_items", "閲覧", 0, "");
 		
         return mv;
     }

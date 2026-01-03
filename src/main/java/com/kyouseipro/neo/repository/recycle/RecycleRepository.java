@@ -141,7 +141,7 @@ public class RecycleRepository {
             );
         } catch (RuntimeException e) {
             if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
+                throw new BusinessException("この番号はすでに使用されています。");
             }
             throw e;
         }
@@ -168,14 +168,14 @@ public class RecycleRepository {
             );
 
             if (count == 0) {
-                throw new BusinessException("更新対象が存在しません");
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
             return count;
 
         } catch (RuntimeException e) {
             if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
+                throw new BusinessException("この番号はすでに使用されています。");
             }
             throw e;
         }
@@ -254,7 +254,7 @@ public class RecycleRepository {
             ps -> RecycleParameterBinder.bindDeleteByIds(ps, ids, editor)
         );
         if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
 
         return count;

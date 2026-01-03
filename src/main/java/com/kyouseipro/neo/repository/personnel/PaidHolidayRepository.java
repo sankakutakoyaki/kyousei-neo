@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.PaidHolidayEntity;
 import com.kyouseipro.neo.entity.personnel.PaidHolidayListEntity;
@@ -48,7 +47,7 @@ public class PaidHolidayRepository {
         // EmployeeEntity entity = employeeRepository.findById(id);
 
         EmployeeEntity entity = employeeRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("社員が見つかりません: " + id));
+            .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
         int targetId = entity.getEmployee_id();
 
         return sqlRepository.findAll(
@@ -66,13 +65,13 @@ public class PaidHolidayRepository {
     public int insert(PaidHolidayEntity entity, String editor) {
         String sql = PaidHolidaySqlBuilder.buildInsert();
 
-        // return sqlRepository.executeRequired(
-        //     sql,
-        //     (ps, en) -> PaidHolidayParameterBinder.bindInsert(ps, en, editor),
-        //     rs -> rs.next() ? rs.getInt("paid_holiday_id") : null,
-        //     p
-        // );
-        try {
+        // // return sqlRepository.executeRequired(
+        // //     sql,
+        // //     (ps, en) -> PaidHolidayParameterBinder.bindInsert(ps, en, editor),
+        // //     rs -> rs.next() ? rs.getInt("paid_holiday_id") : null,
+        // //     p
+        // // );
+        // try {
             return sqlRepository.executeRequired(
                 sql,
                 (ps, en) -> PaidHolidayParameterBinder.bindInsert(ps, en, editor),
@@ -89,12 +88,12 @@ public class PaidHolidayRepository {
                 },
                 entity
             );
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -117,7 +116,7 @@ public class PaidHolidayRepository {
             ps -> PaidHolidayParameterBinder.bindDelete(ps, id, editor)
         );
         if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
 
         return count;

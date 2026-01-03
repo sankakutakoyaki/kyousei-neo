@@ -34,7 +34,7 @@ public class EmployeeRepository {
         // IDが3桁以下の場合はCODEなのでCODEからIDを取得する
         if (String.valueOf(Math.abs(id)).length() < 4) {
             EmployeeEntity entity = findByCode(id)
-                .orElseThrow(() -> new RuntimeException("社員が見つかりません: " + id));
+                .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
 
             targetId = entity.getEmployee_id();
         }
@@ -156,7 +156,7 @@ public class EmployeeRepository {
             );
 
             if (count == 0) {
-                throw new BusinessException("更新対象が存在しません");
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
             return count;
@@ -194,7 +194,7 @@ public class EmployeeRepository {
             ps -> EmployeeParameterBinder.bindDeleteByIds(ps, ids, editor)
         );
         if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
 
         return count;

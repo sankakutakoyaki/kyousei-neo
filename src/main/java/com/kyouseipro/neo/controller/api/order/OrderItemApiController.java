@@ -3,6 +3,7 @@ package com.kyouseipro.neo.controller.api.order;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,7 +37,7 @@ public class OrderItemApiController {
      */
     @PostMapping("/order/item/get/id")
 	@ResponseBody
-    public OrderItemEntity getById(@RequestParam int id) {
+    public Optional<OrderItemEntity> getById(@RequestParam int id) {
         return orderItemService.getById(id);
     }
 

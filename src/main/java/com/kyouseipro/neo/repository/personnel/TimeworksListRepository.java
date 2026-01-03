@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
@@ -38,7 +37,7 @@ public class TimeworksListRepository {
 
         // int targetId = id;
         EmployeeEntity entity = employeeRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("社員が見つかりません: " + id));
+            .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
         int targetId = entity.getEmployee_id();
         // int id = entity.getEmployee_id();
 
@@ -60,7 +59,7 @@ public class TimeworksListRepository {
         // EmployeeEntity entity = employeeRepository.findById(employeeId);
         // int id = entity.getEmployee_id();
         EmployeeEntity entity = employeeRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("社員が見つかりません: " + id));
+            .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
         int targetId = entity.getEmployee_id();
 
         return sqlRepository.findAll(
@@ -80,7 +79,7 @@ public class TimeworksListRepository {
         // EmployeeEntity entity = employeeRepository.findById(employeeId);
         // int id = entity.getEmployee_id();
         EmployeeEntity entity = employeeRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("社員が見つかりません: " + id));
+            .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
         int targetId = entity.getEmployee_id();
 
         return sqlRepository.findAll(
@@ -143,13 +142,13 @@ public class TimeworksListRepository {
     public int insert(TimeworksListEntity entity, String editor) {
         String sql = TimeworksListSqlBuilder.buildInsert();
 
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, entity) -> TimeworksListParameterBinder.bindInsert(pstmt, entity, editor),
-        //     rs -> rs.next() ? rs.getInt("timeworks_id") : null,
-        //     t
-        // );
-        try {
+        // // return sqlRepository.execute(
+        // //     sql,
+        // //     (pstmt, entity) -> TimeworksListParameterBinder.bindInsert(pstmt, entity, editor),
+        // //     rs -> rs.next() ? rs.getInt("timeworks_id") : null,
+        // //     t
+        // // );
+        // try {
             return sqlRepository.executeRequired(
                 sql,
                 (ps, en) -> TimeworksListParameterBinder.bindInsert(ps, en, editor),
@@ -166,12 +165,12 @@ public class TimeworksListRepository {
                 },
                 entity
             );
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -182,30 +181,30 @@ public class TimeworksListRepository {
     public int update(TimeworksListEntity entity, String editor) {
         String sql = TimeworksListSqlBuilder.buildUpdate();
 
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, entity) -> TimeworksListParameterBinder.bindUpdate(pstmt, entity, editor),
-        //     rs -> rs.next() ? rs.getInt("timeworks_id") : null,
-        //     t
-        // );
-        try {
+        // // return sqlRepository.execute(
+        // //     sql,
+        // //     (pstmt, entity) -> TimeworksListParameterBinder.bindUpdate(pstmt, entity, editor),
+        // //     rs -> rs.next() ? rs.getInt("timeworks_id") : null,
+        // //     t
+        // // );
+        // try {
             int count = sqlRepository.executeUpdate(
                 sql,
                 ps -> TimeworksListParameterBinder.bindUpdate(ps, entity, editor)
             );
 
             if (count == 0) {
-                throw new BusinessException("更新対象が存在しません");
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
             return count;
 
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -214,33 +213,33 @@ public class TimeworksListRepository {
      * @param editor
      * @return
      */
-    public Integer reverseConfirm(int id, String editor) {
+    public int reverseConfirm(int id, String editor) {
         String sql = TimeworksListSqlBuilder.buildReverseConfirm();
 
-    //    Integer result = sqlRepository.executeUpdate(
-    //         sql,
-    //         ps -> TimeworksListParameterBinder.bindReverseConfirm(ps, id, editor)
-    //     );
+    // //    Integer result = sqlRepository.executeUpdate(
+    // //         sql,
+    // //         ps -> TimeworksListParameterBinder.bindReverseConfirm(ps, id, editor)
+    // //     );
         
-    //     return result; // 成功件数。0なら削除なし
-        try {
+    // //     return result; // 成功件数。0なら削除なし
+    //     try {
             int count = sqlRepository.executeUpdate(
                 sql,
                 ps -> TimeworksListParameterBinder.bindReverseConfirm(ps, id, editor)
             );
 
             if (count == 0) {
-                throw new BusinessException("更新対象が存在しません");
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
             return count;
 
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -254,12 +253,12 @@ public class TimeworksListRepository {
 
         String sql = TimeworksListSqlBuilder.buildUpdate(); // UPDATE ... WHERE id = ?
 
-        // return sqlRepository.executeBatch(
-        //     sql,
-        //     (ps, en) -> TimeworksListParameterBinder.bindUpdate(ps, en, editor),
-        //     list
-        // );
-        try {
+        // // return sqlRepository.executeBatch(
+        // //     sql,
+        // //     (ps, en) -> TimeworksListParameterBinder.bindUpdate(ps, en, editor),
+        // //     list
+        // // );
+        // try {
             int count = sqlRepository.executeBatch(
                 sql,
                 (ps, en) -> TimeworksListParameterBinder.bindUpdate(ps, en, editor),
@@ -267,17 +266,17 @@ public class TimeworksListRepository {
             );
 
             if (count == 0) {
-                throw new BusinessException("更新対象が存在しません");
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
             return count;
 
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**

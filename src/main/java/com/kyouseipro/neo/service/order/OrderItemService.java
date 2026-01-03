@@ -2,6 +2,7 @@ package com.kyouseipro.neo.service.order;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class OrderItemService {
      * @param id 受注ID
      * @return OrderEntity または null
      */
-    public OrderItemEntity getById(int id) {
+    public Optional<OrderItemEntity> getById(int id) {
         return orderItemRepository.findById(id);
     }
 
@@ -40,7 +41,7 @@ public class OrderItemService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer save(List<OrderItemEntity> itemList, String editor) {
+    public int save(List<OrderItemEntity> itemList, String editor) {
         return orderItemRepository.save(itemList, editor);
     }
 
@@ -49,7 +50,7 @@ public class OrderItemService {
      * @param ids
      * @return
      */
-    public Integer deleteByIds(List<SimpleData> list, String userName) {
+    public int deleteByIds(List<SimpleData> list, String userName) {
         return orderItemRepository.deleteByIds(list, userName);
     }
 

@@ -2,6 +2,7 @@ package com.kyouseipro.neo.service.recycle;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -19,39 +20,34 @@ public class RecycleService {
     private final RecycleRepository recycleRepository;
 
     /**
-     * 指定されたIDのリサイクル情報を取得します。
-     * 論理削除されている場合は null を返します。
-     *
-     * @param id リサイクルID
-     * @return RecycleEntity または null
+     * IDによる取得。
+     * @param id
+     * @return IDから取得したEntityを返す。
      */
-    public RecycleEntity getById(int id) {
+    public Optional<RecycleEntity> getById(int id) {
         return recycleRepository.findById(id);
     }
 
     /**
      * 指定されたNumberのリサイクル情報存在するか確認
-     * 論理削除されている場合は null を返します。
-     *
-     * @param number リサイクルID
+     * @param number
      * @return RecycleEntity または null
      */
-    public RecycleEntity existsByNumber(String str) {
+    public Optional<RecycleEntity> existsByNumber(String str) {
         return recycleRepository.existsByNumber(str);
     }
 
     /**
-     * 
-     * @param sql
+     * Numberによる取得。
      * @param number
-     * @return
+     * @return Numberから取得したEntityを返す。
      */
-    public RecycleEntity getByNumber(String number) {
+    public Optional<RecycleEntity> getByNumber(String number) {
         return recycleRepository.findByNumber(number);
     }
     
     /**
-     * 
+     * 指定した期間のEntityを取得。
      * @param start
      * @param end
      * @param col
@@ -62,54 +58,52 @@ public class RecycleService {
     }
 
     /**
-     * リサイクル情報を登録・更新します。
+     * Entityを登録・更新します。
      * IDが０の時は登録・０以上の時は更新します。
-     * 
      * @param entity
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer save(List<RecycleEntity> itemList, String editor) {
+    public int save(List<RecycleEntity> itemList, String editor) {
         return recycleRepository.save(itemList, editor);
     }
 
     /**
      * リサイクル情報を更新します。
-     * IDが０の時は登録・０以上の時は更新します。
-     * 
      * @param entity
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer update(RecycleEntity entity, String editor) {
+    public int update(RecycleEntity entity, String editor) {
         return recycleRepository.update(entity, editor);
     }
 
     /**
      * 日付情報を登録・更新します。
      * IDが０の時は登録・０以上の時は更新します。
-     * 
      * @param entity
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer updateForDate(List<RecycleDateEntity> itemList, String editor, String type) {
+    public int updateForDate(List<RecycleDateEntity> itemList, String editor, String type) {
         return recycleRepository.updateForDate(itemList, editor, type);
     }
 
     /**
-     * IDからRecycleを削除
-     * @param ids
-     * @return
+     * IDで指定したENTITYを論理削除。
+     * @param list
+     * @param editor
+     * @return 成功件数を返す。
      */
-    public Integer deleteByIds(List<SimpleData> list, String userName) {
+    public int deleteByIds(List<SimpleData> list, String userName) {
         return recycleRepository.deleteByIds(list, userName);
     }
 
     /**
-     * IDからCsv用文字列を取得
-     * @param ids
-     * @return
+     * IDで指定したENTITYのCSVファイルをダウンロードする。
+     * @param list
+     * @param editor
+     * @return listで選択したEntityリストを返す。
      */
     public String downloadCsvByIds(List<SimpleData> list, String userName) {
         List<RecycleEntity> recycles = recycleRepository.downloadCsvByIds(list, userName);

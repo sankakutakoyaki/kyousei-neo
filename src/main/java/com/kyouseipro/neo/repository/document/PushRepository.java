@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.entity.data.SubscriptionRequest;
 import com.kyouseipro.neo.mapper.data.SubscriptionRequestMapper;
 import com.kyouseipro.neo.query.parameter.common.PushParameterBinder;
@@ -44,13 +43,13 @@ public class PushRepository {
     public int save(SubscriptionRequest subscription, String editor){
         String sql = PushSqlBuilder.buildInsertSubscription();
 
-        // return sqlRepositry.execute(
-        //     sql,
-        //     (pstmt, sub) -> PushParameterBinder.bindInsertSubscription(pstmt, sub, editor),
-        //     rs -> rs.next() ? rs.getInt("subscrioption_id") : null,
-        //     subscription
-        // );
-        try {
+        // // return sqlRepositry.execute(
+        // //     sql,
+        // //     (pstmt, sub) -> PushParameterBinder.bindInsertSubscription(pstmt, sub, editor),
+        // //     rs -> rs.next() ? rs.getInt("subscrioption_id") : null,
+        // //     subscription
+        // // );
+        // try {
             return sqlRepository.executeRequired(
                 sql,
                 (ps, en) -> PushParameterBinder.bindInsertSubscription(ps, en, editor),
@@ -67,12 +66,12 @@ public class PushRepository {
                 },
                 subscription
             );
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
     
     /**
@@ -109,7 +108,7 @@ public class PushRepository {
             ps -> PushParameterBinder.bindDeleteSubscriptionForEndpoint(ps, endpoint, editor)
         );
         if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
 
         return count;

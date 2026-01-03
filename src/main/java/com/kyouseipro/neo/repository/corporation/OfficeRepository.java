@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.entity.corporation.OfficeEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.mapper.corporation.OfficeEntityMapper;
@@ -82,13 +81,13 @@ public class OfficeRepository {
     public int insert(OfficeEntity entity, String editor) {
         String sql = OfficeSqlBuilder.buildInsert();
 
-        // return sqlRepository.executeRequired(
-        //     sql,
-        //     (pstmt, e) -> OfficeParameterBinder.bindInsert(pstmt, e, editor),
-        //     rs -> rs.next() ? rs.getInt("office_id") : null,
-        //     entity
-        // );
-        try {
+        // // return sqlRepository.executeRequired(
+        // //     sql,
+        // //     (pstmt, e) -> OfficeParameterBinder.bindInsert(pstmt, e, editor),
+        // //     rs -> rs.next() ? rs.getInt("office_id") : null,
+        // //     entity
+        // // );
+        // try {
             return sqlRepository.executeRequired(
                 sql,
                 (ps, en) -> OfficeParameterBinder.bindInsert(ps, en, editor),
@@ -105,12 +104,12 @@ public class OfficeRepository {
                 },
                 entity
             );
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -121,30 +120,30 @@ public class OfficeRepository {
     public int update(OfficeEntity entity, String editor) {
         String sql = OfficeSqlBuilder.buildUpdate();
 
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, off) -> OfficeParameterBinder.bindUpdate(pstmt, off, editor),
-        //     rs -> rs.next() ? rs.getInt("office_id") : null,
-        //     office
-        // );
-        try {
+        // // return sqlRepository.execute(
+        // //     sql,
+        // //     (pstmt, off) -> OfficeParameterBinder.bindUpdate(pstmt, off, editor),
+        // //     rs -> rs.next() ? rs.getInt("office_id") : null,
+        // //     office
+        // // );
+        // try {
             int count = sqlRepository.executeUpdate(
                 sql,
                 ps -> OfficeParameterBinder.bindUpdate(ps, entity, editor)
             );
 
             if (count == 0) {
-                throw new BusinessException("更新対象が存在しません");
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
             return count;
 
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -172,7 +171,7 @@ public class OfficeRepository {
             ps -> OfficeParameterBinder.bindDeleteByIds(ps, ids, editor)
         );
         if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
 
         return count;

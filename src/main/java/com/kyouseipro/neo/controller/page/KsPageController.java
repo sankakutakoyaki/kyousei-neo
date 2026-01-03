@@ -12,25 +12,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.kyouseipro.neo.controller.abstracts.BaseController;
 import com.kyouseipro.neo.entity.ks.KsSalesEntity;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.ks.KsSalesService;
-import com.kyouseipro.neo.service.personnel.EmployeeService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class KsPageController {
-    private final EmployeeService employeeService;
+public class KsPageController extends BaseController {
+    // private final EmployeeService employeeService;
     private final KsSalesService ksSalesService;
     private final HistoryService historyService;
 
     @GetMapping("/ks/sales")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getKsSales(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getKsSales(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "ケーズ");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -39,9 +40,10 @@ public class KsPageController {
         mv.addObject("insertCss", "/css/ks/ks.css");
 
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getByAccount(userName);
-		mv.addObject("user", user);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity user = employeeService.getByAccount(userName);
+		// mv.addObject("user", user);
+        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
 
         LocalDate now = LocalDate.now();
         LocalDate monthStart = now.withDayOfMonth(1);
@@ -53,8 +55,8 @@ public class KsPageController {
         List<String> storeNames = origin01.stream().map(KsSalesEntity::getStore_name).filter(Objects::nonNull).distinct().toList();
         mv.addObject("storeComboList01", storeNames);
 
-        // 履歴保存
-        historyService.save(userName, "ks_sales", "閲覧", 0, "");
+        EmployeeEntity user = getLoginUser(session);
+        historyService.save(user.getAccount(), "ks_sales", "閲覧", 0, "");
 		
         return mv;
     }

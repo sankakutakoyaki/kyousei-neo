@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -50,7 +51,7 @@ public class FileController {
 	@ResponseBody
     public ResponseEntity getAddressFromPostalCode(@RequestParam String postal_code) {
         // return fileService.getAddressByPostalCode(postal_code);
-        AddressEntity entity = fileService.getAddressByPostalCode(postal_code);
+        Optional<AddressEntity> entity = fileService.getAddressByPostalCode(postal_code);
         return ResponseEntity.ok(entity);
         // StringBuilder sb = new StringBuilder("SELECT * From address WHERE postal_code = '" + postal_code + "';");
         // SqlData sqlData = new SqlData();

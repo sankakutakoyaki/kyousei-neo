@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.service.corporation;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class StaffService {
      * @param id 会社ID
      * @return OfficeEntity または null
      */
-    public StaffEntity getById(int id) {
+    public Optional<StaffEntity> getById(int id) {
         return staffRepository.findById(id);
     }
 
@@ -35,7 +36,7 @@ public class StaffService {
      * @param editor
      * @return
     */
-    public Integer save(StaffEntity entity, String editor) {
+    public int save(StaffEntity entity, String editor) {
         if (entity.getStaff_id() > 0) {
             return staffRepository.update(entity, editor);
         } else {
@@ -48,7 +49,7 @@ public class StaffService {
      * @param ids
      * @return
      */
-    public Integer deleteByIds(List<SimpleData> list, String userName) {
+    public int deleteByIds(List<SimpleData> list, String userName) {
         return staffRepository.deleteByIds(list, userName);
     }
 

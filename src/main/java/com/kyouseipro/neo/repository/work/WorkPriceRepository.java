@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.work.WorkPriceEntity;
 import com.kyouseipro.neo.mapper.work.WorkPriceEntityMapper;
@@ -60,13 +59,13 @@ public class WorkPriceRepository {
      */
     public int insert(WorkPriceEntity entity, String editor) {
         String sql = WorkPriceSqlBuilder.buildInsert(1);
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, emp) -> WorkPriceParameterBinder.bindInsert(pstmt, entity, editor, index),
-        //     rs -> rs.next() ? rs.getInt("work_price_id") : null,
-        //     entity
-        // );
-        try {
+        // // return sqlRepository.execute(
+        // //     sql,
+        // //     (pstmt, emp) -> WorkPriceParameterBinder.bindInsert(pstmt, entity, editor, index),
+        // //     rs -> rs.next() ? rs.getInt("work_price_id") : null,
+        // //     entity
+        // // );
+        // try {
             return sqlRepository.executeRequired(
                 sql,
                 (ps, en) -> WorkPriceParameterBinder.bindInsert(ps, entity, editor, 1),
@@ -83,12 +82,12 @@ public class WorkPriceRepository {
                 },
                 entity
             );
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -99,30 +98,30 @@ public class WorkPriceRepository {
     public int update(WorkPriceEntity entity, String editor) {
         String sql = WorkPriceSqlBuilder.buildUpdate(1);
 
-        // Integer result = sqlRepository.executeUpdate(
-        //     sql,
-        //     pstmt -> WorkPriceParameterBinder.bindUpdate(pstmt, entity, editor, index)
-        // );
+        // // Integer result = sqlRepository.executeUpdate(
+        // //     sql,
+        // //     pstmt -> WorkPriceParameterBinder.bindUpdate(pstmt, entity, editor, index)
+        // // );
 
-        // return result; // 成功件数。0なら削除なし
-        try {
+        // // return result; // 成功件数。0なら削除なし
+        // try {
             int count = sqlRepository.executeUpdate(
                 sql,
                 ps -> WorkPriceParameterBinder.bindUpdate(ps, entity, editor, 1)
             );
 
             if (count == 0) {
-                throw new BusinessException("更新対象が存在しません");
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
             return count;
 
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**

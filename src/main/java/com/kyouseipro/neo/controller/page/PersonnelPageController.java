@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.controller.abstracts.BaseController;
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
@@ -22,7 +23,6 @@ import com.kyouseipro.neo.entity.personnel.WorkingConditionsListEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeListService;
-import com.kyouseipro.neo.service.personnel.EmployeeService;
 import com.kyouseipro.neo.service.personnel.WorkingConditionsListService;
 
 import jakarta.servlet.http.HttpSession;
@@ -30,8 +30,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class PersonnelPageController {
-    private final EmployeeService employeeService;
+public class PersonnelPageController extends BaseController {
     private final EmployeeListService employeeListService;
     private final WorkingConditionsListService workingConditionsListService;
     private final ComboBoxService comboBoxService;
@@ -45,7 +44,7 @@ public class PersonnelPageController {
 	@GetMapping("/employee")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getEmployee(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getEmployee(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "従業員");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -54,9 +53,10 @@ public class PersonnelPageController {
         mv.addObject("insertCss", "/css/personnel/employee.css");
 
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getByAccount(userName);
-		mv.addObject("user", user);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity user = employeeService.getByAccount(userName);
+		// mv.addObject("user", user);
+        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new EmployeeEntity());
@@ -87,8 +87,8 @@ public class PersonnelPageController {
         mv.addObject("categoryEmployeeCode", Enums.employeeCategory.FULLTIME.getCode());
         mv.addObject("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
 
-        // 履歴保存
-        historyService.save(userName, "employee", "閲覧", 0, "");
+        EmployeeEntity user = getLoginUser(session);
+        historyService.save(user.getAccount(), "employee", "閲覧", 0, "");
 		
         return mv;
     }
@@ -110,8 +110,8 @@ public class PersonnelPageController {
         mv.addObject("insertCss", "/css/personnel/timeworks.css");
 
         // ユーザー名
-        String userName = principal.getAttribute("preferred_username");
-        mv.addObject("username", userName);
+        // String userName = principal.getAttribute("preferred_username");
+        // mv.addObject("username", userName);
         // 勤怠データ新規・更新用
         TimeworksListEntity entity = new TimeworksListEntity();
         mv.addObject("entity", entity);
@@ -125,8 +125,10 @@ public class PersonnelPageController {
         mv.addObject("employeeList", employeeList);
         // 完了コードを取得
         mv.addObject("completeNum", Enums.state.COMPLETE.getCode());
-        // 履歴保存
-        historyService.save(userName, "timeworks", "閲覧", 200, "");
+
+        EmployeeEntity user = getLoginUser(session);
+        mv.addObject("username", user.getAccount());
+        historyService.save(user.getAccount(), "timeworks", "閲覧", 200, "");
 	    return mv;
 	}
 
@@ -138,7 +140,7 @@ public class PersonnelPageController {
 	@GetMapping("/working_conditions")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getWorkingConditions(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getWorkingConditions(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "勤務条件");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -147,9 +149,10 @@ public class PersonnelPageController {
         mv.addObject("insertCss", "/css/personnel/working_conditions.css");
 
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = (EmployeeEntity) employeeService.getByAccount(userName);
-		mv.addObject("user", user);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity user = employeeService.getByAccount(userName);
+		// mv.addObject("user", user);
+        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new WorkingConditionsEntity());
@@ -168,8 +171,8 @@ public class PersonnelPageController {
         mv.addObject("categoryEmployeeCode", Enums.employeeCategory.FULLTIME.getCode());
         mv.addObject("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
 
-        // 履歴保存
-        historyService.save(userName, "working_conditions", "閲覧", 200, "");
+        EmployeeEntity user = getLoginUser(session);
+        historyService.save(user.getAccount(), "working_conditions", "閲覧", 200, "");
 		
         return mv;
     }

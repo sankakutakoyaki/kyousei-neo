@@ -2,13 +2,12 @@ package com.kyouseipro.neo.service.personnel;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.data.SimpleData;
-import com.kyouseipro.neo.entity.personnel.PaidHolidayEntity;
-import com.kyouseipro.neo.entity.personnel.PaidHolidayListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksSummaryEntity;
 import com.kyouseipro.neo.repository.personnel.TimeworksListRepository;
@@ -37,7 +36,7 @@ public class TimeworksListService {
      * @param id 従業員ID
      * @return TimeworksListEntity または null
      */
-    public TimeworksListEntity getTodaysByEmployeeId(int id) {
+    public Optional<TimeworksListEntity> getTodaysByEmployeeId(int id) {
         return timeworksListRepository.findByTodaysByEmployeeId(id);
     }
 
@@ -91,7 +90,7 @@ public class TimeworksListService {
      * @param entity 従業員の勤怠データ
      * @return
      */
-    public Integer save(TimeworksListEntity entity, String editor) {
+    public int save(TimeworksListEntity entity, String editor) {
         if (entity.getTimeworks_id() > 0) {
             return timeworksListRepository.update(entity, editor);
         } else {
@@ -105,7 +104,7 @@ public class TimeworksListService {
      * @param id 従業員のID
      * @return
      */
-    public Integer reverseConfirm(int id, String editor) {
+    public int reverseConfirm(int id, String editor) {
         return timeworksListRepository.reverseConfirm(id, editor);
     }
 
@@ -115,7 +114,7 @@ public class TimeworksListService {
      * @param list 修正した従業員の勤怠データリスト
      * @return
      */
-    public Integer updateList(List<TimeworksListEntity> list, String editor) {
+    public int updateList(List<TimeworksListEntity> list, String editor) {
         return timeworksListRepository.updateList(list, editor);
     }
 

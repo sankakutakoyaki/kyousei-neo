@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.controller.api.corporation;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,7 +33,7 @@ public class StaffApiController {
      */
     @PostMapping("/staff/get/id")
 	@ResponseBody
-    public StaffEntity getById(@RequestParam int id) {
+    public Optional<StaffEntity> getById(@RequestParam int id) {
         return staffService.getById(id);
     }
    

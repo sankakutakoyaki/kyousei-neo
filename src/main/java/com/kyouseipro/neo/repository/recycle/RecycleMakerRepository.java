@@ -117,7 +117,7 @@ public class RecycleMakerRepository {
             );
 
             if (count == 0) {
-                throw new BusinessException("更新対象が存在しません");
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
             return count;
@@ -149,7 +149,7 @@ public class RecycleMakerRepository {
             ps -> RecycleMakerParameterBinder.bindDeleteByIds(ps, ids)
         );
         if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
 
         return count;
@@ -159,7 +159,7 @@ public class RecycleMakerRepository {
      * IDで指定したENTITYのCSVファイルをダウンロードする。
      * @param list
      * @param editor
-     * @return Idsで選択したEntityリストを返す。
+     * @return listで選択したEntityリストを返す。
      */
     public List<RecycleMakerEntity> downloadCsvByIds(List<SimpleData> list) {
 

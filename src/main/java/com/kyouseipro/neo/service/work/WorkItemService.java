@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.service.work;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -15,43 +16,42 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WorkItemService {
     private final WorkItemRepository workItemRepository;
+
     /**
-     * 指定されたIDの受注情報を取得します。
-     * 論理削除されている場合は null を返します。
-     *
-     * @param id 受注ID
-     * @return OrderEntity または null
+     * IDによる取得。
+     * @param id
+     * @return IDから取得したEntityを返す。
      */
-    public WorkItemEntity getById(int id) {
+    public Optional<WorkItemEntity> getById(int id) {
         return workItemRepository.findById(id);
     }
 
     /**
-     * 
+     * IDによる取得（CategoryIDで指定）。
      * @param id
-     * @return
+     * @return IDから取得したEntityを返す。
      */
     public List<WorkItemEntity> getByCategoryId(int id) {
         return workItemRepository.findAllByCategoryId(id);
     }
 
     /**
-     * リストを取得
-     * @return
+     * 全件取得。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
      */
     public List<WorkItemEntity> getList() {
         return workItemRepository.findAll();
     }
 
     /**
-     * 商品情報を登録・更新します。
+     * Entityを登録・更新します。
      * IDが０の時は登録・０以上の時は更新します。
-     * 
      * @param entity
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer save(WorkItemEntity item, String editor) {
+    public int save(WorkItemEntity item, String editor) {
         if (item.getWork_item_id() > 0) {
             return workItemRepository.update(item, editor);
         } else {
@@ -61,18 +61,20 @@ public class WorkItemService {
     }
 
     /**
-     * IDからOrderItemを削除
-     * @param ids
-     * @return
+     * IDで指定したENTITYを論理削除。
+     * @param list
+     * @param editor
+     * @return 成功件数を返す。
      */
-    public Integer deleteByIds(List<SimpleData> list, String userName) {
+    public int deleteByIds(List<SimpleData> list, String userName) {
         return workItemRepository.deleteByIds(list, userName);
     }
 
     /**
-     * IDからCsv用文字列を取得
-     * @param ids
-     * @return
+     * IDで指定したENTITYのCSVファイルをダウンロードする。
+     * @param list
+     * @param editor
+     * @return listで選択したEntityリストを返す。
      */
     public String downloadCsvByIds(List<SimpleData> list) {
         List<WorkItemEntity> recycles = workItemRepository.downloadCsvByIds(list);

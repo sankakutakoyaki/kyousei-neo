@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.security.Security;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 @RestController
@@ -60,7 +61,7 @@ public class PushApiController {
     @PostMapping("/subscribe")
     public boolean subscribe(@RequestBody SubscriptionRequest subscriptionRequest, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        SubscriptionRequest result = pushRepository.findByEndpoint(subscriptionRequest.getEndpoint());
+        Optional<SubscriptionRequest> result = pushRepository.findByEndpoint(subscriptionRequest.getEndpoint());
         if (result == null) {
             pushRepository.save(subscriptionRequest, userName);
             System.out.println("Push scribe!");

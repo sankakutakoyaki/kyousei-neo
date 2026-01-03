@@ -113,7 +113,7 @@ public class RecycleItemRepository {
             );
 
             if (count == 0) {
-                throw new BusinessException("更新対象が存在しません");
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
             return count;
@@ -150,7 +150,7 @@ public class RecycleItemRepository {
             ps -> RecycleItemParameterBinder.bindDeleteForIds(ps, ids)
         );
         if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
 
         return count;

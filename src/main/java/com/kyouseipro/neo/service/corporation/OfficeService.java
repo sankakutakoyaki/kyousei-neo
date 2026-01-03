@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.service.corporation;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class OfficeService {
      * @param id 支店ID
      * @return OfficeEntity または null
      */
-    public OfficeEntity getById(int id) {
+    public Optional<OfficeEntity> getById(int id) {
         return officeRepository.findById(id);
     }
 
@@ -35,7 +36,7 @@ public class OfficeService {
      * @param editor
      * @return
     */
-    public Integer save(OfficeEntity entity, String editor) {
+    public int save(OfficeEntity entity, String editor) {
         if (entity.getOffice_id() > 0) {
             return officeRepository.update(entity, editor);
         } else {
@@ -48,7 +49,7 @@ public class OfficeService {
      * @param ids
      * @return
      */
-    public Integer deleteByIds(List<SimpleData> list, String userName) {
+    public int deleteByIds(List<SimpleData> list, String userName) {
         return officeRepository.deleteByIds(list, userName);
     }
 

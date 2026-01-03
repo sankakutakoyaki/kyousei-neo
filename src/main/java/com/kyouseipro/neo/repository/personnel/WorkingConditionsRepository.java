@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
 import com.kyouseipro.neo.mapper.personnel.WorkingConditionsEntityMapper;
@@ -77,13 +76,13 @@ public class WorkingConditionsRepository {
     public int insert(WorkingConditionsEntity entity, String editor) {
         String sql = WorkingConditionsSqlBuilder.buildInsert();
 
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, entity) -> WorkingConditionsParameterBinder.bindInsert(pstmt, entity, editor),
-        //     rs -> rs.next() ? rs.getInt("working_conditions_id") : null,
-        //     w
-        // );
-        try {
+        // // return sqlRepository.execute(
+        // //     sql,
+        // //     (pstmt, entity) -> WorkingConditionsParameterBinder.bindInsert(pstmt, entity, editor),
+        // //     rs -> rs.next() ? rs.getInt("working_conditions_id") : null,
+        // //     w
+        // // );
+        // try {
             return sqlRepository.executeRequired(
                 sql,
                 (ps, en) -> WorkingConditionsParameterBinder.bindInsert(ps, en, editor),
@@ -100,12 +99,12 @@ public class WorkingConditionsRepository {
                 },
                 entity
             );
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -116,30 +115,30 @@ public class WorkingConditionsRepository {
     public int update(WorkingConditionsEntity entity, String editor) {
         String sql = WorkingConditionsSqlBuilder.buildUpdate();
 
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, entity) -> WorkingConditionsParameterBinder.bindUpdate(pstmt, entity, editor),
-        //     rs -> rs.next() ? rs.getInt("working_conditions_id") : null,
-        //     w
-        // );
-        try {
+        // // return sqlRepository.execute(
+        // //     sql,
+        // //     (pstmt, entity) -> WorkingConditionsParameterBinder.bindUpdate(pstmt, entity, editor),
+        // //     rs -> rs.next() ? rs.getInt("working_conditions_id") : null,
+        // //     w
+        // // );
+        // try {
             int count = sqlRepository.executeUpdate(
                 sql,
                 ps -> WorkingConditionsParameterBinder.bindUpdate(ps, entity, editor)
             );
 
             if (count == 0) {
-                throw new BusinessException("更新対象が存在しません");
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
             return count;
 
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -167,7 +166,7 @@ public class WorkingConditionsRepository {
             ps -> WorkingConditionsParameterBinder.bindDeleteByIds(ps, ids, editor)
         );
         if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
 
         return count;

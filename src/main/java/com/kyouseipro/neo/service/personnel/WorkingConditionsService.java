@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.service.personnel;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class WorkingConditionsService {
      * @param id 労働条件ID
      * @return WorkingConditionsEntity または null
      */
-    public WorkingConditionsEntity getById(int id) {
+    public Optional<WorkingConditionsEntity> getById(int id) {
         return workingConditionsRepository.findById(id);
     }
 
@@ -34,7 +35,7 @@ public class WorkingConditionsService {
      * @param id 従業員ID
      * @return WorkingConditionsEntity または null
      */
-    public WorkingConditionsEntity getByEmployeeId(int id) {
+    public Optional<WorkingConditionsEntity> getByEmployeeId(int id) {
         return workingConditionsRepository.findByEmployeeId(id);
     }
 
@@ -46,7 +47,7 @@ public class WorkingConditionsService {
      * @param editor
      * @return
     */
-    public Integer save(WorkingConditionsEntity entity, String editor) {
+    public int save(WorkingConditionsEntity entity, String editor) {
         if (entity.getWorking_conditions_id() > 0) {
             return workingConditionsRepository.update(entity, editor);
         } else {
@@ -59,7 +60,7 @@ public class WorkingConditionsService {
      * @param ids
      * @return
      */
-    public Integer deleteByIds(List<SimpleData> list, String userName) {
+    public int deleteByIds(List<SimpleData> list, String userName) {
         return workingConditionsRepository.deleteByIds(list, userName);
     }
 

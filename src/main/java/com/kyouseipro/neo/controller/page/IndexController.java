@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.kyouseipro.neo.controller.abstracts.BaseController;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
@@ -23,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class IndexController {
+public class IndexController extends BaseController {
 	private final EmployeeService employeeService;
     private final HistoryService historyService;
 
@@ -44,18 +45,26 @@ public class IndexController {
 		mv.addObject("insertCss", "/css/index/home.css");
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
-		mv.addObject("entity", entity);
-		if (entity != null) {
-			mv.addObject("employeeId", entity.getEmployee_id());
-			// セッションに保持
-			session.setAttribute("userName", entity.getAccount());
-			session.setAttribute("companyId", entity.getCompany_id());
-			session.setAttribute("officeId", entity.getOffice_id());
+
+		EmployeeEntity loginUser = employeeService.getByAccount(userName)
+			.orElseThrow(() -> new IllegalStateException("ユーザーが存在しません"));
+		// セッションに保持
+		session.setAttribute("loginUser", loginUser);
+
+		// EmployeeEntity entity = employeeService.getByAccount(userName).orElse(null);
+		// mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
+		// mv.addObject("entity", entity);
+		if (loginUser  != null) {
+			mv.addObject("employeeId", loginUser.getEmployee_id());
+			
+			// session.setAttribute("loginUser", loginUser );
+			// session.setAttribute("userName", entity.getAccount());
+			// session.setAttribute("companyId", entity.getCompany_id());
+			// session.setAttribute("officeId", entity.getOffice_id());
 		} else {
 			mv.addObject("employeeId", 0);
 			// セッションに保持
-			session.setAttribute("userName", userName);
+			// session.setAttribute("userName", userName);
 			switch (userName) {
 				case "osaka@kyouseibin.com":
 					session.setAttribute("companyId", 1000);
@@ -79,7 +88,14 @@ public class IndexController {
 					break;
 			}
 		}
-		historyService.save(userName, "", "ログイン", 200, "ログインしました。");
+        // EmployeeEntity loginUser = (EmployeeEntity) session.getAttribute("loginUser");
+        // if (loginUser == null) {
+        //     throw new IllegalStateException("セッション切れ");
+        // }
+        // mv.addObject("user", loginUser);
+
+		EmployeeEntity user = getLoginUser(session);
+		historyService.save(user.getAccount(), "", "ログイン", 200, "ログインしました。");
         return mv;
     }
 	
@@ -91,14 +107,14 @@ public class IndexController {
 	 */
 	@PostMapping("/user/logout")
 	@ResponseBody
-    public void logOut(HttpServletRequest httpRequest, HttpServletResponse response, @AuthenticationPrincipal OidcUser principal) throws IOException {
+    public void logOut(HttpServletRequest httpRequest, HttpServletResponse response, @AuthenticationPrincipal OidcUser principal, HttpSession session) throws IOException {
         httpRequest.getSession().invalidate();
         String endSessionEndpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/logout";
 		String redirectUrl = "https://www.kyouseipro.com/";
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
 		historyService.save(userName, "", "ログアウト", 200, "ログアウトしました。");
-
+		session.invalidate();
 		response.sendRedirect(endSessionEndpoint + "?post_logout_redirect_uri=" + URLEncoder.encode(redirectUrl, "UTF-8"));
     }
 
@@ -110,7 +126,7 @@ public class IndexController {
 	@GetMapping("/list")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getList(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getList(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
 		mv.addObject("title", "一覧");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -118,11 +134,13 @@ public class IndexController {
         mv.addObject("bodyFragmentName", "contents/index/list :: bodyFragment");
         mv.addObject("insertCss", "/css/index/list.css");
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
-		mv.addObject("entity", entity);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
+		// mv.addObject("entity", entity);
+		// mv.addObject("entity", employeeService.getByAccount(userName).orElse(null));
 
-		historyService.save(userName, "list", "閲覧", 200, "");
+		EmployeeEntity user = getLoginUser(session);
+		historyService.save(user.getAccount(), "list", "閲覧", 200, "");
 		
         return mv;
     }	
@@ -135,7 +153,7 @@ public class IndexController {
 	@GetMapping("/sales")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getSales(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getSales(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
 		mv.addObject("title", "営業");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -143,11 +161,13 @@ public class IndexController {
         mv.addObject("bodyFragmentName", "contents/index/sales :: bodyFragment");
         mv.addObject("insertCss", "/css/index/sales.css");
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
-		mv.addObject("entity", entity);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
+		// mv.addObject("entity", entity);
+		// mv.addObject("entity", employeeService.getByAccount(userName).orElse(null));
 
-		historyService.save(userName, "sales", "閲覧", 200, "");
+		EmployeeEntity user = getLoginUser(session);
+		historyService.save(user.getAccount(), "sales", "閲覧", 200, "");
 		
         return mv;
     }
@@ -160,7 +180,7 @@ public class IndexController {
 	@GetMapping("/personnel")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getPersonnel(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getPersonnel(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
 		mv.addObject("title", "人事");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -168,11 +188,13 @@ public class IndexController {
         mv.addObject("bodyFragmentName", "contents/index/personnel :: bodyFragment");
         mv.addObject("insertCss", "/css/index/personnel.css");
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
-		mv.addObject("entity", entity);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
+		// mv.addObject("entity", entity);
+		// mv.addObject("entity", employeeService.getByAccount(userName).orElse(null));
 
-		historyService.save(userName, "personnel", "閲覧", 200, "");
+		EmployeeEntity user = getLoginUser(session);
+		historyService.save(user.getAccount(), "personnel", "閲覧", 200, "");
 		
         return mv;
     }
@@ -185,7 +207,7 @@ public class IndexController {
 	@GetMapping("/management")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getManagement(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getManagement(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
 		mv.addObject("title", "管理");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -193,11 +215,13 @@ public class IndexController {
         mv.addObject("bodyFragmentName", "contents/index/management :: bodyFragment");
         mv.addObject("insertCss", "/css/index/management.css");
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
-		mv.addObject("entity", entity);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
+		// mv.addObject("entity", entity);
+		// mv.addObject("entity", employeeService.getByAccount(userName).orElse(null));
 
-		historyService.save(userName, "management", "閲覧", 200, "");
+		EmployeeEntity user = getLoginUser(session);
+		historyService.save(user.getAccount(), "management", "閲覧", 200, "");
 		
         return mv;
     }
@@ -210,7 +234,7 @@ public class IndexController {
 	@GetMapping("/regist")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getRegistration(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getRegistration(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
 		mv.addObject("title", "登録");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -218,11 +242,13 @@ public class IndexController {
         mv.addObject("bodyFragmentName", "contents/index/regist :: bodyFragment");
         mv.addObject("insertCss", "/css/index/regist.css");
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
-		mv.addObject("entity", entity);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
+		// mv.addObject("entity", entity);
+		// mv.addObject("entity", employeeService.getByAccount(userName).orElse(null));
 
-		historyService.save(userName, "management", "閲覧", 200, "");
+		EmployeeEntity user = getLoginUser(session);
+		historyService.save(user.getAccount(), "management", "閲覧", 200, "");
 		
         return mv;
     }
@@ -235,7 +261,7 @@ public class IndexController {
 	@GetMapping("/recycle")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getRecycle(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getRecycle(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
 		mv.addObject("title", "リサイクル");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -243,11 +269,13 @@ public class IndexController {
         mv.addObject("bodyFragmentName", "contents/index/recycle :: bodyFragment");
         mv.addObject("insertCss", "/css/index/recycle.css");
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
-		mv.addObject("entity", entity);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
+		// mv.addObject("entity", entity);
+		// mv.addObject("entity", employeeService.getByAccount(userName).orElse(null));
 
-		historyService.save(userName, "recycle", "閲覧", 200, "");
+		EmployeeEntity user = getLoginUser(session);
+		historyService.save(user.getAccount(), "recycle", "閲覧", 200, "");
 		
         return mv;
     }

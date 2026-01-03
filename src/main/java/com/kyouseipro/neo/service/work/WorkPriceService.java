@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.service.work;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -15,35 +16,33 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WorkPriceService {
     private final WorkPriceRepository workPriceRepository;
+
     /**
-     * 指定されたIDの受注情報を取得します。
-     * 論理削除されている場合は null を返します。
-     *
-     * @param id 受注ID
-     * @return OrderEntity または null
+     * IDによる取得。
+     * @param id
+     * @return IDから取得したEntityを返す。
      */
-    public WorkPriceEntity getById(int id) {
+    public Optional<WorkPriceEntity> getById(int id) {
         return workPriceRepository.findById(id);
     }
 
     /**
-     * 荷主IDで指定した料金表を取得
+     * IDによる取得（CompanyIDで指定）。
      * @param id
-     * @return
+     * @return IDから取得したEntityを返す。
      */
     public List<WorkPriceEntity> getListByCompanyId(int id) {
         return workPriceRepository.findAllByCompanyId(id);
     }
 
     /**
-     * 商品情報を登録・更新します。
+     * Entityを登録・更新します。
      * IDが０の時は登録・０以上の時は更新します。
-     * 
      * @param entity
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer save(WorkPriceEntity item, String editor) {
+    public int save(WorkPriceEntity item, String editor) {
         if (item.getWork_price_id() > 0) {
             return workPriceRepository.update(item, editor);
         } else {
@@ -52,9 +51,10 @@ public class WorkPriceService {
     }
 
     /**
-     * IDからCsv用文字列を取得
-     * @param ids
-     * @return
+     * IDで指定したENTITYのCSVファイルをダウンロードする。
+     * @param list
+     * @param editor
+     * @return listで選択したEntityリストを返す。
      */
     public String downloadCsvByIds(List<SimpleData> list) {
         List<WorkPriceEntity> workPrices = workPriceRepository.downloadCsvByIds(list);

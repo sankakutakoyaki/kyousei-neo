@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class RecycleMakerApiController {
     private final RecycleMakerService recycleMakerService;
     private final HistoryService historyService;
+
     /**
      * IDからEntityを取得する
      * @param ID
@@ -32,15 +33,21 @@ public class RecycleMakerApiController {
      */
     @PostMapping("/recycle/maker/get/id")
 	@ResponseBody
-    public ResponseEntity getById(@RequestParam int id) {
-        RecycleMakerEntity entity = recycleMakerService.getById(id);
-        if (entity != null) {
-            return ResponseEntity.ok(entity);
-        } else {
-            return ResponseEntity.ofNullable(null);
-        }
-    }
+    // public ResponseEntity getById(@RequestParam int id) {
+    //     RecycleMakerEntity entity = recycleMakerService.getById(id);
+    //     if (entity != null) {
+    //         return ResponseEntity.ok(entity);
+    //     } else {
+    //         return ResponseEntity.ofNullable(null);
+    //     }
+    // }
+    public ResponseEntity<RecycleMakerEntity> getById(@RequestParam int id) {
 
+        return recycleMakerService.getById(id)
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+   
     /**
      * CodeからEntityを取得する
      * @param ID
@@ -48,14 +55,21 @@ public class RecycleMakerApiController {
      */
     @PostMapping("/recycle/maker/get/code")
 	@ResponseBody
-    public ResponseEntity getByCode(@RequestParam int code) {
-        RecycleMakerEntity entity = recycleMakerService.getByCode(code);
-        if (entity != null) {
-            return ResponseEntity.ok(entity);
-        } else {
-            return ResponseEntity.ofNullable(null);
-        }
+    // public ResponseEntity getByCode(@RequestParam int code) {
+    //     RecycleMakerEntity entity = recycleMakerService.getByCode(code);
+    //     if (entity != null) {
+    //         return ResponseEntity.ok(entity);
+    //     } else {
+    //         return ResponseEntity.ofNullable(null);
+    //     }
+    // }
+    public ResponseEntity<RecycleMakerEntity> getByCode(@RequestParam int code) {
+
+        return recycleMakerService.getByCode(code)
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
     /**
      * EntityListを取得する
      * @return

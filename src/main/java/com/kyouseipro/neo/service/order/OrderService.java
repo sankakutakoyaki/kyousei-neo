@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.service.order;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -32,18 +33,48 @@ public class OrderService {
      * @param id 受注ID
      * @return OrderEntity または null
      */
-    public OrderEntity getById(String sql, int id) {
-        OrderEntity orderEntity = orderRepository.findById(sql, id);
-        List<OrderItemEntity> orderItemEntityList = orderItemRepository.findAllByOrderId(id, null);
-        List<DeliveryStaffEntity> deliveryStaffEntityList = deliveryStaffRepository.findAllByOrderId(id, null);
-        List<WorkContentEntity> workContentEntityList = workContentRepository.findAllByOrderId(id, null);
-        orderEntity.setItem_list(orderItemEntityList);
-        orderEntity.setStaff_list(deliveryStaffEntityList);
-        orderEntity.setWork_list(workContentEntityList);
-        return orderEntity;
+    // public Optional<OrderEntity> getById(int id) {
+    //     Optional<OrderEntity> orderEntity = orderRepository.findById(id);
+    //     List<OrderItemEntity> orderItemEntityList = orderItemRepository.findAllByOrderId(id, null);
+    //     List<DeliveryStaffEntity> deliveryStaffEntityList = deliveryStaffRepository.findAllByOrderId(id, null);
+    //     List<WorkContentEntity> workContentEntityList = workContentRepository.findAllByOrderId(id, null);
+    //     orderEntity.setItem_list(orderItemEntityList);
+    //     orderEntity.setStaff_list(deliveryStaffEntityList);
+    //     orderEntity.setWork_list(workContentEntityList);
+    //     return orderEntity;
+    // }
+    public Optional<OrderEntity> getById(int id) {
+        Optional<OrderEntity> opt = orderRepository.findById(id);
+
+        if (opt.isEmpty()) {
+            return Optional.empty();
+        }
+
+        OrderEntity order = opt.get();
+
+        order.setItem_list(
+            orderItemRepository.findAllByOrderId(id, null)
+        );
+        order.setStaff_list(
+            deliveryStaffRepository.findAllByOrderId(id, null)
+        );
+        order.setWork_list(
+            workContentRepository.findAllByOrderId(id, null)
+        );
+
+        return Optional.of(order);
     }
 
-    public Integer save(OrderEntity entity, 
+    /**
+     * 保存
+     * @param entity
+     * @param itemEntityList
+     * @param staffEntityList
+     * @param workContentEntityList
+     * @param editor
+     * @return
+     */
+    public int save(OrderEntity entity, 
                          List<OrderItemEntity> itemEntityList,
                          List<DeliveryStaffEntity> staffEntityList,
                          List<WorkContentEntity> workContentEntityList,
@@ -57,7 +88,7 @@ public class OrderService {
      * @param ids
      * @return
      */
-    public Integer deleteByIds(List<SimpleData> list, String userName) {
+    public int deleteByIds(List<SimpleData> list, String userName) {
         return orderRepository.deleteByIds(list, userName);
     }
 

@@ -127,7 +127,7 @@ public class WorkItemRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    public Integer update(WorkItemEntity entity, String editor) {
+    public int update(WorkItemEntity entity, String editor) {
         String sql = WorkItemSqlBuilder.buildUpdate(1);
 
         // Integer result = sqlRepository.executeUpdate(
@@ -143,7 +143,7 @@ public class WorkItemRepository {
             );
 
             if (count == 0) {
-                throw new BusinessException("更新対象が存在しません");
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
             return count;
@@ -180,7 +180,7 @@ public class WorkItemRepository {
             ps -> WorkItemParameterBinder.bindDeleteByIds(ps, ids, editor)
         );
         if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
 
         return count;

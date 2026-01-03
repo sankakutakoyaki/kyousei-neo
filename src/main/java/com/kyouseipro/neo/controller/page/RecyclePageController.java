@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.controller.abstracts.BaseController;
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
@@ -19,16 +20,15 @@ import com.kyouseipro.neo.entity.recycle.RecycleEntity;
 import com.kyouseipro.neo.entity.recycle.RecycleMakerEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.personnel.EmployeeService;
 import com.kyouseipro.neo.service.recycle.RecycleMakerService;
 import com.kyouseipro.neo.service.recycle.RecycleService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class RecyclePageController {
-    private final EmployeeService employeeService;
+public class RecyclePageController extends BaseController {
     private final RecycleService recycleService;
     private final RecycleMakerService recycleMakerService;
     private final HistoryService historyService;
@@ -37,7 +37,7 @@ public class RecyclePageController {
 	@GetMapping("/recycle/regist")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getRecycle(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getRecycle(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "登録");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -46,9 +46,10 @@ public class RecyclePageController {
         mv.addObject("insertCss", "/css/recycle/recycle.css");
 
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getByAccount(userName);
-		mv.addObject("user", user);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity user = employeeService.getByAccount(userName);
+		// mv.addObject("user", user);
+        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new RecycleEntity());
@@ -65,8 +66,8 @@ public class RecyclePageController {
 
         mv.addObject("deleteCode", Enums.state.DELETE.getCode());
 
-        // 履歴保存
-        historyService.save(userName, "recycle", "閲覧", 0, "");
+        EmployeeEntity user = getLoginUser(session);
+        historyService.save(user.getAccount(), "recycle", "閲覧", 0, "");
 		
         return mv;
     }
@@ -74,7 +75,7 @@ public class RecyclePageController {
 	@GetMapping("/recycle/maker")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getMaker(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getMaker(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "登録");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -83,9 +84,10 @@ public class RecyclePageController {
         mv.addObject("insertCss", "/css/recycle/maker.css");
 
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getByAccount(userName);
-		mv.addObject("user", user);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity user = employeeService.getByAccount(userName);
+		// mv.addObject("user", user);
+        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new RecycleMakerEntity());
@@ -99,8 +101,8 @@ public class RecyclePageController {
 
         mv.addObject("otherCode", 3);
 
-        // 履歴保存
-        historyService.save(userName, "recycle", "閲覧", 0, "");
+        EmployeeEntity user = getLoginUser(session);
+        historyService.save(user.getAccount(), "recycle", "閲覧", 0, "");
 		
         return mv;
     }

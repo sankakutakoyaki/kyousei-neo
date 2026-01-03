@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.controller.api.personnel;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,7 +33,7 @@ public class EmployeeApiController {
      */
     @PostMapping("/employee/get/id")
 	@ResponseBody
-    public EmployeeEntity getById(@RequestParam int id) {
+    public Optional<EmployeeEntity> getById(@RequestParam int id) {
         return employeeService.getById(id);
     }
 

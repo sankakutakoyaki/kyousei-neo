@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.controller.api.work;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,10 +34,15 @@ public class WorkItemApiController {
      */
     @PostMapping("/work/item/get/id")
 	@ResponseBody
-    public WorkItemEntity getById(@RequestParam int id) {
+    public Optional<WorkItemEntity> getById(@RequestParam int id) {
         return workItemService.getById(id);
     }
 
+    /**
+     * 
+     * @param id
+     * @return
+     */
     @PostMapping("/work/item/get/category")
 	@ResponseBody
     public List<WorkItemEntity> getByCategoryId(@RequestParam int id) {

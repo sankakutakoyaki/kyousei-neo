@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,20 +50,44 @@ public class TimeworksListApiController {
      */
     @PostMapping("/timeworks/get/today/id")
 	@ResponseBody
-    public TimeworksListEntity getTodaysByEmployeeId(@RequestParam int id) {
-        TimeworksListEntity entity = timeworksListService.getTodaysByEmployeeId(id);
-        if (entity == null) {
-            entity = new TimeworksListEntity();
-            EmployeeEntity emp = employeeService.getById(id);
-            if (emp != null) {
-                entity.setEmployee_id(emp.getEmployee_id());
-                entity.setFull_name(emp.getFull_name());
-                entity.setWork_date(LocalDate.now());
-            } else {
-                return entity;
-            }
+    // public Optional<TimeworksListEntity> getTodaysByEmployeeId(@RequestParam int id) {
+    //     Optional<TimeworksListEntity> entity = timeworksListService.getTodaysByEmployeeId(id);
+    //     if (entity == null) {
+    //         entity = new TimeworksListEntity();
+    //         Optional<EmployeeEntity> emp = employeeService.getById(id);
+    //         if (emp != null) {
+    //             entity.setEmployee_id(emp.getEmployee_id());
+    //             entity.setFull_name(emp.getFull_name());
+    //             entity.setWork_date(LocalDate.now());
+    //         } else {
+    //             return entity;
+    //         }
+    //     }
+    //     return entity;
+    // }
+    public Optional<TimeworksListEntity> getTodaysByEmployeeId(@RequestParam int id) {
+        Optional<TimeworksListEntity> opt =
+                timeworksListService.getTodaysByEmployeeId(id);
+
+        // 既に存在するならそのまま返す
+        if (opt.isPresent()) {
+            return opt;
         }
-        return entity;
+
+        // 存在しない場合は新規作成
+        Optional<EmployeeEntity> empOpt = employeeService.getById(id);
+        if (empOpt.isEmpty()) {
+            return Optional.empty();
+        }
+
+        EmployeeEntity emp = empOpt.get();
+
+        TimeworksListEntity entity = new TimeworksListEntity();
+        entity.setEmployee_id(emp.getEmployee_id());
+        entity.setFull_name(emp.getFull_name());
+        entity.setWork_date(LocalDate.now());
+
+        return Optional.of(entity);
     }
 
     /**

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
@@ -41,7 +40,7 @@ public class QualificationsRepository {
             // EmployeeEntity entity = employeeRepository.findById(employeeId);
             // int id = entity.getEmployee_id();
         EmployeeEntity entity = employeeRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("社員が見つかりません: " + id));
+            .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
 
         int targetId = entity.getEmployee_id();
 
@@ -134,13 +133,13 @@ public class QualificationsRepository {
     public int insert(QualificationsEntity entity, String editor) {
         String sql = QualificationsSqlBuilder.buildInsert();
 
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, ent) -> QualificationsParameterBinder.bindInsert(pstmt, ent, editor),
-        //     rs -> rs.next() ? rs.getInt("qualifications_id") : null,
-        //     q
-        // );
-        try {
+        // // return sqlRepository.execute(
+        // //     sql,
+        // //     (pstmt, ent) -> QualificationsParameterBinder.bindInsert(pstmt, ent, editor),
+        // //     rs -> rs.next() ? rs.getInt("qualifications_id") : null,
+        // //     q
+        // // );
+        // try {
             return sqlRepository.executeRequired(
                 sql,
                 (ps, en) -> QualificationsParameterBinder.bindInsert(ps, en, editor),
@@ -157,12 +156,12 @@ public class QualificationsRepository {
                 },
                 entity
             );
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -173,30 +172,30 @@ public class QualificationsRepository {
     public int update(QualificationsEntity entity, String editor) {
         String sql = QualificationsSqlBuilder.buildUpdate();
 
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, ent) -> QualificationsParameterBinder.bindUpdate(pstmt, ent, editor),
-        //     rs -> rs.next() ? rs.getInt("qualifications_id") : null,
-        //     q
-        // );
-        try {
+        // // return sqlRepository.execute(
+        // //     sql,
+        // //     (pstmt, ent) -> QualificationsParameterBinder.bindUpdate(pstmt, ent, editor),
+        // //     rs -> rs.next() ? rs.getInt("qualifications_id") : null,
+        // //     q
+        // // );
+        // try {
             int count = sqlRepository.executeUpdate(
                 sql,
                 ps -> QualificationsParameterBinder.bindUpdate(ps, entity, editor)
             );
 
             if (count == 0) {
-                throw new BusinessException("更新対象が存在しません");
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
             return count;
 
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -219,7 +218,7 @@ public class QualificationsRepository {
             ps -> QualificationsParameterBinder.bindDelete(ps, id, editor)
         );
         if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
 
         return count;
@@ -248,7 +247,7 @@ public class QualificationsRepository {
             ps -> QualificationsParameterBinder.bindDeleteForIds(ps, ids, editor)
         );
         if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
 
         return count;

@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
 import com.kyouseipro.neo.interfaceis.FileUpload;
 import com.kyouseipro.neo.mapper.qualification.QualificationFilesEntityMapper;
@@ -26,7 +25,7 @@ public class QualificationFilesRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public Optional<QualificationFilesEntity> findById(Integer id) {
+    public Optional<QualificationFilesEntity> findById(int id) {
         String sql = QualificationFilesSqlBuilder.buildFindById();
 
         return sqlRepository.executeQuery(
@@ -42,7 +41,7 @@ public class QualificationFilesRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public List<QualificationFilesEntity> findByQualificationsId(Integer id) {
+    public List<QualificationFilesEntity> findByQualificationsId(int id) {
         String sql = QualificationFilesSqlBuilder.buildFindAllByQualificationsId();
 
         return sqlRepository.findAll(
@@ -57,20 +56,20 @@ public class QualificationFilesRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    public int insert(List<FileUpload> list, String editor, Integer id) {
+    public int insert(List<FileUpload> list, String editor, int id) {
         String sql = QualificationFilesSqlBuilder.buildInsert(list.size());
-        // return sqlRepository.executeUpdate(
-        //     sql,
-        //     ps -> QualificationFilesParameterBinder.bindInsert(ps, entities, editor, id)
-        // );
-        // String sql = TimeworksListSqlBuilder.buildUpdate(); // UPDATE ... WHERE id = ?
+        // // return sqlRepository.executeUpdate(
+        // //     sql,
+        // //     ps -> QualificationFilesParameterBinder.bindInsert(ps, entities, editor, id)
+        // // );
+        // // String sql = TimeworksListSqlBuilder.buildUpdate(); // UPDATE ... WHERE id = ?
 
-        // return sqlRepository.executeBatch(
-        //     sql,
-        //     (ps, en) -> TimeworksListParameterBinder.bindUpdate(ps, en, editor),
-        //     list
-        // );
-        try {
+        // // return sqlRepository.executeBatch(
+        // //     sql,
+        // //     (ps, en) -> TimeworksListParameterBinder.bindUpdate(ps, en, editor),
+        // //     list
+        // // );
+        // try {
             int count = sqlRepository.executeBatch(
                 sql,
                 (ps, en) -> QualificationFilesParameterBinder.bindInsert(ps, en, editor, id),
@@ -78,17 +77,17 @@ public class QualificationFilesRepository {
             );
 
             if (count == 0) {
-                throw new BusinessException("更新対象が存在しません");
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
             return count;
 
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("このコードはすでに使用されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**
@@ -97,7 +96,7 @@ public class QualificationFilesRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public Integer delete(String url, String editor) {
+    public int delete(String url, String editor) {
         String sql = QualificationFilesSqlBuilder.buildDelete();
 
         // return sqlRepository.executeUpdate(
@@ -109,7 +108,7 @@ public class QualificationFilesRepository {
             ps -> QualificationFilesParameterBinder.bindDelete(ps, url, editor)
         );
         if (count == 0) {
-            throw new BusinessException("削除対象が存在しません");
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
 
         return count;

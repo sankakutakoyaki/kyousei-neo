@@ -40,13 +40,19 @@ public class RecycleApiController {
      */
     @PostMapping("/recycle/get/id")
 	@ResponseBody
-    public ResponseEntity getById(@RequestParam int id) {
-        RecycleEntity entity = recycleService.getById(id);
-        if (entity != null) {
-            return ResponseEntity.ok(entity);
-        } else {
-            return ResponseEntity.ofNullable(null);
-        }
+    // public ResponseEntity getById(@RequestParam int id) {
+    //     RecycleEntity entity = recycleService.getById(id);
+    //     if (entity != null) {
+    //         return ResponseEntity.ok(entity);
+    //     } else {
+    //         return ResponseEntity.ofNullable(null);
+    //     }
+    // }
+    public ResponseEntity<RecycleEntity> getById(@RequestParam int id) {
+
+        return recycleService.getById(id)
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
@@ -56,13 +62,19 @@ public class RecycleApiController {
      */
     @PostMapping("/recycle/exists/number")
     @ResponseBody
-    public ResponseEntity existsByNmbe(@RequestParam String num) {
-        RecycleEntity entity = recycleService.existsByNumber(num);
-        if (entity != null) {
-            return ResponseEntity.ok(entity);
-        } else {
-            return ResponseEntity.ofNullable(null);
-        }
+    // public Optional<ResponseEntity> existsByNmbe(@RequestParam String num) {
+    //     RecycleEntity entity = recycleService.existsByNumber(num);
+    //     if (entity != null) {
+    //         return ResponseEntity.ok(entity);
+    //     } else {
+    //         return ResponseEntity.ofNullable(null);
+    //     }
+    // }
+    public ResponseEntity<RecycleEntity> findByNumber(@RequestParam String num) {
+
+        return recycleService.existsByNumber(num)
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**

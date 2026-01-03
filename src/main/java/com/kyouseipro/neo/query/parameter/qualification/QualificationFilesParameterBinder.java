@@ -2,7 +2,6 @@ package com.kyouseipro.neo.query.parameter.qualification;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;

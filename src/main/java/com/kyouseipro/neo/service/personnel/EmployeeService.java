@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.service.personnel;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class EmployeeService {
      * @param id 従業員ID
      * @return EmployeeEntity または null
      */
-    public EmployeeEntity getById(int id) {
+    public Optional<EmployeeEntity> getById(int id) {
         return employeeRepository.findById(id);
     }
 
@@ -35,7 +36,7 @@ public class EmployeeService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public Integer save(EmployeeEntity entity, String editor) {
+    public int save(EmployeeEntity entity, String editor) {
         if (entity.getEmployee_id() > 0) {
             return employeeRepository.update(entity, editor);
         } else {
@@ -48,7 +49,7 @@ public class EmployeeService {
      * @param account
      * @return
      */
-    public EmployeeEntity getByAccount(String account) {
+    public Optional<EmployeeEntity> getByAccount(String account) {
         return employeeRepository.findByAccount(account);
     }
 
@@ -57,7 +58,7 @@ public class EmployeeService {
      * @param ids
      * @return
      */
-    public Integer deleteByIds(List<SimpleData> list, String userName) {
+    public int deleteByIds(List<SimpleData> list, String userName) {
         return employeeRepository.deleteByIds(list, userName);
     }
 

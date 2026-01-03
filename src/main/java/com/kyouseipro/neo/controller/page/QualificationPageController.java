@@ -11,20 +11,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.controller.abstracts.BaseController;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.personnel.EmployeeService;
 import com.kyouseipro.neo.service.qualification.QualificationsService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class QualificationPageController {
-    private final EmployeeService employeeService;
+public class QualificationPageController extends BaseController {
     private final HistoryService historyService;
     private final ComboBoxService comboBoxService;
     private final QualificationsService qualificationsService;
@@ -37,7 +37,7 @@ public class QualificationPageController {
 	@GetMapping("/qualifications")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getQualifications(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getQualifications(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "資格");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -46,9 +46,10 @@ public class QualificationPageController {
         mv.addObject("insertCss", "/css/qualifications/qualifications.css");
 
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = (EmployeeEntity) employeeService.getByAccount(userName);
-		mv.addObject("user", user);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity user = employeeService.getByAccount(userName);
+		// mv.addObject("user", user);
+        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new QualificationsEntity());
@@ -61,8 +62,9 @@ public class QualificationPageController {
 
         mv.addObject("url", "/employee/get/id");
         mv.addObject("owner_category", 0);
-        // 履歴保存
-        historyService.save(userName, "qualifications", "閲覧", 200, "");
+
+        EmployeeEntity user = getLoginUser(session);
+        historyService.save(user.getAccount(), "qualifications", "閲覧", 200, "");
 		
         return mv;
     }
@@ -75,7 +77,7 @@ public class QualificationPageController {
 	@GetMapping("/license")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getLicense(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getLicense(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "許認可");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -84,9 +86,10 @@ public class QualificationPageController {
         mv.addObject("insertCss", "/css/qualifications/qualifications.css");
 
 		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = (EmployeeEntity) employeeService.getByAccount(userName);
-		mv.addObject("user", user);
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity user = employeeService.getByAccount(userName);
+		// mv.addObject("user", user);
+        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new QualificationsEntity());
@@ -100,8 +103,9 @@ public class QualificationPageController {
 
         mv.addObject("url", "/company/get/id");
         mv.addObject("owner_category", Enums.clientCategory.PARTNER.getCode());
-        // 履歴保存
-        historyService.save(userName, "qualifications", "閲覧", 200, "");
+
+        EmployeeEntity user = getLoginUser(session);
+        historyService.save(user.getAccount(), "qualifications", "閲覧", 200, "");
 		
         return mv;
     }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.controller.abstracts.BaseController;
 import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
 import com.kyouseipro.neo.entity.corporation.OfficeEntity;
@@ -24,14 +25,13 @@ import com.kyouseipro.neo.service.corporation.CompanyListService;
 import com.kyouseipro.neo.service.corporation.OfficeListService;
 import com.kyouseipro.neo.service.corporation.StaffListService;
 import com.kyouseipro.neo.service.document.HistoryService;
-import com.kyouseipro.neo.service.personnel.EmployeeService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class CorporationPageController {
-    private final EmployeeService employeeService;
+public class CorporationPageController extends BaseController {
     private final CompanyListService companyListService;
     private final OfficeListService officeListService;
     private final StaffListService staffListService;
@@ -45,7 +45,7 @@ public class CorporationPageController {
 	@GetMapping("/client")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getClient(ModelAndView mv, @AuthenticationPrincipal OidcUser principal) {
+	public ModelAndView getClient(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "取引先");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -53,10 +53,9 @@ public class CorporationPageController {
         mv.addObject("bodyFragmentName", "contents/corporation/client :: bodyFragment");
         mv.addObject("insertCss", "/css/corporation/client.css");
 
-		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity user = employeeService.getByAccount(userName);
-		mv.addObject("user", user);
+		// // ユーザー名
+		// String userName = principal.getAttribute("preferred_username");
+		// mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
 
         // 初期化されたエンティティ
         mv.addObject("companyEntity", new CompanyEntity());
@@ -86,8 +85,11 @@ public class CorporationPageController {
         mv.addObject("categoryServiceCode", Enums.clientCategory.SERVICE.getCode());
         mv.addObject("categoryTransportCode", Enums.clientCategory.TRANSPORT.getCode());
 
+        EmployeeEntity user = getLoginUser(session);
         // 履歴保存
-        historyService.save(userName, "companies", "閲覧", 200, "");
+        historyService.save(user.getAccount(), "companies", "閲覧", 200, "");
+
+        // mv.addObject("user", user);
 		
         return mv;
     }

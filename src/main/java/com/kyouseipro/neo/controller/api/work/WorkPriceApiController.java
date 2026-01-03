@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.controller.api.work;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,7 +33,7 @@ public class WorkPriceApiController {
      */
     @PostMapping("/work/price/get/id")
 	@ResponseBody
-    public WorkPriceEntity getById(@RequestParam int id) {
+    public Optional<WorkPriceEntity> getById(@RequestParam int id) {
         return workPriceService.getById(id);
     }
 

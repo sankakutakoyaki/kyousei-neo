@@ -2,6 +2,7 @@ package com.kyouseipro.neo.controller.api.order;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,7 +21,6 @@ import com.kyouseipro.neo.entity.order.DeliveryStaffEntity;
 import com.kyouseipro.neo.entity.order.OrderEntity;
 import com.kyouseipro.neo.entity.order.OrderItemEntity;
 import com.kyouseipro.neo.entity.order.WorkContentEntity;
-import com.kyouseipro.neo.query.sql.order.OrderSqlBuilder;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.order.OrderService;
 
@@ -40,9 +40,9 @@ public class OrderApiController {
      */
     @PostMapping("/order/get/id")
 	@ResponseBody
-    public OrderEntity getById(@RequestParam int id) {
-        String sql = OrderSqlBuilder.buildFindById();
-        return orderService.getById(sql, id);
+    public Optional<OrderEntity> getById(@RequestParam int id) {
+        // String sql = OrderSqlBuilder.buildFindById();
+        return orderService.getById(id);
     }
 
     /**

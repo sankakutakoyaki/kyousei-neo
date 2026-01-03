@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.controller.api.personnel;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,7 +33,7 @@ public class WorkingConditionsApiController {
      */
     @PostMapping("/working_conditions/get/id")
 	@ResponseBody
-    public WorkingConditionsEntity getById(@RequestParam int id) {
+    public Optional<WorkingConditionsEntity> getById(@RequestParam int id) {
             return workingConditionsService.getById(id);
     }
 
@@ -43,7 +44,7 @@ public class WorkingConditionsApiController {
      */
     @PostMapping("/working_conditions/get/employeeid")
 	@ResponseBody
-    public WorkingConditionsEntity getByEmployeeId(@RequestParam int id) {
+    public Optional<WorkingConditionsEntity> getByEmployeeId(@RequestParam int id) {
             return workingConditionsService.getByEmployeeId(id);
     }
 
