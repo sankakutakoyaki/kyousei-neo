@@ -24,7 +24,7 @@ public class OfficeListApiController {
      * EntityListを取得する
      * @return
      */
-    @GetMapping("/office/get/list")
+    @GetMapping("/api/office/get/list")
 	@ResponseBody
     public List<OfficeListEntity> getList() {
         return officeListService.getList();
@@ -34,7 +34,7 @@ public class OfficeListApiController {
      * カテゴリー別のEntityListを取得する
      * @return
      */
-    @PostMapping("/office/get/list/category")
+    @PostMapping("/api/office/get/list/category")
 	@ResponseBody
     public List<OfficeListEntity> getListByCategoryId(@RequestParam int category) {
         return officeListService.getListByCategoryId(category);
@@ -44,7 +44,7 @@ public class OfficeListApiController {
      * EntityListを取得する
      * @return
      */
-    @GetMapping("/office/get/combo")
+    @GetMapping("/api/office/get/combo")
 	@ResponseBody
     public List<OfficeListEntity> getCombo() {
         return comboBoxService.getOfficeList();

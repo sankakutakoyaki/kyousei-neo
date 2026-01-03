@@ -20,7 +20,7 @@ public class StaffListApiController {
      * EntityListを取得する
      * @return
      */
-    @GetMapping("/staff/get/list")
+    @GetMapping("/api/staff/get/list")
 	@ResponseBody
     public List<StaffListEntity> getList() {
             return staffListService.getList();

@@ -25,7 +25,7 @@ public class CompanyListApiController {
      * EntityListを取得する
      * @return
      */
-    @GetMapping("/company/get/list")
+    @GetMapping("/api/company/get/list")
 	@ResponseBody
     public List<CompanyListEntity> getList() {
         return companyListService.getList();
@@ -35,7 +35,7 @@ public class CompanyListApiController {
      * EntityListを取得する
      * @return
      */
-    @GetMapping("/client/get/list")
+    @GetMapping("/api/client/get/list")
 	@ResponseBody
     public List<CompanyListEntity> getClientList() {
         return companyListService.getClientList();
@@ -45,7 +45,7 @@ public class CompanyListApiController {
      * カテゴリー別のEntityListを取得する
      * @return
      */
-    @PostMapping("/company/get/list/category")
+    @PostMapping("/api/company/get/list/category")
 	@ResponseBody
     public List<CompanyListEntity> getListByCategoryId(@RequestParam int category) {
         return companyListService.getListByCategoryId(category);
@@ -55,7 +55,7 @@ public class CompanyListApiController {
      * EntityListを取得する
      * @return
      */
-    @GetMapping("/client/get/combo")
+    @GetMapping("/api/client/get/combo")
 	@ResponseBody
     public List<SimpleData> getClientCombo() {
         return comboBoxService.getClientList();

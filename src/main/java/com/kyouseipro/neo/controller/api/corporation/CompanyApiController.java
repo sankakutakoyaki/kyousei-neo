@@ -31,7 +31,7 @@ public class CompanyApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/company/get/id")
+    @PostMapping("/api/company/get/id")
 	@ResponseBody
     public Optional<CompanyEntity> getById(@RequestParam int id) {
         return companyService.getById(id);
@@ -43,7 +43,7 @@ public class CompanyApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/company/save")
+    @PostMapping("/api/company/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody CompanyEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -62,7 +62,7 @@ public class CompanyApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/company/delete")
+    @PostMapping("/api/company/delete")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -81,7 +81,7 @@ public class CompanyApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/company/download/csv")
+    @PostMapping("/api/company/download/csv")
 	@ResponseBody
     public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");

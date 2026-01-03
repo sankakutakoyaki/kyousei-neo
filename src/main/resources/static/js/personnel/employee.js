@@ -98,7 +98,7 @@ async function execEdit(id, self) {
     if (id > 0) {
         // 選択されたIDのエンティティを取得
         const data = "id=" + encodeURIComponent(parseInt(id));
-        const resultResponse = await postFetch('/employee/get/id', data, token, 'application/x-www-form-urlencoded');
+        const resultResponse = await postFetch('/api/employee/get/id', data, token, 'application/x-www-form-urlencoded');
         const result = await resultResponse.json();
         if (result.employee_id == 0) {
             openMsgDialog("msg-dialog", "データがありません", "red");
@@ -232,7 +232,7 @@ async function execSave() {
         formdata.version = formData.get('version');
 
         // 保存処理
-        const resultResponse = await postFetch("/employee/save", JSON.stringify(formdata), token, "application/json");
+        const resultResponse = await postFetch("/api/employee/save", JSON.stringify(formdata), token, "application/json");
         const result = await resultResponse.json();
         if (result.success) {
             let tableId;
@@ -293,10 +293,10 @@ async function execDelete(self) {
     let result;
     switch (tab) {
         case "01":
-            result = await deleteTablelist('table-01-content', '/employee/delete');
+            result = await deleteTablelist('table-01-content', '/api/employee/delete');
             break;
         case "02":
-            result = await deleteTablelist('table-02-content', '/employee/delete');
+            result = await deleteTablelist('table-02-content', '/api/employee/delete');
             break;
         default:
             break;
@@ -319,10 +319,10 @@ async function execDownloadCsv(self) {
     let result;
     switch (tab) {
         case "01":
-            result = await downloadCsv('table-01-content', '/employee/download/csv');
+            result = await downloadCsv('table-01-content', '/api/employee/download/csv');
             break;
         case "02":
-            result = await downloadCsv('table-02-content', '/employee/download/csv');
+            result = await downloadCsv('table-02-content', '/api/employee/download/csv');
             break;
         default:
             break;
@@ -333,7 +333,7 @@ async function execDownloadCsv(self) {
 
 async function execUpdate() {
     // リスト取得
-    const resultResponse = await fetch('/employee/get/list');
+    const resultResponse = await fetch('/api/employee/get/list');
     origin = await resultResponse.json();
 
     // 画面更新

@@ -32,7 +32,7 @@ public class WorkItemApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/work/item/get/id")
+    @PostMapping("/api/work/item/get/id")
 	@ResponseBody
     public Optional<WorkItemEntity> getById(@RequestParam int id) {
         return workItemService.getById(id);
@@ -43,7 +43,7 @@ public class WorkItemApiController {
      * @param id
      * @return
      */
-    @PostMapping("/work/item/get/category")
+    @PostMapping("/api/work/item/get/category")
 	@ResponseBody
     public List<WorkItemEntity> getByCategoryId(@RequestParam int id) {
         return workItemService.getByCategoryId(id);
@@ -53,7 +53,7 @@ public class WorkItemApiController {
      * Listを取得する
      * @return
      */
-    @GetMapping("/work/item/get/list")
+    @GetMapping("/api/work/item/get/list")
 	@ResponseBody
     public List<WorkItemEntity> getList() {
         return workItemService.getList();
@@ -64,7 +64,7 @@ public class WorkItemApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/work/item/save")
+    @PostMapping("/api/work/item/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody WorkItemEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -83,7 +83,7 @@ public class WorkItemApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/work/item/delete")
+    @PostMapping("/api/work/item/delete")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -102,7 +102,7 @@ public class WorkItemApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/work/item/download/csv")
+    @PostMapping("/api/work/item/download/csv")
 	@ResponseBody
     public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");

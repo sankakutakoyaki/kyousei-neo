@@ -31,7 +31,7 @@ public class RecycleMakerApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/recycle/maker/get/id")
+    @PostMapping("/api/recycle/maker/get/id")
 	@ResponseBody
     // public ResponseEntity getById(@RequestParam int id) {
     //     RecycleMakerEntity entity = recycleMakerService.getById(id);
@@ -53,7 +53,7 @@ public class RecycleMakerApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/recycle/maker/get/code")
+    @PostMapping("/api/recycle/maker/get/code")
 	@ResponseBody
     // public ResponseEntity getByCode(@RequestParam int code) {
     //     RecycleMakerEntity entity = recycleMakerService.getByCode(code);
@@ -74,7 +74,7 @@ public class RecycleMakerApiController {
      * EntityListを取得する
      * @return
      */
-    @GetMapping("/recycle/maker/get/list")
+    @GetMapping("/api/recycle/maker/get/list")
 	@ResponseBody
     public List<RecycleMakerEntity> getList() {
         return recycleMakerService.getList();
@@ -85,7 +85,7 @@ public class RecycleMakerApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/recycle/maker/save")
+    @PostMapping("/api/recycle/maker/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody RecycleMakerEntity entity, @AuthenticationPrincipal OidcUser principal) {
         // String userName = principal.getAttribute("preferred_username");
@@ -99,7 +99,7 @@ public class RecycleMakerApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/recycle/maker/delete")
+    @PostMapping("/api/recycle/maker/delete")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -118,7 +118,7 @@ public class RecycleMakerApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/recycle/maker/download/csv")
+    @PostMapping("/api/recycle/maker/download/csv")
 	@ResponseBody
     public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");

@@ -5,7 +5,7 @@ async function existsRecycleByNumber(number) {
     // // スピナー表示
     // startProcessing();
     const data = "num=" + encodeURIComponent(number);
-    const url = "/recycle/exists/number";
+    const url = "/api/recycle/exists/number";
     const contentType = 'application/x-www-form-urlencoded';
     const resultResponse = await postFetch(url, data, token, contentType);
     // // スピナー消去
@@ -23,7 +23,7 @@ async function getMakerByCode(code) {
     // // スピナー表示
     // startProcessing();
     const data = "code=" + encodeURIComponent(parseInt(code));
-    const url = '/recycle/maker/get/code';
+    const url = '/api/recycle/maker/get/code';
     const contentType = 'application/x-www-form-urlencoded';
     const resultResponse = await postFetch(url, data, token, contentType);
     // // スピナー消去
@@ -40,7 +40,7 @@ async function getItemByCode(code) {
     // // スピナー表示
     // startProcessing();
     const data = "code=" + encodeURIComponent(parseInt(code));
-    const url = '/recycle/item/get/code';
+    const url = '/api/recycle/item/get/code';
     const contentType = 'application/x-www-form-urlencoded';
     const resultResponse = await postFetch(url, data, token, contentType);
     // // スピナー消去
@@ -512,7 +512,7 @@ async function execEdit(id, self, str) {
     if (id > 0) {
         // 選択されたIDのエンティティを取得
         const data = "id=" + encodeURIComponent(parseInt(id));
-        const resultResponse = await postFetch('/recycle/get/id', data, token, 'application/x-www-form-urlencoded');
+        const resultResponse = await postFetch('/api/recycle/get/id', data, token, 'application/x-www-form-urlencoded');
         const result = await resultResponse.json();
 
         let form = document.getElementById("form-dialog-05");
@@ -636,7 +636,7 @@ async function execDelete01(tableId, self) {
     // スピナー表示
     startProcessing();
 
-    const result = await deleteTablelist('table-01-content', '/recycle/delete');
+    const result = await deleteTablelist('table-01-content', '/api/recycle/delete');
 
     if (result.success) {                
         await execDate01Search(tableId);
@@ -832,7 +832,7 @@ async function execSave(formId, tableId, str) {
     startProcessing();
 
     // 保存処理
-    const resultResponse = await postFetch("/recycle/save/" + str, JSON.stringify({list:itemList}), token, "application/json");
+    const resultResponse = await postFetch("/api/recycle/save/" + str, JSON.stringify({list:itemList}), token, "application/json");
     const result = await resultResponse.json();
     if (result.success) {
         // 画面更新
@@ -862,7 +862,7 @@ async function execUpdate(tableId, str) {
     startProcessing();
 
     formdata = setInsertFormData(form);
-    const resultResponse = await postFetch("/recycle/save/" + str, JSON.stringify({entity:formdata}), token, "application/json");
+    const resultResponse = await postFetch("/api/recycle/save/" + str, JSON.stringify({entity:formdata}), token, "application/json");
     const result = await resultResponse.json();
     if (result.success) {
         // 画面更新
@@ -882,7 +882,7 @@ async function execUpdate(tableId, str) {
 /******************************************************************************************************* ダウンロード */
 
 async function execDownloadCsv01(tableId, self) {
-    await downloadCsv(tableId, '/recycle/download/csv');
+    await downloadCsv(tableId, '/api/recycle/download/csv');
 }
 
 /******************************************************************************************************* 画面更新 */
@@ -932,7 +932,7 @@ async function execFilterDisplay(tableId) {
 }
 
 async function execDate01Search(tableId) {
-    origin = await getRecyclesBetween("start-date01", "end-date01", "/recycle/get/between");
+    origin = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
     await updateTableDisplay(tableId, "footer-01", "search-box-01", origin);
 }
 

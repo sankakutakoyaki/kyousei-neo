@@ -214,7 +214,7 @@ async function execEdit(id, self) {
     if (id > 0) {
         // 選択されたIDのエンティティを取得
         const data = "id=" + encodeURIComponent(parseInt(id));
-        const resultResponse = await postFetch('/order/item/get/id', data, token, 'application/x-www-form-urlencoded');
+        const resultResponse = await postFetch('/api/order/item/get/id', data, token, 'application/x-www-form-urlencoded');
         const result = await resultResponse.json();
         if (result.order_item_id == 0) {
             openMsgDialog("msg-dialog", "データがありません", "red");
@@ -398,16 +398,16 @@ async function execDelete(self) {
     let result;
     switch (tab) {
         case "01":
-            result = await deleteTablelist('table-01-content', '/order/item/delete');
+            result = await deleteTablelist('table-01-content', '/api/order/item/delete');
             break;
         case "02":
-            result = await deleteTablelist('table-02-content', '/order/item/delete');
+            result = await deleteTablelist('table-02-content', '/api/order/item/delete');
             break;
         case "03":
-            result = await deleteTablelist('table-03-content', '/order/item/delete');
+            result = await deleteTablelist('table-03-content', '/api/order/item/delete');
             break;
         case "04":
-            result = await deleteTablelist('table-04-content', '/order/item/delete');
+            result = await deleteTablelist('table-04-content', '/api/order/item/delete');
             break;
         default:
             break;
@@ -676,7 +676,7 @@ function formDataCheck(area) {
 // 保存処理
 async function execSave(formId, tableId) {
     // 保存処理
-    const resultResponse = await postFetch("/order/item/save", JSON.stringify({list:itemList}), token, "application/json");
+    const resultResponse = await postFetch("/api/order/item/save", JSON.stringify({list:itemList}), token, "application/json");
     const result = await resultResponse.json();
     if (result.success) {
         const tbl = document.getElementById(tableId);
@@ -700,16 +700,16 @@ async function execDownloadCsv(self) {
     let result;
     switch (tab) {
         case "01":
-            result = await downloadCsv('table-01-content', '/order/item/download/csv');
+            result = await downloadCsv('table-01-content', '/api/order/item/download/csv');
             break;
         case "02":
-            result = await downloadCsv('table-02-content', '/order/item/download/csv');
+            result = await downloadCsv('table-02-content', '/api/order/item/download/csv');
             break;
         case "03":
-            result = await downloadCsv('table-03-content', '/order/item/download/csv');
+            result = await downloadCsv('table-03-content', '/api/order/item/download/csv');
             break;
         case "04":
-            result = await downloadCsv('table-04-content', '/order/item/download/csv');
+            result = await downloadCsv('table-04-content', '/api/order/item/download/csv');
             break;
         default:
             break;
@@ -762,28 +762,28 @@ async function execDateSearch(self) {
     switch (tab) {
         case "01":
             // リスト取得
-            origin = await getOrderItemsBetween("start-date01", "end-date01", "/order/item/get/between");
+            origin = await getOrderItemsBetween("start-date01", "end-date01", "/api/order/item/get/between");
             origin01 = origin.filter(value => value.classification == goodsCode);
             // 画面更新
             await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin01);
             break;
         case "02":
             // リスト取得
-            origin = await getOrderItemsBetween("start-date02", "end-date02", "/order/item/get/between");
+            origin = await getOrderItemsBetween("start-date02", "end-date02", "/api/order/item/get/between");
             origin02 = origin.filter(value => value.classification == materialsCode);
             // 画面更新
             await updateTableDisplay("table-02-content", "footer-02", "search-box-02", origin02);
             break;
         case "03":
             // リスト取得
-            origin = await getOrderItemsBetween("start-date03", "end-date03", "/order/item/get/between");
+            origin = await getOrderItemsBetween("start-date03", "end-date03", "/api/order/item/get/between");
             origin03 = origin.filter(value => value.classification == equipmentCode);
             // 画面更新
             await updateTableDisplay("table-03-content", "footer-03", "search-box-03", origin03);
             break;
         case "04":
             // リスト取得
-            origin = await getOrderItemsBetween("start-date04", "end-date04", "/order/item/get/between");
+            origin = await getOrderItemsBetween("start-date04", "end-date04", "/api/order/item/get/between");
             origin04 = origin.filter(value => value.classification == returnsCode);
             // 画面更新
             await updateTableDisplay("table-04-content", "footer-04", "search-box-04", origin04);

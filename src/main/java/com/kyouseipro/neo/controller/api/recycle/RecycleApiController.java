@@ -38,7 +38,7 @@ public class RecycleApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/recycle/get/id")
+    @PostMapping("/api/recycle/get/id")
 	@ResponseBody
     // public ResponseEntity getById(@RequestParam int id) {
     //     RecycleEntity entity = recycleService.getById(id);
@@ -60,7 +60,7 @@ public class RecycleApiController {
      * @param str
      * @return
      */
-    @PostMapping("/recycle/exists/number")
+    @PostMapping("/api/recycle/exists/number")
     @ResponseBody
     // public Optional<ResponseEntity> existsByNmbe(@RequestParam String num) {
     //     RecycleEntity entity = recycleService.existsByNumber(num);
@@ -84,7 +84,7 @@ public class RecycleApiController {
      * @param col
      * @return
      */
-    @PostMapping("/recycle/get/between")
+    @PostMapping("/api/recycle/get/between")
     @ResponseBody
     public List<RecycleEntity> getBetween(@RequestParam LocalDate start, @RequestParam LocalDate end, @RequestParam String col) {
         List<RecycleEntity> list = recycleService.getBetween(start, end, col);
@@ -96,7 +96,7 @@ public class RecycleApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/recycle/save/{type}")
+    @PostMapping("/api/recycle/save/{type}")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
         String userName = principal.getAttribute("preferred_username");
@@ -139,7 +139,7 @@ public class RecycleApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/recycle/delete")
+    @PostMapping("/api/recycle/delete")
     @ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_userName");
@@ -158,7 +158,7 @@ public class RecycleApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/recycle/download/csv")
+    @PostMapping("/api/recycle/download/csv")
 	@ResponseBody
     public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");

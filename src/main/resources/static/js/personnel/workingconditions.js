@@ -90,7 +90,7 @@ async function execEdit(id, name, self) {
 
     // 選択されたIDのエンティティを取得
     const data = "id=" + encodeURIComponent(parseInt(id));
-    const resultResponse = await postFetch('/working_conditions/get/employeeid', data, token, 'application/x-www-form-urlencoded');
+    const resultResponse = await postFetch('/api/working_conditions/get/employeeid', data, token, 'application/x-www-form-urlencoded');
     const result = await resultResponse.json();
 
     let entity = {};
@@ -179,7 +179,7 @@ async function execSave() {
         formdata.user_name = user.account == null ? "kyousei@kyouseibin.com": user.account;
 
         // 保存処理
-        const resultResponse = await postFetch("/working_conditions/save", JSON.stringify(formdata), token, "application/json");
+        const resultResponse = await postFetch("/api/working_conditions/save", JSON.stringify(formdata), token, "application/json");
         const result = await resultResponse.json();
         if (result.success) {
             let tableId;
@@ -237,10 +237,10 @@ async function execDelete(self) {
     let result;
     switch (tab) {
         case "01":
-            result = await deleteTablelist('table-01-content', '/working_conditions/delete');
+            result = await deleteTablelist('table-01-content', '/api/working_conditions/delete');
             break;
         case "02":
-            result = await deleteTablelist('table-02-content', '/working_conditions/delete');
+            result = await deleteTablelist('table-02-content', '/api/working_conditions/delete');
             break;
         default:
             break;
@@ -263,10 +263,10 @@ async function execDownloadCsv(self) {
     let result;
     switch (tab) {
         case "01":
-            result = await downloadCsv('table-01-content', '/working_conditions/download/csv');
+            result = await downloadCsv('table-01-content', '/api/working_conditions/download/csv');
             break;
         case "02":
-            result = await downloadCsv('table-02-content', '/working_conditions/download/csv');
+            result = await downloadCsv('table-02-content', '/api/working_conditions/download/csv');
             break;
         default:
             break;

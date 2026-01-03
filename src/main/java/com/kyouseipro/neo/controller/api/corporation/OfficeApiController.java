@@ -31,7 +31,7 @@ public class OfficeApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/office/get/id")
+    @PostMapping("/api/office/get/id")
 	@ResponseBody
     public Optional<OfficeEntity> getById(@RequestParam int id) {
         return officeService.getById(id);
@@ -42,7 +42,7 @@ public class OfficeApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/office/save")
+    @PostMapping("/api/office/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody OfficeEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -61,7 +61,7 @@ public class OfficeApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/office/delete")
+    @PostMapping("/api/office/delete")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -80,7 +80,7 @@ public class OfficeApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/office/download/csv")
+    @PostMapping("/api/office/download/csv")
 	@ResponseBody
     public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");

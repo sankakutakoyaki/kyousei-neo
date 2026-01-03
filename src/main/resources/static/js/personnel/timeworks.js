@@ -17,7 +17,7 @@ async function setTimeworks(timeCategory) {
         return null;
     }
     const data = JSON.stringify(entity);
-    const url = '/timeworks/regist/today';
+    const url = '/api/timeworks/regist/today';
     const contentType = 'application/json';
     const resultResponse = await postFetch(url, data, token, contentType);
     const result = await resultResponse.json();
@@ -27,7 +27,7 @@ async function setTimeworks(timeCategory) {
 
 async function updateTimeworks(list, self) {
     const data = JSON.stringify(list);
-    const url = '/timeworks/update/list';
+    const url = '/api/timeworks/update/list';
     const contentType = 'application/json';
     const result = await postFetch(url, data, token, contentType);
 
@@ -94,7 +94,7 @@ async function updateDisplay(result) {
     startProcessing();
 
     // リストデータ取得
-    const getResponse = await fetch('/timeworks/get/today');
+    const getResponse = await fetch('/api/timeworks/get/today');
     const list01 = await getResponse.json();
     
     // 画面更新
@@ -135,7 +135,7 @@ async function searchForNameByCode(e) {
 
     // [id=code]に入力されたコードから[timeworks]を取得して[id=name]に入力する
     const data = "id=" + encodeURIComponent(parseInt(code.value));
-    const url = '/timeworks/get/today/id';
+    const url = '/api/timeworks/get/today/id';
     const contentType = 'application/x-www-form-urlencoded';
     // [timeworks]を取得
     const resultResponse = await postFetch(url, data, token, contentType);
@@ -392,11 +392,11 @@ function createEmployeeList(tab) {
 async function createEmployeeTimeworksList(tab, id) {
     switch(tab) {
         case "02":
-            list02 = await getEmployeeTimeworksBetween(id, "start-date02", "end-date02", "/timeworks/get/between/id");
+            list02 = await getEmployeeTimeworksBetween(id, "start-date02", "end-date02", "/api/timeworks/get/between/id");
             createBetweenTableContent(tab, list02);
             break;
         case "05":
-            list05 = await getEmployeeTimeworksBetween(id, "start-date05", "end-date05", "/timeworks/get/between/id/all");
+            list05 = await getEmployeeTimeworksBetween(id, "start-date05", "end-date05", "/api/timeworks/get/between/id/all");
             createBetweenTableContent(tab, list05);
             return;
         default:
@@ -506,7 +506,7 @@ async function execReverse(id) {
     const data = "id=" + encodeURIComponent(parseInt(id));
     const contentType = 'application/x-www-form-urlencoded';
     // List<Timeworks>を取得
-    const resultResponse = await postFetch("/timeworks/confirm/reverse", data, token, contentType);
+    const resultResponse = await postFetch("/api/timeworks/confirm/reverse", data, token, contentType);
     const result = await resultResponse.json();
     if (result.success) {
         // 画面更新
@@ -573,13 +573,13 @@ async function getEmployeePaidHolidayFromYear(id, year, url) {
 async function execDownloadCsv() {
     const start = document.getElementById("start-date03").value;
     const end = document.getElementById("end-date03").value;
-    await downloadCsvByBetweenDate('table-03-content', '/timeworks/download/csv', start, end);
+    await downloadCsvByBetweenDate('table-03-content', '/api/timeworks/download/csv', start, end);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 出力
 // 選択した営業所IDで従業員の勤怠情報概要を取得してリスト作成
 async function createTimeworksSummaryList(officeId) {
-    list03 = await getEmployeeTimeworksBetween(officeId, "start-date03", "end-date03", "/timeworks/summary/get/between/id");
+    list03 = await getEmployeeTimeworksBetween(officeId, "start-date03", "end-date03", "/api/timeworks/summary/get/between/id");
     createBetweenTable03Content(list03);
     // チェックボックスの処理を再登録する
     registCheckButtonClicked("table-03-content");
@@ -615,7 +615,7 @@ function createBetweenTable03Content(list) {
 // -------------------------------------------------------------------------------------------------------------------------------------- 有給
 // 選択した営業所IDと年で従業員の勤怠情報概要を取得してリスト作成
 async function createPaidHolidayList(officeId, year) {
-    list04 = await getEmployeePaidHolidayFromYear(officeId, year, "/timeworks/paidholiday/get/year");
+    list04 = await getEmployeePaidHolidayFromYear(officeId, year, "/api/timeworks/paidholiday/get/year");
     createTable04Content(list04);
     // チェックボックスの処理を再登録する
     registCheckButtonClicked("table-04-content");
@@ -708,7 +708,7 @@ async function execApplication() {
         formdata.reason = formData.get('reason').trim();
 
         // 保存処理
-        const resultResponse = await postFetch("/timeworks/paidholiday/save", JSON.stringify(formdata), token, "application/json");
+        const resultResponse = await postFetch("/api/timeworks/paidholiday/save", JSON.stringify(formdata), token, "application/json");
         const result = await resultResponse.json();
         if (result.success) {
             // 画面更新
@@ -760,7 +760,7 @@ async function displayPaidHolidayList(id, year) {
 
 // 選択した従業員IDと年で従業員の勤怠情報概要を取得してリスト作成
 async function createPaidHolidayListByEmployeeId(employeeId, year) {
-    list15 = await getEmployeePaidHolidayFromYear(employeeId, year, "/timeworks/paidholiday/get/employeeid");
+    list15 = await getEmployeePaidHolidayFromYear(employeeId, year, "/api/timeworks/paidholiday/get/employeeid");
     createTable05Content(list15, year);
     // チェックボックスの処理を再登録する
     registCheckButtonClicked("table-15-content");
@@ -806,7 +806,7 @@ function createTable05Content(list, year) {
 
 // 選択した営業所IDと年で従業員の勤怠情報概要を取得してリスト作成
 async function createPaidHolidayList(officeId, year) {
-    list04 = await getEmployeePaidHolidayFromYear(officeId, year, "/timeworks/paidholiday/get/year");
+    list04 = await getEmployeePaidHolidayFromYear(officeId, year, "/api/timeworks/paidholiday/get/year");
     createTable04Content(list04);
     // チェックボックスの処理を再登録する
     registCheckButtonClicked("table-04-content");
@@ -817,7 +817,7 @@ async function createPaidHolidayList(officeId, year) {
 
 async function execDeletePaidHolidayByEmployeeId(id) {
     const data = "id=" + encodeURIComponent(parseInt(id));
-    const url = '/timeworks/paidholiday/delete/id';
+    const url = '/api/timeworks/paidholiday/delete/id';
     const contentType = 'application/x-www-form-urlencoded';
     const resultResponse = await postFetch(url, data, token, contentType);
     const result = await resultResponse.json();
@@ -846,7 +846,7 @@ async function searchForNameByCodeForPaidHoliday(e) {
 
     // [id=code]に入力されたコードから[employee]を取得して[id=name]に入力する
     const data = "id=" + encodeURIComponent(parseInt(code02.value));
-    const url = '/employee/get/id';
+    const url = '/api/employee/get/id';
     const contentType = 'application/x-www-form-urlencoded';
     // [employee]を取得
     const resultResponse = await postFetch(url, data, token, contentType);

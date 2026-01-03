@@ -22,7 +22,7 @@ public class WorkingConditionsListApiController {
      * EntityListを取得する
      * @return
      */
-    @GetMapping("/working_conditions/get/list")
+    @GetMapping("/api/working_conditions/get/list")
 	@ResponseBody
     public List<WorkingConditionsListEntity> getList() {
         return workingConditionsListService.getList();
@@ -32,7 +32,7 @@ public class WorkingConditionsListApiController {
      * カテゴリー別のEntityListを取得する
      * @return
      */
-    @PostMapping("/working_conditions/get/list/category")
+    @PostMapping("/api/working_conditions/get/list/category")
 	@ResponseBody
     public List<WorkingConditionsListEntity> getListByCategoryId(@RequestParam int category) {
         return workingConditionsListService.getListByCategoryId(category);

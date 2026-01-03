@@ -29,7 +29,7 @@ public class PaidHolidayApiController {
      * 指定した年と営業所のEntityListを取得する
      * @return
      */
-    @PostMapping("/timeworks/paidholiday/get/year")
+    @PostMapping("/api/timeworks/paidholiday/get/year")
 	@ResponseBody
     public List<PaidHolidayListEntity> getByOfficeIdFromYear (
                 @RequestParam int id,
@@ -41,7 +41,7 @@ public class PaidHolidayApiController {
      * 指定した年と従業員の有給リストを取得する
      * @return
      */
-    @PostMapping("/timeworks/paidholiday/get/employeeid")
+    @PostMapping("/api/timeworks/paidholiday/get/employeeid")
 	@ResponseBody
     public List<PaidHolidayEntity> getByEmployeeIdFromYear (
                 @RequestParam int id,
@@ -53,7 +53,7 @@ public class PaidHolidayApiController {
      * 指定した期間のEntityListを保存する
      * @return
      */
-    @PostMapping("/timeworks/paidholiday/save")
+    @PostMapping("/api/timeworks/paidholiday/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save (
                 @RequestBody PaidHolidayEntity entity,
@@ -73,7 +73,7 @@ public class PaidHolidayApiController {
      * 指定したIDのEntityを削除する
      * @return
      */
-    @PostMapping("/timeworks/paidholiday/delete/id")
+    @PostMapping("/api/timeworks/paidholiday/delete/id")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteById (
                 @RequestParam int id,

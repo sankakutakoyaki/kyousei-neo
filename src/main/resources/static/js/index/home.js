@@ -11,7 +11,7 @@ async function updateDisplay(result) {
 async function searchForNameByCode(id) {
     // [id=code]に入力されたコードから[timeworks]を取得して[id=name]に入力する
     const data = "id=" + encodeURIComponent(parseInt(id));
-    const url = '/timeworks/get/today/id';
+    const url = '/api/timeworks/get/today/id';
     const contentType = 'application/x-www-form-urlencoded';
     // [timeworks]を取得
     const resultResponse = await postFetch(url, data, token, contentType);
@@ -32,6 +32,8 @@ window.addEventListener("load", async () => {
     } else {
         console.warn('Push messaging is not supported in this browser.');
     }
-
+    if (!employeeId || employeeId <= 0) {
+        return; // ← これが重要
+    }
     await updateDisplay();
 });

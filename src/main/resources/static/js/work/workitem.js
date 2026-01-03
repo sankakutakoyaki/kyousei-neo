@@ -156,7 +156,7 @@ async function execSave(ent) {
     startProcessing();
 
     // 保存処理
-    const resultResponse = await postFetch("/work/item/save", JSON.stringify(ent), token, "application/json");
+    const resultResponse = await postFetch("/api/work/item/save", JSON.stringify(ent), token, "application/json");
     const result = await resultResponse.json();
     if (result.success) {
         // 画面更新
@@ -187,7 +187,7 @@ async function execUpdate() {
     // スピナー表示
     startProcessing();
 
-    const resultResponse = await fetch('/work/item/get/list');
+    const resultResponse = await fetch('/api/work/item/get/list');
     origin = await resultResponse.json();
 
     // スピナー消去

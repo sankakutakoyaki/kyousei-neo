@@ -30,7 +30,7 @@ public class QualificationsApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/qualifications/get/id")
+    @PostMapping("/api/qualifications/get/id")
 	@ResponseBody
     public List<QualificationsEntity> getById(@RequestParam int id, @RequestParam int category) {
         switch (category) {
@@ -46,7 +46,7 @@ public class QualificationsApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/qualifications/save")
+    @PostMapping("/api/qualifications/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody QualificationsEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -63,7 +63,7 @@ public class QualificationsApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/qualifications/delete/id")
+    @PostMapping("/api/qualifications/delete/id")
     @ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteById(@RequestParam int id, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -81,7 +81,7 @@ public class QualificationsApiController {
      * すべての資格情報を取得する
      * @return
      */
-    @GetMapping("/qualifications/get")
+    @GetMapping("/api/qualifications/get")
 	@ResponseBody
     public List<QualificationsEntity> getListForEmployee() {
         return qualificationsService.getListForEmployee();
@@ -91,7 +91,7 @@ public class QualificationsApiController {
      * すべての許認可情報を取得する
      * @return
      */
-    @GetMapping("/license/get")
+    @GetMapping("/api/license/get")
 	@ResponseBody
     public List<QualificationsEntity> getListForCompany() {
         return qualificationsService.getListFroCompany();

@@ -31,7 +31,7 @@ public class EmployeeApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/employee/get/id")
+    @PostMapping("/api/employee/get/id")
 	@ResponseBody
     public Optional<EmployeeEntity> getById(@RequestParam int id) {
         return employeeService.getById(id);
@@ -42,7 +42,7 @@ public class EmployeeApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/employee/save")
+    @PostMapping("/api/employee/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody EmployeeEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -61,7 +61,7 @@ public class EmployeeApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/employee/delete")
+    @PostMapping("/api/employee/delete")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -80,7 +80,7 @@ public class EmployeeApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/employee/download/csv")
+    @PostMapping("/api/employee/download/csv")
 	@ResponseBody
     public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");

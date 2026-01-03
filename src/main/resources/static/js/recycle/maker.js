@@ -196,7 +196,7 @@ async function execSave(tableId, footerId, searchId, ent, createContent) {
     // startProcessing();
 
     // 保存処理
-    const resultResponse = await postFetch("/recycle/maker/save", JSON.stringify(ent), token, "application/json");
+    const resultResponse = await postFetch("/api/recycle/maker/save", JSON.stringify(ent), token, "application/json");
     const result = await resultResponse.json();
     if (result.success) {
         // 画面更新
@@ -228,7 +228,7 @@ async function execUpdate() {
     // // スピナー表示
     // startProcessing();
 
-    const resultResponse = await fetch('/recycle/maker/get/list');
+    const resultResponse = await fetch('/api/recycle/maker/get/list');
     origin = await resultResponse.json();
 
     // // スピナー消去

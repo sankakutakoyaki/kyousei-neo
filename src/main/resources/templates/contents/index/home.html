@@ -8,7 +8,6 @@
         <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
         <!-- ボディ -->
         <div class="normal-body">
-
             <div sec:authorize="hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_user', 'APPROLE_staff')">
                 <h2>勤怠</h2>
                 <div class="flex-area time-btn">  

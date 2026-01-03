@@ -23,7 +23,7 @@ public class OrderListApiController {
      * OrderListを取得する
      * @return
      */
-    @GetMapping("/order/get/list")
+    @GetMapping("/api/order/get/list")
 	@ResponseBody
     public List<OrderListEntity> getList() {
         return orderListService.getList();
@@ -36,7 +36,7 @@ public class OrderListApiController {
      * @param end
      * @return
      */
-    @PostMapping("/order/get/between")
+    @PostMapping("/api/order/get/between")
 	@ResponseBody
     public List<OrderListEntity> getBetween(
                 @RequestParam LocalDate start,

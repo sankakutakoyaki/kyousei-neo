@@ -57,7 +57,7 @@ async function execSave(ent) {
     startProcessing();
 
     // 保存処理
-    const resultResponse = await postFetch("/work/price/save", JSON.stringify(ent), token, "application/json");
+    const resultResponse = await postFetch("/api/work/price/save", JSON.stringify(ent), token, "application/json");
     const result = await resultResponse.json();
     if (result.success) {
         // 画面更新
@@ -89,7 +89,7 @@ async function execUpdate() {
 
     const companyCombo = document.getElementById('company1');
     const data = "id=" + encodeURIComponent(parseInt(companyCombo.value));
-    const resultResponse = await postFetch('/work/price/get/list/companyid', data, token, 'application/x-www-form-urlencoded');
+    const resultResponse = await postFetch('/api/work/price/get/list/companyid', data, token, 'application/x-www-form-urlencoded');
     origin = await resultResponse.json();
 
     // スピナー消去

@@ -31,7 +31,7 @@ public class WorkingConditionsApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/working_conditions/get/id")
+    @PostMapping("/api/working_conditions/get/id")
 	@ResponseBody
     public Optional<WorkingConditionsEntity> getById(@RequestParam int id) {
             return workingConditionsService.getById(id);
@@ -42,7 +42,7 @@ public class WorkingConditionsApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/working_conditions/get/employeeid")
+    @PostMapping("/api/working_conditions/get/employeeid")
 	@ResponseBody
     public Optional<WorkingConditionsEntity> getByEmployeeId(@RequestParam int id) {
             return workingConditionsService.getByEmployeeId(id);
@@ -53,7 +53,7 @@ public class WorkingConditionsApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/working_conditions/save")
+    @PostMapping("/api/working_conditions/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody WorkingConditionsEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -72,7 +72,7 @@ public class WorkingConditionsApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/working_conditions/delete")
+    @PostMapping("/api/working_conditions/delete")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -91,7 +91,7 @@ public class WorkingConditionsApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/working_conditions/download/csv")
+    @PostMapping("/api/working_conditions/download/csv")
 	@ResponseBody
     public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");

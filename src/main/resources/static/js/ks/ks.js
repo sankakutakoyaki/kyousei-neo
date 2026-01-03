@@ -52,7 +52,7 @@ async function execDownloadCsv(self) {
     let result;
     switch (tab) {
         case "01":
-            result = await downloadCsv('table-01-content', '/ks/sales/download/csv');
+            result = await downloadCsv('table-01-content', '/api/ks/sales/download/csv');
             break;
         default:
             break;
@@ -91,7 +91,7 @@ async function execDateSearch(self) {
     switch (tab) {
         case "01":
             // リスト取得
-            origin01 = await getKsSalesBetween("start-date01", "end-date01", "/ks/sales/get/between/staff");
+            origin01 = await getKsSalesBetween("start-date01", "end-date01", "/api/ks/sales/get/between/staff");
             storeComboList01 = createStoreCombo(origin01);
             createComboBoxValueString(storeCombo01, storeComboList01);
             const list = setRate(origin01);

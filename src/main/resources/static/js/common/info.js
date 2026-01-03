@@ -93,7 +93,7 @@ async function getAddress(event, elmId, targetId) {
         const code = modified.substr(0, 3) + "-" + modified.substr(3, 4);
         // 郵便番号で住所を検索
         const data = "postal_code=" + encodeURIComponent(code);
-        const resultResponse = await postFetch('/address/get/postalcode', data, token, 'application/x-www-form-urlencoded');
+        const resultResponse = await postFetch('/api/address/get/postalcode', data, token, 'application/x-www-form-urlencoded');
         const result = await resultResponse.json();
         if (resultResponse.ok) {
             // 定型に修正した郵便番号を郵便番号入力ボックスに代入
@@ -144,7 +144,7 @@ async function getEntityByCode(url, code) {
 
 // コードからemployeeを取得
 async function getEmployeeByCode(code) {
-    getEntityByCode("/employee/get/id", code);
+    getEntityByCode("/api/employee/get/id", code);
     // // スピナー表示
     // startProcessing();
     // const data = "id=" + encodeURIComponent(parseInt(code));
@@ -162,5 +162,5 @@ async function getEmployeeByCode(code) {
 
 // コードからwork_itemを取得
 async function getWorkContentByCode(code) {
-    getEntityByCode("/work_content/get/id", code);
+    getEntityByCode("/api/work_content/get/id", code);
 }

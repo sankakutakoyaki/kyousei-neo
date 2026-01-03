@@ -124,13 +124,13 @@ async function execEdit(id, self) {
         let url;
         switch (tab) {
             case "05":
-                url = "/office/get/id";
+                url = "/api/office/get/id";
                 break;
             case "06":
-                url = "/staff/get/id";
+                url = "/api/staff/get/id";
                 break;
             default:
-                url = "/company/get/id";
+                url = "/api/company/get/id";
                 break;
         }
 
@@ -281,17 +281,17 @@ async function execSave(self) {
                 formdata.staff_id = Number(formData.get('staff-id'));
                 formdata.office_id = Number(formData.get('office-id'));
                 formdata.phone_number = formData.get('phone-number').trim();
-                url = "/staff/save";
+                url = "/api/staff/save";
                 break;
             default:
                 if (tab == "05") {
                     formdata = structuredClone(officeEntity);
                     formdata.office_id = Number(formData.get('office-id'));
-                    url = "/office/save";
+                    url = "/api/office/save";
                 } else {
                     formdata = structuredClone(companyEntity);
                     formdata.category = Number(formData.get('category'));
-                    url = "/company/save";
+                    url = "/api/company/save";
                 }
                 formdata.tel_number = formData.get('tel-number').trim();
                 formdata.fax_number = formData.get('fax-number').trim();
@@ -393,13 +393,13 @@ async function execDelete(self) {
     let result;
     switch (tab) {
         case "05":
-            result = await deleteTablelist('table-05-content', '/office/delete');
+            result = await deleteTablelist('table-05-content', '/api/office/delete');
             break;
         case "06":
-            result = await deleteTablelist('table-06-content', '/staff/delete');
+            result = await deleteTablelist('table-06-content', '/api/staff/delete');
             break;
         default:
-            result = await deleteTablelist('table-' + tab + '-content', '/company/delete');
+            result = await deleteTablelist('table-' + tab + '-content', '/api/company/delete');
             break;
     }
 
@@ -419,13 +419,13 @@ async function execDownloadCsv(self) {
     let result;
     switch (tab) {
         case "05":
-            result = await downloadCsv('table-05-content', '/office/download/csv');
+            result = await downloadCsv('table-05-content', '/api/office/download/csv');
             break;
         case "06":
-            result = await downloadCsv('table-06-content', '/staff/download/csv');
+            result = await downloadCsv('table-06-content', '/api/staff/download/csv');
             break;
         default:
-            result = await downloadCsv('table-' + tab + '-content', '/company/download/csv');
+            result = await downloadCsv('table-' + tab + '-content', '/api/company/download/csv');
             break;
     }
 }
@@ -485,10 +485,10 @@ async function execUpdate() {
 
 // company-tab 更新処理
 async function updateCompanyOrigin() {
-    let resultResponse = await fetch('/client/get/list');
+    let resultResponse = await fetch('/api/client/get/list');
     companyOrigin = await resultResponse.json();
 
-    resultResponse = await fetch('/client/get/combo');
+    resultResponse = await fetch('/api/client/get/combo');
     companyComboList = await resultResponse.json();
 
     createComboBoxWithTop(name01, companyComboList, '');
@@ -497,10 +497,10 @@ async function updateCompanyOrigin() {
 
 // office-tab 更新処理
 async function updateOfficeOrigin() {
-    let resultResponse = await fetch('/office/get/list');
+    let resultResponse = await fetch('/api/office/get/list');
     officeOrigin = await resultResponse.json();
 
-    resultResponse = await fetch('/office/get/combo');
+    resultResponse = await fetch('/api/office/get/combo');
     officeComboList = await resultResponse.json();
 
     createComboBoxWithTop(name03, officeComboList, '');

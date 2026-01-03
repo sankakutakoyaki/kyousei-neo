@@ -2,6 +2,7 @@ package com.kyouseipro.neo.controller.abstracts;
 
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import com.kyouseipro.neo.common.exception.SessionExpiredException;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 
 import jakarta.servlet.http.HttpSession;
@@ -9,17 +10,13 @@ import jakarta.servlet.http.HttpSession;
 public abstract class BaseController {
 
     protected EmployeeEntity getLoginUser(HttpSession session) {
-        EmployeeEntity user =
-            (EmployeeEntity) session.getAttribute("loginUser");
-
-        if (user == null) {
-            throw new IllegalStateException("セッション切れ");
-        }
-        return user;
+        return (EmployeeEntity) session.getAttribute("loginUser");
     }
 
-    protected String getLoginUserName(HttpSession session) {
-        return getLoginUser(session).getAccount();
+    protected void requireLogin(HttpSession session) {
+        if (getLoginUser(session) == null) {
+            throw new SessionExpiredException();
+        }
     }
 
     @ModelAttribute("user")

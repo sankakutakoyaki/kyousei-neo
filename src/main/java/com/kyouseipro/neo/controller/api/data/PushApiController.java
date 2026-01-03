@@ -34,7 +34,7 @@ public class PushApiController {
      * @return
      * @throws Exception
      */
-    @PostMapping("/send")
+    @PostMapping("/api/send")
     public void sendPush(@RequestParam String message, @RequestParam String csrftoken, @AuthenticationPrincipal OidcUser principal) throws Exception {
         String userName = principal.getAttribute("preferred_username");
         Security.addProvider(new BouncyCastleProvider());
@@ -58,7 +58,7 @@ public class PushApiController {
      * クライアントから Pushサブスクリプション情報を受け取る
      * @param subscriptionRequest
      */
-    @PostMapping("/subscribe")
+    @PostMapping("/api/subscribe")
     public boolean subscribe(@RequestBody SubscriptionRequest subscriptionRequest, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
         Optional<SubscriptionRequest> result = pushRepository.findByEndpoint(subscriptionRequest.getEndpoint());
@@ -78,7 +78,7 @@ public class PushApiController {
      * VAPID公開鍵をクライアントへ渡す
      * @return
      */
-    @GetMapping("/vapid-public-key")
+    @GetMapping("/api/vapid-public-key")
     public String getVapidPublicKey() {
         try {
             return ResourceBundle.getBundle("application").getString("vapid.publicKey"); // VAPID 秘密鍵
@@ -91,7 +91,7 @@ public class PushApiController {
      * VAPID公開鍵を削除
      * @param endpoint
      */
-    @PostMapping("/remove-subscription")
+    @PostMapping("/api/remove-subscription")
     public void removeSubscription(@RequestParam String endpoint, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
         try {

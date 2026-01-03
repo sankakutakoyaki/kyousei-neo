@@ -38,7 +38,7 @@ public class OrderApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/order/get/id")
+    @PostMapping("/api/order/get/id")
 	@ResponseBody
     public Optional<OrderEntity> getById(@RequestParam int id) {
         // String sql = OrderSqlBuilder.buildFindById();
@@ -50,7 +50,7 @@ public class OrderApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/order/save")
+    @PostMapping("/api/order/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -75,7 +75,7 @@ public class OrderApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/order/delete")
+    @PostMapping("/api/order/delete")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -94,7 +94,7 @@ public class OrderApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/order/download/csv")
+    @PostMapping("/api/order/download/csv")
 	@ResponseBody
     public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");

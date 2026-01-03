@@ -30,7 +30,7 @@ public class RecycleItemApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/recycle/item/get/id")
+    @PostMapping("/api/recycle/item/get/id")
 	@ResponseBody
     // public ResponseEntity getById(@RequestParam int id) {
     //     RecycleItemEntity entity = recycleItemService.getById(id);
@@ -52,7 +52,7 @@ public class RecycleItemApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/recycle/item/get/code")
+    @PostMapping("/api/recycle/item/get/code")
 	@ResponseBody
     // public ResponseEntity getByCode(@RequestParam int code) {
     //     RecycleItemEntity entity = recycleItemService.getByCode(code);
@@ -74,7 +74,7 @@ public class RecycleItemApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/recycle/item/save")
+    @PostMapping("/api/recycle/item/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody RecycleItemEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -93,7 +93,7 @@ public class RecycleItemApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/recycle/item/delete")
+    @PostMapping("/api/recycle/item/delete")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -112,7 +112,7 @@ public class RecycleItemApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/recycle/item/download/csv")
+    @PostMapping("/api/recycle/item/download/csv")
 	@ResponseBody
     public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");

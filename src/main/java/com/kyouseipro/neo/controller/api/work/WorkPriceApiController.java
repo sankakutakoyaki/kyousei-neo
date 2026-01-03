@@ -31,7 +31,7 @@ public class WorkPriceApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/work/price/get/id")
+    @PostMapping("/api/work/price/get/id")
 	@ResponseBody
     public Optional<WorkPriceEntity> getById(@RequestParam int id) {
         return workPriceService.getById(id);
@@ -42,7 +42,7 @@ public class WorkPriceApiController {
      * @param id
      * @return
      */
-    @PostMapping("/work/price/get/list/companyid")
+    @PostMapping("/api/work/price/get/list/companyid")
 	@ResponseBody
     public List<WorkPriceEntity> getEntityByCompanyId(@RequestParam int id) {
         return workPriceService.getListByCompanyId(id);
@@ -54,7 +54,7 @@ public class WorkPriceApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/work/price/save")
+    @PostMapping("/api/work/price/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> saveWorkPrice(@RequestBody WorkPriceEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -73,7 +73,7 @@ public class WorkPriceApiController {
     //  * @param IDS
     //  * @return 
     //  */
-    // @PostMapping("/work/price/delete")
+    // @PostMapping("/api/work/price/delete")
 	// @ResponseBody
     // public ResponseEntity<ApiResponse<Integer>> deleteWorkPriceByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
     //     String userName = principal.getAttribute("preferred_username");
@@ -92,7 +92,7 @@ public class WorkPriceApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/work/price/download/csv")
+    @PostMapping("/api/work/price/download/csv")
 	@ResponseBody
     public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");

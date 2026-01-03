@@ -35,7 +35,7 @@ public class OrderItemApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/order/item/get/id")
+    @PostMapping("/api/order/item/get/id")
 	@ResponseBody
     public Optional<OrderItemEntity> getById(@RequestParam int id) {
         return orderItemService.getById(id);
@@ -47,7 +47,7 @@ public class OrderItemApiController {
      * @param end
      * @return
      */
-    @PostMapping("/order/item/get/between")
+    @PostMapping("/api/order/item/get/between")
 	@ResponseBody
     public List<OrderItemEntity> getBetween(
                 @RequestParam LocalDate start,
@@ -61,7 +61,7 @@ public class OrderItemApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/order/item/save")
+    @PostMapping("/api/order/item/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -81,7 +81,7 @@ public class OrderItemApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/order/item/delete")
+    @PostMapping("/api/order/item/delete")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
@@ -100,7 +100,7 @@ public class OrderItemApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/order/item/download/csv")
+    @PostMapping("/api/order/item/download/csv")
 	@ResponseBody
     public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");

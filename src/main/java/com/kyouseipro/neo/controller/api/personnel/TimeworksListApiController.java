@@ -38,7 +38,7 @@ public class TimeworksListApiController {
      * EntityListを取得する
      * @return
      */
-    @GetMapping("/timeworks/get/today")
+    @GetMapping("/api/timeworks/get/today")
 	@ResponseBody
     public List<TimeworksListEntity> getTodaysList() {
         return timeworksListService.getTodaysList();
@@ -48,7 +48,7 @@ public class TimeworksListApiController {
      * Entityを取得する
      * @return
      */
-    @PostMapping("/timeworks/get/today/id")
+    @PostMapping("/api/timeworks/get/today/id")
 	@ResponseBody
     // public Optional<TimeworksListEntity> getTodaysByEmployeeId(@RequestParam int id) {
     //     Optional<TimeworksListEntity> entity = timeworksListService.getTodaysByEmployeeId(id);
@@ -94,7 +94,7 @@ public class TimeworksListApiController {
      * 指定した期間のEntityListを取得する
      * @return
      */
-    @PostMapping("/timeworks/get/between/id")
+    @PostMapping("/api/timeworks/get/between/id")
 	@ResponseBody
     public List<TimeworksListEntity> getBetweenByEmployeeId(
                 @RequestParam int id,
@@ -108,7 +108,7 @@ public class TimeworksListApiController {
      * 指定した期間の確定済みも含めたEntityListを取得する
      * @return
      */
-    @PostMapping("/timeworks/get/between/id/all")
+    @PostMapping("/api/timeworks/get/between/id/all")
 	@ResponseBody
     public List<TimeworksListEntity> getBetweenAllByEmployeeId(
                 @RequestParam int id,
@@ -122,7 +122,7 @@ public class TimeworksListApiController {
      * 指定した期間のEntityList概要版を取得する
      * @return
      */
-    @PostMapping("/timeworks/summary/get/between/id")
+    @PostMapping("/api/timeworks/summary/get/between/id")
 	@ResponseBody
     public List<TimeworksSummaryEntity> getBetweenSummary(
                 @RequestParam int id,
@@ -140,7 +140,7 @@ public class TimeworksListApiController {
      * @param timeworksEntity
      * @return
      */
-    @PostMapping("/timeworks/regist/today")
+    @PostMapping("/api/timeworks/regist/today")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody TimeworksListEntity timeworksEntity, @AuthenticationPrincipal OidcUser principal) {
         String editor = principal.getAttribute("preferred_username");
@@ -162,7 +162,7 @@ public class TimeworksListApiController {
      * @param id
      * @return
      */
-    @PostMapping("/timeworks/confirm/reverse")
+    @PostMapping("/api/timeworks/confirm/reverse")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> reverseConrirm(@RequestParam int id, @AuthenticationPrincipal OidcUser principal) {
         String editor = principal.getAttribute("preferred_username");
@@ -181,7 +181,7 @@ public class TimeworksListApiController {
      * @param list
      * @return
      */
-    @PostMapping("/timeworks/update/list")
+    @PostMapping("/api/timeworks/update/list")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> update(@RequestBody List<TimeworksListEntity> list, @AuthenticationPrincipal OidcUser principal) {
         String editor = principal.getAttribute("preferred_username");
@@ -200,7 +200,7 @@ public class TimeworksListApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/timeworks/download/csv")
+    @PostMapping("/api/timeworks/download/csv")
 	@ResponseBody
     public String downloadCsvByIdsFromBetween(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal) {
         List<Map<String, Object>> items = (List<Map<String, Object>>) body.get("ids");

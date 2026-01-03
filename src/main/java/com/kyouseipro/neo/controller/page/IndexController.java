@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.kyouseipro.neo.controller.abstracts.BaseController;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
@@ -24,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class IndexController extends BaseController {
+public class IndexController {
 	private final EmployeeService employeeService;
     private final HistoryService historyService;
 
@@ -34,7 +33,6 @@ public class IndexController extends BaseController {
 	 * @return
 	 */
 	@GetMapping("/")
-	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
 	public ModelAndView getIndex(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		mv.setViewName("layouts/main");
@@ -51,51 +49,51 @@ public class IndexController extends BaseController {
 		// セッションに保持
 		session.setAttribute("loginUser", loginUser);
 
-		// EmployeeEntity entity = employeeService.getByAccount(userName).orElse(null);
-		// mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
-		// mv.addObject("entity", entity);
-		if (loginUser  != null) {
-			mv.addObject("employeeId", loginUser.getEmployee_id());
+		// // EmployeeEntity entity = employeeService.getByAccount(userName).orElse(null);
+		// // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
+		// // mv.addObject("entity", entity);
+		// if (loginUser  != null) {
+		// 	mv.addObject("employeeId", loginUser.getEmployee_id());
 			
-			// session.setAttribute("loginUser", loginUser );
-			// session.setAttribute("userName", entity.getAccount());
-			// session.setAttribute("companyId", entity.getCompany_id());
-			// session.setAttribute("officeId", entity.getOffice_id());
-		} else {
-			mv.addObject("employeeId", 0);
-			// セッションに保持
-			// session.setAttribute("userName", userName);
-			switch (userName) {
-				case "osaka@kyouseibin.com":
-					session.setAttribute("companyId", 1000);
-					session.setAttribute("officeId", 1001);
-					break;
-				case "wakayama@kyouseibin.com":
-					session.setAttribute("companyId", 1000);
-					session.setAttribute("officeId", 1002);
-					break;
-				case "hyogo@kyouseibin.com":
-					session.setAttribute("companyId", 1000);
-					session.setAttribute("officeId", 1003);
-					break;
-				case null:
-					session.setAttribute("companyId", 1000);
-					session.setAttribute("officeId", 0);
-					break;
-				default:
-					session.setAttribute("companyId", 1000);
-					session.setAttribute("officeId", 0);
-					break;
-			}
-		}
+		// 	// session.setAttribute("loginUser", loginUser );
+		// 	// session.setAttribute("userName", entity.getAccount());
+		// 	// session.setAttribute("companyId", entity.getCompany_id());
+		// 	// session.setAttribute("officeId", entity.getOffice_id());
+		// } else {
+		// 	mv.addObject("employeeId", 0);
+		// 	// セッションに保持
+		// 	// session.setAttribute("userName", userName);
+		// 	switch (userName) {
+		// 		case "osaka@kyouseibin.com":
+		// 			session.setAttribute("companyId", 1000);
+		// 			session.setAttribute("officeId", 1001);
+		// 			break;
+		// 		case "wakayama@kyouseibin.com":
+		// 			session.setAttribute("companyId", 1000);
+		// 			session.setAttribute("officeId", 1002);
+		// 			break;
+		// 		case "hyogo@kyouseibin.com":
+		// 			session.setAttribute("companyId", 1000);
+		// 			session.setAttribute("officeId", 1003);
+		// 			break;
+		// 		case null:
+		// 			session.setAttribute("companyId", 1000);
+		// 			session.setAttribute("officeId", 0);
+		// 			break;
+		// 		default:
+		// 			session.setAttribute("companyId", 1000);
+		// 			session.setAttribute("officeId", 0);
+		// 			break;
+		// 	}
+		// }
         // EmployeeEntity loginUser = (EmployeeEntity) session.getAttribute("loginUser");
         // if (loginUser == null) {
         //     throw new IllegalStateException("セッション切れ");
         // }
-        // mv.addObject("user", loginUser);
+        mv.addObject("user", loginUser);
 
-		EmployeeEntity user = getLoginUser(session);
-		historyService.save(user.getAccount(), "", "ログイン", 200, "ログインしました。");
+		historyService.save(loginUser.getAccount(), "", "ログイン", 200, "ログインしました。");
+
         return mv;
     }
 	
@@ -114,169 +112,6 @@ public class IndexController extends BaseController {
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
 		historyService.save(userName, "", "ログアウト", 200, "ログアウトしました。");
-		session.invalidate();
 		response.sendRedirect(endSessionEndpoint + "?post_logout_redirect_uri=" + URLEncoder.encode(redirectUrl, "UTF-8"));
-    }
-
-	/**
-	 * 営業
-	 * @param mv
-	 * @return
-	 */
-	@GetMapping("/list")
-	@ResponseBody
-	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getList(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
-		mv.setViewName("layouts/main");
-		mv.addObject("title", "一覧");
-        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/common/menu :: listFragment");
-        mv.addObject("bodyFragmentName", "contents/index/list :: bodyFragment");
-        mv.addObject("insertCss", "/css/index/list.css");
-		// ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
-		// mv.addObject("entity", entity);
-		// mv.addObject("entity", employeeService.getByAccount(userName).orElse(null));
-
-		EmployeeEntity user = getLoginUser(session);
-		historyService.save(user.getAccount(), "list", "閲覧", 200, "");
-		
-        return mv;
-    }	
-	
-	/**
-	 * 営業
-	 * @param mv
-	 * @return
-	 */
-	@GetMapping("/sales")
-	@ResponseBody
-	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getSales(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
-		mv.setViewName("layouts/main");
-		mv.addObject("title", "営業");
-        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/common/menu :: salesFragment");
-        mv.addObject("bodyFragmentName", "contents/index/sales :: bodyFragment");
-        mv.addObject("insertCss", "/css/index/sales.css");
-		// ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
-		// mv.addObject("entity", entity);
-		// mv.addObject("entity", employeeService.getByAccount(userName).orElse(null));
-
-		EmployeeEntity user = getLoginUser(session);
-		historyService.save(user.getAccount(), "sales", "閲覧", 200, "");
-		
-        return mv;
-    }
-
-	/**
-	 * 人事
-	 * @param mv
-	 * @return
-	 */
-	@GetMapping("/personnel")
-	@ResponseBody
-	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getPersonnel(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
-		mv.setViewName("layouts/main");
-		mv.addObject("title", "人事");
-        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
-        mv.addObject("bodyFragmentName", "contents/index/personnel :: bodyFragment");
-        mv.addObject("insertCss", "/css/index/personnel.css");
-		// ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
-		// mv.addObject("entity", entity);
-		// mv.addObject("entity", employeeService.getByAccount(userName).orElse(null));
-
-		EmployeeEntity user = getLoginUser(session);
-		historyService.save(user.getAccount(), "personnel", "閲覧", 200, "");
-		
-        return mv;
-    }
-
-	/**
-	 * 管理
-	 * @param mv
-	 * @return
-	 */
-	@GetMapping("/management")
-	@ResponseBody
-	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getManagement(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
-		mv.setViewName("layouts/main");
-		mv.addObject("title", "管理");
-        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/common/menu :: managementFragment");
-        mv.addObject("bodyFragmentName", "contents/index/management :: bodyFragment");
-        mv.addObject("insertCss", "/css/index/management.css");
-		// ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
-		// mv.addObject("entity", entity);
-		// mv.addObject("entity", employeeService.getByAccount(userName).orElse(null));
-
-		EmployeeEntity user = getLoginUser(session);
-		historyService.save(user.getAccount(), "management", "閲覧", 200, "");
-		
-        return mv;
-    }
-
-	/**
-	 * 登録
-	 * @param mv
-	 * @return
-	 */
-	@GetMapping("/regist")
-	@ResponseBody
-	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getRegistration(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
-		mv.setViewName("layouts/main");
-		mv.addObject("title", "登録");
-        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/common/menu :: registFragment");
-        mv.addObject("bodyFragmentName", "contents/index/regist :: bodyFragment");
-        mv.addObject("insertCss", "/css/index/regist.css");
-		// ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
-		// mv.addObject("entity", entity);
-		// mv.addObject("entity", employeeService.getByAccount(userName).orElse(null));
-
-		EmployeeEntity user = getLoginUser(session);
-		historyService.save(user.getAccount(), "management", "閲覧", 200, "");
-		
-        return mv;
-    }
-
-	/**
-	 * リサイクル
-	 * @param mv
-	 * @return
-	 */
-	@GetMapping("/recycle")
-	@ResponseBody
-	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView getRecycle(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
-		mv.setViewName("layouts/main");
-		mv.addObject("title", "リサイクル");
-        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/common/menu :: recycleFragment");
-        mv.addObject("bodyFragmentName", "contents/index/recycle :: bodyFragment");
-        mv.addObject("insertCss", "/css/index/recycle.css");
-		// ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// EmployeeEntity entity = (EmployeeEntity) employeeService.getByAccount(userName);
-		// mv.addObject("entity", entity);
-		// mv.addObject("entity", employeeService.getByAccount(userName).orElse(null));
-
-		EmployeeEntity user = getLoginUser(session);
-		historyService.save(user.getAccount(), "recycle", "閲覧", 200, "");
-		
-        return mv;
     }
 }

@@ -6,6 +6,66 @@
  * @param {コンテントタイプ} contentType 
  * @returns　json
  */
+// async function postFetch(url, data, token, contentType = "application/json") {
+//     const spinner = document.getElementById("loading");
+//     if (spinner) spinner.classList.remove("loaded");
+
+//     try {
+//         const response = await fetch(url, {
+//             method: "POST",
+//             headers: {
+//                 "X-CSRF-TOKEN": token,
+//                 "Content-Type": contentType,
+//             },
+//             body: data,
+//         });
+
+//         if (!response.ok) {
+//             switch (response.status) {
+//                 case 400:
+//                     openMsgDialog("msg-dialog", "入力内容に誤りがあります。", "red");
+//                     break;
+//                 case 401:
+//                     openMsgDialog("msg-dialog", "ログインが必要です。", "red");
+//                     location.href = "/login";
+//                     break;
+//                 case 403:
+//                     openMsgDialog("msg-dialog", "権限がありません。", "red");
+//                     break;
+//                 case 404:
+//                     openMsgDialog("msg-dialog", "処理が見つかりません。", "red");
+//                     break;
+//                 case 500:
+//                     openMsgDialog("msg-dialog", "サーバーエラーが発生しました。", "red");
+//                     break;
+//                 default:
+//                     openMsgDialog("msg-dialog", `エラーが発生しました (${response.status})`, "red");
+//             }
+//             return null;
+//         }
+
+//         let result;
+//         try {
+//             result = await response.json();
+//         } catch {
+//             openMsgDialog("msg-dialog", "サーバーから不正な応答が返されました。", "red");
+//             return null;
+//         }
+
+//         if (!result.success) {
+//             handleResultError(result);
+//             return null;
+//         }
+
+//         return result;
+
+//     } catch (e) {
+//         return handleFetchError(e);
+
+//     } finally {
+//         if (spinner) spinner.classList.add("loaded");
+//     }
+// }
 async function postFetch(url, data, token, contentType = "application/json") {
     const spinner = document.getElementById("loading");
     if (spinner) spinner.classList.remove("loaded");
@@ -20,17 +80,21 @@ async function postFetch(url, data, token, contentType = "application/json") {
             body: data,
         });
 
+        // ★ HTTPエラーはここで完全に止める
         if (!response.ok) {
             switch (response.status) {
-                case 400:
-                    openMsgDialog("msg-dialog", "入力内容に誤りがあります。", "red");
-                    break;
+                // case 401:
+                //     location.href = "/";
+                //     throw new Error("SESSION_EXPIRED");
                 case 401:
                     openMsgDialog("msg-dialog", "ログインが必要です。", "red");
-                    location.href = "/login";
+                    location.href = "/";
                     break;
                 case 403:
                     openMsgDialog("msg-dialog", "権限がありません。", "red");
+                    break;
+                case 400:
+                    openMsgDialog("msg-dialog", "入力内容に誤りがあります。", "red");
                     break;
                 case 404:
                     openMsgDialog("msg-dialog", "処理が見つかりません。", "red");
@@ -41,32 +105,24 @@ async function postFetch(url, data, token, contentType = "application/json") {
                 default:
                     openMsgDialog("msg-dialog", `エラーが発生しました (${response.status})`, "red");
             }
-            return null;
+
+            throw new Error(`HTTP_ERROR_${response.status}`);
         }
 
-        let result;
-        try {
-            result = await response.json();
-        } catch {
-            openMsgDialog("msg-dialog", "サーバーから不正な応答が返されました。", "red");
-            return null;
-        }
+        const result = await response.json();
 
+        // ★ 業務エラーも例外にする
         if (!result.success) {
             handleResultError(result);
-            return null;
+            throw new Error("BUSINESS_ERROR");
         }
 
         return result;
-
-    } catch (e) {
-        return handleFetchError(e);
 
     } finally {
         if (spinner) spinner.classList.add("loaded");
     }
 }
-
 /**
  * fetch 共通エラーハンドリング
  */

@@ -89,7 +89,7 @@ async function execSave() {
         formdata.version = Number(formData.get('version'));
 
         // 保存処理
-        const resultResponse = await postFetch("/qualifications/save", JSON.stringify(formdata), token, "application/json");
+        const resultResponse = await postFetch("/api/qualifications/save", JSON.stringify(formdata), token, "application/json");
         const result = await resultResponse.json();
         if (result.success) {
             // 画面更新
@@ -183,10 +183,10 @@ async function execUpdate() {
     // リスト取得
     if (owner_category == 0) {
         // 従業員の場合
-        getUrl = "/qualifications/get";
+        getUrl = "/api/qualifications/get";
     } else {
         // 会社の場合
-        getUrl = "/license/get";
+        getUrl = "/api/license/get";
     }
     const resultResponse = await fetch(getUrl);
     origin = await resultResponse.json();
@@ -235,7 +235,7 @@ async function uploadFile(files) {
     formData.append("folder_name", "qualification/" + String(id.value) + "/");
     formData.append("id", parseInt(id.value));
 
-    const response = await fetch("/files/upload/qualifications", {
+    const response = await fetch("/api/files/upload/qualifications", {
         headers: {  // リクエストヘッダを追加
             'X-CSRF-TOKEN': token,
         },
@@ -294,7 +294,7 @@ async function handleFiles(files) {
 
 async function removeQualificationById(id) {
     const data = "id=" + encodeURIComponent(parseInt(id));
-    const resultResponse = await postFetch('/qualifications/delete/id', data, token, 'application/x-www-form-urlencoded');
+    const resultResponse = await postFetch('/api/qualifications/delete/id', data, token, 'application/x-www-form-urlencoded');
     const result = await resultResponse.json();
     if (result.success) {
         openMsgDialog("msg-dialog", result.message, "blue");
@@ -321,7 +321,7 @@ async function getQualifications(e, codeId, nameId) {
         const tab = panel.dataset.panel;
 
         const data = "id=" + encodeURIComponent(parseInt(code.value)) + "&category=" + encodeURIComponent(parseInt(owner_category));
-        const resultResponse = await postFetch("/qualifications/get/id", data, token, 'application/x-www-form-urlencoded');
+        const resultResponse = await postFetch("/api/qualifications/get/id", data, token, 'application/x-www-form-urlencoded');
         const result = await resultResponse.json();
 
         if (result.length > 0) {
@@ -419,10 +419,10 @@ async function getQualifications(e, codeId, nameId) {
             }
             if (result2 != null) {
                 switch (url) {
-                    case "/employee/get/id":
+                    case "/api/employee/get/id":
                         name.value = result2.full_name;
                         break;
-                    case "/company/get/id":
+                    case "/api/company/get/id":
                         name.value = result2.name;
                         break;             
                     default:
@@ -445,7 +445,7 @@ async function getQualificationsFiles(id) {
     
     const folderName = id;
     const data = "id=" + encodeURIComponent(parseInt(id));
-    const resultResponse = await postFetch('/files/get/qualifications', data, token, 'application/x-www-form-urlencoded');
+    const resultResponse = await postFetch('/api/files/get/qualifications', data, token, 'application/x-www-form-urlencoded');
     const result = await resultResponse.json();
 
     if (result.length > 0) {
@@ -463,9 +463,9 @@ async function getQualificationsFiles(id) {
 function setPdfListItem(folderName, fileName, internalName) {
     const path = folderName + "/" + encodeURIComponent(internalName);
 
-    const li = createListItem("/files/qualification/" + path, fileName);
+    const li = createListItem("/api/files/qualification/" + path, fileName);
 
-    const removeBtn = setFileRemoveEventListner(createRemoveBtn(), li, path, '/files/delete/qualifications');
+    const removeBtn = setFileRemoveEventListner(createRemoveBtn(), li, path, '/api/files/delete/qualifications');
     li.appendChild(removeBtn);
 
     fileList.appendChild(li);

@@ -22,7 +22,7 @@ public class EmployeeListApiController {
      * EntityListを取得する
      * @return
      */
-    @GetMapping("/employee/get/list")
+    @GetMapping("/api/employee/get/list")
 	@ResponseBody
     public List<EmployeeListEntity> getList() {
         return employeeListService.getList();
@@ -32,7 +32,7 @@ public class EmployeeListApiController {
      * カテゴリー別のEntityListを取得する
      * @return
      */
-    @PostMapping("/employee/get/list/category")
+    @PostMapping("/api/employee/get/list/category")
 	@ResponseBody
     public List<EmployeeListEntity> getListByCategoryId(@RequestParam int category) {
         return employeeListService.getListByCategoryId(category);
