@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div class="dialog-footer" th:fragment="footerFragment(formId, execFuncName)">
+        <button class="normal-btn frameless" type="button"
+            th:onclick="closeFormDialog([[${formId}]], event)"><span>キャンセル</span></button>
+        <button tabindex="7" class="normal-btn ok" type="button"
+            th:onclick="|__${execFuncName}__;|"><span>作成</span></button>
+        <!-- <button tabindex="7" class="normal-btn ok" type="button"
+            th:onclick="|${execFuncName}();|"><span>作成</span></button> -->
+    </div>
+</body>
+
+</html>

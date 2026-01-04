@@ -28,19 +28,11 @@
             <!-- フォーム画面をここに記入する -->
             <div id="form-dialog-01" class="form-dialog none">
                 <div class="dialog-main">
-                    <div class="dialog-header"><span></span>
-                        <div class="img-btn" onclick="closeFormDialog('form-dialog-01', event)"><img title="閉じる"
-                                src="/icons/close-s.png"></div>
-                    </div>
+                    <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-01', '')}"></div>
 
                     <form th:replace="~{fragments/recycle/maker :: form01Fragment()}"></form>
 
-                    <div class="dialog-footer">
-                        <button class="normal-btn frameless" type="button"
-                            onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
-                        <button tabindex="7" class="normal-btn ok" type="button"
-                            onclick="execCreate01(this)"><span>作成</span></button>
-                    </div>
+                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-01', 'execCreate01(this)')}"></div>
                 </div>
             </div>
         </div>

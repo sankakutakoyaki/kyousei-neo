@@ -82,26 +82,6 @@ async function execCreate01(self) {
 
 // 入力チェック
 function form01DataCheck(area) {
-    // let msg = "";
-    // // コードが入力されていない、または不正な値のときFalseを返す
-    // const code = area.querySelector('input[name="maker-code"]');
-    // if (code != null && code.value == "" && code.value < 0) msg += '\nコードを入力して下さい';
-    // if (Number(code.value) > 999 || Number(code.value) < 1) msg += '\nコードは1から999の間で入力して下さい';
-    // // グループが選択されていないとFalseを返す
-    // const group = area.querySelector('select[name="maker-group"]');
-    // if (group != null && group.value == 0) msg += '\nグループを選択して下さい';
-    // // 製造業者等名チェック
-    // const name = area.querySelector('input[name="maker-name"]');
-    // if (name != null && name.value == "") msg += '\n製造業者等名を入力してくだい';
-    // // 略称チェック
-    // const abbr = area.querySelector('input[name="abbr-name"]');
-    // if (abbr != null && abbr.value == "") msg += '\n略称入力してくだい';
-    // // エラーが一つ以上あればエラーメッセージダイアログを表示する
-    // if (msg != "") {
-    //     openMsgDialog("msg-dialog", msg, "red");
-    //     return false;
-    // }
-    // return true;
     const errors = [];
 
     // コードチェック

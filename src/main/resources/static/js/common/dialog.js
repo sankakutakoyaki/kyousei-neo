@@ -90,7 +90,8 @@ function openMsgDialog(dialogId, msg, color) {
     content.textContent = msg;
 
     // OKボタンにフォーカスを合わせる
-    dialog.querySelector('button[name="focus-btn"]').focus();
+    const focusBtn = dialog.querySelector('button[name="focus-btn"]');
+    if (focusBtn != null) focusBtn.focus();
 }
 
 /**

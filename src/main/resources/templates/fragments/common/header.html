@@ -2,6 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
+    <div class="dialog-header" th:fragment="form-headerFragment(formId, title)"><span th:text="${title}"></span>
+        <div class="img-btn" th:onclick="closeFormDialog([[${formId}]], event)"><img title="閉じる" src="/icons/close-s.png"></div>
+    </div>
+
     <div class="header-menu" th:fragment="headerFragment">
         <div class="logo-btn pc-style" th:onclick="moveLinkPage('/')"><span>Kyosei</span></div>
         <div class="sp-style">
