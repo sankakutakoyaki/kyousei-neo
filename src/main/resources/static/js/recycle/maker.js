@@ -1,16 +1,5 @@
 /******************************************************************************************************* 画面 */
 
-// リスト画面の本体部分を作成する
-// function createTable01Content(tableId, list) {
-//     const tbl = document.getElementById(tableId);
-//     list.forEach(function (item) {
-//         let newRow = tbl.insertRow();
-//         newRow.setAttribute('name', 'data-row');
-//         newRow.setAttribute('data-id', item.recycle_maker_id);
-//         tdEnableEdit(newRow);
-//         createTable01Row(newRow, item);
-//     });
-// }
 function createTable01Content(tableId, list) {
     const table = document.getElementById(tableId);
 
@@ -125,7 +114,7 @@ function form01DataCheck(area) {
     return true;
 }
 
-// 保存する
+// TDが変更された時の処理
 function handleTdChange(editor) {
     const td = editor.closest('td.editable');
     if (!td) return;
@@ -152,25 +141,6 @@ function handleTdChange(editor) {
     execSave("table-01-content", "footer-01", "search-box-01", ent, createTable01Content);
 }
 
-/******************************************************************************************************* 削除 */
-
-async function execDelete01(self) {
-    // // スピナー表示
-    // startProcessing();
-    const result = await deleteTablelist('table-01-content', 'footer-01', 'search-box-01', '/recycle/maker/download/csv');
-
-    if (!result) return;
-
-    await updateTableDisplay('table-01-content', 'footer-01', 'search-box-01', origin, createTable01Content);
-    // await execDate01Search(tableId);
-    // openMsgDialog("msg-dialog", result.message, "blue");
-
-    // // スピナー消去
-    // processingEnd();
-}
-
-/******************************************************************************************************* 保存 */
-
 // 保存処理
 async function execSave(tableId, footerId, searchId, ent, createContent) {
     // // スピナー表示
@@ -196,6 +166,23 @@ async function execSave(tableId, footerId, searchId, ent, createContent) {
     // processingEnd();
 }
 
+/******************************************************************************************************* 削除 */
+
+async function execDelete01(self) {
+    // // スピナー表示
+    // startProcessing();
+    const result = await deleteTablelist('table-01-content', 'footer-01', 'search-box-01', '/recycle/maker/download/csv');
+
+    if (!result) return;
+
+    await updateTableDisplay('table-01-content', 'footer-01', 'search-box-01', origin, createTable01Content);
+    // await execDate01Search(tableId);
+    // openMsgDialog("msg-dialog", result.message, "blue");
+
+    // // スピナー消去
+    // processingEnd();
+}
+
 /******************************************************************************************************* ダウンロード */
 
 async function execDownloadCsv01(self) {
@@ -214,6 +201,20 @@ async function execUpdate() {
 
     // // スピナー消去
     // processingEnd();
+}
+
+async function execNumberSearch01(number) {
+    const num = Number(number);
+    if (Number.isNaN(num)) {
+        console.log("数字じゃない")
+    } else {
+        if (num === 0) {
+            await updateTableDisplay('table-01-content', 'footer-01', 'search-box-01', origin, createTable01Content);
+        } else {
+            const list = origin.filter(value => value.code >= num && value.code <= (num + 99));
+            await updateTableDisplay('table-01-content', 'footer-01', 'search-box-01', list, createTable01Content);
+        }
+    }
 }
 
 // // テーブルリスト画面を更新する

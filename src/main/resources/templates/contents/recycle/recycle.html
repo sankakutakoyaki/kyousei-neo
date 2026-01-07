@@ -12,102 +12,116 @@
         <div class="normal-body">
             <div class="table-area">
                 <!-- ヘッダー -->
-                <header th:replace="~{fragments/recycle/recycle :: header01Fragment('search-box-01', 'start-date01', 'end-date01')}">
-                </header>
+                <header th:replace="~{fragments/recycle/recycle :: header01Fragment('search-box-01', 'start-date01', 'end-date01')}"></header>
+
                 <!-- コンテンツ -->
-                <main th:replace="~{fragments/recycle/recycle :: main01Fragment('table-01', 'table-01-content')}">
-                </main>
+                <main th:replace="~{fragments/recycle/recycle :: main01Fragment('table-01', 'table-01-content')}"></main>
+
                 <!-- フッター -->
-                <footer id="footer-01" class="pc-style"
-                    th:insert="~{fragments/recycle/recycle :: footerFragment()}"></footer>
+                <footer id="footer-01" class="pc-style" th:insert="~{fragments/recycle/recycle :: footerFragment()}"></footer>
             </div>
         </div>
         <div id="form-dialog-area">
             <!-- フォーム画面をここに記入する -->
             <div id="form-dialog-01" class="form-dialog none">
                 <div class="dialog-main">
-                    <div class="dialog-header"><span></span>
+                    <!-- <div class="dialog-header"><span></span>
                         <div class="img-btn" onclick="closeFormDialog('form-dialog-01', event)"><img title="閉じる"
                                 src="/icons/close-s.png"></div>
-                    </div>
+                    </div> -->
+                    <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-01', '')}"></div>
 
                     <form th:replace="~{fragments/recycle/recycle :: form01Fragment()}"></form>
 
-                    <div class="dialog-footer">
+                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-01', 'execSave(\'form-dialog-01\', \'table-01-content\', \'regist\')', '保存')}"></div>
+
+                    <!-- <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
                         <button class="normal-btn ok" type="button"
                             onclick="execSave('form-dialog-01', 'table-01-content', 'regist')"><span>保存</span></button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div id="form-dialog-02" class="form-dialog none">
                 <div class="dialog-main">
-                    <div class="dialog-header"><span></span>
+                    <!-- <div class="dialog-header"><span></span>
                         <div class="img-btn" onclick="closeFormDialog('form-dialog-02', event)"><img title="閉じる"
                                 src="/icons/close-s.png"></div>
-                    </div>
-                    
+                    </div> -->
+                    <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-02', '')}"></div>
+
                     <form th:replace="~{fragments/recycle/recycle :: form02Fragment()}"></form>
 
-                    <div class="dialog-footer">
+                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-02', 'execSave(\'form-dialog-02\', \'table-01-content\', \'delivery\')', '保存')}"></div>
+
+                    <!-- <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-02', event)"><span>キャンセル</span></button>
                         <button class="normal-btn ok" type="button"
                             onclick="execSave('form-dialog-02', 'table-01-content', 'delivery')"><span>保存</span></button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div id="form-dialog-03" class="form-dialog none">
                 <div class="dialog-main">
-                    <div class="dialog-header"><span></span>
+                    <!-- <div class="dialog-header"><span></span>
                         <div class="img-btn" onclick="closeFormDialog('form-dialog-03', event)"><img title="閉じる"
                                 src="/icons/close-s.png"></div>
-                    </div>
-                    
+                    </div> -->
+                    <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-03', '')}"></div>
+
                     <form th:replace="~{fragments/recycle/recycle :: form03Fragment()}"></form>
 
-                    <div class="dialog-footer">
+                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-02', 'execSave(\'form-dialog-03\', \'table-01-content\', \'shipping\')', '保存')}"></div>
+
+                    <!-- <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-03', event)"><span>キャンセル</span></button>
                         <button class="normal-btn ok" type="button"
                             onclick="execSave('form-dialog-03', 'table-01-content', 'shipping')"><span>保存</span></button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div id="form-dialog-04" class="form-dialog none">
                 <div class="dialog-main">
-                    <div class="dialog-header"><span></span>
+                    <!-- <div class="dialog-header"><span></span>
                         <div class="img-btn" onclick="closeFormDialog('form-dialog-04', event)"><img title="閉じる"
                                 src="/icons/close-s.png"></div>
-                    </div>
-                    
+                    </div> -->
+                    <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-04', '')}"></div>
+
                     <form th:replace="~{fragments/recycle/recycle :: form04Fragment()}"></form>
 
-                    <div class="dialog-footer">
+                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-02', 'execSave(\'form-dialog-04\', \'table-01-content\', \'loss\')', '保存')}"></div>
+
+                    <!-- <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-04', event)"><span>キャンセル</span></button>
                         <button class="normal-btn ok" type="button"
                             onclick="execSave('form-dialog-04', 'table-01-content', 'loss')"><span>保存</span></button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
             <div id="form-dialog-05" class="form-dialog none">
                 <div class="dialog-main">
-                    <div class="dialog-header"><span></span>
+                    <!-- <div class="dialog-header"><span></span>
                         <div class="img-btn" onclick="closeFormDialog('form-dialog-05', event)"><img title="閉じる"
                                 src="/icons/close-s.png"></div>
-                    </div>
-                    
+                    </div> -->
+                    <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-05', '')}"></div>
+
                     <form th:replace="~{fragments/recycle/recycle :: form05Fragment()}"></form>
 
-                    <div class="dialog-footer">
+                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-02', 'execUpdate(\'table-01-content\', \'edit\')', '保存')}"></div>
+
+                    <!-- <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-05', event)"><span>キャンセル</span></button>
                         <button class="normal-btn ok" type="button"
                             onclick="execUpdate('table-01-content', 'edit')"><span>保存</span></button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -124,75 +138,6 @@
             const disposalSiteComboList = /*[[${disposalSiteComboList}]]*/;
             const dateComboList = [{"number":"regist","text":"登録日"},{"number":"use", "text":"使用日"},{"number":"delivery", "text":"引渡日"},{"number":"shipping", "text":"発送日"},{"number":"loss", "text":"ロス処理日"}]
             let origin = /*[[${origin}]]*/; // 初期リスト記憶用
-            let itemId = 0;
-            let itemList = [];
-            const number11 = document.getElementById('number11');
-            const number12 = document.getElementById('number12');
-            const number13 = document.getElementById('number13');
-            const number14 = document.getElementById('number14');
-            const number15 = document.getElementById('number15');
-            const moldingNumber11 = document.getElementById('molding-number11');
-            const moldingNumber12 = document.getElementById('molding-number12');
-            const moldingNumber13 = document.getElementById('molding-number13');
-            const moldingNumber14 = document.getElementById('molding-number14');
-            const moldingNumber15 = document.getElementById('molding-number15');
-            const makerCode11 = document.getElementById('maker-code11');
-            const makerCode15 = document.getElementById('maker-code15');
-            const itemCode11 = document.getElementById('item-code11');
-            const itemCode15 = document.getElementById('item-code15');
-            const makerName11 = document.getElementById('maker-name11');
-            const makerName15 = document.getElementById('maker-name15');
-            const itemName11 = document.getElementById('item-name11');
-            const itemName15 = document.getElementById('item-name15');
-            const makerId11 = document.getElementById('maker-id11');
-            const makerId15 = document.getElementById('maker-id15');
-            const itemId11 = document.getElementById('item-id11');
-            const itemId15 = document.getElementById('item-id15');
-            const useDate11 = document.getElementById('use-date11');
-            const deliveryDate12 = document.getElementById('delivery-date12');
-            const shippingDate13 = document.getElementById('shipping-date13');
-            const lossDate14 = document.getElementById('loss-date14');
-            const useDate15 = document.getElementById('use-date15');
-            const deliveryDate15 = document.getElementById('delivery-date15');
-            const shippingDate15 = document.getElementById('shipping-date15');
-            const lossDate15 = document.getElementById('loss-date15');
-            const recycleId11 = document.getElementById('recycle-id11');
-            const recycleId12 = document.getElementById('recycle-id12');
-            const recycleId13 = document.getElementById('recycle-id13');
-            const recycleId14 = document.getElementById('recycle-id14');
-            const recycleId15 = document.getElementById('recycle-id15');
-            const MODE_CONFIG = {
-                regist: {
-                    dialogId: "form-dialog-01",
-                    formId: "form-01",
-                    afterOpen: async (itemList) => {
-                        useDate11.value = "";
-                        await updateFormTableDisplay("table-11-content", "footer-11", itemList);
-                        setCompanyComboBox(form, entity, companyComboList, officeComboList);
-                    }
-                },
-                delivery: {
-                    dialogId: "form-dialog-02",
-                    formId: "form-02",
-                    dateInput: () => deliveryDate12,
-                    tableId: "table-12-content",
-                    footerId: "footer-12"
-                },
-                shipping: {
-                    dialogId: "form-dialog-03",
-                    formId: "form-03",
-                    dateInput: () => shippingDate13,
-                    tableId: "table-13-content",
-                    footerId: "footer-13"
-                },
-                loss: {
-                    dialogId: "form-dialog-04",
-                    formId: "form-04",
-                    dateInput: () => lossDate14,
-                    tableId: "table-14-content",
-                    footerId: "footer-14"
-                }
-            };
         </script>
         <script th:src="@{/js/recycle/recycle.js}"></script>
     </div>

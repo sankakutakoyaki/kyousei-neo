@@ -304,6 +304,7 @@ function createOfficeComboBox(form, officeList) {
     createComboBoxWithTop(officeArea, officeComboList, "");
 }
 
+// モードで指定したフォームを開く
 async function openFormByMode(mode, itemList, modeConfig) {
     const config = modeConfig[mode];
     if (!config) return;
@@ -314,7 +315,7 @@ async function openFormByMode(mode, itemList, modeConfig) {
     resetFormInput(form, mode);
     setEnterFocus(config.formId);
 
-    if (config.afterOpen) {
-        await config.afterOpen(itemList);
-    }
+    // if (config.afterOpen) {
+    //     await config.afterOpen(itemList);
+    // }
 }

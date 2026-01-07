@@ -21,7 +21,8 @@
                 </main>
                 <!-- フッター -->
                 <footer id="footer-01" class="pc-style"
-                    th:insert="~{fragments/recycle/maker :: footer01Fragment()}"></footer>
+                    th:insert="~{fragments/recycle/maker :: footer01Fragment()}">
+                </footer>
             </div>
         </div>
         <div id="form-dialog-area">
@@ -32,7 +33,7 @@
 
                     <form th:replace="~{fragments/recycle/maker :: form01Fragment()}"></form>
 
-                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-01', 'execCreate01(this)')}"></div>
+                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-01', 'execCreate01(this)', '作成')}"></div>
                 </div>
             </div>
         </div>
