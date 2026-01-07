@@ -273,9 +273,11 @@ function createFormTableRow(newRow, item, str) {
 /******************************************************************************************************* 入力画面 */
 
 // 商品登録画面を開く
-async function execEdit(id, self, str) {
+async function execEdit(id, str, self) {
     itemList = [];
     let entity = {};
+    const config = MODE_CONFIG[str];
+    const form = document.getElementById(config.dialogId);
 
     if (id > 0) {
         // 選択されたIDのエンティティを取得
@@ -283,25 +285,33 @@ async function execEdit(id, self, str) {
         const resultResponse = await postFetch('/api/recycle/get/id', data, token, 'application/x-www-form-urlencoded');
         const result = await resultResponse.json();
 
-        const form = document.getElementById("form-dialog-05");
+        // const form = document.getElementById("form-dialog-05");
 
         if (result.recycle_id == 0) {
             openMsgDialog("msg-dialog", "データがありません", "red");
             return;
         }
         entity = structuredClone(result);
-        openFormDialog("form-dialog-05"); 
-        resetFormInput(form, str);
-        setFormContent(form, entity);
-        setEnterFocus("form-05");
-        setCompanyComboBox(form, entity, companyComboList, officeComboList);
+        // openFormDialog("form-dialog-05"); 
+        // resetFormInput(form, str);
+        // setFormContent(form, entity);
+        // setEnterFocus("form-05");
+        // setCompanyComboBox(form, entity, companyComboList, officeComboList);
     } else {
-        openFormByMode(str, itemList, MODE_CONFIG);
-        if (str == "regist") {
+        // openFormByMode(str, itemList, MODE_CONFIG);
+        // if (str == "regist") {
             entity = structuredClone(formEntity);
-            const form = document.getElementById("form-dialog-01");
-            setCompanyComboBox(form, entity, companyComboList, officeComboList);
-        }
+            // const form = document.getElementById("form-dialog-01");
+            // setCompanyComboBox(form, entity, companyComboList, officeComboList);
+        // }
+    }
+
+    openFormByMode(str, itemList, MODE_CONFIG);
+
+    if (typeof str === "string" && str === "regist") {
+        setFormContent(form, entity);
+        // const form = document.getElementById(config.dialogId);
+        // setCompanyComboBox(form, entity, companyComboList, officeComboList);
     }
 }
 
@@ -452,9 +462,11 @@ function setFormContent(form, entity, str) {
 }
 
 
-function createFormdata(form, regBtn, str) {
+function createFormdata(form, str) {
     // document.getElementById(regBtnId).focus();
-    regBtn.focus();
+    const config = MODE_CONFIG[str];
+    config.regBtn.focus();
+    
     let formdata = [];
 
     switch (str) {
@@ -1106,7 +1118,7 @@ async function execRegistItem(self, str) {
         return;
     }
 
-    const formdata = createFormdata(form, config.regBtnId, str);
+    const formdata = createFormdata(form, str);
 
     itemList.push(formdata);
 
