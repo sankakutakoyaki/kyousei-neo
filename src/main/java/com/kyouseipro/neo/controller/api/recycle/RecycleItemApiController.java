@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.controller.api.recycle;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -63,7 +64,6 @@ public class RecycleItemApiController {
     //     }
     // }
     public ResponseEntity<RecycleItemEntity> getByCode(@RequestParam int code) {
-
         return recycleItemService.getByCode(code)
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.notFound().build());

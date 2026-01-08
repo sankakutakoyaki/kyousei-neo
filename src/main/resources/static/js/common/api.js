@@ -111,18 +111,26 @@ async function postFetch(url, data, token, contentType = "application/json") {
 
         const result = await response.json();
 
-        // ★ 業務エラーも例外にする
-        if (!result.success) {
-            handleResultError(result);
-            throw new Error("BUSINESS_ERROR");
+        // // ★ 業務エラーも例外にする
+        // if (!result.success) {
+        //     handleResultError(result);
+        //     throw new Error("BUSINESS_ERROR");
+        // }
+        // success がある場合だけチェック
+        if (result && typeof result.success === "boolean") {
+            // ★ 業務エラーも例外にする
+            if (!result.success) {
+                handleResultError(result);
+                throw new Error("BUSINESS_ERROR");
+            }
         }
-
         return result;
 
     } finally {
         if (spinner) spinner.classList.add("loaded");
     }
 }
+
 /**
  * fetch 共通エラーハンドリング
  */

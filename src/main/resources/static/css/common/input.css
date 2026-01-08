@@ -62,6 +62,12 @@ input.normal-chk[type="checkbox"]:checked:before {
     content: '';
 }
 
+.checkbox-label {
+    display: inline-flex;
+    align-items: center;   /* ← 縦中央揃え */
+    gap: 4px;              /* ボックスと文字の間隔 */
+}
+
 /******************************************************************************************************* 検索ボックス */
 
 .search-box {
@@ -97,7 +103,7 @@ select.normal-select {
     height: 2.5rem;
     border-radius: .3rem;
     border: 1px solid var(--br);
-    padding: 0 2rem 0 .8rem;
+    padding: 0 3rem 0 .8rem;
     background-image: url('/icons/down.png');
     background-position: right .5rem center;
     background-repeat: no-repeat;

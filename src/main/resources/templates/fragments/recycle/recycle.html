@@ -27,11 +27,11 @@
                     <img title="作成・登録" src="/icons/close.png">
                     <span>ロス</span>
                 </div>
-                <div class="img-btn" onclick="execDelete01('table-01-content', this)">
+                <div class="img-btn" onclick="execDelete(this)">
                     <img title="削除" src="/icons/dust.png">
                     <span>削除</span>
                 </div>
-                <div class="img-btn" onclick="execDownloadCsv01('table-01-content', this)">
+                <div class="img-btn" onclick="execDownloadCsv(this)">
                     <img title="ダウンロード" src="/icons/download.png">
                     <span>取得</span>
                 </div>
@@ -58,19 +58,19 @@
         </div>
     </header>
 
-    <form id="form-01" class="dialog-content" th:fragment="form01Fragment()">
+    <form id="form-01" class="dialog-content" th:fragment="form01Fragment()" data-mode="regist">
         <div class="table-area">
-            <input id="recycle-id11" name="recycle-id" type="hidden" value="">
-            <input id="version11" name="version" type="hidden" value="">
-            <input id="maker-id11" name="maker-id" type="hidden" value="">
-            <input id="item-id11" name="item-id" type="hidden" value="">
-            <input id="recycling-fee11" name="recycling-fee" type="hidden" value="">
-            <input id="molding-number11" name="molding-number" type="hidden" value="">
+            <input id="recycle-id11" name="recycle-id" type="hidden" value="" data-reset="regist">
+            <input id="version11" name="version" type="hidden" value="" data-reset="regist">
+            <input id="maker-id11" name="maker-id" type="hidden" value="" data-reset="regist">
+            <input id="item-id11" name="item-id" type="hidden" value="" data-reset="regist">
+            <input id="recycling-fee11" name="recycling-fee" type="hidden" value="" data-reset="regist">
+            <input id="molding-number11" name="molding-number" type="hidden" value="" data-reset="regist">
 
             <div class="flex-area">
                 <div class="form-parts">
                     <label>小売業者</label>
-                    <select tabindex="11" id="company11" name="company" autofocus
+                    <select tabindex="11" id="company11" name="company"
                         class="normal-select"></select>
                 </div>
                 <div class="form-parts">
@@ -78,38 +78,44 @@
                     <select tabindex="12" id="office11" name="office"
                         class="normal-select"></select>
                 </div>
-            </div>
-            <div class="flex-area">
+            <!-- </div>
+            <div class="flex-area"> -->
                 <div class="form-parts">
                     <label>使用日</label>
                     <input tabindex="13" id="use-date11" name="use-date" class="normal-input" type="date" value=""
                         onfocus="this.select();">
                 </div>
                 <div class="form-parts">
-                    <label>お問合せ管理票番号</label>
-                    <input tabindex="14" id="number11" name="recycle-number" class="normal-input" type="text"
-                        value="" onfocus="this.select();">
+                    <label></label>
+                    <label class="checkbox-label"><input type="checkbox" id="fix-item-checkbox"><span>品目固定</span></label>
                 </div>
             </div>
             <div class="flex-area">
                 <div class="form-parts">
+                    <label>お問合せ管理票番号</label>
+                    <input tabindex="14" id="number11" name="recycle-number" class="normal-input" type="text" data-reset="regist" autofocus
+                        value="" onfocus="this.select();">
+                </div>
+            <!-- </div>
+            <div class="flex-area"> -->
+                <div class="form-parts">
                     <label>品目・料金区分</label>
-                    <input tabindex="15" id="item-code11" name="item-code" class="normal-input" type="text"
+                    <input tabindex="15" id="item-code11" name="item-code" class="normal-input" type="text" data-reset="regist"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label></label>
-                    <input id="item-name11" name="item-name" class="normal-input" type="text" readonly
+                    <input id="item-name11" name="item-name" class="normal-input" type="text" readonly data-reset="regist"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label>製造業者等名</label>
-                    <input tabindex="16" id="maker-code11" name="maker-code" class="normal-input" type="text"
+                    <input tabindex="16" id="maker-code11" name="maker-code" class="normal-input" type="text" data-reset="regist"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label></label>
-                    <input id="maker-name11" name="maker-name" class="normal-input" type="text" readonly
+                    <input id="maker-name11" name="maker-name" class="normal-input" type="text" readonly data-reset="regist"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -127,21 +133,21 @@
         </div>
     </form>
     
-    <form id="form-02" class="dialog-content" th:fragment="form02Fragment()">
+    <form id="form-02" class="dialog-content" th:fragment="form02Fragment()" data-mode="delivery">
         <div class="table-area">
-            <input id="recycle-id12" name="recycle-id" type="hidden" value="">
-            <input id="version12" name="version" type="hidden" value="">
-            <input id="molding-number12" name="molding-number" type="hidden" value="">
+            <input id="recycle-id12" name="recycle-id" type="hidden" value="" data-reset="delivery">
+            <input id="version12" name="version" type="hidden" value="" data-reset="delivery">>
+            <input id="molding-number12" name="molding-number" type="hidden" value="" data-reset="delivery">>
 
             <div class="flex-area">
                 <div class="form-parts">
                     <label>引渡日</label>
-                    <input tabindex="21" id="delivery-date12" name="delivery-date" class="normal-input" type="date" value="" autofocus
+                    <input tabindex="21" id="delivery-date12" name="delivery-date" class="normal-input" type="date" value="" autofocus data-reset="delivery"
                         onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
-                    <input tabindex="22" id="number12" name="recycle-number" class="normal-input" type="text"
+                    <input tabindex="22" id="number12" name="recycle-number" class="normal-input" type="text" data-reset="delivery"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -159,21 +165,21 @@
         </div>
     </form>
 
-    <form id="form-03" class="dialog-content" th:fragment="form03Fragment()">
+    <form id="form-03" class="dialog-content" th:fragment="form03Fragment()" data-mode="shipping">
         <div class="table-area">
-            <input id="recycle-id13" name="recycle-id" type="hidden" value="">
-            <input id="version13" name="version" type="hidden" value="">
-            <input id="molding-number13" name="molding-number" type="hidden" value="">
+            <input id="recycle-id13" name="recycle-id" type="hidden" value="" data-reset="shipping">
+            <input id="version13" name="version" type="hidden" value="" data-reset="shipping">
+            <input id="molding-number13" name="molding-number" type="hidden" value="" data-reset="shipping">
 
             <div class="flex-area">
                 <div class="form-parts">
                     <label>発送日</label>
-                    <input tabindex="31" id="shipping-date13" name="shipping-date" class="normal-input" type="date" value="" autofocus
+                    <input tabindex="31" id="shipping-date13" name="shipping-date" class="normal-input" type="date" value="" autofocus data-reset="shipping"
                         onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
-                    <input tabindex="32" id="number13" name="recycle-number" class="normal-input" type="text"
+                    <input tabindex="32" id="number13" name="recycle-number" class="normal-input" type="text" data-reset="shipping"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -191,21 +197,21 @@
         </div>
     </form>
 
-    <form id="form-04" class="dialog-content" th:fragment="form04Fragment()">
+    <form id="form-04" class="dialog-content" th:fragment="form04Fragment()" data-mode="loss">
         <div class="table-area">
-            <input id="recycle-id14" name="recycle-id" type="hidden" value="">
-            <input id="version14" name="version" type="hidden" value="">
-            <input id="molding-number14" name="molding-number" type="hidden" value="">
+            <input id="recycle-id14" name="recycle-id" type="hidden" value="" data-reset="loss">
+            <input id="version14" name="version" type="hidden" value="" data-reset="loss">
+            <input id="molding-number14" name="molding-number" type="hidden" value="" data-reset="loss">
 
             <div class="flex-area">
                 <div class="form-parts">
                     <label>ロス処理日</label>
-                    <input tabindex="41" id="loss-date14" name="loss-date" class="normal-input" type="date" value="" autofocus
+                    <input tabindex="41" id="loss-date14" name="loss-date" class="normal-input" type="date" value="" autofocus data-reset="loss"
                         onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
-                    <input tabindex="42" id="number14" name="recycle-number" class="normal-input" type="text"
+                    <input tabindex="42" id="number14" name="recycle-number" class="normal-input" type="text" data-reset="loss"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -223,84 +229,84 @@
         </div>
     </form>
 
-    <form id="form-05" class="dialog-content" th:fragment="form05Fragment()">
+    <form id="form-05" class="dialog-content" th:fragment="form05Fragment()" data-mode="edit">
         <div class="table-area">
-            <input id="recycle-id15" name="recycle-id" type="hidden" value="">
-            <input id="version15" name="version" type="hidden" value="">
-            <input id="maker-id15" name="maker-id" type="hidden" value="">
-            <input id="item-id15" name="item-id" type="hidden" value="">
-            <input id="recycling-fee15" name="recycling-fee" type="hidden" value="">
-            <input id="number15" name="recycle-number" type="hidden" value="">
+            <input id="recycle-id15" name="recycle-id" type="hidden" value="" data-reset="edit">
+            <input id="version15" name="version" type="hidden" value="" data-reset="edit">
+            <input id="maker-id15" name="maker-id" type="hidden" value="" data-reset="edit">
+            <input id="item-id15" name="item-id" type="hidden" value="" data-reset="edit">
+            <input id="recycling-fee15" name="recycling-fee" type="hidden" value="" data-reset="edit">
+            <input id="number15" name="recycle-number" type="hidden" value="" data-reset="edit">
 
             <div class="flex-area">
                 <div class="form-parts">
                     <label>お問合せ管理票番号</label>
-                    <input tabindex="51" id="molding-number15" name="molding-number" class="normal-input" type="text" readonly
+                    <input tabindex="51" id="molding-number15" name="molding-number" class="normal-input" type="text" readonly data-reset="edit"
                         value="" onfocus="this.select();">
                 </div>
             </div>
             <div class="flex-area">
                 <div class="form-parts">
                     <label>品目・料金区分</label>
-                    <input tabindex="52" id="item-code15" name="item-code" class="normal-input" type="text" autofocus
+                    <input tabindex="52" id="item-code15" name="item-code" class="normal-input" type="text" autofocus data-reset="edit"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label></label>
-                    <input id="item-name15" name="item-name" class="normal-input" type="text" readonly
+                    <input id="item-name15" name="item-name" class="normal-input" type="text" readonly data-reset="edit"
                         value="" onfocus="this.select();">
                 </div>
             </div>
             <div class="flex-area">
                 <div class="form-parts">
                     <label>製造業者等名</label>
-                    <input tabindex="53" id="maker-code15" name="maker-code" class="normal-input" type="text"
+                    <input tabindex="53" id="maker-code15" name="maker-code" class="normal-input" type="text" data-reset="edit"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label></label>
-                    <input id="maker-name15" name="maker-name" class="normal-input" type="text" readonly
+                    <input id="maker-name15" name="maker-name" class="normal-input" type="text" readonly data-reset="edit"
                         value="" onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label>リサイクル料</label>
-                    <input tabindex="54" id="recycling-fee15" name="recycling-fee" class="normal-input text-right"
+                    <input tabindex="54" id="recycling-fee15" name="recycling-fee" class="normal-input text-right" data-reset="edit"
                         type="text" value="" onfocus="this.select();">
                 </div>
             </div>
             <div class="flex-area">
                 <div class="form-parts">
                     <label>使用日</label>
-                    <input tabindex="55" id="use-date15" name="use-date" class="normal-input" type="date" value=""
+                    <input tabindex="55" id="use-date15" name="use-date" class="normal-input" type="date" value="" data-reset="edit"
                         onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label>引渡日</label>
-                    <input tabindex="56" id="delivery-date15" name="delivery-date" class="normal-input" type="date" value=""
+                    <input tabindex="56" id="delivery-date15" name="delivery-date" class="normal-input" type="date" value="" data-reset="edit"
                         onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label>発送日</label>
-                    <input tabindex="57" id="shipping-date15" name="shipping-date" class="normal-input" type="date" value=""
+                    <input tabindex="57" id="shipping-date15" name="shipping-date" class="normal-input" type="date" value="" data-reset="edit"
                         onfocus="this.select();">
                 </div>
                 <div class="form-parts">
                     <label>ロス処理日</label>
-                    <input tabindex="58" id="loss-date15" name="loss-date" class="normal-input" type="date" value=""
+                    <input tabindex="58" id="loss-date15" name="loss-date" class="normal-input" type="date" value="" data-reset="edit"
                         onfocus="this.select();">
                 </div>
             </div>
             <div class="flex-area">
                 <div class="form-parts">
                     <label>小売業者</label>
-                    <select tabindex="59" id="company15" name="company"
+                    <select tabindex="59" id="company15" name="company" data-reset="edit"
                         class="normal-select"></select>
                 </div>
             </div>
             <div class="flex-area">
                 <div class="form-parts">
                     <label>支店</label>
-                    <select tabindex="60" id="office15" name="office"
+                    <select tabindex="60" id="office15" name="office" data-reset="edit"
                         class="normal-select"></select>
                 </div>
             </div>

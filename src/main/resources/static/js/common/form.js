@@ -283,7 +283,21 @@ function execSpecifyPeriod(str, startId, endId) {
 
 // 会社コンボボックスを登録する
 function setCompanyComboBox(form, entity, companyList, officeList) {
-    const companyArea = form.querySelector('select[name="company"]');
+    const companyArea = form.querySelector('select[name="company"]');    
+    createComboBox(companyArea, companyList);
+    setComboboxSelected(companyArea, entity.company_id);
+    createOfficeComboBox(form, officeList);
+    // if (entity.company_id > 0) {
+    //     const officeArea = form.querySelector('select[name="office"]');
+    //     createComboBoxWithTop(officeArea, officeList, "");
+    //     setComboboxSelected(officeArea, entity.office_id);                    
+    // }
+    companyArea.onchange = function() { createOfficeComboBox(form, officeList) };
+}
+
+// 先頭が空白の会社コンボボックスを登録する
+function setCompanyComboBoxWithTop(form, entity, companyList, officeList) {
+    const companyArea = form.querySelector('select[name="company"]');    
     createComboBoxWithTop(companyArea, companyList, "");
     setComboboxSelected(companyArea, entity.company_id);  
     if (entity.company_id > 0) {
@@ -305,7 +319,7 @@ function createOfficeComboBox(form, officeList) {
 }
 
 // モードで指定したフォームを開く
-async function openFormByMode(mode, itemList, modeConfig) {
+async function openFormByMode(mode, modeConfig) {
     const config = modeConfig[mode];
     if (!config) return;
 
@@ -313,9 +327,6 @@ async function openFormByMode(mode, itemList, modeConfig) {
 
     const form = document.getElementById(config.dialogId);
     resetFormInput(form, mode);
-    setEnterFocus(config.formId);
-
-    // if (config.afterOpen) {
-    //     await config.afterOpen(itemList);
-    // }
+    resetEnterFocus();
+    // setEnterFocus(config.formId);
 }

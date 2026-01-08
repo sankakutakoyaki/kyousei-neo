@@ -31,6 +31,11 @@ function filterTabFocusElements(nodeList) {
     });
 }
 
+// フォーカス遷移対象要素を再設定
+function resetEnterFocus() {
+    tabFocusElements = createTabFocusElements();
+}
+
 // keydownイベントリスナに登録
 function setEnterFocus(areaId) {
     let area;

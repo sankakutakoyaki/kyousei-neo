@@ -18,10 +18,10 @@ public class RecycleEntity implements CsvExportable {
     private int item_id;//　品目・料金区分
     private int item_code;
     private String item_name;
-    private LocalDate use_date;//　使用日
-    private LocalDate delivery_date;//　引渡日
-    private LocalDate shipping_date;//　発送日
-    private LocalDate loss_date;//　ロス処理日
+    private LocalDate use_date = LocalDate.of(9999, 12, 31);//　使用日
+    private LocalDate delivery_date = LocalDate.of(9999, 12, 31);//　引渡日
+    private LocalDate shipping_date = LocalDate.of(9999, 12, 31);//　発送日
+    private LocalDate loss_date = LocalDate.of(9999, 12, 31);//　ロス処理日
     private int company_id;//　小売業者
     private String company_name;
     private int office_id;
