@@ -58,26 +58,22 @@ async function getItemByCode(code) {
 }
 
 // お問合せ管理票番号の桁数と数値かどうかを確認
-function checkNumber(numberBox) {
-    if (numberBox != null) {
-        const num = numberBox.value;
-        if (num === "") return;
-console.log(num)
-        // const number = removeEdgeA(num);
-        const number = num.replace(/\D/g, "");
-        // 文字列で13桁かチェック
-        if (typeof number !== "string" || number.length !== 13 || !/^\d+$/.test(number)) {
-            return "";
-        }
-        return number;
-    } else {
-        return "";
+function checkNumber(num) {
+    if (num == null || num == "") return null;
+
+    // const number = removeEdgeA(num);
+    const number = num.replace(/\D/g, "");
+
+    // 文字列で13桁かチェック
+    if (typeof number !== "string" || number.length !== 13 || !/^\d+$/.test(number)) {
+        return false;
     }
+    return number;
 }
 
 // 0000-00000000-0の形にする
-function moldingNumber(numberBox) {
-    const number = checkNumber(numberBox);
+function moldingNumber(num) {
+    const number = checkNumber(num);
     // 正しい場合のみ成形
     if (number == "") {
         return "";

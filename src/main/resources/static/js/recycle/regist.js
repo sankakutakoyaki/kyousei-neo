@@ -348,6 +348,87 @@ async function execEdit(id, mode, self) {
     ID_CONFIG[mode].number.focus();
 }
 
+// コンテンツ部分作成
+function setFormContent(form, entity) {
+    form.querySelector('[name="recycle-id"]').value = entity.recycle_id;
+    form.querySelector('[name="version"]').value = entity.version;
+    form.querySelector('[name="number"]').value = entity.molding_number;
+    form.querySelector('[name="recycle-number"]').value = entity.recycle_number;
+    form.querySelector('[name="molding-number"]').value = entity.molding_number;
+    form.querySelector('[name="maker-code"]').value = entity.maker_code;
+    form.querySelector('[name="maker-name"]').value = entity.maker_name;
+    form.querySelector('[name="maker-id"]').value = entity.maker_id;
+    form.querySelector('[name="item-code"]').value = entity.item_code;
+    form.querySelector('[name="item-name"]').value = entity.item_name;
+    form.querySelector('[name="item-id"]').value = entity.item_id;
+    form.querySelector('[name="recycling-fee"]').value = entity.recycling_fee;
+
+    if (entity.use_date === "9999-12-31") {
+        form.querySelector('[name="use-date"]').value = "";
+    } else {
+        form.querySelector('[name="use-date"]').value = entity.use_date;
+    }
+
+    if (entity.delivery_date === "9999-12-31") {
+        form.querySelector('[name="delivery-date"]').value = "";
+    } else {
+        form.querySelector('[name="delivery-date"]').value = entity.delivery_date;
+    }
+
+    if (entity.shipping_date === "9999-12-31") {
+        form.querySelector('[name="shipping-date"]').value = "";
+    } else {
+        form.querySelector('[name="shipping-date"]').value = entity.shipping_date;
+    }
+
+    if (entity.loss_date === "9999-12-31") {
+        form.querySelector('[name="loss-date"]').value = "";
+    } else {
+        form.querySelector('[name="loss-date"]').value = entity.loss_date;
+    }
+
+    // 製造業者等名コンボボックス
+    setCompanyComboBox(form, entity, companyComboList, officeComboList);
+
+    // 処分場コンボボックス
+    const disposalSiteArea = form.querySelector('select[name="disposal-site"]');
+    if (disposalSiteArea != null) {
+        createComboBoxWithTop(disposalSiteArea, disposalSiteComboList, "");
+        setComboboxSelected(disposalSiteArea, entity.disposal_site_id); 
+    }
+
+    // form.querySelector('[autofocus]').focus();
+}
+
+
+function createFormdata(form, mode) {
+    // document.getElementById(regBtnId).focus();
+    const config = ID_CONFIG[mode];
+    config.regBtn.focus();
+    
+    let formdata = [];
+    // const formdata = structuredClone(formEntity);
+
+    switch (mode) {
+        case "regist":
+            formdata = setInsertFormData(form);
+            break;
+        // case "delivery":
+        //     formdata = setDateUpdateFormData(form);
+        //     break;
+        // case "shipping":
+        //     formdata = setDateUpdateFormData(form);
+        //     break;
+        // case "loss":
+        //     formdata = setDateUpdateFormData(form);
+        //     break;
+        default:
+            formdata = setDateUpdateFormData(form);
+            break;
+    }
+    return formdata;
+}
+
 // データを保存するためのformdataを作成する
 function setInsertFormData(form) {
     const formData = new FormData(form);
@@ -440,87 +521,6 @@ function setInsertFormData(form) {
         formdata.disposal_site_name = disposalSiteName;
     }
 
-    return formdata;
-}
-
-// コンテンツ部分作成
-function setFormContent(form, entity) {
-    form.querySelector('[name="recycle-id"]').value = entity.recycle_id;
-    form.querySelector('[name="version"]').value = entity.version;
-    form.querySelector('[name="number"]').value = entity.molding_number;
-    form.querySelector('[name="recycle-number"]').value = entity.recycle_number;
-    form.querySelector('[name="molding-number"]').value = entity.molding_number;
-    form.querySelector('[name="maker-code"]').value = entity.maker_code;
-    form.querySelector('[name="maker-name"]').value = entity.maker_name;
-    form.querySelector('[name="maker-id"]').value = entity.maker_id;
-    form.querySelector('[name="item-code"]').value = entity.item_code;
-    form.querySelector('[name="item-name"]').value = entity.item_name;
-    form.querySelector('[name="item-id"]').value = entity.item_id;
-    form.querySelector('[name="recycling-fee"]').value = entity.recycling_fee;
-
-    if (entity.use_date === "9999-12-31") {
-        form.querySelector('[name="use-date"]').value = "";
-    } else {
-        form.querySelector('[name="use-date"]').value = entity.use_date;
-    }
-
-    if (entity.delivery_date === "9999-12-31") {
-        form.querySelector('[name="delivery-date"]').value = "";
-    } else {
-        form.querySelector('[name="delivery-date"]').value = entity.delivery_date;
-    }
-
-    if (entity.shipping_date === "9999-12-31") {
-        form.querySelector('[name="shipping-date"]').value = "";
-    } else {
-        form.querySelector('[name="shipping-date"]').value = entity.shipping_date;
-    }
-
-    if (entity.loss_date === "9999-12-31") {
-        form.querySelector('[name="loss-date"]').value = "";
-    } else {
-        form.querySelector('[name="loss-date"]').value = entity.loss_date;
-    }
-
-    // 製造業者等名コンボボックス
-    setCompanyComboBox(form, entity, companyComboList, officeComboList);
-
-    // 処分場コンボボックス
-    const disposalSiteArea = form.querySelector('select[name="disposal-site"]');
-    if (disposalSiteArea != null) {
-        createComboBoxWithTop(disposalSiteArea, disposalSiteComboList, "");
-        setComboboxSelected(disposalSiteArea, entity.disposal_site_id); 
-    }
-
-    // form.querySelector('[autofocus]').focus();
-}
-
-
-function createFormdata(form, mode) {
-    // document.getElementById(regBtnId).focus();
-    const config = ID_CONFIG[mode];
-    config.regBtn.focus();
-    
-    let formdata = [];
-    // const formdata = structuredClone(formEntity);
-
-    switch (mode) {
-        case "regist":
-            formdata = setInsertFormData(form);
-            break;
-        // case "delivery":
-        //     formdata = setDateUpdateFormData(form);
-        //     break;
-        // case "shipping":
-        //     formdata = setDateUpdateFormData(form);
-        //     break;
-        // case "loss":
-        //     formdata = setDateUpdateFormData(form);
-        //     break;
-        default:
-            formdata = setDateUpdateFormData(form);
-            break;
-    }
     return formdata;
 }
 
@@ -658,16 +658,20 @@ async function execNumberBlur(e, mode) {
     const config = ID_CONFIG[mode];
     if (config.number.value == null) return;
 
-    const number = removeEdgeA(config.number.value);
-    const result = checkNumber(number); 
+    // const number = removeEdgeA(config.number.value);
+    const number = checkNumber(config.number.value); 
     // const numberBtn = form.querySelector('input[name="recycle-number"]');
     // const regBtn = form.querySelector('button[name="regist-btn"]');
     // const number = checkNumber(numberBox); 
 
-    if (number == "") {
-        config.number.focus();
-        // clearNumber(config.number);
+    if (number == null) {
+        // config.number.focus();
+        clearNumber(config.number);
         return;   
+    } else if (!number) {
+        openMsgDialog("msg-dialog", "不正な番号です。", 'red');
+        setFocusElement("msg-dialog", config.number);
+        return;
     }
 
     let item = {};
@@ -675,8 +679,8 @@ async function execNumberBlur(e, mode) {
         item = itemList.find(value => value.recyle_number === number);
         if (item != null) {
             // clearNumber(config.number);
-            openMsgDialog("msg-dialog", "その番号は、リストに存在します", 'red');
-            setFocusElement("msg-dialog", config.mnumber);
+            openMsgDialog("msg-dialog", number + "は、リストに存在します", 'red');
+            setFocusElement("msg-dialog", config.number);
             return;
         }
     }
@@ -711,6 +715,7 @@ async function execNumberBlur(e, mode) {
     if (msg !== "") {
         openMsgDialog("msg-dialog", msg, 'red');
         setFocusElement("msg-dialog", config.number);
+        config.number.value = config.moldingNumber.value;
         // config.number.focus();
     } else {
         config.recycleId.value = item == null ? 0: item.recycle_id;
