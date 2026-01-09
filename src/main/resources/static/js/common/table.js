@@ -419,7 +419,7 @@ async function funcDownloadCsv(data, url) {
 
     // 取得処理
     // const data = JSON.stringify(ids);
-    const result = await postFetch(url, JSON.stringify(data), token, "application/json");
+    const result = await updateFetch(url, JSON.stringify(data), token, "application/json");
     const text = await result.text();
 
     // 文字列データが返却されなければ、エラーメッセージを表示
@@ -438,16 +438,17 @@ async function funcDownloadCsv(data, url) {
  * @param {*} tableId 
  * @param {*} url 
  */
-async function deleteTablelist(tableId, footerId, searchId, url) {
+async function deleteTablelist(tableId, url) {
     // 選択された要素を取得する
     const data = getAllSelectedIds(tableId);
     if (data.length == 0) {
         // 選択された要素がなければメッセージを表示して終了
-        return {"success":false, "message":"選択されていないか、データがありません。"};
+        openMsgDialog("msg-dialog", "選択されていません", "red");
+        return;
     } else {
         // const resultResponse = await postFetch(url, JSON.stringify(data), token, 'application/json');
         // return await resultResponse.json();
-        return await postFetch(url, JSON.stringify(data), token, "application/json");
+        return await updateFetch(url, JSON.stringify(data), token, "application/json");
     }
 }
 

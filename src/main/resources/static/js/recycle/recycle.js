@@ -17,7 +17,7 @@ async function existsRecycleByNumber(number) {
     // } else {
     //     return null;
     // }
-    return await postFetch(url, data, token, contentType);
+    return await serachFetch(url, data, token, contentType);
 }
 
 // コードからrecycle_makerを取得
@@ -35,7 +35,7 @@ async function getMakerByCode(code) {
     // } else {
     //     return null;
     // }
-    return await postFetch(url, data, token, contentType);
+    return await searchFetch(url, data, token, contentType);
 }
 
 
@@ -54,14 +54,17 @@ async function getItemByCode(code) {
     // } else {
     //     return null;
     // }
-    return await postFetch(url, data, token, contentType);
+    return await searchFetch(url, data, token, contentType);
 }
 
 // お問合せ管理票番号の桁数と数値かどうかを確認
 function checkNumber(numberBox) {
     if (numberBox != null) {
         const num = numberBox.value;
-        const number = removeEdgeA(num);
+        if (num === "") return;
+console.log(num)
+        // const number = removeEdgeA(num);
+        const number = num.replace(/\D/g, "");
         // 文字列で13桁かチェック
         if (typeof number !== "string" || number.length !== 13 || !/^\d+$/.test(number)) {
             return "";

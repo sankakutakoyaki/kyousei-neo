@@ -7,6 +7,7 @@ let itemList = [];
 const ID_CONFIG = {
     regist: {
         number: document.getElementById('number11'),
+        recycleNumber: document.getElementById('recycle-number11'),
         moldingNumber: document.getElementById('molding-number11'),
         makerCode: document.getElementById('maker-code11'),
         itemCode: document.getElementById('item-code11'),
@@ -21,6 +22,7 @@ const ID_CONFIG = {
     },
     delivery: {
         number: document.getElementById('number12'),
+        recycleNumber: document.getElementById('recycle-number12'),
         moldingNumber: document.getElementById('molding-number12'),
         date: document.getElementById('delivery-date12'),
         recycleId: document.getElementById('recycle-id12'),
@@ -29,6 +31,7 @@ const ID_CONFIG = {
     },
     shipping: {
         number: document.getElementById('number13'),
+        recycleNumber: document.getElementById('recycle-number13'),
         moldingNumber: document.getElementById('molding-number13'),
         date: document.getElementById('shipping-date13'),
         recycleId: document.getElementById('recycle-id13'),
@@ -37,6 +40,7 @@ const ID_CONFIG = {
     },
     loss: {
         number: document.getElementById('number14'),
+        recycleNumber: document.getElementById('recycle-number14'),
         moldingNumber: document.getElementById('molding-number14'),
         date: document.getElementById('loss-date14'),
         recycleId: document.getElementById('recycle-id14'),
@@ -45,6 +49,7 @@ const ID_CONFIG = {
     },
     edit: {
         number: document.getElementById('number15'),
+        recycleNumber: document.getElementById('recycle-number15'),
         moldingNumber: document.getElementById('molding-number15'),
         makerCode: document.getElementById('maker-code15'),
         itemCode: document.getElementById('item-code15'),
@@ -108,8 +113,6 @@ const MODE_CONFIG = {
         dialogId: "form-dialog-05",
         formId: "form-05",
         dateInput: () => editDate15,
-        tableId: "table-15-content",
-        footerId: "footer-15",
         regBtnId: "regist-btn15"
     }
 };
@@ -161,7 +164,7 @@ function createTable01Content(tableId, list) {
             idKey: "recycle_id",
             validCheck: item => item.loss_date !== "9999-12-31",
             onDoubleClick: (item, row) => {
-                execEdit(item.recycle_id, row);
+                execEdit(item.recycle_id, 'edit', this);
             }
         });
 
@@ -179,9 +182,9 @@ function createFormTableContent(mode, list) {
             item,
             idKey: "recycle_id",
             validCheck: item => item.state !== deleteCode,
-            onDoubleClick: (item, row) => {
-                execEdit(item.recycle_id, row);
-            }
+            // onDoubleClick: (item, row) => {
+            //     // execEdit(item.recycle_id, row);
+            // }
         });
 
         createFormTableRow(row, item, mode);
@@ -296,18 +299,18 @@ function createFormTableRow(newRow, item, mode) {
 async function execEdit(id, mode, self) {
     itemList = [];
     let entity = {};
-    const config = MODE_CONFIG[mode];
+    const config = MODE_CONFIG[mode];console.log(config.dialogId)
     const form = document.getElementById(config.dialogId);
 
     if (id > 0) {
         // 選択されたIDのエンティティを取得
         const data = "id=" + encodeURIComponent(parseInt(id));
-        const resultResponse = await postFetch('/api/recycle/get/id', data, token, 'application/x-www-form-urlencoded');
-        const result = await resultResponse.json();
+        const result = await searchFetch('/api/recycle/get/id', data, token, 'application/x-www-form-urlencoded');
+        // const result = await resultResponse.json();
 
         // const form = document.getElementById("form-dialog-05");
 
-        if (result.recycle_id == 0) {
+        if (result == null) {
             openMsgDialog("msg-dialog", "データがありません", "red");
             return;
         }
@@ -331,16 +334,21 @@ async function execEdit(id, mode, self) {
 
     openFormByMode(mode, MODE_CONFIG);
 
+    if (typeof mode === "string" && mode !== "edit") {
+        ID_CONFIG[mode].date.value = getDate();
+    }
+
     if (typeof mode === "string" && mode === "regist") {
         setCompanyComboBox(form, entity, companyComboList, officeComboList);
-        ID_CONFIG[mode].date.value = getDate();
     } else if (typeof mode === "string" && mode === "edit") {
         setFormContent(form, entity);
         setCompanyComboBox(form, entity, companyComboList, officeComboList);
     }
+
+    ID_CONFIG[mode].number.focus();
 }
 
-// 入力画面にデータを挿入する
+// データを保存するためのformdataを作成する
 function setInsertFormData(form) {
     const formData = new FormData(form);
     const formdata = structuredClone(formEntity);
@@ -439,6 +447,7 @@ function setInsertFormData(form) {
 function setFormContent(form, entity) {
     form.querySelector('[name="recycle-id"]').value = entity.recycle_id;
     form.querySelector('[name="version"]').value = entity.version;
+    form.querySelector('[name="number"]').value = entity.molding_number;
     form.querySelector('[name="recycle-number"]').value = entity.recycle_number;
     form.querySelector('[name="molding-number"]').value = entity.molding_number;
     form.querySelector('[name="maker-code"]').value = entity.maker_code;
@@ -483,7 +492,7 @@ function setFormContent(form, entity) {
         setComboboxSelected(disposalSiteArea, entity.disposal_site_id); 
     }
 
-    form.querySelector('[autofocus]').focus();
+    // form.querySelector('[autofocus]').focus();
 }
 
 
@@ -641,28 +650,39 @@ function resetFormInput(form, mode) {
 
 // お問合せ管理票番号を取得して検証
 // async function searchForExistByNumber(form, list, numberBox, recycleId, moldingId, versionId, mode) {
-async function searchForExistByNumber(list, mode) {
+// async function searchForExistByNumber(list, mode) {
+async function execNumberBlur(e, mode) {
+    e.preventDefault();
+    if (e.currentTarget == null) return;
+
     const config = ID_CONFIG[mode];
-    const number = checkNumber(config.number); 
+    if (config.number.value == null) return;
+
+    const number = removeEdgeA(config.number.value);
+    const result = checkNumber(number); 
     // const numberBtn = form.querySelector('input[name="recycle-number"]');
     // const regBtn = form.querySelector('button[name="regist-btn"]');
     // const number = checkNumber(numberBox); 
 
     if (number == "") {
-        clearNumber(config.number);
+        config.number.focus();
+        // clearNumber(config.number);
         return;   
     }
 
-    const item = list.find(value => value.recyle_number === number);
-    // if (item != null) {
-    //     clearNumber(config.number);
-    //     openMsgDialog("msg-dialog", "その番号は、リストに存在します", 'red');
-    //     setFocusElement("msg-dialog", config.number);
-    //     return;
-    // }
+    let item = {};
+    if (mode !== "edit") {
+        item = itemList.find(value => value.recyle_number === number);
+        if (item != null) {
+            // clearNumber(config.number);
+            openMsgDialog("msg-dialog", "その番号は、リストに存在します", 'red');
+            setFocusElement("msg-dialog", config.mnumber);
+            return;
+        }
+    }
 
     // const entity = await existsRecycleByNumber(number);
-
+    item = origin.find(value => value.recycle_number === number);
     // if (entity != null && entity.loss_date != "9999-12-31") {
     //     clearNumber(config.number);
     //     openMsgDialog("msg-dialog", "その番号は、ロス処理済みです", 'red');
@@ -673,6 +693,8 @@ async function searchForExistByNumber(list, mode) {
 
     let msg = "";
     if (item != null && mode === "regist") {
+        msg = "その番号は、すでに登録されています";
+    } else if (item != null && mode === "edit") {
         msg = "その番号は、すでに登録されています";
     } else if (item == null && mode === "delivery") {
         msg = "その番号は、使用登録されていません";
@@ -689,10 +711,12 @@ async function searchForExistByNumber(list, mode) {
     if (msg !== "") {
         openMsgDialog("msg-dialog", msg, 'red');
         setFocusElement("msg-dialog", config.number);
+        // config.number.focus();
     } else {
         config.recycleId.value = item == null ? 0: item.recycle_id;
-        config.version.value = item == null ? 0: entity.version;
+        config.version.value = item == null ? 0: item.version;
         const molNumber = moldingNumber(config.number);
+        config.recycleNumber.value = number;
         config.moldingNumber.value = molNumber;
         config.number.value = molNumber !== "" ? molNumber: "";
         if (mode !== "regist" && mode !== "edit") {
@@ -779,7 +803,10 @@ async function searchForExistByNumber(list, mode) {
 
 // コードから[maker]を取得して、名前を表示
 // async function searchForNameByMakerCode(form, makerCode, makerName, makerId) {
-async function searchForNameByMakerCode(mode) {
+// async function searchForNameByMakerCode(mode) {
+async function execMakerCodeBlur(e, mode) {
+    e.preventDefault();
+    if (e.currentTarget == null) return;
     // let code = 0;
     // const makerBtn = form.querySelector('input[name="maker-code"]');
     // if (makerCode.value == "" || isNaN(makerCode.value)) {
@@ -810,14 +837,22 @@ async function searchForNameByMakerCode(mode) {
         makerCode.value = "";
         makerName.value = "";
         makerId.value = "";
+        // makerCode.focus();
         openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
         setFocusElement("msg-dialog", makerCode);
+
+        const dialog = document.getElementById("msg-dialog");
+        const focusBtn = dialog.querySelector('[name="focus-btn"]');
+        if (focusBtn != null) focusBtn.focus();
     }
 }
 
 // コードから[item]を取得して、名前を表示
 // async function searchForNameByItemCode(form, itemCode, itemName, itemId) {
-async function searchForNameByItemCode(mode) {
+// async function searchForNameByItemCode(mode) {
+async function execItemCodeBlur(e, mode) {
+    e.preventDefault();
+    if (e.currentTarget == null) return;
     // let code = 0;
     // const codeBtn = form.querySelector('input[name="item-code"]')
 
@@ -835,7 +870,6 @@ async function searchForNameByItemCode(mode) {
     // code = itemCode.value;
 
     const entity = await getItemByCode(Number(itemCode.value));
-
     if (entity != null && entity.recycle_item_id > 0) {
         itemName.value = entity.name;
         itemId.value = entity.recycle_item_id;
@@ -843,6 +877,7 @@ async function searchForNameByItemCode(mode) {
         itemCode.value = "";
         itemName.value = "";
         itemId.value = "";
+        // itemCode.focus();
         openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
         setFocusElement("msg-dialog", itemCode);
     }
@@ -851,9 +886,9 @@ async function searchForNameByItemCode(mode) {
 /******************************************************************************************************* 削除 */
 
 async function execDelete(self) {
-    const tableArea = self.closest('[data-tab]');
-    if (!tableArea) return;
-    const config = MODE_CONFIG[tableArea.tab];
+    const area = self.closest('[data-tab]');
+    if (!area) return;
+    const config = MODE_CONFIG[area.dataset.tab];
 
     // // スピナー表示
     // startProcessing();
@@ -862,6 +897,7 @@ async function execDelete(self) {
 
     if (result.success) {                
         // await execDate01Search(tableId);
+        origin = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
         await updateTableDisplay(config.tableId, config.footerId, config.searchId, origin, createTable01Content);
         openMsgDialog("msg-dialog", result.message, "blue");
     } else {
@@ -1134,6 +1170,8 @@ async function execRegistItem(self, mode) {
     await updateFormTableDisplay(mode, itemList);
     scrollIntoTableList(config.tableId, itemId);
     resetFormInput(form, mode);
+
+    ID_CONFIG[mode].number.focus();
 }
 
 /******************************************************************************************************* 保存 */
@@ -1144,15 +1182,17 @@ async function execSave(formId, tableId, mode) {
     // startProcessing();
 
     // 保存処理
-    const resultResponse = await postFetch("/api/recycle/save/" + mode, JSON.stringify({list:itemList}), token, "application/json");
-    const result = await resultResponse.json();
-    if (result.success) {
-        // 画面更新
-        openMsgDialog("msg-dialog", result.message, "blue");
+    const result = await updateFetch("/api/recycle/save/" + mode, JSON.stringify({list:itemList}), token, "application/json");
+
+    // const result = await resultResponse.json();
+    if (result.success) {        
+        origin = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
         await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);
         // await execDate01Search(tableId);
         // 追加・変更行に移動
         scrollIntoTableList(tableId, result.id);
+
+        openMsgDialog("msg-dialog", result.message, "blue");
         // itemList = [];
     } else {
         openMsgDialog("msg-dialog", result.message, "red");
@@ -1175,13 +1215,14 @@ async function execUpdate(mode) {
     // startProcessing();
 
     const formdata = setInsertFormData(form);
-    const resultResponse = await postFetch("/api/recycle/save/" + mode, JSON.stringify({entity:formdata}), token, "application/json");
-    const result = await resultResponse.json();
+    const result = await updateFetch("/api/recycle/save/" + mode, JSON.stringify({entity:formdata}), token, "application/json");
+    // const result = await resultResponse.json();
     if (result.success) {
         // 画面更新
-        openMsgDialog("msg-dialog", result.message, "blue");
+        origin = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
         await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);
         // await execDate01Search(tableId);
+        openMsgDialog("msg-dialog", result.message, "blue");
     } else {
         openMsgDialog("msg-dialog", result.message, "red");
     }
@@ -1230,7 +1271,7 @@ async function execDownloadCsv(self) {
 
 // テーブルリスト画面を更新する
 async function updateFormTableDisplay(mode, list) {
-    const config = MODE_CONFIG[mode];console.log(config);console.log(mode)
+    const config = MODE_CONFIG[mode];
     // リスト画面を初期化
     deleteElements(config.tableId);
     // リスト作成
@@ -1265,124 +1306,124 @@ async function getRecyclesBetween(startId, endId, url) {
     const data = "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end) + "&col=" + encodeURIComponent(col);
     const contentType = 'application/x-www-form-urlencoded';
     // List<Recycle>を取得
-    const resultResponse = await postFetch(url, data, token, contentType);
+    return await searchFetch(url, data, token, contentType);
 
     // // スピナー消去
     // processingEnd();
 
-    return await resultResponse.json();
+    // return await resultResponse.json();
 }
 
 /******************************************************************************************************* コード入力時の処理 */
 
-// コード入力ボックスからフォーカスが外れた時の処理
-function execMakerCodeBlur(e, mode) {
-    e.preventDefault();
-    if (e.currentTarget == null) return;
-    const form = e.currentTarget.closest('.dialog-content');
-    searchForNameByMakerCode(mode);
+// // コード入力ボックスからフォーカスが外れた時の処理
+// function execMakerCodeBlur(e, mode) {
+//     e.preventDefault();
+//     if (e.currentTarget == null) return;
+//     const form = e.currentTarget.closest('.dialog-content');
+//     searchForNameByMakerCode(mode);
 
-    // const config = ID_CONFIG[str];
-    // const makerCode = config.makerCode;
-    // const makerName = config.makerName;
-    // const makerId = config.makerId
-    // // let makerCode = "";
-    // // let makerName = "";
-    // // let makerId = "";
-    // // switch (str) {
-    // //     case "regist":
-    // //         makerCode = makerCode11;
-    // //         makerName = makerName11;
-    // //         makerId = makerId11;
-    // //         break;
-    // //     case "edit":
-    // //         makerCode = makerCode15;
-    // //         makerName = makerName15;
-    // //         makerId = makerId15
-    // //         break;
-    // //     default:
-    // //         break;
-    // // }
-    // searchForNameByMakerCode(form, makerCode, makerName, makerId)
-}
+//     // const config = ID_CONFIG[str];
+//     // const makerCode = config.makerCode;
+//     // const makerName = config.makerName;
+//     // const makerId = config.makerId
+//     // // let makerCode = "";
+//     // // let makerName = "";
+//     // // let makerId = "";
+//     // // switch (str) {
+//     // //     case "regist":
+//     // //         makerCode = makerCode11;
+//     // //         makerName = makerName11;
+//     // //         makerId = makerId11;
+//     // //         break;
+//     // //     case "edit":
+//     // //         makerCode = makerCode15;
+//     // //         makerName = makerName15;
+//     // //         makerId = makerId15
+//     // //         break;
+//     // //     default:
+//     // //         break;
+//     // // }
+//     // searchForNameByMakerCode(form, makerCode, makerName, makerId)
+// }
 
-// コード入力ボックスからフォーカスが外れた時の処理
-function execItemCodeBlur(e, mode) {
-    e.preventDefault();
-    if (e.currentTarget == null) return;
-    const form = e.currentTarget.closest('.dialog-content');
-    searchForNameByItemCode(mode);
+// // コード入力ボックスからフォーカスが外れた時の処理
+// function execItemCodeBlur(e, mode) {
+//     e.preventDefault();
+//     if (e.currentTarget == null) return;
+//     const form = e.currentTarget.closest('.dialog-content');
+//     searchForNameByItemCode(mode);
 
-    // const config = ID_CONFIG[str];
-    // const itemCode = config.itemCode;
-    // const itemName = config.itemName;
-    // const itemId = config.itemId
+//     // const config = ID_CONFIG[str];
+//     // const itemCode = config.itemCode;
+//     // const itemName = config.itemName;
+//     // const itemId = config.itemId
 
-    // // let itemCode = "";
-    // // let itemName = "";
-    // // let itemId = "";
-    // // switch (str) {
-    // //     case "regist":
-    // //         itemCode = itemCode11;
-    // //         itemName = itemName11;
-    // //         itemId = itemId11
-    // //         break;
-    // //     case "edit":
-    // //         itemCode = itemCode15;
-    // //         itemName = itemName15;
-    // //         itemId = itemId15
-    // //         break;
-    // //     default:
-    // //         break;
-    // // }
-    // searchForNameByItemCode(form, itemCode, itemName, itemId)
-}
+//     // // let itemCode = "";
+//     // // let itemName = "";
+//     // // let itemId = "";
+//     // // switch (str) {
+//     // //     case "regist":
+//     // //         itemCode = itemCode11;
+//     // //         itemName = itemName11;
+//     // //         itemId = itemId11
+//     // //         break;
+//     // //     case "edit":
+//     // //         itemCode = itemCode15;
+//     // //         itemName = itemName15;
+//     // //         itemId = itemId15
+//     // //         break;
+//     // //     default:
+//     // //         break;
+//     // // }
+//     // searchForNameByItemCode(form, itemCode, itemName, itemId)
+// }
 
-async function execNumberBlur(e, mode) {
-    e.preventDefault();
-    if (e.currentTarget == null) return;
-    const form = e.currentTarget.closest('.dialog-content');
-    // let numberBox = "";
-    // let recycleId = "";
-    // let moldingId = "";
-    // let versionId = "";
-    // switch (str) {
-    //     case "regist":
-    //         numberBox = number11;
-    //         recycleId = recycleId11;
-    //         moldingId = moldingNumber11;
-    //         versionId = version11;
-    //         break;
-    //     case "delivery":
-    //         numberBox = number12;
-    //         recycleId = recycleId12;
-    //         moldingId = moldingNumber12;
-    //         versionId = version12;
-    //         break;
-    //     case "shipping":
-    //         numberBox = number13;
-    //         recycleId = recycleId13;
-    //         moldingId = moldingNumber13;
-    //         versionId = version13;
-    //         break;
-    //     case "loss":
-    //         numberBox = number14;
-    //         recycleId = recycleId14;
-    //         moldingId = moldingNumber14;
-    //         versionId = version14;
-    //         break;
-    //     case "edit":
-    //         numberBox = number15;
-    //         recycleId = recycleId15;
-    //         moldingId = moldingNumber15;
-    //         versionId = version15;
-    //         break;
-    //     default:
-    //         break;
-    // }
-    // await searchForExistByNumber(form, itemList, numberBox, recycleId, moldingId, versionId, str);
-    await searchForExistByNumber(itemList, mode);
-}
+// async function execNumberBlur(e, mode) {
+//     e.preventDefault();
+//     if (e.currentTarget == null) return;
+//     const form = e.currentTarget.closest('.dialog-content');
+//     // let numberBox = "";
+//     // let recycleId = "";
+//     // let moldingId = "";
+//     // let versionId = "";
+//     // switch (str) {
+//     //     case "regist":
+//     //         numberBox = number11;
+//     //         recycleId = recycleId11;
+//     //         moldingId = moldingNumber11;
+//     //         versionId = version11;
+//     //         break;
+//     //     case "delivery":
+//     //         numberBox = number12;
+//     //         recycleId = recycleId12;
+//     //         moldingId = moldingNumber12;
+//     //         versionId = version12;
+//     //         break;
+//     //     case "shipping":
+//     //         numberBox = number13;
+//     //         recycleId = recycleId13;
+//     //         moldingId = moldingNumber13;
+//     //         versionId = version13;
+//     //         break;
+//     //     case "loss":
+//     //         numberBox = number14;
+//     //         recycleId = recycleId14;
+//     //         moldingId = moldingNumber14;
+//     //         versionId = version14;
+//     //         break;
+//     //     case "edit":
+//     //         numberBox = number15;
+//     //         recycleId = recycleId15;
+//     //         moldingId = moldingNumber15;
+//     //         versionId = version15;
+//     //         break;
+//     //     default:
+//     //         break;
+//     // }
+//     // await searchForExistByNumber(form, itemList, numberBox, recycleId, moldingId, versionId, str);
+//     await searchForExistByNumber(itemList, mode);
+// }
 
 function itemCheckedAfter() {
     const itemInput = document.getElementById("item-code11");

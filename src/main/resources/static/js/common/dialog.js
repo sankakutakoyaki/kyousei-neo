@@ -41,9 +41,9 @@ function closeFormDialog(dialogId, e) {
     const elm = document.querySelector('.normal-body');
     if (elm != null) elm.inert = false;
 
-    // autofocus属性が付いているアイテムをフォーカスする
-    const focusBox = document.querySelector('input[autofocus]');
-    if (focusBox != null) focusBox.focus();
+    // // autofocus属性が付いているアイテムをフォーカスする
+    // const focusBox = document.querySelector('input[autofocus]');
+    // if (focusBox != null) focusBox.focus();
 }
 
 /**
@@ -90,7 +90,7 @@ function openMsgDialog(dialogId, msg, color) {
     content.textContent = msg;
 
     // OKボタンにフォーカスを合わせる
-    const focusBtn = dialog.querySelector('button[name="focus-btn"]');
+    const focusBtn = dialog.querySelector('[name="focus-btn"]');
     if (focusBtn != null) focusBtn.focus();
 }
 
@@ -110,24 +110,34 @@ function closeMsgDialog(dialogId, e) {
     area.classList.remove('dialog');
 
     // メッセージ画面に[none]クラスを付与して画面を消去する
-    const form = document.getElementById(dialogId);
-    if (form == null) return;
-    form.classList.add('none');
+    const dialog = document.getElementById(dialogId);
+    if (dialog == null) return;
+    dialog.classList.add('none');
 
     // 要素がクリック禁止になっている場合は解除する
     const elm = document.querySelector('.normal-body');
     if (elm != null) elm.inert = false;
 
-    // autofocus属性が付いているアイテムをフォーカスする
-    const focusBox = document.querySelector('input[autofocus]');
-    if (focusBox != null) focusBox.focus();
+    // // autofocus属性が付いているアイテムをフォーカスする
+    // const focusBox = document.querySelector('input[autofocus]');
+    // if (focusBox != null) focusBox.focus();
+
+    // // OKボタンにフォーカスを合わせる
+    // const focusBtn = dialog.querySelector('[name="focus-btn"]');
+    // if (focusBtn != null) focusBtn.focus();
 }
 
+/**
+ * 閉じた時のフォーカス先を指定する
+ * @param {*} msgId 
+ * @param {*} elm 
+ */
 function setFocusElement(msgId, elm) {
     const dialog = document.getElementById(msgId);
-    const btn =dialog.querySelector('button[name="focus-btn');
+    const btn =dialog.querySelector('[name="focus-btn');
     // btn.addEventListener('click', function () { elm.focus(); });
-    btn.onclick = () => {
+    btn.onclick = (e) => {
+        closeMsgDialog(msgId, e);// 上書きされて消えるため再度設定
         elm.focus();
     };
 }
