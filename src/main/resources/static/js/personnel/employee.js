@@ -1,67 +1,100 @@
-/******************************************************************************************************* 入力画面 */
+const MODE_CONFIG = {
+    "01": {
+        tableId: "table-01-content",
+        footerId: "footer-01",
+        searchId: "search-box-01",
+        category: categoryEmployeeCode
+    },
+    "02": {
+        tableId: "table-02-content",
+        footerId: "footer-02",
+        searchId: "search-box-02",
+        category: categoryParttimeCode
+    }
+};
+
+/******************************************************************************************************* 画面 */
 
 // リスト画面の本体部分を作成する
-function createTableContent(tableId, list) {
-    const tbl = document.getElementById(tableId);
-    list.forEach(function (item) {
-        let newRow = tbl.insertRow();
-        // ID（Post送信用）
-        newRow.setAttribute('name', 'data-row');
-        newRow.setAttribute('data-id', item.employee_id);
-        // シングルクリック時の処理
-        newRow.onclick = function (e) {
-            if (!e.currentTarget.classList.contains('selected')){
-                // すべての行の選択状態を解除する
-                detachmentSelectClassToAllRow(tbl, false);
-                // 選択した行にセレクトクラスを付与する
-                const result = addSelectClassToRow(e.currentTarget);
-            } else {
-                // 選択済みの要素をクリックした時の処理
-                const clickedTd = e.target.closest("td");
-                // 取得したTDの処理
-            }
-        }
-        // ダブルクリック時の処理
-        newRow.ondblclick = function (e) { 
-            // チェックボックスの動作を停止させる
-            e.preventDefault();
-            // 選択済みの場合
-            if (!e.currentTarget.classList.contains('selected')){
-                // すべての行の選択状態を解除する
-                detachmentSelectClassToAllRow(tableId, false);
-                // 選択した行にセレクトクラスを付与する
-                const result = addSelectClassToRow(e.currentTarget);
-            }
+// function createTableContent(tableId, list) {
+//     const tbl = document.getElementById(tableId);
+//     list.forEach(function (item) {
+//         let newRow = tbl.insertRow();
+//         // ID（Post送信用）
+//         newRow.setAttribute('name', 'data-row');
+//         newRow.setAttribute('data-id', item.employee_id);
+//         // シングルクリック時の処理
+//         newRow.onclick = function (e) {
+//             if (!e.currentTarget.classList.contains('selected')){
+//                 // すべての行の選択状態を解除する
+//                 detachmentSelectClassToAllRow(tbl, false);
+//                 // 選択した行にセレクトクラスを付与する
+//                 const result = addSelectClassToRow(e.currentTarget);
+//             } else {
+//                 // 選択済みの要素をクリックした時の処理
+//                 const clickedTd = e.target.closest("td");
+//                 // 取得したTDの処理
+//             }
+//         }
+//         // ダブルクリック時の処理
+//         newRow.ondblclick = function (e) { 
+//             // チェックボックスの動作を停止させる
+//             e.preventDefault();
+//             // 選択済みの場合
+//             if (!e.currentTarget.classList.contains('selected')){
+//                 // すべての行の選択状態を解除する
+//                 detachmentSelectClassToAllRow(tableId, false);
+//                 // 選択した行にセレクトクラスを付与する
+//                 const result = addSelectClassToRow(e.currentTarget);
+//             }
             
-            // フォーム入力画面を表示する
-            switch (tableId) {
-                case "table-01-content":
-                    execEdit(item.employee_id, this);
-                    break;
-                case "table-02-content":
-                    execEdit(item.employee_id, this);
-                    break;
-                default:
-                    break;
+//             // フォーム入力画面を表示する
+//             switch (tableId) {
+//                 case "table-01-content":
+//                     execEdit(item.employee_id, this);
+//                     break;
+//                 case "table-02-content":
+//                     execEdit(item.employee_id, this);
+//                     break;
+//                 default:
+//                     break;
+//             }
+//         }
+
+//         switch (tableId) {
+//             case "table-01-content":
+//                 createTableRow(newRow, item, "01");
+//                 break;
+//             case "table-02-content":
+//                 createTableRow(newRow, item, "02");
+//                 break;
+//             default:
+//                 break;
+//         }
+
+//     });
+// }
+function createTableContent(tableId, list) {
+    const table = document.getElementById(tableId);
+
+    list.forEach(item => {
+        const row = createSelectableRow({
+            table,
+            item,
+            idKey: "employee_id",
+            onDoubleClick: (item) => {
+                execEdit(item.employee_id, this);
             }
-        }
+        });
 
-        switch (tableId) {
-            case "table-01-content":
-                createTableRow(newRow, item, "01");
-                break;
-            case "table-02-content":
-                createTableRow(newRow, item, "02");
-                break;
-            default:
-                break;
-        }
-
+        createTableRow(row, item);
     });
 }
 
+/******************************************************************************************************* テーブル行作成 */
+
 // テーブル行を作成する
-function createTableRow(newRow, item, tab) {
+function createTableRow(newRow, item) {
     // 選択用チェックボックス
     newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
     // ID
@@ -82,11 +115,13 @@ function createTableRow(newRow, item, tab) {
 
 // 従業員登録画面を開く
 async function execEdit(id, self) {
-    const panel = self.closest('.tab-panel');
-    const tab = panel.dataset.panel;
-
-    // スピナー表示
-    startProcessing();
+    // const panel = self.closest('.tab-panel');
+    // const tab = panel.dataset.panel;
+    const tab = document.querySelector('li.is-active');
+    if (tab == null) return;
+    const config = MODE_CONFIG[tab];
+    // // スピナー表示
+    // startProcessing();
 
     // 入力フォームダイアログを開く
     openFormDialog("form-dialog-01");
@@ -98,27 +133,89 @@ async function execEdit(id, self) {
     if (id > 0) {
         // 選択されたIDのエンティティを取得
         const data = "id=" + encodeURIComponent(parseInt(id));
-        const resultResponse = await postFetch('/api/employee/get/id', data, token, 'application/x-www-form-urlencoded');
-        const result = await resultResponse.json();
-        if (result.employee_id == 0) {
+        const result = await searchFetch('/api/employee/get/id', data, token, 'application/x-www-form-urlencoded');
+        // const result = await resultResponse.json();
+        if (result == null) {
             openMsgDialog("msg-dialog", "データがありません", "red");
             return;
         }
         entity = structuredClone(result);
     } else {
         entity = structuredClone(formEntity);
-        switch (tab) {
-            case "01":
-                entity.category = categoryEmployeeCode;
-                break;
-            case "02":
-                entity.category = categoryParttimeCode;
-                break;
-            default:
-                break;
-        }
+        entity.category = config.category;
+        // switch (tab) {
+        //     case "01":
+        //         entity.category = categoryEmployeeCode;
+        //         break;
+        //     case "02":
+        //         entity.category = categoryParttimeCode;
+        //         break;
+        //     default:
+        //         break;
+        // }
     }
 
+    setFormContent(form, entity);
+    // form.querySelector('[name="employee-id"]').value = entity.employee_id;
+    // if (entity.code == 0) {
+    //     form.querySelector('[name="code"]').value = "";
+    // } else {
+    //     form.querySelector('[name="code"]').value = entity.code;
+    // }
+    // form.querySelector('[name="category"]').value = entity.category;
+    // form.querySelector('[name="account"]').value = entity.account;
+    // form.querySelector('[name="last-name"]').value = entity.last_name;
+    // form.querySelector('[name="first-name"]').value = entity.first_name;
+    // form.querySelector('[name="last-name-kana"]').value = entity.last_name_kana;
+    // form.querySelector('[name="first-name-kana"]').value = entity.first_name_kana;
+    // form.querySelector('[name="phone-number"]').value = entity.phone_number;
+    // form.querySelector('[name="postal-code"]').value = entity.postal_code;
+    // form.querySelector('[name="full-address"]').value = entity.full_address;
+    // form.querySelector('[name="email"]').value = entity.email;
+    // if (entity.birthday == "9999-12-31") {
+    //     form.querySelector('[name="birthday"]').value = null;
+    // } else {
+    //     form.querySelector('[name="birthday"]').value = entity.birthday;
+    // }
+    // form.querySelector('[name="emergency-contact"]').value = entity.emergency_contact;
+    // form.querySelector('[name="emergency-contact-number"]').value = entity.emergency_contact_number;
+    // if (entity.date_of_hire == "9999-12-31") {
+    //     form.querySelector('[name="date-of-hire"]').value = "";
+    // } else {
+    //     form.querySelector('[name="date-of-hire"]').value = entity.date_of_hire;
+    // }
+    // form.querySelector('[name="version"]').value = entity.version;
+
+    // // 会社名コンボボックス
+    // const companyArea = form.querySelector('select[name="company"]');
+    // if (tab == "01" || tab == "02") {
+    //     createComboBox(companyArea, companyComboList);
+    //     companyArea.style.pointerEvents = 'none';
+    // } else {
+    //     createComboBox(companyArea, clientComboList);
+    //     companyArea.style.pointerEvents = '';
+    // }
+    // setComboboxSelected(companyArea, entity.company_id);
+    // companyArea.onchange = function() { createOfficeComboBox(this) };
+    // // 営業所名コンボボックス
+    // createOfficeComboBox(companyArea);
+    // const officeArea = form.querySelector('select[name="office"]');
+    // setComboboxSelected(officeArea, entity.office_id);
+    // // 性別コンボボックス
+    // const genderArea = form.querySelector('select[name="gender"]');
+    // createComboBox(genderArea, genderComboList);
+    // setComboboxSelected(genderArea, entity.gender);
+    // // 血液型コンボボックス
+    // const bloodTypeArea = form.querySelector('select[name="blood-type"]');
+    // createComboBox(bloodTypeArea, bloodTypeComboList);
+    // setComboboxSelected(bloodTypeArea, entity.blood_type);
+
+    // // スピナー消去
+    // processingEnd();
+}
+
+// コンテンツ部分作成
+function setFormContent(form, entity) {
     form.querySelector('[name="employee-id"]').value = entity.employee_id;
     if (entity.code == 0) {
         form.querySelector('[name="code"]').value = "";
@@ -151,46 +248,51 @@ async function execEdit(id, self) {
 
     // 会社名コンボボックス
     const companyArea = form.querySelector('select[name="company"]');
-    if (tab == "01" || tab == "02") {
+    // if (tab == "01" || tab == "02") {
         createComboBox(companyArea, companyComboList);
         companyArea.style.pointerEvents = 'none';
-    } else {
-        createComboBox(companyArea, clientComboList);
-        companyArea.style.pointerEvents = '';
-    }
+    // } else {
+    //     createComboBox(companyArea, clientComboList);
+    //     companyArea.style.pointerEvents = '';
+    // }
     setComboboxSelected(companyArea, entity.company_id);
-    companyArea.onchange = function() { createOfficeComboBox(this) };
+    companyArea.onchange = function() { createOfficeComboBox(form, officeList); };
+
     // 営業所名コンボボックス
-    createOfficeComboBox(companyArea);
+    // createOfficeComboBox(companyArea);
+    // const comboList = officeList.filter(value => { return value.company_id == entity.company_id }).map(item => ({number:item.office_id, text:item.name}));
+    createOfficeComboBox(form, officeList);
     const officeArea = form.querySelector('select[name="office"]');
     setComboboxSelected(officeArea, entity.office_id);
+
     // 性別コンボボックス
     const genderArea = form.querySelector('select[name="gender"]');
     createComboBox(genderArea, genderComboList);
     setComboboxSelected(genderArea, entity.gender);
+
     // 血液型コンボボックス
     const bloodTypeArea = form.querySelector('select[name="blood-type"]');
     createComboBox(bloodTypeArea, bloodTypeComboList);
     setComboboxSelected(bloodTypeArea, entity.blood_type);
-
-    // スピナー消去
-    processingEnd();
 }
 
-// 選択した会社の支店をコンボボックスに登録する
-function createOfficeComboBox(self) {
-    const selectId = self.value;
-    const comboList = officeList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
-    const area = self.closest('.dialog-content');
-    const officeArea = area.querySelector('select[name="office"]');
-    createComboBoxWithTop(officeArea, comboList, "");
-}
+// // 選択した会社の支店をコンボボックスに登録する
+// function createOfficeComboBox(self) {
+//     const selectId = self.value;
+//     const comboList = officeList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
+//     const area = self.closest('.dialog-content');
+//     const officeArea = area.querySelector('select[name="office"]');
+//     createComboBoxWithTop(officeArea, comboList, "");
+// }
 
 /******************************************************************************************************* 保存 */
 
 // 保存処理
 async function execSave() {
     const form = document.getElementById('form-01');
+    const tab = document.querySelector('li.is-active');
+    if (tab == null) return;
+
     // エラーチェック
     if (formDataCheck(form) == false) {
         return;
@@ -232,25 +334,28 @@ async function execSave() {
         formdata.version = formData.get('version');
 
         // 保存処理
-        const resultResponse = await postFetch("/api/employee/save", JSON.stringify(formdata), token, "application/json");
-        const result = await resultResponse.json();
+        const result = await updateFetch("/api/employee/save", JSON.stringify(formdata), token, "application/json");
+        // const result = await resultResponse.json();
         if (result.success) {
-            let tableId;
-            switch (formdata.category) {
-                case categoryEmployeeCode:
-                    tableId = "table-01-content";
-                    break;
-                case categoryParttimeCode:
-                    tableId = "table-02-content";
-                    break;
-                default:
-                    break;
-            }
+            const config = MODE_CONFIG[tab.dataset.panel]
+
+            // let tableId;
+            // switch (formdata.category) {
+            //     case categoryEmployeeCode:
+            //         tableId = "table-01-content";
+            //         break;
+            //     case categoryParttimeCode:
+            //         tableId = "table-02-content";
+            //         break;
+            //     default:
+            //         break;
+            // }
             // 画面更新
             openMsgDialog("msg-dialog", result.message, "blue");
             await execUpdate();
             // 追加・変更行に移動
-            scrollIntoTableList(tableId, result.id);
+            // scrollIntoTableList(tableId, result.id);
+            scrollIntoTableList(config.tableId, result.id);
         } else {
             openMsgDialog("msg-dialog", result.message, "red");
         }
@@ -290,18 +395,21 @@ function formDataCheck(area) {
 async function execDelete(self) {
     const panel = self.closest('.tab-panel');
     const tab = panel.dataset.panel;
-    let result;
-    switch (tab) {
-        case "01":
-            result = await deleteTablelist('table-01-content', '/api/employee/delete');
-            break;
-        case "02":
-            result = await deleteTablelist('table-02-content', '/api/employee/delete');
-            break;
-        default:
-            break;
-    }
+    const config = MODE_CONFIG[tab];
+    // let result;
+    // switch (tab) {
+    //     case "01":
+    //         result = await deleteTablelist('table-01-content', '/api/employee/delete');
+    //         break;
+    //     case "02":
+    //         result = await deleteTablelist('table-02-content', '/api/employee/delete');
+    //         break;
+    //     default:
+    //         break;
+    // }
     
+    const result = await deleteTablelist(config.tableId, '/api/employee/delete');
+
     if (result.success) {                
         await execUpdate();
         openMsgDialog("msg-dialog", result.message, "blue");
@@ -316,75 +424,90 @@ async function execDelete(self) {
 async function execDownloadCsv(self) {
     const panel = self.closest('.tab-panel');
     const tab = panel.dataset.panel;
-    let result;
-    switch (tab) {
-        case "01":
-            result = await downloadCsv('table-01-content', '/api/employee/download/csv');
-            break;
-        case "02":
-            result = await downloadCsv('table-02-content', '/api/employee/download/csv');
-            break;
-        default:
-            break;
-    }
+    const config = MODE_CONFIG[tab];
+
+    await downloadCsv(config.tableId, '/api/employee/download/csv');
+    // let result;
+    // switch (tab) {
+    //     case "01":
+    //         result = await downloadCsv('table-01-content', '/api/employee/download/csv');
+    //         break;
+    //     case "02":
+    //         result = await downloadCsv('table-02-content', '/api/employee/download/csv');
+    //         break;
+    //     default:
+    //         break;
+    // }
 }
 
 /******************************************************************************************************* 画面更新 */
 
 async function execUpdate() {
+    const tab = document.querySelector('li.is-active');
+    if (tab == null) return;
+    const config = MODE_CONFIG[tab.dataset.panel];
+
     // リスト取得
     const resultResponse = await fetch('/api/employee/get/list');
     origin = await resultResponse.json();
 
     // 画面更新
-    const list01 = origin.filter(function(value) { return value.category == categoryEmployeeCode });
-    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
-    const list02 = origin.filter(function(value) { return value.category == categoryParttimeCode });
-    await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
+    const list = origin.filter(function(value) { return value.category == config.category });
+    await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
+    
+    // const list01 = origin.filter(function(value) { return value.category == categoryEmployeeCode });
+    // await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
+    // const list02 = origin.filter(function(value) { return value.category == categoryParttimeCode });
+    // await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
 }
 
 /******************************************************************************************************* 画面更新 */
 
-// テーブルリスト画面を更新する
-async function updateTableDisplay(tableId, footerId, searchId, list) {
-    // フィルター処理
-    const result = filterDisplay(searchId, list);
-    // リスト画面を初期化
-    deleteElements(tableId);
-    // リスト作成
-    createTableContent(tableId, result);
-    // フッター作成
-    createTableFooter(footerId, list);
-    // チェックボタン押下時の処理を登録する
-    registCheckButtonClicked(tableId);
-    // すべて選択ボタンをオフにする
-    turnOffAllCheckBtn(tableId);
-    // テーブルのソートをリセットする
-    resetSortable(tableId);
-    // スクロール時のページトップボタン処理を登録する
-    setPageTopButton(tableId);
-    // テーブルにスクロールバーが表示されたときの処理を登録する
-    document.querySelectorAll('.scroll-area').forEach(el => {
-        toggleScrollbar(el);
-    });
-}
+// // テーブルリスト画面を更新する
+// async function updateTableDisplay(tableId, footerId, searchId, list) {
+//     // フィルター処理
+//     const result = filterDisplay(searchId, list);
+//     // リスト画面を初期化
+//     deleteElements(tableId);
+//     // リスト作成
+//     createTableContent(tableId, result);
+//     // フッター作成
+//     createTableFooter(footerId, list);
+//     // チェックボタン押下時の処理を登録する
+//     registCheckButtonClicked(tableId);
+//     // すべて選択ボタンをオフにする
+//     turnOffAllCheckBtn(tableId);
+//     // テーブルのソートをリセットする
+//     resetSortable(tableId);
+//     // スクロール時のページトップボタン処理を登録する
+//     setPageTopButton(tableId);
+//     // テーブルにスクロールバーが表示されたときの処理を登録する
+//     document.querySelectorAll('.scroll-area').forEach(el => {
+//         toggleScrollbar(el);
+//     });
+// }
 
 async function execFilterDisplay(self) {
     const panel = self.closest('.tab-panel');
     const tab = panel.dataset.panel;
-    let list = [];
-    switch (tab) {
-        case "01":
-            list = origin.filter(function(value) { return value.category == categoryEmployeeCode });
-            await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
-            break;
-        case "02":
-            list = origin.filter(function(value) { return value.category == categoryParttimeCode });
-            await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
-            break;
-        default:
-            break;
-    }
+
+    const config = MODE_CONFIG[tab];
+    const list = origin.filter(value => { return value.category === config.category });
+    await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
+
+    // let list = [];
+    // switch (tab) {
+    //     case "01":
+    //         list = origin.filter(function(value) { return value.category == categoryEmployeeCode });
+    //         await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+    //         break;
+    //     case "02":
+    //         list = origin.filter(function(value) { return value.category == categoryParttimeCode });
+    //         await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list);
+    //         break;
+    //     default:
+    //         break;
+    // }
 }
 
 /******************************************************************************************************* 初期化時 */
@@ -394,35 +517,39 @@ window.addEventListener("load", async () => {
     // スピナー表示
     startProcessing();
 
-    // 検索ボックス入力時の処理
-    document.getElementById('search-box-01').addEventListener('search', async function(e) {
-        await execFilterDisplay(e.currentTarget);
-    }, false);
-    document.getElementById('search-box-02').addEventListener('search', async function(e) {
-        await execFilterDisplay(e.currentTarget);
-    }, false);
+    for (const mode of Object.keys(MODE_CONFIG)) {
+        let config = MODE_CONFIG[mode];
+        if (config != null) {
+            // 検索ボックス入力時の処理
+            document.getElementById(config.searchId).addEventListener('search', async function(e) {
+                await execFilterDisplay(e.currentTarget);
+            }, false);
+        }
+        let list = origin.filter(value => { return value.category === config.category });
+        await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
+    }
 
     // 郵便番号入力ボックスでエンターキーが押された時の処理を登録
     document.getElementById('employee-postal-code').addEventListener('keydown', async function (e) {
         await getAddress(e, 'employee-postal-code', 'employee-full-address');                                                                                                                                                                                                                                                                                                                                                       ;
     });
 
-    // エンターフォーカス処理をイベントリスナーに登録する
-    setEnterFocus("form-01");
+    // // エンターフォーカス処理をイベントリスナーに登録する
+    // setEnterFocus("form-01");
 
-    // 画面更新
-    const list01 = origin.filter(function(value) { return value.category == categoryEmployeeCode });
-    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
-    // テーブルをソート可能にする
-    makeSortable("table-01-content");
-    // スクロール時のページトップボタン処理を登録する
-    setPageTopButton("table-01-content");
-    const list02 = origin.filter(function(value) { return value.category == categoryParttimeCode });
-    await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
-    // テーブルをソート可能にする
-    makeSortable("table-02-content");
-    // スクロール時のページトップボタン処理を登録する
-    setPageTopButton("table-02-content");
+    // // 画面更新
+    // const list01 = origin.filter(function(value) { return value.category == categoryEmployeeCode });
+    // await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list01);
+    // // テーブルをソート可能にする
+    // makeSortable("table-01-content");
+    // // スクロール時のページトップボタン処理を登録する
+    // setPageTopButton("table-01-content");
+    // const list02 = origin.filter(function(value) { return value.category == categoryParttimeCode });
+    // await updateTableDisplay("table-02-content", "footer-02", "search-box-02", list02);
+    // // テーブルをソート可能にする
+    // makeSortable("table-02-content");
+    // // スクロール時のページトップボタン処理を登録する
+    // setPageTopButton("table-02-content");
 
     // タブメニュー処理
     const tabMenus = document.querySelectorAll('.tab-menu-item');

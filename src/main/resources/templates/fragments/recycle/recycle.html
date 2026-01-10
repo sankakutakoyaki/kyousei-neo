@@ -41,7 +41,6 @@
         <div class="flex-area">
             <div>
                 <select id="date-category01" name="date-category" class="normal-select"></select>
-                <!-- <select id="item-state01" name="item-state" class="normal-select"></select> -->
             </div>
             <div>
                 <input id="start-date01" class="normal-input date-area" type="date" value="" onfocus="this.select();" onchange="checkDateChanged(this)">
@@ -54,7 +53,6 @@
             <!-- 日付移動ボタン -->
             <div th:replace="~{fragments/common/header::header-month-move-btn-fragment('start-date01', 'end-date01')}"></div>
             <div th:replace="~{fragments/common/header::header-day-move-btn-fragment('start-date01', 'end-date01')}"></div>
-            <!-- <div th:replace="~{fragments/common/header::header-week-move-btn-fragment('start-date01', end-date01)}"></div> -->
         </div>
     </header>
 
@@ -79,8 +77,6 @@
                     <select tabindex="12" id="office11" name="office"
                         class="normal-select"></select>
                 </div>
-            <!-- </div>
-            <div class="flex-area"> -->
                 <div class="form-parts">
                     <label>使用日</label>
                     <input tabindex="13" id="use-date11" name="use-date" class="normal-input" type="date" value=""
@@ -97,8 +93,6 @@
                     <input tabindex="14" id="number11" name="number" class="normal-input" type="text" data-reset="regist" autofocus
                         value="" onfocus="this.select();">
                 </div>
-            <!-- </div>
-            <div class="flex-area"> -->
                 <div class="form-parts">
                     <label>品目・料金区分</label>
                     <input tabindex="15" id="item-code11" name="item-code" class="normal-input" type="text" data-reset="regist"

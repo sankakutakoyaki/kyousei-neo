@@ -1,5 +1,6 @@
 /******************************************************************************************************* 画面 */
 
+// リスト画面の本体部分を作成する
 function createTable01Content(tableId, list) {
     const table = document.getElementById(tableId);
 
@@ -140,44 +141,28 @@ function handleTdChange(editor) {
 
 // 保存処理
 async function execSave(tableId, footerId, searchId, ent, createContent) {
-    // // スピナー表示
-    // startProcessing();
-
     // 保存処理
     const result = await updateFetch("/api/recycle/maker/save", JSON.stringify(ent), token, "application/json");
-    // const result = await resultResponse.json();
     if (result.success) {
         // 画面更新
         await execUpdate();
-        // await updateTableDisplay(tableId, footerId, searchId, origin);
-        // await updateTableDisplay({tableId: "table-11-content", footerId: "footer-11", searchId: "search-11", list: itemList, createContent: createRecycleMakerTableContent});
         await updateTableDisplay(tableId, footerId, searchId, origin, createContent);
         // 追加・変更行に移動
         scrollIntoTableList(tableId, result.id);
-        // itemList = [];
     } else {
         openMsgDialog("msg-dialog", result.message, "red");
     }
-
-    // // スピナー消去
-    // processingEnd();
 }
 
 /******************************************************************************************************* 削除 */
 
+// 削除する
 async function execDelete01(self) {
-    // // スピナー表示
-    // startProcessing();
     const result = await deleteTablelist('table-01-content', 'footer-01', 'search-box-01', '/recycle/maker/download/csv');
 
     if (!result) return;
 
     await updateTableDisplay('table-01-content', 'footer-01', 'search-box-01', origin, createTable01Content);
-    // await execDate01Search(tableId);
-    // openMsgDialog("msg-dialog", result.message, "blue");
-
-    // // スピナー消去
-    // processingEnd();
 }
 
 /******************************************************************************************************* ダウンロード */
@@ -190,12 +175,6 @@ async function execDownloadCsv01(self) {
 
 // 最新のリストを取得
 async function execUpdate() {
-    // // スピナー表示
-    // startProcessing();
-
-    // const resultResponse = await fetch('/api/recycle/maker/get/list');
-    // origin = await resultResponse.json();
-
     const response = await fetch('/api/recycle/maker/get/list');
 
     if (!response.ok) {
@@ -204,9 +183,6 @@ async function execUpdate() {
     }
 
     return await response.json();
-
-    // // スピナー消去
-    // processingEnd();
 }
 
 async function execNumberSearch01(number) {
@@ -222,30 +198,6 @@ async function execNumberSearch01(number) {
         }
     }
 }
-
-// // テーブルリスト画面を更新する
-// async function updateTableDisplay(tableId, footerId, searchId, list) {
-//     // フィルター処理
-//     const result = filterDisplay(searchId, list);
-//     // リスト画面を初期化
-//     deleteElements(tableId);
-//     // リスト作成
-//     createTable01Content(tableId, result);
-//     // フッター作成
-//     createTableFooter(footerId, list);
-//     // チェックボタン押下時の処理を登録する
-//     registCheckButtonClicked(tableId);
-//     // すべて選択ボタンをオフにする
-//     turnOffAllCheckBtn(tableId);
-//     // テーブルのソートをリセットする
-//     resetSortable(tableId);
-//     // スクロール時のページトップボタン処理を登録する
-//     setPageTopButton(tableId);
-//     // テーブルにスクロールバーが表示されたときの処理を登録する
-//     document.querySelectorAll('.scroll-area').forEach(el => {
-//         toggleScrollbar(el);
-//     });
-// }
 
 /******************************************************************************************************* 初期化時 */
 
