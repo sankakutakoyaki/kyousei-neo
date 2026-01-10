@@ -136,7 +136,7 @@ public class RecycleParameterBinder {
         ps.setDate(index++, java.sql.Date.valueOf(date));
         ps.setTimestamp(index++, Timestamp.valueOf(LocalDateTime.now()));
         ps.setInt(index++, id);
-        ps.setString(index, editor);
+        ps.setString(index++, editor);
         return index;
     }
 
@@ -145,14 +145,14 @@ public class RecycleParameterBinder {
         ps.setString(index++, r.getMolding_number());
         ps.setDate(index++, java.sql.Date.valueOf(r.getDate()));
         ps.setTimestamp(index++, Timestamp.valueOf(LocalDateTime.now()));
-        ps.setString(index, editor);
+        ps.setString(index++, editor);
         return index;
     }
 
     public static int bindDelete(PreparedStatement ps, int id, String editor, int index) throws SQLException {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, id);
-        ps.setString(index, editor);
+        ps.setString(index++, editor);
         return index;
     }
 
@@ -203,7 +203,7 @@ public class RecycleParameterBinder {
             ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
         }
         ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
-        ps.setString(index, editor); // 4. log
+        ps.setString(index++, editor); // 4. log
         return index;
     }
 

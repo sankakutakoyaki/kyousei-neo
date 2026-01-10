@@ -81,7 +81,7 @@ public class RecycleRepository {
      * @return
      */
     public List<RecycleEntity> findByBetween(LocalDate start, LocalDate end, String col) {
-        if ("regist".equals(col)) { col = "update"; }
+        // if ("regist".equals(col)) { col = "update"; }
         String sql = RecycleSqlBuilder.buildFindByBetween(col);
         
         return sqlRepository.findAll(
@@ -217,17 +217,17 @@ public class RecycleRepository {
             }
         }
 
-        try {
+        // try {
             return sqlRepository.executeUpdate(
                 sql.toString(),
                 ps -> RecycleParameterBinder.bindUpdateForDate(ps, itemList, editor)
             );
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("この日付はすでに登録されています。");
-            }
-            throw e;
-        }
+        // } catch (RuntimeException e) {
+        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
+        //         throw new BusinessException("この日付はすでに登録されています。");
+        //     }
+        //     throw e;
+        // }
     }
 
     /**

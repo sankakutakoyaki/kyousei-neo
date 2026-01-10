@@ -136,7 +136,14 @@
             const companyComboList = /*[[${companyComboList}]]*/;
             const officeComboList = /*[[${officeComboList}]]*/;
             const disposalSiteComboList = /*[[${disposalSiteComboList}]]*/;
-            const dateComboList = [{"number":"regist","text":"登録日"},{"number":"use", "text":"使用日"},{"number":"delivery", "text":"引渡日"},{"number":"shipping", "text":"発送日"},{"number":"loss", "text":"ロス処理日"}]
+            const dateComboList = [
+                {"number":"update","text":"更新日"},
+                {"number":"regist","text":"登録日"},
+                {"number":"use", "text":"使用日"},
+                {"number":"delivery", "text":"引渡日"},
+                {"number":"shipping", "text":"発送日"},
+                {"number":"loss", "text":"ロス処理日"}
+            ]
             let origin = /*[[${origin}]]*/; // 初期リスト記憶用
         </script>
         <script th:src="@{/js/recycle/recycle.js}"></script>

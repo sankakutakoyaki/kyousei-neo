@@ -7,6 +7,9 @@
  * @returns 
  */
 async function updateFetch(url, data, token, contentType = "application/json") {
+    const spinner = document.getElementById("loading");
+    if (spinner) spinner.classList.remove("loaded");
+
     const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -21,6 +24,8 @@ async function updateFetch(url, data, token, contentType = "application/json") {
         throw new Error(`HTTP_ERROR_${response.status}`);
     }
 
+    if (spinner) spinner.classList.add("loaded");
+
     return await response.json();
 }
 
@@ -33,6 +38,9 @@ async function updateFetch(url, data, token, contentType = "application/json") {
  * @returns 
  */
 async function searchFetch(url, data, token, contentType = "application/json") {
+    const spinner = document.getElementById("loading");
+    if (spinner) spinner.classList.remove("loaded");
+
     const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -51,6 +59,8 @@ async function searchFetch(url, data, token, contentType = "application/json") {
         throw new Error(`HTTP_ERROR_${response.status}`);
     }
 
+    if (spinner) spinner.classList.add("loaded");
+    
     return await response.json();
 }
 

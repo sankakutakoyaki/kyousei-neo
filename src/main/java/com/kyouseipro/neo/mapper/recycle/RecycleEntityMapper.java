@@ -30,6 +30,8 @@ public class RecycleEntityMapper {
         entity.setDisposal_site_name(rs.getString("disposal_site_name"));
         entity.setVersion(rs.getInt("version"));
         entity.setState(rs.getInt("state"));
+        entity.setRegist_date(rs.getDate("regist_date").toLocalDate());
+        entity.setUpdate_date(rs.getDate("update_date").toLocalDate());
         return entity;
     }
 }

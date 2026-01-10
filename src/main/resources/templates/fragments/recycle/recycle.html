@@ -47,7 +47,7 @@
                 <input id="start-date01" class="normal-input date-area" type="date" value="" onfocus="this.select();" onchange="checkDateChanged(this)">
                 <span class="pc-style">〜</span>
                 <input id="end-date01" class="normal-input date-area" type="date" value="" onfocus="this.select();" onchange="checkDateChanged(this)">
-                <button id="date-search-btn01" class="normal-btn ok" type="button" onclick="execDate01Search('table-01-content')">
+                <button id="date-search-btn01" class="normal-btn ok" type="button" onclick="refleshDisplay01()">
                     <span>検索</span>
                 </button>                    
             </div>
@@ -144,7 +144,7 @@
             <div class="flex-area">
                 <div class="form-parts">
                     <label>引渡日</label>
-                    <input tabindex="21" id="delivery-date12" name="delivery-date" class="normal-input" type="date" value="" autofocus data-reset="delivery"
+                    <input tabindex="21" id="delivery-date12" name="delivery-date" class="normal-input" type="date" value="" autofocus
                         onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -177,7 +177,7 @@
             <div class="flex-area">
                 <div class="form-parts">
                     <label>発送日</label>
-                    <input tabindex="31" id="shipping-date13" name="shipping-date" class="normal-input" type="date" value="" autofocus data-reset="shipping"
+                    <input tabindex="31" id="shipping-date13" name="shipping-date" class="normal-input" type="date" value="" autofocus
                         onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -210,7 +210,7 @@
             <div class="flex-area">
                 <div class="form-parts">
                     <label>ロス処理日</label>
-                    <input tabindex="41" id="loss-date14" name="loss-date" class="normal-input" type="date" value="" autofocus data-reset="loss"
+                    <input tabindex="41" id="loss-date14" name="loss-date" class="normal-input" type="date" value="" autofocus
                         onfocus="this.select();">
                 </div>
                 <div class="form-parts">
@@ -325,6 +325,7 @@
                 <th><span>お問合せ管理票番号</span></th>
                 <th><span>使用日</span><br><span>引渡日</span></th>
                 <th><span>発送日</span><br><span>ロス処理日</span></th>
+                <th><span>登録日</span><br><span>最終更新日</span></th>
                 <th><span>小売業者</span></th>
                 <th><span>製造業者等名</span><br><span>品目・料金区分</span></th>
             </tr>

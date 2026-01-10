@@ -248,6 +248,8 @@ function createTable01Row(newRow, item) {
     newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.use_date == '9999-12-31' ? "-----": item.use_date) + '</span><br><span>' + (item.delivery_date == '9999-12-31' ? "-----": item.delivery_date) + '</span></td>');
     // 発送日　ロス処理日
     newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.shipping_date == '9999-12-31' ? "-----": item.shipping_date) + '</span><br><span>' + (item.loss_date == '9999-12-31' ? "-----": item.loss_date) + '</span></td>');
+    // 登録日　最終更新日
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.regist_date == '9999-12-31' ? "-----": item.regist_date) + '</span><br><span>' + (item.update_date == '9999-12-31' ? "-----": item.update_date) + '</span></td>');
     // 小売業者
     newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.company_name ?? "") + '</span><br><span>' + (item.office_name ?? "") + '</span></td>');
     // 製造業者等名　品目・料金区分
@@ -299,7 +301,7 @@ function createFormTableRow(newRow, item, mode) {
 async function execEdit(id, mode, self) {
     itemList = [];
     let entity = {};
-    const config = MODE_CONFIG[mode];console.log(config.dialogId)
+    const config = MODE_CONFIG[mode];
     const form = document.getElementById(config.dialogId);
 
     if (id > 0) {
@@ -659,11 +661,16 @@ async function execNumberBlur(e, mode) {
     if (config.number.value == null) return;
 
     // const number = removeEdgeA(config.number.value);
-    const number = checkNumber(config.number.value); 
+
+    // 入力値が正しいかチェックする
+    const number = checkNumber(config.number.value);
+    // const number = await existsRecycleByNumber(entity);
+
     // const numberBtn = form.querySelector('input[name="recycle-number"]');
     // const regBtn = form.querySelector('button[name="regist-btn"]');
     // const number = checkNumber(numberBox); 
 
+    // Null、または不正な値はエラー
     if (number == null) {
         // config.number.focus();
         clearNumber(config.number);
@@ -674,55 +681,103 @@ async function execNumberBlur(e, mode) {
         return;
     }
 
-    let item = {};
+    // テーブルリストに追加されている場合はエラー
     if (mode !== "edit") {
-        item = itemList.find(value => value.recyle_number === number);
-        if (item != null) {
+        const entity = itemList.find(value => value.recyle_number === number);
+        if (entity != null) {
             // clearNumber(config.number);
-            openMsgDialog("msg-dialog", number + "は、リストに存在します", 'red');
+            openMsgDialog("msg-dialog", "「" + molNumber + "」は、リストに存在します", 'red');
             setFocusElement("msg-dialog", config.number);
             return;
         }
     }
 
-    // const entity = await existsRecycleByNumber(number);
-    item = origin.find(value => value.recycle_number === number);
-    // if (entity != null && entity.loss_date != "9999-12-31") {
-    //     clearNumber(config.number);
-    //     openMsgDialog("msg-dialog", "その番号は、ロス処理済みです", 'red');
-    //     setFocusElement("msg-dialog", config.number);
-    // } else {
-    //     processNumberAfterCheck(entity, number, mode, numberBox, recycleId, moldingId, versionId, numberBtn, regBtn);
-    // }
+    // DBを確認する
+    const item = await existsRecycleByNumber(number);
 
+    // let item = {};
     let msg = "";
-    if (item != null && mode === "regist") {
-        msg = "その番号は、すでに登録されています";
-    } else if (item != null && mode === "edit") {
-        msg = "その番号は、すでに登録されています";
-    } else if (item == null && mode === "delivery") {
-        msg = "その番号は、使用登録されていません";
-    } else if (item == null && mode === "shopping") {
-        msg = "その番号は、使用登録されていません";
-    } else if (item != null && item.delivery_date !== "9999-12-31" && mode === "delivery") {
-        msg = "その番号は、引渡しされています";
-    } else if (item != null && item.delivery_date === "9999-12-31" && mode === "shopping") {
-        msg = "その番号は、引渡しされていません";
-    } else if (item != null && item.shopping_date !== "9999-12-31" && mode === "shopping") {
-        msg = "その番号は、発送されています";
+    // 0000-00000000-0 に成型する
+    const molNumber = moldingNumber(number);
+
+    if (mode !== "edit") {
+        // const entity = itemList.find(value => value.recyle_number === number);
+        // if (entity != null) {
+        //     // clearNumber(config.number);
+        //     openMsgDialog("msg-dialog", "「" + molNumber + "」は、リストに存在します", 'red');
+        //     setFocusElement("msg-dialog", config.number);
+        //     return;
+        // }
+
+        // item = origin.find(value => value.recycle_number === number);
+        if (item != null && mode === "regist") {
+            msg = "「" + molNumber + "」は、すでに登録されています";
+        } else if (item == null && mode === "delivery") {
+            msg = "「" + molNumber + "」は、使用登録されていません";
+        } else if (item == null && mode === "shopping") {
+            msg = "「" + molNumber + "」は、使用登録されていません";
+        } else if (item != null && item.delivery_date !== "9999-12-31" && mode === "delivery") {
+            msg = "「" + molNumber + "」は、引渡しされています";
+        } else if (item != null && item.delivery_date === "9999-12-31" && mode === "shopping") {
+            msg = "「" + molNumber + "」は、引渡しされていません";
+        } else if (item != null && item.shopping_date !== "9999-12-31" && mode === "shopping") {
+            msg = "「" + molNumber + "」は、発送されています";
+        }
+    } else {
+        if (config.recycleId == null) return;
+        // const recycleId = Number(config.recycleId.value);
+        // item = origin.find(value => value.recycle_id === recycleId && value.recycle_number === number);
+        if (item != null && item.recycle_id !== Number(config.recycleId.value)) {
+            // const result = origin.find(value => value.recycle_id !== recycleId && value.recycle_number === number);
+            // EDITでエラーの場合は画面を閉じる
+            // if (result != null) {
+                openMsgDialog("msg-dialog", "「" + molNumber + "」は、すでに登録されています", 'red');
+                setFocusElement("msg-dialog", config.number);
+                config.number.value = config.moldingNumber.value;
+                // // ダイアログを閉じる
+                // closeFormDialog(MODE_CONFIG[mode].dialogId);
+                return;
+            // }
+        }
+    // } else {
+    //     // const entity = await existsRecycleByNumber(number);
+        
+    //     // if (entity != null && entity.loss_date != "9999-12-31") {
+    //     //     clearNumber(config.number);
+    //     //     openMsgDialog("msg-dialog", "その番号は、ロス処理済みです", 'red');
+    //     //     setFocusElement("msg-dialog", config.number);
+    //     // } else {
+    //     //     processNumberAfterCheck(entity, number, mode, numberBox, recycleId, moldingId, versionId, numberBtn, regBtn);
+    //     // }
+    
+    //     if (item != null && mode === "regist") {
+    //         msg = "その番号は、すでに登録されています";
+    //     } else if (item == null && mode === "delivery") {
+    //         msg = "その番号は、使用登録されていません";
+    //     } else if (item == null && mode === "shopping") {
+    //         msg = "その番号は、使用登録されていません";
+    //     } else if (item != null && item.delivery_date !== "9999-12-31" && mode === "delivery") {
+    //         msg = "その番号は、引渡しされています";
+    //     } else if (item != null && item.delivery_date === "9999-12-31" && mode === "shopping") {
+    //         msg = "その番号は、引渡しされていません";
+    //     } else if (item != null && item.shopping_date !== "9999-12-31" && mode === "shopping") {
+    //         msg = "その番号は、発送されています";
+    //     }
     }
 
     if (msg !== "") {
         openMsgDialog("msg-dialog", msg, 'red');
         setFocusElement("msg-dialog", config.number);
-        config.number.value = config.moldingNumber.value;
+        clearNumber(config.number);
+        // config.number.value = config.moldingNumber.value;
         // config.number.focus();
     } else {
         config.recycleId.value = item == null ? 0: item.recycle_id;
         config.version.value = item == null ? 0: item.version;
-        const molNumber = moldingNumber(config.number);
+        // const molNumber = moldingNumber(config.number);
         config.recycleNumber.value = number;
         config.moldingNumber.value = molNumber;
+
         config.number.value = molNumber !== "" ? molNumber: "";
         if (mode !== "regist" && mode !== "edit") {
             config.regBtn.click();
@@ -902,8 +957,9 @@ async function execDelete(self) {
 
     if (result.success) {                
         // await execDate01Search(tableId);
-        origin = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
-        await updateTableDisplay(config.tableId, config.footerId, config.searchId, origin, createTable01Content);
+        await refleshDisplay01();
+        // origin = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
+        // await updateTableDisplay(config.tableId, config.footerId, config.searchId, origin, createTable01Content);
         openMsgDialog("msg-dialog", result.message, "blue");
     } else {
         openMsgDialog("msg-dialog", result.message, "red");
@@ -1191,8 +1247,9 @@ async function execSave(formId, tableId, mode) {
 
     // const result = await resultResponse.json();
     if (result.success) {        
-        origin = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
-        await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);
+        await refleshDisplay01();
+        // origin = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
+        // await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);
         // await execDate01Search(tableId);
         // 追加・変更行に移動
         scrollIntoTableList(tableId, result.id);
@@ -1211,7 +1268,9 @@ async function execSave(formId, tableId, mode) {
 
 // 更新処理
 async function execUpdate(mode) {
-    const form = document.getElementById("form-05");
+    const config = MODE_CONFIG[mode];
+
+    const form = document.getElementById(config.formId);
     if (formDataCheck(form, mode) == false) {
         return;
     }
@@ -1224,8 +1283,9 @@ async function execUpdate(mode) {
     // const result = await resultResponse.json();
     if (result.success) {
         // 画面更新
-        origin = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
-        await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);
+        await refleshDisplay01();
+        // origin = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
+        // await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);
         // await execDate01Search(tableId);
         openMsgDialog("msg-dialog", result.message, "blue");
     } else {
@@ -1233,7 +1293,7 @@ async function execUpdate(mode) {
     }
 
     // ダイアログを閉じる
-    closeFormDialog("form-dialog-05");
+    closeFormDialog(config.dialogId);
 
     // // スピナー消去
     // processingEnd();
@@ -1244,7 +1304,7 @@ async function execUpdate(mode) {
 async function execDownloadCsv(self) {
     const area = self.closest('[data-tab]');
     if (!area) return;
-    const config = MODE_CONFIG[area.tab];
+    const config = MODE_CONFIG[area.dataset.tab];
     await downloadCsv(config.tableId, '/api/recycle/download/csv');
 }
 
@@ -1295,10 +1355,10 @@ async function updateFormTableDisplay(mode, list) {
 //     await updateTableDisplay(tableId, "footer-01", "search-box-01", origin);
 // }
 
-// async function execDate01Search(tableId) {
-//     origin = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
-//     await updateTableDisplay(tableId, "footer-01", "search-box-01", origin);
-// }
+async function refleshDisplay01() {
+    origin = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
+    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);
+}
 
 // 一覧表示用のリスト取得
 async function getRecyclesBetween(startId, endId, url) {
@@ -1455,8 +1515,8 @@ function itemCheckedAfter() {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
-    // スピナー表示
-    startProcessing();
+    // // スピナー表示
+    // startProcessing();
 
     // 日付フィルターコンボボックス
     const dateCategoryArea = document.querySelector('select[name="date-category"]')
@@ -1510,9 +1570,10 @@ window.addEventListener("load", async () => {
     execSpecifyPeriod("today", 'start-date01', 'end-date01');
 
     // 画面更新
+    await refleshDisplay01();
     // origin01 = origin.filter(value => value.classification == goodsCode);
-    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);
+    // await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);
 
-    // スピナー消去
-    processingEnd();
+    // // スピナー消去
+    // processingEnd();
 });

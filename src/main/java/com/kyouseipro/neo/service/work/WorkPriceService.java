@@ -29,10 +29,21 @@ public class WorkPriceService {
     /**
      * IDによる取得（CompanyIDで指定）。
      * @param id
-     * @return IDから取得したEntityを返す。
+     * @return IDから取得したEntityを返す。work_price_idが0の場合は-1からの仮IDを付与する
      */
     public List<WorkPriceEntity> getListByCompanyId(int id) {
-        return workPriceRepository.findAllByCompanyId(id);
+        // return workPriceRepository.findAllByCompanyId(id);
+        List<WorkPriceEntity> list = workPriceRepository.findAllByCompanyId(id);
+
+        int tempId = -1;
+        for (WorkPriceEntity entity : list) {
+            if (entity.getWork_price_id() == 0) {
+                entity.setWork_price_id(tempId);
+                tempId--;
+            }
+        }
+
+        return list;
     }
 
     /**

@@ -25,6 +25,7 @@ function registCheckButtonClicked(tableId) {
     // });
     if (!tbl) return;
 
+    // チェックボタン押下時の処理
     tbl.querySelectorAll('input[name="chk-box"]').forEach(chk => {
         chk.addEventListener('change', e => {
             const tbl = e.currentTarget.closest('.normal-table');
@@ -38,6 +39,16 @@ function registCheckButtonClicked(tableId) {
                 allChk.checked = items.length > 0 && checked.length === items.length;
             }
         });
+    });
+
+    // テーブル外をクリックしたら選択を外す
+    document.addEventListener("click", (e) => {
+        if (!tbl) return;
+
+        // table の外をクリックした場合だけ
+        if (!tbl.contains(e.target)) {
+            detachmentSelectClassToAllRow(tableId, false);
+        }
     });
 }
 
@@ -389,6 +400,8 @@ async function downloadCsv(tableId, url) {
         // return {"success":false, "message":"選択されていないか、データがありません。"};
     } else {
         funcDownloadCsv(data, url);
+        // チェック状態を解除
+        detachmentCheckedToAllRow(config.tableId, false);
     }
 }
 
@@ -413,26 +426,56 @@ async function downloadCsvByBetweenDate(tableId, url, startStr, endStr) {
  * @param {*} data 
  * @param {*} url 
  */
+// async function funcDownloadCsv(data, url) {
+//     // スピナー表示
+//     startProcessing();
+
+//     // 取得処理
+//     // const data = JSON.stringify(ids);
+//     const result = await updateFetch(url, JSON.stringify(data), token, "application/json");
+//     const text = await result.text();
+
+//     // 文字列データが返却されなければ、エラーメッセージを表示
+//     if (text == null || text == "") {
+//         openMsgDialog("msg-dialog", "取得できませんでした", "red");
+//     } else {
+//         createCsvThenDownload(text);
+//     }
+
+//     // スピナー消去
+//     processingEnd();
+// }
 async function funcDownloadCsv(data, url) {
-    // スピナー表示
     startProcessing();
 
-    // 取得処理
-    // const data = JSON.stringify(ids);
-    const result = await updateFetch(url, JSON.stringify(data), token, "application/json");
-    const text = await result.text();
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": token
+            },
+            body: JSON.stringify(data)
+        });
 
-    // 文字列データが返却されなければ、エラーメッセージを表示
-    if (text == null || text == "") {
-        openMsgDialog("msg-dialog", "取得できませんでした", "red");
-    } else {
+        if (!response.ok) {
+            openMsgDialog("msg-dialog", "CSVの取得に失敗しました", "red");
+            return;
+        }
+
+        const text = await response.text();
+
+        if (!text) {
+            openMsgDialog("msg-dialog", "取得できませんでした", "red");
+            return;
+        }
+
         createCsvThenDownload(text);
+
+    } finally {
+        processingEnd();
     }
-
-    // スピナー消去
-    processingEnd();
 }
-
 /**
  * 削除
  * @param {*} tableId 
@@ -625,6 +668,7 @@ function createSelectableRow({
     row.setAttribute("name", "data-row");
     row.dataset.id = item[idKey];
     row.dataset.valid = validCheck ? validCheck(item) : true;
+    tdEnableEdit(row);
 
     // シングルクリック
     row.onclick = function (e) {

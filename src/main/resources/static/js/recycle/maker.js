@@ -7,11 +7,7 @@ function createTable01Content(tableId, list) {
         const row = createSelectableRow({
             table,
             item,
-            idKey: "recycle_id",
-            validCheck: item => item.loss_date !== "9999-12-31",
-            onDoubleClick: (item, row) => {
-                execEdit(item.recycle_id, row);
-            }
+            idKey: "recycle_maker_id"
         });
 
         createTable01Row(row, item);
@@ -48,6 +44,7 @@ async function execEdit01(self) {
 
     // 入力フォームダイアログを開く
     openFormDialog("form-dialog-01");
+    code.focus();
 }
 
 /******************************************************************************************************* 保存 */
@@ -147,8 +144,8 @@ async function execSave(tableId, footerId, searchId, ent, createContent) {
     // startProcessing();
 
     // 保存処理
-    const resultResponse = await postFetch("/api/recycle/maker/save", JSON.stringify(ent), token, "application/json");
-    const result = await resultResponse.json();
+    const result = await updateFetch("/api/recycle/maker/save", JSON.stringify(ent), token, "application/json");
+    // const result = await resultResponse.json();
     if (result.success) {
         // 画面更新
         await execUpdate();
@@ -196,8 +193,17 @@ async function execUpdate() {
     // // スピナー表示
     // startProcessing();
 
-    const resultResponse = await fetch('/api/recycle/maker/get/list');
-    origin = await resultResponse.json();
+    // const resultResponse = await fetch('/api/recycle/maker/get/list');
+    // origin = await resultResponse.json();
+
+    const response = await fetch('/api/recycle/maker/get/list');
+
+    if (!response.ok) {
+        openMsgDialog("msg-dialog", "一覧の取得に失敗しました", "red");
+        return null;
+    }
+
+    return await response.json();
 
     // // スピナー消去
     // processingEnd();

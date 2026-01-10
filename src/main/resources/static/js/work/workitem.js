@@ -1,17 +1,30 @@
 /******************************************************************************************************* 画面 */
 
 // リスト画面の本体部分を作成する
+// function createTableContent(tableId, list) {
+//     const tbl = document.getElementById(tableId);
+//     list.forEach(function (item) {
+//         let newRow = tbl.insertRow();
+//         // ID（Post送信用）
+//         newRow.setAttribute('name', 'data-row');
+//         newRow.setAttribute('data-id', item.work_item_id);
+//         newRow.setAttribute('data-cate', item.category_id);
+//         // tdChangeEdit(newRow);
+//         tdEnableEdit(newRow);
+//         createTable01Row(newRow, item);
+//     });
+// }
 function createTableContent(tableId, list) {
-    const tbl = document.getElementById(tableId);
-    list.forEach(function (item) {
-        let newRow = tbl.insertRow();
-        // ID（Post送信用）
-        newRow.setAttribute('name', 'data-row');
-        newRow.setAttribute('data-id', item.work_item_id);
-        newRow.setAttribute('data-cate', item.category_id);
-        tdChangeEdit(newRow);
-        tdEnableEdit(newRow);
-        createTable01Row(newRow, item);
+    const table = document.getElementById(tableId);
+
+    list.forEach(item => {
+        const row = createSelectableRow({
+            table,
+            item,
+            idKey: "work_item_id"
+        });
+
+        createTable01Row(row, item);
     });
 }
 
@@ -51,10 +64,12 @@ async function execCreate(self) {
 }
 
 // TDが変更された時の処理
-function tdChangeEdit(newRow) {
-    newRow.addEventListener('change', function (e) {
-        const input = e.target;
-        const td = input.closest('td.editable');
+// function tdChangeEdit(newRow) {
+function handleTdChange(editor) {
+    // newRow.addEventListener('change', function (e) {
+        // const input = e.target;
+        // const td = input.closest('td.editable');
+        const td = editor.closest('td.editable');
         const col = td.dataset.col;
         const row = td.closest('tr');
         const id = row.dataset.id;
@@ -63,26 +78,32 @@ function tdChangeEdit(newRow) {
         const ent = origin.find(value => value.work_item_id == id);
         switch (col) {
             case "itemcode":
-                if (existsSameCode(Number(cate), Number(input.value))) {
-                    input.value = "";
+                // if (existsSameCode(Number(cate), Number(input.value))) {
+                if (existsSameCode(Number(cate), Number(editor.value))) {
+                    // input.value = "";
+                    editor.value = "";
                     return;
                 } else {
-                    ent.code = Number(input.value);
+                    // ent.code = Number(input.value);
+                    ent.code = Number(editor.value);
                     break;
                 }
             case "itemname":
-                if (existsSameName(Number(cate), input.value)) {
-                    input.value = "";
+                // if (existsSameName(Number(cate), input.value)) {
+                if (existsSameName(Number(cate), editor.value)) {
+                    // input.value = "";
+                    editor.value = "";
                     return;
                 } else {
-                    ent.name = input.value;
+                    // ent.name = input.value;
+                    ent.name = editor.value;
                     break;
                 }
             default:
                 return;
         }
         execSave(ent);
-    });
+    // });
 }
 
 // リスト内に同じコードがないかチェック
@@ -136,9 +157,10 @@ async function execDelete(tableId, footerId, searchId, url, self) {
     const result = await deleteTablelist(tableId, url);
 
     if (result.success) {                
-        await execUpdate();
-        const list = getCategoryFilterList();
-        await updateTableDisplay(tableId, footerId, searchId, list);
+        // await execUpdate();
+        // const list = getCategoryFilterList();
+        // await updateTableDisplay(tableId, footerId, searchId, list, createTableContent);
+        refleshDisplay();
         openMsgDialog("msg-dialog", result.message, "blue");
     } else {
         openMsgDialog("msg-dialog", result.message, "red");
@@ -152,17 +174,18 @@ async function execDelete(tableId, footerId, searchId, url, self) {
 
 // 保存処理
 async function execSave(ent) {
-    // スピナー表示
-    startProcessing();
+    // // スピナー表示
+    // startProcessing();
 
     // 保存処理
-    const resultResponse = await postFetch("/api/work/item/save", JSON.stringify(ent), token, "application/json");
-    const result = await resultResponse.json();
+    const result = await updateFetch("/api/work/item/save", JSON.stringify(ent), token, "application/json");
+    // const result = await resultResponse.json();
     if (result.success) {
         // 画面更新
-        await execUpdate();
-        const list = getCategoryFilterList();
-        await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+        // await execUpdate();
+        // const list = getCategoryFilterList();
+        // await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTableContent);
+        refleshDisplay();
         // 追加・変更行に移動
         scrollIntoTableList("table-01-content", result.id);
         // itemList = [];
@@ -170,8 +193,8 @@ async function execSave(ent) {
         openMsgDialog("msg-dialog", result.message, "red");
     }
 
-    // スピナー消去
-    processingEnd();
+    // // スピナー消去
+    // processingEnd();
 }
 
 /******************************************************************************************************* ダウンロード */
@@ -182,16 +205,32 @@ async function execDownloadCsv(tableId, url, self) {
 
 /******************************************************************************************************* 画面更新 */
 
+// フィルターを通して画面を更新する
+async function refleshDisplay() {
+    await execUpdate();
+    const list = getCategoryFilterList();
+    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTableContent);
+}
+
 // 最新のリストを取得
 async function execUpdate() {
-    // スピナー表示
-    startProcessing();
+    // // スピナー表示
+    // startProcessing();
 
-    const resultResponse = await fetch('/api/work/item/get/list');
-    origin = await resultResponse.json();
+    // const resultResponse = await fetch('/api/work/item/get/list');
+    // origin = await resultResponse.json();
+    
+    // // スピナー消去
+    // processingEnd();
 
-    // スピナー消去
-    processingEnd();
+    const response = await fetch('/api/work/item/get/list');
+
+    if (!response.ok) {
+        openMsgDialog("msg-dialog", "一覧の取得に失敗しました", "red");
+        return;
+    }
+
+    origin = await response.json();
 }
 
 // カテゴリーフィルター選択時の処理
@@ -204,29 +243,29 @@ function getCategoryFilterList() {
     }
 }
 
-// テーブルリスト画面を更新する
-async function updateTableDisplay(tableId, footerId, searchId, list) {
-    // フィルター処理
-    const result = filterDisplay(searchId, list);
-    // リスト画面を初期化
-    deleteElements(tableId);
-    // リスト作成
-    createTableContent(tableId, result);
-    // フッター作成
-    createTableFooter(footerId, list);
-    // チェックボタン押下時の処理を登録する
-    registCheckButtonClicked(tableId);
-    // すべて選択ボタンをオフにする
-    turnOffAllCheckBtn(tableId);
-    // テーブルのソートをリセットする
-    resetSortable(tableId);
-    // スクロール時のページトップボタン処理を登録する
-    setPageTopButton(tableId);
-    // テーブルにスクロールバーが表示されたときの処理を登録する
-    document.querySelectorAll('.scroll-area').forEach(el => {
-        toggleScrollbar(el);
-    });
-}
+// // テーブルリスト画面を更新する
+// async function updateTableDisplay(tableId, footerId, searchId, list) {
+//     // フィルター処理
+//     const result = filterDisplay(searchId, list);
+//     // リスト画面を初期化
+//     deleteElements(tableId);
+//     // リスト作成
+//     createTableContent(tableId, result);
+//     // フッター作成
+//     createTableFooter(footerId, list);
+//     // チェックボタン押下時の処理を登録する
+//     registCheckButtonClicked(tableId);
+//     // すべて選択ボタンをオフにする
+//     turnOffAllCheckBtn(tableId);
+//     // テーブルのソートをリセットする
+//     resetSortable(tableId);
+//     // スクロール時のページトップボタン処理を登録する
+//     setPageTopButton(tableId);
+//     // テーブルにスクロールバーが表示されたときの処理を登録する
+//     document.querySelectorAll('.scroll-area').forEach(el => {
+//         toggleScrollbar(el);
+//     });
+// }
 
 /******************************************************************************************************* 初期化時 */
 
@@ -241,18 +280,20 @@ window.addEventListener("load", async () => {
     const category1Area = document.getElementById('category1')
     createComboBoxWithTop(category1Area, categoryComboList, "");
     category1Area.onchange = function(e) {
-        const list = getCategoryFilterList();
-        updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+        // const list = getCategoryFilterList();
+        // updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTableContent);
+        refleshDisplay();
     };
 
     // 検索ボックス入力時の処理
     document.getElementById('search-box-01').addEventListener('search', async function(e) {
-        const list = getCategoryFilterList();
-        updateTableDisplay("table-01-content", "footer-01", "search-box-01", list);
+        refleshDisplay();
+        // updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTableContent);
     }, false);
 
     // 画面更新
-    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+    const list = getCategoryFilterList();
+    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTableContent);
 
     // スピナー消去
     processingEnd();
