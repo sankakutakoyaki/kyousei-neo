@@ -31,7 +31,6 @@ public class EmployeeService {
     /**
      * 従業員情報を登録・更新します。
      * IDが０の時は登録・０以上の時は更新します。
-     * 
      * @param entity
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
@@ -42,6 +41,34 @@ public class EmployeeService {
         } else {
             return employeeRepository.insert(entity, editor);
         }
+    }
+
+    /**
+     * 従業員コードを更新します。
+     * @param id
+     * @param data
+     * @return 成功した場合は更新件数を返す。失敗した場合は０を返す。
+    */
+    public int updateCode(int id, String code, String editor) {
+        int value = 0;
+        if (code != null && !code.isBlank()) {
+            try {
+                value = Integer.parseInt(code);
+            } catch (NumberFormatException e) {
+                value = 0;
+            }
+        }
+        return employeeRepository.updateCode(id, value, editor);
+    }
+
+    /**
+     * 登録携帯番号を更新します。
+     * @param id
+     * @param data
+     * @return 成功した場合は更新件数を返す。失敗した場合は０を返す。
+    */
+    public int updatePhone(int id, String phone, String editor) {
+        return employeeRepository.updatePhone(id, phone, editor);
     }
 
     /**

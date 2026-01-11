@@ -49,7 +49,7 @@ public class PersonnelPageController extends BaseController {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "従業員");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
+		mv.addObject("sidebarFragmentName", "fragments/common/menu :: registFragment");
         mv.addObject("bodyFragmentName", "contents/personnel/employee :: bodyFragment");
         mv.addObject("insertCss", "/css/personnel/employee.css");
 

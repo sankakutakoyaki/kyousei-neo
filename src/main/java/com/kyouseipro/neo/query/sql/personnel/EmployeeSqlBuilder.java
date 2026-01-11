@@ -74,6 +74,37 @@ public class EmployeeSqlBuilder {
             "SELECT employee_id FROM @UpdatedRows;";
     }
 
+    public static String buildUpdateCode() {
+        return
+            buildLogTable("@UpdatedRows") +
+
+            "UPDATE employees SET code=? " +
+            
+            buildOutputLog() + "INTO @UpdatedRows " +
+
+            "WHERE employee_id=?; " +
+
+            buildInsertLog("@UpdatedRows", "UPDATE") +
+
+            "SELECT employee_id FROM @UpdatedRows;";
+    }
+
+
+    public static String buildUpdatePhone() {
+        return
+            buildLogTable("@UpdatedRows") +
+
+            "UPDATE employees SET phone_number=? " +
+            
+            buildOutputLog() + "INTO @UpdatedRows " +
+
+            "WHERE employee_id=?; " +
+
+            buildInsertLog("@UpdatedRows", "UPDATE") +
+
+            "SELECT employee_id FROM @UpdatedRows;";
+    }
+
     public static String buildDeleteByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ..., ?"
 

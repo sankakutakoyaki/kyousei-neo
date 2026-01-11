@@ -90,6 +90,24 @@ public class EmployeeParameterBinder {
         return index;
     }
 
+    public static int bindUpdateCode(PreparedStatement pstmt, int id, int code, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setInt(index++, code);
+
+        pstmt.setInt(index++, id); // WHERE句
+        pstmt.setString(index++, editor);          // ログ用
+        return index;
+    }
+
+    public static int bindUpdatePhone(PreparedStatement pstmt, int id, String phone, String editor) throws SQLException {
+        int index = 1;
+        pstmt.setString(index++, phone);
+
+        pstmt.setInt(index++, id); // WHERE句
+        pstmt.setString(index++, editor);          // ログ用
+        return index;
+    }
+
     public static int bindFindById(PreparedStatement ps, Integer id) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());

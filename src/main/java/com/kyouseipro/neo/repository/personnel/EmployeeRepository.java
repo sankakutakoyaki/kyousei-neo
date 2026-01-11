@@ -170,6 +170,55 @@ public class EmployeeRepository {
     }
 
     /**
+     * コードを更新。
+     * @param id
+     * @param code
+     * @return 成功件数を返す。
+     */
+    public int updateCode(int id, int code, String editor) {
+        String sql = EmployeeSqlBuilder.buildUpdateCode();
+        try {
+            int count = sqlRepository.executeUpdate(
+                sql,
+                ps -> EmployeeParameterBinder.bindUpdateCode(ps, id, code, editor)
+            );
+
+            if (count == 0) {
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
+            }
+
+            return count;
+
+        } catch (RuntimeException e) {
+            if (SqlExceptionUtil.isDuplicateKey(e)) {
+                throw new BusinessException("このコードはすでに使用されています。");
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * 電話番号を更新。
+     * @param id
+     * @param phone
+     * @return 成功件数を返す。
+     */
+    public int updatePhone(int id, String phone, String editor) {
+        String sql = EmployeeSqlBuilder.buildUpdatePhone();
+
+        int count = sqlRepository.executeUpdate(
+            sql,
+            ps -> EmployeeParameterBinder.bindUpdatePhone(ps, id, phone, editor)
+        );
+
+        if (count == 0) {
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
+        }
+
+        return count;
+    }
+
+    /**
      * 削除。
      * @param list
      * @param editor

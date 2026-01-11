@@ -287,11 +287,6 @@ function setCompanyComboBox(form, entity, companyList, officeList) {
     createComboBox(companyArea, companyList);
     setComboboxSelected(companyArea, entity.company_id);
     createOfficeComboBox(form, officeList);
-    // if (entity.company_id > 0) {
-    //     const officeArea = form.querySelector('select[name="office"]');
-    //     createComboBoxWithTop(officeArea, officeList, "");
-    //     setComboboxSelected(officeArea, entity.office_id);                    
-    // }
     companyArea.onchange = function() { createOfficeComboBox(form, officeList) };
 }
 
@@ -312,10 +307,11 @@ function setCompanyComboBoxWithTop(form, entity, companyList, officeList) {
 function createOfficeComboBox(form, officeList) {
     const companyArea = form.querySelector('select[name="company"]');
     const officeArea = form.querySelector('select[name="office"]');
+    if (!officeArea) return;
 
     const selectId = companyArea.value;  
-    const officeComboList = officeList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
-    createComboBoxWithTop(officeArea, officeComboList, "");
+    const list = officeList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
+    createComboBoxWithTop(officeArea, list, "");
 }
 
 // モードで指定したフォームを開く

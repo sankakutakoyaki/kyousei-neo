@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,8 +47,39 @@ public class EmployeeApiController {
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody EmployeeEntity entity, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = employeeService.save(entity, userName);
-        if (id != null && id > 0) {
+        int id = employeeService.save(entity, userName);
+        if (id > 0) {
+            historyService.save(userName, "employees", "保存", 200, "成功");
+            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        } else {
+            historyService.save(userName, "employees", "保存", 400, "失敗");
+            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+        }
+    }
+
+    /**
+     * 情報を更新する
+     * @param ENTITY
+     * @return 
+     */
+    @PostMapping("/api/employee/update/{type}")
+	@ResponseBody
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestParam int id, @RequestParam String data, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
+        String userName = principal.getAttribute("preferred_username");
+        int resultId = 0;
+
+        switch (type) {
+            case "code":
+                resultId = employeeService.updateCode(id, data, userName);
+                break;
+            case "phone":
+                resultId = employeeService.updatePhone(id, data, userName);
+                break;
+            default:
+                break;
+        }
+
+        if (resultId > 0) {
             historyService.save(userName, "employees", "保存", 200, "成功");
             return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         } else {

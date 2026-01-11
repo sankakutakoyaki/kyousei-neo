@@ -25,11 +25,9 @@
                         <!-- ヘッダー -->
                         <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-01')}"></header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-01', 'table-01-content')}">
-                        </main>
+                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-01', 'table-01-content')}"></main>
                         <!-- フッター -->
-                        <footer id="footer-01" class="pc-style"
-                            th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
+                        <footer id="footer-01" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="02">
@@ -37,11 +35,9 @@
                         <!-- ヘッダー -->
                         <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-02')}"></header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-02', 'table-02-content')}">
-                        </main>
+                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-02', 'table-02-content')}"></main>
                         <!-- フッター -->
-                        <footer id="footer-02" class="pc-style"
-                            th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
+                        <footer id="footer-02" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="03">
@@ -49,11 +45,9 @@
                         <!-- ヘッダー -->
                         <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-03')}"></header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-03', 'table-03-content')}">
-                        </main>
+                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-03', 'table-03-content')}"></main>
                         <!-- フッター -->
-                        <footer id="footer-03" class="pc-style"
-                            th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
+                        <footer id="footer-03" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="04">
@@ -61,11 +55,9 @@
                         <!-- ヘッダー -->
                         <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-04')}"></header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-04', 'table-04-content')}">
-                        </main>
+                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-04', 'table-04-content')}"></main>
                         <!-- フッター -->
-                        <footer id="footer-04" class="pc-style"
-                            th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
+                        <footer id="footer-04" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="07">
@@ -73,40 +65,29 @@
                         <!-- ヘッダー -->
                         <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-07')}"></header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-07', 'table-07-content')}">
-                        </main>
+                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-07', 'table-07-content')}"></main>
                         <!-- フッター -->
-                        <footer id="footer-07" class="pc-style"
-                            th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
+                        <footer id="footer-07" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="05">
                     <div class="table-area">
                         <!-- ヘッダー -->
-                        <header
-                            th:replace="~{fragments/corporation/client :: headerOfficeFragment('code-box-01', 'name-box-01')}">
-                        </header>
+                        <header th:replace="~{fragments/corporation/client :: headerOfficeFragment('code-box-01', 'name-box-01')}"></header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-05', 'table-05-content')}">
-                        </main>
+                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-05', 'table-05-content')}"></main>
                         <!-- フッター -->
-                        <footer id="footer-05" class="pc-style"
-                            th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
+                        <footer id="footer-05" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="06">
                     <div class="table-area">
                         <!-- ヘッダー -->
-                        <header
-                            th:replace="~{fragments/corporation/client :: headerStaffFragment('code-box-02', 'name-box-02', 'name-box-03')}">
-                        </header>
+                        <header th:replace="~{fragments/corporation/client :: headerStaffFragment('code-box-02', 'name-box-02', 'name-box-03')}"></header>
                         <!-- コンテンツ -->
-                        <main
-                            th:replace="~{fragments/corporation/client :: mainStaffFragment('table-06', 'table-06-content')}">
-                        </main>
+                        <main th:replace="~{fragments/corporation/client :: mainStaffFragment('table-06', 'table-06-content')}"></main>
                         <!-- フッター -->
-                        <footer id="footer-06" class="pc-style"
-                            th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
+                        <footer id="footer-06" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
                     </div>
                 </div>
             </div>
@@ -115,11 +96,15 @@
             <!-- フォーム画面をここに記入する -->
             <div id="form-dialog-01" class="form-dialog none">
                 <div class="dialog-main">
-                    <div class="dialog-header"><span></span>
+                    <!-- <div class="dialog-header"><span></span>
                         <div class="img-btn" onclick="closeFormDialog('form-dialog-01', event)"><img title="閉じる"
                                 src="/icons/close-s.png"></div>
-                    </div>
-                    <form id="form-01" class="dialog-content">
+                    </div> -->
+                    <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-01', '')}"></div>
+
+                    <form th:replace="~{fragments/corporation/client :: form01Fragment()}"></form>
+
+                    <!-- <form id="form-01" class="dialog-content">
                         <input name="company-id" type="hidden" value="">
                         <input name="office-id" type="hidden" value="">
                         <input name="category" type="hidden" value="">
@@ -190,22 +175,31 @@
                                 </select>
                             </div>
                         </div>
-                    </form>
-                    <div class="dialog-footer">
+                    </form> -->
+
+                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-01', 'execSave(this)', '保存')}"></div>
+
+                    <!-- <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
                             onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
                         <button tabindex="10" class="normal-btn ok" type="button"
                             onclick="execSave(this)"><span>保存</span></button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div id="form-dialog-02" class="form-dialog none">
                 <div class="dialog-main">
-                    <div class="dialog-header"><span></span>
+                    <!-- <div class="dialog-header"><span></span>
                         <div class="img-btn" onclick="closeFormDialog('form-dialog-02', event)"><img title="閉じる"
                                 src="/icons/close-s.png"></div>
-                    </div>
-                    <form id="form-02" class="dialog-content">
+                    </div> -->
+                    <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-02', '')}"></div>
+
+                    <form th:replace="~{fragments/corporation/client :: form02Fragment()}"></form>
+                    
+                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-02', 'execSave(this)', '保存')}"></div>
+
+                    <!-- <form id="form-02" class="dialog-content">
                         <input name="staff-id" type="hidden" value="">
                         <input name="company-id" type="hidden" value="">
                         <input name="version" type="hidden" value="">
@@ -249,7 +243,7 @@
                             onclick="closeFormDialog('form-dialog-02', event)"><span>キャンセル</span></button>
                         <button tabindex="5" class="normal-btn ok" type="button"
                             onclick="execSave(this)"><span>保存</span></button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -271,13 +265,13 @@
             let officeOrigin = /*[[${officeOrigin}]]*/; // 初期リスト記憶用
             let staffOrigin = /*[[${staffOrigin}]]*/; // 初期リスト記憶用
             let companyComboList = /*[[${companyComboList}]]*/;
-            let officeComboList = /*[[${officeComboList}]]*/;
+            // let officeComboList = /*[[${officeComboList}]]*/;
 
-            const code01 = document.getElementById('code-box-01'); // Tab5の会社コードボックス
-            const code02 = document.getElementById('code-box-02'); // Tab6の会社コードボックス
-            const name01 = document.getElementById('name-box-01'); // Tab5の会社選択セレクトボックス
-            const name02 = document.getElementById('name-box-02'); // Tab6の会社選択セレクトボックス
-            const name03 = document.getElementById('name-box-03'); // 支店選択セレクトボックス
+            // const code01 = document.getElementById('code-box-01'); // Tab5の会社コードボックス
+            // const code02 = document.getElementById('code-box-02'); // Tab6の会社コードボックス
+            // const name01 = document.getElementById('name-box-01'); // Tab5の会社選択セレクトボックス
+            // const name02 = document.getElementById('name-box-02'); // Tab6の会社選択セレクトボックス
+            // const name03 = document.getElementById('name-box-03'); // 支店選択セレクトボックス
         </script>
         <script th:src="@{/js/corporation/client.js}"></script>
     </div>
