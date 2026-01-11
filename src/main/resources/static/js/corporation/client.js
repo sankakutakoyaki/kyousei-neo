@@ -86,34 +86,75 @@ const ID_CONFIG = {
             "full-address",
             "web-address",
             "category"
-        ],
-        show: ["priceArea"]
+        ]
     },
     "02": {
         common: true,
         fields: [
+            "tel-number",
+            "fax-number",
+            "postal-code",
+            "full-address",
+            "web-address",
             "category",
             "price"
         ],
         show: ["priceArea"]
     },
+    "03": {
+        common: true,
+        fields: [
+            "tel-number",
+            "fax-number",
+            "postal-code",
+            "full-address",
+            "web-address",
+            "category"
+        ],
+    },
+    "04": {
+        common: true,
+        fields: [
+            "tel-number",
+            "fax-number",
+            "postal-code",
+            "full-address",
+            "web-address",
+            "category"
+        ]
+    },
     "05": {
         common: true,
         fields: [
-            "office-id"
+            "tel-number",
+            "fax-number",
+            "postal-code",
+            "full-address",
+            "web-address"
         ]
     },
     "06": {
+        common: true,
+        fields: [
+            "tel-number",
+            "fax-number",
+            "postal-code",
+            "full-address",
+            "web-address",
+            "office-id"
+        ],
+        init: (config, entity) => {
+            createFormOfficeComboBox(config.formId, entity.office_id);
+        }
+    },
+    "07": {
         common: false,
         fields: [
+            "category",
             "staff-id",
             "office-id",
             "phone-number"
-        ],
-        init: () => {
-            const combo = document.getElementById("office-id");
-            createOfficeComboBox(combo);
-        }
+        ]
     }
 };
 
@@ -514,6 +555,17 @@ function setFormContent(form, entity, tab) {
     //         break;
     // }
 
+    const config = ID_CONFIG[tab];
+    if (!config) return;
+
+    const mode = MODE_CONFIG[tab];
+    if (!mode) return;
+
+    // 初期化処理（コンボ生成など）
+    if (typeof config.init === "function") {
+        config.init(mode, entity);
+    }
+
     // 共通項目
     const commonFields = {
         "company-id": entity.company_id,
@@ -526,14 +578,6 @@ function setFormContent(form, entity, tab) {
     Object.entries(commonFields).forEach(([k, v]) =>
         setValue(form, k, v)
     );
-
-    const config = ID_CONFIG[tab];
-    if (!config) return;
-
-    // 初期化処理（コンボ生成など）
-    if (typeof config.init === "function") {
-        config.init();
-    }
 
     // フィールド反映
     config.fields.forEach(name => {
@@ -676,7 +720,7 @@ async function execSave() {
     entity.user_name = user?.account ?? "kyousei@kyouseibin.com";
 
     // 保存
-    const result = await postFetch(
+    const result = await updateFetch(
         config.url,
         JSON.stringify(entity),
         token,
@@ -1104,9 +1148,23 @@ async function createOfficeComboBoxFromClient() {
         const companyArea = panel.querySelector('select[name="company"]');
         const officeArea = panel.querySelector('select[name="office"]');
         const selectId = companyArea.value;  
-        const list = result.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
+        const list = result.filter(value => { return value.company_id === Number(selectId) }).map(item => ({number:item.office_id, text:item.name}));
         createComboBoxWithTop(officeArea, list, "");
         officeArea.onchange = () => updateStaffTableDisplay();
+    }
+}
+
+// 選択した会社の支店をコンボボックスに登録する
+async function createFormOfficeComboBox(formId, id) {
+    const resultResponse = await fetch('api/office/get/list');
+    const result = await resultResponse.json();
+    if (result != null) {
+        const form = document.getElementById(formId);
+        const companyArea = form.querySelector('[name="company-id"]');
+        const officeArea = form.querySelector('select[name="office"]');
+        const list = result.filter(value => { return value.company_id === Number(companyArea.value) }).map(item => ({number:item.office_id, text:item.name}));
+        createComboBoxWithTop(officeArea, list, "");
+        setComboboxSelected(officeArea, id);
     }
 }
 
@@ -1251,6 +1309,7 @@ window.addEventListener("load", async () => {
     //     el?.addEventListener('search', e => execFilterDisplay(e.currentTarget));
     // });
     Object.values(MODE_CONFIG).forEach(cfg => {
+        setEnterFocus(cfg.formId);
         const el = document.getElementById(cfg.searchId);
         if (!el) return;
 

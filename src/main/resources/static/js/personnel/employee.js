@@ -335,6 +335,7 @@ window.addEventListener("load", async () => {
     for (const mode of Object.keys(MODE_CONFIG)) {
         let config = MODE_CONFIG[mode];
         if (config != null) {
+            setEnterFocus(config.formId);
             // 検索ボックス入力時の処理
             document.getElementById(config.searchId).addEventListener('search', async function(e) {
                 await execFilterDisplay(e.currentTarget);
