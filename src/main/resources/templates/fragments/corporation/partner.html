@@ -106,41 +106,105 @@
     </form>
 
     <form id="form-02" class="dialog-content" th:fragment="form02Fragment()">
-        <input name="staff-id" type="hidden" value="">
-        <input name="company-id" type="hidden" value="">
+        <input name="employee-id" type="hidden" value="">
+        <input name="category" type="hidden" value="">
         <input name="version" type="hidden" value="">
         <div class="flex-area">
             <div class="form-parts">
-                <label>支店名</label>
-                <select tabindex="1" id="office-id" name="office" class="normal-select"
-                    value=""></select>
+                <label>アカウント</label>
+                <input tabindex="1" name="account" class="normal-input" type="text" value=""
+                    placeholder="example@kyouseibin.com" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>コード</label>
+                <input tabindex="2" name="code" class="normal-input" type="text" inputmode="numeric"
+                    pattern="\d*" value="" placeholder="000" onfocus="this.select();">
             </div>
         </div>
         <div class="flex-area">
             <div class="form-parts">
-                <label>担当者名</label>
-                <input tabindex="2" name="name" class="normal-input" type="text" value=""
-                    placeholder="担当者名" onfocus="this.select();">
+                <label>会社名</label>
+                <select tabindex="3" name="company" class="normal-select"></select>
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>氏名</label>
+                <div class="flex-area">
+                    <input tabindex="5" name="last-name" class="normal-input" type="text" value=""
+                        placeholder="姓" onfocus="this.select();">
+                    <input tabindex="6" name="first-name" class="normal-input" type="text" value=""
+                        placeholder="名" onfocus="this.select();">
+                </div>
             </div>
             <div class="form-parts">
                 <label>かな</label>
-                <input tabindex="3" name="name-kana" class="normal-input" type="text" value=""
-                    placeholder="たんとうしゃめい" onfocus="this.select();">
+                <div class="flex-area">
+                    <input tabindex="7" name="last-name-kana" class="normal-input" type="text" value=""
+                        placeholder="せい" onfocus="this.select();">
+                    <input tabindex="8" name="first-name-kana" class="normal-input" type="text" value=""
+                        placeholder="めい" onfocus="this.select();">
+                </div>
             </div>
         </div>
         <div class="flex-area">
             <div class="form-parts">
-                <label>電話番号</label>
-                <input tabindex="4" name="phone-number" class="normal-input" type="text"
+                <label>携帯番号</label>
+                <input tabindex="9" name="phone-number" class="normal-input" type="text"
                     inputmode="numeric" pattern="\\d{3}-\\d{4}-\\d{4}" value=""
                     placeholder="012-3456-7890" onfocus="this.select();">
             </div>
+            <div class="form-parts">
+                <label>メールアドレス</label>
+                <input tabindex="10" name="email" class="normal-input" type="email" value=""
+                    placeholder="例）example@kyouseibin.com" onfocus="this.select();">
+            </div>
         </div>
         <div class="flex-area">
             <div class="form-parts">
-                <label>メールアドレス</label>
-                <input tabindex="5" name="email" class="normal-input" type="email" value=""
-                    placeholder="例）example@kyouseibin.com" onfocus="this.select();">
+                <label>郵便番号</label>
+                <input tabindex="11" id="employee-postal-code" name="postal-code" class="normal-input"
+                    type="text" inputmode="numeric" pattern="\\d{3}-?\\d{4}" value=""
+                    placeholder="012-3456" onfocus="this.select();">
+                <img title="検索" src="/icons/search.png"
+                    onclick="getAddress('Enter', 'employee-postal-code', 'employee-full-address')">
+            </div>
+            <div class="form-parts">
+                <label>住所</label>
+                <input tabindex="12" id="employee-full-address" name="full-address" class="normal-input"
+                    type="text" value="" placeholder="例）大阪府高槻市柱本5丁目7番10号" onfocus="this.select();">
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>生年月日</label>
+                <input tabindex="13" name="birthday" class="normal-input" type="date" value=""
+                    onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>性別</label>
+                <select tabindex="14" name="gender" class="normal-select"></select>
+            </div>
+            <div class="form-parts">
+                <label>血液型</label>
+                <select tabindex="15" name="blood-type" class="normal-select"></select>
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>緊急連絡先</label>
+                <div class="flex-area">
+                    <input tabindex="16" name="emergency-contact" class="normal-input" type="text"
+                        value="" placeholder="例）実家・妻" onfocus="this.select();">
+                    <input tabindex="17" name="emergency-contact-number" class="normal-input"
+                        type="text" inputmode="numeric" pattern="\\d{2,4}-\\d{2,4}-\\d{3,4}" value=""
+                        placeholder="012-3456-7890" onfocus="this.select();">
+                </div>
+            </div>
+            <div class="form-parts">
+                <label>雇い入れ日</label>
+                <input tabindex="18" name="date-of-hire" class="normal-input" type="date" value=""
+                    onfocus="this.select();">
             </div>
         </div>
     </form>
@@ -152,7 +216,7 @@
                 <th><span>ID<span class="sort-arrow"></span></span></th>
                 <th><span>名称<span class="sort-arrow"></span></span></th>
                 <th><span>電話番号<span class="sort-arrow"></span></span></th>
-                <th><span>支店名<span class="sort-arrow"></span></span></th>
+                <th><span>メールアドレス<span class="sort-arrow"></span></span></th>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>
         </table>

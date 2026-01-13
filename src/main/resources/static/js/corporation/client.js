@@ -1121,36 +1121,36 @@ function initCompanyInputs() {
     });
 }
 
-function bindCodeInput(codeInput, nameSelect, onBlurCallback) {
+// function bindCodeInput(codeInput, nameSelect, onBlurCallback) {
 
-    // Enterキー処理
-    codeInput.addEventListener('keydown', function (e) {
-        if (e.key === "Enter") {
-            setComboboxSelected(nameSelect, this.value);
-            nameSelect.focus();
-        }
-    });
+//     // Enterキー処理
+//     codeInput.addEventListener('keydown', function (e) {
+//         if (e.key === "Enter") {
+//             setComboboxSelected(nameSelect, this.value);
+//             nameSelect.focus();
+//         }
+//     });
 
-    // フォーカスアウト時の処理
-    codeInput.addEventListener('blur', function () {
-        if (typeof onBlurCallback === "function") {
-            onBlurCallback();
-        }
-    });
-}
+//     // フォーカスアウト時の処理
+//     codeInput.addEventListener('blur', function () {
+//         if (typeof onBlurCallback === "function") {
+//             onBlurCallback();
+//         }
+//     });
+// }
 
-function initCompanyCombo(selectElem, onChangeCallback) {
+// function initCompanyCombo(selectElem, onChangeCallback) {
 
-    // コンボボックス初期化
-    createComboBoxWithTop(selectElem, companyComboList, "");
+//     // コンボボックス初期化
+//     createComboBoxWithTop(selectElem, companyComboList, "");
 
-    // 変更時処理
-    selectElem.onchange = async function () {
-        if (typeof onChangeCallback === "function") {
-            await onChangeCallback();
-        }
-    };
-}
+//     // 変更時処理
+//     selectElem.onchange = async function () {
+//         if (typeof onChangeCallback === "function") {
+//             await onChangeCallback();
+//         }
+//     };
+// }
 
 // 選択した会社の支店をコンボボックスに登録する
 async function createOfficeComboBoxFromClient() {

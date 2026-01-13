@@ -105,7 +105,11 @@ const ORIGIN_CONFIG = {
 const COMPANY_UI_CONFIG = [
     {
         codeId: "code01",
-        nameId: "name01"
+        nameId: "name01",
+        onChange: async () => {
+            await updateStaffTableDisplay();
+            refleshCode;
+        }
     }
 ];
 
@@ -151,17 +155,15 @@ function createTableRow(newRow, item, tab) {
     switch (tab) {
         case "01":
             // 電話番号
-            newRow.insertAdjacentHTML('beforeend', '<td name="tel-cell"><span>' + (item.phone_number ?? "登録なし") + '</span></td>');
-            // 支店名
-            newRow.insertAdjacentHTML('beforeend', '<td name="office-cell"><span>' + (item.office_name ?? "登録なし") + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.tel_number ?? "登録なし") + '</span></td>');
             break;
         case "02":
             // 電話番号
-            newRow.insertAdjacentHTML('beforeend', '<td name="tel-cell"><span>' + (item.tel_number ?? "登録なし") + '</span></td>');
-            // メールアドレス
-            newRow.insertAdjacentHTML('beforeend', '<td name="email-cell"><span>' + (item.email ?? "登録なし") + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="phone" data-edit-type="text"><span>' + (item.phone_number ?? "登録なし") + '</span></td>');
             break;
     }
+    // メールアドレス
+    newRow.insertAdjacentHTML('beforeend', '<td name="email-cell"><span>' + (item.email ?? "登録なし") + '</span></td>');
 }
 
 /******************************************************************************************************* 入力画面 */
@@ -199,6 +201,9 @@ async function execEdit(id, self) {
                 if (code01.value == "") {
                     // ダイアログを閉じる
                     closeFormDialog(config.formDialogId);
+                    // エラーメッセージ表示
+                    openMsgDialog("msg-dialog", "会社を選択してください", "red");
+                    setFocusElement(config.tableId, code01);
                     return;
                 }
                 entity.company_id = code01.value;
@@ -350,6 +355,44 @@ function formDataCheck(area) {
     return true;
 }
 
+// TDが変更された時の処理
+async function handleTdChange(editor) {
+    const td = editor.closest('td.editable');
+    const col = td.dataset.col;
+    const row = td.closest('tr');
+    const id = row.dataset.id;
+
+    const ent = origin.find(value => value.employee_id == id);
+    // const ent = getEmployee(id);
+    switch (col) {
+        case "code":
+            if (existsSameCode(Number(editor.value))) {
+                editor.value = ent.code;
+                return;
+            }
+            break;
+        case "phone":
+            if (!checkPhoneNumber(editor)) {
+                editor.value = ent.phone_number;
+                return;
+            }
+            break;
+        default:
+            return;
+    }
+
+    const data = "id=" + encodeURIComponent(parseInt(id)) + "&data=" + (editor.value);
+    await searchFetch('/api/employee/update/' + col, data, token, 'application/x-www-form-urlencoded');
+    await execUpdate();
+}
+
+// リスト内に同じコードがないかチェック
+function existsSameCode(code) {
+    return staffOrigin.some(item =>
+        item.code === code
+    );
+}
+
 /******************************************************************************************************* 削除 */
 
 async function execDelete(self) {
@@ -488,41 +531,8 @@ function initCompanyInputs() {
     });
 }
 
-function bindCodeInput(codeInput, nameSelect, onBlurCallback) {
-
-    // Enterキー処理
-    codeInput.addEventListener('keydown', function (e) {
-        if (e.key === "Enter") {
-            setComboboxSelected(nameSelect, this.value);
-            nameSelect.focus();
-        }
-    });
-
-    // フォーカスアウト時の処理
-    codeInput.addEventListener('blur', function () {
-        if (typeof onBlurCallback === "function") {
-            onBlurCallback();
-        }
-    });
-}
-
-function initCompanyCombo(selectElem, onChangeCallback) {
-
-    // コンボボックス初期化
-    createComboBoxWithTop(selectElem, companyComboList, "");
-
-    // 変更時処理
-    selectElem.onchange = async function () {
-        if (typeof onChangeCallback === "function") {
-            await onChangeCallback();
-        }
-    };
-}
-
-function getComboTargets(targetIds) {
-    return targetIds
-        .map(id => document.getElementById(id))
-        .filter(elm => elm !== null);
+function refleshCode() {
+    code01.value = code01.value !== name01.value ? name01.value: code01.value;
 }
 
 /******************************************************************************************************* 初期化時 */

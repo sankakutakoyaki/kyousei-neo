@@ -326,3 +326,43 @@ async function openFormByMode(mode, modeConfig) {
     resetEnterFocus();
     // setEnterFocus(config.formId);
 }
+
+// コードBOX変更時の処理
+function bindCodeInput(codeInput, nameSelect, onBlurCallback) {
+
+    // Enterキー処理
+    codeInput.addEventListener('keydown', function (e) {
+        if (e.key === "Enter") {
+            setComboboxSelected(nameSelect, this.value);
+            nameSelect.focus();
+        }
+    });
+
+    // フォーカスアウト時の処理
+    codeInput.addEventListener('blur', function () {
+        if (typeof onBlurCallback === "function") {
+            onBlurCallback();
+        }
+    });
+}
+
+// コンボボックス変更時の処理
+function initCompanyCombo(selectElem, onChangeCallback) {
+
+    // コンボボックス初期化
+    createComboBoxWithTop(selectElem, companyComboList, "");
+
+    // 変更時処理
+    selectElem.onchange = async function () {
+        if (typeof onChangeCallback === "function") {
+            await onChangeCallback();
+        }
+    };
+}
+
+// すべてのコンボボックスを取得する
+function getComboTargets(targetIds) {
+    return targetIds
+        .map(id => document.getElementById(id))
+        .filter(elm => elm !== null);
+}

@@ -11,13 +11,17 @@
     column-gap: 2rem;
 }
 
-:is(#table-01, #table-02, #table-03, #table-04, #table-05, #table-07) tr {
-    grid-template-columns: 3rem 5rem 40% 9rem 1fr 2rem;
-    /* text-align: center; */
+#code-area {
+    display: grid;
+    grid-template-columns: 6rem auto 1fr;
 }
 
-#table-06 tr {
-    grid-template-columns: 3rem 5rem 15rem 1fr 1fr 2rem;
+:is(#table-01) tr {
+    grid-template-columns: 3rem 5rem 40% 9rem 1fr 2rem;
+}
+
+:is(#table-02) tr {
+    grid-template-columns: 3rem 5rem 5rem 15rem 9rem 1fr 2rem;
 }
 
 .tab-panel .table-area {
@@ -26,16 +30,6 @@
     margin-top: 2rem;
     overflow: hidden;
     max-width: 70rem;
-}
-
-.tab-panel[data-panel='05'] #code-area {
-    display: grid;
-    grid-template-columns: 6rem 1fr 15rem;
-}
-
-.tab-panel[data-panel='06'] #code-area {
-    display: grid;
-    grid-template-columns: 6rem 1fr 1fr 5rem;
 }
 
 #form-dialog-01 {
@@ -82,23 +76,44 @@
     & .dialog-content {
         & >.flex-area:nth-of-type(1) {
             display: grid;
-            grid-template-columns: 1fr;
-            width: 100%;
+            grid-template-columns: 20rem 5rem;
         }
         & >.flex-area:nth-of-type(2) {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            width: 100%;
+            grid-template-columns: 15rem 1fr;
         }
         & >.flex-area:nth-of-type(3) {
             display: grid;
-            grid-template-columns: 10rem;
+            grid-template-columns: 1fr 1fr;
             width: 100%;
+            & .flex-area {
+                display: grid;
+                grid-template-columns: 8rem 8rem;
+            }
         }
         & >.flex-area:nth-of-type(4) {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 10rem 1fr;
             width: 100%;
+        }
+        & >.flex-area:nth-of-type(5) {
+            display: grid;
+            grid-template-columns: 8rem 1fr;
+            width: 100%;
+        }
+        & >.flex-area:nth-of-type(6) {
+            display: grid;
+            grid-template-columns: 11rem 8rem 8rem;
+        }
+        & >.flex-area:nth-of-type(7) {
+            display: grid;
+            grid-template-columns: 1fr 11rem;
+            width: 100%;
+            & .flex-area {
+                display: grid;
+                grid-template-columns: 10rem 1fr;
+                width: 100%;
+            }
         }
     }
 }
