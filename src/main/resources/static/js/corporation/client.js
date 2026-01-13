@@ -1,15 +1,15 @@
 const MODE_CONFIG = {
-    "01": {
-        tableId: "table-01-content",
-        footerId: "footer-01",
-        searchId: "search-box-01",
-        category: categoryPartnerCode,
-        categoryName: "company",
-        dataId: "company_id",
-        formDialogId: "form-dialog-01",
-        formId: "form-01",
-        entity: companyEntity
-    },
+    // "01": {
+    //     tableId: "table-01-content",
+    //     footerId: "footer-01",
+    //     searchId: "search-box-01",
+    //     category: categoryPartnerCode,
+    //     categoryName: "company",
+    //     dataId: "company_id",
+    //     formDialogId: "form-dialog-01",
+    //     formId: "form-01",
+    //     entity: companyEntity
+    // },
     "02": {
         tableId: "table-02-content",
         footerId: "footer-02",
@@ -77,17 +77,17 @@ const MODE_CONFIG = {
 };
 
 const ID_CONFIG = {
-    "01": {
-        common: true,
-        fields: [
-            "tel-number",
-            "fax-number",
-            "postal-code",
-            "full-address",
-            "web-address",
-            "category"
-        ]
-    },
+    // "01": {
+    //     common: true,
+    //     fields: [
+    //         "tel-number",
+    //         "fax-number",
+    //         "postal-code",
+    //         "full-address",
+    //         "web-address",
+    //         "category"
+    //     ]
+    // },
     "02": {
         common: true,
         fields: [
@@ -1108,6 +1108,19 @@ async function execFilterDisplay(self) {
 //     }
 }
 
+function initCompanyInputs() {
+    COMPANY_UI_CONFIG.forEach(cfg => {
+        const codeElm = document.getElementById(cfg.codeId);
+        const nameElm = document.getElementById(cfg.nameId);
+
+        // code → combo
+        bindCodeInput(codeElm, nameElm, cfg.onChange);
+
+        // combo change
+        initCompanyCombo(nameElm, cfg.onChange);
+    });
+}
+
 function bindCodeInput(codeInput, nameSelect, onBlurCallback) {
 
     // Enterキー処理
@@ -1172,19 +1185,6 @@ function getComboTargets(targetIds) {
     return targetIds
         .map(id => document.getElementById(id))
         .filter(elm => elm !== null);
-}
-
-function initCompanyInputs() {
-    COMPANY_UI_CONFIG.forEach(cfg => {
-        const codeElm = document.getElementById(cfg.codeId);
-        const nameElm = document.getElementById(cfg.nameId);
-
-        // code → combo
-        bindCodeInput(codeElm, nameElm, cfg.onChange);
-
-        // combo change
-        initCompanyCombo(nameElm, cfg.onChange);
-    });
 }
 
 /******************************************************************************************************* 初期化時 */

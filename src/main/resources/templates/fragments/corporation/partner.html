@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <header class="flex-area pc-style" th:fragment="headerFragment(box)">
+        <!-- 検索ボックス -->
+        <div class="search-box">
+            <input th:id="${box}" type="search" placeholder="検索">
+            <img title="検索" src="/icons/search.png" onclick="execFilterDisplay(this)">
+        </div>
+        <div class="kebab-btns">
+            <!-- 新規作成ボタン -->
+            <div class="img-btn" onclick="execEdit(0, this)">
+                <img title="作成・登録" src="/icons/add.png">
+                <span>新規</span>
+            </div>
+            <!-- 削除ボタン -->
+            <div class="img-btn" onclick="execDelete(this)">
+                <img title="削除" src="/icons/dust.png">
+                <span>削除</span>
+            </div>
+            <!-- ダウンロードボタン -->
+            <div class="img-btn" onclick="execDownloadCsv(this)">
+                <img title="ダウンロード" src="/icons/download.png">
+                <span>取得</span>
+            </div>
+            <!-- 更新ボタン -->
+            <div class="img-btn" onclick="execUpdate(this)">
+                <img title="更新" src="/icons/update.png">
+                <span>更新</span>
+            </div>
+        </div>
+    </header>
+
+    <form id="form-01" class="dialog-content" th:fragment="form01Fragment()">
+        <input name="company-id" type="hidden" value="">
+        <input name="office-id" type="hidden" value="">
+        <input name="category" type="hidden" value="">
+        <input name="version" type="hidden" value="">
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>名称</label>
+                <input tabindex="1" name="name" class="normal-input" type="text" value=""
+                    placeholder="名称" onfocus="this.select();">
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>かな</label>
+                <input tabindex="2" name="name-kana" class="normal-input" type="text" value=""
+                    placeholder="めいしょう" onfocus="this.select();">
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>電話番号</label>
+                <input tabindex="3" name="tel-number" class="normal-input" type="text"
+                    inputmode="numeric" pattern="\\d{4}-\\d{4}-\\d{4}" value=""
+                    placeholder="01-2345-6789" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>FAX番号</label>
+                <input tabindex="4" name="fax-number" class="normal-input" type="text"
+                    inputmode="numeric" pattern="\\d{4}-\\d{4}-\\d{4}" value=""
+                    placeholder="01-2345-6789" onfocus="this.select();">
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>郵便番号</label>
+                <input tabindex="5" id="postal-code" name="postal-code" class="normal-input" type="text"
+                    inputmode="numeric" pattern="\\d{3}-?\\d{4}" value="" placeholder="012-3456"
+                    onfocus="this.select();">
+                <img title="検索" src="/icons/search.png"
+                    onclick="getAddress('Enter', 'postal-code', 'full-address')">
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>住所</label>
+                <input tabindex="6" id="full-address" name="full-address" class="normal-input"
+                    type="text" value="" placeholder="例）大阪府高槻市柱本5丁目7番10号" onfocus="this.select();">
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>メールアドレス</label>
+                <input tabindex="7" name="email" class="normal-input" type="email" value=""
+                    placeholder="例）example@kyouseibin.com" onfocus="this.select();">
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>Webアドレス</label>
+                <input tabindex="8" name="web-address" class="normal-input" type="url" value=""
+                    placeholder="例）example@kyouseibin.com" onfocus="this.select();">
+            </div>
+            <div class="form-parts" name="priceArea">
+                <label>料金表</label>
+                <select tabindex="9" name="price" class="normal-select">
+                    <option value="0"></option>
+                    <option value="1">有</option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <form id="form-02" class="dialog-content" th:fragment="form02Fragment()">
+        <input name="staff-id" type="hidden" value="">
+        <input name="company-id" type="hidden" value="">
+        <input name="version" type="hidden" value="">
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>支店名</label>
+                <select tabindex="1" id="office-id" name="office" class="normal-select"
+                    value=""></select>
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>担当者名</label>
+                <input tabindex="2" name="name" class="normal-input" type="text" value=""
+                    placeholder="担当者名" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>かな</label>
+                <input tabindex="3" name="name-kana" class="normal-input" type="text" value=""
+                    placeholder="たんとうしゃめい" onfocus="this.select();">
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>電話番号</label>
+                <input tabindex="4" name="phone-number" class="normal-input" type="text"
+                    inputmode="numeric" pattern="\\d{3}-\\d{4}-\\d{4}" value=""
+                    placeholder="012-3456-7890" onfocus="this.select();">
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>メールアドレス</label>
+                <input tabindex="5" name="email" class="normal-input" type="email" value=""
+                    placeholder="例）example@kyouseibin.com" onfocus="this.select();">
+            </div>
+        </div>
+    </form>
+
+    <main th:fragment="mainPartnerFragment(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table">
+            <tr id="row-0" name="table-header" class="pc-style">
+                <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
+                <th><span>ID<span class="sort-arrow"></span></span></th>
+                <th><span>名称<span class="sort-arrow"></span></span></th>
+                <th><span>電話番号<span class="sort-arrow"></span></span></th>
+                <th><span>支店名<span class="sort-arrow"></span></span></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+    <main th:fragment="mainStaffFragment(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table">
+            <tr id="row-0" name="table-header" class="pc-style">
+                <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
+                <th><span>ID<span class="sort-arrow"></span></span></th>
+                <th><span>コード<span class="sort-arrow"></span></span></th>
+                <th><span>担当者名<span class="sort-arrow"></span></span></th>
+                <th><span>電話番号<span class="sort-arrow"></span></span></th>
+                <th><span>メールアドレス<span class="sort-arrow"></span></span></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+    <header class="flex-area pc-style" th:fragment="headerStaffFragment()">
+        <div id="code-area" class="flex-area">
+            <div class="form-parts">
+                <label>ID</label>
+                <input id="code01" name="code" class="normal-input" type="text" value="">
+            </div>
+            <div class="form-parts">
+                <label>会社名</label>
+                <select id="name01" name="company" class="normal-select"></select>
+            </div>
+        </div>
+        <div class="kebab-btns">
+            <!-- 新規作成ボタン -->
+            <div class="img-btn" onclick="execEdit(0, this)">
+                <img title="作成・登録" src="/icons/add.png">
+                <span>新規</span>
+            </div>
+            <!-- 削除ボタン -->
+            <div class="img-btn" onclick="execDelete(this)">
+                <img title="削除" src="/icons/dust.png">
+                <span>削除</span>
+            </div>
+            <!-- ダウンロードボタン -->
+            <div class="img-btn" onclick="execDownloadCsv(this)">
+                <img title="ダウンロード" src="/icons/download.png">
+                <span>取得</span>
+            </div>
+            <!-- 更新ボタン -->
+            <div class="img-btn" onclick="execUpdate(this)">
+                <img title="更新" src="/icons/update.png">
+                <span>更新</span>
+            </div>
+        </div>
+    </header>
+
+    <footer th:fragment="footerFragment()" th:remove="tag">
+        <span>0件 : 0000/00/00 00:00 現在</span>
+    </footer>
+</body>
+
+</html>

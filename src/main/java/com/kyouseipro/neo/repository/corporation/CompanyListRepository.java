@@ -35,7 +35,7 @@ public class CompanyListRepository {
     }
 
     /**
-     * 荷主全件取得。
+     * 荷主以外全件取得。
      * 0件の場合は空リストを返す。
      * @return 取得したリストを返す
      */
@@ -55,7 +55,7 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<CompanyListEntity> findByCategoryId(int id) {
-        String sql = CompanyListSqlBuilder.buildFindAllClient();
+        String sql = CompanyListSqlBuilder.buildFindAllByCategoryId();
 
         return sqlRepository.findAll(
             sql,

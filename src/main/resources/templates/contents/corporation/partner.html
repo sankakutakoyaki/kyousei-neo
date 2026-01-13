@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- 本体 -->
+    <div class="normal-content" th:fragment="bodyFragment">
+        <!-- ハンバーガー -->
+        <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
+        <!-- サイドバー -->
+        <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
+        <!-- ボディ -->
+        <div class="normal-body">
+            <div class="tab-area">
+                <ul class="tab-menu">
+                    <li class="tab-menu-item is-active" data-tab="01">施工店</li>
+                    <li class="tab-menu-item" data-tab="02">担当者</li>
+                </ul>
+                <div class="tab-panel is-show" data-panel="01">
+                    <div class="table-area">
+                        <!-- ヘッダー -->
+                        <header th:replace="~{fragments/corporation/partner :: headerFragment('search-box-01')}"></header>
+                        <!-- コンテンツ -->
+                        <main th:replace="~{fragments/corporation/partner :: mainPartnerFragment('table-01', 'table-01-content')}"></main>
+                        <!-- フッター -->
+                        <footer id="footer-01" class="pc-style" th:insert="~{fragments/corporation/partner :: footerFragment()}"></footer>
+                    </div>
+                </div>
+                <div class="tab-panel" data-panel="02">
+                    <div class="table-area">
+                        <!-- ヘッダー -->
+                        <header th:replace="~{fragments/corporation/partner :: headerStaffFragment()}"></header>
+                        <!-- コンテンツ -->
+                        <main th:replace="~{fragments/corporation/partner :: mainStaffFragment('table-02', 'table-02-content')}"></main>
+                        <!-- フッター -->
+                        <footer id="footer-02" class="pc-style" th:insert="~{fragments/corporation/partner :: footerFragment()}"></footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="form-dialog-area">
+            <!-- フォーム画面をここに記入する -->
+            <div id="form-dialog-01" class="form-dialog none">
+                <div class="dialog-main">
+                    <!-- ヘッダー -->
+                    <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-01', '')}"></div>
+                    <!-- コンテンツ -->
+                    <form th:replace="~{fragments/corporation/partner :: form01Fragment()}"></form>
+                    <!-- フッター -->
+                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-01', 'execSave(this)', '保存')}"></div>
+                </div>
+            </div>
+            <div id="form-dialog-02" class="form-dialog none">
+                <div class="dialog-main">
+                    <!-- ヘッダー -->
+                    <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-02', '')}"></div>
+                    <!-- コンテンツ -->
+                    <form th:replace="~{fragments/corporation/partner :: form02Fragment()}"></form>
+                    <!-- フッター -->
+                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-02', 'execSave(this)', '保存')}"></div>
+                </div>
+            </div>
+        </div>
+        <div id="msg-dialog-area">
+            <div th:replace="~{fragments/common/dialog :: messageFragment}"></div>
+        </div>
+        <script type="text/JavaScript" th:inline="JavaScript">
+            const token = /*[[${_csrf.token}]]*/;
+            const user = /*[[${user}]]*/;
+            const companyEntity = /*[[${companyEntity}]]*/;
+            const staffEntity = /*[[${staffEntity}]]*/;
+            const formEntity = /*[[${formEntity}]]*/;
+            const categoryPartnerCode = /*[[${categoryPartnerCode}]]*/;
+            let companyOrigin = /*[[${companyOrigin}]]*/; // 初期リスト記憶用
+            let staffOrigin = /*[[${staffOrigin}]]*/; // 初期リスト記憶用
+            let qualificationsOrigin = /*[[${licnesesOrigin}]]*/; // 初期リスト記憶用
+            let companyComboList = /*[[${companyComboList}]]*/;
+        </script>
+        <script th:src="@{/js/corporation/partner.js}"></script>
+    </div>
+
+</body>

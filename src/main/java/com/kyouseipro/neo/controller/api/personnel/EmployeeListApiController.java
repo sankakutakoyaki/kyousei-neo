@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.personnel.EmployeeListEntity;
 import com.kyouseipro.neo.service.personnel.EmployeeListService;
 
@@ -35,6 +37,26 @@ public class EmployeeListApiController {
     @PostMapping("/api/employee/get/list/category")
 	@ResponseBody
     public List<EmployeeListEntity> getListByCategoryId(@RequestParam int category) {
+        return employeeListService.getListByCategoryId(category);
+    }
+
+    /**
+     * カテゴリー別のEntityListを取得する
+     * @return
+     */
+    @PostMapping("/api/employee/get/list/{type}")
+	@ResponseBody
+    public List<EmployeeListEntity> getListByCategoryId(@PathVariable String type) {
+        int category = 0;
+
+        switch (type) {
+            case "partner":
+                category = Enums.clientCategory.PARTNER.getCode();
+                break;
+        
+            default:
+                break;
+        }
         return employeeListService.getListByCategoryId(category);
     }
 }

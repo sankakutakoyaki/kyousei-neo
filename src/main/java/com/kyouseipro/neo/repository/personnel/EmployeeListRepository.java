@@ -38,7 +38,7 @@ public class EmployeeListRepository {
      * @return 取得したリストを返す
      */
     public List<EmployeeListEntity> findByCategoryId(int id) {
-        String sql = EmployeeListSqlBuilder.buildFindAll();
+        String sql = EmployeeListSqlBuilder.buildFindAllByCategoryId();
 
         return sqlRepository.findAll(
             sql,

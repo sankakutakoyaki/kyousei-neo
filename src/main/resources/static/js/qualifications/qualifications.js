@@ -189,10 +189,10 @@ async function execUpdate() {
         getUrl = "/api/license/get";
     }
     const resultResponse = await fetch(getUrl);
-    origin = await resultResponse.json();
+    qualificationsOrigin = await resultResponse.json();
 
     // 画面更新
-    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", qualificationsOrigin);
 }
 
 /******************************************************************************************************* 画面更新 */
@@ -538,7 +538,7 @@ function filterStatusCombo(list) {
 }
 
 async function execFilterDisplay(self) {
-    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", qualificationsOrigin);
 }
 
 /******************************************************************************************************* 初期化時 */
@@ -568,13 +568,13 @@ window.addEventListener("load", () => {
     createComboBoxWithTop(qualificationSearchArea, qualificationComboList, "すべて");
     // qualificationSearchArea.value = -1;
     qualificationSearchArea.addEventListener('change', function (e) {
-        updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+        updateTableDisplay("table-01-content", "footer-01", "search-box-01", qualificationsOrigin);
     });
 
     // 検索用状況コンボボックスを作成する
     const statusSearchArea = document.getElementById('status-search');
     statusSearchArea.addEventListener('change', function (e) {
-        updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+        updateTableDisplay("table-01-content", "footer-01", "search-box-01", qualificationsOrigin);
     });
 
     // 資格コンボボックスを作成する
@@ -599,7 +599,7 @@ window.addEventListener("load", () => {
     makeSortable("table-01-content");
 
     // 画面更新
-    updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin);
+    updateTableDisplay("table-01-content", "footer-01", "search-box-01", qualificationsOrigin);
 
     // タブメニュー処理
     const tabMenus = document.querySelectorAll('.tab-menu-item');

@@ -17,6 +17,7 @@ public class CompanyListParameterBinder {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, 0);
+        ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
         return index;
     }
 
@@ -44,6 +45,7 @@ public class CompanyListParameterBinder {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, 0);
+        ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
         return index;
     }
 
