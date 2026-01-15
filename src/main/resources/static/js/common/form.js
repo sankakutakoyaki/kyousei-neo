@@ -366,3 +366,45 @@ function getComboTargets(targetIds) {
         .map(id => document.getElementById(id))
         .filter(elm => elm !== null);
 }
+
+// 共通バリデーション関数
+function validateForm(form, mode) {
+    let messages = [];
+
+    const rules = [
+        ...(ERROR_CONFIG.common || []),
+        ...(ERROR_CONFIG[mode] || [])
+    ];
+
+    rules.forEach(rule => {
+        const el = form.querySelector(rule.selector);
+        if (!el) return;
+
+        const value = el.value;
+        if (!rule.check(value)) {
+            messages.push(rule.message);
+        }
+    });
+
+    if (messages.length > 0) {
+        openMsgDialog("msg-dialog", messages.join('\n'), "red");
+        return false;
+    }
+    return true;
+}
+
+// select + name セットの共通関数
+function setSelectValue(form, formdata, {
+    valueName,
+    idKey,
+    nameKey
+}) {
+    const v = formData.get(valueName);
+    if (v == null) return;
+
+    formdata[idKey] = v;
+    const select = form.querySelector(`[name="${valueName}"]`);
+    if (select) {
+        formdata[nameKey] = select.options[select.selectedIndex].text;
+    }
+}

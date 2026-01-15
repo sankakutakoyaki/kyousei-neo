@@ -131,7 +131,8 @@ public class CorporationPageController extends BaseController {
         List<CompanyListEntity> companyOrigin = companyListService.getListByCategoryId(Enums.clientCategory.PARTNER.getCode());
         mv.addObject("companyOrigin", companyOrigin);
         // 初期表示用Staffリスト取得
-        List<EmployeeListEntity> staffOrigin = employeeListService.getListByCategoryId(Enums.employeeCategory.CONSTRUCT.getCode());
+        // List<EmployeeListEntity> staffOrigin = employeeListService.getListByCategoryId(Enums.employeeCategory.CONSTRUCT.getCode());
+        List<EmployeeListEntity> staffOrigin = employeeListService.getList();
         mv.addObject("staffOrigin", staffOrigin);
 
         // コンボボックスアイテム取得
@@ -143,6 +144,7 @@ public class CorporationPageController extends BaseController {
 
         // 保存用コード
         mv.addObject("categoryPartnerCode", Enums.clientCategory.PARTNER.getCode());
+        mv.addObject("categoryConstructCode", Enums.employeeCategory.CONSTRUCT.getCode());
 
         // 履歴保存
         historyService.save(user.getAccount(), "companies", "閲覧", 200, "");

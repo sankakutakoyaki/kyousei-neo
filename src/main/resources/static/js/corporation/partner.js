@@ -15,7 +15,7 @@ const MODE_CONFIG = {
         tableId: "table-02-content",
         footerId: "footer-02",
         searchId: "search-box-02",
-        category: categoryPartnerCode,
+        category: categoryConstructCode,
         categoryName: "staff",
         dataId: "employee_id",
         formDialogId: "form-dialog-02",
@@ -556,12 +556,13 @@ window.addEventListener("load", async () => {
 
     for (const [tab, cfg] of Object.entries(MODE_CONFIG)) {
         if (!cfg.category) continue;
-
+        
+        let list = cfg.list.filter(value => { return value.category === cfg.category });
         await updateTableDisplay(
             cfg.tableId,
             cfg.footerId,
             cfg.searchId,
-            cfg.list,
+            list,
             createTableContent
         );
 

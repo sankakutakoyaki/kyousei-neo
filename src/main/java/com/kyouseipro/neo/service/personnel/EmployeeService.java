@@ -5,9 +5,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
+import com.kyouseipro.neo.interfaceis.HistoryTarget;
 import com.kyouseipro.neo.repository.personnel.EmployeeRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,10 @@ public class EmployeeService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
+    @HistoryTarget(
+        table = HistoryTables.EMPLOYEES,
+        action = "保存"
+    )
     public int save(EmployeeEntity entity, String editor) {
         if (entity.getEmployee_id() > 0) {
             return employeeRepository.update(entity, editor);

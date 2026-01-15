@@ -13,12 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -34,8 +36,11 @@ public class EmployeeApiController {
      */
     @PostMapping("/api/employee/get/id")
 	@ResponseBody
-    public Optional<EmployeeEntity> getById(@RequestParam int id) {
-        return employeeService.getById(id);
+    // public Optional<EmployeeEntity> getById(@RequestParam int id) {
+    //     return employeeService.getById(id);
+    // }
+    public ResponseEntity<EmployeeEntity> getById(@RequestParam int id) {
+        return ResponseEntity.ok(employeeService.getById(id).orElse(null));
     }
 
     /**
@@ -46,15 +51,8 @@ public class EmployeeApiController {
     @PostMapping("/api/employee/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody EmployeeEntity entity, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        int id = employeeService.save(entity, userName);
-        if (id > 0) {
-            historyService.save(userName, "employees", "保存", 200, "成功");
-            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
-        } else {
-            historyService.save(userName, "employees", "保存", 400, "失敗");
-            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
-        }
+        int id = employeeService.save(entity, principal.getAttribute("preferred_username"));
+        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
     }
 
     /**

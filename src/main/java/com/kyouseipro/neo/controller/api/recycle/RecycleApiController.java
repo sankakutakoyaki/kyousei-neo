@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -51,9 +50,11 @@ public class RecycleApiController {
     // }
     public ResponseEntity<RecycleEntity> getById(@RequestParam int id) {
 
-        return recycleService.getById(id)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+        // return recycleService.getById(id)
+        //     .map(ResponseEntity::ok)
+        //     .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(
+            recycleService.getById(id).orElse(null));
     }
 
     /**
@@ -73,9 +74,15 @@ public class RecycleApiController {
     // }
     public ResponseEntity<RecycleEntity> findByNumber(@RequestParam String num) {
 
-        return recycleService.existsByNumber(num)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+        // return recycleService.existsByNumber(num)
+        //     .map(ResponseEntity::ok)
+        //     .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(
+            recycleService.existsByNumber(num).orElse(null));
+    // public ApiResponse<RecycleEntity> findByNumber(@RequestParam String num) {
+    //     return recycleService.existsByNumber(num)
+    //         .map(entity -> ApiResponse.ok(null, entity))
+    //         .orElseGet(() -> ApiResponse.ok(null, null));
     }
 
     /**

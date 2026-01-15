@@ -379,4 +379,9 @@ public class Enums {
             return Utilities.enumValueOf(Enums.yesOrNo.class, num).getDescription();
         }
     }
+
+    public final class HistoryTables {
+        public static final String EMPLOYEES = "employees";
+        public static final String COMPANIES = "companies";
+    }
 }

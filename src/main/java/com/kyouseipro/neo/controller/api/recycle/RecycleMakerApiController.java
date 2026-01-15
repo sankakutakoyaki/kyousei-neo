@@ -43,9 +43,10 @@ public class RecycleMakerApiController extends BaseController {
     //     }
     // }
     public ResponseEntity<RecycleMakerEntity> getById(@RequestParam int id) {
-        return recycleMakerService.getById(id)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+        // return recycleMakerService.getById(id)
+        //     .map(ResponseEntity::ok)
+        //     .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(recycleMakerService.getById(id).orElse(null));
     }
    
     /**
@@ -64,9 +65,10 @@ public class RecycleMakerApiController extends BaseController {
     //     }
     // }
     public ResponseEntity<RecycleMakerEntity> getByCode(@RequestParam int code) {
-        return recycleMakerService.getByCode(code)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+        // return recycleMakerService.getByCode(code)
+        //     .map(ResponseEntity::ok)
+        //     .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(recycleMakerService.getByCode(code).orElse(null));
     }
 
     /**
@@ -89,8 +91,13 @@ public class RecycleMakerApiController extends BaseController {
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody RecycleMakerEntity entity, @AuthenticationPrincipal OidcUser principal) {
         // String userName = principal.getAttribute("preferred_username");
         Integer id = recycleMakerService.save(entity, principal.getAttribute("preferred_username"));
+        if (id != null && id > 0) {
+            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
         // historyService.save(userName, "recycle_makers", "保存", 200, "成功");
-        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+        }
+        
     }
 
     /**
