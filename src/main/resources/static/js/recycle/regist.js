@@ -157,29 +157,33 @@ function setFormContent(form, entity) {
     form.querySelector('[name="item-id"]').value = entity.item_id;
     form.querySelector('[name="recycling-fee"]').value = entity.recycling_fee;
 
-    if (entity.use_date === "9999-12-31") {
-        form.querySelector('[name="use-date"]').value = "";
-    } else {
-        form.querySelector('[name="use-date"]').value = entity.use_date;
-    }
+    form.querySelector('[name="use-date"]').value = entity.use_date === "9999-12-31" ? "": entity.use_date;
+    form.querySelector('[name="delivery-date"]').value = entity.delivery_date === "9999-12-31" ? "": entity.delivery_date;
+    form.querySelector('[name="shipping-date"]').value = entity.shipping_date === "9999-12-31" ? "": entity.shipping_date;
+    form.querySelector('[name="loss-date"]').value = entity.loss_date === "9999-12-31" ? "": entity.loss_date;
+    // if (entity.use_date === "9999-12-31") {
+    //     form.querySelector('[name="use-date"]').value = "";
+    // } else {
+    //     form.querySelector('[name="use-date"]').value = entity.use_date;
+    // }
 
-    if (entity.delivery_date === "9999-12-31") {
-        form.querySelector('[name="delivery-date"]').value = "";
-    } else {
-        form.querySelector('[name="delivery-date"]').value = entity.delivery_date;
-    }
+    // if (entity.delivery_date === "9999-12-31") {
+    //     form.querySelector('[name="delivery-date"]').value = "";
+    // } else {
+    //     form.querySelector('[name="delivery-date"]').value = entity.delivery_date;
+    // }
 
-    if (entity.shipping_date === "9999-12-31") {
-        form.querySelector('[name="shipping-date"]').value = "";
-    } else {
-        form.querySelector('[name="shipping-date"]').value = entity.shipping_date;
-    }
+    // if (entity.shipping_date === "9999-12-31") {
+    //     form.querySelector('[name="shipping-date"]').value = "";
+    // } else {
+    //     form.querySelector('[name="shipping-date"]').value = entity.shipping_date;
+    // }
 
-    if (entity.loss_date === "9999-12-31") {
-        form.querySelector('[name="loss-date"]').value = "";
-    } else {
-        form.querySelector('[name="loss-date"]').value = entity.loss_date;
-    }
+    // if (entity.loss_date === "9999-12-31") {
+    //     form.querySelector('[name="loss-date"]').value = "";
+    // } else {
+    //     form.querySelector('[name="loss-date"]').value = entity.loss_date;
+    // }
 
     // 製造業者等名コンボボックス
     setCompanyComboBox(form, entity, companyComboList, officeComboList);
@@ -477,6 +481,7 @@ async function execNumberBlur(e, mode) {
 
     // DBを確認する
     const item = await existsRecycleByNumber(number);
+    
     // let item = {};
     let msg = "";
 
@@ -637,7 +642,10 @@ async function execRegistItem(self, mode) {
     // if (formDataCheck(form, mode) == false) {
     //     return;
     // }
-    if (!validateForm(form, mode)) {
+    // if (!validateForm(form, mode)) {
+    //     return;
+    // }
+    if (!validateByConfig(form, { ...ERROR_CONFIG.recycle, mode: mode })) {
         return;
     }
     const formdata = createFormdata(form, mode);
@@ -679,10 +687,13 @@ async function execUpdate(mode) {
     // if (formDataCheck(form, mode) == false) {
     //     return;
     // }
-    if (!validateForm(form, mode)) {
+    // if (!validateForm(form, mode)) {
+    //     return;
+    // }
+    if (!validateByConfig(form, { ...ERROR_CONFIG.recycle, mode: mode })) {
         return;
     }
-
+    
     const formdata = setInsertFormData(form);
     const result = await updateFetch("/api/recycle/save/" + mode, JSON.stringify({entity:formdata}), token, "application/json");
     if (result.success) {
@@ -740,8 +751,13 @@ async function getRecyclesBetween(startId, endId, url) {
     const start = document.getElementById(startId).value;
     const end = document.getElementById(endId).value;
     const col = document.getElementById('date-category01').value;
-    const data = "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end) + "&col=" + encodeURIComponent(col);
-    const contentType = 'application/x-www-form-urlencoded';
+    const data = {
+        start: document.getElementById(startId).value,
+        end: document.getElementById(endId).value,
+        col: document.getElementById('date-category01').value
+    };
+    // const data = "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end) + "&col=" + encodeURIComponent(col);
+    // const contentType = 'application/x-www-form-urlencoded';
     // List<Recycle>を取得
     return await searchFetch(url, data, token, contentType);
 }

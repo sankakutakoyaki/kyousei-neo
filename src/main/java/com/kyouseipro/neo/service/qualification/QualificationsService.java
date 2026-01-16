@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
+import com.kyouseipro.neo.interfaceis.HistoryTarget;
 import com.kyouseipro.neo.repository.qualification.QualificationsRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -46,7 +48,11 @@ public class QualificationsService {
      * @param editor
      * @return
     */
-    public Integer save(QualificationsEntity entity, String editor) {
+    @HistoryTarget(
+        table = HistoryTables.QUALIFICATIONS,
+        action = "保存"
+    )
+    public int save(QualificationsEntity entity, String editor) {
         if (entity.getQualifications_id() > 0) {
             return qualificationsRepository.update(entity, editor);
         } else {
@@ -59,7 +65,11 @@ public class QualificationsService {
      * @param id
      * @return
      */
-    public Integer deleteById(Integer id, String userName) {
+    @HistoryTarget(
+        table = HistoryTables.QUALIFICATIONS,
+        action = "削除"
+    )
+    public int deleteById(int id, String userName) {
         return qualificationsRepository.delete(id, userName);
     }
 
@@ -68,7 +78,11 @@ public class QualificationsService {
      * @param ids
      * @return
      */
-    public Integer deleteByIds(List<SimpleData> list, String userName) {
+    @HistoryTarget(
+        table = HistoryTables.QUALIFICATIONS,
+        action = "削除"
+    )
+    public int deleteByIds(List<SimpleData> list, String userName) {
         return qualificationsRepository.deleteByIds(list, userName);
     }
 

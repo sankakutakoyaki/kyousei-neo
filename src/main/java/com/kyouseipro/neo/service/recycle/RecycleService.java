@@ -6,10 +6,12 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.controller.document.CsvExporter;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.recycle.RecycleDateEntity;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
+import com.kyouseipro.neo.interfaceis.HistoryTarget;
 import com.kyouseipro.neo.repository.recycle.RecycleRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -64,6 +66,10 @@ public class RecycleService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
+    @HistoryTarget(
+        table = HistoryTables.RECYCLES,
+        action = "保存"
+    )
     public int save(List<RecycleEntity> itemList, String editor) {
         return recycleRepository.save(itemList, editor);
     }
@@ -74,6 +80,10 @@ public class RecycleService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
+    @HistoryTarget(
+        table = HistoryTables.RECYCLEITEMS,
+        action = "更新"
+    )
     public int update(RecycleEntity entity, String editor) {
         return recycleRepository.update(entity, editor);
     }
@@ -85,6 +95,10 @@ public class RecycleService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
+    @HistoryTarget(
+        table = HistoryTables.RECYCLEITEMS,
+        action = "日付更新"
+    )
     public int updateForDate(List<RecycleDateEntity> itemList, String editor, String type) {
         return recycleRepository.updateForDate(itemList, editor, type);
     }
@@ -95,7 +109,11 @@ public class RecycleService {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int deleteByIds(List<SimpleData> list, String userName) {
+    @HistoryTarget(
+        table = HistoryTables.RECYCLEITEMS,
+        action = "削除"
+    )
+    public int deleteByIds(IdListRequest list, String userName) {
         return recycleRepository.deleteByIds(list, userName);
     }
 
@@ -105,7 +123,7 @@ public class RecycleService {
      * @param editor
      * @return listで選択したEntityリストを返す。
      */
-    public String downloadCsvByIds(List<SimpleData> list, String userName) {
+    public String downloadCsvByIds(IdListRequest list, String userName) {
         List<RecycleEntity> recycles = recycleRepository.downloadCsvByIds(list, userName);
         return CsvExporter.export(recycles, RecycleEntity.class);
     }

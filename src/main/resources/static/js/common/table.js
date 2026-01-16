@@ -311,10 +311,33 @@ function resetSortIndicators(headers) {
     });
 }
 
+// /**
+//  * 選択されているチェックボックスを全て取得する
+//  * @param {取得対象の親要素} parent 
+//  * @returns チェックされている要素のIDリストをJSON形式で返す { number:0 }
+//  */
+// function getAllSelectedIds(tableId) {
+//     let tbl;
+//     if(tableId instanceof HTMLElement) {
+//         tbl = tableId;
+//     } else {
+//         tbl = document.getElementById(tableId);
+//     }
+//     if (tbl == null) return;
+//     const ids = tbl.querySelectorAll('input[name="chk-box"]:checked');
+//     const checked_data = [];
+//     if (0 < ids.length) {
+//         for (let data of ids) {
+//             let num = parseInt(data.closest('tr').dataset.id);
+//             if (num > 0) checked_data.push({ 'number': num });
+//         }
+//     }
+//     return checked_data;
+// }
 /**
  * 選択されているチェックボックスを全て取得する
  * @param {取得対象の親要素} parent 
- * @returns チェックされている要素のIDリストをJSON形式で返す { number:0 }
+ * @returns チェックされている要素のIDリストをJSON形式で返す。
  */
 function getAllSelectedIds(tableId) {
     let tbl;
@@ -324,15 +347,20 @@ function getAllSelectedIds(tableId) {
         tbl = document.getElementById(tableId);
     }
     if (tbl == null) return;
+
     const ids = tbl.querySelectorAll('input[name="chk-box"]:checked');
     const checked_data = [];
     if (0 < ids.length) {
         for (let data of ids) {
             let num = parseInt(data.closest('tr').dataset.id);
-            if (num > 0) checked_data.push({ 'number': num });
+            if (num > 0) checked_data.push(num);
         }
+        return JSON.stringify(checked_data);
+    } else {
+        // 選択された要素がなければメッセージを表示して終了
+        openMsgDialog("msg-dialog", "選択されていません", "red");
+        return null;
     }
-    return checked_data;
 }
 
 /**
@@ -394,15 +422,20 @@ function filterDisplay(boxId, list) {
 async function downloadCsv(tableId, url) {
     // 選択された要素を取得する
     const data = getAllSelectedIds(tableId);
-    if (data.length == 0) {
-        // 選択された要素がなければメッセージを表示して終了
-        openMsgDialog("msg-dialog", "選択されていません", "red");
-        // return {"success":false, "message":"選択されていないか、データがありません。"};
-    } else {
+    if (data) {
         funcDownloadCsv(data, url);
         // チェック状態を解除
         detachmentCheckedToAllRow(config.tableId, false);
     }
+    // if (data.length == 0) {
+    //     // 選択された要素がなければメッセージを表示して終了
+    //     openMsgDialog("msg-dialog", "選択されていません", "red");
+    //     // return {"success":false, "message":"選択されていないか、データがありません。"};
+    // } else {
+    //     funcDownloadCsv(data, url);
+    //     // チェック状態を解除
+    //     detachmentCheckedToAllRow(config.tableId, false);
+    // }
 }
 
 /**
@@ -413,12 +446,15 @@ async function downloadCsv(tableId, url) {
 async function downloadCsvByBetweenDate(tableId, url, startStr, endStr) {
     // 選択された要素を取得する
     const data = getAllSelectedIds(tableId);
-    if (data.length == 0) {
-        // 選択された要素がなければメッセージを表示して終了
-        openMsgDialog("msg-dialog", "選択されていません", "red");
-    } else {
+    if (data) {
         funcDownloadCsv({ids:data, start:startStr, end:endStr}, url);
     }
+    // if (data.length == 0) {
+    //     // 選択された要素がなければメッセージを表示して終了
+    //     openMsgDialog("msg-dialog", "選択されていません", "red");
+    // } else {
+    //     funcDownloadCsv({ids:data, start:startStr, end:endStr}, url);
+    // }
 }
 
 /**
@@ -484,15 +520,18 @@ async function funcDownloadCsv(data, url) {
 async function deleteTablelist(tableId, url) {
     // 選択された要素を取得する
     const data = getAllSelectedIds(tableId);
-    if (data.length == 0) {
-        // 選択された要素がなければメッセージを表示して終了
-        openMsgDialog("msg-dialog", "選択されていません", "red");
-        return;
-    } else {
-        // const resultResponse = await postFetch(url, JSON.stringify(data), token, 'application/json');
-        // return await resultResponse.json();
-        return await updateFetch(url, JSON.stringify(data), token, "application/json");
+    if (data) {
+        return await updateFetch(url, data, token, "application/json");
     }
+    // if (data.length == 0) {
+    //     // 選択された要素がなければメッセージを表示して終了
+    //     openMsgDialog("msg-dialog", "選択されていません", "red");
+    //     return;
+    // } else {
+    //     // const resultResponse = await postFetch(url, JSON.stringify(data), token, 'application/json');
+    //     // return await resultResponse.json();
+    //     return await updateFetch(url, data, token, "application/json");
+    // }
 }
 
 // // クリックしたTDを編集可能にする

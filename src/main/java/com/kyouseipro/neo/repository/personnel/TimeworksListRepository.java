@@ -6,9 +6,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksSummaryEntity;
@@ -285,7 +284,7 @@ public class TimeworksListRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<TimeworksListEntity> downloadCsvByIdsFromBetween(List<SimpleData> list, String start, String end, String editor) {
+    public List<TimeworksListEntity> downloadCsvByIdsFromBetween(IdListRequest list, LocalDate start, LocalDate end, String editor) {
         // List<Integer> ids = Utilities.createSequenceByIds(list);
         // String sql = TimeworksListSqlBuilder.buildDownloadCsvForIdsFromBetween(ids.size());
 
@@ -294,16 +293,16 @@ public class TimeworksListRepository {
         //     (ps, v) -> TimeworksListParameterBinder.bindDownloadCsvByIdsFromBetween(ps, employeeIds, start, end),
         //     TimeworksListEntityMapper::map // ← ここで ResultSet を map
         // );
-        if (list == null || list.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = TimeworksListSqlBuilder.buildDownloadCsvForIdsFromBetween(ids.size());
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = TimeworksListSqlBuilder.buildDownloadCsvForIdsFromBetween(list.getIds().size());
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) ->  TimeworksListParameterBinder.bindDownloadCsvByIdsFromBetween(ps, ids, start, end),
+            (ps, v) ->  TimeworksListParameterBinder.bindDownloadCsvByIdsFromBetween(ps, list.getIds(), start, end),
             TimeworksListEntityMapper::map
         );
     }

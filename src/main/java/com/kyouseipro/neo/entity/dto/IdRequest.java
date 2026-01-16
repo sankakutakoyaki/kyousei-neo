@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.entity.data;
+package com.kyouseipro.neo.entity.dto;
 
 import lombok.Data;
 

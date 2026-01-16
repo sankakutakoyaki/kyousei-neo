@@ -5,10 +5,10 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.work.WorkItemEntity;
 import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
 import com.kyouseipro.neo.mapper.work.WorkItemEntityMapper;
@@ -162,22 +162,22 @@ public class WorkItemRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int deleteByIds(List<SimpleData> list, String editor) {
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = WorkItemSqlBuilder.buildDeleteByIds(ids.size());
+    public int deleteByIds(IdListRequest list, String editor) {
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = WorkItemSqlBuilder.buildDeleteByIds(list.getIds().size());
 
         // return sqlRepository.executeUpdate(
         //     sql,
         //     ps -> WorkItemParameterBinder.bindDeleteByIds(ps, workItemIds, editor)
         // );
         // return result; // 成功件数。0なら削除なし
-        if (list == null || list.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
         int count = sqlRepository.executeUpdate(
             sql,
-            ps -> WorkItemParameterBinder.bindDeleteByIds(ps, ids, editor)
+            ps -> WorkItemParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
         );
         if (count == 0) {
             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
@@ -192,7 +192,7 @@ public class WorkItemRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<WorkItemEntity> downloadCsvByIds(List<SimpleData> list) {
+    public List<WorkItemEntity> downloadCsvByIds(IdListRequest list, String editor) {
         // List<Integer> workItemIds = Utilities.createSequenceByIds(ids);
         // String sql = WorkItemSqlBuilder.buildDownloadCsvByIds(workItemIds.size());
 
@@ -201,16 +201,16 @@ public class WorkItemRepository {
         //     ps -> WorkItemParameterBinder.bindDownloadCsvByIds(ps, workItemIds),
         //     WorkItemEntityMapper::map // ← ここで ResultSet を map
         // );
-        if (list == null || list.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = WorkItemSqlBuilder.buildDownloadCsvByIds(ids.size());
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = WorkItemSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> WorkItemParameterBinder.bindDownloadCsvByIds(ps, ids),
+            (ps, v) -> WorkItemParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
             WorkItemEntityMapper::map
         );
     }

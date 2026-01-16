@@ -109,60 +109,71 @@ const MODE_CONFIG = {
 };
 
 const ERROR_CONFIG = {
-    common: [
-        {
-            selector: 'input[name="recycle-number"]',
-            check: v => Number(v) !== 0,
-            message: 'お問合せ管理票番号を入力して下さい'
-        }
-    ],
-    regist: [
-        {
-            selector: 'select[name="company"]',
-            check: v => Number(v) !== 0,
-            message: '小売業者を選択して下さい'
-        },
-        {
-            selector: 'input[name="maker-code"]',
-            check: v => v !== '',
-            message: '製造業者等名を選択して下さい'
-        },
-        {
-            selector: 'input[name="item-code"]',
-            check: v => v !== '',
-            message: '品目・料金区分を選択して下さい'
-        },
-        {
-            selector: 'input[name="use-date"]',
-            check: v => v !== '',
-            message: '使用日を入力して下さい'
-        }
-    ],
-    delivery: [
-        {
-            selector: 'input[name="delivery-date"]',
-            check: v => v !== '',
-            message: '引渡日を入力して下さい'
-        }
-    ],
-    shipping: [
-        {
-            selector: 'input[name="shipping-date"]',
-            check: v => v !== '',
-            message: '発送日を入力して下さい'
-        }
-    ],
-    loss: [
-        {
-            selector: 'input[name="loss-date"]',
-            check: v => v !== '',
-            message: 'ロス処理日を入力して下さい'
-        }
-    ],
-    edit: [
-        // regist と同じなので再利用も可能（後述）
-    ]
-};
+    recycle: {
+        common: [
+            {
+                selector: 'input[name="recycle-number"]',
+                focus: true,
+                check: [
+                    { test: v => v !== "", message: 'お問合せ管理票番号を入力して下さい'}
+                ]
+            }
+        ],
+        regist: [
+            {
+                selector: 'select[name="company"]',
+                check: [
+                    { test: v => v !== "0", message: '小売業者を選択して下さい'}
+                ]
+            },
+            {
+                selector: 'input[name="maker-code"]',
+                check: [
+                    { test: v => v !== "", message: '製造業者等名を選択して下さい'}
+                ]
+            },
+            {
+                selector: 'input[name="item-code"]',
+                check: [
+                    { test: v => v !== "", message: '品目・料金区分を選択して下さい'}
+                ]
+            },
+            {
+                selector: 'input[name="use-date"]',
+                check: [
+                    { test: v => v !== "", message: '使用日を入力して下さい'}
+                ]
+            }
+        ],
+        delivery: [
+            {
+                selector: 'input[name="delivery-date"]',
+                check: [
+                    { test: v => v !== "", message: '引渡日を入力して下さい'}
+                ]
+            }
+        ],
+        shipping: [
+            {
+                selector: 'input[name="shipping-date"]',
+                check: [
+                    { test: v => v !== "", message: '発送日を入力して下さい'}
+                ]
+            }
+        ],
+        loss: [
+            {
+                selector: 'input[name="loss-date"]',
+                check: [
+                    { test: v => v !== "", message: 'ロス処理日を入力して下さい'}
+                ]
+            }
+        ],
+        edit: [
+            // regist と同じなので再利用も可能（後述）
+        ]
+    }
+}
 
 const FIELD_MAP = {
     version: 'version',

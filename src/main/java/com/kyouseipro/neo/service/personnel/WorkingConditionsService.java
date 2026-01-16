@@ -5,9 +5,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.controller.document.CsvExporter;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
+import com.kyouseipro.neo.interfaceis.HistoryTarget;
 import com.kyouseipro.neo.repository.personnel.WorkingConditionsRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -47,6 +49,10 @@ public class WorkingConditionsService {
      * @param editor
      * @return
     */
+    @HistoryTarget(
+        table = HistoryTables.WORKINGCONDITIONS,
+        action = "保存"
+    )
     public int save(WorkingConditionsEntity entity, String editor) {
         if (entity.getWorking_conditions_id() > 0) {
             return workingConditionsRepository.update(entity, editor);
@@ -60,7 +66,11 @@ public class WorkingConditionsService {
      * @param ids
      * @return
      */
-    public int deleteByIds(List<SimpleData> list, String userName) {
+    @HistoryTarget(
+        table = HistoryTables.WORKINGCONDITIONS,
+        action = "削除"
+    )
+    public int deleteByIds(IdListRequest list, String userName) {
         return workingConditionsRepository.deleteByIds(list, userName);
     }
 
@@ -69,7 +79,7 @@ public class WorkingConditionsService {
      * @param ids
      * @return
      */
-    public String downloadCsvByIds(List<SimpleData> list, String userName) {
+    public String downloadCsvByIds(IdListRequest list, String userName) {
         List<WorkingConditionsEntity> workingConditions = workingConditionsRepository.downloadCsvByIds(list, userName);
         return CsvExporter.export(workingConditions, WorkingConditionsEntity.class);
     }

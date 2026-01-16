@@ -5,9 +5,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
 import com.kyouseipro.neo.mapper.personnel.WorkingConditionsEntityMapper;
 import com.kyouseipro.neo.query.parameter.personnel.WorkingConditionsParameterBinder;
@@ -147,9 +146,9 @@ public class WorkingConditionsRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int deleteByIds(List<SimpleData> list, String editor) {
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = WorkingConditionsSqlBuilder.buildDeleteByIds(ids.size());
+    public int deleteByIds(IdListRequest list, String editor) {
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = WorkingConditionsSqlBuilder.buildDeleteByIds(list.getIds().size());
 
         // int result = sqlRepository.executeUpdate(
         //     sql,
@@ -157,13 +156,13 @@ public class WorkingConditionsRepository {
         // );
 
         // return result; // 成功件数。0なら削除なし
-            if (list == null || list.isEmpty()) {
+            if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
         int count = sqlRepository.executeUpdate(
             sql,
-            ps -> WorkingConditionsParameterBinder.bindDeleteByIds(ps, ids, editor)
+            ps -> WorkingConditionsParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
         );
         if (count == 0) {
             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
@@ -178,7 +177,7 @@ public class WorkingConditionsRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<WorkingConditionsEntity> downloadCsvByIds(List<SimpleData> list, String editor) {
+    public List<WorkingConditionsEntity> downloadCsvByIds(IdListRequest list, String editor) {
         // List<Integer> workingConditionsIds = Utilities.createSequenceByIds(ids);
         // String sql = WorkingConditionsSqlBuilder.buildDownloadCsvByIds(workingConditionsIds.size());
 
@@ -187,16 +186,16 @@ public class WorkingConditionsRepository {
         //     ps -> WorkingConditionsParameterBinder.bindDownloadCsvByIds(ps, workingConditionsIds),
         //     WorkingConditionsEntityMapper::map // ← ここで ResultSet を map
         // );
-        if (list == null || list.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = WorkingConditionsSqlBuilder.buildDownloadCsvByIds(ids.size());
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = WorkingConditionsSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> WorkingConditionsParameterBinder.bindDownloadCsvByIds(ps, ids),
+            (ps, v) -> WorkingConditionsParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
             WorkingConditionsEntityMapper::map
         );
     }

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
-import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.qualification.QualificationsService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QualificationsApiController {
     private final QualificationsService qualificationsService;
-    private final HistoryService historyService;
 
     /**
      * IDから情報を取得する
@@ -49,13 +47,13 @@ public class QualificationsApiController {
     @PostMapping("/api/qualifications/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody QualificationsEntity entity, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        Integer id = qualificationsService.save(entity, userName);
-        if (id != null && id > 0) {
-            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
-        } else {
-            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
-        }
+        Integer id = qualificationsService.save(entity, principal.getAttribute("preferred_username"));
+        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        // if (id != null && id > 0) {
+        //     return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        // } else {
+        //     return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+        // }
     }
 
     /**
@@ -65,16 +63,20 @@ public class QualificationsApiController {
      */
     @PostMapping("/api/qualifications/delete/id")
     @ResponseBody
+    // public ResponseEntity<ApiResponse<Integer>> deleteById(@RequestParam int id, @AuthenticationPrincipal OidcUser principal) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     Integer result = qualificationsService.deleteById(id, userName);
+    //     if (result != null && result > 0) {
+    //         historyService.save(userName, "qualifications", "削除", 200, "成功");
+    //         return ResponseEntity.ok(ApiResponse.ok("削除しました。", result));
+    //     } else {
+    //         historyService.save(userName, "qualifications", "削除", 400, "失敗");
+    //         return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
+    //     }
+    // }
     public ResponseEntity<ApiResponse<Integer>> deleteById(@RequestParam int id, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        Integer result = qualificationsService.deleteById(id, userName);
-        if (result != null && result > 0) {
-            historyService.save(userName, "qualifications", "削除", 200, "成功");
-            return ResponseEntity.ok(ApiResponse.ok("削除しました。", result));
-        } else {
-            historyService.save(userName, "qualifications", "削除", 400, "失敗");
-            return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
-        }
+        Integer result = qualificationsService.deleteById(id, principal.getAttribute("preferred_username"));
+        return ResponseEntity.ok(ApiResponse.ok("削除しました。", result));
     }
 
     /**

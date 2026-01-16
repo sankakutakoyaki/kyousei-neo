@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.controller.api.work;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,9 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.data.ApiResponse;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.work.WorkPriceEntity;
-import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.work.WorkPriceService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WorkPriceApiController {
     private final WorkPriceService workPriceService;
-    private final HistoryService historyService;
 
     /**
      * IDからEntityを取得する
@@ -33,8 +30,11 @@ public class WorkPriceApiController {
      */
     @PostMapping("/api/work/price/get/id")
 	@ResponseBody
-    public Optional<WorkPriceEntity> getById(@RequestParam int id) {
-        return workPriceService.getById(id);
+    // public Optional<WorkPriceEntity> getById(@RequestParam int id) {
+    //     return workPriceService.getById(id);
+    // }
+    public ResponseEntity<WorkPriceEntity> getById(@RequestParam int id) {
+        return ResponseEntity.ok(workPriceService.getById(id).orElse(null));
     }
 
     /**
@@ -56,16 +56,20 @@ public class WorkPriceApiController {
      */
     @PostMapping("/api/work/price/save")
 	@ResponseBody
+    // public ResponseEntity<ApiResponse<Integer>> saveWorkPrice(@RequestBody WorkPriceEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     Integer id = workPriceService.save(entity, userName);
+    //     if (id != null && id > 0) {
+    //         historyService.save(userName, "work_prices", "保存", 200, "成功");
+    //         return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+    //     } else {
+    //         historyService.save(userName, "work_prices", "保存", 400, "失敗");
+    //         return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+    //     }
+    // }
     public ResponseEntity<ApiResponse<Integer>> saveWorkPrice(@RequestBody WorkPriceEntity entity, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        Integer id = workPriceService.save(entity, userName);
-        if (id != null && id > 0) {
-            historyService.save(userName, "work_prices", "保存", 200, "成功");
-            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
-        } else {
-            historyService.save(userName, "work_prices", "保存", 400, "失敗");
-            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
-        }
+        Integer id = workPriceService.save(entity, principal.getAttribute("preferred_username"));
+        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
     }
 
     // /**
@@ -94,9 +98,12 @@ public class WorkPriceApiController {
      */
     @PostMapping("/api/work/price/download/csv")
 	@ResponseBody
-    public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        historyService.save(userName, "work_prices", "ダウンロード", 0, "");
-        return workPriceService.downloadCsvByIds(ids);
+    // public String downloadCsvEntityByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     historyService.save(userName, "work_prices", "ダウンロード", 0, "");
+    //     return workPriceService.downloadCsvByIds(ids);
+    // }
+    public String downloadCsvEntityByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+        return workPriceService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
     }
 }

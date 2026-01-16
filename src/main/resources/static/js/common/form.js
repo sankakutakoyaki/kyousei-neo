@@ -368,26 +368,61 @@ function getComboTargets(targetIds) {
 }
 
 // 共通バリデーション関数
-function validateForm(form, mode) {
-    let messages = [];
+// function validateForm(form, mode) {
+//     let messages = [];
+
+//     const rules = [
+//         ...(ERROR_CONFIG.common || []),
+//         ...(ERROR_CONFIG[mode] || [])
+//     ];
+
+//     rules.forEach(rule => {
+//         const el = form.querySelector(rule.selector);
+//         if (!el) return;
+
+//         const value = el.value;
+//         if (!rule.check(value)) {
+//             messages.push(rule.message);
+//         }
+//     });
+
+//     if (messages.length > 0) {
+//         openMsgDialog("msg-dialog", messages.join('\n'), "red");
+//         return false;
+//     }
+//     return true;
+// }
+function validateByConfig(area, config) {
+    const messages = [];
+    let focusTarget = null;
 
     const rules = [
-        ...(ERROR_CONFIG.common || []),
-        ...(ERROR_CONFIG[mode] || [])
+        ...(config.common || []),
+        ...(config.mode ? (config[config.mode] || []) : [])
     ];
 
-    rules.forEach(rule => {
-        const el = form.querySelector(rule.selector);
-        if (!el) return;
+    for (const rule of rules) {
+        const el = area.querySelector(rule.selector);
+        if (!el) continue;
 
-        const value = el.value;
-        if (!rule.check(value)) {
-            messages.push(rule.message);
+        const value = el.value ?? "";
+
+        for (const check of rule.checks) {
+            if (!check.test(value, el)) {
+                messages.push(check.message);
+                if (!focusTarget && rule.focus) {
+                    focusTarget = el;
+                }
+                break;
+            }
         }
-    });
+    }
 
     if (messages.length > 0) {
-        openMsgDialog("msg-dialog", messages.join('\n'), "red");
+        openMsgDialog("msg-dialog", messages.join("\n"), "red");
+        if (focusTarget) {
+            setFocusElement("msg-dialog", focusTarget);
+        }
         return false;
     }
     return true;

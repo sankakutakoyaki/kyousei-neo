@@ -5,10 +5,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.entity.corporation.StaffEntity;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.mapper.corporation.StaffEntityMapper;
 import com.kyouseipro.neo.query.parameter.corporation.StaffParameterBinder;
 import com.kyouseipro.neo.query.sql.corporation.StaffSqlBuilder;
@@ -131,9 +130,9 @@ public class StaffRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int deleteByIds(List<SimpleData> list, String editor) {
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = StaffSqlBuilder.buildDeleteByIds(ids.size());
+    public int deleteByIds(IdListRequest list, String editor) {
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = StaffSqlBuilder.buildDeleteByIds(list.getIds().size());
 
         // int result = sqlRepository.executeUpdate(
         //     sql,
@@ -141,13 +140,13 @@ public class StaffRepository {
         // );
 
         // return result; // 成功件数。0なら削除なし
-        if (list == null || list.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
         int count = sqlRepository.executeUpdate(
             sql,
-            ps -> StaffParameterBinder.bindDeleteByIds(ps, ids, editor)
+            ps -> StaffParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
         );
         if (count == 0) {
             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
@@ -162,7 +161,7 @@ public class StaffRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<StaffEntity> downloadCsvByIds(List<SimpleData> list, String editor) {
+    public List<StaffEntity> downloadCsvByIds(IdListRequest list, String editor) {
         // List<Integer> staffIds = Utilities.createSequenceByIds(ids);
         // String sql = StaffSqlBuilder.buildDownloadCsvByIds(staffIds.size());
 
@@ -171,16 +170,16 @@ public class StaffRepository {
         //     ps -> StaffParameterBinder.bindDownloadCsvByIds(ps, staffIds),
         //     StaffEntityMapper::map // ← ここで ResultSet を map
         // );
-        if (list == null || list.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = StaffSqlBuilder.buildDownloadCsvByIds(ids.size());
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = StaffSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> StaffParameterBinder.bindDownloadCsvByIds(ps, ids),
+            (ps, v) -> StaffParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
             StaffEntityMapper::map
         );
     }

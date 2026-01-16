@@ -5,9 +5,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.controller.document.CsvExporter;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.recycle.RecycleMakerEntity;
+import com.kyouseipro.neo.interfaceis.HistoryTarget;
 import com.kyouseipro.neo.repository.recycle.RecycleMakerRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -60,6 +62,10 @@ public class RecycleMakerService {
     //     return recycleMakerRepository.insert(entity);
     // }
     // @Transactional
+    @HistoryTarget(
+        table = HistoryTables.RECYCLEMAKERS,
+        action = "保存"
+    )
     public int save(RecycleMakerEntity entity, String userName) {
         int id = entity.getRecycle_maker_id();
 
@@ -78,8 +84,12 @@ public class RecycleMakerService {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int deleteByIds(List<SimpleData> list) {
-        return recycleMakerRepository.deleteByIds(list);
+    @HistoryTarget(
+        table = HistoryTables.RECYCLEITEMS,
+        action = "削除"
+    )
+    public int deleteByIds(IdListRequest list, String userName) {
+        return recycleMakerRepository.deleteByIds(list, userName);
     }
 
     /**
@@ -88,8 +98,8 @@ public class RecycleMakerService {
      * @param editor
      * @return listで選択したEntityリストを返す。
      */
-    public String downloadCsvByIds(List<SimpleData> list) {
-        List<RecycleMakerEntity> recycles = recycleMakerRepository.downloadCsvByIds(list);
+    public String downloadCsvByIds(IdListRequest list, String userName) {
+        List<RecycleMakerEntity> recycles = recycleMakerRepository.downloadCsvByIds(list, userName);
         return CsvExporter.export(recycles, RecycleMakerEntity.class);
     }
 }

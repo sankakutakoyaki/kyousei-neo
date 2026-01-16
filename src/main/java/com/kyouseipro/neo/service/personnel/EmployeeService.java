@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.controller.document.CsvExporter;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.interfaceis.HistoryTarget;
 import com.kyouseipro.neo.repository.personnel.EmployeeRepository;
@@ -55,6 +55,10 @@ public class EmployeeService {
      * @param data
      * @return 成功した場合は更新件数を返す。失敗した場合は０を返す。
     */
+    @HistoryTarget(
+        table = HistoryTables.EMPLOYEES,
+        action = "コード更新"
+    )
     public int updateCode(int id, String code, String editor) {
         int value = 0;
         if (code != null && !code.isBlank()) {
@@ -73,6 +77,10 @@ public class EmployeeService {
      * @param data
      * @return 成功した場合は更新件数を返す。失敗した場合は０を返す。
     */
+    @HistoryTarget(
+        table = HistoryTables.EMPLOYEES,
+        action = "電話番号更新"
+    )
     public int updatePhone(int id, String phone, String editor) {
         return employeeRepository.updatePhone(id, phone, editor);
     }
@@ -91,7 +99,11 @@ public class EmployeeService {
      * @param ids
      * @return
      */
-    public int deleteByIds(List<SimpleData> list, String userName) {
+    @HistoryTarget(
+        table = HistoryTables.EMPLOYEES,
+        action = "削除"
+    )
+    public int deleteByIds(IdListRequest list, String userName) {
         return employeeRepository.deleteByIds(list, userName);
     }
 
@@ -100,7 +112,7 @@ public class EmployeeService {
      * @param ids
      * @return
      */
-    public String downloadCsvByIds(List<SimpleData> list, String userName) {
+    public String downloadCsvByIds(IdListRequest list, String userName) {
         List<EmployeeEntity> employees = employeeRepository.downloadCsvByIds(list, userName);
         return CsvExporter.export(employees, EmployeeEntity.class);
     }

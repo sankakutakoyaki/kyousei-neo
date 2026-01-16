@@ -6,10 +6,12 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.controller.document.CsvExporter;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksSummaryEntity;
+import com.kyouseipro.neo.interfaceis.HistoryTarget;
 import com.kyouseipro.neo.repository.personnel.TimeworksListRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -90,6 +92,10 @@ public class TimeworksListService {
      * @param entity 従業員の勤怠データ
      * @return
      */
+    @HistoryTarget(
+        table = HistoryTables.TIMEWORKS,
+        action = "保存"
+    )
     public int save(TimeworksListEntity entity, String editor) {
         if (entity.getTimeworks_id() > 0) {
             return timeworksListRepository.update(entity, editor);
@@ -104,6 +110,10 @@ public class TimeworksListService {
      * @param id 従業員のID
      * @return
      */
+    @HistoryTarget(
+        table = HistoryTables.TIMEWORKS,
+        action = "取消"
+    )
     public int reverseConfirm(int id, String editor) {
         return timeworksListRepository.reverseConfirm(id, editor);
     }
@@ -114,6 +124,10 @@ public class TimeworksListService {
      * @param list 修正した従業員の勤怠データリスト
      * @return
      */
+    @HistoryTarget(
+        table = HistoryTables.TIMEWORKS,
+        action = "更新"
+    )
     public int updateList(List<TimeworksListEntity> list, String editor) {
         return timeworksListRepository.updateList(list, editor);
     }
@@ -123,7 +137,7 @@ public class TimeworksListService {
      * @param ids
      * @return
      */
-    public String downloadCsvByIdsFromBetween(List<SimpleData> list, String start, String end, String userName) {
+    public String downloadCsvByIdsFromBetween(IdListRequest list, LocalDate start, LocalDate end, String userName) {
         List<TimeworksListEntity> items = timeworksListRepository.downloadCsvByIdsFromBetween(list, start, end, userName);
         return CsvExporter.export(items, TimeworksListEntity.class);
     }

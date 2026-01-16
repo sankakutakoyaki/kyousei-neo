@@ -35,8 +35,9 @@ function createTable01Row(newRow, item) {
 
 // 登録画面を開く
 async function execEdit01(self) {
+    const config = MODE_CONFIG["01"];
     // フォーム画面を取得
-    const form = document.getElementById('form-dialog-01');
+    const form = document.getElementById(config.dialogId);
     const code = form.querySelector('[name="maker-code"]');
     code.value = "";
     form.querySelector('[name="maker-group"]').value = "0";
@@ -44,18 +45,23 @@ async function execEdit01(self) {
     form.querySelector('[name="maker-abbr"]').value = "";
 
     // 入力フォームダイアログを開く
-    openFormDialog("form-dialog-01");
+    openFormDialog(config.dialogId);
     code.focus();
 }
 
 /******************************************************************************************************* 保存 */
 
 async function execCreate01(self) {
-    const form = document.getElementById('form-01'); 
-    // エラーチェック
-    if (form01DataCheck(form) == false) {
+    const config = MODE_CONFIG["01"];
+    const form = document.getElementById(config.formId); 
+
+    if (!validateByConfig(form, { ...ERROR_CONFIG.recycle_maker, mode: mode })) {
         return;
     } else {
+    // // エラーチェック
+    // if (form01DataCheck(form) == false) {
+    //     return;
+    // } else {
         const formData = new FormData(form);
         const formdata = structuredClone(formEntity);
         formdata.code = Number(formData.get('maker-code'));
@@ -63,57 +69,58 @@ async function execCreate01(self) {
         formdata.name = formData.get('maker-name').trim();
         formdata.abbr_name = formData.get('maker-abbr').trim();
 
-        execSave("table-01-content", "footer-01", "search-box-01", formdata, createTable01Content);
+        execSave(config.tableId, config.footerId, config.searchId, formdata, createTable01Content);
     }
 }
 
-// 入力チェック
-function form01DataCheck(area) {
-    const errors = [];
+// // 入力チェック
+// function form01DataCheck(area) {
+//     const errors = [];
 
-    // コードチェック
-    const codeInput = area.querySelector('input[name="maker-code"]');
-    if (codeInput) {
-        const code = Number(codeInput.value);
+//     // コードチェック
+//     const codeInput = area.querySelector('input[name="maker-code"]');
+//     if (codeInput) {
+//         const code = Number(codeInput.value);
 
-        if (!codeInput.value) {
-            errors.push("コードを入力してください");
-        } else if (Number.isNaN(code) || code < 1 || code > 999) {
-            errors.push("コードは1〜999の間で入力してください");
-        }
-    }
+//         if (!codeInput.value) {
+//             errors.push("コードを入力してください");
+//         } else if (Number.isNaN(code) || code < 1 || code > 999) {
+//             errors.push("コードは1〜999の間で入力してください");
+//         }
+//     }
 
-    // グループチェック
-    const group = area.querySelector('select[name="maker-group"]');
-    if (group && group.value === "0") {
-        errors.push("グループを選択してください");
-    }
+//     // グループチェック
+//     const group = area.querySelector('select[name="maker-group"]');
+//     if (group && group.value === "0") {
+//         errors.push("グループを選択してください");
+//     }
 
-    // 製造業者名
-    const name = area.querySelector('input[name="maker-name"]');
-    if (name && !name.value.trim()) {
-        errors.push("製造業者等名を入力してください");
-    }
+//     // 製造業者名
+//     const name = area.querySelector('input[name="maker-name"]');
+//     if (name && !name.value.trim()) {
+//         errors.push("製造業者等名を入力してください");
+//     }
 
-    // 略称
-    const abbr = area.querySelector('input[name="maker-abbr"]');
-    if (abbr && !abbr.value.trim()) {
-        errors.push("略称を入力してください");
-    }
+//     // 略称
+//     const abbr = area.querySelector('input[name="maker-abbr"]');
+//     if (abbr && !abbr.value.trim()) {
+//         errors.push("略称を入力してください");
+//     }
 
-    // エラー表示
-    if (errors.length > 0) {
-        openMsgDialog("msg-dialog", errors.join("\n"), "red");
-        const code = form.querySelector('[name="maker-code"]');
-        if (code != null) setFocusElement("msg-dialog", code);
-        return false;
-    }
+//     // エラー表示
+//     if (errors.length > 0) {
+//         openMsgDialog("msg-dialog", errors.join("\n"), "red");
+//         const code = form.querySelector('[name="maker-code"]');
+//         if (code != null) setFocusElement("msg-dialog", code);
+//         return false;
+//     }
 
-    return true;
-}
+//     return true;
+// }
 
 // TDが変更された時の処理
 function handleTdChange(editor) {
+    const config = MODE_CONFIG["01"];
     const td = editor.closest('td.editable');
     if (!td) return;
 
@@ -136,7 +143,7 @@ function handleTdChange(editor) {
             break;
     }
 
-    execSave("table-01-content", "footer-01", "search-box-01", ent, createTable01Content);
+    execSave(config.tableId, config.footerId, config.searchId, ent, createTable01Content);
 }
 
 // 保存処理
@@ -158,17 +165,19 @@ async function execSave(tableId, footerId, searchId, ent, createContent) {
 
 // 削除する
 async function execDelete01(self) {
-    const result = await deleteTablelist('table-01-content', 'footer-01', 'search-box-01', '/recycle/maker/download/csv');
+    const config = MODE_CONFIG["01"];
+    const result = await deleteTablelist(config.dialogId, config.footerId, config.searchId, '/recycle/maker/download/csv');
 
     if (!result) return;
 
-    await updateTableDisplay('table-01-content', 'footer-01', 'search-box-01', origin, createTable01Content);
+    await updateTableDisplay(config.dialogId, config.footerId, config.searchId, origin, createTable01Content);
 }
 
 /******************************************************************************************************* ダウンロード */
 
 async function execDownloadCsv01(self) {
-    await downloadCsv('tabel-01-content', '/recycle/maker/download/csv', );
+    const config = MODE_CONFIG["01"];
+    await downloadCsv(config.tableId, '/recycle/maker/download/csv', );
 }
 
 /******************************************************************************************************* 画面更新 */
@@ -190,11 +199,12 @@ async function execNumberSearch01(number) {
     if (Number.isNaN(num)) {
         console.log("数字じゃない")
     } else {
+        const config = MODE_CONFIG["01"];
         if (num === 0) {
-            await updateTableDisplay('table-01-content', 'footer-01', 'search-box-01', origin, createTable01Content);
+            await updateTableDisplay(config.tableId, config.footerId, config.searchId, origin, createTable01Content);
         } else {
             const list = origin.filter(value => value.code >= num && value.code <= (num + 99));
-            await updateTableDisplay('table-01-content', 'footer-01', 'search-box-01', list, createTable01Content);
+            await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTable01Content);
         }
     }
 }
@@ -206,10 +216,11 @@ window.addEventListener("load", async () => {
     // スピナー表示
     startProcessing();
 
+    const config = MODE_CONFIG["01"];
     // 検索ボックス入力時の処理
-    document.getElementById('search-box-01').addEventListener('search', async function(e) {
+    document.getElementById(config.searchId).addEventListener('search', async function(e) {
         const list = getCategoryFilterList();
-        await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTable01Content);
+        await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTable01Content);
     }, false);
 
     // 作成フォームのグループコンボボックス
@@ -217,7 +228,7 @@ window.addEventListener("load", async () => {
     createComboBoxWithTop(groupArea, groupComboList, "");
 
     // 画面更新
-    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);
+    await updateTableDisplay(config.tableId, config.footerId, config.searchId, origin, createTable01Content);
 
     // スピナー消去
     processingEnd();

@@ -8,11 +8,9 @@
  * @returns 
  */
 async function existsRecycleByNumber(number) {
-    const data = "num=" + encodeURIComponent(number);
     const url = "/api/recycle/exists/number";
-    const contentType = 'application/x-www-form-urlencoded';
-
-    return await searchFetch(url, data, token, contentType);
+    const data = JSON.stringify({num:number});
+    return await searchFetch(url, data, token);
 }
 
 /**
@@ -21,10 +19,11 @@ async function existsRecycleByNumber(number) {
  * @returns 
  */
 async function getMakerByCode(code) {
-    const data = "code=" + encodeURIComponent(parseInt(code));
+    // const data = "code=" + encodeURIComponent(parseInt(code));
     const url = '/api/recycle/maker/get/code';
-    const contentType = 'application/x-www-form-urlencoded';
-    return await searchFetch(url, data, token, contentType);
+    const data = JSON.stringify({code:code});
+    // const contentType = 'application/x-www-form-urlencoded';
+    return await searchFetch(url, data, token);
 }
 
 /**
@@ -33,10 +32,11 @@ async function getMakerByCode(code) {
  * @returns 
  */
 async function getItemByCode(code) {
-    const data = "code=" + encodeURIComponent(parseInt(code));
+    // const data = "code=" + encodeURIComponent(parseInt(code));
     const url = '/api/recycle/item/get/code';
-    const contentType = 'application/x-www-form-urlencoded';
-    return await searchFetch(url, data, token, contentType);
+    const data = JSON.stringify({code:code});
+    // const contentType = 'application/x-www-form-urlencoded';
+    return await searchFetch(url, data, token);
 }
 
 /**

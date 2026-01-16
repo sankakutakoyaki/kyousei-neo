@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.entity.personnel.PaidHolidayEntity;
 import com.kyouseipro.neo.entity.personnel.PaidHolidayListEntity;
+import com.kyouseipro.neo.interfaceis.HistoryTarget;
 import com.kyouseipro.neo.repository.personnel.PaidHolidayRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -43,7 +45,11 @@ public class PaidHolidayService {
      * @param entity 従業員の有給申請データ
      * @return
      */
-    public Integer insert(PaidHolidayEntity entity, String editor) {
+    @HistoryTarget(
+        table = HistoryTables.PAIDHOLIDAY,
+        action = "登録"
+    )
+    public int insert(PaidHolidayEntity entity, String editor) {
         return paidHolidayRepository.insert(entity, editor);
     }
 
@@ -53,7 +59,11 @@ public class PaidHolidayService {
      * @param id 従業員の有給申請ID
      * @return
      */
-    public Integer deleteById(int id, String editor) {
+    @HistoryTarget(
+        table = HistoryTables.PAIDHOLIDAY,
+        action = "削除"
+    )
+    public int deleteById(int id, String editor) {
         return paidHolidayRepository.delete(id, editor);
     }
 }

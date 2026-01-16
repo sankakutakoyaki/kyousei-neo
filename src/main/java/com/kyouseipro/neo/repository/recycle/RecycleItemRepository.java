@@ -5,10 +5,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.recycle.RecycleItemEntity;
 import com.kyouseipro.neo.mapper.recycle.RecycleItemEntityMapper;
 import com.kyouseipro.neo.query.parameter.recycle.RecycleItemParameterBinder;
@@ -59,7 +58,7 @@ public class RecycleItemRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    public int insert(RecycleItemEntity entity) {
+    public int insert(RecycleItemEntity entity, String userName) {
         String sql = RecycleItemSqlBuilder.buildInsert();
         // return sqlRepository.execute(
         //     sql,
@@ -97,7 +96,7 @@ public class RecycleItemRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    public int update(RecycleItemEntity entity) {
+    public int update(RecycleItemEntity entity, String userName) {
         String sql = RecycleItemSqlBuilder.buildUpdate();
 
         // Integer result = sqlRepository.executeUpdate(
@@ -109,7 +108,7 @@ public class RecycleItemRepository {
         try {
             int count = sqlRepository.executeUpdate(
                 sql,
-                ps -> RecycleItemParameterBinder.bindUpdate(ps, entity)
+                ps -> RecycleItemParameterBinder.bindUpdate(ps, entity, userName)
             );
 
             if (count == 0) {
@@ -132,22 +131,22 @@ public class RecycleItemRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int deleteByIds(List<SimpleData> list) {
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = RecycleItemSqlBuilder.buildDeleteByIds(ids.size());
+    public int deleteByIds(IdListRequest list, String userName) {
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = RecycleItemSqlBuilder.buildDeleteByIds(list.getIds().size());
 
         // return sqlRepository.executeUpdate(
         //     sql,
         //     ps -> RecycleItemParameterBinder.bindDeleteForIds(ps, recycleItemIds)
         // );
         // return result; // 成功件数。0なら削除なし
-        if (list == null || list.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
         int count = sqlRepository.executeUpdate(
             sql,
-            ps -> RecycleItemParameterBinder.bindDeleteForIds(ps, ids)
+            ps -> RecycleItemParameterBinder.bindDeleteForIds(ps, list.getIds())
         );
         if (count == 0) {
             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
@@ -162,7 +161,7 @@ public class RecycleItemRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<RecycleItemEntity> downloadCsvByIds(List<SimpleData> list) {
+    public List<RecycleItemEntity> downloadCsvByIds(IdListRequest list, String userName) {
         // List<Integer> recycleItemIds = Utilities.createSequenceByIds(ids);
         // String sql = RecycleItemSqlBuilder.buildDownloadCsvByIds(recycleItemIds.size());
 
@@ -171,16 +170,16 @@ public class RecycleItemRepository {
         //     ps -> RecycleItemParameterBinder.bindDownloadCsvForIds(ps, recycleItemIds),
         //     RecycleItemEntityMapper::map // ← ここで ResultSet を map
         // );
-        if (list == null || list.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = RecycleItemSqlBuilder.buildDownloadCsvByIds(ids.size());
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = RecycleItemSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> RecycleItemParameterBinder.bindDownloadCsvForIds(ps, ids),
+            (ps, v) -> RecycleItemParameterBinder.bindDownloadCsvForIds(ps, list.getIds()),
             RecycleItemEntityMapper::map
         );
     }

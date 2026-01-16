@@ -6,9 +6,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.order.OrderItemEntity;
+import com.kyouseipro.neo.interfaceis.HistoryTarget;
 import com.kyouseipro.neo.repository.order.OrderItemRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,10 @@ public class OrderItemService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
+    @HistoryTarget(
+        table = HistoryTables.ORDERITEMS,
+        action = "保存"
+    )
     public int save(List<OrderItemEntity> itemList, String editor) {
         return orderItemRepository.save(itemList, editor);
     }
@@ -50,6 +56,10 @@ public class OrderItemService {
      * @param ids
      * @return
      */
+    @HistoryTarget(
+        table = HistoryTables.ORDERITEMS,
+        action = "削除"
+    )
     public int deleteByIds(List<SimpleData> list, String userName) {
         return orderItemRepository.deleteByIds(list, userName);
     }

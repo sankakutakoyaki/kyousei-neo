@@ -5,12 +5,14 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.order.DeliveryStaffEntity;
 import com.kyouseipro.neo.entity.order.OrderEntity;
 import com.kyouseipro.neo.entity.order.OrderItemEntity;
 import com.kyouseipro.neo.entity.order.WorkContentEntity;
+import com.kyouseipro.neo.interfaceis.HistoryTarget;
 import com.kyouseipro.neo.repository.order.DeliveryStaffRepository;
 import com.kyouseipro.neo.repository.order.OrderItemRepository;
 import com.kyouseipro.neo.repository.order.OrderRepository;
@@ -74,6 +76,10 @@ public class OrderService {
      * @param editor
      * @return
      */
+    @HistoryTarget(
+        table = HistoryTables.ORDERS,
+        action = "保存"
+    )
     public int save(OrderEntity entity, 
                          List<OrderItemEntity> itemEntityList,
                          List<DeliveryStaffEntity> staffEntityList,
@@ -88,6 +94,10 @@ public class OrderService {
      * @param ids
      * @return
      */
+    @HistoryTarget(
+        table = HistoryTables.ORDERS,
+        action = "削除"
+    )
     public int deleteByIds(List<SimpleData> list, String userName) {
         return orderRepository.deleteByIds(list, userName);
     }

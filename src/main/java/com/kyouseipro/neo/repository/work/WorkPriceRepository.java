@@ -5,9 +5,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.work.WorkPriceEntity;
 import com.kyouseipro.neo.mapper.work.WorkPriceEntityMapper;
 import com.kyouseipro.neo.query.parameter.work.WorkPriceParameterBinder;
@@ -130,7 +129,7 @@ public class WorkPriceRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<WorkPriceEntity> downloadCsvByIds(List<SimpleData> list) {
+    public List<WorkPriceEntity> downloadCsvByIds(IdListRequest list, String userName) {
         // List<Integer> workPriceIds = Utilities.createSequenceByIds(ids);
         // String sql = WorkPriceSqlBuilder.buildDownloadCsvByIds(workPriceIds.size());
 
@@ -140,16 +139,16 @@ public class WorkPriceRepository {
         //     WorkPriceEntityMapper::map // ← ここで ResultSet を map
         // );
 
-        if (list == null || list.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = WorkPriceSqlBuilder.buildDownloadCsvByIds(ids.size());
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = WorkPriceSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> WorkPriceParameterBinder.bindDownloadCsvForIds(ps, ids),
+            (ps, v) -> WorkPriceParameterBinder.bindDownloadCsvForIds(ps, list.getIds()),
             WorkPriceEntityMapper::map
         );
     }

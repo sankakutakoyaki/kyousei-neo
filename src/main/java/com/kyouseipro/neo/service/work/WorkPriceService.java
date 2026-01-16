@@ -5,9 +5,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.controller.document.CsvExporter;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.work.WorkPriceEntity;
+import com.kyouseipro.neo.interfaceis.HistoryTarget;
 import com.kyouseipro.neo.repository.work.WorkPriceRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -53,11 +55,15 @@ public class WorkPriceService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public int save(WorkPriceEntity item, String editor) {
+    @HistoryTarget(
+        table = HistoryTables.WORKPRICIES,
+        action = "保存"
+    )
+    public int save(WorkPriceEntity item, String userName) {
         if (item.getWork_price_id() > 0) {
-            return workPriceRepository.update(item, editor);
+            return workPriceRepository.update(item, userName);
         } else {
-            return workPriceRepository.insert(item, editor);
+            return workPriceRepository.insert(item, userName);
         }        
     }
 
@@ -67,8 +73,8 @@ public class WorkPriceService {
      * @param editor
      * @return listで選択したEntityリストを返す。
      */
-    public String downloadCsvByIds(List<SimpleData> list) {
-        List<WorkPriceEntity> workPrices = workPriceRepository.downloadCsvByIds(list);
+    public String downloadCsvByIds(IdListRequest list, String userName) {
+        List<WorkPriceEntity> workPrices = workPriceRepository.downloadCsvByIds(list, userName);
         return CsvExporter.export(workPrices, WorkPriceEntity.class);
     }
 }

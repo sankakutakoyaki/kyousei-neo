@@ -1,6 +1,5 @@
 package com.kyouseipro.neo.controller.api.recycle;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -20,17 +19,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kyouseipro.neo.entity.data.ApiResponse;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.BetweenRequest;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.recycle.RecycleDateEntity;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
-import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.recycle.RecycleService;
 
 @Controller
 @RequiredArgsConstructor
 public class RecycleApiController {
     private final RecycleService recycleService;
-    private final HistoryService historyService;
     private final ObjectMapper objectMapper;
 
     /**
@@ -53,8 +51,7 @@ public class RecycleApiController {
         // return recycleService.getById(id)
         //     .map(ResponseEntity::ok)
         //     .orElseGet(() -> ResponseEntity.notFound().build());
-        return ResponseEntity.ok(
-            recycleService.getById(id).orElse(null));
+        return ResponseEntity.ok(recycleService.getById(id).orElse(null));
     }
 
     /**
@@ -77,8 +74,7 @@ public class RecycleApiController {
         // return recycleService.existsByNumber(num)
         //     .map(ResponseEntity::ok)
         //     .orElseGet(() -> ResponseEntity.notFound().build());
-        return ResponseEntity.ok(
-            recycleService.existsByNumber(num).orElse(null));
+        return ResponseEntity.ok(recycleService.existsByNumber(num).orElse(null));
     // public ApiResponse<RecycleEntity> findByNumber(@RequestParam String num) {
     //     return recycleService.existsByNumber(num)
     //         .map(entity -> ApiResponse.ok(null, entity))
@@ -94,9 +90,9 @@ public class RecycleApiController {
      */
     @PostMapping("/api/recycle/get/between")
     @ResponseBody
-    public List<RecycleEntity> getBetween(@RequestParam LocalDate start, @RequestParam LocalDate end, @RequestParam String col) {
-        List<RecycleEntity> list = recycleService.getBetween(start, end, col);
-        return list;
+    // public List<RecycleEntity> getBetween(@RequestParam LocalDate start, @RequestParam LocalDate end, @RequestParam String col) {
+    public List<RecycleEntity> getBetween(@RequestParam BetweenRequest req) {
+        return recycleService.getBetween(req.getStart(), req.getEnd(), req.getType());
     }
 
     /**
@@ -114,32 +110,35 @@ public class RecycleApiController {
                 List<RecycleEntity> itemList1 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleEntity>>() {});
                 id = recycleService.save(itemList1, userName);
                 break;
-            case "delivery":
-                List<RecycleDateEntity> itemList2 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
-                id = recycleService.updateForDate(itemList2, userName, type);
-                break;
-            case "shipping":
-                List<RecycleDateEntity> itemList3 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
-                id = recycleService.updateForDate(itemList3, userName, type);
-                break;
-            case "loss":
-                List<RecycleDateEntity> itemList4 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
-                id = recycleService.updateForDate(itemList4, userName, type);
-                break;
+            // case "delivery":
+            //     List<RecycleDateEntity> itemList2 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
+            //     id = recycleService.updateForDate(itemList2, userName, type);
+            //     break;
+            // case "shipping":
+            //     List<RecycleDateEntity> itemList3 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
+            //     id = recycleService.updateForDate(itemList3, userName, type);
+            //     break;
+            // case "loss":
+            //     List<RecycleDateEntity> itemList4 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
+            //     id = recycleService.updateForDate(itemList4, userName, type);
+            //     break;
             case "edit":
                 RecycleEntity entity = objectMapper.convertValue(body.get("entity"), new TypeReference<RecycleEntity>() {});
                 id = recycleService.update(entity, userName);
                 break;
             default:
+                List<RecycleDateEntity> itemList2 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
+                id = recycleService.updateForDate(itemList2, userName, type);
                 break;
         }
-        if (id != null && id > 0) {
-            historyService.save(userName, "recycles", "保存", 200, "成功");
-            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
-        } else {
-            historyService.save(userName, "recycles", "保存", 400, "失敗");
-            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
-        }
+        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        // if (id != null && id > 0) {
+        //     historyService.save(userName, "recycles", "保存", 200, "成功");
+        //     return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        // } else {
+        //     historyService.save(userName, "recycles", "保存", 400, "失敗");
+        //     return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+        // }
     }
 
     /**
@@ -149,16 +148,20 @@ public class RecycleApiController {
      */
     @PostMapping("/api/recycle/delete")
     @ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_userName");
-        Integer num = recycleService.deleteByIds(ids, userName);
-        if (num != null && num > 0) {
-            historyService.save(userName, "recycels", "削除", 200, "成功");
-            return ResponseEntity.ok(ApiResponse.ok(num + "件削除しました。", num));
-        } else {
-            historyService.save(userName, "recycels", "削除", 400, "失敗");
-            return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました。"));
-        }
+    // public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    //     String userName = principal.getAttribute("preferred_userName");
+    //     Integer num = recycleService.deleteByIds(ids, userName);
+    //     if (num != null && num > 0) {
+    //         historyService.save(userName, "recycels", "削除", 200, "成功");
+    //         return ResponseEntity.ok(ApiResponse.ok(num + "件削除しました。", num));
+    //     } else {
+    //         historyService.save(userName, "recycels", "削除", 400, "失敗");
+    //         return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました。"));
+    //     }
+    // }
+    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+        Integer num = recycleService.deleteByIds(ids, principal.getAttribute("preferred_userName"));
+        return ResponseEntity.ok(ApiResponse.ok(num + "件削除しました。", num));
     }
 
     /**
@@ -168,9 +171,12 @@ public class RecycleApiController {
      */
     @PostMapping("/api/recycle/download/csv")
 	@ResponseBody
-    public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        historyService.save(userName, "recycles", "ダウンロード", 0, "");
-        return recycleService.downloadCsvByIds(ids, userName);
+    // public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     historyService.save(userName, "recycles", "ダウンロード", 0, "");
+    //     return recycleService.downloadCsvByIds(ids, userName);
+    // }
+    public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+        return recycleService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
     }
 }

@@ -5,9 +5,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.controller.document.CsvExporter;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.recycle.RecycleItemEntity;
+import com.kyouseipro.neo.interfaceis.HistoryTarget;
 import com.kyouseipro.neo.repository.recycle.RecycleItemRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -43,11 +45,15 @@ public class RecycleItemService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    public int save(RecycleItemEntity entity) {
+    @HistoryTarget(
+        table = HistoryTables.RECYCLEITEMS,
+        action = "保存"
+    )
+    public int save(RecycleItemEntity entity, String userName) {
         if (entity.getRecycle_item_id() > 0) {
-            return recycleItemRepository.update(entity);
+            return recycleItemRepository.update(entity, userName);
         } else {
-            return recycleItemRepository.insert(entity);
+            return recycleItemRepository.insert(entity, userName);
         }
     }
 
@@ -57,8 +63,12 @@ public class RecycleItemService {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int deleteByIds(List<SimpleData> list) {
-        return recycleItemRepository.deleteByIds(list);
+    @HistoryTarget(
+        table = HistoryTables.RECYCLEITEMS,
+        action = "削除"
+    )
+    public int deleteByIds(IdListRequest list, String userName) {
+        return recycleItemRepository.deleteByIds(list, userName);
     }
 
     /**
@@ -67,8 +77,8 @@ public class RecycleItemService {
      * @param editor
      * @return listで選択したEntityリストを返す。
      */
-    public String downloadCsvByIds(List<SimpleData> list) {
-        List<RecycleItemEntity> recycles = recycleItemRepository.downloadCsvByIds(list);
+    public String downloadCsvByIds(IdListRequest list, String userName) {
+        List<RecycleItemEntity> recycles = recycleItemRepository.downloadCsvByIds(list, userName);
         return CsvExporter.export(recycles, RecycleItemEntity.class);
     }
 }

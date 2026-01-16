@@ -7,10 +7,10 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.recycle.RecycleDateEntity;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
 import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
@@ -236,22 +236,22 @@ public class RecycleRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int deleteByIds(List<SimpleData> list, String editor) {
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = RecycleSqlBuilder.buildDeleteByIds(ids.size());
+    public int deleteByIds(IdListRequest list, String editor) {
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = RecycleSqlBuilder.buildDeleteByIds(list.getIds().size());
 
         // return sqlRepository.executeUpdate(
         //     sql,
         //     ps -> RecycleParameterBinder.bindDeleteByIds(ps, recycleIds, editor)
         // );
         // // return result; // 成功件数。0なら削除なし
-        if (list == null || list.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
         int count = sqlRepository.executeUpdate(
             sql,
-            ps -> RecycleParameterBinder.bindDeleteByIds(ps, ids, editor)
+            ps -> RecycleParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
         );
         if (count == 0) {
             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
@@ -266,7 +266,7 @@ public class RecycleRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<RecycleEntity> downloadCsvByIds(List<SimpleData> list, String editor) {
+    public List<RecycleEntity> downloadCsvByIds(IdListRequest list, String editor) {
         // List<Integer> recycleIds = Utilities.createSequenceByIds(ids);
         // String sql = RecycleSqlBuilder.buildDownloadCsvByIds(recycleIds.size());
 
@@ -275,16 +275,16 @@ public class RecycleRepository {
         //     ps -> RecycleParameterBinder.bindDownloadCsvByIds(ps, recycleIds),
         //     RecycleEntityMapper::map // ← ここで ResultSet を map
         // );
-        if (list == null || list.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = RecycleSqlBuilder.buildDownloadCsvByIds(ids.size());
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = RecycleSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> RecycleParameterBinder.bindDownloadCsvByIds(ps, ids),
+            (ps, v) -> RecycleParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
             RecycleEntityMapper::map
         );
     }

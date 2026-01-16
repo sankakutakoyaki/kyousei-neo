@@ -383,5 +383,18 @@ public class Enums {
     public final class HistoryTables {
         public static final String EMPLOYEES = "employees";
         public static final String COMPANIES = "companies";
+        public static final String OFFICES = "offices";
+        public static final String STAFFS = "staffs";
+        public static final String PAIDHOLIDAY = "paid_holiday";
+        public static final String TIMEWORKS = "timeworks";
+        public static final String WORKINGCONDITIONS = "working_conditions";
+        public static final String QUALIFICATIONS = "qualifications";
+        public static final String RECYCLES = "recycles";
+        public static final String RECYCLEMAKERS = "recycle_makers";
+        public static final String RECYCLEITEMS = "recycle_items";
+        public static final String WORKITEMS = "work_items";
+        public static final String WORKPRICIES = "work_priceis";
+        public static final String ORDERS = "orders";
+        public static final String ORDERITEMS = "order_items";
     }
 }

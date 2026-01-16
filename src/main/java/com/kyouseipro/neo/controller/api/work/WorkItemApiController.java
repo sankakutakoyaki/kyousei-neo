@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.controller.api.work;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,9 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.data.ApiResponse;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.work.WorkItemEntity;
-import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.work.WorkItemService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WorkItemApiController {
     private final WorkItemService workItemService;
-    private final HistoryService historyService;
 
     /**
      * IDからEntityを取得する
@@ -34,8 +31,11 @@ public class WorkItemApiController {
      */
     @PostMapping("/api/work/item/get/id")
 	@ResponseBody
-    public Optional<WorkItemEntity> getById(@RequestParam int id) {
-        return workItemService.getById(id);
+    // public Optional<WorkItemEntity> getById(@RequestParam int id) {
+    //     return workItemService.getById(id);
+    // }
+    public ResponseEntity<WorkItemEntity> getById(@RequestParam int id) {
+        return ResponseEntity.ok(workItemService.getById(id).orElse(null));
     }
 
     /**
@@ -66,16 +66,20 @@ public class WorkItemApiController {
      */
     @PostMapping("/api/work/item/save")
 	@ResponseBody
+    // public ResponseEntity<ApiResponse<Integer>> save(@RequestBody WorkItemEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     Integer id = workItemService.save(entity, userName);
+    //     if (id != null && id > 0) {
+    //         historyService.save(userName, "work_items", "保存", 200, "成功");
+    //         return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+    //     } else {
+    //         historyService.save(userName, "work_items", "保存", 400, "失敗");
+    //         return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+    //     }
+    // }
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody WorkItemEntity entity, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        Integer id = workItemService.save(entity, userName);
-        if (id != null && id > 0) {
-            historyService.save(userName, "work_items", "保存", 200, "成功");
-            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
-        } else {
-            historyService.save(userName, "work_items", "保存", 400, "失敗");
-            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
-        }
+        Integer id = workItemService.save(entity, principal.getAttribute("preferred_username"));
+        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
     }
 
     /**
@@ -85,16 +89,20 @@ public class WorkItemApiController {
      */
     @PostMapping("/api/work/item/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        Integer id = workItemService.deleteByIds(ids, userName);
-        if (id != null && id > 0) {
-            historyService.save(userName, "work_items", "削除", 200, "成功");
-            return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
-        } else {
-            historyService.save(userName, "work_items", "削除", 400, "失敗");
-            return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
-        }
+    // public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     Integer id = workItemService.deleteByIds(ids, userName);
+    //     if (id != null && id > 0) {
+    //         historyService.save(userName, "work_items", "削除", 200, "成功");
+    //         return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
+    //     } else {
+    //         historyService.save(userName, "work_items", "削除", 400, "失敗");
+    //         return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
+    //     }
+    // }
+    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+        Integer id = workItemService.deleteByIds(ids, principal.getAttribute("preferred_username"));
+        return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
     }
 
     /**
@@ -104,9 +112,12 @@ public class WorkItemApiController {
      */
     @PostMapping("/api/work/item/download/csv")
 	@ResponseBody
-    public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        historyService.save(userName, "work_items", "ダウンロード", 0, "");
-        return workItemService.downloadCsvByIds(ids);
+    // public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     historyService.save(userName, "work_items", "ダウンロード", 0, "");
+    //     return workItemService.downloadCsvByIds(ids);
+    // }
+    public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+        return workItemService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
     }
 }

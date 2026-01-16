@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.controller.abstracts.BaseController;
 import com.kyouseipro.neo.entity.data.ApiResponse;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.recycle.RecycleMakerEntity;
-import com.kyouseipro.neo.service.document.HistoryService;
 import com.kyouseipro.neo.service.recycle.RecycleMakerService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RecycleMakerApiController extends BaseController {
     private final RecycleMakerService recycleMakerService;
-    private final HistoryService historyService;
 
     /**
      * IDからEntityを取得する
@@ -88,16 +86,19 @@ public class RecycleMakerApiController extends BaseController {
      */
     @PostMapping("/api/recycle/maker/save")
 	@ResponseBody
+    // public ResponseEntity<ApiResponse<Integer>> save(@RequestBody RecycleMakerEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    //     // String userName = principal.getAttribute("preferred_username");
+    //     Integer id = recycleMakerService.save(entity, principal.getAttribute("preferred_username"));
+    //     if (id != null && id > 0) {
+    //         return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+    //     // historyService.save(userName, "recycle_makers", "保存", 200, "成功");
+    //     } else {
+    //         return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
+    //     }
+    // }
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody RecycleMakerEntity entity, @AuthenticationPrincipal OidcUser principal) {
-        // String userName = principal.getAttribute("preferred_username");
-        Integer id = recycleMakerService.save(entity, principal.getAttribute("preferred_username"));
-        if (id != null && id > 0) {
-            return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
-        // historyService.save(userName, "recycle_makers", "保存", 200, "成功");
-        } else {
-            return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
-        }
-        
+        int id = recycleMakerService.save(entity, principal.getAttribute("preferred_username"));
+        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
     }
 
     /**
@@ -107,16 +108,20 @@ public class RecycleMakerApiController extends BaseController {
      */
     @PostMapping("/api/recycle/maker/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        Integer id = recycleMakerService.deleteByIds(ids);
-        if (id != null && id > 0) {
-            historyService.save(userName, "recycle_makers", "削除", 200, "成功");
-            return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
-        } else {
-            historyService.save(userName, "recycle_makers", "削除", 400, "失敗");
-            return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
-        }
+    // public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     Integer id = recycleMakerService.deleteByIds(ids);
+    //     if (id != null && id > 0) {
+    //         historyService.save(userName, "recycle_makers", "削除", 200, "成功");
+    //         return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
+    //     } else {
+    //         historyService.save(userName, "recycle_makers", "削除", 400, "失敗");
+    //         return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
+    //     }
+    // }
+    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+        int id = recycleMakerService.deleteByIds(ids, principal.getAttribute("preferred_username"));
+        return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
     }
 
     /**
@@ -126,9 +131,12 @@ public class RecycleMakerApiController extends BaseController {
      */
     @PostMapping("/api/recycle/maker/download/csv")
 	@ResponseBody
-    public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        historyService.save(userName, "recycle_makers", "ダウンロード", 0, "");
-        return recycleMakerService.downloadCsvByIds(ids);
+    // public String downloadCsvByIds(@RequestBody List<SimpleData> ids, @AuthenticationPrincipal OidcUser principal) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     historyService.save(userName, "recycle_makers", "ダウンロード", 0, "");
+    //     return recycleMakerService.downloadCsvByIds(ids);
+    // }
+    public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+        return recycleMakerService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
     }
 }

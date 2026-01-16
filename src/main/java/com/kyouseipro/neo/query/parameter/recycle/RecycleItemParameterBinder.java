@@ -17,7 +17,7 @@ public class RecycleItemParameterBinder {
         return index;
     }
 
-    public static int bindUpdate(PreparedStatement pstmt, RecycleItemEntity r) throws SQLException {
+    public static int bindUpdate(PreparedStatement pstmt, RecycleItemEntity r, String editor) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, r.getCode());
         pstmt.setString(index++, r.getName());

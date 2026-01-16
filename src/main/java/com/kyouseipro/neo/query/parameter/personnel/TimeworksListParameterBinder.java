@@ -144,7 +144,8 @@ public class TimeworksListParameterBinder {
     }
 
     // CSVダウンロード
-    public static int bindDownloadCsvByIdsFromBetween(PreparedStatement ps, List<Integer> ids, String start, String end) throws SQLException {
+    // public static int bindDownloadCsvByIdsFromBetween(PreparedStatement ps, List<Integer> ids, String start, String end) throws SQLException {
+    public static int bindDownloadCsvByIdsFromBetween(PreparedStatement ps, List<Integer> ids, LocalDate start, LocalDate end) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -153,16 +154,16 @@ public class TimeworksListParameterBinder {
         for (Integer id : ids) {
             ps.setInt(index++, id); // IN (?, ?, ?)
         }
-        ps.setDate(index++, Date.valueOf(start));
-        ps.setDate(index++, Date.valueOf(end));
+        ps.setDate(index++, Date.valueOf(start.toString()));
+        ps.setDate(index++, Date.valueOf(end.toString()));
 
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {
             ps.setInt(index++, id); // IN (?, ?, ?)
         }
-        ps.setDate(index++, Date.valueOf(start));
-        ps.setDate(index++, Date.valueOf(end));
+        ps.setDate(index++, Date.valueOf(start.toString()));
+        ps.setDate(index++, Date.valueOf(end.toString()));
         return index;
     }
 }

@@ -5,9 +5,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.controller.document.CsvExporter;
 import com.kyouseipro.neo.entity.corporation.StaffEntity;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
+import com.kyouseipro.neo.interfaceis.HistoryTarget;
 import com.kyouseipro.neo.repository.corporation.StaffRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,10 @@ public class StaffService {
      * @param editor
      * @return
     */
+    @HistoryTarget(
+        table = HistoryTables.STAFFS,
+        action = "保存"
+    )
     public int save(StaffEntity entity, String editor) {
         if (entity.getStaff_id() > 0) {
             return staffRepository.update(entity, editor);
@@ -49,7 +55,11 @@ public class StaffService {
      * @param ids
      * @return
      */
-    public int deleteByIds(List<SimpleData> list, String userName) {
+    @HistoryTarget(
+        table = HistoryTables.STAFFS,
+        action = "削除"
+    )
+    public int deleteByIds(IdListRequest list, String userName) {
         return staffRepository.deleteByIds(list, userName);
     }
 
@@ -58,7 +68,7 @@ public class StaffService {
      * @param ids
      * @return
      */
-    public String downloadCsvByIds(List<SimpleData> list, String userName) {
+    public String downloadCsvByIds(IdListRequest list, String userName) {
         List<StaffEntity> staffs = staffRepository.downloadCsvByIds(list, userName);
         return CsvExporter.export(staffs, StaffEntity.class);
     }

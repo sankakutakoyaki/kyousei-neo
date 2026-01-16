@@ -5,10 +5,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.entity.corporation.CompanyEntity;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.mapper.corporation.CompanyEntityMapper;
 import com.kyouseipro.neo.query.parameter.corporation.CompanyParameterBinder;
 import com.kyouseipro.neo.query.sql.corporation.CompanySqlBuilder;
@@ -146,9 +145,9 @@ public class CompanyRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int deleteByIds(List<SimpleData> list, String editor) {
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = CompanySqlBuilder.buildDeleteByIds(ids.size());
+    public int deleteByIds(IdListRequest list, String editor) {
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = CompanySqlBuilder.buildDeleteByIds(list.getIds().size());
 
         // int result = sqlRepository.executeUpdate(
         //     sql,
@@ -156,13 +155,13 @@ public class CompanyRepository {
         // );
 
         // return result; // 成功件数。0なら削除なし
-        if (list == null || list.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
         int count = sqlRepository.executeUpdate(
             sql,
-            ps -> CompanyParameterBinder.bindDeleteByIds(ps, ids, editor)
+            ps -> CompanyParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
         );
         if (count == 0) {
             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
@@ -177,22 +176,22 @@ public class CompanyRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<CompanyEntity> downloadCsvByIds(List<SimpleData> list, String editor) {
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = CompanySqlBuilder.buildDownloadCsvByIds(ids.size());
+    public List<CompanyEntity> downloadCsvByIds(IdListRequest list, String editor) {
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = CompanySqlBuilder.buildDownloadCsvByIds(list.getIds().size());
 
         // return sqlRepository.findAll(
         //     sql,
         //     ps -> CompanyParameterBinder.bindDownloadCsvByIds(ps, companyIds),
         //     CompanyEntityMapper::map // ← ここで ResultSet を map
         // );
-        if (ids == null || ids.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> CompanyParameterBinder.bindDownloadCsvByIds(ps, ids),
+            (ps, v) -> CompanyParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
             CompanyEntityMapper::map
         );
     }
