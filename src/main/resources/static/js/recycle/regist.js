@@ -693,7 +693,7 @@ async function execUpdate(mode) {
     if (!validateByConfig(form, { ...ERROR_CONFIG.recycle, mode: mode })) {
         return;
     }
-    
+
     const formdata = setInsertFormData(form);
     const result = await updateFetch("/api/recycle/save/" + mode, JSON.stringify({entity:formdata}), token, "application/json");
     if (result.success) {
