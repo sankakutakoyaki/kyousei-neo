@@ -126,7 +126,7 @@ async function execEdit(id, mode, self) {
         deleteElements(config.tableId);
     }
 
-    openFormByMode(mode, MODE_CONFIG);
+    // openFormByMode(mode, MODE_CONFIG);
 
     if (typeof mode === "string" && mode !== "edit") {
         ID_CONFIG[mode].date.value = getDate();
@@ -138,6 +138,8 @@ async function execEdit(id, mode, self) {
         setFormContent(form, entity);
         setCompanyComboBox(form, entity, companyComboList, officeComboList);
     }
+
+    openFormByMode(mode, MODE_CONFIG);
 
     ID_CONFIG[mode].number.focus();
 }
@@ -240,19 +242,19 @@ function setInsertFormData(form) {
         formdata[f.key] = v ? v : "9999-12-31";
     });
 
-    setSelectValue(form, formdata, {
+    setSelectValue(form, formData, formdata, {
         valueName: 'company',
         idKey: 'company_id',
         nameKey: 'company_name'
     });
 
-    setSelectValue(form, formdata, {
+    setSelectValue(form, formData, formdata, {
         valueName: 'office',
         idKey: 'office_id',
         nameKey: 'office_name'
     });
 
-    setSelectValue(form, formdata, {
+    setSelectValue(form, formData, formdata, {
         valueName: 'disposal-site',
         idKey: 'disposal-site_id',
         nameKey: 'disposal-site_name'
@@ -485,37 +487,37 @@ async function execNumberBlur(e, mode) {
     // let item = {};
     let msg = "";
 
-    if (mode !== "edit") {
-        if (item.data && mode === "regist") {
+    if (item == null) {
+        
+    } else if (mode !== "edit") {
+        if (item && mode === "regist") {
             msg = `「${molNumber}」は、すでに登録されています`;
-        } else if (!item.data && (mode === "delivery" || mode === "shopping")) {
+        } else if (!item && (mode === "delivery" || mode === "shopping")) {
             msg = `「${molNumber}」は、使用登録されていません`;
         } else if (
-            item.data &&
-            item.data.delivery_date !== "9999-12-31" &&
+            item &&
+            item.delivery_date !== "9999-12-31" &&
             mode === "delivery"
         ) {
             msg = `「${molNumber}」は、引渡しされています`;
         } else if (
-            item.data &&
-            item.data.delivery_date === "9999-12-31" &&
+            item &&
+            item.delivery_date === "9999-12-31" &&
             mode === "shopping"
         ) {
             msg = `「${molNumber}」は、引渡しされていません`;
         } else if (
-            item.data &&
-            item.data.shopping_date !== "9999-12-31" &&
+            item &&
+            item.shopping_date !== "9999-12-31" &&
             mode === "shopping"
         ) {
             msg = `「${molNumber}」は、発送されています`;
         }
-    } else {
-        if (item.data && item.data.recycle_id !== Number(config.recycleId.value)) {
-            openMsgDialog("msg-dialog", `「${molNumber}」は、すでに登録されています`, 'red');
-            setFocusElement("msg-dialog", config.number);
-            config.number.value = config.moldingNumber.value;
-            return;
-        }
+    } else if (item && item.recycle_id !== Number(config.recycleId.value)) {
+        openMsgDialog("msg-dialog", `「${molNumber}」は、すでに登録されています`, 'red');
+        setFocusElement("msg-dialog", config.number);
+        config.number.value = config.moldingNumber.value;
+        return;
     }
 
     if (msg) {
@@ -523,8 +525,8 @@ async function execNumberBlur(e, mode) {
         setFocusElement("msg-dialog", config.number);
         clearNumber(config.number);
     } else {
-        config.recycleId.value = item.data ? item.data.recycle_id : 0;
-        config.version.value = item.data ? item.data.version : 0;
+        config.recycleId.value = item ? item.recycle_id : 0;
+        config.version.value = item ? item.version : 0;
         config.recycleNumber.value = number;
         config.moldingNumber.value = molNumber;
         config.number.value = molNumber;
@@ -754,12 +756,12 @@ async function getRecyclesBetween(startId, endId, url) {
     const data = {
         start: document.getElementById(startId).value,
         end: document.getElementById(endId).value,
-        col: document.getElementById('date-category01').value
+        type: document.getElementById('date-category01').value
     };
     // const data = "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end) + "&col=" + encodeURIComponent(col);
     // const contentType = 'application/x-www-form-urlencoded';
     // List<Recycle>を取得
-    return await searchFetch(url, data, token, contentType);
+    return await searchFetch(url, JSON.stringify(data), token);
 }
 
 /******************************************************************************************************* チェック時の処理 */

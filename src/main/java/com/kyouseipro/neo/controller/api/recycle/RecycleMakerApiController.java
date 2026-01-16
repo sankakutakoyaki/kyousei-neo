@@ -9,12 +9,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.controller.abstracts.BaseController;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
+import com.kyouseipro.neo.entity.dto.IdRequest;
+import com.kyouseipro.neo.entity.dto.NumberRequest;
 import com.kyouseipro.neo.entity.recycle.RecycleMakerEntity;
 import com.kyouseipro.neo.service.recycle.RecycleMakerService;
 
@@ -40,11 +41,11 @@ public class RecycleMakerApiController extends BaseController {
     //         return ResponseEntity.ofNullable(null);
     //     }
     // }
-    public ResponseEntity<RecycleMakerEntity> getById(@RequestParam int id) {
+    public ResponseEntity<RecycleMakerEntity> getById(@RequestBody IdRequest req) {
         // return recycleMakerService.getById(id)
         //     .map(ResponseEntity::ok)
         //     .orElseGet(() -> ResponseEntity.notFound().build());
-        return ResponseEntity.ok(recycleMakerService.getById(id).orElse(null));
+        return ResponseEntity.ok(recycleMakerService.getById(req.getId()).orElse(null));
     }
    
     /**
@@ -62,11 +63,11 @@ public class RecycleMakerApiController extends BaseController {
     //         return ResponseEntity.ofNullable(null);
     //     }
     // }
-    public ResponseEntity<RecycleMakerEntity> getByCode(@RequestParam int code) {
+    public ResponseEntity<RecycleMakerEntity> getByCode(@RequestBody NumberRequest req) {
         // return recycleMakerService.getByCode(code)
         //     .map(ResponseEntity::ok)
         //     .orElseGet(() -> ResponseEntity.notFound().build());
-        return ResponseEntity.ok(recycleMakerService.getByCode(code).orElse(null));
+        return ResponseEntity.ok(recycleMakerService.getByCode(req.getNumber()).orElse(null));
     }
 
     /**

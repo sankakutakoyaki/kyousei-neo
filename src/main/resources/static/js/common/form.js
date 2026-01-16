@@ -429,7 +429,7 @@ function validateByConfig(area, config) {
 }
 
 // select + name セットの共通関数
-function setSelectValue(form, formdata, {
+function setSelectValue(form, formData, formdata, {
     valueName,
     idKey,
     nameKey

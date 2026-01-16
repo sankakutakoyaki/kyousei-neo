@@ -9,7 +9,7 @@
  */
 async function existsRecycleByNumber(number) {
     const url = "/api/recycle/exists/number";
-    const data = JSON.stringify({num:number});
+    const data = JSON.stringify({value:number});
     return await searchFetch(url, data, token);
 }
 
@@ -21,7 +21,7 @@ async function existsRecycleByNumber(number) {
 async function getMakerByCode(code) {
     // const data = "code=" + encodeURIComponent(parseInt(code));
     const url = '/api/recycle/maker/get/code';
-    const data = JSON.stringify({code:code});
+    const data = JSON.stringify({number:code});
     // const contentType = 'application/x-www-form-urlencoded';
     return await searchFetch(url, data, token);
 }
@@ -34,7 +34,7 @@ async function getMakerByCode(code) {
 async function getItemByCode(code) {
     // const data = "code=" + encodeURIComponent(parseInt(code));
     const url = '/api/recycle/item/get/code';
-    const data = JSON.stringify({code:code});
+    const data = JSON.stringify({number:code});
     // const contentType = 'application/x-www-form-urlencoded';
     return await searchFetch(url, data, token);
 }

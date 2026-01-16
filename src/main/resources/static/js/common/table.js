@@ -355,7 +355,7 @@ function getAllSelectedIds(tableId) {
             let num = parseInt(data.closest('tr').dataset.id);
             if (num > 0) checked_data.push(num);
         }
-        return JSON.stringify(checked_data);
+        return JSON.stringify({ ids:checked_data });
     } else {
         // 選択された要素がなければメッセージを表示して終了
         openMsgDialog("msg-dialog", "選択されていません", "red");
@@ -521,7 +521,7 @@ async function deleteTablelist(tableId, url) {
     // 選択された要素を取得する
     const data = getAllSelectedIds(tableId);
     if (data) {
-        return await updateFetch(url, data, token, "application/json");
+        return await updateFetch(url, data, token);
     }
     // if (data.length == 0) {
     //     // 選択された要素がなければメッセージを表示して終了

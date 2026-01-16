@@ -6,11 +6,12 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
+import com.kyouseipro.neo.entity.dto.IdRequest;
+import com.kyouseipro.neo.entity.dto.NumberRequest;
 import com.kyouseipro.neo.entity.recycle.RecycleItemEntity;
 import com.kyouseipro.neo.service.recycle.RecycleItemService;
 
@@ -36,12 +37,12 @@ public class RecycleItemApiController {
     //         return ResponseEntity.ofNullable(null);
     //     }
     // }
-    public ResponseEntity<RecycleItemEntity> getById(@RequestParam int id) {
+    public ResponseEntity<RecycleItemEntity> getById(@RequestBody IdRequest req) {
 
         // return recycleItemService.getById(id)
         //     .map(ResponseEntity::ok)
         //     .orElseGet(() -> ResponseEntity.notFound().build());
-        return ResponseEntity.ok(recycleItemService.getById(id).orElse(null));
+        return ResponseEntity.ok(recycleItemService.getById(req.getId()).orElse(null));
     }
 
     /**
@@ -59,11 +60,11 @@ public class RecycleItemApiController {
     //         return ResponseEntity.ofNullable(null);
     //     }
     // }
-    public ResponseEntity<RecycleItemEntity> getByCode(@RequestParam int code) {
+    public ResponseEntity<RecycleItemEntity> getByCode(@RequestBody NumberRequest req) {
         // return recycleItemService.getByCode(code)
         //     .map(ResponseEntity::ok)
         //     .orElseGet(() -> ResponseEntity.notFound().build());
-        return ResponseEntity.ok(recycleItemService.getByCode(code).orElse(null));
+        return ResponseEntity.ok(recycleItemService.getByCode(req.getNumber()).orElse(null));
     }
 
     /**

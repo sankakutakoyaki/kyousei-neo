@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kyouseipro.neo.entity.data.ApiResponse;
 import com.kyouseipro.neo.entity.dto.BetweenRequest;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
+import com.kyouseipro.neo.entity.dto.StringRequest;
 import com.kyouseipro.neo.entity.recycle.RecycleDateEntity;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
 import com.kyouseipro.neo.service.recycle.RecycleService;
@@ -69,12 +70,12 @@ public class RecycleApiController {
     //         return ResponseEntity.ofNullable(null);
     //     }
     // }
-    public ResponseEntity<RecycleEntity> findByNumber(@RequestParam String num) {
+    public ResponseEntity<RecycleEntity> findByNumber(@RequestBody StringRequest str) {
 
         // return recycleService.existsByNumber(num)
         //     .map(ResponseEntity::ok)
         //     .orElseGet(() -> ResponseEntity.notFound().build());
-        return ResponseEntity.ok(recycleService.existsByNumber(num).orElse(null));
+        return ResponseEntity.ok(recycleService.existsByNumber(str.getValue()).orElse(null));
     // public ApiResponse<RecycleEntity> findByNumber(@RequestParam String num) {
     //     return recycleService.existsByNumber(num)
     //         .map(entity -> ApiResponse.ok(null, entity))
@@ -91,7 +92,7 @@ public class RecycleApiController {
     @PostMapping("/api/recycle/get/between")
     @ResponseBody
     // public List<RecycleEntity> getBetween(@RequestParam LocalDate start, @RequestParam LocalDate end, @RequestParam String col) {
-    public List<RecycleEntity> getBetween(@RequestParam BetweenRequest req) {
+    public List<RecycleEntity> getBetween(@RequestBody BetweenRequest req) {
         return recycleService.getBetween(req.getStart(), req.getEnd(), req.getType());
     }
 
@@ -160,7 +161,7 @@ public class RecycleApiController {
     //     }
     // }
     public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
-        Integer num = recycleService.deleteByIds(ids, principal.getAttribute("preferred_userName"));
+        int num = recycleService.deleteByIds(ids, principal.getAttribute("preferred_userName"));
         return ResponseEntity.ok(ApiResponse.ok(num + "件削除しました。", num));
     }
 

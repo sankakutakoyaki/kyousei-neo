@@ -114,7 +114,7 @@ const ERROR_CONFIG = {
             {
                 selector: 'input[name="recycle-number"]',
                 focus: true,
-                check: [
+                checks: [
                     { test: v => v !== "", message: 'お問合せ管理票番号を入力して下さい'}
                 ]
             }
@@ -122,25 +122,25 @@ const ERROR_CONFIG = {
         regist: [
             {
                 selector: 'select[name="company"]',
-                check: [
+                checks: [
                     { test: v => v !== "0", message: '小売業者を選択して下さい'}
                 ]
             },
             {
                 selector: 'input[name="maker-code"]',
-                check: [
+                checks: [
                     { test: v => v !== "", message: '製造業者等名を選択して下さい'}
                 ]
             },
             {
                 selector: 'input[name="item-code"]',
-                check: [
+                checks: [
                     { test: v => v !== "", message: '品目・料金区分を選択して下さい'}
                 ]
             },
             {
                 selector: 'input[name="use-date"]',
-                check: [
+                checks: [
                     { test: v => v !== "", message: '使用日を入力して下さい'}
                 ]
             }
@@ -148,7 +148,7 @@ const ERROR_CONFIG = {
         delivery: [
             {
                 selector: 'input[name="delivery-date"]',
-                check: [
+                checks: [
                     { test: v => v !== "", message: '引渡日を入力して下さい'}
                 ]
             }
@@ -156,7 +156,7 @@ const ERROR_CONFIG = {
         shipping: [
             {
                 selector: 'input[name="shipping-date"]',
-                check: [
+                checks: [
                     { test: v => v !== "", message: '発送日を入力して下さい'}
                 ]
             }
@@ -164,7 +164,7 @@ const ERROR_CONFIG = {
         loss: [
             {
                 selector: 'input[name="loss-date"]',
-                check: [
+                checks: [
                     { test: v => v !== "", message: 'ロス処理日を入力して下さい'}
                 ]
             }

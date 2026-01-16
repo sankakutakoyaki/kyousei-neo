@@ -26,7 +26,11 @@ async function updateFetch(url, data, token, contentType = "application/json") {
 
     if (spinner) spinner.classList.add("loaded");
 
-    return await response.json();
+    // return await response.json();
+    const text = await response.text();
+    if (!text) return null;
+
+    return JSON.parse(text);
 }
 
 /**
@@ -61,7 +65,11 @@ async function searchFetch(url, data, token, contentType = "application/json") {
 
     if (spinner) spinner.classList.add("loaded");
     
-    return await response.json();
+    // return await response.json();
+    const text = await response.text();
+    if (!text) return null;
+
+    return JSON.parse(text);
 }
 
 /**
@@ -72,7 +80,8 @@ function handleHttpError(status) {
     switch (status) {
         case 401:
             openMsgDialog("msg-dialog", "ログインが必要です。", "red");
-            location.href = "/";
+            // location.href = "/";
+            location.reload(); // 再ログイン
             break;
         case 403:
             openMsgDialog("msg-dialog", "権限がありません。", "red");

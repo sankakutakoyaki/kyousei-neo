@@ -21,14 +21,14 @@ import org.springframework.http.ResponseEntity;
 public class GlobalExceptionHandler {
     private final HistoryService historyService;
 
-    @ExceptionHandler(BusinessException.class)
-    @ResponseStatus(HttpStatus.OK)
-    public Map<String, Object> handleBusiness(BusinessException e) {
-        return Map.of(
-            "success", false,
-            "message", e.getMessage()
-        );
-    }
+    // @ExceptionHandler(BusinessException.class)
+    // @ResponseStatus(HttpStatus.OK)
+    // public Map<String, Object> handleBusiness(BusinessException e) {
+    //     return Map.of(
+    //         "success", false,
+    //         "message", e.getMessage()
+    //     );
+    // }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
