@@ -17,6 +17,7 @@ import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.dto.IdRequest;
 import com.kyouseipro.neo.entity.dto.NumberRequest;
 import com.kyouseipro.neo.entity.recycle.RecycleMakerEntity;
+import com.kyouseipro.neo.service.common.ValidateService;
 import com.kyouseipro.neo.service.recycle.RecycleMakerService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RecycleMakerApiController extends BaseController {
     private final RecycleMakerService recycleMakerService;
+    private final ValidateService validateService;
 
     /**
      * IDからEntityを取得する
@@ -98,6 +100,8 @@ public class RecycleMakerApiController extends BaseController {
     //     }
     // }
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody RecycleMakerEntity entity, @AuthenticationPrincipal OidcUser principal) {
+        validateService.validateCodeAbbrRule(entity.getCode(), entity.getAbbr_name());
+
         int id = recycleMakerService.save(entity, principal.getAttribute("preferred_username"));
         return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
     }

@@ -61,8 +61,8 @@ async function execEdit(id, self) {
     if (tab == null) return;
     const config = MODE_CONFIG[tab];
 
-    // 入力フォームダイアログを開く
-    openFormDialog("form-dialog-01");
+    // // 入力フォームダイアログを開く
+    // openFormDialog("form-dialog-01");
 
     // フォーム画面を取得
     const form = document.getElementById('form-dialog-01');              
@@ -83,6 +83,8 @@ async function execEdit(id, self) {
     }
 
     setFormContent(form, entity);
+        // 入力フォームダイアログを開く
+    openFormDialog("form-dialog-01");
 }
 
 // コンテンツ部分作成
@@ -191,13 +193,13 @@ async function execSave() {
         // 保存処理
         const result = await updateFetch("/api/employee/save", JSON.stringify(formdata), token, "application/json");
         if (result.success) {
-            const config = MODE_CONFIG[tab.dataset.panel]
+            const config = MODE_CONFIG[tab.dataset.tab];
 
             // 画面更新
             openMsgDialog("msg-dialog", result.message, "blue");
             await execUpdate();
             // 追加・変更行に移動
-            scrollIntoTableList(config.tableId, result.id);
+            scrollIntoTableList(config.tableId, result.employee_id);
         } else {
             openMsgDialog("msg-dialog", result.message, "red");
         }

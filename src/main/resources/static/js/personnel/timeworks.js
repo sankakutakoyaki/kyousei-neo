@@ -753,9 +753,8 @@ function formDataCheck(area) {
 
 // 有給申請リストダイアログを開く ---------------------------------
 async function displayPaidHolidayList(id, year) {
-    openFormDialog("form-dialog-02");
-
     await createPaidHolidayListByEmployeeId(id, year);
+    openFormDialog("form-dialog-02");
 }
 
 // 選択した従業員IDと年で従業員の勤怠情報概要を取得してリスト作成

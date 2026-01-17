@@ -556,7 +556,7 @@ async function execMakerCodeBlur(e, mode) {
 
     const entity = await getMakerByCode(Number(makerCode.value));
     if (entity != null && entity.recycle_maker_id > 0) {
-        makerName.value = entity.name;
+        makerName.value = entity.abbr_name;
         makerId.value = entity.recycle_maker_id;
     } else {
         makerCode.value = "";
@@ -741,10 +741,10 @@ async function updateFormTableDisplay(mode, list) {
 
 // 画面を更新する
 async function refleshDisplay01() {
-    const list = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
-    if (list != null) {
-        origin = list;
-        await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);
+    const result = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
+    if (result.success) {
+        origin = result;
+        await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);console.log(origin)
     }
 }
 

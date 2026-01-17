@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.kyouseipro.neo.ai.AiApiClient;
+import com.kyouseipro.neo.ai.api.AiApiClient;
 import com.kyouseipro.neo.ai.entity.AiKnowledgeChunk;
 import com.kyouseipro.neo.ai.entity.AiPromptTemplate;
 import com.kyouseipro.neo.ai.reepository.AiAskLogRepository;

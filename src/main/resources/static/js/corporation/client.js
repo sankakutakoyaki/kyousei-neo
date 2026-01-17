@@ -380,7 +380,7 @@ async function execEdit(id, self) {
     //         form = document.getElementById("form-01");
     //         break;
     // }
-    openFormDialog(config.formDialogId);
+    // openFormDialog(config.formDialogId);
     const form = document.getElementById(config.formId);
 
     let entity = {};
@@ -514,6 +514,7 @@ async function execEdit(id, self) {
     }
 
     setFormContent(form, entity, tab);
+    openFormDialog(config.formDialogId);
 }
 
 // コンテンツ部分作成

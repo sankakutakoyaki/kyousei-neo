@@ -269,11 +269,13 @@ async function execEdit(id, self) {
             break;
     }
 
-    openFormDialog(formDialogId); 
+    
     form = document.getElementById(formDialogId);
     resetFormInput(form, tab);
     setFormContent(form, entity, tab);
     setEnterFocus(formId);
+
+    openFormDialog(formDialogId); 
 
     // スピナー消去
     processingEnd();

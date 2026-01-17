@@ -91,8 +91,8 @@ async function execEdit(id, self) {
     // スピナー表示
     startProcessing();
 
-    // 入力フォームダイアログを開く
-    openFormDialog("form-dialog-01"); 
+    // // 入力フォームダイアログを開く
+    // openFormDialog("form-dialog-01"); 
 
     let entity = {};
     if (id > 0) {
@@ -152,6 +152,9 @@ async function execEdit(id, self) {
     const primeConstractorStaffArea = form.querySelector('select[name="prime-constractor-staff"]');
     createPrimeConstractorComboBox('staff');
     setComboboxSelected(primeConstractorStaffArea, entity.prime_constractor_staff_id);
+
+    // 入力フォームダイアログを開く
+    openFormDialog("form-dialog-01"); 
 
     // スピナー消去
     processingEnd();

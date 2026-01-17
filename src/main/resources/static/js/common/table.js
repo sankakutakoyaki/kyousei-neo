@@ -576,10 +576,12 @@ function tdEnableEdit(newRow) {
         if (!td) return;
         if (td.querySelector('input, select')) return;
 
-        const currentValue = td.textContent.trim();
+        const originalText = td.textContent.trim();
+        const originalValue = td.dataset.value; // select 用
         const editType = td.dataset.editType || 'text';
 
         let editor;
+        let canceled = false; // ★ Esc 判定用
 
         if (editType === 'select') {
             editor = document.createElement('select');
@@ -592,7 +594,7 @@ function tdEnableEdit(newRow) {
                 const option = document.createElement('option');
                 option.value = opt.number;
                 option.textContent = opt.text;
-                if (String(opt.number) === td.dataset.value) {
+                if (String(opt.number) === originalValue) {
                     option.selected = true;
                 }
                 editor.appendChild(option);
@@ -601,7 +603,7 @@ function tdEnableEdit(newRow) {
             editor = document.createElement('input');
             editor.type = 'text';
             editor.classList.add('normal-input');
-            editor.value = currentValue === '-----' ? '' : currentValue;
+            editor.value = originalText === '-----' ? '' : originalText;
         }
 
         editor.style.width = '100%';
@@ -611,23 +613,47 @@ function tdEnableEdit(newRow) {
 
         if (editor instanceof HTMLInputElement) editor.select();
 
-        // ==== イベント ====
+        // ===== イベント =====
+
+        editor.addEventListener('keydown', e => {
+
+            // 日本語変換中は無視
+            if (e.isComposing) return;
+
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                canceled = true;
+                restoreCell(td, originalText, originalValue);
+                return;
+            }
+
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                editor.blur();
+            }
+        });
 
         editor.addEventListener('change', () => {
-            handleTdChange(editor);   // ← 保存
-            saveEditor(td, editor, currentValue); // ← 表示
+            if (canceled) return;
+            handleTdChange(editor);
+            saveEditor(td, editor, originalText);
         });
 
         editor.addEventListener('blur', () => {
-            saveEditor(td, editor, currentValue);
-        });
-
-        editor.addEventListener('keydown', e => {
-            if (e.key === 'Enter') editor.blur();
+            if (canceled) return;
+            saveEditor(td, editor, originalText);
         });
     });
 }
 
+function restoreCell(td, text, value) {
+    td.textContent = text || '-----';
+    if (value !== undefined) {
+        td.dataset.value = value;
+    }
+}
+
+// セル復元用ヘルパー
 function saveEditor(td, editor, currentValue) {
     if (editor instanceof HTMLSelectElement) {
         const opt = editor.selectedOptions[0];

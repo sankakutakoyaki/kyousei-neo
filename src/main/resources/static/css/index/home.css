@@ -7,3 +7,8 @@
 .time-btn span {
     text-align: center;
 }
+
+.input-prompt {
+    margin: 0 20%;
+    margin-top: 3rem;
+}

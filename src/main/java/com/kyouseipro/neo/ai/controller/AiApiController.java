@@ -18,6 +18,6 @@ public class AiApiController {
     public String ask(@RequestParam String question, Model model) {
         String answer = aiQuestionService.ask(question);
         model.addAttribute("answer", answer);
-        return "";
+        return "/";
     }
 }

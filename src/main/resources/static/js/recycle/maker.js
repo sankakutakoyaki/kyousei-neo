@@ -28,7 +28,7 @@ function createTable01Row(newRow, item) {
     // 製造業者等名
     newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="name" data-edit-type="text">' + (item.name ?? "-----") + '</td>');
     // 略称
-    newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="abbr" data-edit-type="text">' + (item.abbr_name ?? "-----") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="abbr_name" data-edit-type="text">' + (item.abbr_name ?? "-----") + '</td>');
 }
 
 /******************************************************************************************************* 入力画面 */
@@ -119,19 +119,20 @@ async function execCreate01(self) {
 // }
 
 // TDが変更された時の処理
-function handleTdChange(editor) {
+async function handleTdChange(editor) {
     const config = MODE_CONFIG["01"];
     const td = editor.closest('td.editable');
     if (!td) return;
 
-    const col = td.dataset.col;
+    const type = td.dataset.col;
     const row = td.closest('tr');
     const id = row.dataset.id;
 
-    const ent = origin.find(v => v.recycle_maker_id == id);
-    if (!ent) return;
+    const entity = origin.find(v => v.recycle_maker_id == id);
+    if (!entity) return;
 
-    switch (col) {
+    const ent = structuredClone(entity);
+    switch (type) {
         case "group":
             ent.group = Number(editor.value);
             break;
@@ -141,24 +142,44 @@ function handleTdChange(editor) {
         case "name":
             ent.name = editor.value;
             break;
+        case "abbr_name":
+            ent.abbr_name = editor.value;
+            break;
     }
 
-    execSave(config.tableId, config.footerId, config.searchId, ent, createTable01Content);
+    const result = await execSave(config.tableId, config.footerId, config.searchId, ent, createTable01Content);
+    if (!result) reverseCode(config.tableId, ent.recycle_maker_id, type);
 }
 
 // 保存処理
 async function execSave(tableId, footerId, searchId, ent, createContent) {
     // 保存処理
     const result = await updateFetch("/api/recycle/maker/save", JSON.stringify(ent), token, "application/json");
+
     if (result.success) {
         // 画面更新
-        await execUpdate();
+        origin = await execUpdate();
         await updateTableDisplay(tableId, footerId, searchId, origin, createContent);
         // 追加・変更行に移動
-        scrollIntoTableList(tableId, result.id);
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
+        scrollIntoTableList(tableId, result.recycle_maker_id);
+    // } else {
+    //     reverseCode(tableId, ent.recycle_maker_id);
+    //     // openMsgDialog("msg-dialog", result.message, "red");
     }
+
+    return result.success;
+}
+
+// 変更した部分を元に戻す
+function reverseCode(tableId, id, type) {
+    const entity = origin.find(value => value.recycle_maker_id === id);
+    const tbl = document.getElementById(tableId);
+    const row = tbl.querySelector('tr[data-id="' + entity.recycle_maker_id + '"]');
+    if (!row) return;
+
+    const box = row.querySelector('td[data-col="' + type + '"]');
+    if (!box) return;
+    box.textContent = entity[type];
 }
 
 /******************************************************************************************************* 削除 */
@@ -188,7 +209,7 @@ async function execUpdate() {
 
     if (!response.ok) {
         openMsgDialog("msg-dialog", "一覧の取得に失敗しました", "red");
-        return null;
+        return origin;
     }
 
     return await response.json();

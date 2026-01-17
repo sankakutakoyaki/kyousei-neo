@@ -82,8 +82,8 @@ async function execEdit(id, name, self) {
     // スピナー表示
     startProcessing();
 
-    // 入力フォームダイアログを開く
-    openFormDialog("form-dialog-01");
+    // // 入力フォームダイアログを開く
+    // openFormDialog("form-dialog-01");
 
     // フォーム画面を取得
     const form = document.getElementById('form-dialog-01');   
@@ -131,7 +131,9 @@ async function execEdit(id, name, self) {
     const payTypeArea = form.querySelector('select[name="pay-type"]');
     createComboBox(payTypeArea, payTypeComboList);
     setComboboxSelected(payTypeArea, entity.pay_type);
-
+    
+    // 入力フォームダイアログを開く
+    openFormDialog("form-dialog-01");
     // スピナー消去
     processingEnd();
 }

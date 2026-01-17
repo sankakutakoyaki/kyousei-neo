@@ -174,7 +174,7 @@ async function execEdit(id, self) {
     const tab = panel.dataset.panel;
     const config = MODE_CONFIG[tab];
 
-    openFormDialog(config.formDialogId);
+    // openFormDialog(config.formDialogId);
     const form = document.getElementById(config.formId);
 
     let entity = {};
@@ -214,6 +214,7 @@ async function execEdit(id, self) {
     }
 
     setFormContent(form, entity, tab);
+    openFormDialog(config.formDialogId);
 }
 
 // コンテンツ部分作成

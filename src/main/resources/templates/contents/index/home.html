@@ -8,9 +8,17 @@
         <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
         <!-- ボディ -->
         <div class="normal-body">
-            <form th:action="@{/ai/ask}" method="post">
-                <input class="normal-input" type="text" name="question" placeholder="質問を入力してください" />
-                <button type="submit">質問</button>
+            <!-- <form th:action="@{/ai/ask}" method="post">
+                <div class="flex-area">
+                    <input class="normal-input" type="text" name="question" placeholder="質問を入力してください" />
+                    <button class="normal-btn" type="submit">質問</button>
+                </div>
+            </form> -->
+            <form class="input-prompt">
+                <div class="flex-area">
+                    <input class="normal-input" type="text" name="question" placeholder="質問を入力してください" />
+                    <button class="normal-btn" type="button">質問</button>
+                </div>
             </form>
 
             <div th:if="${answer}">
@@ -65,6 +73,7 @@
             <div th:replace="~{fragments/common/dialog :: messageFragment}"></div>
         </div>
         <!-- <script th:src="@{/js/personnel/timeworks.js}"></script> -->
+        <script th:src="@{/js/data/subscription.js}"></script>
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
             const user_name = /*[[${user_name}]]*/;
