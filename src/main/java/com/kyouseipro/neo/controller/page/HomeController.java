@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.controller.abstracts.BaseController;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
-import com.kyouseipro.neo.service.document.HistoryService;
+import com.kyouseipro.neo.service.dto.HistoryService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

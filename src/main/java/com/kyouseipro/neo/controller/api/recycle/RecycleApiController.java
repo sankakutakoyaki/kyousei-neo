@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kyouseipro.neo.entity.data.ApiResponse;
+import com.kyouseipro.neo.entity.dto.ApiResponse;
 import com.kyouseipro.neo.entity.dto.BetweenRequest;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.dto.StringRequest;

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
-import com.kyouseipro.neo.service.document.HistoryService;
+import com.kyouseipro.neo.service.dto.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
 import jakarta.servlet.http.HttpServletRequest;

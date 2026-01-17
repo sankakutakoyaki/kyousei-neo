@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.kyouseipro.neo.entity.data.ApiResponse;
+import com.kyouseipro.neo.entity.dto.ApiResponse;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {

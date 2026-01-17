@@ -13,11 +13,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.controller.abstracts.BaseController;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
-import com.kyouseipro.neo.service.document.HistoryService;
+import com.kyouseipro.neo.service.dto.HistoryService;
 import com.kyouseipro.neo.service.qualification.QualificationsService;
 
 import jakarta.servlet.http.HttpServletResponse;

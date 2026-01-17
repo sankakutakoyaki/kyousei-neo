@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.interfaceis.HistoryTarget;
-import com.kyouseipro.neo.service.document.HistoryService;
+import com.kyouseipro.neo.service.dto.HistoryService;
 
 import lombok.RequiredArgsConstructor;
 

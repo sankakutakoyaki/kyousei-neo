@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.kyouseipro.neo.entity.data.ApiResponse;
-import com.kyouseipro.neo.service.document.HistoryService;
+import com.kyouseipro.neo.entity.dto.ApiResponse;
+import com.kyouseipro.neo.service.dto.HistoryService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

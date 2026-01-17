@@ -16,7 +16,7 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.controller.abstracts.BaseController;
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.corporation.StaffListEntity;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.SimpleData;
 import com.kyouseipro.neo.entity.order.DeliveryStaffEntity;
 import com.kyouseipro.neo.entity.order.OrderEntity;
 import com.kyouseipro.neo.entity.order.OrderItemEntity;
@@ -24,7 +24,7 @@ import com.kyouseipro.neo.entity.order.OrderListEntity;
 import com.kyouseipro.neo.entity.order.WorkContentEntity;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
-import com.kyouseipro.neo.service.document.HistoryService;
+import com.kyouseipro.neo.service.dto.HistoryService;
 import com.kyouseipro.neo.service.order.OrderItemService;
 import com.kyouseipro.neo.service.order.OrderListService;
 

@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.SimpleData;
 import com.kyouseipro.neo.mapper.corporation.CompanyListEntityMapper;
-import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
+import com.kyouseipro.neo.mapper.dto.SimpleDataMapper;
 import com.kyouseipro.neo.query.parameter.corporation.CompanyListParameterBinder;
 import com.kyouseipro.neo.query.sql.corporation.CompanyListSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;

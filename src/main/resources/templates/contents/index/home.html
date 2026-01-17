@@ -8,7 +8,37 @@
         <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
         <!-- ボディ -->
         <div class="normal-body">
-            <div sec:authorize="hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_user', 'APPROLE_staff')">
+            <form th:action="@{/ai/ask}" method="post">
+                <input class="normal-input" type="text" name="question" placeholder="質問を入力してください" />
+                <button type="submit">質問</button>
+            </form>
+
+            <div th:if="${answer}">
+                <pre th:text="${answer}"></pre>
+            </div>
+
+
+            <!-- <h2>AI知識一覧</h2>
+
+            <a th:href="@{/admin/ai/knowledge/new}">新規作成</a>
+
+            <table>
+                <tr>
+                    <th>ID</th><th>カテゴリ</th><th>タイトル</th><th></th>
+                </tr>
+                <tr th:each="k : ${list}">
+                    <td th:text="${k.id}"></td>
+                    <td th:text="${k.category}"></td>
+                    <td th:text="${k.title}"></td>
+                    <td>
+                        <a th:href="@{/admin/ai/knowledge/{id}/chunk(id=${k.id})}">
+                            AI用本文編集
+                        </a>
+                    </td>
+                </tr>
+            </table> -->
+
+            <!-- <div sec:authorize="hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_user', 'APPROLE_staff')">
                 <h2>勤怠</h2>
                 <div class="flex-area time-btn">  
                     <div class="form-parts">
@@ -20,12 +50,12 @@
                         <span id="end-time">00:00:00</span>
                     </div>
                 </div>
-            </div> 
+            </div>  -->
             
-            <div sec:authorize="hasAuthority('APPROLE_office')">
+            <!-- <div sec:authorize="hasAuthority('APPROLE_office')">
                 <h2>営業所メニュー</h2>
                 <a th:href="@{/timeworks}">勤怠</a>
-            </div>
+            </div> -->
 
         </div>
         <div id="form-dialog-area">
@@ -34,7 +64,7 @@
         <div id="msg-dialog-area">
             <div th:replace="~{fragments/common/dialog :: messageFragment}"></div>
         </div>
-        <script th:src="@{/js/personnel/timeworks.js}"></script>
+        <!-- <script th:src="@{/js/personnel/timeworks.js}"></script> -->
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
             const user_name = /*[[${user_name}]]*/;

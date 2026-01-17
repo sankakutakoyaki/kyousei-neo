@@ -3,7 +3,7 @@ package com.kyouseipro.neo.query.parameter.document;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.kyouseipro.neo.entity.document.HistoryEntity;
+import com.kyouseipro.neo.entity.dto.HistoryEntity;
 
 public class HistoryParameterBinder {
     public static int bindInsert(PreparedStatement pstmt, HistoryEntity history, String editor) throws SQLException {

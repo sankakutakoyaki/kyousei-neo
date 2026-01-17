@@ -3,7 +3,7 @@ package com.kyouseipro.neo.query.parameter.common;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.kyouseipro.neo.entity.data.SubscriptionRequest;
+import com.kyouseipro.neo.entity.dto.SubscriptionRequest;
 
 public class PushParameterBinder {
 

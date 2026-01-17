@@ -7,10 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
-import com.kyouseipro.neo.entity.data.SimpleData;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
+import com.kyouseipro.neo.entity.dto.SimpleData;
 import com.kyouseipro.neo.entity.work.WorkItemEntity;
-import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
+import com.kyouseipro.neo.mapper.dto.SimpleDataMapper;
 import com.kyouseipro.neo.mapper.work.WorkItemEntityMapper;
 import com.kyouseipro.neo.query.parameter.work.WorkItemParameterBinder;
 import com.kyouseipro.neo.query.sql.work.WorkItemSqlBuilder;

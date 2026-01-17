@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.controller.abstracts.BaseController;
-import com.kyouseipro.neo.entity.data.ApiResponse;
+import com.kyouseipro.neo.entity.dto.ApiResponse;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.dto.IdRequest;
 import com.kyouseipro.neo.entity.dto.NumberRequest;

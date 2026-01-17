@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums.HistoryTables;
-import com.kyouseipro.neo.controller.document.CsvExporter;
+import com.kyouseipro.neo.controller.dto.CsvExporter;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.interfaceis.HistoryTarget;

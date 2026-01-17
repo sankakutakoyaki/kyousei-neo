@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
-import com.kyouseipro.neo.entity.data.SimpleData;
+import com.kyouseipro.neo.entity.dto.SimpleData;
 import com.kyouseipro.neo.mapper.corporation.OfficeListEntityMapper;
-import com.kyouseipro.neo.mapper.data.SimpleDataMapper;
+import com.kyouseipro.neo.mapper.dto.SimpleDataMapper;
 import com.kyouseipro.neo.query.parameter.corporation.OfficeListParameterBinder;
 import com.kyouseipro.neo.query.sql.corporation.OfficeListSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
