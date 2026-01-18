@@ -8,11 +8,11 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.dto.ApiResponse;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
+import com.kyouseipro.neo.entity.dto.IdRequest;
 import com.kyouseipro.neo.entity.work.WorkPriceEntity;
 import com.kyouseipro.neo.service.work.WorkPriceService;
 
@@ -33,8 +33,8 @@ public class WorkPriceApiController {
     // public Optional<WorkPriceEntity> getById(@RequestParam int id) {
     //     return workPriceService.getById(id);
     // }
-    public ResponseEntity<WorkPriceEntity> getById(@RequestParam int id) {
-        return ResponseEntity.ok(workPriceService.getById(id).orElse(null));
+    public ResponseEntity<WorkPriceEntity> getById(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(workPriceService.getById(req.getId()).orElse(null));
     }
 
     /**
@@ -44,8 +44,8 @@ public class WorkPriceApiController {
      */
     @PostMapping("/api/work/price/get/list/companyid")
 	@ResponseBody
-    public List<WorkPriceEntity> getEntityByCompanyId(@RequestParam int id) {
-        return workPriceService.getListByCompanyId(id);
+    public List<WorkPriceEntity> getEntityByCompanyId(@RequestBody IdRequest req) {
+        return workPriceService.getListByCompanyId(req.getId());
     }
 
     /**

@@ -137,17 +137,18 @@ function createStoreCombo(list) {
 
 // 一覧表示用のリスト取得
 async function getKsSalesBetween(startId, endId, url) {
-    // スピナー表示
-    startProcessing();
+    // // スピナー表示
+    // startProcessing();
     const start = document.getElementById(startId).value;
     const end = document.getElementById(endId).value;
-    const data = "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end);
-    const contentType = 'application/x-www-form-urlencoded';
+    // const data = "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end);
+    // const contentType = 'application/x-www-form-urlencoded';
     // List<OrderItem>を取得
-    const resultResponse = await postFetch(url, data, token, contentType);
-    // スピナー消去
-    processingEnd();
-    return await resultResponse.json();
+    // const resultResponse = await searchFetch(url, JSON.stringify({start:start, end:end}), token);
+    // // // スピナー消去
+    // // processingEnd();
+    // return await resultResponse.json();
+    return await searchFetch(url, JSON.stringify({start:start, end:end}), token);
 }
 
 // 

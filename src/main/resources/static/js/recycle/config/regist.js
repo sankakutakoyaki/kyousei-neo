@@ -190,3 +190,42 @@ const DATE_FIELDS = [
 ];
 
 const DEFAULT_DATE = "9999-12-31";
+
+const RECYCLE_FORM_CONFIG = [
+    { name: 'recycle-id', key: 'recycle_id' },
+    { name: 'version', key: 'version' },
+
+    { name: 'number', key: 'molding_number' },
+    { name: 'recycle-number', key: 'recycle_number' },
+    { name: 'molding-number', key: 'molding_number' },
+
+    { name: 'maker-code', key: 'maker_code' },
+    { name: 'maker-name', key: 'maker_name' },
+    { name: 'maker-id', key: 'maker_id' },
+
+    { name: 'item-code', key: 'item_code' },
+    { name: 'item-name', key: 'item_name' },
+    { name: 'item-id', key: 'item_id' },
+
+    { name: 'recycling-fee', key: 'recycling_fee' },
+
+    { name: 'use-date', key: 'use_date', emptyIf: '9999-12-31' },
+    { name: 'delivery-date', key: 'delivery_date', emptyIf: '9999-12-31' },
+    { name: 'shipping-date', key: 'shipping_date', emptyIf: '9999-12-31' },
+    { name: 'loss-date', key: 'loss_date', emptyIf: '9999-12-31' }
+];
+
+const RECYCLE_COMBO_CONFIG = [
+    {
+        type: 'company',
+        handler: (form, entity) => {
+        setCompanyComboBox(form, entity, companyComboList, officeComboList);
+        }
+    },
+    {
+        selector: 'select[name="disposal-site"]',
+        list: disposalSiteComboList,
+        key: 'disposal_site_id',
+        withTop: true
+    }
+];

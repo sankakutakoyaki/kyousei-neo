@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.controller.dto.CsvExporter;
-import com.kyouseipro.neo.entity.dto.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.order.OrderItemEntity;
 import com.kyouseipro.neo.interfaceis.HistoryTarget;
 import com.kyouseipro.neo.repository.order.OrderItemRepository;
@@ -60,7 +60,7 @@ public class OrderItemService {
         table = HistoryTables.ORDERITEMS,
         action = "削除"
     )
-    public int deleteByIds(List<SimpleData> list, String userName) {
+    public int deleteByIds(IdListRequest list, String userName) {
         return orderItemRepository.deleteByIds(list, userName);
     }
 
@@ -69,7 +69,7 @@ public class OrderItemService {
      * @param ids
      * @return
      */
-    public String downloadCsvByIds(List<SimpleData> list, String userName) {
+    public String downloadCsvByIds(IdListRequest list, String userName) {
         List<OrderItemEntity> orderItems = orderItemRepository.downloadCsvByIds(list, userName);
         return CsvExporter.export(orderItems, OrderItemEntity.class);
     }

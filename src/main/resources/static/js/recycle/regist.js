@@ -146,56 +146,59 @@ async function execEdit(id, mode, self) {
 
 // コンテンツ部分作成
 function setFormContent(form, entity) {
-    form.querySelector('[name="recycle-id"]').value = entity.recycle_id;
-    form.querySelector('[name="version"]').value = entity.version;
-    form.querySelector('[name="number"]').value = entity.molding_number;
-    form.querySelector('[name="recycle-number"]').value = entity.recycle_number;
-    form.querySelector('[name="molding-number"]').value = entity.molding_number;
-    form.querySelector('[name="maker-code"]').value = entity.maker_code;
-    form.querySelector('[name="maker-name"]').value = entity.maker_name;
-    form.querySelector('[name="maker-id"]').value = entity.maker_id;
-    form.querySelector('[name="item-code"]').value = entity.item_code;
-    form.querySelector('[name="item-name"]').value = entity.item_name;
-    form.querySelector('[name="item-id"]').value = entity.item_id;
-    form.querySelector('[name="recycling-fee"]').value = entity.recycling_fee;
+    // form.querySelector('[name="recycle-id"]').value = entity.recycle_id;
+    // form.querySelector('[name="version"]').value = entity.version;
+    // form.querySelector('[name="number"]').value = entity.molding_number;
+    // form.querySelector('[name="recycle-number"]').value = entity.recycle_number;
+    // form.querySelector('[name="molding-number"]').value = entity.molding_number;
+    // form.querySelector('[name="maker-code"]').value = entity.maker_code;
+    // form.querySelector('[name="maker-name"]').value = entity.maker_name;
+    // form.querySelector('[name="maker-id"]').value = entity.maker_id;
+    // form.querySelector('[name="item-code"]').value = entity.item_code;
+    // form.querySelector('[name="item-name"]').value = entity.item_name;
+    // form.querySelector('[name="item-id"]').value = entity.item_id;
+    // form.querySelector('[name="recycling-fee"]').value = entity.recycling_fee;
 
-    form.querySelector('[name="use-date"]').value = entity.use_date === "9999-12-31" ? "": entity.use_date;
-    form.querySelector('[name="delivery-date"]').value = entity.delivery_date === "9999-12-31" ? "": entity.delivery_date;
-    form.querySelector('[name="shipping-date"]').value = entity.shipping_date === "9999-12-31" ? "": entity.shipping_date;
-    form.querySelector('[name="loss-date"]').value = entity.loss_date === "9999-12-31" ? "": entity.loss_date;
-    // if (entity.use_date === "9999-12-31") {
-    //     form.querySelector('[name="use-date"]').value = "";
-    // } else {
-    //     form.querySelector('[name="use-date"]').value = entity.use_date;
+    // form.querySelector('[name="use-date"]').value = entity.use_date === "9999-12-31" ? "": entity.use_date;
+    // form.querySelector('[name="delivery-date"]').value = entity.delivery_date === "9999-12-31" ? "": entity.delivery_date;
+    // form.querySelector('[name="shipping-date"]').value = entity.shipping_date === "9999-12-31" ? "": entity.shipping_date;
+    // form.querySelector('[name="loss-date"]').value = entity.loss_date === "9999-12-31" ? "": entity.loss_date;
+    // // if (entity.use_date === "9999-12-31") {
+    // //     form.querySelector('[name="use-date"]').value = "";
+    // // } else {
+    // //     form.querySelector('[name="use-date"]').value = entity.use_date;
+    // // }
+
+    // // if (entity.delivery_date === "9999-12-31") {
+    // //     form.querySelector('[name="delivery-date"]').value = "";
+    // // } else {
+    // //     form.querySelector('[name="delivery-date"]').value = entity.delivery_date;
+    // // }
+
+    // // if (entity.shipping_date === "9999-12-31") {
+    // //     form.querySelector('[name="shipping-date"]').value = "";
+    // // } else {
+    // //     form.querySelector('[name="shipping-date"]').value = entity.shipping_date;
+    // // }
+
+    // // if (entity.loss_date === "9999-12-31") {
+    // //     form.querySelector('[name="loss-date"]').value = "";
+    // // } else {
+    // //     form.querySelector('[name="loss-date"]').value = entity.loss_date;
+    // // }
+
+    // // 製造業者等名コンボボックス
+    // setCompanyComboBox(form, entity, companyComboList, officeComboList);
+
+    // // 処分場コンボボックス
+    // const disposalSiteArea = form.querySelector('select[name="disposal-site"]');
+    // if (disposalSiteArea != null) {
+    //     createComboBoxWithTop(disposalSiteArea, disposalSiteComboList, "");
+    //     setComboboxSelected(disposalSiteArea, entity.disposal_site_id); 
     // }
-
-    // if (entity.delivery_date === "9999-12-31") {
-    //     form.querySelector('[name="delivery-date"]').value = "";
-    // } else {
-    //     form.querySelector('[name="delivery-date"]').value = entity.delivery_date;
-    // }
-
-    // if (entity.shipping_date === "9999-12-31") {
-    //     form.querySelector('[name="shipping-date"]').value = "";
-    // } else {
-    //     form.querySelector('[name="shipping-date"]').value = entity.shipping_date;
-    // }
-
-    // if (entity.loss_date === "9999-12-31") {
-    //     form.querySelector('[name="loss-date"]').value = "";
-    // } else {
-    //     form.querySelector('[name="loss-date"]').value = entity.loss_date;
-    // }
-
-    // 製造業者等名コンボボックス
-    setCompanyComboBox(form, entity, companyComboList, officeComboList);
-
-    // 処分場コンボボックス
-    const disposalSiteArea = form.querySelector('select[name="disposal-site"]');
-    if (disposalSiteArea != null) {
-        createComboBoxWithTop(disposalSiteArea, disposalSiteComboList, "");
-        setComboboxSelected(disposalSiteArea, entity.disposal_site_id); 
-    }
+    
+    applyFormConfig(form, entity, RECYCLE_FORM_CONFIG);
+    applyComboConfig(form, entity, RECYCLE_COMBO_CONFIG);
 }
 // 保存用のformdataを作成する
 function createFormdata(form, mode) {

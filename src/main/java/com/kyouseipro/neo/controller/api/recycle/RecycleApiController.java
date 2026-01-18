@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -21,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kyouseipro.neo.entity.dto.ApiResponse;
 import com.kyouseipro.neo.entity.dto.BetweenRequest;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
+import com.kyouseipro.neo.entity.dto.IdRequest;
 import com.kyouseipro.neo.entity.dto.StringRequest;
 import com.kyouseipro.neo.entity.recycle.RecycleDateEntity;
 import com.kyouseipro.neo.entity.recycle.RecycleEntity;
@@ -47,12 +47,12 @@ public class RecycleApiController {
     //         return ResponseEntity.ofNullable(null);
     //     }
     // }
-    public ResponseEntity<RecycleEntity> getById(@RequestParam int id) {
+    public ResponseEntity<RecycleEntity> getById(@RequestBody IdRequest req) {
 
         // return recycleService.getById(id)
         //     .map(ResponseEntity::ok)
         //     .orElseGet(() -> ResponseEntity.notFound().build());
-        return ResponseEntity.ok(recycleService.getById(id).orElse(null));
+        return ResponseEntity.ok(recycleService.getById(req.getId()).orElse(null));
     }
 
     /**

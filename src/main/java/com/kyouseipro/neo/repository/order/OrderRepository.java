@@ -6,9 +6,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.entity.dto.SimpleData;
+import com.kyouseipro.neo.entity.dto.IdListRequest;
 import com.kyouseipro.neo.entity.order.DeliveryStaffEntity;
 import com.kyouseipro.neo.entity.order.OrderEntity;
 import com.kyouseipro.neo.entity.order.OrderItemEntity;
@@ -212,21 +211,21 @@ public class OrderRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int deleteByIds(List<SimpleData> list, String editor) {
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = OrderSqlBuilder.buildDeleteByIds(ids.size());
+    public int deleteByIds(IdListRequest list, String editor) {
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = OrderSqlBuilder.buildDeleteByIds(list.getIds().size());
 
         // return sqlRepository.executeUpdate(
         //     sql,
         //     ps -> OrderParameterBinder.bindDeleteByIds(ps, orderIds, editor)
         // );
-        if (list == null || list.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
         int count = sqlRepository.executeUpdate(
             sql,
-            ps -> OrderParameterBinder.bindDeleteByIds(ps, ids, editor)
+            ps -> OrderParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
         );
         if (count == 0) {
             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
@@ -241,7 +240,7 @@ public class OrderRepository {
      * @param editor
      * @return Idsで選択したEntityリストを返す。
      */
-    public List<OrderEntity> downloadCsvByIds(List<SimpleData> list, String editor) {
+    public List<OrderEntity> downloadCsvByIds(IdListRequest list, String editor) {
         // List<Integer> orderIds = Utilities.createSequenceByIds(ids);
         // String sql = OrderSqlBuilder.buildDownloadCsvByIds(orderIds.size());
 
@@ -250,16 +249,16 @@ public class OrderRepository {
         //     ps -> OrderParameterBinder.bindDownloadCsvByIds(ps, ids),
         //     OrderEntityMapper::map // ← ここで ResultSet を map
         // );
-        if (list == null || list.isEmpty()) {
+        if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = OrderSqlBuilder.buildDownloadCsvByIds(ids.size());
+        // List<Integer> ids = Utilities.createSequenceByIds(list);
+        String sql = OrderSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> OrderParameterBinder.bindDownloadCsvByIds(ps, ids),
+            (ps, v) -> OrderParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
             OrderEntityMapper::map
         );
     }

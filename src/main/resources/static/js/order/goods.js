@@ -213,14 +213,15 @@ async function execEdit(id, self) {
     let entity = {};
     if (id > 0) {
         // 選択されたIDのエンティティを取得
-        const data = "id=" + encodeURIComponent(parseInt(id));
-        const resultResponse = await postFetch('/api/order/item/get/id', data, token, 'application/x-www-form-urlencoded');
-        const result = await resultResponse.json();
-        if (result.order_item_id == 0) {
-            openMsgDialog("msg-dialog", "データがありません", "red");
-            processingEnd();
-            return;
-        }
+        // const data = "id=" + encodeURIComponent(parseInt(id));
+        const result = await searchFetch('/api/order/item/get/id', JSON.stringify({id:parseInt(id)}), token);
+        if (!result?.ok) return;
+        // const result = await resultResponse.json();
+        // if (result.order_item_id == 0) {
+        //     openMsgDialog("msg-dialog", "データがありません", "red");
+        //     processingEnd();
+        //     return;
+        // }
         entity = structuredClone(result);
     } else {
         entity = structuredClone(formEntity);
@@ -799,11 +800,12 @@ async function execDateSearch(self) {
 async function getOrderItemsBetween(startId, endId, url) {
     const start = document.getElementById(startId).value;
     const end = document.getElementById(endId).value;
-    const data = "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end);
-    const contentType = 'application/x-www-form-urlencoded';
-    // List<OrderItem>を取得
-    const resultResponse = await postFetch(url, data, token, contentType);
-    return await resultResponse.json();
+    // const data = "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end);
+    // const contentType = 'application/x-www-form-urlencoded';
+    // // List<OrderItem>を取得
+    // const resultResponse = await postFetch(url, data, token, contentType);
+    // return await resultResponse.json();
+    return await postFetch(url, JSON.stringify({start:start, end:end}), token);
 }
 
 async function execFilterDisplay(self) {

@@ -6,12 +6,12 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.dto.ApiResponse;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
+import com.kyouseipro.neo.entity.dto.IdRequest;
 import com.kyouseipro.neo.service.corporation.CompanyService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,9 +28,9 @@ public class CompanyApiController {
      */
     @PostMapping("/api/company/get/id")
 	@ResponseBody
-    public ResponseEntity<CompanyEntity> getById(@RequestParam int id) {
+    public ResponseEntity<CompanyEntity> getById(@RequestBody IdRequest req) {
         // return companyService.getById(id);
-        return ResponseEntity.ok(companyService.getById(id).orElse(null));
+        return ResponseEntity.ok(companyService.getById(req.getId()).orElse(null));
     }
 
 

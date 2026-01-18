@@ -7,11 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.dto.ApiResponse;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
+import com.kyouseipro.neo.entity.dto.IdRequest;
+import com.kyouseipro.neo.entity.dto.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.personnel.EmployeeService;
 
@@ -32,8 +33,9 @@ public class EmployeeApiController {
     // public Optional<EmployeeEntity> getById(@RequestParam int id) {
     //     return employeeService.getById(id);
     // }
-    public ResponseEntity<EmployeeEntity> getById(@RequestParam int id) {
-        return ResponseEntity.ok(employeeService.getById(id).orElse(null));
+    // public ResponseEntity<EmployeeEntity> getById(@RequestParam int id) {
+    public ResponseEntity<EmployeeEntity> getById(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(employeeService.getById(req.getId()).orElse(null));
     }
 
     /**
@@ -55,16 +57,17 @@ public class EmployeeApiController {
      */
     @PostMapping("/api/employee/update/{type}")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> save(@RequestParam int id, @RequestParam String data, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
+    // public ResponseEntity<ApiResponse<Integer>> save(@RequestParam int id, @RequestParam String data, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody SimpleData data, @PathVariable String type, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
         int resultId = 0;
 
         switch (type) {
             case "code":
-                resultId = employeeService.updateCode(id, data, userName);
+                resultId = employeeService.updateCode(data.getNumber(), data.getText(), userName);
                 break;
             case "phone":
-                resultId = employeeService.updatePhone(id, data, userName);
+                resultId = employeeService.updatePhone(data.getNumber(), data.getText(), userName);
                 break;
             default:
                 break;

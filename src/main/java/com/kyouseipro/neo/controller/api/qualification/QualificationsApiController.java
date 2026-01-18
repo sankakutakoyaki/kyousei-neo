@@ -9,10 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.dto.ApiResponse;
+import com.kyouseipro.neo.entity.dto.IdPairRequest;
+import com.kyouseipro.neo.entity.dto.IdRequest;
 import com.kyouseipro.neo.entity.qualification.QualificationsEntity;
 import com.kyouseipro.neo.service.qualification.QualificationsService;
 
@@ -30,12 +31,12 @@ public class QualificationsApiController {
      */
     @PostMapping("/api/qualifications/get/id")
 	@ResponseBody
-    public List<QualificationsEntity> getById(@RequestParam int id, @RequestParam int category) {
-        switch (category) {
+    public List<QualificationsEntity> getById(@RequestBody IdPairRequest req) {
+        switch (req.getSecondaryId()) {
             case 0:
-                return qualificationsService.getByEmployeeId(id);
+                return qualificationsService.getByEmployeeId(req.getPrimaryId());
             default:
-                return qualificationsService.getByCompanyId(id);
+                return qualificationsService.getByCompanyId(req.getPrimaryId());
         }
     }
 
@@ -74,8 +75,8 @@ public class QualificationsApiController {
     //         return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
     //     }
     // }
-    public ResponseEntity<ApiResponse<Integer>> deleteById(@RequestParam int id, @AuthenticationPrincipal OidcUser principal) {
-        Integer result = qualificationsService.deleteById(id, principal.getAttribute("preferred_username"));
+    public ResponseEntity<ApiResponse<Integer>> deleteById(@RequestBody IdRequest req, @AuthenticationPrincipal OidcUser principal) {
+        Integer result = qualificationsService.deleteById(req.getId(), principal.getAttribute("preferred_username"));
         return ResponseEntity.ok(ApiResponse.ok("削除しました。", result));
     }
 

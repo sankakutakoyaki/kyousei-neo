@@ -66,6 +66,21 @@ function setComboboxSelected(selectArea, id) {
     }
 }
 
+/**
+ * コンボボックスを選択した状態で作成する
+ * @param {*} form 
+ * @param {*} comboId 
+ * @param {*} list 
+ * @param {*} selectId 
+ */
+function setComboBox(form, comboId, list, selectId) {
+    const area = form.querySelector(comboId);
+    createComboBox(area, list);
+    setComboboxSelected(area, selectId);
+    return area;
+}
+
+
 // タブの処理
 function tabSwitch(e) {
     // クリックされた要素のデータ属性を取得
@@ -281,37 +296,42 @@ function execSpecifyPeriod(str, startId, endId) {
     }
 }
 
-// 会社コンボボックスを登録する
-function setCompanyComboBox(form, entity, companyList, officeList) {
-    const companyArea = form.querySelector('select[name="company"]');    
-    createComboBox(companyArea, companyList);
-    setComboboxSelected(companyArea, entity.company_id);
-    createOfficeComboBox(form, officeList);
-    companyArea.onchange = function() { createOfficeComboBox(form, officeList) };
-}
+// // 会社コンボボックスを登録する
+// function setCompanyComboBox(form, entity, companyList, officeList) {
+//     const companyArea = form.querySelector('select[name="company"]');    
+//     createComboBox(companyArea, companyList);
+//     setComboboxSelected(companyArea, entity.company_id);
+//     createOfficeComboBox(form, officeList);
+//     companyArea.onchange = function() { createOfficeComboBox(form, officeList) };
+// }
 
-// 先頭が空白の会社コンボボックスを登録する
-function setCompanyComboBoxWithTop(form, entity, companyList, officeList) {
-    const companyArea = form.querySelector('select[name="company"]');    
-    createComboBoxWithTop(companyArea, companyList, "");
-    setComboboxSelected(companyArea, entity.company_id);  
-    if (entity.company_id > 0) {
-        const officeArea = form.querySelector('select[name="office"]');
-        createComboBoxWithTop(officeArea, officeList, "");
-        setComboboxSelected(officeArea, entity.office_id);                    
-    }
-    companyArea.onchange = function() { createOfficeComboBox(form, officeList) };
-}
+// // 先頭が空白の会社コンボボックスを登録する
+// function setCompanyComboBoxWithTop(form, entity, companyList, officeList) {
+//     const companyArea = form.querySelector('select[name="company"]');    
+//     createComboBoxWithTop(companyArea, companyList, "");
+//     setComboboxSelected(companyArea, entity.company_id);  
+//     if (entity.company_id > 0) {
+//         const officeArea = form.querySelector('select[name="office"]');
+//         createComboBoxWithTop(officeArea, officeList, "");
+//         setComboboxSelected(officeArea, entity.office_id);                    
+//     }
+//     companyArea.onchange = function() { createOfficeComboBox(form, officeList) };
+// }
 
 // 選択した会社の支店をコンボボックスに登録する
-function createOfficeComboBox(form, officeList) {
-    const companyArea = form.querySelector('select[name="company"]');
+function createOfficeComboBox(form, officeList, selectId) {
+    // const companyArea = form.querySelector('select[name="company"]');
     const officeArea = form.querySelector('select[name="office"]');
     if (!officeArea) return;
 
-    const selectId = companyArea.value;  
+    // const selectId = companyArea.value;  
     const list = officeList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
     createComboBoxWithTop(officeArea, list, "");
+    if (selectId != null && selectId > 0) {
+        setComboboxSelected(officeArea, selectId);
+    }
+    
+    return officeArea;
 }
 
 // モードで指定したフォームを開く
@@ -441,5 +461,89 @@ function setSelectValue(form, formData, formdata, {
     const select = form.querySelector(`[name="${valueName}"]`);
     if (select) {
         formdata[nameKey] = select.options[select.selectedIndex].text;
+    }
+}
+
+//　フォーム画面にentityの情報を登録する
+function applyFormConfig(form, entity, config) {
+    config.forEach(c => {
+        const el = form.querySelector(`[name="${c.name}"]`);
+        if (!el) return;
+
+        let value = entity[c.key];
+
+        if (c.emptyIf !== undefined && value == c.emptyIf) {
+        value = '';
+        }
+        el.value = value ?? '';
+    });
+}
+
+//　フォーム画面のコンボボックスにentityの情報を登録する
+function applyComboConfig(form, entity, config) {
+    config.forEach(c => {
+        const el = setComboBox(form, c.selector, c.list, entity[c.key]);
+        if (c.onChange) {
+            el.onchange = () => c.onChange(form, el);
+        }
+    });
+}
+
+// フォーム画面の表示用entitytyを登録する
+function applyViewConfig(ctx, entity, config) {
+    config.forEach(c => {
+        const el = document.getElementById(c.id);
+        if (!el) return;
+        el.textContent = c.value(entity, ctx);
+    });
+}
+
+// 保存用のエンティティを作成する
+function applySaveConfig(form, baseEntity) {
+  const formData = new FormData(form);
+  const entity = structuredClone(baseEntity);
+
+  SAVE_CONFIG.forEach(c => {
+    const raw = formData.get(c.name);
+    entity[c.key] = c.parse ? c.parse(raw) : raw;
+  });
+
+  return entity;
+}
+
+// フォームからentityへ変換する
+function buildEntityFromForm(form, baseEntity, config) {
+    const fd = new FormData(form);
+    const entity = structuredClone(baseEntity);
+
+    config.forEach(c => {
+        let v = fd.get(c.name);
+
+        if (c.trim && typeof v === 'string') {
+        v = v.trim();
+        }
+        if ((v === '' || v == null) && c.emptyTo !== undefined) {
+        v = c.emptyTo;
+        }
+        if (c.number && v !== '' && v != null) {
+        v = Number(v);
+        }
+        entity[c.key] = v;
+    });
+
+    return entity;
+}
+
+// 検索ボックスの初期設定
+function registerSearchEvents() {
+    for (const mode of Object.values(MODE_CONFIG)) {
+        const searchBox = document.getElementById(mode.searchId);
+        if (!searchBox) continue;
+
+        searchBox.addEventListener(
+        'search',
+        async e => await execFilterDisplay(e.currentTarget),
+        false
+        );
     }
 }

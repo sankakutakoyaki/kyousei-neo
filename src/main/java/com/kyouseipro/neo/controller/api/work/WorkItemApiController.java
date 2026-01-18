@@ -9,11 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.dto.ApiResponse;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
+import com.kyouseipro.neo.entity.dto.IdRequest;
 import com.kyouseipro.neo.entity.work.WorkItemEntity;
 import com.kyouseipro.neo.service.work.WorkItemService;
 
@@ -34,8 +34,8 @@ public class WorkItemApiController {
     // public Optional<WorkItemEntity> getById(@RequestParam int id) {
     //     return workItemService.getById(id);
     // }
-    public ResponseEntity<WorkItemEntity> getById(@RequestParam int id) {
-        return ResponseEntity.ok(workItemService.getById(id).orElse(null));
+    public ResponseEntity<WorkItemEntity> getById(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(workItemService.getById(req.getId()).orElse(null));
     }
 
     /**
@@ -45,8 +45,8 @@ public class WorkItemApiController {
      */
     @PostMapping("/api/work/item/get/category")
 	@ResponseBody
-    public List<WorkItemEntity> getByCategoryId(@RequestParam int id) {
-        return workItemService.getByCategoryId(id);
+    public List<WorkItemEntity> getByCategoryId(@RequestBody IdRequest req) {
+        return workItemService.getByCategoryId(req.getId());
     }
 
     /**

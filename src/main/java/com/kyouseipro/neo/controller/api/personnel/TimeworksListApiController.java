@@ -12,12 +12,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.dto.ApiResponse;
 import com.kyouseipro.neo.entity.dto.BetweenRequest;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
+import com.kyouseipro.neo.entity.dto.IdRequest;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
 import com.kyouseipro.neo.entity.personnel.TimeworksSummaryEntity;
@@ -71,8 +71,8 @@ public class TimeworksListApiController {
 
     //     return Optional.of(entity);
     // }
-    public ResponseEntity<TimeworksListEntity> getTodaysByEmployeeId(@RequestParam int id) {
-        Optional<TimeworksListEntity> opt = timeworksListService.getTodaysByEmployeeId(id);
+    public ResponseEntity<TimeworksListEntity> getTodaysByEmployeeId(@RequestBody IdRequest req) {
+        Optional<TimeworksListEntity> opt = timeworksListService.getTodaysByEmployeeId(req.getId());
 
         // 既に存在するならそのまま返す
         if (opt != null) {
@@ -80,7 +80,7 @@ public class TimeworksListApiController {
         }
 
         // 存在しない場合は新規作成
-        Optional<EmployeeEntity> empOpt = employeeService.getById(id);
+        Optional<EmployeeEntity> empOpt = employeeService.getById(req.getId());
         if (empOpt.isEmpty()) {
             return null;
         }
@@ -108,7 +108,7 @@ public class TimeworksListApiController {
     //     List<TimeworksListEntity> list = timeworksListService.getBetweenByEmployeeId(id, start, end);
     //     return list;
     // }
-    public List<TimeworksListEntity> getBetweenByEmployeeId(@RequestParam BetweenRequest req) {
+    public List<TimeworksListEntity> getBetweenByEmployeeId(@RequestBody BetweenRequest req) {
         return timeworksListService.getBetweenByEmployeeId(req.getId(), req.getStart(), req.getEnd());
     }
 
@@ -125,7 +125,7 @@ public class TimeworksListApiController {
     //     List<TimeworksListEntity> list = timeworksListService.getBetweenAllByEmployeeId(id, start, end);
     //     return list;
     // }
-    public List<TimeworksListEntity> getBetweenAllByEmployeeId(@RequestParam BetweenRequest req) {
+    public List<TimeworksListEntity> getBetweenAllByEmployeeId(@RequestBody BetweenRequest req) {
         return timeworksListService.getBetweenAllByEmployeeId(req.getId(), req.getStart(), req.getEnd());
     }
 
@@ -145,7 +145,7 @@ public class TimeworksListApiController {
     //         return timeworksListService.getBetweenSummaryByOfficeId(id, start, end);
     //     }
     // }
-    public List<TimeworksSummaryEntity> getBetweenSummary(@RequestParam BetweenRequest req) {
+    public List<TimeworksSummaryEntity> getBetweenSummary(@RequestBody BetweenRequest req) {
         if (req.getId() == 0) {
             return timeworksListService.getBetweenSummary(req.getStart(), req.getEnd());
         } else {
@@ -197,8 +197,8 @@ public class TimeworksListApiController {
     //         return ResponseEntity.badRequest().body(ApiResponse.error("戻せませんでした。"));
     //     }
     // }
-    public ResponseEntity<ApiResponse<Integer>> reverseConrirm(@RequestParam int id, @AuthenticationPrincipal OidcUser principal) {
-        int newId = timeworksListService.reverseConfirm(id, principal.getAttribute("preferred_username"));
+    public ResponseEntity<ApiResponse<Integer>> reverseConrirm(@RequestBody IdRequest req, @AuthenticationPrincipal OidcUser principal) {
+        int newId = timeworksListService.reverseConfirm(req.getId(), principal.getAttribute("preferred_username"));
         return ResponseEntity.ok(ApiResponse.ok("戻しました。", newId));
     }
 

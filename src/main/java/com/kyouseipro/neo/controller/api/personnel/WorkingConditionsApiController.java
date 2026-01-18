@@ -6,11 +6,11 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.dto.ApiResponse;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
+import com.kyouseipro.neo.entity.dto.IdRequest;
 import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
 import com.kyouseipro.neo.service.personnel.WorkingConditionsService;
 
@@ -31,8 +31,8 @@ public class WorkingConditionsApiController {
     // public Optional<WorkingConditionsEntity> getById(@RequestParam int id) {
     //         return workingConditionsService.getById(id);
     // }
-    public ResponseEntity<WorkingConditionsEntity> getById(@RequestParam int id) {
-            return ResponseEntity.ok(workingConditionsService.getById(id).orElse(null));
+    public ResponseEntity<WorkingConditionsEntity> getById(@RequestBody IdRequest req) {
+            return ResponseEntity.ok(workingConditionsService.getById(req.getId()).orElse(null));
     }
 
     /**
@@ -45,8 +45,8 @@ public class WorkingConditionsApiController {
     // public Optional<WorkingConditionsEntity> getByEmployeeId(@RequestParam int id) {
     //         return workingConditionsService.getByEmployeeId(id);
     // }
-    public ResponseEntity<WorkingConditionsEntity> getByEmployeeId(@RequestParam int id) {
-            return ResponseEntity.ok(workingConditionsService.getByEmployeeId(id).orElse(null));
+    public ResponseEntity<WorkingConditionsEntity> getByEmployeeId(@RequestBody IdRequest req) {
+            return ResponseEntity.ok(workingConditionsService.getByEmployeeId(req.getId()).orElse(null));
     }
 
     /**

@@ -320,8 +320,10 @@ async function getQualifications(e, codeId, nameId) {
         const panel = code.closest('.tab-panel');
         const tab = panel.dataset.panel;
 
-        const data = "id=" + encodeURIComponent(parseInt(code.value)) + "&category=" + encodeURIComponent(parseInt(owner_category));
-        const resultResponse = await postFetch("/api/qualifications/get/id", data, token, 'application/x-www-form-urlencoded');
+        // const data = "id=" + encodeURIComponent(parseInt(code.value)) + "&category=" + encodeURIComponent(parseInt(owner_category));
+        // const resultResponse = await postFetch("/api/qualifications/get/id", data, token, 'application/x-www-form-urlencoded');
+        const data = JSON.stringify({primaryId:parseInt(code.value), secondaryId:parseInt(owner_category)});
+        const resultResponse = await postFetch("/api/qualifications/get/id", data, token);
         const result = await resultResponse.json();
 
         if (result.length > 0) {

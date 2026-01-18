@@ -6,12 +6,12 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.corporation.OfficeEntity;
 import com.kyouseipro.neo.entity.dto.ApiResponse;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
+import com.kyouseipro.neo.entity.dto.IdRequest;
 import com.kyouseipro.neo.service.corporation.OfficeService;
 
 import lombok.RequiredArgsConstructor;
@@ -31,8 +31,8 @@ public class OfficeApiController {
     // public Optional<OfficeEntity> getById(@RequestParam int id) {
     //     return officeService.getById(id);
     // }
-    public ResponseEntity<OfficeEntity> getById(@RequestParam int id) {
-        return ResponseEntity.ok(officeService.getById(id).orElse(null));
+    public ResponseEntity<OfficeEntity> getById(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(officeService.getById(req.getId()).orElse(null));
     }
 
     /**

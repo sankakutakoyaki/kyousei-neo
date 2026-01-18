@@ -1,39 +1,57 @@
 "use strict"
 
+// async function setTimeworks(timeCategory) {
+//     const time = getTimeNow();
+//     const position = await getLoacation();
+//     if (timeCategory == "start") {
+//         entity.start_time = time;
+//         entity.comp_start_time = time;
+//         entity.start_latitude = position.coords.latitude;
+//         entity.start_longitude = position.coords.longitude;
+//     } else if (timeCategory == "end") {
+//         entity.end_time = time;
+//         entity.comp_end_time = time;
+//         entity.end_latitude = position.coords.latitude;
+//         entity.end_longitude = position.coords.longitude;
+//     } else {
+//         return null;
+//     }
+//     // const data = JSON.stringify(entity);
+//     // const url = '/api/timeworks/regist/today';
+//     // const contentType = 'application/json';
+//     const result = await updateFetch('/api/timeworks/regist/today', JSON.stringify(entity), token);
+//     if (!result?.ok) return;
+//     // const result = await resultResponse.json();
+
+//     await updateDisplay(result);
+// }
 async function setTimeworks(timeCategory) {
+    const cfg = TIMEWORKS_TIME_CONFIG[timeCategory];
+    if (!cfg) return null;
+
     const time = getTimeNow();
-    const position = await getLoacation();
-    if (timeCategory == "start") {
-        entity.start_time = time;
-        entity.comp_start_time = time;
-        entity.start_latitude = position.coords.latitude;
-        entity.start_longitude = position.coords.longitude;
-    } else if (timeCategory == "end") {
-        entity.end_time = time;
-        entity.comp_end_time = time;
-        entity.end_latitude = position.coords.latitude;
-        entity.end_longitude = position.coords.longitude;
-    } else {
-        return null;
-    }
-    const data = JSON.stringify(entity);
-    const url = '/api/timeworks/regist/today';
-    const contentType = 'application/json';
-    const resultResponse = await postFetch(url, data, token, contentType);
-    const result = await resultResponse.json();
+    const position = await getLocation();
+
+    entity[cfg.timeKey] = time;
+    entity[cfg.compTimeKey] = time;
+    entity[cfg.latKey] = position.coords.latitude;
+    entity[cfg.lngKey] = position.coords.longitude;
+
+    const result = await updateFetch('/api/timeworks/regist/today', JSON.stringify(entity), token);
+    if (!result?.ok) return;
 
     await updateDisplay(result);
 }
 
 async function updateTimeworks(list, self) {
-    const data = JSON.stringify(list);
-    const url = '/api/timeworks/update/list';
-    const contentType = 'application/json';
-    const result = await postFetch(url, data, token, contentType);
-
-    await execListChange(self);
+    // const data = JSON.stringify(list);
+    // const url = '/api/timeworks/update/list';
+    // const contentType = 'application/json';
     
-    return await result.json();
+    await execListChange(self);
+    return await postFetch('/api/timeworks/update/list', JSON.stringify(list), token);
+    
+    // return await result.json();
 }
 
 function zeroTimeCheck(self) {
@@ -45,6 +63,7 @@ function zeroTimeCheck(self) {
 }
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 時計作成
+
 function clock() {
     // 現在の日時・時刻の情報を取得
     const d = new Date();    
@@ -134,13 +153,15 @@ async function searchForNameByCode(e) {
     }
 
     // [id=code]に入力されたコードから[timeworks]を取得して[id=name]に入力する
-    const data = "id=" + encodeURIComponent(parseInt(code.value));
-    const url = '/api/timeworks/get/today/id';
-    const contentType = 'application/x-www-form-urlencoded';
-    // [timeworks]を取得
-    const resultResponse = await postFetch(url, data, token, contentType);
-    entity = await resultResponse.json();
-    if (entity != null && entity.employee_id > 0) {
+    // const data = "id=" + encodeURIComponent(parseInt(code.value));
+    // const url = '/api/timeworks/get/today/id';
+    // const contentType = 'application/x-www-form-urlencoded';
+    // // [timeworks]を取得
+    // const resultResponse = await postFetch(url, data, token, contentType);
+    // entity = await resultResponse.json();
+
+    const entity = await searchFetch(url, JSON.stringify({id:parseInt(code.value)}), token);
+    if (entity.ok && entity.employee_id > 0) {
         name.value = entity.full_name;
         checkTimeWorksStartSaved(entity);
         return;
@@ -390,18 +411,20 @@ function createEmployeeList(tab) {
 
 // 選択した従業員IDで勤怠情報を取得してリスト作成
 async function createEmployeeTimeworksList(tab, id) {
-    switch(tab) {
-        case "02":
-            list02 = await getEmployeeTimeworksBetween(id, "start-date02", "end-date02", "/api/timeworks/get/between/id");
-            createBetweenTableContent(tab, list02);
-            break;
-        case "05":
-            list05 = await getEmployeeTimeworksBetween(id, "start-date05", "end-date05", "/api/timeworks/get/between/id/all");
-            createBetweenTableContent(tab, list05);
-            return;
-        default:
-            return;
-    }
+    const list = await getTimeworksByTab(tab, id);
+    createBetweenTableContent(tab, list);
+    // switch(tab) {
+    //     case "02":
+    //         list02 = await getEmployeeTimeworksBetween(id, "start-date02", "end-date02", "/api/timeworks/get/between/id");
+    //         createBetweenTableContent(tab, list02);
+    //         break;
+    //     case "05":
+    //         list05 = await getEmployeeTimeworksBetween(id, "start-date05", "end-date05", "/api/timeworks/get/between/id/all");
+    //         createBetweenTableContent(tab, list05);
+    //         return;
+    //     default:
+    //         return;
+    // }
 
     // エンターフォーカス処理をイベントリスナーに登録する
     tabFocusElements = createTabFocusElements();
@@ -503,18 +526,20 @@ function createBetweenTableContent(tab, list) {
 };
 
 async function execReverse(id) {
-    const data = "id=" + encodeURIComponent(parseInt(id));
-    const contentType = 'application/x-www-form-urlencoded';
-    // List<Timeworks>を取得
-    const resultResponse = await postFetch("/api/timeworks/confirm/reverse", data, token, contentType);
-    const result = await resultResponse.json();
-    if (result.success) {
+    // const data = "id=" + encodeURIComponent(parseInt(id));
+    // const contentType = 'application/x-www-form-urlencoded';
+    // // List<Timeworks>を取得
+    // const resultResponse = await postFetch("/api/timeworks/confirm/reverse", data, token, contentType);
+    // const result = await resultResponse.json();
+
+    const result = await searchFetch("/api/timeworks/confirm/reverse", JSON.stringify({id:parseInt(id)}), token);
+    if (result?.ok) {
         // 画面更新
         openMsgDialog("msg-dialog", result.message, "blue");
         const selectedId = document.querySelector("#employee-list-05 li.selected");
         if (selectedId != null) await createEmployeeTimeworksList("05", selectedId.dataset.id);
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
+    // } else {
+    //     openMsgDialog("msg-dialog", result.message, "red");
     }
 }
 
@@ -553,20 +578,22 @@ async function execListChange(self) {
 async function getEmployeeTimeworksBetween(id, startId, endId, url) {
     const start = document.getElementById(startId).value;
     const end = document.getElementById(endId).value;
-    const data = "id=" + encodeURIComponent(parseInt(id)) + "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end);
-    const contentType = 'application/x-www-form-urlencoded';
-    // List<Timeworks>を取得
-    const resultResponse = await postFetch(url, data, token, contentType);
-    return await resultResponse.json();
+    // const data = "id=" + encodeURIComponent(parseInt(id)) + "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end);
+    // const contentType = 'application/x-www-form-urlencoded';
+    // // List<Timeworks>を取得
+    // const resultResponse = await postFetch(url, data, token, contentType);
+    // return await resultResponse.json();
+    return await searchFetch(url, JSON.stringify({id:parseInt(id), start:start, end:end}), token);
 }
 
 // 有給休暇一覧表示用のリスト取得
 async function getEmployeePaidHolidayFromYear(id, year, url) {
-    const data = "id=" + encodeURIComponent(parseInt(id)) + "&year=" + encodeURIComponent(year);
-    const contentType = 'application/x-www-form-urlencoded';
-    // List<Timeworks>を取得
-    const resultResponse = await postFetch(url, data, token, contentType);
-    return await resultResponse.json();
+    // const data = "id=" + encodeURIComponent(parseInt(id)) + "&year=" + encodeURIComponent(year);
+    // const contentType = 'application/x-www-form-urlencoded';
+    // // List<Timeworks>を取得
+    // const resultResponse = await postFetch(url, data, token, contentType);
+    // return await resultResponse.json();
+    return await postFetch(url, JSON.stringify({number:id, text:year}), token, contentType);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------------------- ダウンロード
@@ -815,20 +842,21 @@ async function createPaidHolidayList(officeId, year) {
 }
 
 async function execDeletePaidHolidayByEmployeeId(id) {
-    const data = "id=" + encodeURIComponent(parseInt(id));
-    const url = '/api/timeworks/paidholiday/delete/id';
-    const contentType = 'application/x-www-form-urlencoded';
-    const resultResponse = await postFetch(url, data, token, contentType);
-    const result = await resultResponse.json();
+    // const data = "id=" + encodeURIComponent(parseInt(id));
+    // const url = '/api/timeworks/paidholiday/delete/id';
+    // const contentType = 'application/x-www-form-urlencoded';
+    // const resultResponse = await postFetch(url, data, token, contentType);
+    // const result = await resultResponse.json();
 
-    if (result.success) {
+    const result = await updateFetch('/api/timeworks/paidholiday/delete/id', JSON.stringify({id:parseInt(id)}), token);
+    if (result?.ok) {
         // 画面更新
         openMsgDialog("msg-dialog", result.message, "blue");
         const office = document.querySelector('div[data-panel="04"] select[name="office"]');
         const year = document.querySelector('div[data-panel="04"] select[name="year"]');
         await createPaidHolidayList(office.value, year.value)
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
+    // } else {
+    //     openMsgDialog("msg-dialog", result.message, "red");
     }
     // ダイアログを閉じる
     closeFormDialog('form-dialog-02');
@@ -844,13 +872,15 @@ async function searchForNameByCodeForPaidHoliday(e) {
     }
 
     // [id=code]に入力されたコードから[employee]を取得して[id=name]に入力する
-    const data = "id=" + encodeURIComponent(parseInt(code02.value));
-    const url = '/api/employee/get/id';
-    const contentType = 'application/x-www-form-urlencoded';
-    // [employee]を取得
-    const resultResponse = await postFetch(url, data, token, contentType);
-    const entity02 = await resultResponse.json();
-    if (entity02 != null && entity02.employee_id > 0) {
+    // const data = "id=" + encodeURIComponent(parseInt(code02.value));
+    // const url = '/api/employee/get/id';
+    // const contentType = 'application/x-www-form-urlencoded';
+    // // [employee]を取得
+    // const resultResponse = await postFetch(url, data, token, contentType);
+    // const entity02 = await resultResponse.json();
+
+    const entity02 = await searchFetch(url, JSON.stringify({id:parseInt(code02.value)}), token);
+    if (entity02.ok && entity02.employee_id > 0) {
         name02.value = entity02.full_name;
         start11.focus();
         return;
@@ -883,6 +913,18 @@ function execCode02Changed(e) {
         e.preventDefault();
         execCode02Blur(e);
     }
+}
+
+async function getTimeworksByTab(tab, id) {
+    const cfg = TIMEWORKS_TAB_CONFIG[tab];
+    if (!cfg) return [];
+
+    return await getEmployeeTimeworksBetween(
+        id,
+        `start-date${tab}`,
+        `end-date${tab}`,
+        cfg.api.list
+    );
 }
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 初期化時の処理

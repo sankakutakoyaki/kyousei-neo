@@ -8,10 +8,11 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.dto.ApiResponse;
+import com.kyouseipro.neo.entity.dto.IdRequest;
+import com.kyouseipro.neo.entity.dto.SimpleData;
 import com.kyouseipro.neo.entity.personnel.PaidHolidayEntity;
 import com.kyouseipro.neo.entity.personnel.PaidHolidayListEntity;
 import com.kyouseipro.neo.service.personnel.PaidHolidayService;
@@ -29,8 +30,9 @@ public class PaidHolidayApiController {
      */
     @PostMapping("/api/timeworks/paidholiday/get/year")
 	@ResponseBody
-    public List<PaidHolidayListEntity> getByOfficeIdFromYear (@RequestParam int id, @RequestParam String year) {
-        return paidHolidayService.getByOfficeIdFromYear(id, year);
+    // public List<PaidHolidayListEntity> getByOfficeIdFromYear (@RequestParam int id, @RequestParam String year) {
+    public List<PaidHolidayListEntity> getByOfficeIdFromYear (@RequestBody SimpleData data) {
+        return paidHolidayService.getByOfficeIdFromYear(data.getNumber(), data.getText());
     }
 
     /**
@@ -39,8 +41,8 @@ public class PaidHolidayApiController {
      */
     @PostMapping("/api/timeworks/paidholiday/get/employeeid")
 	@ResponseBody
-    public List<PaidHolidayEntity> getByEmployeeIdFromYear (@RequestParam int id, @RequestParam String year) {
-        return paidHolidayService.getByEmployeeIdFromYear(id, year);
+    public List<PaidHolidayEntity> getByEmployeeIdFromYear (@RequestBody SimpleData data) {
+        return paidHolidayService.getByEmployeeIdFromYear(data.getNumber(), data.getText());
     }
 
     /**
@@ -82,8 +84,8 @@ public class PaidHolidayApiController {
     //         return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
     //     }
     // }
-    public ResponseEntity<ApiResponse<Integer>> deleteById (@RequestParam int id, @AuthenticationPrincipal OidcUser principal) {
-        int result = paidHolidayService.deleteById(id, principal.getAttribute("preferred_username"));
+    public ResponseEntity<ApiResponse<Integer>> deleteById (@RequestBody IdRequest req, @AuthenticationPrincipal OidcUser principal) {
+        int result = paidHolidayService.deleteById(req.getId(), principal.getAttribute("preferred_username"));
         return ResponseEntity.ok(ApiResponse.ok("削除しました。", result));
     }
 }

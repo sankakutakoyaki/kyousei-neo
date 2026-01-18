@@ -1,17 +1,4 @@
-const MODE_CONFIG = {
-    "01": {
-        tableId: "table-01-content",
-        footerId: "footer-01",
-        searchId: "search-box-01",
-        category: categoryEmployeeCode
-    },
-    "02": {
-        tableId: "table-02-content",
-        footerId: "footer-02",
-        searchId: "search-box-02",
-        category: categoryParttimeCode
-    }
-};
+"use strict"
 
 /******************************************************************************************************* 画面 */
 
@@ -70,12 +57,15 @@ async function execEdit(id, self) {
     let entity = {};
     if (id > 0) {
         // 選択されたIDのエンティティを取得
-        const data = "id=" + encodeURIComponent(parseInt(id));
-        const result = await searchFetch('/api/employee/get/id', data, token, 'application/x-www-form-urlencoded');
-        if (result == null) {
-            openMsgDialog("msg-dialog", "データがありません", "red");
-            return;
-        }
+        // const data = "id=" + encodeURIComponent(parseInt(id));
+        // const result = await searchFetch('/api/employee/get/id', data, token, 'application/x-www-form-urlencoded');
+        // if (result == null) {
+        //     openMsgDialog("msg-dialog", "データがありません", "red");
+        //     return;
+        // }
+        const result = await searchFetch('/api/employee/get/id', JSON.stringify({id:parseInt(id)}), token);
+        if (!result?.ok) return;
+
         entity = structuredClone(result);
     } else {
         entity = structuredClone(formEntity);
@@ -89,123 +79,162 @@ async function execEdit(id, self) {
 
 // コンテンツ部分作成
 function setFormContent(form, entity) {
-    form.querySelector('[name="employee-id"]').value = entity.employee_id;
-    if (entity.code == 0) {
-        form.querySelector('[name="code"]').value = "";
-    } else {
-        form.querySelector('[name="code"]').value = entity.code;
-    }
-    form.querySelector('[name="category"]').value = entity.category;
-    form.querySelector('[name="account"]').value = entity.account;
-    form.querySelector('[name="last-name"]').value = entity.last_name;
-    form.querySelector('[name="first-name"]').value = entity.first_name;
-    form.querySelector('[name="last-name-kana"]').value = entity.last_name_kana;
-    form.querySelector('[name="first-name-kana"]').value = entity.first_name_kana;
-    form.querySelector('[name="phone-number"]').value = entity.phone_number;
-    form.querySelector('[name="postal-code"]').value = entity.postal_code;
-    form.querySelector('[name="full-address"]').value = entity.full_address;
-    form.querySelector('[name="email"]').value = entity.email;
-    if (entity.birthday == "9999-12-31") {
-        form.querySelector('[name="birthday"]').value = null;
-    } else {
-        form.querySelector('[name="birthday"]').value = entity.birthday;
-    }
-    form.querySelector('[name="emergency-contact"]').value = entity.emergency_contact;
-    form.querySelector('[name="emergency-contact-number"]').value = entity.emergency_contact_number;
-    if (entity.date_of_hire == "9999-12-31") {
-        form.querySelector('[name="date-of-hire"]').value = "";
-    } else {
-        form.querySelector('[name="date-of-hire"]').value = entity.date_of_hire;
-    }
-    form.querySelector('[name="version"]').value = entity.version;
+    applyFormConfig(form, entity, FORM_CONFIG);
+    applyComboConfig(form, entity, COMBO_CONFIG);
 
-    // 会社名コンボボックス
-    const companyArea = form.querySelector('select[name="company"]');
-    createComboBox(companyArea, companyComboList);
-    companyArea.style.pointerEvents = 'none';
-    setComboboxSelected(companyArea, entity.company_id);
-    companyArea.onchange = function() { createOfficeComboBox(form, officeList); };
+    // 営業所（会社依存）
+    createOfficeComboBox(form, officeList, entity.office_id);
 
-    // 営業所名コンボボックス
-    createOfficeComboBox(form, officeList);
-    const officeArea = form.querySelector('select[name="office"]');
-    setComboboxSelected(officeArea, entity.office_id);
+    // form.querySelector('[name="employee-id"]').value = entity.employee_id;
+    // if (entity.code == 0) {
+    //     form.querySelector('[name="code"]').value = "";
+    // } else {
+    //     form.querySelector('[name="code"]').value = entity.code;
+    // }
+    // form.querySelector('[name="category"]').value = entity.category;
+    // form.querySelector('[name="account"]').value = entity.account;
+    // form.querySelector('[name="last-name"]').value = entity.last_name;
+    // form.querySelector('[name="first-name"]').value = entity.first_name;
+    // form.querySelector('[name="last-name-kana"]').value = entity.last_name_kana;
+    // form.querySelector('[name="first-name-kana"]').value = entity.first_name_kana;
+    // form.querySelector('[name="phone-number"]').value = entity.phone_number;
+    // form.querySelector('[name="postal-code"]').value = entity.postal_code;
+    // form.querySelector('[name="full-address"]').value = entity.full_address;
+    // form.querySelector('[name="email"]').value = entity.email;
+    // if (entity.birthday == "9999-12-31") {
+    //     form.querySelector('[name="birthday"]').value = null;
+    // } else {
+    //     form.querySelector('[name="birthday"]').value = entity.birthday;
+    // }
+    // form.querySelector('[name="emergency-contact"]').value = entity.emergency_contact;
+    // form.querySelector('[name="emergency-contact-number"]').value = entity.emergency_contact_number;
+    // if (entity.date_of_hire == "9999-12-31") {
+    //     form.querySelector('[name="date-of-hire"]').value = "";
+    // } else {
+    //     form.querySelector('[name="date-of-hire"]').value = entity.date_of_hire;
+    // }
+    // form.querySelector('[name="version"]').value = entity.version;
 
-    // 性別コンボボックス
-    const genderArea = form.querySelector('select[name="gender"]');
-    createComboBox(genderArea, genderComboList);
-    setComboboxSelected(genderArea, entity.gender);
+    // // 会社名コンボボックス
+    // // const companyArea = form.querySelector('select[name="company"]');
+    // // createComboBox(companyArea, companyComboList);
+    // // companyArea.style.pointerEvents = 'none';
+    // // setComboboxSelected(companyArea, entity.company_id);
+    // // companyArea.onchange = function() { createOfficeComboBox(form, officeList); };
+    // const companyArea = setComboBox(form, 'select[name="company"]', companyComboList, entity.company_id);
+    // companyArea.onchange = function() { createOfficeComboBox(form, companyArea, officeList); };
 
-    // 血液型コンボボックス
-    const bloodTypeArea = form.querySelector('select[name="blood-type"]');
-    createComboBox(bloodTypeArea, bloodTypeComboList);
-    setComboboxSelected(bloodTypeArea, entity.blood_type);
+    // // 営業所名コンボボックス
+    // const officeArea = createOfficeComboBox(form, officeList, entity.office_id);
+    // // const officeArea = form.querySelector('select[name="office"]');
+    // // setComboboxSelected(officeArea, entity.office_id);
+
+    // // 性別コンボボックス
+    // // const genderArea = form.querySelector('select[name="gender"]');
+    // // createComboBox(genderArea, genderComboList);
+    // // setComboboxSelected(genderArea, entity.gender);
+    // setComboBox(form, 'select[name="gender"]', genderComboList, entity.gender);
+
+    // // 血液型コンボボックス
+    // // const bloodTypeArea = form.querySelector('select[name="blood-type"]');
+    // // createComboBox(bloodTypeArea, bloodTypeComboList);
+    // // setComboboxSelected(bloodTypeArea, entity.blood_type);
+    // setComboBox(form, 'select[name="blood-type"]', bloodTypeComboList, entity.blood_type);
 }
 
 /******************************************************************************************************* 保存 */
 
 // 保存処理
 async function execSave() {
+    // const form = document.getElementById('form-01');
+    // const tab = document.querySelector('li.is-active');
+    // if (tab == null) return;
+
+    // // エラーチェック
+    // if (formDataCheck(form) == false) {
+    //     return;
+    // } else {
+    //     const formData = new FormData(form);
+    //     const formdata = structuredClone(formEntity);
+    //     formdata.employee_id = formData.get('employee-id');
+    //     if (formData.get('code') == "") {
+    //         formdata.code = 0;
+    //     } else {
+    //         formdata.code = formData.get('code');
+    //     }
+    //     formdata.category = Number(formData.get('category'));
+    //     formdata.account = formData.get('account').trim();
+    //     formdata.company_id = formData.get('company');
+    //     formdata.office_id = formData.get('office');
+    //     formdata.last_name = formData.get('last-name').trim();
+    //     formdata.first_name = formData.get('first-name').trim();
+    //     formdata.last_name_kana = formData.get('last-name-kana').trim();
+    //     formdata.first_name_kana = formData.get('first-name-kana').trim();
+    //     formdata.phone_number = formData.get('phone-number').trim();
+    //     formdata.postal_code = formData.get('postal-code').trim();
+    //     formdata.full_address = formData.get('full-address').trim();
+    //     formdata.email = formData.get('email').trim();
+    //     formdata.gender= formData.get('gender');
+    //     formdata.blood_type = formData.get('blood-type');
+    //     if (formData.get('birthday') == "") {
+    //         formdata.birthday = "9999-12-31";
+    //     } else {
+    //         formdata.birthday = formData.get('birthday');
+    //     }
+    //     formdata.emergency_contact = formData.get('emergency-contact').trim();
+    //     formdata.emergency_contact_number = formData.get('emergency-contact-number').trim();
+    //     if (formData.get('date-of-hire') == "") {
+    //         formdata.date_of_hire = "9999-12-31";
+    //     } else {
+    //         formdata.date_of_hire = formData.get('date-of-hire');
+    //     }
+    //     formdata.version = formData.get('version');
+
+    //     // 保存処理
+    //     const result = await updateFetch("/api/employee/save", JSON.stringify(formdata), token, "application/json");
+    //     if (result.success) {
+    //         const config = MODE_CONFIG[tab.dataset.tab];
+
+    //         // 画面更新
+    //         openMsgDialog("msg-dialog", result.message, "blue");
+    //         await execUpdate();
+    //         // 追加・変更行に移動
+    //         scrollIntoTableList(config.tableId, result.employee_id);
+    //     } else {
+    //         openMsgDialog("msg-dialog", result.message, "red");
+    //     }
+    //     // ダイアログを閉じる
+    //     closeFormDialog('form-dialog-01');
+    // }
     const form = document.getElementById('form-01');
     const tab = document.querySelector('li.is-active');
-    if (tab == null) return;
+    if (!tab) return;
 
-    // エラーチェック
-    if (formDataCheck(form) == false) {
-        return;
+    if (!formDataCheck(form)) return;
+
+    const formdata = buildEntityFromForm(
+        form,
+        formEntity,
+        SAVE_FORM_CONFIG
+    );
+
+    const result = await updateFetch(
+        "/api/employee/save",
+        JSON.stringify(formdata),
+        token,
+        "application/json"
+    );
+
+    if (result.success) {
+        const config = MODE_CONFIG[tab.dataset.tab];
+        openMsgDialog("msg-dialog", result.message, "blue");
+        await execUpdate();
+        scrollIntoTableList(config.tableId, result.employee_id);
     } else {
-        const formData = new FormData(form);
-        const formdata = structuredClone(formEntity);
-        formdata.employee_id = formData.get('employee-id');
-        if (formData.get('code') == "") {
-            formdata.code = 0;
-        } else {
-            formdata.code = formData.get('code');
-        }
-        formdata.category = Number(formData.get('category'));
-        formdata.account = formData.get('account').trim();
-        formdata.company_id = formData.get('company');
-        formdata.office_id = formData.get('office');
-        formdata.last_name = formData.get('last-name').trim();
-        formdata.first_name = formData.get('first-name').trim();
-        formdata.last_name_kana = formData.get('last-name-kana').trim();
-        formdata.first_name_kana = formData.get('first-name-kana').trim();
-        formdata.phone_number = formData.get('phone-number').trim();
-        formdata.postal_code = formData.get('postal-code').trim();
-        formdata.full_address = formData.get('full-address').trim();
-        formdata.email = formData.get('email').trim();
-        formdata.gender= formData.get('gender');
-        formdata.blood_type = formData.get('blood-type');
-        if (formData.get('birthday') == "") {
-            formdata.birthday = "9999-12-31";
-        } else {
-            formdata.birthday = formData.get('birthday');
-        }
-        formdata.emergency_contact = formData.get('emergency-contact').trim();
-        formdata.emergency_contact_number = formData.get('emergency-contact-number').trim();
-        if (formData.get('date-of-hire') == "") {
-            formdata.date_of_hire = "9999-12-31";
-        } else {
-            formdata.date_of_hire = formData.get('date-of-hire');
-        }
-        formdata.version = formData.get('version');
-
-        // 保存処理
-        const result = await updateFetch("/api/employee/save", JSON.stringify(formdata), token, "application/json");
-        if (result.success) {
-            const config = MODE_CONFIG[tab.dataset.tab];
-
-            // 画面更新
-            openMsgDialog("msg-dialog", result.message, "blue");
-            await execUpdate();
-            // 追加・変更行に移動
-            scrollIntoTableList(config.tableId, result.employee_id);
-        } else {
-            openMsgDialog("msg-dialog", result.message, "red");
-        }
-        // ダイアログを閉じる
-        closeFormDialog('form-dialog-01');
+        openMsgDialog("msg-dialog", result.message, "red");
     }
+
+    closeFormDialog('form-dialog-01');
 }
 
 // 入力チェック
@@ -260,8 +289,9 @@ async function handleTdChange(editor) {
             return;
     }
 
-    const data = "id=" + encodeURIComponent(parseInt(id)) + "&data=" + (editor.value);
-    await searchFetch('/api/employee/update/' + col, data, token, 'application/x-www-form-urlencoded');
+    // const data = "id=" + encodeURIComponent(parseInt(id)) + "&data=" + (editor.value);
+    // await searchFetch('/api/employee/update/' + col, data, token, 'application/x-www-form-urlencoded');
+    await updateFetch('/api/employee/update/' + col, JSON.stringify({number:id,text:editor.value}), token);
     await execUpdate();
 }
 

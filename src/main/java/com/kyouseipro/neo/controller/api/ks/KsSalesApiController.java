@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.dto.BetweenRequest;
@@ -30,7 +30,7 @@ public class KsSalesApiController {
     //     List<KsSalesEntity> list = ksSalesService.getAllFromBetween(start, end, type);
     //     return list;
     // }
-    public List<KsSalesEntity> getAllFromBetween(@RequestParam BetweenRequest req) {
+    public List<KsSalesEntity> getAllFromBetween(@RequestBody BetweenRequest req) {
         List<KsSalesEntity> list = ksSalesService.getAllFromBetween(req.getStart(), req.getEnd(), req.getType());
         return list;
     }

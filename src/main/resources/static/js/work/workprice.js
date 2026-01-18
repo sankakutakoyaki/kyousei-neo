@@ -41,11 +41,12 @@ function handleTdChange(editor) {
     const row = td.closest('tr');
     const id = row.dataset.id;
 
-    let ent = origin.find(value => value.work_price_id == id);
-    if (ent != null) {
-        ent.price = Number(editor.value);
-        execSave(ent);
-    }
+    let entity = origin.find(value => value.work_price_id == id);
+    if (entity == null) return;
+    
+    const ent = structuredClone(entity);
+    ent.price = Number(editor.value);
+    execSave(ent);
 }
 
 // 保存処理

@@ -5,10 +5,11 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
+import com.kyouseipro.neo.entity.dto.IdRequest;
 import com.kyouseipro.neo.entity.dto.SimpleData;
 import com.kyouseipro.neo.service.common.ComboBoxService;
 import com.kyouseipro.neo.service.corporation.CompanyListService;
@@ -47,8 +48,8 @@ public class CompanyListApiController {
      */
     @PostMapping("/api/company/get/list/category")
 	@ResponseBody
-    public List<CompanyListEntity> getListByCategoryId(@RequestParam int category) {
-        return companyListService.getListByCategoryId(category);
+    public List<CompanyListEntity> getListByCategoryId(@RequestBody IdRequest req) {
+        return companyListService.getListByCategoryId(req.getId());
     }
 
     /**
