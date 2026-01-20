@@ -1,30 +1,5 @@
 "use strict"
 
-// async function setTimeworks(timeCategory) {
-//     const time = getTimeNow();
-//     const position = await getLoacation();
-//     if (timeCategory == "start") {
-//         entity.start_time = time;
-//         entity.comp_start_time = time;
-//         entity.start_latitude = position.coords.latitude;
-//         entity.start_longitude = position.coords.longitude;
-//     } else if (timeCategory == "end") {
-//         entity.end_time = time;
-//         entity.comp_end_time = time;
-//         entity.end_latitude = position.coords.latitude;
-//         entity.end_longitude = position.coords.longitude;
-//     } else {
-//         return null;
-//     }
-//     // const data = JSON.stringify(entity);
-//     // const url = '/api/timeworks/regist/today';
-//     // const contentType = 'application/json';
-//     const result = await updateFetch('/api/timeworks/regist/today', JSON.stringify(entity), token);
-//     if (!result?.ok) return;
-//     // const result = await resultResponse.json();
-
-//     await updateDisplay(result);
-// }
 async function setTimeworks(timeCategory) {
     const cfg = TIMEWORKS_TIME_CONFIG[timeCategory];
     if (!cfg) return null;
@@ -44,14 +19,8 @@ async function setTimeworks(timeCategory) {
 }
 
 async function updateTimeworks(list, self) {
-    // const data = JSON.stringify(list);
-    // const url = '/api/timeworks/update/list';
-    // const contentType = 'application/json';
-    
     await execListChange(self);
-    return await postFetch('/api/timeworks/update/list', JSON.stringify(list), token);
-    
-    // return await result.json();
+    return await updateFetch('/api/timeworks/update/list', JSON.stringify(list), token);
 }
 
 function zeroTimeCheck(self) {
@@ -101,6 +70,7 @@ function clock() {
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 更新処理
+
 async function updateDisplay(result) {
     if (result != null && result.data == -1) {
         openMsgDialog("msg-dialog", result.message, 'red');
@@ -152,14 +122,6 @@ async function searchForNameByCode(e) {
         return;
     }
 
-    // [id=code]に入力されたコードから[timeworks]を取得して[id=name]に入力する
-    // const data = "id=" + encodeURIComponent(parseInt(code.value));
-    // const url = '/api/timeworks/get/today/id';
-    // const contentType = 'application/x-www-form-urlencoded';
-    // // [timeworks]を取得
-    // const resultResponse = await postFetch(url, data, token, contentType);
-    // entity = await resultResponse.json();
-
     const entity = await searchFetch(url, JSON.stringify({id:parseInt(code.value)}), token);
     if (entity.ok && entity.employee_id > 0) {
         name.value = entity.full_name;
@@ -197,125 +159,8 @@ function execCodeChanged(e) {
     }
 }
 
-// -------------------------------------------------------------------------------------------------------------------------------------- 保存処理
-async function execSave(self) {
-    let changedList = list02.filter(value => (value.state > 0));
-    if (changedList.length == 0) return;
-
-    changedList.forEach(function (item) {
-        // let target = list02.filter(value => (value.timeworks_id == item.timeworks_id));
-        let start = document.querySelector('#table-02-content tr[data-id="' + item.timeworks_id + '"] input[name="start"]');
-        let end = document.querySelector('#table-02-content tr[data-id="' + item.timeworks_id + '"] input[name="end"]');
-        let rest = document.querySelector('#table-02-content tr[data-id="' + item.timeworks_id + '"] input[name="rest"]');
-        item.comp_start_time = start.value;
-        item.comp_end_time = end.value;
-        item.rest_time = rest.value;
-        item.state = 0;
-    });
-    const result = await updateTimeworks(changedList, self);
-    if (result.success) {
-        // 画面更新
-        openMsgDialog("msg-dialog", result.message, "blue");
-        await saveAfterUpdateDisplay();
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
-    }
-}
-
-// -------------------------------------------------------------------------------------------------------------------------------------- 確定処理
-async function execConfirm(self) {
-    if (list02.some(value => value?.state > 0)) {
-        openMsgDialog("msg-dialog", "未保存のデータがあります", "red");
-        return;
-    }
-
-    if (list02.some(value => value?.comp_start_time === "00:00:00" || value?.comp_end_time === "00:00:00")) {
-        openMsgDialog("msg-dialog", "未入力のデータがあります", "red");
-        return;
-    }
-
-    list02.forEach(function (item) {
-        item.state = completeNum;
-    });
-    const result = await updateTimeworks(list02, self);
-    if (result.success) {
-        // 画面更新
-        openMsgDialog("msg-dialog", result.message, "blue");
-        await confirmAfterUpdateDisplay();
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
-    }
-}
-
-// -------------------------------------------------------------------------------------------------------------------------------------- 保存・確定後の処理
-async function saveAfterUpdateDisplay() {
-    const selectedId = document.querySelector("#employee-list-02 li.selected");
-    if (selectedId != null) {
-        await createEmployeeTimeworksList("02", selectedId.dataset.id);
-
-        const btn = document.getElementById("save-btn02");
-        if (btn != null) {
-            btn.disabled = true;
-            if (btn.classList.contains("ok")){
-                btn.classList.remove("ok");
-            }
-        }
-        const btn2 = document.getElementById("confirm-btn02");
-        if (btn2 != null) {
-            if (list02.length > 0) {
-                btn2.disabled = false;
-                if (!btn2.classList.contains("ok")){
-                    btn2.classList.add("ok");
-                }
-            } else {
-                btn2.disabled = true;
-                if (btn2.classList.contains("ok")){
-                    btn2.classList.remove("ok");
-                }
-            }
-        }
-    }
-}
-
-async function confirmAfterUpdateDisplay() {
-    const selectedId = document.querySelector("#employee-list-02 li.selected");
-    if (selectedId != null) {
-        await createEmployeeTimeworksList("02", selectedId.dataset.id);
-
-        const btn2 = document.getElementById("confirm-btn02");
-        if (btn2 != null) {
-            btn2.disabled = true;
-            if (btn2.classList.contains("ok")){
-                btn2.classList.remove("ok");
-            }
-        }
-    }
-} 
-
-// -------------------------------------------------------------------------------------------------------------------------------------- セル変更処理
-function cellChange(id, self) {
-    self.classList.add("changed");
-    const item = list02.find(value => (value.timeworks_id == Number(id)));
-    if (item != null) item.state = 1; // 変更のフラグ
-    const btn = document.getElementById("save-btn02");
-    if (btn != null) {
-        btn.disabled = false;
-        if (!btn.classList.contains("ok")){
-            btn.classList.add("ok");
-        }
-    }
-    const btn2 = document.getElementById("confirm-btn02");
-    if (btn2 != null) {
-        if (!list02.some(value => value?.state > 0)) {
-            btn2.disabled = false;
-            if (!btn2.classList.contains("ok")){
-                btn2.classList.add("ok");
-            }
-        }
-    }
-}
-
 // -------------------------------------------------------------------------------------------------------------------------------------- 出勤退勤確認
+
 function checkTimeWorksStartSaved(entity) {
     if (entity != null) {
         if (entity.start_time != null) {
@@ -327,7 +172,7 @@ function checkTimeWorksStartSaved(entity) {
 }
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 打刻リスト画面作成
-// function createTable(list) {
+
 function createTableContent(tableId, list) {
     const tbl = document.getElementById(tableId);
     deleteElements(tbl);
@@ -350,117 +195,88 @@ function createTableContent(tableId, list) {
 // -------------------------------------------------------------------------------------------------------------------------------------- 確定タブ・一覧タブ
 // 従業員選択メニュー作成
 function createEmployeeList(tab) {
-    let sideStr = "";
-    let listStr = "";
-    let tableId = "";
-    let footerId = "";
-    switch(tab){
-        case "02":
-            employeeList02.innerHTML = "";
-            sideStr = "timeworks-sidemenu02"
-            listStr = "#employee-list-02.normal-list>li";
-            tableId = "table-02-content";
-            footerId = "footer-02";
-            break;
-        case "05":
-            employeeList05.innerHTML = "";
-            sideStr = "timeworks-sidemenu05"
-            listStr = "#employee-list-05.normal-list>li";
-            tableId = "table-05-content";
-            footerId = "footer-05";
-            break;
-        default:
-            return;
-    }
-    
-    const form01 = document.getElementById(sideStr);
-    const officeArea = form01.querySelector('select[name="office"]');
-    const list = employeeList.filter(value => value.office_id === Number(officeArea.value));
+    const config = TIMEWORKS_TAB_CONFIG[tab];
+    if (!config.officeMenu) return;
+
+    const form = document.getElementById(config.officeMenu);
+    const area = form.querySelector('select[name="office"]');
+
+    const list = origin.filter(value => value.office_id === Number(area.value));
+    createSidebarEmployeeList(tab, list);
+}
+
+function createSidebarEmployeeList(tab, list) {
+    const config = TIMEWORKS_TAB_CONFIG[tab];
+    const sidemenu = document.getElementById(config.sidemenu);
+
     list.forEach(function(item) {
-        const li = document.createElement('li');
-        li.dataset.id = item.employee_id;
-        li.textContent = item.full_name;
+        // const li = document.createElement('li');
+        // li.dataset.id = item.employee_id;
+        // li.textContent = item.full_name;
+        // li.addEventListener('click', () => {
+        //     // すでに選択されているなら解除して return
+        //     if (li.classList.contains('selected')) {
+        //         li.classList.remove('selected');
+        //         const tbl = document.getElementById(tableId);
+        //         deleteElements(tbl);
+        //         createTableFooter(footerId);
+        //         return;
+        //     }
+        //     // 他のliから選択クラスを外す
+        //     document.querySelectorAll(listStr).forEach(el => el.classList.remove('selected'));
+        //     // このliに選択クラスを追加
+        //     li.classList.add('selected');
+        //     createEmployeeTimeworksList(tab, item.employee_id);
+        // });
+        // sidemenu.appendChild(li);
+        let li = createListItemWithSelection(item.employee_id, item.full_name, sidemenu);
         li.addEventListener('click', () => {
-            // すでに選択されているなら解除して return
-            if (li.classList.contains('selected')) {
-                li.classList.remove('selected');
-                const tbl = document.getElementById(tableId);
-                deleteElements(tbl);
-                createTableFooter(footerId);
-                return;
-            }
-            // 他のliから選択クラスを外す
-            document.querySelectorAll(listStr).forEach(el => el.classList.remove('selected'));
-            // このliに選択クラスを追加
-            li.classList.add('selected');
             createEmployeeTimeworksList(tab, item.employee_id);
-        });
-        // employeeList02.appendChild(li);
-        switch(tab){
-            case "02":
-                employeeList02.appendChild(li);
-                break;
-            case "05":
-                employeeList05.appendChild(li);
-                break;
-            default:
-                return;
-        }
+        })
+        sidemenu.appendChild(li);
     });
 }
+
+// // 選択した営業所IDで従業員の勤怠情報概要を取得してリスト作成
+// async function createTimeworksSummaryList(tab, officeId) {
+//     list03 = await getEmployeeTimeworksBetween(officeId, "start-date03", "end-date03", "/api/timeworks/summary/get/between/id");
+//     createBetweenTable03Content(list03);
+//     // チェックボックスの処理を再登録する
+//     registCheckButtonClicked("table-03-content");
+//     // エンターフォーカス処理をイベントリスナーに登録する
+//     tabFocusElements = createTabFocusElements();
+//     setEnterFocus("table-03");
+// }
 
 // 選択した従業員IDで勤怠情報を取得してリスト作成
 async function createEmployeeTimeworksList(tab, id) {
     const list = await getTimeworksByTab(tab, id);
     createBetweenTableContent(tab, list);
-    // switch(tab) {
-    //     case "02":
-    //         list02 = await getEmployeeTimeworksBetween(id, "start-date02", "end-date02", "/api/timeworks/get/between/id");
-    //         createBetweenTableContent(tab, list02);
-    //         break;
-    //     case "05":
-    //         list05 = await getEmployeeTimeworksBetween(id, "start-date05", "end-date05", "/api/timeworks/get/between/id/all");
-    //         createBetweenTableContent(tab, list05);
-    //         return;
-    //     default:
-    //         return;
-    // }
 
-    // エンターフォーカス処理をイベントリスナーに登録する
-    tabFocusElements = createTabFocusElements();
-    setEnterFocus("table-02");
-    const btn2 = document.getElementById("confirm-btn02");
-    if (btn2 != null) {
-        if (list02.length > 0) {
-            btn2.disabled = false;
-            if (!btn2.classList.contains("ok")){
-                btn2.classList.add("ok");
-            }
-        } else {
-            btn2.disabled = true;
-            if (btn2.classList.contains("ok")){
-                btn2.classList.remove("ok");
-            }
-        }
-    }
+    setEnterFocusFromEmployeeTimeworkList();
 }
 
 // 確定・一覧表示用のテーブル作成
 function createBetweenTableContent(tab, list) {
-    let tableStr = "";
-    switch (tab) {
-        case "02":
-            tableStr = "table-02-content";
-            break;
-        case "05":
-            tableStr = "table-05-content";
-            break;
-        default:
-            return;
-    }
+    // let tableStr = "";
+    // switch (tab) {
+    //     case "02":
+    //         tableStr = "table-02-content";
+    //         break;
+    //     case "05":
+    //         tableStr = "table-05-content";
+    //         break;
+    //     default:
+    //         return;
+    // }
 
-    const tbl = document.getElementById(tableStr);
+    const config = TIMEWORKS_TAB_CONFIG[tab];
+    if (!config)return;
+
+    // const tbl = document.getElementById(tableStr);
+    const tbl = document.getElementById(config.tableId);
     deleteElements(tbl);
+
     let i = 0;
     list.forEach(function (item) {
         let newRow = tbl.insertRow();
@@ -469,61 +285,63 @@ function createBetweenTableContent(tab, list) {
         newRow.setAttribute('data-id', item.timeworks_id);
         // 担当者名
         newRow.insertAdjacentHTML('beforeend', '<td><span>' + item.work_date + '</span></td>');
+        
+        createTableRow(item, row, tab, i);
+    });
 
-        switch (tab) {
-            case "02":
+    createTableFooter("footer-02", list);
+};
+
+function createTableRow(item, newRow, tab, i) {
+    switch (tab) {
+        case "02":
+            // 出勤打刻
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.start_time ?? "") + '</span></td>');
+            // 退勤打刻
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.end_time ?? "") + '</span></td>');
+            // 出勤確定
+            let zeroClassStart = item.comp_start_time === "00:00:00" ? " zero-time" : "";
+            newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i++ + '" name="start"' +
+                ' class="icon-del' + zeroClassStart + '" type="time" step="1" value="' + (item.comp_start_time ?? "") + '"' +
+                ' onchange="cellChange(' + item.timeworks_id + ', this); zeroTimeCheck(this)"></td>');
+            // 退勤確定
+            let zeroClassEnd = item.comp_end_time === "00:00:00" ? " zero-time" : "";
+            newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i++ + '" name="end"' +
+                ' class="icon-del' + zeroClassEnd + '" type="time" step="1" value="' + (item.comp_end_time ?? "") + '"' +
+                ' onchange="cellChange(' + item.timeworks_id + ', this); zeroTimeCheck(this)"></td>'
+            );
+            // 休憩
+            newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i++ + '" name="rest"' +
+                ' class="icon-del" type="time" value="' + (item.rest_time ?? "") + '"' +
+                ' onchange="cellChange(' + item.timeworks_id + ', this)"></td>');
+            break;
+        case "05":
+            if (item.situation == "有給") {
+                newRow.insertAdjacentHTML('beforeend', '<td></td><td></td><td></td><td></td><td></td><td><span>有給</span></td><td></td>');
+            } else {
                 // 出勤打刻
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.start_time ?? "") + '</span></td>');
                 // 退勤打刻
                 newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.end_time ?? "") + '</span></td>');
                 // 出勤確定
-                i++;
-                let zeroClassStart = item.comp_start_time === "00:00:00" ? " zero-time" : "";
-                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" name="start"' +
-                    ' class="icon-del' + zeroClassStart + '" type="time" step="1" value="' + (item.comp_start_time ?? "") + '"' +
-                    ' onchange="cellChange(' + item.timeworks_id + ', this); zeroTimeCheck(this)"></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.comp_start_time ?? "") + '</span></td>');
                 // 退勤確定
-                i++;
-                let zeroClassEnd = item.comp_end_time === "00:00:00" ? " zero-time" : "";
-                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" name="end"' +
-                    ' class="icon-del' + zeroClassEnd + '" type="time" step="1" value="' + (item.comp_end_time ?? "") + '"' +
-                    ' onchange="cellChange(' + item.timeworks_id + ', this); zeroTimeCheck(this)"></td>'
-                );
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.comp_end_time ?? "") + '</span></td>');
                 // 休憩
-                i++;
-                newRow.insertAdjacentHTML('beforeend', '<td><input tabindex="' + i + '" name="rest"' +
-                    ' class="icon-del" type="time" value="' + (item.rest_time ?? "") + '"' +
-                    ' onchange="cellChange(' + item.timeworks_id + ', this)"></td>');
-                break;
-            case "05":
-                if (item.situation == "有給") {
-                    newRow.insertAdjacentHTML('beforeend', '<td></td><td></td><td></td><td></td><td></td><td><span>有給</span></td><td></td>');
+                newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.rest_time ?? "") + '</span></td>');
+                // 確定
+                if (item.state > 0) {
+                    newRow.insertAdjacentHTML('beforeend', '<td><span>確定</span></td>');
+                    // 確定を戻すボタン
+                    newRow.insertAdjacentHTML('beforeend', '<td><div sec:authorize="hasAuthority("APPROLE_admin")"><div onclick="execReverse(' + item.timeworks_id + ')" class="img-btn"><img src="/icons/update.png"></img></div></div></td>');
                 } else {
-                    // 出勤打刻
-                    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.start_time ?? "") + '</span></td>');
-                    // 退勤打刻
-                    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.end_time ?? "") + '</span></td>');
-                    // 出勤確定
-                    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.comp_start_time ?? "") + '</span></td>');
-                    // 退勤確定
-                    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.comp_end_time ?? "") + '</span></td>');
-                    // 休憩
-                    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.rest_time ?? "") + '</span></td>');
-                    // 確定
-                    if (item.state > 0) {
-                        newRow.insertAdjacentHTML('beforeend', '<td><span>確定</span></td>');
-                        // 確定を戻すボタン
-                        newRow.insertAdjacentHTML('beforeend', '<td><div sec:authorize="hasAuthority("APPROLE_admin")"><div onclick="execReverse(' + item.timeworks_id + ')" class="img-btn"><img src="/icons/update.png"></img></div></div></td>');
-                    } else {
-                        newRow.insertAdjacentHTML('beforeend', '<td></td><td></td>');
-                    }       
-                }                   
-            default:
-                break;
-        }
-    });
-    createTableFooter("footer-02", list);
-};
+                    newRow.insertAdjacentHTML('beforeend', '<td></td><td></td>');
+                }       
+            }                   
+        default:
+            break;
+    }
+}
 
 async function execReverse(id) {
     // const data = "id=" + encodeURIComponent(parseInt(id));
@@ -559,7 +377,7 @@ async function execListChange(self) {
         case "03":
             const selectedItem = panel.querySelector("[name='office']");
             if (selectedItem != null) {
-                createTimeworksSummaryList(selectedItem.value);
+                createTimeworksSummaryList(tab, selectedItem.value);
             }
             break;
         case "05":
@@ -604,16 +422,7 @@ async function execDownloadCsv() {
 }
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 出力
-// 選択した営業所IDで従業員の勤怠情報概要を取得してリスト作成
-async function createTimeworksSummaryList(officeId) {
-    list03 = await getEmployeeTimeworksBetween(officeId, "start-date03", "end-date03", "/api/timeworks/summary/get/between/id");
-    createBetweenTable03Content(list03);
-    // チェックボックスの処理を再登録する
-    registCheckButtonClicked("table-03-content");
-    // エンターフォーカス処理をイベントリスナーに登録する
-    tabFocusElements = createTabFocusElements();
-    setEnterFocus("table-03");
-}
+
 
 // 出力一覧表示用のテーブル作成
 function createBetweenTable03Content(list) {
@@ -951,7 +760,7 @@ window.addEventListener("load", async () => {
     const officeArea02 = document.querySelector('div[data-panel="03"] select[name="office"]');
     createComboBoxWithTop(officeArea02, officeList, "すべて");
     setComboboxSelected(officeArea02, officeId);
-    officeArea02.onchange = function() { createTimeworksSummaryList(this.value); };
+    officeArea02.onchange = function() { createTimeworksSummaryList("03", this.value); };
 
     const officeArea03 = document.querySelector('div[data-panel="04"] select[name="office"]');
     createComboBoxWithTop(officeArea03, officeList, "すべて");
@@ -1002,7 +811,7 @@ window.addEventListener("load", async () => {
     execSpecifyPeriod(monthStr, 'start-date05', 'end-date05');
 
     await updateDisplay();
-    createTimeworksSummaryList(officeId);
+    createTimeworksSummaryList("03", officeId);
     createPaidHolidayList(officeId, thisYear)
     createTableFooter("footer-02", null);
     createTableFooter("footer-03", null);

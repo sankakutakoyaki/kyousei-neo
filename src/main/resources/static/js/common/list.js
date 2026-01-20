@@ -5,7 +5,7 @@
  * @param {*} fileName 
  * @returns 
  */
-function createListItemWithSelection(id, fileName) {
+function createListItemWithSelection(id, fileName, area = document) {
     const li = document.createElement('li');
     li.dataset.id = id;
     li.textContent = fileName;
@@ -19,10 +19,13 @@ function createListItemWithSelection(id, fileName) {
         }
 
         // 他のliから選択クラスを外す
-        document.querySelectorAll('.normal-list>li').forEach(el => el.classList.remove('selected'));
+        // document.querySelectorAll('.normal-list>li').forEach(el => el.classList.remove('selected'));
+        area.querySelectorAll('.normal-list>li').forEach(el => el.classList.remove('selected'));
 
         // このliに選択クラスを追加
         li.classList.add('selected');
+
+        if (funcName != null) () => funcName();
     });
 
     return li;
