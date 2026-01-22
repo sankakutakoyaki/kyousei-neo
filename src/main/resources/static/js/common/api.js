@@ -86,11 +86,12 @@ async function searchFetch(url, data, token, contentType = "application/json") {
         await handleHttpError(response.status, json);
     }
 
-    return {
-        ok: response.ok,
-        status: response.status,
-        ...json
-    };
+    return json;
+    // return {
+    //     ok: response.ok,
+    //     status: response.status,
+    //     ...json
+    // };
 }
 
 /**

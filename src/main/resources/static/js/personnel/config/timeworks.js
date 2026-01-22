@@ -2,12 +2,14 @@
 
 const TIMEWORKS_TIME_CONFIG = {
     start: {
+        dateTimeKey: "start_date_time",
         timeKey: "start_time",
         compTimeKey: "comp_start_time",
         latKey: "start_latitude",
         lngKey: "start_longitude"
     },
     end: {
+        dateTimeKey: "end_date_time",
         timeKey: "end_time",
         compTimeKey: "comp_end_time",
         latKey: "end_latitude",
@@ -16,6 +18,17 @@ const TIMEWORKS_TIME_CONFIG = {
 };
 
 const TIMEWORKS_TAB_CONFIG = {
+    "01": {
+        tab: "01",
+        containerId: "timeworks-container01",
+        tableId: "table-01-content",
+        footerId: "footer-01",
+
+        // nameBox: "name",
+        // codeBox: "code",
+        codeChange: (e) => checkTimeWorksStartSaved(e)
+    },
+
     "02": {
         tab: "02",
         tableId: "table-02-content",
@@ -40,12 +53,19 @@ const TIMEWORKS_TAB_CONFIG = {
 
     "03": {
         tab: "03",
+        tableId: "table-03-content",
         selectedId: "[name='office']",
-        createList: (tab, id) => createTimeworksSummaryList(id),
+        // createList: (tab, id) => createTimeworksSummaryList(id),
+        createList: (tab, id) => createEmployeeTimeworksList(tab, id),
 
         api: {
             list: "/api/timeworks/summary/get/between/id"
         }
+    },
+
+    "04": {
+        tab: "04",
+        tableId: "table-04-contentn"
     },
 
     "05": {
@@ -67,5 +87,16 @@ const TIMEWORKS_TAB_CONFIG = {
 
         selectedId: "#employee-list-05 li.selected",
         createList: (tab, id) => createEmployeeTimeworksList(tab, id)
+    }
+};
+
+const CODE_CONFIG = {
+    "01": {
+        nameId: "name",
+        codeId: "code",
+    },
+    "02": {
+        nameId: "name02",
+        codeId: "code02",
     }
 };

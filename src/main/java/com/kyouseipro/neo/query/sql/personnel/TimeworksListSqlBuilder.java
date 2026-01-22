@@ -5,7 +5,7 @@ public class TimeworksListSqlBuilder {
     private static String baseSelectString() {
         return
             "SELECT t.timeworks_id, t.employee_id, t.category" +
-            ", t.work_date, t.start_time, t.end_time, t.comp_start_time, t.comp_end_time, t.rest_time, t.version, t.state" +
+            ", t.work_date, t.start_date_time, t.start_time, t.end_date_time, t.end_time, t.comp_start_time, t.comp_end_time, t.rest_time, t.version, t.state" +
             ", COALESCE(w.basic_start_time, '00:00:00') as basic_start_time, COALESCE(w.basic_end_time, '00:00:00') as basic_end_time" +
             ", COALESCE(e.full_name, '') as full_name, COALESCE(o.name, '') as office_name, '' as situation FROM timeworks t" +
             " LEFT OUTER JOIN employees e ON e.employee_id = t.employee_id AND NOT (e.state = ?)" +
@@ -57,7 +57,7 @@ public class TimeworksListSqlBuilder {
         return
             "DECLARE " + rowTableName + " TABLE (" +
             "timeworks_id INT, employee_id INT, category INT, " +
-            "work_date DATE, start_time TIME, end_time TIME, " +
+            "work_date DATE, start_date_time DATETIME, start_time TIME, end_date_time ENDTIME, end_time TIME, " +
             "comp_start_time TIME, comp_end_time TIME, rest_time TIME, version INT, state INT" +
             "); ";
     }
@@ -66,17 +66,17 @@ public class TimeworksListSqlBuilder {
         return
             "INSERT INTO timeworks_log (" +
             "timeworks_id, editor, process, log_date, employee_id, category, work_date, " +
-            "start_time, end_time, comp_start_time, comp_end_time, rest_time, version, state" +
+            "start_date_time, start_time, end_date_time, end_time, comp_start_time, comp_end_time, rest_time, version, state" +
             ") " +
             "SELECT timeworks_id, ?, '" + processName + "', CURRENT_TIMESTAMP, employee_id, category, work_date" +
-            ", start_time, end_time, comp_start_time, comp_end_time, rest_time, version, state " +
+            ", start_date_time, start_time, end_date_time, end_time, comp_start_time, comp_end_time, rest_time, version, state " +
             "FROM " + rowTableName + ";";
     }
 
     private static String buildOutputLog() {
         return
             "OUTPUT INSERTED.timeworks_id, INSERTED.employee_id, INSERTED.category, " +
-            "INSERTED.work_date, INSERTED.start_time, INSERTED.end_time, " +
+            "INSERTED.work_date, INSERTED.start_date_time, INSERTED.start_time, INSERTED.end_date_time, INSERTED.end_time, " +
             "INSERTED.comp_start_time, INSERTED.comp_end_time, INSERTED.rest_time, INSERTED.version, INSERTED.state ";
     }
 
@@ -99,7 +99,7 @@ public class TimeworksListSqlBuilder {
 
             // 通常の勤務 INSER
             "INSERT INTO timeworks (" +
-            "  employee_id, category, work_date, start_time, end_time, comp_start_time, comp_end_time, rest_time, version, state" +
+            "  employee_id, category, work_date, start_date_time, start_time, end_date_time, end_time, comp_start_time, comp_end_time, rest_time, version, state" +
             ") " +
             buildOutputLog() + "INTO @Inserted " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
@@ -113,7 +113,7 @@ public class TimeworksListSqlBuilder {
             buildLogTable("@Updated") +
 
             "UPDATE timeworks SET " +
-            "  employee_id=?, category=?, work_date=?, start_time=?, end_time=?, comp_start_time=?, comp_end_time=?, rest_time=?, version=?, state=? " +
+            "  employee_id=?, category=?, work_date=?, start_date_tiem=?, start_time=?, end_date_time=?, end_time=?, comp_start_time=?, comp_end_time=?, rest_time=?, version=?, state=? " +
             buildOutputLog() + "INTO @Updated " +
             "WHERE timeworks_id=?; " +
 

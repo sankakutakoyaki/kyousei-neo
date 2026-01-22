@@ -4,7 +4,10 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -91,7 +94,25 @@ public class TimeworksListParameterBinder {
         pstmt.setInt(index++, t.getEmployee_id());
         pstmt.setInt(index++, t.getCategory());
         pstmt.setString(index++, LocalDate.now().toString());
+        if (t.getStart_date_time() != null) {
+            pstmt.setTimestamp(
+                index++,
+                Timestamp.valueOf(t.getStart_date_time())
+            );
+        } else {
+            pstmt.setNull(index++, Types.TIMESTAMP);
+        }
+        // pstmt.setTimestamp(index++, t.getStart_date_time() != null ? Timestamp.valueOf(t.getStart_date_time()) : null);
         pstmt.setTime(index++, t.getStart_time() != null ? Time.valueOf(t.getStart_time()) : Time.valueOf("00:00:00"));
+        if (t.getEnd_date_time() != null) {
+            pstmt.setTimestamp(
+                index++,
+                Timestamp.valueOf(t.getEnd_date_time())
+            );
+        } else {
+            pstmt.setNull(index++, Types.TIMESTAMP);
+        }
+        // pstmt.setTimestamp(index++, t.getEnd_date_time() != null ? Timestamp.valueOf(t.getEnd_date_time()) : null);
         pstmt.setTime(index++, t.getEnd_time() != null ? Time.valueOf(t.getEnd_time()) : Time.valueOf("00:00:00"));
         pstmt.setTime(index++, t.getComp_start_time() != null ? Time.valueOf(t.getComp_start_time()) : Time.valueOf("00:00:00"));
         pstmt.setTime(index++, t.getComp_end_time() != null ? Time.valueOf(t.getComp_end_time()) : Time.valueOf("00:00:00"));
@@ -114,7 +135,25 @@ public class TimeworksListParameterBinder {
         pstmt.setInt(index++, t.getEmployee_id());
         pstmt.setInt(index++, t.getCategory());
         pstmt.setString(index++, t.getWork_date().toString());
+        if (t.getStart_date_time() != null) {
+            pstmt.setTimestamp(
+                index++,
+                Timestamp.valueOf(t.getStart_date_time())
+            );
+        } else {
+            pstmt.setNull(index++, Types.TIMESTAMP);
+        }
+        // pstmt.setTimestamp(index++, t.getStart_date_time() != null ? Timestamp.valueOf(t.getStart_date_time()) : null);
         pstmt.setTime(index++, t.getStart_time() != null ? Time.valueOf(t.getStart_time()) : Time.valueOf("00:00:00"));
+        if (t.getEnd_date_time() != null) {
+            pstmt.setTimestamp(
+                index++,
+                Timestamp.valueOf(t.getEnd_date_time())
+            );
+        } else {
+            pstmt.setNull(index++, Types.TIMESTAMP);
+        }
+        // pstmt.setTimestamp(index++, t.getEnd_date_time() != null ? Timestamp.valueOf(t.getEnd_date_time()) : null);
         pstmt.setTime(index++, t.getEnd_time() != null ? Time.valueOf(t.getEnd_time()) : Time.valueOf("00:00:00"));
         pstmt.setTime(index++, t.getComp_start_time() != null ? Time.valueOf(t.getComp_start_time()) : Time.valueOf("00:00:00"));
         pstmt.setTime(index++, t.getComp_end_time() != null ? Time.valueOf(t.getComp_end_time()) : Time.valueOf("00:00:00"));

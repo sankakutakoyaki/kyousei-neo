@@ -2,6 +2,7 @@ package com.kyouseipro.neo.mapper.personnel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -14,6 +15,10 @@ public class TimeworksListEntityMapper {
         entity.setEmployee_id(rs.getInt("employee_id"));
         entity.setCategory(rs.getInt("category"));
         entity.setWork_date(rs.getDate("work_date").toLocalDate());
+        Timestamp tsStart = rs.getTimestamp("start_date_time");
+        entity.setStart_date_time(tsStart != null ? tsStart.toLocalDateTime() : null);
+        Timestamp tsEnd = rs.getTimestamp("end_date_time");
+        entity.setStart_date_time(tsEnd != null ? tsEnd.toLocalDateTime() : null);
         entity.setFull_name(rs.getString("full_name"));
         entity.setOffice_name(rs.getString("office_name"));
         // 打刻データ

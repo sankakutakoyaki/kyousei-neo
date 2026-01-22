@@ -33,3 +33,26 @@ function createUniqueName({
     }
     return `${baseName}(${num})`;
 }
+
+// コードから[timeworks]を取得して、名前を表示
+async function searchForEmployeeNameByCode(url, codeBox, nameBox) {
+    if (codeBox == null || nameBox == null) return;
+    if (codeBox.value == "" || isNaN(codeBox.value)) {
+        nameBox.value = "";
+        return;
+    }
+
+    const entity = await searchFetch(url, JSON.stringify({id:parseInt(codeBox.value)}), token);
+
+    if (entity != null && entity.employee_id > 0) {
+        nameBox.value = entity.full_name;
+        // checkTimeWorksStartSaved(entity);
+        return entity;
+    } else {
+        codeBox.value = "";
+        nameBox.value = "";
+        openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
+        setFocusElement("msg-dialog", codeBox);
+        return null;
+    }
+}

@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.entity.personnel;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.interfaceis.CsvExportable;
@@ -15,7 +16,9 @@ public class TimeworksListEntity implements CsvExportable {
     private String full_name;
     private String office_name;
     private LocalDate work_date;
+    private LocalDateTime start_date_time;
     private String start_time;
+    private LocalDateTime end_date_time;
     private String end_time;
     private String comp_start_time;
     private String comp_end_time;

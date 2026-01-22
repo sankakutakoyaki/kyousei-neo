@@ -614,7 +614,7 @@ async function execDelete(self) {
 
     const result = await deleteTablelist(config.tableId, '/api/recycle/delete');
 
-    if (result.success) {
+    if (result.ok) {
         await refleshDisplay01();
         openMsgDialog("msg-dialog", result.message, "blue");
     } else {
@@ -671,7 +671,7 @@ async function execSave(formId, tableId, mode) {
     // 保存処理
     const result = await updateFetch("/api/recycle/save/" + mode, JSON.stringify({list:itemList}), token, "application/json");
 
-    if (result.success) {        
+    if (result.ok) {        
         await refleshDisplay01();
         // 追加・変更行に移動
         scrollIntoTableList(tableId, result.id);
@@ -701,7 +701,7 @@ async function execUpdate(mode) {
 
     const formdata = setInsertFormData(form);
     const result = await updateFetch("/api/recycle/save/" + mode, JSON.stringify({entity:formdata}), token, "application/json");
-    if (result.success) {
+    if (result.ok) {
         // 画面更新
         await refleshDisplay01();
         openMsgDialog("msg-dialog", result.message, "blue");
@@ -745,9 +745,9 @@ async function updateFormTableDisplay(mode, list) {
 // 画面を更新する
 async function refleshDisplay01() {
     const result = await getRecyclesBetween("start-date01", "end-date01", "/api/recycle/get/between");
-    if (result.success) {
+    if (result.ok) {
         origin = result;
-        await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);console.log(origin)
+        await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTable01Content);
     }
 }
 

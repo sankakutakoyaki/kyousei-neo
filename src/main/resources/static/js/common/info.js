@@ -23,7 +23,7 @@ function getNow() {
     const d = date.getDate();
     const h = date.getHours();
     const min = date.getMinutes();
-    return y + "/" + ('0' + m).slice(-2) + "/" + ('0' + d).slice(-2) + ' ' + ('0' + h).slice(-2) + ":" + ('0' + min).slice(-2);
+    return y + "-" + ('0' + m).slice(-2) + "-" + ('0' + d).slice(-2) + ' ' + ('0' + h).slice(-2) + ":" + ('0' + min).slice(-2);
 }
 
 /**
@@ -116,7 +116,7 @@ async function getAddress(event, elmId, targetId) {
  * 現在地を取得する
  * @returns latitude:緯度　longitude:経度
  */
-async function getLoacation() {
+async function getLocation() {
     // Geolocationのサポートを確認
     if ("geolocation" in navigator) {
     return new Promise((resolve, reject) => {

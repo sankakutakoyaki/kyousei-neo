@@ -19,7 +19,7 @@
                     <li class="tab-menu-item" data-tab="05">一覧</li>
                 </ul>
                 <div class="tab-panel is-show" data-panel="01">
-                    <div class="timeworks-container01">
+                    <div id="timeworks-container01" class="timeworks-container01">
                         <!-- ヘッダー -->
                         <header th:replace="~{fragments/personnel/timeworks :: header01Fragment()}"></header>
                         <div class="table-area">
@@ -208,18 +208,19 @@
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
             let entity = {};
-            const code = document.getElementById('code');
-            const name = document.getElementById('name');
-            const code02 = document.getElementById('code02');
-            const name02 = document.getElementById('name02');
-            const start11 = document.getElementById('start-date11');
-            const startBtn = document.querySelector('button[name="start-btn"]');
-            const endBtn = document.querySelector('button[name="end-btn"]');
+
+            // const code = document.getElementById('code');
+            // const name = document.getElementById('name');
+            // const code02 = document.getElementById('code02');
+            // const name02 = document.getElementById('name02');
+            // const start11 = document.getElementById('start-date11');
+            // const startBtn = document.querySelector('button[name="start-btn"]');
+            // const endBtn = document.querySelector('button[name="end-btn"]');
             const completeNum = /*[[${completeNum}]]*/;
             const officeId = /*[[${officeId}]]*/;
             const officeList = /*[[${officeList}]]*/;
 
-            const origin = /*[[${employeeList}]]*/;
+            const employeeList = /*[[${employeeList}]]*/;
             // const employeeList02 = document.getElementById('employee-list-02');
             // const employeeList05 = document.getElementById('employee-list-05');
             // let list02 = {};
@@ -234,6 +235,14 @@
                 yearList.push(item);
             }
         </script>
+        <script th:src="@{/js/personnel/config/timeworks.js}"></script>
+        
+        <script th:src="@{/js/personnel/timeworks01.js}"></script>
+        <script th:src="@{/js/personnel/timeworks02.js}"></script>
+        <script th:src="@{/js/personnel/timeworks03.js}"></script>
+        <script th:src="@{/js/personnel/timeworks04.js}"></script>
+        <script th:src="@{/js/personnel/timeworks05.js}"></script>
+        
         <script th:src="@{/js/personnel/timeworks.js}"></script>
     </div>
 </body>

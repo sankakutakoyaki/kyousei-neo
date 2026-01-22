@@ -75,7 +75,8 @@ public class TimeworksListApiController {
         Optional<TimeworksListEntity> opt = timeworksListService.getTodaysByEmployeeId(req.getId());
 
         // 既に存在するならそのまま返す
-        if (opt != null) {
+        // if (opt != null) {
+        if (!opt.isEmpty()) {    
             return ResponseEntity.ok(opt.orElse(null));
         }
 
