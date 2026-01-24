@@ -11,6 +11,7 @@
     --white: white;
     --yellow: rgb(220, 200, 20);
     --light-yellow: rgb(253, 242, 181);
+    --light-grey: lightgrey;
 
     --bg: white;
     --br: darkgrey;
@@ -35,6 +36,7 @@
     /*  */
     --dialog-bg: rgba(0, 0, 0, 0.5);
     --sidebar-bg: white;
+    --sidebar-select-bg: rgb(232, 232, 232);
     --shadow: grey;
     --line: #ddd;
 

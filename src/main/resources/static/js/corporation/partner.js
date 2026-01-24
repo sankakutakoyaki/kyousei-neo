@@ -424,6 +424,8 @@ function refleshCode() {
 /******************************************************************************************************* 初期化時 */
 
 window.addEventListener("load", async () => {
+    hamburgerItemAddSelectClass('.header-title', 'regist');
+    hamburgerItemAddSelectClass('.normal-sidebar', 'partner');
     startProcessing();
 
     Object.values(MODE_CONFIG).forEach(cfg => {

@@ -1,3 +1,5 @@
+"use strict"
+
 /**
  * 更新用
  * @param {*} url 

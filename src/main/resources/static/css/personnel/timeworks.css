@@ -18,11 +18,19 @@
     font-size: 4rem;
 }
 
-.timeworks-container01,
-.timeworks-container02,
-.timeworks-container03,
-.timeworks-container04,
-.timeworks-container05 {
+.tab-area.timeworks {
+    display: grid;
+    grid-template-rows: 3rem 1fr;    
+}
+
+/* 勤怠リスト部分 */
+.table-area.timeworks {
+    display: grid;
+    grid-template-rows: 1fr 3rem;
+    max-width: 40rem;
+}
+
+.timeworks-container01 {
     display: grid;
     width: 100%;
     height: 100%;
@@ -34,97 +42,12 @@
     column-gap: 1rem;
 }
 
-.timeworks-container02,
-.timeworks-container05 {
-    grid-template-columns: 15rem 1fr;
-    column-gap: 2rem;
-}
-
-.timeworks-container03 {
-    grid-template-columns: 40rem;
-}
-
-.timeworks-container04 {
-    grid-template-columns: 40rem;
-}
-
+/* 打刻入力部分 */
 .timeworks-content01 {
     display: grid;
     row-gap: 1rem;
     grid-template-rows: auto auto 5rem 1fr;
     padding: 1rem;
-}
-
-.timeworks-content02,
-.timeworks-content05 {
-    display: grid;
-    row-gap: .5rem;
-    grid-template-rows: auto auto;
-    padding: 1rem;
-}
-
-.timeworks-content03 {
-    display: grid;
-    row-gap: .5rem;
-    grid-template-rows: auto auto;
-}
-
-.timeworks-content04 {
-    display: grid;
-}
-
-#form02 {
-    display: grid;
-}
-
-/* .timeworks-content02>div.flex-area:nth-child(2) {
-    column-gap: 2rem;
-} */
-
-.timeworks-content02>div.flex-area:nth-child(2)>div.flex-area,
-.timeworks-content03>div.flex-area:nth-child(2)>div.flex-area,
-.timeworks-content05>div.flex-area:nth-child(2)>div.flex-area {
-    column-gap: 0;
-}
-
-.timeworks-content02 .normal-btn.frameless>img,
-.timeworks-content03 .normal-btn.frameless>img,
-.timeworks-content05 .normal-btn.frameless>img {
-    width: .8rem;
-}
-
-.timeworks-content02 .normal-btn.frameless:nth-child(1),
-.timeworks-content02 .normal-btn.frameless:nth-child(3),
-.timeworks-content02 .normal-btn.frameless:nth-child(4),
-.timeworks-content02 .normal-btn.frameless:nth-child(6),
-.timeworks-content03 .normal-btn.frameless:nth-child(1),
-.timeworks-content03 .normal-btn.frameless:nth-child(3),
-.timeworks-content03 .normal-btn.frameless:nth-child(4),
-.timeworks-content03 .normal-btn.frameless:nth-child(6),
-.timeworks-content05 .normal-btn.frameless:nth-child(1),
-.timeworks-content05 .normal-btn.frameless:nth-child(3),
-.timeworks-content05 .normal-btn.frameless:nth-child(4),
-.timeworks-content05 .normal-btn.frameless:nth-child(6) {
-    min-width: 1.5rem;
-    padding-left: .5rem;
-    padding-right: .5rem;
-}
-
-.timeworks-content02 .normal-btn.frameless:nth-child(3),
-.timeworks-content03 .normal-btn.frameless:nth-child(3),
-.timeworks-content05 .normal-btn.frameless:nth-child(3) {
-    margin-right: 2rem;
-}
-
-.timeworks-content02 .normal-btn.frameless:nth-child(2),
-.timeworks-content02 .normal-btn.frameless:nth-child(5),
-.timeworks-content03 .normal-btn.frameless:nth-child(2),
-.timeworks-content03 .normal-btn.frameless:nth-child(5),
-.timeworks-content05 .normal-btn.frameless:nth-child(2),
-.timeworks-content05 .normal-btn.frameless:nth-child(5) {
-    min-width: 1.5rem;
-    padding-left: .5rem;
-    padding-right: .5rem;
 }
 
 .timeworks-content01 .code-box {
@@ -150,162 +73,22 @@
 }
 
 .normal-table.timeworks01 tr {
-    grid-template-columns: 11rem 7rem 7rem 1fr;
+    grid-template-columns: 11rem 5rem 5rem 1fr;
 }
 
-.normal-table.timeworks02 tr {
-    grid-template-columns: 8rem 6rem 6rem 7rem 7rem 6rem 1fr;
-}
-
-.normal-table.timeworks03 tr {
-    grid-template-columns: 3rem 5rem 10rem 5rem 1fr;
-}
-
-.normal-table.timeworks04 tr {
-    grid-template-columns: 5rem 10rem 5rem 1fr;
-}
-
-.normal-table.timeworks05 tr {
-    grid-template-columns: 8rem 6rem 6rem 7rem 7rem 6rem 3rem 3rem 1fr;
-}
-
-.normal-table.timeworks15 tr {
-    grid-template-columns: 8rem 8rem minmax(8rem, 1fr) 3rem;
-}
-
-div[data-panel="03"] .form-parts.office,
-div[data-panel="04"] .form-parts.office {
-    width: 15rem;
-    /* margin-bottom: .5rem; */
-}
-
-div[data-panel="03"] .form-parts.office {
-    margin-bottom: .5rem;
-}
-
-div[data-panel="04"] .form-parts.year {
-    width: 7rem;
-    /* margin-bottom: .5rem; */
-}
-/* .normal-table.timeworks01 tbody.scroll-area,
-.normal-table.timeworks02 tbody.scroll-area {
-    min-height: 12rem;
-} */
-
-.normal-table.timeworks01 tbody tr[name="data-row"],
-.normal-table.timeworks02 tbody tr[name="data-row"],
-.normal-table.timeworks03 tbody tr[name="data-row"],
-.normal-table.timeworks04 tbody tr[name="data-row"],
-.normal-table.timeworks05 tbody tr[name="data-row"],
-.normal-table.timeworks15 tbody tr[name="data-row"] {
-    height: 2.5rem;
+.normal-table.timeworks01 tbody tr[name="data-row"] {
+    height: 2rem;
     border: 0;
 }
 
-.normal-table.timeworks01 tbody tr[name="data-row"].selected,
-.normal-table.timeworks02 tbody tr[name="data-row"].selected,
-.normal-table.timeworks03 tbody tr[name="data-row"].selected,
-.normal-table.timeworks05 tbody tr[name="data-row"].selected,
-.normal-table.timeworks15 tbody tr[name="data-row"].selected {
+.normal-table.timeworks01 tbody tr[name="data-row"].selected {
     background-color: transparent;
 }
 
-.normal-table.timeworks04 tbody tr[name="data-row"].selected {
-    background-color: var(--row-selected);
-}
-
-.normal-table.timeworks01 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child,
-.normal-table.timeworks02 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child,
-.normal-table.timeworks03 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child,
-.normal-table.timeworks04 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child,
-.normal-table.timeworks05 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child,
-.normal-table.timeworks15 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child {
+.normal-table.timeworks01 tbody tr[name="data-row"]:hover+tr[name="data-row"]:last-child {
     border: 0;
-}
-
-.normal-table.timeworks02 tr td:nth-child(2) span,
-.normal-table.timeworks02 tr td:nth-child(3) span,
-.normal-table.timeworks05 tr td:nth-child(2) span,
-.normal-table.timeworks05 tr td:nth-child(3) span {
-    color: lightgray;
-}
-
-.normal-table.timeworks02 tr input,
-.normal-table.timeworks05 tr input,
-.normal-table.timeworks15 tr input {
-    border: 0;
-    padding: .5rem;
-    width: fit-content;
-    font-size: 1.1rem;
-}
-
-.normal-table.timeworks15 tr input {
-    background-color: transparent;
-}
-
-.normal-table.timeworks02 tr input.changed,
-.normal-table.timeworks05 tr input.changed {
-    color: darkred;
 }
 
 #employee-list-01.normal-list {
     padding: 0 1rem;
-}
-
-#form-01 .form-parts {
-    width: 100%;
-}
-
-#form-01 textarea[name="reason"] {
-    width: 100%;
-    height: 8rem;
-}
-
-#form-01 .code-box>:first-child {
-    width: 8rem;
-}
-
-@media screen and (max-width:1240px) {
-}
-
-@media screen and (max-width:560px) {
-    .timeworks-container01,
-    .timeworks-container02,
-    .timeworks-container03,
-    .timeworks-container04,
-    .timeworks-container05 {
-        display: block;
-        width: 100%;
-        padding: 0;
-    }
-    
-    .normal-table.timeworks02 tr,
-    .normal-table.timeworks03 tr,
-    .normal-table.timeworks04 tr,
-    .normal-table.timeworks05 tr,
-    .normal-table.timeworks15 tr {
-        grid-template-columns: 1fr;
-    }
-    .normal-table.timeworks01 tr {
-        grid-template-columns: 8rem 6rem 6rem 1fr;
-    }
-
-    .normal-table.timeworks01 tr th,
-    .normal-table.timeworks02 tr th,
-    .normal-table.timeworks03 tr th,
-    .normal-table.timeworks04 tr th,
-    .normal-table.timeworks05 tr th,
-    .normal-table.timeworks15 tr th {
-        display: none;
-    }
-    .input-area.code-box {
-        grid-template-columns: 35% 65%;
-    }
-    .input-area.time-btn {
-        grid-template-columns: 1fr 1fr;
-    }
-    .input-area.code-box .img-btn {
-        bottom: .5rem;
-        right: 0;
-    }
 }

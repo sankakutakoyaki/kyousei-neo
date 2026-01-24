@@ -1066,6 +1066,8 @@ function getComboTargets(targetIds) {
 // });
 
 window.addEventListener("load", async () => {
+    hamburgerItemAddSelectClass('.header-title', 'regist');
+    hamburgerItemAddSelectClass('.normal-sidebar', 'client');
     startProcessing();
 
     // // search box

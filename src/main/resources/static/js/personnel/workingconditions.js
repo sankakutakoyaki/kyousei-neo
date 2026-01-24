@@ -1,3 +1,5 @@
+"use strict"
+
 /******************************************************************************************************* 入力画面 */
 
 // リスト画面の本体部分を作成する
@@ -417,8 +419,10 @@ async function renderAllTables(origin) {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async  () => {
-    // スピナー表示
-    startProcessing();
+    hamburgerItemAddSelectClass('.header-title', 'personnel');
+    hamburgerItemAddSelectClass('.normal-sidebar', 'working-conditions');
+    // // スピナー表示
+    // startProcessing();
 
     // // 検索ボックス入力時の処理
     // document.getElementById('search-box-01').addEventListener('search', async function(e) {
@@ -454,6 +458,6 @@ window.addEventListener("load", async  () => {
         tabMenu.addEventListener('click', tabSwitch);
     })
 
-    // スピナー消去
-    processingEnd();
+    // // スピナー消去
+    // processingEnd();
 });

@@ -144,7 +144,7 @@ input[type="time"]::-webkit-date-and-time-value {
 
 /******************************************************************************************************* 時刻ボックス */
 
-.zero-time {
+/* .zero-time {
     background-color: pink;
     color: var(--br);
-}
+} */

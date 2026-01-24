@@ -12,7 +12,7 @@
 @import url("/css/common/list.css");
 
 :root {
-    font-size: 14px;
+    font-size: 12px;
     --cursor: pointer;
 }
 
@@ -94,6 +94,12 @@ body {
     padding: 2rem 0;
 }
 
+.normal-sidebar>div.hamburger-item.selected {
+    border-radius: 0 .5rem .5rem 0;
+    background-color: var(--sidebar-select-bg);
+    font-weight: bold;
+}
+
 /* 共通ヘッダー部分 */
 .header-menu {
     position: relative;
@@ -112,12 +118,18 @@ body {
     cursor: pointer;
 }
 
+
 .hamburger-item>img {
     width: 2rem;
 }
 
-.header-title>.hamburger-item>span {
+.header-title>.hamburger-item.selected>span {
     color: var(--white);
+    font-weight: bold;
+}
+
+.header-title>.hamburger-item>span {
+    color: var(--light-grey);
 }
 
 .hamburger-btn-open,
@@ -253,3 +265,10 @@ body {
 		transform-origin: left bottom;
 	}
 } */
+
+/* タブレット・携帯端末の時 */
+@media (pointer: coarse) and (max-width: 1024px) {
+  body {
+    font-size: 14px;
+  }
+}

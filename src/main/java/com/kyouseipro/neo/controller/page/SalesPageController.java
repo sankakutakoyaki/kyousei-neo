@@ -34,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class OrderPageController extends BaseController {
+public class SalesPageController extends BaseController {
     private final OrderListService orderListService;
     private final OrderItemService orderItemService;
     private final ComboBoxService comboBoxService;
@@ -48,8 +48,8 @@ public class OrderPageController extends BaseController {
         mv.addObject("title", "受注");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
 		mv.addObject("sidebarFragmentName", "fragments/common/menu :: salesFragment");
-        mv.addObject("bodyFragmentName", "contents/order/order :: bodyFragment");
-        mv.addObject("insertCss", "/css/order/order.css");
+        mv.addObject("bodyFragmentName", "contents/sales/order :: bodyFragment");
+        mv.addObject("insertCss", "/css/sales/order.css");
 
         EmployeeEntity user = getLoginUser(session, response);
         if (user == null) return null; // リダイレクト済みなので処理は止まる
@@ -93,8 +93,8 @@ public class OrderPageController extends BaseController {
         mv.addObject("title", "入荷");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
 		mv.addObject("sidebarFragmentName", "fragments/common/menu :: salesFragment");
-        mv.addObject("bodyFragmentName", "contents/order/goods :: bodyFragment");
-        mv.addObject("insertCss", "/css/order/goods.css");
+        mv.addObject("bodyFragmentName", "contents/sales/goods :: bodyFragment");
+        mv.addObject("insertCss", "/css/sales/goods.css");
 
         EmployeeEntity user = getLoginUser(session, response);
         if (user == null) return null; // リダイレクト済みなので処理は止まる

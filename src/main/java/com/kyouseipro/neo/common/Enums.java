@@ -397,4 +397,159 @@ public class Enums {
         public static final String ORDERS = "orders";
         public static final String ORDERITEMS = "order_items";
     }
+
+    /**
+     * 勤怠の業務タイプ
+     */
+    public enum timeworksType implements CodeEnum {
+        NORMAL(0, "通常勤務"),
+        AUTO_START(1, "出勤自動補完"),
+        AUTO_END(2, "退勤自動補完"),
+        NIGHT(3, "夜勤"),
+        PAID_LEAVE(10, "有給休暇"),
+        SPECIAL_LEAVE(11, "特別休暇");
+
+        private int num;
+        private String str;
+
+        private timeworksType(int num, String str) {
+            this.num = num;
+            this.str = str;
+        }
+
+        @Override
+        public int getCode() {
+            return this.num;
+        }
+
+        @Override
+        public String getDescription() {
+            return this.str;
+        }
+
+        public static String getDescriptionByNum(int num) {
+            for (timeworksType t  : values()) {
+                if (t.num == num) {
+                    return t.str;
+                }
+            }
+            return null;
+        }
+
+        public static timeworksType from(int code) {
+            for (timeworksType t : values()) {
+                if (t.num == code) {
+                    return t;
+                }
+            }
+            throw new IllegalArgumentException("Unknown WorkType: " + code);
+        }
+    }
+
+    /**
+     * 打刻の種類
+     */
+    public enum timeworksCategory implements CodeEnum {
+        START(1, "start"),
+        END(2, "end");
+
+        private int num;
+        private String str;
+
+        private timeworksCategory(int num, String str) {
+            this.num = num;
+            this.str = str;
+        }
+
+        @Override
+        public int getCode() {
+            return this.num;
+        }
+
+        @Override
+        public String getDescription() {
+            return this.str;
+        }
+
+        public static String getDescriptionByNum(int num) {
+            for (timeworksCategory c : values()) {
+                if (c.num == num) {
+                    return c.str;
+                }
+            }
+            return null;
+        }
+
+        public static timeworksCategory from(String value) {
+            for (timeworksCategory c : values()) {
+                if (c.str.equalsIgnoreCase(value)) {
+                    return c;
+                }
+            }
+            throw new IllegalArgumentException("Unknown TimeCategory: " + value);
+        }
+
+        /** ★ JSON → enum 変換用 */
+        @com.fasterxml.jackson.annotation.JsonCreator
+        public static timeworksCategory fromJson(String value) {
+            for (timeworksCategory c : values()) {
+                if (c.str.equalsIgnoreCase(value)
+                    || c.name().equalsIgnoreCase(value)) {
+                    return c;
+                }
+            }
+            throw new IllegalArgumentException("Unknown timeworksCategory: " + value);
+        }
+    }
+
+    // public final class TimeworksState {
+    //     public static final int WORKING = 0;
+    //     public static final int FINISHED = 1;
+    //     public static final int LEAVE = 2;
+    // }
+    /**
+     * 勤怠データの状態
+     */
+    public enum timeworksState implements CodeEnum {
+        NOT_STARTED(0, "未打刻"),
+        WORKING(1, "勤務中"),
+        FINISHED(2, "勤務終了"),
+        FIXED(3, "確定済");
+
+        private int num;
+        private String str;
+
+        private timeworksState(int num, String str) {
+            this.num = num;
+            this.str = str;
+        }
+
+        @Override
+        public int getCode() {
+            return this.num;
+        }
+
+        @Override
+        public String getDescription() {
+            return this.str;
+        }
+
+        public static String getDescriptionByNum(int num) {
+            for (timeworksState s : values()) {
+                if (s.num == num) {
+                    return s.str;
+                }
+            }
+            return null;
+        }
+
+        public static timeworksState from(int code) {
+            for (timeworksState s : values()) {
+                if (s.num == code) {
+                    return s;
+                }
+            }
+            throw new IllegalArgumentException("Unknown TimeworksState: " + code);
+        }
+    }
 }

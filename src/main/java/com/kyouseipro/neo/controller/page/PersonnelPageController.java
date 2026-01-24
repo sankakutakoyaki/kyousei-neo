@@ -17,7 +17,6 @@ import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.dto.SimpleData;
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.entity.personnel.EmployeeListEntity;
-import com.kyouseipro.neo.entity.personnel.TimeworksListEntity;
 import com.kyouseipro.neo.entity.personnel.WorkingConditionsEntity;
 import com.kyouseipro.neo.entity.personnel.WorkingConditionsListEntity;
 import com.kyouseipro.neo.service.common.ComboBoxService;
@@ -114,29 +113,57 @@ public class PersonnelPageController extends BaseController {
 
         EmployeeEntity user = getLoginUser(session, response);
         if (user == null) return null; // リダイレクト済みなので処理は止まる
-        // ユーザー名
-        // String userName = principal.getAttribute("preferred_username");
-        // mv.addObject("username", userName);
-        // 勤怠データ新規・更新用
-        TimeworksListEntity entity = new TimeworksListEntity();
-        mv.addObject("entity", entity);
-        // 初期表示用営業所ID
-        mv.addObject("officeId", session.getAttribute("officeId") == null ? "1000" : session.getAttribute("officeId").toString());
-        // 営業所リスト
-        List<SimpleData> officeList = comboBoxService.getSimpleOfficeList();
-        mv.addObject("officeList", officeList);
-        // 初期表示用従業員リスト取得
-        List<EmployeeListEntity> employeeList = employeeListService.getList();
-        mv.addObject("employeeList", employeeList);
-        // 完了コードを取得
-        mv.addObject("completeNum", Enums.state.COMPLETE.getCode());
+
+        // // 勤怠データ新規・更新用
+        // TimeworksListEntity entity = new TimeworksListEntity();
+        // mv.addObject("entity", entity);
+        // // 初期表示用営業所ID
+        // mv.addObject("officeId", session.getAttribute("officeId") == null ? "1000" : session.getAttribute("officeId").toString());
+        // // 営業所リスト
+        // List<SimpleData> officeList = comboBoxService.getSimpleOfficeList();
+        // mv.addObject("officeList", officeList);
+        // // 初期表示用従業員リスト取得
+        // List<EmployeeListEntity> employeeList = employeeListService.getList();
+        // mv.addObject("employeeList", employeeList);
+        // // 完了コードを取得
+        // mv.addObject("completeNum", Enums.state.COMPLETE.getCode());
 
         // EmployeeEntity user = getLoginUser(session);
         mv.addObject("username", user.getAccount());
         historyService.save(user.getAccount(), "timeworks", "閲覧", 200, "");
 	    return mv;
 	}
+	// @GetMapping("/timeworks")
+    // @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
+	// public ModelAndView showList(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
+    //     mv.setViewName("layouts/main");
+    //     mv.addObject("title", "勤怠");
+    //     mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+	// 	mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
+    //     mv.addObject("bodyFragmentName", "contents/personnel/timeworks :: bodyFragment");
+    //     mv.addObject("insertCss", "/css/personnel/timeworks.css");
 
+    //     EmployeeEntity user = getLoginUser(session, response);
+    //     if (user == null) return null; // リダイレクト済みなので処理は止まる
+    //     // 勤怠データ新規・更新用
+    //     TimeworksListEntity entity = new TimeworksListEntity();
+    //     mv.addObject("entity", entity);
+    //     // 初期表示用営業所ID
+    //     mv.addObject("officeId", session.getAttribute("officeId") == null ? "1000" : session.getAttribute("officeId").toString());
+    //     // 営業所リスト
+    //     List<SimpleData> officeList = comboBoxService.getSimpleOfficeList();
+    //     mv.addObject("officeList", officeList);
+    //     // 初期表示用従業員リスト取得
+    //     List<EmployeeListEntity> employeeList = employeeListService.getList();
+    //     mv.addObject("employeeList", employeeList);
+    //     // 完了コードを取得
+    //     mv.addObject("completeNum", Enums.state.COMPLETE.getCode());
+
+    //     // EmployeeEntity user = getLoginUser(session);
+    //     mv.addObject("username", user.getAccount());
+    //     historyService.save(user.getAccount(), "timeworks", "閲覧", 200, "");
+	//     return mv;
+	// }
     /**
 	 * 勤務条件
 	 * @param mv

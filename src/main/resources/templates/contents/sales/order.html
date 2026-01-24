@@ -19,14 +19,14 @@
                 <div class="tab-panel is-show" data-panel="01">
                     <div class="table-area">
                         <!-- ヘッダー -->
-                        <header th:replace="~{fragments/order/order :: headerFragment('search-box-01')}">
+                        <header th:replace="~{fragments/sales/order :: headerFragment('search-box-01')}">
                         </header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/order/order :: main01Fragment('table-01', 'table-01-content')}">
+                        <main th:replace="~{fragments/sales/order :: main01Fragment('table-01', 'table-01-content')}">
                         </main>
                         <!-- フッター -->
                         <footer id="footer-01" class="pc-style"
-                            th:insert="~{fragments/order/order :: footerFragment()}"></footer>
+                            th:insert="~{fragments/sales/order :: footerFragment()}"></footer>
                     </div>
                 </div>
             </div>
@@ -180,7 +180,7 @@
                                         </div>
                                     </div>
                                     <main
-                                        th:replace="~{fragments/order/order :: tabPanel12Fragment('table-12', 'table-12-content')}">
+                                        th:replace="~{fragments/sales/order :: tabPanel12Fragment('table-12', 'table-12-content')}">
                                     </main>
                                 </div>
                             </div>
@@ -214,7 +214,7 @@
                                         </div>
                                     </div>
                                     <main
-                                        th:replace="~{fragments/order/order :: tabPanel13Fragment('table-13', 'table-13-content')}">
+                                        th:replace="~{fragments/sales/order :: tabPanel13Fragment('table-13', 'table-13-content')}">
                                     </main>
                                 </div>
                             </div>
@@ -243,7 +243,7 @@
                                         </div>
                                     </div>
                                     <main
-                                        th:replace="~{fragments/order/order :: tabPanel14Fragment('table-14', 'table-14-content')}">
+                                        th:replace="~{fragments/sales/order :: tabPanel14Fragment('table-14', 'table-14-content')}">
                                     </main>
                                 </div>
                             </div>
@@ -292,6 +292,6 @@
             const emp14 = document.getElementById('emp14');
             const com14 = document.getElementById('com14');
         </script>
-        <script th:src="@{/js/order/order.js}"></script>
+        <script th:src="@{/js/sales/order.js}"></script>
     </div>
 </body>

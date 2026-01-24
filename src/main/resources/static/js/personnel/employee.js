@@ -361,8 +361,11 @@ async function execFilterDisplay(self) {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
-    // スピナー表示
-    startProcessing();
+    hamburgerItemAddSelectClass('.header-title', 'regist');
+    hamburgerItemAddSelectClass('.normal-sidebar', 'employee');
+
+    // // スピナー表示
+    // startProcessing();
 
     for (const mode of Object.keys(MODE_CONFIG)) {
         let config = MODE_CONFIG[mode];
@@ -389,6 +392,6 @@ window.addEventListener("load", async () => {
         tabMenu.addEventListener('click', tabSwitch);
     })
 
-    // スピナー消去
-    processingEnd();
+    // // スピナー消去
+    // processingEnd();
 });

@@ -20,53 +20,53 @@
                 <div class="tab-panel is-show" data-panel="01">
                     <div class="table-area">
                         <!-- ヘッダー -->
-                        <header th:replace="~{fragments/order/goods :: header01Fragment('search-box-01', 'start-date01', 'end-date01')}">
+                        <header th:replace="~{fragments/sales/goods :: header01Fragment('search-box-01', 'start-date01', 'end-date01')}">
                         </header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/order/goods :: main01Fragment('table-01', 'table-01-content', false)}">
+                        <main th:replace="~{fragments/sales/goods :: main01Fragment('table-01', 'table-01-content', false)}">
                         </main>
                         <!-- フッター -->
                         <footer id="footer-01" class="pc-style"
-                            th:insert="~{fragments/order/goods :: footerFragment()}"></footer>
+                            th:insert="~{fragments/sales/goods :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="02">
                     <div class="table-area">
                         <!-- ヘッダー -->
-                        <header th:replace="~{fragments/order/goods :: header01Fragment('search-box-02', 'start-date02', 'end-date02')}">
+                        <header th:replace="~{fragments/sales/goods :: header01Fragment('search-box-02', 'start-date02', 'end-date02')}">
                         </header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/order/goods :: main02Fragment('table-02', 'table-02-content', false)}">
+                        <main th:replace="~{fragments/sales/goods :: main02Fragment('table-02', 'table-02-content', false)}">
                         </main>
                         <!-- フッター -->
                         <footer id="footer-02" class="pc-style"
-                            th:insert="~{fragments/order/goods :: footerFragment()}"></footer>
+                            th:insert="~{fragments/sales/goods :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="03">
                     <div class="table-area">
                         <!-- ヘッダー -->
-                        <header th:replace="~{fragments/order/goods :: header01Fragment('search-box-03', 'start-date03', 'end-date03')}">
+                        <header th:replace="~{fragments/sales/goods :: header01Fragment('search-box-03', 'start-date03', 'end-date03')}">
                         </header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/order/goods :: main03Fragment('table-03', 'table-03-content', false)}">
+                        <main th:replace="~{fragments/sales/goods :: main03Fragment('table-03', 'table-03-content', false)}">
                         </main>
                         <!-- フッター -->
                         <footer id="footer-03" class="pc-style"
-                            th:insert="~{fragments/order/goods :: footerFragment()}"></footer>
+                            th:insert="~{fragments/sales/goods :: footerFragment()}"></footer>
                     </div>
                 </div>
                 <div class="tab-panel" data-panel="04">
                     <div class="table-area">
                         <!-- ヘッダー -->
-                        <header th:replace="~{fragments/order/goods :: header01Fragment('search-box-04', 'start-date04', 'end-date04')}">
+                        <header th:replace="~{fragments/sales/goods :: header01Fragment('search-box-04', 'start-date04', 'end-date04')}">
                         </header>
                         <!-- コンテンツ -->
-                        <main th:replace="~{fragments/order/goods :: main04Fragment('table-04', 'table-04-content', false)}">
+                        <main th:replace="~{fragments/sales/goods :: main04Fragment('table-04', 'table-04-content', false)}">
                         </main>
                         <!-- フッター -->
                         <footer id="footer-04" class="pc-style"
-                            th:insert="~{fragments/order/goods :: footerFragment()}"></footer>
+                            th:insert="~{fragments/sales/goods :: footerFragment()}"></footer>
                     </div>
                 </div>
             </div>
@@ -80,7 +80,7 @@
                                 src="/icons/close-s.png"></div>
                     </div>
 
-                    <form th:replace="~{fragments/order/goods :: form01Fragment()}"></form>
+                    <form th:replace="~{fragments/sales/goods :: form01Fragment()}"></form>
 
                     <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
@@ -97,7 +97,7 @@
                                 src="/icons/close-s.png"></div>
                     </div>
                     
-                    <form th:replace="~{fragments/order/goods :: form02Fragment()}"></form>
+                    <form th:replace="~{fragments/sales/goods :: form02Fragment()}"></form>
 
                     <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
@@ -114,7 +114,7 @@
                                 src="/icons/close-s.png"></div>
                     </div>
                     
-                    <form th:replace="~{fragments/order/goods :: form03Fragment()}"></form>
+                    <form th:replace="~{fragments/sales/goods :: form03Fragment()}"></form>
 
                     <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
@@ -131,7 +131,7 @@
                                 src="/icons/close-s.png"></div>
                     </div>
                     
-                    <form th:replace="~{fragments/order/goods :: form04Fragment()}"></form>
+                    <form th:replace="~{fragments/sales/goods :: form04Fragment()}"></form>
 
                     <div class="dialog-footer">
                         <button class="normal-btn frameless" type="button"
@@ -178,7 +178,7 @@
             const buyerCompanyName12 = document.getElementById('buyer-company-name12');
             const buyerName12 = document.getElementById('buyer-name12');
         </script>
-        <script th:src="@{/js/order/goods.js}"></script>
+        <script th:src="@{/js/sales/goods.js}"></script>
     </div>
 
 </body>

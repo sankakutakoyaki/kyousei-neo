@@ -201,3 +201,27 @@ function hamburgerClose() {
     const menuClose = document.querySelector('#menu-close');
     if (menuClose != null) menuClose.click();
 }
+
+/**
+ * ハンバーガーアイテムクリック時の処理
+ * @param {*} self 
+ */
+function hamburgerItemAddSelectClass(areaId, selectId) {
+    const area = document.querySelector(areaId);
+    const item = area.querySelector('[data-menu="' + selectId + '"]');
+
+    // アイテムに選択クラスを追加
+    item.classList.add('selected');
+}
+
+// /**
+//  * メインサイドバーのクリック時の処理
+//  * @param {*} self 
+//  */
+// function sideBarAddSelectClass(selectId) {
+//     const area = document.querySelector('.normal-sidebar');
+//     const item = area.querySelector('[name="' + selectId + '"]');
+
+//     // このliに選択クラスを追加
+//     item.classList.add('selected');
+// }

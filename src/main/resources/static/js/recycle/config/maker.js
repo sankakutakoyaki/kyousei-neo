@@ -1,3 +1,5 @@
+"use strict"
+
 const MODE_CONFIG = {
     "01": {
         dialogId: "form-dialog-01",

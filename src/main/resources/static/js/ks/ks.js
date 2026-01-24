@@ -1,3 +1,5 @@
+"use strict"
+
 /******************************************************************************************************* 入力画面 */
 
 // リスト画面の本体部分を作成する
@@ -185,6 +187,8 @@ function execFilterStore(tab) {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
+    hamburgerItemAddSelectClass('.header-title', 'list');
+    hamburgerItemAddSelectClass('.normal-sidebar', 'ks');
     // スピナー表示
     startProcessing();
 

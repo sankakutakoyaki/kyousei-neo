@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+<!-- タブ1 --------------------------------------------------------------------------------------------------------------->
+    <div class="timeworks-content01" th:fragment="side01Fragment()">
+        <div class="clock">
+            <div>
+                <span class="clock-date">0000年00月00日（日）</span>
+            </div>
+            <div>
+                <span class="clock-time">00:00:00</span>
+            </div>
+        </div>
+        <div class="flex-area code-box">
+            <div class="form-parts">
+                <label>コード</label>
+                <input autofocus id="code" class="normal-input" type="text" inputmode="numeric" pattern="\d*" value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>従業員名</label>
+                <input id="name" class="normal-input" type="text" disabled>
+            </div>
+        </div>    
+        <div class="flex-area time-btn">  
+            <button name="start-btn"type="button" onclick="setTimeworks('start')"><span>出勤</span></button>
+            <button name="end-btn" type="button" onclick="setTimeworks('end')"><span>退勤</span></button>
+        </div>
+    </div>
+
+    <main th:fragment="mainFragment01(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table timeworks01">
+            <tr id="row-0" name="table-header" class="pc-style">
+                <th><span>氏名<span class="sort-arrow"></span></span></th>
+                <th><span>出勤<span class="sort-arrow"></span></span></th>
+                <th><span>退勤<span class="sort-arrow"></span></span></th>
+                <th><span>営業所<span class="sort-arrow"></span></span></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+<!-- タブ2 --------------------------------------------------------------------------------------------------------------->    
+    <header class="timeworks-content02" th:fragment="header02Fragment()">
+        <!-- 期間指定ボックス -->
+        <div class="flex-area">
+            <input id="start-date02" class="normal-input date-area icon-del" type="date" value="" disabled>
+            <span class="pc-style">〜</span>
+            <input id="end-date02" class="normal-input date-area icon-del" type="date" value="" disabled>
+            <button id="save-btn02" name="save-btn" class="normal-btn" type="button" onclick="execSave(this)" disabled>
+                <span>保存</span>
+            </button>
+            <button id="confirm-btn02" name="confirm-btn" class="normal-btn" type="button" onclick="execConfirm(this)" disabled>
+                <span>確定</span>
+            </button>
+        </div>
+        <!-- 日付移動ボタン -->
+        <div class="flex-area">
+            <div th:replace="~{fragments/common/header::header-2week-move-btn-fragment('start-date02', 'end-date02')}"></div>
+        </div>
+    </header>
+
+    <main th:fragment="mainFragment02(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table timeworks02">
+            <tr id="row-0" name="table-header" class="pc-style">
+                <th><span>日付<span class="sort-arrow"></span></span></th>
+                <th><span>出勤<span class="sort-arrow"></span></span></th>
+                <th><span>退勤<span class="sort-arrow"></span></span></th>
+                <th><span>確定（出勤）<span class="sort-arrow"></span></span></th>
+                <th><span>確定（退勤）<span class="sort-arrow"></span></span></th>
+                <th><span>休憩<span class="sort-arrow"></span></span></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+<!-- タブ3 --------------------------------------------------------------------------------------------------------------->
+    <header class="timeworks-content03" th:fragment="header03Fragment()">
+        <!-- 期間指定ボックス -->
+        <div class="flex-area">
+            <input id="start-date03" class="normal-input date-area icon-del" type="date" value="" disabled>
+            <span class="pc-style">〜</span>
+            <input id="end-date03" class="normal-input date-area icon-del" type="date" value="" disabled>
+            <!-- <button name="search-btn" class="normal-btn ok" type="button" onclick="execSearch()"> -->
+            <button id="down-btn01" name="down-btn" class="normal-btn ok" type="button" onclick="execDownloadCsv()">
+                <span>出力</span>
+            </button>
+        </div>
+        <!-- 日付移動ボタン -->
+        <div class="flex-area">
+            <div th:replace="~{fragments/common/header::header-2week-move-btn-fragment('start-date03', 'end-date03')}"></div>
+        </div>
+    </header>
+
+    <main th:fragment="mainFragment03(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table timeworks03">
+            <tr id="row-0" name="table-header" class="pc-style">
+                <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
+                <th><span>ID<span class="sort-arrow"></span></span></th>
+                <th><span>氏名<span class="sort-arrow"></span></span></th>
+                <th><span>日数<span class="sort-arrow"></span></span></th>
+                <th><span>勤務時間<span class="sort-arrow"></span></span></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+<!-- タブ4 --------------------------------------------------------------------------------------------------------------->
+    <main th:fragment="mainFragment04(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table timeworks04">
+            <tr id="row-0" name="table-header" class="pc-style">
+                <!-- <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th> -->
+                <th><span>ID<span class="sort-arrow"></span></span></th>
+                <th><span>氏名<span class="sort-arrow"></span></span></th>
+                <th><span>使用日数<span class="sort-arrow"></span></span></th>
+                <!-- <th><span>残日数<span class="sort-arrow"></span></span></th> -->
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+    <main th:fragment="mainFragment15(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table timeworks15">
+            <tr id="row-0" name="table-header" class="pc-style">
+                <!-- <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th> -->
+                <th><span>開始日<span class="sort-arrow"></span></span></th>
+                <th><span>終了日<span class="sort-arrow"></span></span></th>
+                <th><span>事由<span class="sort-arrow"></span></span></th>
+                <th></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+<!-- タブ5 --------------------------------------------------------------------------------------------------------------->    
+    <header class="timeworks-content05" th:fragment="header05Fragment()">
+        <!-- 期間指定ボックス -->
+        <div class="flex-area">
+            <input id="start-date05" class="normal-input date-area icon-del" type="date" value="" disabled>
+            <span class="pc-style">〜</span>
+            <input id="end-date05" class="normal-input date-area icon-del" type="date" value="" disabled>
+        </div>
+        <!-- 日付移動ボタン -->
+        <div class="flex-area">
+            <div th:replace="~{fragments/common/header::header-2week-move-btn-fragment('start-date05', 'end-date05')}"></div>
+        </div>
+    </header>
+
+    <main th:fragment="mainFragment05(tableId, scrollId)">
+        <table th:id="${tableId}" class="normal-table timeworks05">
+            <tr id="row-0" name="table-header" class="pc-style">
+                <th><span>日付<span class="sort-arrow"></span></span></th>
+                <th><span>出勤<span class="sort-arrow"></span></span></th>
+                <th><span>退勤<span class="sort-arrow"></span></span></th>
+                <th><span>確定（出勤）<span class="sort-arrow"></span></span></th>
+                <th><span>確定（退勤）<span class="sort-arrow"></span></span></th>
+                <th><span>休憩<span class="sort-arrow"></span></span></th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tbody th:id="${scrollId}" class="scroll-area"></tbody>
+        </table>
+        <button type="button" class="page-top"></button>
+    </main>
+
+<!-- フッター --------------------------------------------------------------------------------------------------------------->
+    <footer th:fragment="footerFragment()" th:remove="tag">
+        <span>0件 : 0000/00/00 00:00 現在</span>
+    </footer>
+</body>
+
+</html>

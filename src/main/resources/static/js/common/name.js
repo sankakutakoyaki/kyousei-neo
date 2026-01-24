@@ -1,3 +1,4 @@
+"use strict"
 
 // 数字が被らなように名前を作成する
 function createUniqueName({
@@ -44,9 +45,8 @@ async function searchForEmployeeNameByCode(url, codeBox, nameBox) {
 
     const entity = await searchFetch(url, JSON.stringify({id:parseInt(codeBox.value)}), token);
 
-    if (entity != null && entity.employee_id > 0) {
-        nameBox.value = entity.full_name;
-        // checkTimeWorksStartSaved(entity);
+    if (entity != null && entity.employeeId > 0) {
+        nameBox.value = entity.fullName;
         return entity;
     } else {
         codeBox.value = "";

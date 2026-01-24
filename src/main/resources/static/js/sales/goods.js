@@ -1,3 +1,5 @@
+"use strict"
+
 /******************************************************************************************************* 入力画面 */
 
 // リスト画面の本体部分を作成する
@@ -201,6 +203,7 @@ function createTable14Row(newRow, item) {
 
 // 商品登録画面を開く
 async function execEdit(id, self) {
+    hamburgerItemAddSelectClass('.normal-sidebar', '入荷')
     // スピナー表示
     startProcessing();
 
@@ -957,6 +960,8 @@ async function searchForNameByBuyerCode(e) {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
+    hamburgerItemAddSelectClass('.header-title', 'sales');
+    hamburgerItemAddSelectClass('.normal-sidebar', 'goods');
     // スピナー表示
     startProcessing();
 

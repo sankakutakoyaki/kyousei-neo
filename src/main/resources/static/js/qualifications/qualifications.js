@@ -1,3 +1,5 @@
+"use strict"
+
 /******************************************************************************************************* 入力画面 */
 
 // リスト画面の本体部分を作成する
@@ -547,6 +549,8 @@ async function execFilterDisplay(self) {
 
 // ページ読み込み後の処理
 window.addEventListener("load", () => {
+    hamburgerItemAddSelectClass('.header-title', 'management');
+    hamburgerItemAddSelectClass('.normal-sidebar', 'qualifications');
     // スピナー表示
     startProcessing();
 

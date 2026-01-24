@@ -28,6 +28,11 @@
         text-decoration: underline;
         cursor: var(--cursor);
     }
+
+    .header-title>.hamburger-item:hover>span {
+        color: var(--white);
+        font-weight: bold;
+    }
 }
 
 @media (hover: none) {

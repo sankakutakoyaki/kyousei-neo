@@ -1,3 +1,5 @@
+"use strict"
+
 // // Subscriptionをサーバーに登録
 // async function saveSubscriptionToServer(subscription) {
 //     // subscriptionオブジェクトを確認

@@ -1,3 +1,5 @@
+"use strict"
+
 // フォーカス遷移対象要素
 let tabFocusElements = createTabFocusElements();
 
