@@ -1,62 +1,57 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/with-sidebar}">
 <body>
     <!-- 本体 -->
-    <div class="normal-content" th:fragment="bodyFragment">
+    <!-- <div class="normal-content" th:fragment="bodyFragment"> -->
         <!-- ハンバーガー -->
-        <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
+        <!-- <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div> -->
         <!-- サイドバー -->
-        <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
+        <!-- <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div> -->
+    <!-- サイドバー -->
+    <div layout:fragment="sidebar-content">
+        <div th:replace="~{fragments/common/menu :: personnelFragment}"></div>
+    </div>
+
         <!-- ボディ -->
-        <div class="normal-body">
-            <div class="tab-area">
-                <ul class="tab-menu">
-                    <li class="tab-menu-item is-active" data-tab="01">社員</li>
-                    <li class="tab-menu-item" data-tab="02">アルバイト</li>
-                </ul>
-                <div class="tab-panel is-show" data-panel="01">
-                    <div class="table-area">
-                        <!-- ヘッダー -->
-                        <header th:replace="~{fragments/personnel/employee :: headerFragment('search-box-01')}"></header>
-                        <!-- コンテンツ -->
-                        <main th:replace="~{fragments/personnel/employee :: mainFragment('table-01', 'table-01-content')}"></main>
-                        <!-- フッター -->
-                        <footer id="footer-01" class="pc-style" th:insert="~{fragments/personnel/employee :: footerFragment()}"></footer>
-                    </div>
+    <main layout:fragment="content">
+        <div class="tab-area">
+            <ul class="tab-menu">
+                <li class="tab-menu-item is-active" data-tab="01">社員</li>
+                <li class="tab-menu-item" data-tab="02">アルバイト</li>
+            </ul>
+            <div class="tab-panel is-show" data-panel="01">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/personnel/employee :: headerFragment('search-box-01')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/personnel/employee :: mainFragment('table-01', 'table-01-content')}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-01" class="pc-style" th:insert="~{fragments/personnel/employee :: footerFragment()}"></footer>
                 </div>
-                <div class="tab-panel" data-panel="02">
-                    <div class="table-area">
-                        <!-- ヘッダー -->
-                        <header th:replace="~{fragments/personnel/employee :: headerFragment('search-box-02')}"></header>
-                        <!-- コンテンツ -->
-                        <main th:replace="~{fragments/personnel/employee :: mainFragment('table-02', 'table-02-content')}"></main>
-                        <!-- フッター -->
-                        <footer id="footer-02" class="pc-style" th:insert="~{fragments/personnel/employee :: footerFragment()}"></footer>
-                    </div>
+            </div>
+            <div class="tab-panel" data-panel="02">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/personnel/employee :: headerFragment('search-box-02')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/personnel/employee :: mainFragment('table-02', 'table-02-content')}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-02" class="pc-style" th:insert="~{fragments/personnel/employee :: footerFragment()}"></footer>
                 </div>
             </div>
         </div>
+        <!-- </div> -->
         <div id="form-dialog-area">
             <!-- フォーム画面をここに記入する -->
             <div id="form-dialog-01" class="form-dialog none">
                 <div class="dialog-main">
-                    <!-- <div class="dialog-header"><span></span>
-                        <div class="img-btn" onclick="closeFormDialog('form-dialog-01', event)"><img title="閉じる"
-                                src="/icons/close-s.png"></div>
-                    </div> -->
+                    <!-- ヘッダー -->
                     <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-01', '')}"></div>
-
+                    <!-- コンテンツ -->
                     <form th:replace="~{fragments/personnel/employee :: form01Fragment()}"></form>
-
+                    <!-- フッター -->
                     <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-01', 'execSave()', '保存')}"></div>
-
-                    <!-- <div class="dialog-footer">
-                        <button class="normal-btn frameless" type="button"
-                            onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
-                        <button tabindex="19" class="normal-btn ok" type="button"
-                            onclick="execSave()"><span>保存</span></button>
-                    </div> -->
                 </div>
             </div>
         </div>
@@ -78,6 +73,6 @@
         </script>
         <script th:src="@{/js/personnel/config/employee.js}"></script>
         <script th:src="@{/js/personnel/employee.js}"></script>
-    </div>
+    </main>
 
 </body>

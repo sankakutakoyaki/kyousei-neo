@@ -1,15 +1,17 @@
 
 <!DOCTYPE html>
 <html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,viewport-fit=cover">
     <title th:text="${title}"></title>
 
     <link th:href="@{/css/common/default.css}" rel="stylesheet">
     <link th:href="@{__${insertCss}__}" rel="stylesheet">
-    <link th:href="@{kyousei.png}" rel="icon" type="image/x-icon" />
-    <link th:href="@{/manifest.json}" rel="manifest">
+    <link th:href="@{/kyousei.ico}" rel="icon">
+    <link th:href="@{/manifest.json}" rel="manifest" crossorigin="use-credentials">
 
     <script src="/js/common/default.js" defer></script>
     <script src="/js/common/api.js" defer></script>

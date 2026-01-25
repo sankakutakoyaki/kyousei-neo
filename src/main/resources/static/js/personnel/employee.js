@@ -48,21 +48,12 @@ async function execEdit(id, self) {
     if (tab == null) return;
     const config = MODE_CONFIG[tab];
 
-    // // 入力フォームダイアログを開く
-    // openFormDialog("form-dialog-01");
-
     // フォーム画面を取得
     const form = document.getElementById('form-dialog-01');              
 
     let entity = {};
     if (id > 0) {
         // 選択されたIDのエンティティを取得
-        // const data = "id=" + encodeURIComponent(parseInt(id));
-        // const result = await searchFetch('/api/employee/get/id', data, token, 'application/x-www-form-urlencoded');
-        // if (result == null) {
-        //     openMsgDialog("msg-dialog", "データがありません", "red");
-        //     return;
-        // }
         const result = await searchFetch('/api/employee/get/id', JSON.stringify({id:parseInt(id)}), token);
         if (!result?.ok) return;
 
@@ -84,128 +75,12 @@ function setFormContent(form, entity) {
 
     // 営業所（会社依存）
     createOfficeComboBox(form, officeList, entity.office_id);
-
-    // form.querySelector('[name="employee-id"]').value = entity.employee_id;
-    // if (entity.code == 0) {
-    //     form.querySelector('[name="code"]').value = "";
-    // } else {
-    //     form.querySelector('[name="code"]').value = entity.code;
-    // }
-    // form.querySelector('[name="category"]').value = entity.category;
-    // form.querySelector('[name="account"]').value = entity.account;
-    // form.querySelector('[name="last-name"]').value = entity.last_name;
-    // form.querySelector('[name="first-name"]').value = entity.first_name;
-    // form.querySelector('[name="last-name-kana"]').value = entity.last_name_kana;
-    // form.querySelector('[name="first-name-kana"]').value = entity.first_name_kana;
-    // form.querySelector('[name="phone-number"]').value = entity.phone_number;
-    // form.querySelector('[name="postal-code"]').value = entity.postal_code;
-    // form.querySelector('[name="full-address"]').value = entity.full_address;
-    // form.querySelector('[name="email"]').value = entity.email;
-    // if (entity.birthday == "9999-12-31") {
-    //     form.querySelector('[name="birthday"]').value = null;
-    // } else {
-    //     form.querySelector('[name="birthday"]').value = entity.birthday;
-    // }
-    // form.querySelector('[name="emergency-contact"]').value = entity.emergency_contact;
-    // form.querySelector('[name="emergency-contact-number"]').value = entity.emergency_contact_number;
-    // if (entity.date_of_hire == "9999-12-31") {
-    //     form.querySelector('[name="date-of-hire"]').value = "";
-    // } else {
-    //     form.querySelector('[name="date-of-hire"]').value = entity.date_of_hire;
-    // }
-    // form.querySelector('[name="version"]').value = entity.version;
-
-    // // 会社名コンボボックス
-    // // const companyArea = form.querySelector('select[name="company"]');
-    // // createComboBox(companyArea, companyComboList);
-    // // companyArea.style.pointerEvents = 'none';
-    // // setComboboxSelected(companyArea, entity.company_id);
-    // // companyArea.onchange = function() { createOfficeComboBox(form, officeList); };
-    // const companyArea = setComboBox(form, 'select[name="company"]', companyComboList, entity.company_id);
-    // companyArea.onchange = function() { createOfficeComboBox(form, companyArea, officeList); };
-
-    // // 営業所名コンボボックス
-    // const officeArea = createOfficeComboBox(form, officeList, entity.office_id);
-    // // const officeArea = form.querySelector('select[name="office"]');
-    // // setComboboxSelected(officeArea, entity.office_id);
-
-    // // 性別コンボボックス
-    // // const genderArea = form.querySelector('select[name="gender"]');
-    // // createComboBox(genderArea, genderComboList);
-    // // setComboboxSelected(genderArea, entity.gender);
-    // setComboBox(form, 'select[name="gender"]', genderComboList, entity.gender);
-
-    // // 血液型コンボボックス
-    // // const bloodTypeArea = form.querySelector('select[name="blood-type"]');
-    // // createComboBox(bloodTypeArea, bloodTypeComboList);
-    // // setComboboxSelected(bloodTypeArea, entity.blood_type);
-    // setComboBox(form, 'select[name="blood-type"]', bloodTypeComboList, entity.blood_type);
 }
 
 /******************************************************************************************************* 保存 */
 
 // 保存処理
 async function execSave() {
-    // const form = document.getElementById('form-01');
-    // const tab = document.querySelector('li.is-active');
-    // if (tab == null) return;
-
-    // // エラーチェック
-    // if (formDataCheck(form) == false) {
-    //     return;
-    // } else {
-    //     const formData = new FormData(form);
-    //     const formdata = structuredClone(formEntity);
-    //     formdata.employee_id = formData.get('employee-id');
-    //     if (formData.get('code') == "") {
-    //         formdata.code = 0;
-    //     } else {
-    //         formdata.code = formData.get('code');
-    //     }
-    //     formdata.category = Number(formData.get('category'));
-    //     formdata.account = formData.get('account').trim();
-    //     formdata.company_id = formData.get('company');
-    //     formdata.office_id = formData.get('office');
-    //     formdata.last_name = formData.get('last-name').trim();
-    //     formdata.first_name = formData.get('first-name').trim();
-    //     formdata.last_name_kana = formData.get('last-name-kana').trim();
-    //     formdata.first_name_kana = formData.get('first-name-kana').trim();
-    //     formdata.phone_number = formData.get('phone-number').trim();
-    //     formdata.postal_code = formData.get('postal-code').trim();
-    //     formdata.full_address = formData.get('full-address').trim();
-    //     formdata.email = formData.get('email').trim();
-    //     formdata.gender= formData.get('gender');
-    //     formdata.blood_type = formData.get('blood-type');
-    //     if (formData.get('birthday') == "") {
-    //         formdata.birthday = "9999-12-31";
-    //     } else {
-    //         formdata.birthday = formData.get('birthday');
-    //     }
-    //     formdata.emergency_contact = formData.get('emergency-contact').trim();
-    //     formdata.emergency_contact_number = formData.get('emergency-contact-number').trim();
-    //     if (formData.get('date-of-hire') == "") {
-    //         formdata.date_of_hire = "9999-12-31";
-    //     } else {
-    //         formdata.date_of_hire = formData.get('date-of-hire');
-    //     }
-    //     formdata.version = formData.get('version');
-
-    //     // 保存処理
-    //     const result = await updateFetch("/api/employee/save", JSON.stringify(formdata), token, "application/json");
-    //     if (result.success) {
-    //         const config = MODE_CONFIG[tab.dataset.tab];
-
-    //         // 画面更新
-    //         openMsgDialog("msg-dialog", result.message, "blue");
-    //         await execUpdate();
-    //         // 追加・変更行に移動
-    //         scrollIntoTableList(config.tableId, result.employee_id);
-    //     } else {
-    //         openMsgDialog("msg-dialog", result.message, "red");
-    //     }
-    //     // ダイアログを閉じる
-    //     closeFormDialog('form-dialog-01');
-    // }
     const form = document.getElementById('form-01');
     const tab = document.querySelector('li.is-active');
     if (!tab) return;
@@ -271,7 +146,6 @@ async function handleTdChange(editor) {
     const id = row.dataset.id;
 
     const ent = origin.find(value => value.employee_id == id);
-    // const ent = getEmployee(id);
     switch (col) {
         case "code":
             if (existsSameCode(Number(editor.value))) {
@@ -289,8 +163,6 @@ async function handleTdChange(editor) {
             return;
     }
 
-    // const data = "id=" + encodeURIComponent(parseInt(id)) + "&data=" + (editor.value);
-    // await searchFetch('/api/employee/update/' + col, data, token, 'application/x-www-form-urlencoded');
     await updateFetch('/api/employee/update/' + col, JSON.stringify({number:id,text:editor.value}), token);
     await execUpdate();
 }
@@ -318,7 +190,6 @@ async function execDelete(self) {
         openMsgDialog("msg-dialog", result.message, "red");
     }
 }
-
 
 /******************************************************************************************************* ダウンロード */
 
@@ -361,12 +232,8 @@ async function execFilterDisplay(self) {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
-    // hamburgerItemAddSelectClass('.header-title', 'regist');
-    // hamburgerItemAddSelectClass('.normal-sidebar', 'employee');
 
-    // // スピナー表示
-    // startProcessing();
-
+    // 各タブの検索ボックス処理の登録とリスト作成をする
     for (const mode of Object.keys(MODE_CONFIG)) {
         let config = MODE_CONFIG[mode];
         if (config != null) {
@@ -391,7 +258,4 @@ window.addEventListener("load", async () => {
     tabMenus.forEach((tabMenu) => {
         tabMenu.addEventListener('click', tabSwitch);
     })
-
-    // // スピナー消去
-    // processingEnd();
 });

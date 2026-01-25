@@ -175,43 +175,6 @@ function checkWebAddress(sourceElm) {
     return true;
 }
 
-// /**
-//  * フォームデータを保存する
-//  * @param {*} formData 
-//  * @param {*} url 
-//  * @returns 
-//  */
-// async function saveFormData(formData, url) {
-//     // スピナー表示
-//     startProcessing();
-
-//     const response = await fetch(url, {
-//         headers: {  // リクエストヘッダを追加
-//             'X-CSRF-TOKEN': token,
-//         },
-//         method: "POST",
-//         body: formData,
-//     });
-
-//     const result = await response.json();
-
-//     // // 保存処理
-//     // const data = JSON.stringify(formData);
-//     // const resultResponse = await postFetch(url, data, token, 'application/json');
-//     // const result = await resultResponse.json();
-
-//     // スピナー消去
-//     processingEnd();          
-
-//     if (result.number == 0) {
-//         openMsgDialog("msg-dialog", result.text, "red");
-//         return 0;
-//     } else {
-//         openMsgDialog("msg-dialog", result.text, "blue");
-//         return result.number;
-//     }
-// }
-
 /**
  * 期間指定ボックスを変更する
  * @param {*} str 分岐用文字列
@@ -220,12 +183,10 @@ function checkWebAddress(sourceElm) {
 function execSpecifyPeriod(str, startId, endId) {
     const date = new Date();
 
-    // const startdate = document.querySelector('input[name="start-date"]');
     const startdate = document.getElementById(startId);
     if (startdate == null) return;
     const start = new Date(startdate.value);
 
-    // const enddate = document.querySelector('input[name="end-date"]');
     const enddate = document.getElementById(endId);
     if (enddate == null) return;
     const end = new Date(enddate.value);
@@ -296,35 +257,11 @@ function execSpecifyPeriod(str, startId, endId) {
     }
 }
 
-// // 会社コンボボックスを登録する
-// function setCompanyComboBox(form, entity, companyList, officeList) {
-//     const companyArea = form.querySelector('select[name="company"]');    
-//     createComboBox(companyArea, companyList);
-//     setComboboxSelected(companyArea, entity.company_id);
-//     createOfficeComboBox(form, officeList);
-//     companyArea.onchange = function() { createOfficeComboBox(form, officeList) };
-// }
-
-// // 先頭が空白の会社コンボボックスを登録する
-// function setCompanyComboBoxWithTop(form, entity, companyList, officeList) {
-//     const companyArea = form.querySelector('select[name="company"]');    
-//     createComboBoxWithTop(companyArea, companyList, "");
-//     setComboboxSelected(companyArea, entity.company_id);  
-//     if (entity.company_id > 0) {
-//         const officeArea = form.querySelector('select[name="office"]');
-//         createComboBoxWithTop(officeArea, officeList, "");
-//         setComboboxSelected(officeArea, entity.office_id);                    
-//     }
-//     companyArea.onchange = function() { createOfficeComboBox(form, officeList) };
-// }
-
 // 選択した会社の支店をコンボボックスに登録する
 function createOfficeComboBox(form, officeList, selectId) {
-    // const companyArea = form.querySelector('select[name="company"]');
     const officeArea = form.querySelector('select[name="office"]');
     if (!officeArea) return;
 
-    // const selectId = companyArea.value;  
     const list = officeList.filter(value => { return value.company_id == selectId }).map(item => ({number:item.office_id, text:item.name}));
     createComboBoxWithTop(officeArea, list, "");
     if (selectId != null && selectId > 0) {
@@ -344,7 +281,6 @@ async function openFormByMode(mode, modeConfig) {
     const form = document.getElementById(config.dialogId);
     resetFormInput(form, mode);
     resetEnterFocus();
-    // setEnterFocus(config.formId);
 }
 
 // コードBOX変更時の処理
@@ -387,31 +323,7 @@ function getComboTargets(targetIds) {
         .filter(elm => elm !== null);
 }
 
-// 共通バリデーション関数
-// function validateForm(form, mode) {
-//     let messages = [];
-
-//     const rules = [
-//         ...(ERROR_CONFIG.common || []),
-//         ...(ERROR_CONFIG[mode] || [])
-//     ];
-
-//     rules.forEach(rule => {
-//         const el = form.querySelector(rule.selector);
-//         if (!el) return;
-
-//         const value = el.value;
-//         if (!rule.check(value)) {
-//             messages.push(rule.message);
-//         }
-//     });
-
-//     if (messages.length > 0) {
-//         openMsgDialog("msg-dialog", messages.join('\n'), "red");
-//         return false;
-//     }
-//     return true;
-// }
+// 共通Validate関数
 function validateByConfig(area, config) {
     const messages = [];
     let focusTarget = null;
@@ -535,9 +447,9 @@ function buildEntityFromForm(form, baseEntity, config) {
 }
 
 // 検索ボックスの初期設定
-function registerSearchEvents() {
-    for (const mode of Object.values(MODE_CONFIG)) {
-        const searchBox = document.getElementById(mode.searchId);
+function registerSearchEvents(ID_CONFIG) {
+    for (const cfg of Object.values(ID_CONFIG)) {
+        const searchBox = document.getElementById(cfg.searchId);
         if (!searchBox) continue;
 
         searchBox.addEventListener(

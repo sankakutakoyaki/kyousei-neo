@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.dto.IdRequest;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/api/working_conditions")
 public class WorkingConditionsListApiController {
     private final WorkingConditionsListService workingConditionsListService;
     
@@ -23,7 +25,7 @@ public class WorkingConditionsListApiController {
      * EntityListを取得する
      * @return
      */
-    @GetMapping("/api/working_conditions/get/list")
+    @GetMapping("/get/list")
 	@ResponseBody
     public List<WorkingConditionsListEntity> getList() {
         return workingConditionsListService.getList();
@@ -33,7 +35,7 @@ public class WorkingConditionsListApiController {
      * カテゴリー別のEntityListを取得する
      * @return
      */
-    @PostMapping("/api/working_conditions/get/list/category")
+    @PostMapping("/get/list/category")
 	@ResponseBody
     public List<WorkingConditionsListEntity> getListByCategoryId(@RequestBody IdRequest req) {
         return workingConditionsListService.getListByCategoryId(req.getId());

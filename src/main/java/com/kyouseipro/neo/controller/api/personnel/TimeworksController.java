@@ -45,38 +45,22 @@ public class TimeworksController {
         return ResponseEntity.ok(timeworksService.getTodaysEntity(req.getId()).orElse(null));
     }
 
+    /**
+     * 打刻したデータを保存する
+     * @param req
+     * @return
+     */
     @PostMapping("/regist/today")
     public ResponseEntity<?> registToday(@RequestBody TimeworksRegistRequest req) {
         timeworksService.registToday(req.getDto(), req.getCategory());
         return ResponseEntity.ok().build();
     }
 
-    // /** 出勤 */
-    // @PostMapping("/start")
-    // public ResponseEntity<?> start(@RequestBody TimeworksRequestDto dto) {
-
-    //     if (dto.getStartDt() == null) {
-    //         return ResponseEntity.badRequest().body("startDt is required");
-    //     }
-
-    //         timeworksService.startWork(dto);
-
-    //     return ResponseEntity.ok().build();
-    // }
-
-    // /** 退勤 */
-    // @PostMapping("/end")
-    // public ResponseEntity<?> end(@RequestBody TimeworksRequestDto dto) {
-
-    //     if (dto.getEndDt() == null) {
-    //         return ResponseEntity.badRequest().body("endDt is required");
-    //     }
-
-    //     timeworksService.endWork(dto);
-
-    //     return ResponseEntity.ok().build();
-    // }
-
+    /**
+     * エラー時の処理
+     * @param ex
+     * @return
+     */
     @ExceptionHandler({IllegalStateException.class, IllegalArgumentException.class})
     public ResponseEntity<?> handle(RuntimeException ex) {
         return ResponseEntity

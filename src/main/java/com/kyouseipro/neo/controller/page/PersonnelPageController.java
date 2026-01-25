@@ -135,44 +135,21 @@ public class PersonnelPageController extends BaseController {
     //     historyService.save(user.getAccount(), "timeworks", "閲覧", 200, "");
 	//     return mv;
     // }
-    public ModelAndView timeworks(ModelAndView mv, HttpSession session, HttpServletResponse response) throws IOException {
-		mv.setViewName("contents/personnel/timeworks :: content"); // ★ テンプレート
-        return mv;
+    public String getTimeworks(Model model, HttpSession session, HttpServletResponse response) throws IOException {
+        
+        EmployeeEntity user = getLoginUser(session, response);
+		if (user == null) return null; // リダイレクト済み
+
+		historyService.save(user.getAccount(), "timeworks", "閲覧", 200, "");
+
+        model.addAttribute("title", "勤怠");
+		model.addAttribute("sidebarFragmentName", "~{fragments/common/menu :: personnelFragment}");
+		model.addAttribute("activeMenu", "personnel");
+        model.addAttribute("activeSidebar", "timeworks");
+        model.addAttribute("insertCss", "/css/personnel/timeworks.css");
+        
+        return "contents/personnel/timeworks";
     }
-    // public ModelAndView showList(
-    //         HttpServletRequest request,
-    //         HttpSession session,
-    //         HttpServletResponse response
-    // ) throws IOException {
-
-    //     EmployeeEntity user = getLoginUser(session, response);
-    //     if (user == null) {
-    //         return new ModelAndView("redirect:/login");
-    //     }
-
-    //     ModelAndView mv = new ModelAndView();
-    //     mv.addObject("insertCss", "/css/personnel/timeworks.css");
-    //     mv.addObject("title", "勤怠管理");
-    //     mv.addObject("username", user.getAccount());
-
-    //     historyService.save(user.getAccount(), "timeworks", "閲覧", 200, "");
-
-    //     boolean isAjax =
-    //         "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
-
-    //     if (isAjax) {
-    //         // body だけ返す
-    //         mv.setViewName("contents/personnel/timeworks :: bodyFragment");
-    //     } else {
-    //         // layout ごと返す
-    //         mv.setViewName("layouts/main");
-    //         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-    //         mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
-    //         mv.addObject("bodyFragmentName", "contents/personnel/timeworks :: bodyFragment");
-    //     }
-
-    //     return mv;
-    // }
 
     /**
 	 * 勤務条件
@@ -180,44 +157,76 @@ public class PersonnelPageController extends BaseController {
 	 * @return
 	 */
 	@GetMapping("/working_conditions")
-	@ResponseBody
+	// @ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getWorkingConditions(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
-		mv.setViewName("layouts/main");
-        mv.addObject("title", "勤務条件");
-        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
-        mv.addObject("bodyFragmentName", "contents/personnel/working_conditions :: bodyFragment");
-        mv.addObject("insertCss", "/css/personnel/working_conditions.css");
+	// public ModelAndView getWorkingConditions(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
+	// 	mv.setViewName("layouts/main");
+    //     mv.addObject("title", "勤務条件");
+    //     mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+	// 	mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
+    //     mv.addObject("bodyFragmentName", "contents/personnel/working_conditions :: bodyFragment");
+    //     mv.addObject("insertCss", "/css/personnel/working_conditions.css");
+
+    //     EmployeeEntity user = getLoginUser(session, response);
+    //     if (user == null) return null; // リダイレクト済みなので処理は止まる
+	// 	// ユーザー名
+	// 	// String userName = principal.getAttribute("preferred_username");
+	// 	// EmployeeEntity user = employeeService.getByAccount(userName);
+	// 	// mv.addObject("user", user);
+    //     // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
+
+    //     // 初期化されたエンティティ
+    //     mv.addObject("formEntity", new WorkingConditionsEntity());
+
+    //     // 初期表示用従業員リスト取得
+    //     List<WorkingConditionsListEntity> origin = workingConditionsListService.getList();
+    //     mv.addObject("origin", origin);
+
+    //     // コンボボックスアイテム取得
+    //     List<SimpleData> paymentMethodComboList = comboBoxService.getPaymentMethod();
+    //     mv.addObject("paymentMethodComboList", paymentMethodComboList);
+    //     List<SimpleData> payTypeComboList = comboBoxService.getPayType();
+    //     mv.addObject("payTypeComboList", payTypeComboList);
+
+    //     // 保存用コード
+    //     mv.addObject("categoryEmployeeCode", Enums.employeeCategory.FULLTIME.getCode());
+    //     mv.addObject("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
+
+    //     // EmployeeEntity user = getLoginUser(session);
+    //     historyService.save(user.getAccount(), "working_conditions", "閲覧", 200, "");
+		
+    //     return mv;
+    // }
+    public String getWorkingConditions(Model model, HttpSession session, HttpServletResponse response) throws IOException {
 
         EmployeeEntity user = getLoginUser(session, response);
-        if (user == null) return null; // リダイレクト済みなので処理は止まる
-		// ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// EmployeeEntity user = employeeService.getByAccount(userName);
-		// mv.addObject("user", user);
-        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
+		if (user == null) return null; // リダイレクト済み
+
+		historyService.save(user.getAccount(), "working_conditions", "閲覧", 200, "");
+
+        model.addAttribute("title", "勤務条件");
+		model.addAttribute("sidebarFragmentName", "~{fragments/common/menu :: personnelFragment}");
+		model.addAttribute("activeMenu", "personnel");
+        model.addAttribute("activeSidebar", "working-conditions");
+        model.addAttribute("insertCss", "/css/personnel/working-conditions.css");
 
         // 初期化されたエンティティ
-        mv.addObject("formEntity", new WorkingConditionsEntity());
+        model.addAttribute("formEntity", new WorkingConditionsEntity());
 
         // 初期表示用従業員リスト取得
         List<WorkingConditionsListEntity> origin = workingConditionsListService.getList();
-        mv.addObject("origin", origin);
+        model.addAttribute("origin", origin);
 
         // コンボボックスアイテム取得
         List<SimpleData> paymentMethodComboList = comboBoxService.getPaymentMethod();
-        mv.addObject("paymentMethodComboList", paymentMethodComboList);
+        model.addAttribute("paymentMethodComboList", paymentMethodComboList);
         List<SimpleData> payTypeComboList = comboBoxService.getPayType();
-        mv.addObject("payTypeComboList", payTypeComboList);
+        model.addAttribute("payTypeComboList", payTypeComboList);
 
         // 保存用コード
-        mv.addObject("categoryEmployeeCode", Enums.employeeCategory.FULLTIME.getCode());
-        mv.addObject("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
+        model.addAttribute("categoryEmployeeCode", Enums.employeeCategory.FULLTIME.getCode());
+        model.addAttribute("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
 
-        // EmployeeEntity user = getLoginUser(session);
-        historyService.save(user.getAccount(), "working_conditions", "閲覧", 200, "");
-		
-        return mv;
+        return "contents/personnel/working_conditions";
     }
 }

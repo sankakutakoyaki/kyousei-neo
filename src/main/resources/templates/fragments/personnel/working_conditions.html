@@ -33,7 +33,6 @@
                 <th><span>ID<span class="sort-arrow"></span></span></th>
                 <th><span>氏名<span class="sort-arrow"></span></span></th>
                 <th><span>営業所<span class="sort-arrow"></span></span></th>
-                <!-- <th><span>データ<span class="sort-arrow"></span></span></th> -->
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>
         </table>
@@ -43,6 +42,48 @@
     <footer th:fragment="footerFragment()" th:remove="tag">
         <span>0件 : 0000/00/00 00:00 現在</span>
     </footer>
+
+    <form id="form-01" class="dialog-content" th:fragment="form01Fragment()">
+        <input name="working-conditions-id" type="hidden" value="">
+        <input name="employee-id" type="hidden" value="">
+        <input name="category" type="hidden" value="">
+        <input name="version" type="hidden" value="">
+        <div class="flex-area">
+            <span id="employee-name"></span>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>支払い方法</label>
+                <select tabindex="1" name="payment-method" class="normal-select"></select>
+            </div>
+            <div class="form-parts">
+                <label>給与形態</label>
+                <select tabindex="2" name="pay-type" class="normal-select"></select>
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>基本給 / 時給</label>
+                <input tabindex="3" name="base-salary" class="normal-input text-right" type="text"
+                    inputmode="numeric" pattern="\d*" value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>交通費</label>
+                <input tabindex="4" name="trans-cost" class="normal-input text-right" type="text"
+                    inputmode="numeric" pattern="\d*" value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>始業時間</label>
+                <input tabindex="5" name="basic-start-time" class="normal-input icon-del" type="time"
+                    value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>終業時間</label>
+                <input tabindex="6" name="basic-end-time" class="normal-input icon-del" type="time"
+                    value="" onfocus="this.select();">
+            </div>
+        </div>
+    </form>
 </body>
 
 </html>

@@ -87,11 +87,6 @@
         <button name="next-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('next-month-move', [[${startId}]], [[${endId}]]); execListChange(this)">
             <img th:src="@{/icons/next.png}">
         </button>
-        
-        <!-- <button name="this-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('this-month', [[${startId}]], [[${endId}]])">
-            <span>今月</span>
-        </button> -->
-
         <button name="prev-month-btn" class="normal-btn frameless" type="button" th:onclick="execSpecifyPeriod('prev-month', [[${startId}]], [[${endId}]]); execListChange(this)">
             <img th:src="@{/icons/prev.png}">
         </button>
