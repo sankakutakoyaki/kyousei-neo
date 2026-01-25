@@ -1,24 +1,20 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/with-sidebar}">
 <body>
-    <!-- 本体 -->
-    <div class="normal-content" th:fragment="bodyFragment">
-        <!-- ハンバーガー -->
-        <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
-        <!-- サイドバー -->
-        <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
-        <!-- ボディ -->
-        <div class="normal-body">
-            <p>sales</p>
-        </div>
-        <div id="form-dialog-area">
-            <!-- フォーム画面をここに記入する -->
-        </div>
-        <div id="dialog-area">
-            <!-- ダイアログ画面をここに記入する -->
-        </div>
-        <script th:src="@{/js/index/sale.js}"></script>
-    </div>
+
+<div layout:fragment="sidebar-content">
+    <div th:replace="~{fragments/common/menu :: salesFragment}"></div>
+</div>
+
+<main layout:fragment="content">
+    <p>sales</p>
+
+    <div id="form-dialog-area"></div>
+    <div id="dialog-area"></div>
+
+    <script th:src="@{/js/index/sales.js}"></script>
+</main>
 
 </body>
+</html>

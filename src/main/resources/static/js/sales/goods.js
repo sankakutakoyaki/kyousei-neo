@@ -960,8 +960,8 @@ async function searchForNameByBuyerCode(e) {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
-    hamburgerItemAddSelectClass('.header-title', 'sales');
-    hamburgerItemAddSelectClass('.normal-sidebar', 'goods');
+    // hamburgerItemAddSelectClass('.header-title', 'sales');
+    // hamburgerItemAddSelectClass('.normal-sidebar', 'goods');
     // スピナー表示
     startProcessing();
 

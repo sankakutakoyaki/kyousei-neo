@@ -790,8 +790,8 @@ async function execFilterDisplay(self) {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
-    hamburgerItemAddSelectClass('.header-title', 'sales');
-    hamburgerItemAddSelectClass('.normal-sidebar', 'order');
+    // hamburgerItemAddSelectClass('.header-title', 'sales');
+    // hamburgerItemAddSelectClass('.normal-sidebar', 'order');
     // スピナー表示
     startProcessing();
 

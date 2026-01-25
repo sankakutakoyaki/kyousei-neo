@@ -206,22 +206,54 @@ function hamburgerClose() {
  * ハンバーガーアイテムクリック時の処理
  * @param {*} self 
  */
-function hamburgerItemAddSelectClass(areaId, selectId) {
+function hamburgerItemAddSelectClass(areaId, self) {
     const area = document.querySelector(areaId);
-    const item = area.querySelector('[data-menu="' + selectId + '"]');
+    area.querySelectorAll('.hamburger-item').forEach(el => el.classList.remove('selected'));
+    self.classList.add('selected');
 
-    // アイテムに選択クラスを追加
-    item.classList.add('selected');
+    // const area = document.querySelector(areaId);
+    // const item = area.querySelector('[data-menu="' + selectId + '"]');
+
+    // // アイテムに選択クラスを追加
+    // item.classList.add('selected');
 }
 
-// /**
-//  * メインサイドバーのクリック時の処理
-//  * @param {*} self 
-//  */
-// function sideBarAddSelectClass(selectId) {
-//     const area = document.querySelector('.normal-sidebar');
-//     const item = area.querySelector('[name="' + selectId + '"]');
+async function loadBody(url, options = {}) {
+    const res = await fetch(url, {
+        method: "GET",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    });
 
-//     // このliに選択クラスを追加
-//     item.classList.add('selected');
-// }
+    if (!res.ok) {
+        console.error("loadBody failed:", res.status);
+        return;
+    }
+
+    const html = await res.text();
+
+    // 受け取ったHTMLをDOMに変換
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    // 差し替え対象を取得
+    const newBody = doc.querySelector(".normal-content");
+    const currentBody = document.querySelector(".normal-content");
+
+    if (!newBody || !currentBody) {
+        console.error("normal-content not found");
+        return;
+    }
+
+    // 差し替え
+    currentBody.replaceWith(newBody);
+
+    // URLを更新（戻る対応）
+    if (options.pushState !== false) {
+        history.pushState({}, "", url);
+    }
+
+    // 共通初期化イベント
+    document.dispatchEvent(new CustomEvent("body:loaded"));
+}

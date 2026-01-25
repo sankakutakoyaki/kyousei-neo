@@ -30,8 +30,7 @@
     }
 
     .header-title>.hamburger-item:hover>span {
-        color: var(--white);
-        font-weight: bold;
+        border-bottom: 1.2px solid;
     }
 }
 

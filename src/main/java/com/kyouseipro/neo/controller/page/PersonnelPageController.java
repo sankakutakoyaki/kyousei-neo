@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,6 +25,7 @@ import com.kyouseipro.neo.service.dto.HistoryService;
 import com.kyouseipro.neo.service.personnel.EmployeeListService;
 import com.kyouseipro.neo.service.personnel.WorkingConditionsListService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -103,67 +105,75 @@ public class PersonnelPageController extends BaseController {
      */
 	@GetMapping("/timeworks")
     @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public ModelAndView showList(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
-        mv.setViewName("layouts/main");
-        mv.addObject("title", "勤怠");
-        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
-        mv.addObject("bodyFragmentName", "contents/personnel/timeworks :: bodyFragment");
-        mv.addObject("insertCss", "/css/personnel/timeworks.css");
-
-        EmployeeEntity user = getLoginUser(session, response);
-        if (user == null) return null; // リダイレクト済みなので処理は止まる
-
-        // // 勤怠データ新規・更新用
-        // TimeworksListEntity entity = new TimeworksListEntity();
-        // mv.addObject("entity", entity);
-        // // 初期表示用営業所ID
-        // mv.addObject("officeId", session.getAttribute("officeId") == null ? "1000" : session.getAttribute("officeId").toString());
-        // // 営業所リスト
-        // List<SimpleData> officeList = comboBoxService.getSimpleOfficeList();
-        // mv.addObject("officeList", officeList);
-        // // 初期表示用従業員リスト取得
-        // List<EmployeeListEntity> employeeList = employeeListService.getList();
-        // mv.addObject("employeeList", employeeList);
-        // // 完了コードを取得
-        // mv.addObject("completeNum", Enums.state.COMPLETE.getCode());
-
-        // EmployeeEntity user = getLoginUser(session);
-        mv.addObject("username", user.getAccount());
-        historyService.save(user.getAccount(), "timeworks", "閲覧", 200, "");
-	    return mv;
-	}
-	// @GetMapping("/timeworks")
-    // @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
 	// public ModelAndView showList(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
-    //     mv.setViewName("layouts/main");
-    //     mv.addObject("title", "勤怠");
-    //     mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-	// 	mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
-    //     mv.addObject("bodyFragmentName", "contents/personnel/timeworks :: bodyFragment");
+    //     // mv.setViewName("layouts/main");
+    //     // mv.addObject("title", "勤怠");
+    //     // mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+	// 	// mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
+    //     // mv.addObject("bodyFragmentName", "contents/personnel/timeworks :: bodyFragment");
     //     mv.addObject("insertCss", "/css/personnel/timeworks.css");
 
     //     EmployeeEntity user = getLoginUser(session, response);
     //     if (user == null) return null; // リダイレクト済みなので処理は止まる
-    //     // 勤怠データ新規・更新用
-    //     TimeworksListEntity entity = new TimeworksListEntity();
-    //     mv.addObject("entity", entity);
-    //     // 初期表示用営業所ID
-    //     mv.addObject("officeId", session.getAttribute("officeId") == null ? "1000" : session.getAttribute("officeId").toString());
-    //     // 営業所リスト
-    //     List<SimpleData> officeList = comboBoxService.getSimpleOfficeList();
-    //     mv.addObject("officeList", officeList);
-    //     // 初期表示用従業員リスト取得
-    //     List<EmployeeListEntity> employeeList = employeeListService.getList();
-    //     mv.addObject("employeeList", employeeList);
-    //     // 完了コードを取得
-    //     mv.addObject("completeNum", Enums.state.COMPLETE.getCode());
+
+    //     // // 勤怠データ新規・更新用
+    //     // TimeworksListEntity entity = new TimeworksListEntity();
+    //     // mv.addObject("entity", entity);
+    //     // // 初期表示用営業所ID
+    //     // mv.addObject("officeId", session.getAttribute("officeId") == null ? "1000" : session.getAttribute("officeId").toString());
+    //     // // 営業所リスト
+    //     // List<SimpleData> officeList = comboBoxService.getSimpleOfficeList();
+    //     // mv.addObject("officeList", officeList);
+    //     // // 初期表示用従業員リスト取得
+    //     // List<EmployeeListEntity> employeeList = employeeListService.getList();
+    //     // mv.addObject("employeeList", employeeList);
+    //     // // 完了コードを取得
+    //     // mv.addObject("completeNum", Enums.state.COMPLETE.getCode());
 
     //     // EmployeeEntity user = getLoginUser(session);
     //     mv.addObject("username", user.getAccount());
     //     historyService.save(user.getAccount(), "timeworks", "閲覧", 200, "");
 	//     return mv;
-	// }
+    // }
+    public ModelAndView timeworks(ModelAndView mv, HttpSession session, HttpServletResponse response) throws IOException {
+		mv.setViewName("contents/personnel/timeworks :: content"); // ★ テンプレート
+        return mv;
+    }
+    // public ModelAndView showList(
+    //         HttpServletRequest request,
+    //         HttpSession session,
+    //         HttpServletResponse response
+    // ) throws IOException {
+
+    //     EmployeeEntity user = getLoginUser(session, response);
+    //     if (user == null) {
+    //         return new ModelAndView("redirect:/login");
+    //     }
+
+    //     ModelAndView mv = new ModelAndView();
+    //     mv.addObject("insertCss", "/css/personnel/timeworks.css");
+    //     mv.addObject("title", "勤怠管理");
+    //     mv.addObject("username", user.getAccount());
+
+    //     historyService.save(user.getAccount(), "timeworks", "閲覧", 200, "");
+
+    //     boolean isAjax =
+    //         "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+
+    //     if (isAjax) {
+    //         // body だけ返す
+    //         mv.setViewName("contents/personnel/timeworks :: bodyFragment");
+    //     } else {
+    //         // layout ごと返す
+    //         mv.setViewName("layouts/main");
+    //         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+    //         mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
+    //         mv.addObject("bodyFragmentName", "contents/personnel/timeworks :: bodyFragment");
+    //     }
+
+    //     return mv;
+    // }
+
     /**
 	 * 勤務条件
 	 * @param mv

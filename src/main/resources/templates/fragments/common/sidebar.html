@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
@@ -10,4 +10,22 @@
     </div>
 </body>
 
+</html> -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="sidebar">
+        <div id="hamburger-area">
+            <button id="menu-close" class="hamburger-btn-close">
+                <img th:src="@{/icons/close.png}">
+            </button>
+
+            <!-- ここに中身を差し込む -->
+            <div class="hamburger-content"
+                 layout:fragment="sidebar-content">
+            </div>
+        </div>
+    </div>
+</body>
 </html>

@@ -549,8 +549,8 @@ async function execFilterDisplay(self) {
 
 // ページ読み込み後の処理
 window.addEventListener("load", () => {
-    hamburgerItemAddSelectClass('.header-title', 'management');
-    hamburgerItemAddSelectClass('.normal-sidebar', 'qualifications');
+    // hamburgerItemAddSelectClass('.header-title', 'management');
+    // hamburgerItemAddSelectClass('.normal-sidebar', 'qualifications');
     // スピナー表示
     startProcessing();
 

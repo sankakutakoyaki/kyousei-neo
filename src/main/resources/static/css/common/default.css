@@ -54,6 +54,9 @@ body {
     height: 100dvh;
     width: 100vw;
     overflow: hidden;
+
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
 }
 
 .normal-main {
@@ -61,8 +64,8 @@ body {
     display: grid;
     width: 100%;
     height: 100%;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+    grid-template-columns: auto 1fr;
+    /* grid-template-rows: auto 1fr; */
     overflow: hidden;
 }
 
@@ -91,7 +94,7 @@ body {
     width: fit-content;
     height: 100%;
     overflow: auto;
-    padding: 2rem 0;
+    padding: 2rem;
 }
 
 .normal-sidebar>div.hamburger-item.selected {
@@ -121,6 +124,10 @@ body {
 
 .hamburger-item>img {
     width: 2rem;
+}
+
+.header-title>.hamburger-item {
+    margin-left: .5rem;
 }
 
 .header-title>.hamburger-item.selected>span {

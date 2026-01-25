@@ -419,8 +419,8 @@ async function renderAllTables(origin) {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async  () => {
-    hamburgerItemAddSelectClass('.header-title', 'personnel');
-    hamburgerItemAddSelectClass('.normal-sidebar', 'working-conditions');
+    // hamburgerItemAddSelectClass('.header-title', 'personnel');
+    // hamburgerItemAddSelectClass('.normal-sidebar', 'working-conditions');
     // // スピナー表示
     // startProcessing();
 

@@ -236,8 +236,8 @@ async function execNumberSearch01(number) {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
-    hamburgerItemAddSelectClass('.header-title', 'recycle');
-    hamburgerItemAddSelectClass('.normal-sidebar', 'maker');
+    // hamburgerItemAddSelectClass('.header-title', 'recycle');
+    // hamburgerItemAddSelectClass('.normal-sidebar', 'maker');
     // スピナー表示
     startProcessing();
 

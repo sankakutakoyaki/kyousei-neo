@@ -3,11 +3,12 @@
 
 <body>
     <!-- 本体 -->
-    <div class="normal-content" th:fragment="bodyFragment">
+    <div class="normal-content" layout:fragment="content">
+    <!-- <div class="normal-content" th:fragment="bodyFragment"> -->
         <!-- ハンバーガー -->
-        <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
+        <!-- <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div> -->
         <!-- サイドバー -->
-        <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
+        <!-- <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div> -->
         <!-- ボディ -->
         <div class="normal-body">
             <div class="tab-area timeworks">

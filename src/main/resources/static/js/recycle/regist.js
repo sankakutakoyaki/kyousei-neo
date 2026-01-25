@@ -794,8 +794,8 @@ function itemCheckedAfter() {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
-    hamburgerItemAddSelectClass('.header-title', 'recycle');
-    hamburgerItemAddSelectClass('.normal-sidebar', 'regist');
+    // hamburgerItemAddSelectClass('.header-title', 'recycle');
+    // hamburgerItemAddSelectClass('.normal-sidebar', 'regist');
     // スピナー表示
     startProcessing();
 

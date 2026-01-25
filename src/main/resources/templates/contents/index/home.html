@@ -1,19 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+    layout:decorate="~{layouts/no-sidebar}">
 
 <body>
     <!-- 本体 -->
-    <div class="normal-content" th:fragment="bodyFragment">
-        <!-- サイドバー -->
-        <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
+    <main layout:fragment="content">
         <!-- ボディ -->
         <div class="normal-body">
-            <!-- <form th:action="@{/ai/ask}" method="post">
-                <div class="flex-area">
-                    <input class="normal-input" type="text" name="question" placeholder="質問を入力してください" />
-                    <button class="normal-btn" type="submit">質問</button>
-                </div>
-            </form> -->
             <form class="input-prompt">
                 <div class="flex-area">
                     <input class="normal-input" type="text" name="question" placeholder="質問を入力してください" />
@@ -24,47 +17,6 @@
             <div th:if="${answer}">
                 <pre th:text="${answer}"></pre>
             </div>
-
-
-            <!-- <h2>AI知識一覧</h2>
-
-            <a th:href="@{/admin/ai/knowledge/new}">新規作成</a>
-
-            <table>
-                <tr>
-                    <th>ID</th><th>カテゴリ</th><th>タイトル</th><th></th>
-                </tr>
-                <tr th:each="k : ${list}">
-                    <td th:text="${k.id}"></td>
-                    <td th:text="${k.category}"></td>
-                    <td th:text="${k.title}"></td>
-                    <td>
-                        <a th:href="@{/admin/ai/knowledge/{id}/chunk(id=${k.id})}">
-                            AI用本文編集
-                        </a>
-                    </td>
-                </tr>
-            </table> -->
-
-            <!-- <div sec:authorize="hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_user', 'APPROLE_staff')">
-                <h2>勤怠</h2>
-                <div class="flex-area time-btn">  
-                    <div class="form-parts">
-                        <button name="start-btn" class="normal-btn" type="button" onclick="setTimeworks('start')"><span>出勤</span></button>
-                        <span id="start-time">00:00:00</span>
-                    </div>
-                    <div class="form-parts">
-                        <button name="end-btn" class="normal-btn" type="button" onclick="setTimeworks('end')"><span>退勤</span></button>
-                        <span id="end-time">00:00:00</span>
-                    </div>
-                </div>
-            </div>  -->
-            
-            <!-- <div sec:authorize="hasAuthority('APPROLE_office')">
-                <h2>営業所メニュー</h2>
-                <a th:href="@{/timeworks}">勤怠</a>
-            </div> -->
-
         </div>
         <div id="form-dialog-area">
             <!-- フォーム画面をここに記入する -->
@@ -72,7 +24,6 @@
         <div id="msg-dialog-area">
             <div th:replace="~{fragments/common/dialog :: messageFragment}"></div>
         </div>
-        <!-- <script th:src="@{/js/personnel/timeworks.js}"></script> -->
         <script th:src="@{/js/data/subscription.js}"></script>
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
@@ -80,6 +31,6 @@
             const employeeId = /*[[${employeeId}]]*/;
         </script>
         <script th:src="@{/js/index/home.js}"></script>
-    </div>
+    </main>
 
 </body>

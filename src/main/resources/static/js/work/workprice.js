@@ -117,8 +117,8 @@ function getCategoryFilterList(list) {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
-    hamburgerItemAddSelectClass('.header-title', 'regist');
-    hamburgerItemAddSelectClass('.normal-sidebar', 'work-price');
+    // hamburgerItemAddSelectClass('.header-title', 'regist');
+    // hamburgerItemAddSelectClass('.normal-sidebar', 'work-price');
     // スピナー表示
     startProcessing();
 
