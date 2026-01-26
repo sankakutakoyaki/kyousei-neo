@@ -69,14 +69,21 @@ body {
     overflow: hidden;
 }
 
-.normal-content {
+.no-side-body {
+    position: relative;
+    padding: 2rem;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+/* .normal-content {
     position: relative;
     display: grid;
     width: 100%;
     height: 100%;
     grid-template-columns: 1fr;
     overflow: hidden;
-}
+} */
 
 .normal-body {
     position: relative;
@@ -84,6 +91,8 @@ body {
     width: 100%;
     height: 100%;
     overflow: auto;
+    /* display: grid; */
+    /* grid-template-columns: auto 1fr; */
 }
 
 .normal-sidebar {
@@ -102,7 +111,7 @@ body {
 }
 
 /* 共通ヘッダー部分 */
-.header-menu {
+.normal-header {
     position: relative;
     display: grid;
     background-color: var(--theme-blue);

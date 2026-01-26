@@ -42,7 +42,7 @@ public class EmployeeService {
         action = "保存"
     )
     public int save(EmployeeEntity entity, String editor) {
-        if (entity.getEmployee_id() > 0) {
+        if (entity.getEmployeeId() > 0) {
             return employeeRepository.update(entity, editor);
         } else {
             return employeeRepository.insert(entity, editor);

@@ -42,7 +42,7 @@ public class QualificationsRepository {
         EmployeeEntity entity = employeeRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
 
-        int targetId = entity.getEmployee_id();
+        int targetId = entity.getEmployeeId();
 
         return sqlRepository.findAll(
             sql,

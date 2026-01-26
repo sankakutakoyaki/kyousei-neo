@@ -6,7 +6,7 @@
         <div class="img-btn" th:onclick="closeFormDialog([[${formId}]], event)"><img title="閉じる" src="/icons/close-s.png"></div>
     </div>
 
-    <div class="header-menu" th:fragment="headerFragment">
+    <div class="normal-header" th:fragment="headerFragment">
         <div class="logo-btn pc-style" th:onclick="moveLinkPage('/')"><span>Kyosei</span></div>
         <div class="sp-style">
             <button id="menu-open" class="hamburger-btn-open"><img th:src="@{/icons/hamburger.png}"></button>

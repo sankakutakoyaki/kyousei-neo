@@ -10,21 +10,21 @@ import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 public class EmployeeParameterBinder {
     public static int bindInsert(PreparedStatement pstmt, EmployeeEntity e, String editor) throws SQLException {
         int index = 1;
-        pstmt.setInt(index++, e.getCompany_id());
-        pstmt.setInt(index++, e.getOffice_id());
+        pstmt.setInt(index++, e.getCompanyId());
+        pstmt.setInt(index++, e.getOfficeId());
         pstmt.setString(index++, e.getAccount());
         pstmt.setInt(index++, e.getCode());
         pstmt.setInt(index++, e.getCategory());
-        pstmt.setString(index++, e.getLast_name());
-        pstmt.setString(index++, e.getFirst_name());
-        pstmt.setString(index++, e.getLast_name_kana());
-        pstmt.setString(index++, e.getFirst_name_kana());
-        pstmt.setString(index++, e.getPhone_number());
-        pstmt.setString(index++, e.getPostal_code());
-        pstmt.setString(index++, e.getFull_address());
+        pstmt.setString(index++, e.getLastName());
+        pstmt.setString(index++, e.getFirstName());
+        pstmt.setString(index++, e.getLastNameKana());
+        pstmt.setString(index++, e.getFirstNameKana());
+        pstmt.setString(index++, e.getPhoneNumber());
+        pstmt.setString(index++, e.getPostalCode());
+        pstmt.setString(index++, e.getFullAddress());
         pstmt.setString(index++, e.getEmail());
         pstmt.setInt(index++, e.getGender());
-        pstmt.setInt(index++, e.getBlood_type());
+        pstmt.setInt(index++, e.getBloodType());
 
         if (e.getBirthday() != null) {
             pstmt.setDate(index++, java.sql.Date.valueOf(e.getBirthday()));
@@ -32,11 +32,11 @@ public class EmployeeParameterBinder {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
 
-        pstmt.setString(index++, e.getEmergency_contact());
-        pstmt.setString(index++, e.getEmergency_contact_number());
+        pstmt.setString(index++, e.getEmergencyContact());
+        pstmt.setString(index++, e.getEmergencyContactNumber());
 
-        if (e.getDate_of_hire() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(e.getDate_of_hire()));
+        if (e.getDateOfHire() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(e.getDateOfHire()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
@@ -50,21 +50,21 @@ public class EmployeeParameterBinder {
 
     public static int bindUpdate(PreparedStatement pstmt, EmployeeEntity e, String editor) throws SQLException {
         int index = 1;
-        pstmt.setInt(index++, e.getCompany_id());
-        pstmt.setInt(index++, e.getOffice_id());
+        pstmt.setInt(index++, e.getCompanyId());
+        pstmt.setInt(index++, e.getOfficeId());
         pstmt.setString(index++, e.getAccount());
         pstmt.setInt(index++, e.getCode());
         pstmt.setInt(index++, e.getCategory());
-        pstmt.setString(index++, e.getLast_name());
-        pstmt.setString(index++, e.getFirst_name());
-        pstmt.setString(index++, e.getLast_name_kana());
-        pstmt.setString(index++, e.getFirst_name_kana());
-        pstmt.setString(index++, e.getPhone_number());
-        pstmt.setString(index++, e.getPostal_code());
-        pstmt.setString(index++, e.getFull_address());
+        pstmt.setString(index++, e.getLastName());
+        pstmt.setString(index++, e.getFirstName());
+        pstmt.setString(index++, e.getLastNameKana());
+        pstmt.setString(index++, e.getFirstNameKana());
+        pstmt.setString(index++, e.getPhoneNumber());
+        pstmt.setString(index++, e.getPostalCode());
+        pstmt.setString(index++, e.getFullAddress());
         pstmt.setString(index++, e.getEmail());
         pstmt.setInt(index++, e.getGender());
-        pstmt.setInt(index++, e.getBlood_type());
+        pstmt.setInt(index++, e.getBloodType());
 
         if (e.getBirthday() != null) {
             pstmt.setDate(index++, java.sql.Date.valueOf(e.getBirthday()));
@@ -72,11 +72,11 @@ public class EmployeeParameterBinder {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
 
-        pstmt.setString(index++, e.getEmergency_contact());
-        pstmt.setString(index++, e.getEmergency_contact_number());
+        pstmt.setString(index++, e.getEmergencyContact());
+        pstmt.setString(index++, e.getEmergencyContactNumber());
 
-        if (e.getDate_of_hire() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(e.getDate_of_hire()));
+        if (e.getDateOfHire() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(e.getDateOfHire()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
@@ -84,7 +84,7 @@ public class EmployeeParameterBinder {
         pstmt.setInt(index++, e.getVersion() +1);
         pstmt.setInt(index++, e.getState());
 
-        pstmt.setInt(index++, e.getEmployee_id()); // WHERE句
+        pstmt.setInt(index++, e.getEmployeeId()); // WHERE句
         pstmt.setInt(index++, e.getVersion());
         pstmt.setString(index++, editor);          // ログ用
         return index;

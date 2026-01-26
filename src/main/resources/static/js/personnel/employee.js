@@ -10,9 +10,9 @@ function createTableContent(tableId, list) {
         const row = createSelectableRow({
             table,
             item,
-            idKey: "employee_id",
+            idKey: "employeeId",
             onDoubleClick: (item) => {
-                execEdit(item.employee_id, this);
+                execEdit(item.employeeId, this);
             }
         });
 
@@ -27,17 +27,17 @@ function createTableRow(newRow, item) {
     // 選択用チェックボックス
     newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
     // ID
-    newRow.insertAdjacentHTML('beforeend', '<td class="link-cell" onclick="execEdit(' + item.employee_id + ', this)">' + String(item.employee_id).padStart(4, '0') + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td class="link-cell" onclick="execEdit(' + item.employeeId + ', this)">' + String(item.employeeId).padStart(4, '0') + '</td>');
     // コード
     newRow.insertAdjacentHTML('beforeend', '<td class="editable text-center" data-col="code" data-edit-type="text">' + (item.code == 0 ? "": item.code) + '</td>');
     // 名前
-    newRow.insertAdjacentHTML('beforeend', '<td><span class="kana">' + item.full_name_kana + '</span><br><span>' + item.full_name + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td><span class="kana">' + item.fullNameKana + '</span><br><span>' + item.fullName + '</span></td>');
     // 携帯番号
-    newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="phone" data-edit-type="text"><span>' + (item.phone_number ?? "登録なし") + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="phone" data-edit-type="text"><span>' + (item.phoneNumber ?? "登録なし") + '</span></td>');
     // 会社名
-    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.company_name ?? "登録なし") + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.companyName ?? "登録なし") + '</span></td>');
     // 営業所名
-    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.office_name ?? "登録なし") + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.officeName ?? "登録なし") + '</span></td>');
 }
 
 /******************************************************************************************************* 入力画面 */
@@ -60,11 +60,12 @@ async function execEdit(id, self) {
         entity = structuredClone(result);
     } else {
         entity = structuredClone(formEntity);
+        entity.companyId = ownCompanyId;
         entity.category = config.category;
     }
 
     setFormContent(form, entity);
-        // 入力フォームダイアログを開く
+    // 入力フォームダイアログを開く
     openFormDialog("form-dialog-01");
 }
 
@@ -72,9 +73,6 @@ async function execEdit(id, self) {
 function setFormContent(form, entity) {
     applyFormConfig(form, entity, FORM_CONFIG);
     applyComboConfig(form, entity, COMBO_CONFIG);
-
-    // 営業所（会社依存）
-    createOfficeComboBox(form, officeList, entity.office_id);
 }
 
 /******************************************************************************************************* 保存 */
@@ -93,23 +91,15 @@ async function execSave() {
         SAVE_FORM_CONFIG
     );
 
-    const result = await updateFetch(
-        "/api/employee/save",
-        JSON.stringify(formdata),
-        token,
-        "application/json"
-    );
-
-    if (result.success) {
-        const config = MODE_CONFIG[tab.dataset.tab];
+    const result = await updateFetch("/api/employee/save", JSON.stringify(formdata), token, "application/json");
+    if (result.ok) {
         openMsgDialog("msg-dialog", result.message, "blue");
+        
+        closeFormDialog('form-dialog-01');
         await execUpdate();
-        scrollIntoTableList(config.tableId, result.employee_id);
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
+        const config = MODE_CONFIG[tab.dataset.tab];
+        scrollIntoTableList(config.tableId, result.employeeId);
     }
-
-    closeFormDialog('form-dialog-01');
 }
 
 // 入力チェック
@@ -145,7 +135,7 @@ async function handleTdChange(editor) {
     const row = td.closest('tr');
     const id = row.dataset.id;
 
-    const ent = origin.find(value => value.employee_id == id);
+    const ent = origin.find(value => value.employeeId == id);
     switch (col) {
         case "code":
             if (existsSameCode(Number(editor.value))) {
@@ -155,7 +145,7 @@ async function handleTdChange(editor) {
             break;
         case "phone":
             if (!checkPhoneNumber(editor)) {
-                editor.value = ent.phone_number;
+                editor.value = ent.phoneNumber;
                 return;
             }
             break;
@@ -183,11 +173,9 @@ async function execDelete(self) {
     
     const result = await deleteTablelist(config.tableId, '/api/employee/delete');
 
-    if (result.success) {                
+    if (result.ok) {                
         await execUpdate();
         openMsgDialog("msg-dialog", result.message, "blue");
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
     }
 }
 

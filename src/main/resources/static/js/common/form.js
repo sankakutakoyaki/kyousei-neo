@@ -385,7 +385,7 @@ function applyFormConfig(form, entity, config) {
         let value = entity[c.key];
 
         if (c.emptyIf !== undefined && value == c.emptyIf) {
-        value = '';
+            value = '';
         }
         el.value = value ?? '';
     });

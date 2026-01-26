@@ -37,7 +37,7 @@ public class TimeworksListRepository {
         // int targetId = id;
         EmployeeEntity entity = employeeRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
-        int targetId = entity.getEmployee_id();
+        int targetId = entity.getEmployeeId();
         // int id = entity.getEmployee_id();
 
         return sqlRepository.executeQuery(
@@ -59,7 +59,7 @@ public class TimeworksListRepository {
         // int id = entity.getEmployee_id();
         EmployeeEntity entity = employeeRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
-        int targetId = entity.getEmployee_id();
+        int targetId = entity.getEmployeeId();
 
         return sqlRepository.findAll(
             sql,
@@ -79,7 +79,7 @@ public class TimeworksListRepository {
         // int id = entity.getEmployee_id();
         EmployeeEntity entity = employeeRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
-        int targetId = entity.getEmployee_id();
+        int targetId = entity.getEmployeeId();
 
         return sqlRepository.findAll(
             sql,

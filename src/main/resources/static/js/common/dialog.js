@@ -15,6 +15,8 @@ function openFormDialog(dialogId) {
     const form = document.getElementById(dialogId);
     if (form == null) return;
     form.classList.remove('none');
+
+    setInertState(true);
 }
 
 /**
@@ -37,13 +39,8 @@ function closeFormDialog(dialogId, e) {
     if (form == null) return;
     form.classList.add('none');
 
-    // 要素がクリック禁止になっている場合は解除する
-    const elm = document.querySelector('.normal-body');
-    if (elm != null) elm.inert = false;
-
-    // // autofocus属性が付いているアイテムをフォーカスする
-    // const focusBox = document.querySelector('input[autofocus]');
-    // if (focusBox != null) focusBox.focus();
+    // 要素のクリック禁止を解除する
+    setInertState(false);
 }
 
 /**
@@ -63,19 +60,18 @@ function openMsgDialog(dialogId, msg, color) {
     if (dialog == null) return;
 
     // ボタンを使用不可にする
-    const element = document.querySelector('.normal-body');
-    if (element != null) element.inert = true;
+    setInertState(true);
 
     // ダイアログが重なる場合は背景を透明にする
     const check = element.querySelector('.dialog');
     if (check != null) {
-        parent.classList.add('trans');
+        check.classList.add('trans');
     }
 
     // メッセージエリアにダイアログクラスを付与する
     const parent = document.getElementById('msg-dialog-area');
     parent.classList.add('dialog');
-    
+
     // メッセージ画面から[none]クラスを取り除く
     dialog.classList.remove('none');
 
@@ -85,8 +81,6 @@ function openMsgDialog(dialogId, msg, color) {
 
     // メッセージを代入する
     const content = parent.querySelector('.msg-dialog-content');
-    // const arrayMsg = msg.replace(/\s+/, '<br>');
-    // content.textContent = arrayMsg;
     content.textContent = msg;
 
     // OKボタンにフォーカスを合わせる
@@ -114,17 +108,8 @@ function closeMsgDialog(dialogId, e) {
     if (dialog == null) return;
     dialog.classList.add('none');
 
-    // 要素がクリック禁止になっている場合は解除する
-    const elm = document.querySelector('.normal-body');
-    if (elm != null) elm.inert = false;
-
-    // // autofocus属性が付いているアイテムをフォーカスする
-    // const focusBox = document.querySelector('input[autofocus]');
-    // if (focusBox != null) focusBox.focus();
-
-    // // OKボタンにフォーカスを合わせる
-    // const focusBtn = dialog.querySelector('[name="focus-btn"]');
-    // if (focusBtn != null) focusBtn.focus();
+    // 要素のクリック禁止を解除する
+    setInertState(false);
 }
 
 /**
@@ -135,9 +120,23 @@ function closeMsgDialog(dialogId, e) {
 function setFocusElement(msgId, elm) {
     const dialog = document.getElementById(msgId);
     const btn =dialog.querySelector('[name="focus-btn');
-    // btn.addEventListener('click', function () { elm.focus(); });
     btn.onclick = (e) => {
         closeMsgDialog(msgId, e);// 上書きされて消えるため再度設定
         elm.focus();
     };
+}
+
+// ボタンを使用不可にする
+function setInertState(state) {
+    const header = document.querySelector('.normal-header');
+    if (header != null) header.inert = state;
+
+    const aside = document.querySelector('.normal-sidebar');
+    if (aside != null) aside.inert = state;
+
+    const tab = document.querySelector('.tab-area');
+    if (tab != null) tab.inert = state;
+
+    const table = document.querySelector('.table-area');
+    if (table != null) table.inert = state;
 }

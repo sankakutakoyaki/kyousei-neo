@@ -59,9 +59,9 @@ public class TimeworksService {
             );
 
         TimeworksEntity e = new TimeworksEntity();
-        e.setEmployeeId(emp.getEmployee_id());
-        e.setFullName(emp.getFull_name());
-        e.setOfficeName(emp.getOffice_name());
+        e.setEmployeeId(emp.getEmployeeId());
+        e.setFullName(emp.getFullName());
+        e.setOfficeName(emp.getOfficeName());
 
         e.setWorkBaseDate(today);
         e.setState(Enums.timeworksState.NOT_STARTED);

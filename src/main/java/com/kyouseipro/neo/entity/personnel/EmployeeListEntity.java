@@ -4,17 +4,17 @@ import lombok.Data;
 
 @Data
 public class EmployeeListEntity {
-    private int employee_id;
+    private int employeeId;
     private int code;
-    private int company_id;
-    private String company_name;
-    private int office_id;
-    private String office_name;
-    private String full_name;
-    private String full_name_kana;
+    private int companyId;
+    private String companyName;
+    private int officeId;
+    private String officeName;
+    private String fullName;
+    private String fullNameKana;
     private String phone_number;
     private int category;
-    private String category_name;
+    private String categoryName;
 
     // private String user_name;
 

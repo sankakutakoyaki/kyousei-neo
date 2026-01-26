@@ -10,30 +10,30 @@ import lombok.Data;
 
 @Data
 public class EmployeeEntity implements CsvExportable {
-    private int employee_id;
-    private int company_id;
-    private String company_name;
-    private int office_id;
-    private String office_name;
+    private int employeeId;
+    private int companyId;
+    private String companyName;
+    private int officeId;
+    private String officeName;
     private String account;
     private int code;
     private int category;
-    private String last_name;
-    private String first_name;
-    private String full_name;
-    private String last_name_kana;
-    private String first_name_kana;
-    private String full_name_kana;
-    private String phone_number;
-    private String postal_code;
-    private String full_address;
+    private String lastName;
+    private String firstName;
+    private String fullName;
+    private String lastNameKana;
+    private String firstNameKana;
+    private String fullNameKana;
+    private String phoneNumber;
+    private String postalCode;
+    private String fullAddress;
     private String email;
     private int gender;
-    private int blood_type;
+    private int bloodType;
     private LocalDate birthday = LocalDate.of(9999, 12, 31);
-    private String emergency_contact;
-    private String emergency_contact_number;
-    private LocalDate date_of_hire;
+    private String emergencyContact;
+    private String emergencyContactNumber;
+    private LocalDate dateOfHire;
     private int version;
     private int state;
 
@@ -44,23 +44,23 @@ public class EmployeeEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(employee_id)) + "," +
+        return Utilities.escapeCsv(String.valueOf(employeeId)) + "," +
                Utilities.escapeCsv(account) + "," +
                Utilities.escapeCsv(String.valueOf(code)) + "," +
-               Utilities.escapeCsv(last_name) + "," +
-               Utilities.escapeCsv(first_name) + "," +
-               Utilities.escapeCsv(last_name_kana) + "," +
-               Utilities.escapeCsv(first_name_kana) + "," +
-               Utilities.escapeCsv(phone_number) + "," +
-               Utilities.escapeCsv(postal_code) + "," +
-               Utilities.escapeCsv(full_address) + "," +
+               Utilities.escapeCsv(lastName) + "," +
+               Utilities.escapeCsv(firstName) + "," +
+               Utilities.escapeCsv(lastNameKana) + "," +
+               Utilities.escapeCsv(firstNameKana) + "," +
+               Utilities.escapeCsv(phoneNumber) + "," +
+               Utilities.escapeCsv(postalCode) + "," +
+               Utilities.escapeCsv(fullAddress) + "," +
                Utilities.escapeCsv(email) + "," +
                Utilities.escapeCsv(Enums.gender.getDescriptionByNum(gender)) + "," +
-               Utilities.escapeCsv(Enums.bloodType.getDescriptionByNum(blood_type)) + "," +
+               Utilities.escapeCsv(Enums.bloodType.getDescriptionByNum(bloodType)) + "," +
                Utilities.escapeCsv(String.valueOf(birthday)) +
-               Utilities.escapeCsv(emergency_contact) + "," +
-               Utilities.escapeCsv(emergency_contact_number) + "," +
-               Utilities.escapeCsv(String.valueOf(date_of_hire));
+               Utilities.escapeCsv(emergencyContact) + "," +
+               Utilities.escapeCsv(emergencyContactNumber) + "," +
+               Utilities.escapeCsv(String.valueOf(dateOfHire));
     }
 
     // private String user_name;

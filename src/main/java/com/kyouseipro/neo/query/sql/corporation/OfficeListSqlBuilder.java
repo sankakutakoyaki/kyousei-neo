@@ -24,6 +24,10 @@ public class OfficeListSqlBuilder {
         return "SELECT office_id as number, name as text FROM offices WHERE NOT (state = ?) ORDER BY name_kana;";
     }
 
+    public static String buildFindByOwn() {
+        return "SELECT office_id as number, name as text FROM offices WHERE NOT (state = ?) AND company_id = ?";
+    }
+
     public static String buildFindAllByCategory() {
         return 
             basicSelectString() +

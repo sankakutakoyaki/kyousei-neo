@@ -2,18 +2,12 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/with-sidebar}">
 <body>
-    <!-- 本体 -->
-    <!-- <div class="normal-content" th:fragment="bodyFragment"> -->
-        <!-- ハンバーガー -->
-        <!-- <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div> -->
-        <!-- サイドバー -->
-        <!-- <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div> -->
     <!-- サイドバー -->
     <div layout:fragment="sidebar-content">
-        <div th:replace="~{fragments/common/menu :: personnelFragment}"></div>
+        <div th:replace="~{fragments/common/menu :: registFragment}"></div>
     </div>
 
-        <!-- ボディ -->
+    <!-- ボディ -->
     <main layout:fragment="content">
         <div class="tab-area">
             <ul class="tab-menu">
@@ -62,11 +56,11 @@
             const token = /*[[${_csrf.token}]]*/;
             const user = /*[[${user}]]*/;
             const formEntity = /*[[${formEntity}]]*/;
+            // const ownCompanyId = /*[[${ownCompanyId}]]*/;
             const categoryEmployeeCode = /*[[${categoryEmployeeCode}]]*/;
             const categoryParttimeCode = /*[[${categoryParttimeCode}]]*/;
-            const companyComboList = /*[[${companyComboList}]]*/;
-            const officeList = /*[[${officeList}]]*/;
-            const employeeCategoryComboList = /*[[${employeeCategoryComboList}]]*/;
+            // const companyComboList = /*[[${companyComboList}]]*/;
+            const officeComboList = /*[[${officeComboList}]]*/;
             const genderComboList = /*[[${genderComboList}]]*/;
             const bloodTypeComboList = /*[[${bloodTypeComboList}]]*/;
             let origin = /*[[${origin}]]*/; // 初期リスト記憶用

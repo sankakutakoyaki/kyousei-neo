@@ -16,80 +16,88 @@ const MODE_CONFIG = {
 };
 
 const FORM_CONFIG = [
-  { name: 'employee-id', key: 'employee_id' },
+    { name: 'employee-id', key: 'employeeId' },
+    { name: 'company-id', key: 'companyId' },
 
-  { name: 'code', key: 'code', emptyIf: 0 },
+    { name: 'code', key: 'code', emptyIf: 0 },
 
-  { name: 'category', key: 'category' },
-  { name: 'account', key: 'account' },
+    { name: 'category', key: 'category' },
+    { name: 'account', key: 'account' },
 
-  { name: 'last-name', key: 'last_name' },
-  { name: 'first-name', key: 'first_name' },
-  { name: 'last-name-kana', key: 'last_name_kana' },
-  { name: 'first-name-kana', key: 'first_name_kana' },
+    { name: 'office', key: 'officeId' },
 
-  { name: 'phone-number', key: 'phone_number' },
-  { name: 'postal-code', key: 'postal_code' },
-  { name: 'full-address', key: 'full_address' },
-  { name: 'email', key: 'email' },
+    { name: 'last-name', key: 'lastName' },
+    { name: 'first-name', key: 'firstName' },
+    { name: 'last-name-kana', key: 'lastNameKana' },
+    { name: 'first-name-kana', key: 'firstNameKana' },
 
-  { name: 'birthday', key: 'birthday', emptyIf: '9999-12-31' },
-  { name: 'date-of-hire', key: 'date_of_hire', emptyIf: '9999-12-31' },
+    { name: 'phone-number', key: 'phoneNumber' },
+    { name: 'postal-code', key: 'postalCode' },
+    { name: 'full-address', key: 'fullAddress' },
+    { name: 'email', key: 'email' },
 
-  { name: 'emergency-contact', key: 'emergency_contact' },
-  { name: 'emergency-contact-number', key: 'emergency_contact_number' },
+    { name: 'birthday', key: 'birthday', emptyIf: '9999-12-31' },
+    { name: 'date-of-hire', key: 'dateOfHire', emptyIf: '9999-12-31' },
 
-  { name: 'version', key: 'version' }
+    { name: 'emergency-contact', key: 'emergencyContact' },
+    { name: 'emergency-contact-number', key: 'emergencyContactNumber' },
+
+    { name: 'version', key: 'version' }
 ];
 
 const SAVE_FORM_CONFIG = [
-  { name: 'employee-id', key: 'employee_id' },
+    { name: 'employee-id', key: 'employeeId' },
+    { name: 'company-id', key: 'companyId' },
 
-  { name: 'code', key: 'code', emptyTo: 0, number: true },
+    { name: 'code', key: 'code', emptyTo: 0, number: true },
 
-  { name: 'category', key: 'category', number: true },
-  { name: 'account', key: 'account', trim: true },
+    { name: 'category', key: 'category', number: true },
+    { name: 'account', key: 'account', trim: true },
 
-  { name: 'company', key: 'company_id', number: true },
-  { name: 'office', key: 'office_id', number: true },
+    { name: 'office', key: 'officeId', number: true },
 
-  { name: 'last-name', key: 'last_name', trim: true },
-  { name: 'first-name', key: 'first_name', trim: true },
-  { name: 'last-name-kana', key: 'last_name_kana', trim: true },
-  { name: 'first-name-kana', key: 'first_name_kana', trim: true },
+    { name: 'last-name', key: 'lastName', trim: true },
+    { name: 'first-name', key: 'firstName', trim: true },
+    { name: 'last-name-kana', key: 'lastNameKana', trim: true },
+    { name: 'first-name-kana', key: 'firstNameKana', trim: true },
 
-  { name: 'phone-number', key: 'phone_number', trim: true },
-  { name: 'postal-code', key: 'postal_code', trim: true },
-  { name: 'full-address', key: 'full_address', trim: true },
-  { name: 'email', key: 'email', trim: true },
+    { name: 'phone-number', key: 'phoneNumber', trim: true },
+    { name: 'postal-code', key: 'postalCode', trim: true },
+    { name: 'full-address', key: 'fullAddress', trim: true },
+    { name: 'email', key: 'email', trim: true },
 
-  { name: 'gender', key: 'gender' },
-  { name: 'blood-type', key: 'blood_type' },
+    { name: 'gender', key: 'gender' },
+    { name: 'blood-type', key: 'bloodType' },
 
-  { name: 'birthday', key: 'birthday', emptyTo: '9999-12-31' },
-  { name: 'date-of-hire', key: 'date_of_hire', emptyTo: '9999-12-31' },
+    { name: 'birthday', key: 'birthday', emptyTo: '9999-12-31' },
+    { name: 'date-of-hire', key: 'dateOfHire', emptyTo: '9999-12-31' },
 
-  { name: 'emergency-contact', key: 'emergency_contact', trim: true },
-  { name: 'emergency-contact-number', key: 'emergency_contact_number', trim: true },
+    { name: 'emergency-contact', key: 'emergencyContact', trim: true },
+    { name: 'emergency-contact-number', key: 'emergencyContactNumber', trim: true },
 
-  { name: 'version', key: 'version', number: true }
+    { name: 'version', key: 'version', number: true }
 ];
 
 const COMBO_CONFIG = [
-  {
-    selector: 'select[name="company"]',
-    list: companyComboList,
-    key: 'company_id',
-    onChange: (form, el) => createOfficeComboBox(form, el, officeList)
-  },
-  {
-    selector: 'select[name="gender"]',
-    list: genderComboList,
-    key: 'gender'
-  },
-  {
-    selector: 'select[name="blood-type"]',
-    list: bloodTypeComboList,
-    key: 'blood_type'
-  }
+    // {
+    //   selector: 'select[name="company"]',
+    //   list: companyComboList,
+    //   key: 'companyId',
+    //   onChange: (form, el) => createOfficeComboBox(form, el, officeList)
+    // },
+    {
+        selector: 'select[name="office"]',
+        list: officeComboList,
+        key: 'officeId'
+    },
+    {
+        selector: 'select[name="gender"]',
+        list: genderComboList,
+        key: 'gender'
+    },
+    {
+        selector: 'select[name="blood-type"]',
+        list: bloodTypeComboList,
+        key: 'bloodType'
+    }
 ];

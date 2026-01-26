@@ -35,7 +35,7 @@ public class EmployeeRepository {
             EmployeeEntity entity = findByCode(id)
                 .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
 
-            targetId = entity.getEmployee_id();
+            targetId = entity.getEmployeeId();
         }
 
         return sqlRepository.executeQuery(

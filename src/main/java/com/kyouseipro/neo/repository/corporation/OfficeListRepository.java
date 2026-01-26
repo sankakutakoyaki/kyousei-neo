@@ -65,6 +65,21 @@ public class OfficeListRepository {
     }
 
     /**
+     * コンボボックス用リスト取得。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
+    public List<SimpleData> findByOwnCombo() {
+        String sql = OfficeListSqlBuilder.buildFindByOwn();
+
+        return sqlRepository.findAll(
+            sql,
+            (ps, v) -> OfficeListParameterBinder.bindFindByOwn(ps),
+            SimpleDataMapper::map
+        );
+    }
+
+    /**
      * コンボボックス用リスト取得（CategoryIDで指定）。
      * 0件の場合は空リストを返す。
      * @return 取得したリストを返す

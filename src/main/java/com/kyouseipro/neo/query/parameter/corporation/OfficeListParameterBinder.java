@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.common.Utilities;
 
 public class OfficeListParameterBinder {
     
@@ -25,6 +26,13 @@ public class OfficeListParameterBinder {
     public static int bindFindAllCombo(PreparedStatement ps) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
+        return index;
+    }
+
+    public static int bindFindByOwn(PreparedStatement ps) throws SQLException {
+        int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Utilities.getOwnCompanyId());
         return index;
     }
 

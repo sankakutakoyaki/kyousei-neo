@@ -81,7 +81,7 @@
     /* display: grid;
     grid-template-rows: auto auto auto;
     position: fixed; */
-    z-index: 100;
+    /* z-index: 100; */
     width: fit-content;
     height: fit-content;
     inset: 0;
@@ -93,12 +93,22 @@
     box-shadow: 0 0 8px var(--shadow);
     overflow: hidden;
 }
+
+.msg-dialog {
+    z-index: 200;
+}
+
+.form-dialog {
+    z-index: 200;
+}
+
 .msg-dialog>.dialog-main,
 .form-dialog>.dialog-main {
     height: auto;
     display: grid;
     grid-template-rows: auto auto auto;
 }
+
 .msg-dialog-content {
     /* display: grid;
     grid-template-rows: auto auto auto; */

@@ -175,6 +175,10 @@ public class ComboBoxService {
         return officeListRepository.findAllCombo();
     }
 
+    public List<SimpleData> getSimpleOwnOfficeList() {
+        return officeListRepository.findByOwnCombo();
+    }
+
     public List<SimpleData> getQualificationMaster() {
         return qualificationsRepository.findAllByQualificationMasterCombo();
     }
