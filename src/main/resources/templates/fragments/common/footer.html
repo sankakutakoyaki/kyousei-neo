@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<body>
+<!-- <body>
     <div class="dialog-footer" th:fragment="footerFragment(formId, execFuncName, btnName)">
         <button class="normal-btn frameless" type="button"
             th:onclick="closeFormDialog([[${formId}]], event)"><span>キャンセル</span></button>
         <button tabindex="7" class="normal-btn ok" type="button"
             th:onclick="|__${execFuncName}__;|"><span th:text="${btnName}"></span></button>
     </div>
-</body>
+</body> -->
+<div class="dialog-footer"
+     th:fragment="footerFragment(formId, execFuncName, btnName)">
+    <button class="normal-btn frameless" type="button"
+        th:onclick="closeFormDialog([[${formId}]], event)">
+        <span>キャンセル</span>
+    </button>
 
+    <button tabindex="7"
+            class="normal-btn ok"
+            type="button"
+            th:onclick="|withInertButton(this, () => __${execFuncName}__);|">
+        <span th:text="${btnName}"></span>
+    </button>
+</div>
 </html>

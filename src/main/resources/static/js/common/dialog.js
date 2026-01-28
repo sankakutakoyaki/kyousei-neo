@@ -140,3 +140,19 @@ function setInertState(state) {
     const table = document.querySelector('.table-area');
     if (table != null) table.inert = state;
 }
+
+/**
+ * ボタン連打防止
+ * @param {*} button 
+ * @param {*} asyncFunc 
+ * @returns 
+ */
+async function withInertButton(button, asyncFunc) {
+    button.inert = true;
+    try {
+        const ok = await asyncFunc();
+        return ok;
+    } finally {
+        button.inert = false;
+    }
+}
