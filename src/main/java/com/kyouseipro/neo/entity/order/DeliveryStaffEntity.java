@@ -7,14 +7,14 @@ import lombok.Data;
 
 @Data
 public class DeliveryStaffEntity implements CsvExportable{
-    private int delivery_staff_id;
-    private int order_id;
-    private int employee_id;
-    private int company_id;
-    private String company_name;
-    private int office_id;
-    private String office_name;
-    private String full_name;
+    private int deliveryStaffId;
+    private int orderId;
+    private int employeeId;
+    private int companyId;
+    private String companyName;
+    private int officeId;
+    private String officeName;
+    private String fullName;
     private int version;
     private int state;
 
@@ -25,10 +25,10 @@ public class DeliveryStaffEntity implements CsvExportable{
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(delivery_staff_id)) + "," +
-               Utilities.escapeCsv(String.valueOf(order_id)) + "," +
-               Utilities.escapeCsv(company_name) + "," +
-               Utilities.escapeCsv(office_name) + "," +
-               Utilities.escapeCsv(full_name) + ",";
+        return Utilities.escapeCsv(String.valueOf(deliveryStaffId)) + "," +
+               Utilities.escapeCsv(String.valueOf(orderId)) + "," +
+               Utilities.escapeCsv(companyName) + "," +
+               Utilities.escapeCsv(officeName) + "," +
+               Utilities.escapeCsv(fullName) + ",";
     }
 }

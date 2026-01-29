@@ -1,26 +1,21 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/with-sidebar}">
 <body>
-    <!-- 本体 -->
-    <div class="normal-content" th:fragment="bodyFragment">
-        <!-- ハンバーガー -->
-        <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
-        <!-- サイドバー -->
-        <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
-        <!-- ボディ -->
-        <div class="normal-body">
-            <div class="table-area">
-                <!-- ヘッダー -->
-                <header th:replace="~{fragments/work/workitem :: header01Fragment('search-box-01')}">
-                </header>
-                <!-- コンテンツ -->
-                <main th:replace="~{fragments/work/workitem :: main01Fragment('table-01', 'table-01-content')}">
-                </main>
-                <!-- フッター -->
-                <footer id="footer-01" class="pc-style"
-                    th:insert="~{fragments/work/workitem :: footerFragment()}"></footer>
-            </div>
+    <!-- サイドバー -->
+    <div layout:fragment="sidebar-content">
+        <div th:replace="~{fragments/common/menu :: registFragment}"></div>
+    </div>
+    
+    <!-- ボディ -->
+    <main layout:fragment="content">
+        <div class="table-area">
+            <!-- ヘッダー -->
+            <header th:replace="~{fragments/work/workitem :: header01Fragment('search-box-01')}"></header>
+            <!-- コンテンツ -->
+            <main th:replace="~{fragments/work/workitem :: main01Fragment('table-01', 'table-01-content')}"></main>
+            <!-- フッター -->
+            <footer id="footer-01" class="pc-style" th:insert="~{fragments/work/workitem :: footerFragment()}"></footer>
         </div>
         <div id="form-dialog-area">
             <!-- フォーム画面をここに記入する -->
@@ -36,6 +31,6 @@
             let origin = /*[[${origin}]]*/; // 初期リスト記憶用
         </script>
         <script th:src="@{/js/work/workitem.js}"></script>
-    </div>
+    </main>
 
 </body>

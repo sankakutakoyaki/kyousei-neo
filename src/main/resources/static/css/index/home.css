@@ -9,6 +9,7 @@
 }
 
 .input-prompt {
-    margin: 0 20%;
     margin-top: 3rem;
+    width: 30rem;
+    justify-self: center;
 }

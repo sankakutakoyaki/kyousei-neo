@@ -20,12 +20,6 @@ public class OfficeListService {
      */
     public List<OfficeListEntity> getList() {
         return officeListRepository.findAll();
-        // StringBuilder sb = new StringBuilder();
-        // sb.append(OfficeListEntity.selectString());
-        // sb.append(" WHERE NOT (o.state = " + Enums.state.DELETE.getNum() + ");");
-        // SqlData sqlData = new SqlData();
-        // sqlData.setData(sb.toString(), new OfficeListEntity());
-        // return sqlRepository.getEntityList(sqlData);
     }
 
     /**
@@ -34,12 +28,6 @@ public class OfficeListService {
      */
     public List<OfficeListEntity> getClientList() {
         return officeListRepository.findByCategoryId(0);
-        // StringBuilder sb = new StringBuilder();
-        // sb.append(OfficeListEntity.selectString());
-        // sb.append(" WHERE NOT (o.state = " + Enums.state.DELETE.getNum() + ") AND NOT (c.category = 0);");
-        // SqlData sqlData = new SqlData();
-        // sqlData.setData(sb.toString(), new OfficeListEntity());
-        // return sqlRepository.getEntityList(sqlData);
     }
 
     /**
@@ -48,11 +36,5 @@ public class OfficeListService {
      */
     public List<OfficeListEntity> getListByCategoryId(int category) {
         return officeListRepository.findByCategoryId(category);
-        // StringBuilder sb = new StringBuilder();
-        // sb.append(OfficeListEntity.selectString());
-        // sb.append(" WHERE category = " + category + " AND NOT (state = " + Enums.state.DELETE.getNum() + ");");
-        // SqlData sqlData = new SqlData();
-        // sqlData.setData(sb.toString(), new OfficeListEntity());
-        // return sqlRepository.getEntityList(sqlData);
     } 
 }

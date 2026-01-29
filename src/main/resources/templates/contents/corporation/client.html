@@ -1,91 +1,81 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/with-sidebar}">
 <body>
+    <!-- サイドバー -->
+    <div layout:fragment="sidebar-content">
+        <div th:replace="~{fragments/common/menu :: registFragment}"></div>
+    </div>
+
     <!-- 本体 -->
-    <div class="normal-content" th:fragment="bodyFragment">
-        <!-- ハンバーガー -->
-        <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
-        <!-- サイドバー -->
-        <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
-        <!-- ボディ -->
-        <div class="normal-body">
-            <div class="tab-area">
-                <ul class="tab-menu">
-                    <!-- <li class="tab-menu-item is-active" data-tab="01">施工</li> -->
-                    <li class="tab-menu-item is-active" data-tab="02">荷主</li>
-                    <li class="tab-menu-item" data-tab="03">購買</li>
-                    <li class="tab-menu-item" data-tab="04">サービス</li>
-                    <li class="tab-menu-item" data-tab="07">運送</li>
-                    <li class="tab-menu-item" data-tab="05">支店</li>
-                    <li class="tab-menu-item" data-tab="06">スタッフ</li>
-                </ul>
-                <!-- <div class="tab-panel is-show" data-panel="01">
-                    <div class="table-area">
-                        <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-01')}"></header>
-                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-01', 'table-01-content')}"></main>
-                        <footer id="footer-01" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
-                    </div>
-                </div> -->
-                <div class="tab-panel is-show" data-panel="02">
-                    <div class="table-area">
-                        <!-- ヘッダー -->
-                        <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-02')}"></header>
-                        <!-- コンテンツ -->
-                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-02', 'table-02-content')}"></main>
-                        <!-- フッター -->
-                        <footer id="footer-02" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
-                    </div>
+    <main layout:fragment="content">
+        <div class="tab-area">
+            <ul class="tab-menu">
+                <li class="tab-menu-item is-active" data-tab="02">荷主</li>
+                <li class="tab-menu-item" data-tab="03">購買</li>
+                <li class="tab-menu-item" data-tab="04">サービス</li>
+                <li class="tab-menu-item" data-tab="07">運送</li>
+                <li class="tab-menu-item" data-tab="05">支店</li>
+                <li class="tab-menu-item" data-tab="06">スタッフ</li>
+            </ul>
+            <div class="tab-panel is-show" data-panel="02">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-02')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/corporation/client :: mainFragment('table-02', 'table-02-content')}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-02" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
                 </div>
-                <div class="tab-panel" data-panel="03">
-                    <div class="table-area">
-                        <!-- ヘッダー -->
-                        <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-03')}"></header>
-                        <!-- コンテンツ -->
-                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-03', 'table-03-content')}"></main>
-                        <!-- フッター -->
-                        <footer id="footer-03" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
-                    </div>
+            </div>
+            <div class="tab-panel" data-panel="03">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-03')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/corporation/client :: mainFragment('table-03', 'table-03-content')}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-03" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
                 </div>
-                <div class="tab-panel" data-panel="04">
-                    <div class="table-area">
-                        <!-- ヘッダー -->
-                        <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-04')}"></header>
-                        <!-- コンテンツ -->
-                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-04', 'table-04-content')}"></main>
-                        <!-- フッター -->
-                        <footer id="footer-04" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
-                    </div>
+            </div>
+            <div class="tab-panel" data-panel="04">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-04')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/corporation/client :: mainFragment('table-04', 'table-04-content')}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-04" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
                 </div>
-                <div class="tab-panel" data-panel="07">
-                    <div class="table-area">
-                        <!-- ヘッダー -->
-                        <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-07')}"></header>
-                        <!-- コンテンツ -->
-                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-07', 'table-07-content')}"></main>
-                        <!-- フッター -->
-                        <footer id="footer-07" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
-                    </div>
+            </div>
+            <div class="tab-panel" data-panel="07">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-07')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/corporation/client :: mainFragment('table-07', 'table-07-content')}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-07" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
                 </div>
-                <div class="tab-panel" data-panel="05">
-                    <div class="table-area">
-                        <!-- ヘッダー -->
-                        <header th:replace="~{fragments/corporation/client :: headerOfficeFragment('code-box-01', 'name-box-01')}"></header>
-                        <!-- コンテンツ -->
-                        <main th:replace="~{fragments/corporation/client :: mainFragment('table-05', 'table-05-content')}"></main>
-                        <!-- フッター -->
-                        <footer id="footer-05" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
-                    </div>
+            </div>
+            <div class="tab-panel" data-panel="05">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/corporation/client :: headerOfficeFragment('code-box-01', 'name-box-01')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/corporation/client :: mainFragment('table-05', 'table-05-content')}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-05" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
                 </div>
-                <div class="tab-panel" data-panel="06">
-                    <div class="table-area">
-                        <!-- ヘッダー -->
-                        <header th:replace="~{fragments/corporation/client :: headerStaffFragment('code-box-02', 'name-box-02', 'name-box-03')}"></header>
-                        <!-- コンテンツ -->
-                        <main th:replace="~{fragments/corporation/client :: mainStaffFragment('table-06', 'table-06-content')}"></main>
-                        <!-- フッター -->
-                        <footer id="footer-06" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
-                    </div>
+            </div>
+            <div class="tab-panel" data-panel="06">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/corporation/client :: headerStaffFragment('code-box-02', 'name-box-02', 'name-box-03')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/corporation/client :: mainStaffFragment('table-06', 'table-06-content')}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-06" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
                 </div>
             </div>
         </div>
@@ -93,154 +83,22 @@
             <!-- フォーム画面をここに記入する -->
             <div id="form-dialog-01" class="form-dialog none">
                 <div class="dialog-main">
-                    <!-- <div class="dialog-header"><span></span>
-                        <div class="img-btn" onclick="closeFormDialog('form-dialog-01', event)"><img title="閉じる"
-                                src="/icons/close-s.png"></div>
-                    </div> -->
+                    <!-- ヘッダー -->
                     <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-01', '')}"></div>
-
+                    <!-- コンテンツ -->
                     <form th:replace="~{fragments/corporation/client :: form01Fragment()}"></form>
-
-                    <!-- <form id="form-01" class="dialog-content">
-                        <input name="company-id" type="hidden" value="">
-                        <input name="office-id" type="hidden" value="">
-                        <input name="category" type="hidden" value="">
-                        <input name="version" type="hidden" value="">
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>名称</label>
-                                <input tabindex="1" name="name" class="normal-input" type="text" value=""
-                                    placeholder="名称" onfocus="this.select();">
-                            </div>
-                        </div>
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>かな</label>
-                                <input tabindex="2" name="name-kana" class="normal-input" type="text" value=""
-                                    placeholder="めいしょう" onfocus="this.select();">
-                            </div>
-                        </div>
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>電話番号</label>
-                                <input tabindex="3" name="tel-number" class="normal-input" type="text"
-                                    inputmode="numeric" pattern="\\d{4}-\\d{4}-\\d{4}" value=""
-                                    placeholder="01-2345-6789" onfocus="this.select();">
-                            </div>
-                            <div class="form-parts">
-                                <label>FAX番号</label>
-                                <input tabindex="4" name="fax-number" class="normal-input" type="text"
-                                    inputmode="numeric" pattern="\\d{4}-\\d{4}-\\d{4}" value=""
-                                    placeholder="01-2345-6789" onfocus="this.select();">
-                            </div>
-                        </div>
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>郵便番号</label>
-                                <input tabindex="5" id="postal-code" name="postal-code" class="normal-input" type="text"
-                                    inputmode="numeric" pattern="\\d{3}-?\\d{4}" value="" placeholder="012-3456"
-                                    onfocus="this.select();">
-                                <img title="検索" src="/icons/search.png"
-                                    onclick="getAddress('Enter', 'postal-code', 'full-address')">
-                            </div>
-                        </div>
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>住所</label>
-                                <input tabindex="6" id="full-address" name="full-address" class="normal-input"
-                                    type="text" value="" placeholder="例）大阪府高槻市柱本5丁目7番10号" onfocus="this.select();">
-                            </div>
-                        </div>
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>メールアドレス</label>
-                                <input tabindex="7" name="email" class="normal-input" type="email" value=""
-                                    placeholder="例）example@kyouseibin.com" onfocus="this.select();">
-                            </div>
-                        </div>
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>Webアドレス</label>
-                                <input tabindex="8" name="web-address" class="normal-input" type="url" value=""
-                                    placeholder="例）example@kyouseibin.com" onfocus="this.select();">
-                            </div>
-                            <div class="form-parts" name="priceArea">
-                                <label>料金表</label>
-                                <select tabindex="9" name="price" class="normal-select">
-                                    <option value="0"></option>
-                                    <option value="1">有</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form> -->
-
+                    <!-- フッター -->
                     <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-01', 'execSave(this)', '保存')}"></div>
-
-                    <!-- <div class="dialog-footer">
-                        <button class="normal-btn frameless" type="button"
-                            onclick="closeFormDialog('form-dialog-01', event)"><span>キャンセル</span></button>
-                        <button tabindex="10" class="normal-btn ok" type="button"
-                            onclick="execSave(this)"><span>保存</span></button>
-                    </div> -->
                 </div>
             </div>
             <div id="form-dialog-02" class="form-dialog none">
                 <div class="dialog-main">
-                    <!-- <div class="dialog-header"><span></span>
-                        <div class="img-btn" onclick="closeFormDialog('form-dialog-02', event)"><img title="閉じる"
-                                src="/icons/close-s.png"></div>
-                    </div> -->
+                    <!-- ヘッダー -->
                     <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-02', '')}"></div>
-
+                    <!-- コンテンツ -->
                     <form th:replace="~{fragments/corporation/client :: form02Fragment()}"></form>
-                    
+                    <!-- フッター -->
                     <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-02', 'execSave(this)', '保存')}"></div>
-
-                    <!-- <form id="form-02" class="dialog-content">
-                        <input name="staff-id" type="hidden" value="">
-                        <input name="company-id" type="hidden" value="">
-                        <input name="version" type="hidden" value="">
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>支店名</label>
-                                <select tabindex="1" id="office-id" name="office-id" class="normal-select"
-                                    value=""></select>
-                            </div>
-                        </div>
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>担当者名</label>
-                                <input tabindex="2" name="name" class="normal-input" type="text" value=""
-                                    placeholder="担当者名" onfocus="this.select();">
-                            </div>
-                            <div class="form-parts">
-                                <label>かな</label>
-                                <input tabindex="3" name="name-kana" class="normal-input" type="text" value=""
-                                    placeholder="たんとうしゃめい" onfocus="this.select();">
-                            </div>
-                        </div>
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>電話番号</label>
-                                <input tabindex="4" name="phone-number" class="normal-input" type="text"
-                                    inputmode="numeric" pattern="\\d{3}-\\d{4}-\\d{4}" value=""
-                                    placeholder="012-3456-7890" onfocus="this.select();">
-                            </div>
-                        </div>
-                        <div class="flex-area">
-                            <div class="form-parts">
-                                <label>メールアドレス</label>
-                                <input tabindex="5" name="email" class="normal-input" type="email" value=""
-                                    placeholder="例）example@kyouseibin.com" onfocus="this.select();">
-                            </div>
-                        </div>
-                    </form>
-                    <div class="dialog-footer">
-                        <button class="normal-btn frameless" type="button"
-                            onclick="closeFormDialog('form-dialog-02', event)"><span>キャンセル</span></button>
-                        <button tabindex="5" class="normal-btn ok" type="button"
-                            onclick="execSave(this)"><span>保存</span></button>
-                    </div> -->
                 </div>
             </div>
         </div>
@@ -262,16 +120,9 @@
             let officeOrigin = /*[[${officeOrigin}]]*/; // 初期リスト記憶用
             let staffOrigin = /*[[${staffOrigin}]]*/; // 初期リスト記憶用
             let companyComboList = /*[[${companyComboList}]]*/;
-            // let officeComboList = /*[[${officeComboList}]]*/;
-
-            // const code01 = document.getElementById('code-box-01'); // Tab5の会社コードボックス
-            // const code02 = document.getElementById('code-box-02'); // Tab6の会社コードボックス
-            // const name01 = document.getElementById('name-box-01'); // Tab5の会社選択セレクトボックス
-            // const name02 = document.getElementById('name-box-02'); // Tab6の会社選択セレクトボックス
-            // const name03 = document.getElementById('name-box-03'); // 支店選択セレクトボックス
         </script>
         <script th:src="@{/js/corporation/config/client.js}"></script>
         <script th:src="@{/js/corporation/client.js}"></script>
-    </div>
+    </main>
 
 </body>

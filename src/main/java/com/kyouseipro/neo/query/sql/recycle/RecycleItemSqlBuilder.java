@@ -3,11 +3,6 @@ package com.kyouseipro.neo.query.sql.recycle;
 import com.kyouseipro.neo.common.Utilities;
 
 public class RecycleItemSqlBuilder {
-    public static String buildInsert() {
-        return
-            "INSERT INTO recycle_items (code, name, version, state) OUTPUT INSERTED.recycle_item_id VALUES (?, ?, ?, ?);";
-    }
-
     public static String buildUpdate() {
         return
             "UPDATE recycle_items SET code=?, name=?, version=?, state=? WHERE recycle_item_id=? AND version=?;";

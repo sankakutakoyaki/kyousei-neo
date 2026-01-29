@@ -62,38 +62,4 @@ public class EmployeeEntity implements CsvExportable {
                Utilities.escapeCsv(emergencyContactNumber) + "," +
                Utilities.escapeCsv(String.valueOf(dateOfHire));
     }
-
-    // private String user_name;
-
-    // @Override
-    // public void setEntity(ResultSet rs) {
-    //     try {
-    //         this.employee_id = rs.getInt("employee_id");
-    //         this.company_id = rs.getInt("company_id");
-    //         this.office_id = rs.getInt("office_id");
-    //         this.account = rs.getString("account");
-    //         this.code = rs.getInt("code");
-    //         this.category = rs.getInt("category");
-    //         this.last_name = rs.getString("last_name");
-    //         this.first_name = rs.getString("first_name");
-    //         this.full_name = rs.getString("full_name");
-    //         this.last_name_kana = rs.getString("last_name_kana");
-    //         this.first_name_kana = rs.getString("first_name_kana");
-    //         this.full_name_kana = rs.getString("full_name_kana");
-    //         this.phone_number = rs.getString("phone_number");
-    //         this.postal_code = rs.getString("postal_code");
-    //         this.full_address = rs.getString("full_address");
-    //         this.email = rs.getString("email");
-    //         this.gender = rs.getInt("gender");
-    //         this.blood_type = rs.getInt("blood_type");
-    //         this.birthday = rs.getDate("birthday").toLocalDate();
-    //         this.emergency_contact = rs.getString("emergency_contact");
-    //         this.emergency_contact_number = rs.getString("emergency_contact_number");
-    //         this.date_of_hire = rs.getDate("date_of_hire").toLocalDate();
-    //         this.version = rs.getInt("version");
-    //         this.state = rs.getInt("state");
-    //     } catch (Exception e) {
-    //         System.out.println(e);
-    //     }
-    // }
 }

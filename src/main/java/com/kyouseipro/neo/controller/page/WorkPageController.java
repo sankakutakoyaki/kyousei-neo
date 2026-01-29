@@ -4,12 +4,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.controller.abstracts.BaseController;
@@ -35,72 +32,54 @@ public class WorkPageController extends BaseController {
     private final HistoryService historyService;
 
     @GetMapping("/work/item")
-	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getWorkItem(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
-		mv.setViewName("layouts/main");
-        mv.addObject("title", "作業項目");
-        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/common/menu :: registFragment");
-        mv.addObject("bodyFragmentName", "contents/work/workitem :: bodyFragment");
-        mv.addObject("insertCss", "/css/work/workitem.css");
-
+	public String getWorkItem(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         EmployeeEntity user = getLoginUser(session, response);
-        if (user == null) return null; // リダイレクト済みなので処理は止まる
-		// ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// EmployeeEntity user = employeeService.getByAccount(userName);
-		// mv.addObject("user", user);
-        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
+		if (user == null) return null; // リダイレクト
+
+		historyService.save(user.getAccount(), "workitem", "閲覧", 200, "");
+
+        model.addAttribute("title", "分類");
+		model.addAttribute("activeMenu", "regist");
+        model.addAttribute("activeSidebar", "item");
+        model.addAttribute("insertCss", "/css/work/workitem.css");
 
         // 初期表示用受注リスト取得
         List<WorkItemEntity> origin = workItemService.getList();
-        mv.addObject("origin", origin);
+        model.addAttribute("origin", origin);
 
         // コンボボックスアイテム取得
         List<SimpleData> categoryComboList = comboBoxService.getWorkItemParentCategoryList();
-        mv.addObject("categoryComboList", categoryComboList);
+        model.addAttribute("categoryComboList", categoryComboList);
 
-        mv.addObject("ownCompanyId", Utilities.getOwnCompanyId());
-
-        // EmployeeEntity user = getLoginUser(session);
-        historyService.save(user.getAccount(), "work_item", "閲覧", 0, "");
+        model.addAttribute("ownCompanyId", Utilities.getOwnCompanyId());
 		
-        return mv;
+        return "contents/work/workitem";
     }
 
     @GetMapping("/work/price")
-	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getWorkPrice(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
-		mv.setViewName("layouts/main");
-        mv.addObject("title", "作業料金");
-        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/common/menu :: registFragment");
-        mv.addObject("bodyFragmentName", "contents/work/workprice :: bodyFragment");
-        mv.addObject("insertCss", "/css/work/workprice.css");
-
+	public String getWorkPrice(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         EmployeeEntity user = getLoginUser(session, response);
-        if (user == null) return null; // リダイレクト済みなので処理は止まる
-		// ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// EmployeeEntity user = employeeService.getByAccount(userName);
-		// mv.addObject("user", user);
-        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
+		if (user == null) return null; // リダイレクト
+
+		historyService.save(user.getAccount(), "workprice", "閲覧", 200, "");
+
+        model.addAttribute("title", "料金表");
+		model.addAttribute("activeMenu", "regist");
+        model.addAttribute("activeSidebar", "price");
+        model.addAttribute("insertCss", "/css/work/workprice.css");
 
         // 初期表示用受注リスト取得
         List<WorkPriceEntity> origin = workPriceService.getListByCompanyId(Utilities.getOwnCompanyId());
-        mv.addObject("origin", origin);
+        model.addAttribute("origin", origin);
 
         // コンボボックスアイテム取得
         List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorListAddTopOfOwnCompanyHasOriginalPrice();
-        mv.addObject("companyComboList", companyComboList);
+        model.addAttribute("companyComboList", companyComboList);
         List<SimpleData> categoryComboList = comboBoxService.getWorkItemParentCategoryList();
-        mv.addObject("categoryComboList", categoryComboList);
-
-        // EmployeeEntity user = getLoginUser(session);
-        historyService.save(user.getAccount(), "work_price", "閲覧", 0, "");
+        model.addAttribute("categoryComboList", categoryComboList);
 		
-        return mv;
+        return "contents/work/workprice";
     }
 }

@@ -13,14 +13,14 @@ public class CompanyParameterBinder {
         int index = 1;
         pstmt.setInt(index++, company.getCategory());
         pstmt.setString(index++, company.getName());
-        pstmt.setString(index++, company.getName_kana());
-        pstmt.setString(index++, company.getTel_number());
-        pstmt.setString(index++, company.getFax_number());
-        pstmt.setString(index++, company.getPostal_code());
-        pstmt.setString(index++, company.getFull_address());
+        pstmt.setString(index++, company.getNameKana());
+        pstmt.setString(index++, company.getTelNumber());
+        pstmt.setString(index++, company.getFaxNumber());
+        pstmt.setString(index++, company.getPostalCode());
+        pstmt.setString(index++, company.getFullAddress());
         pstmt.setString(index++, company.getEmail());
-        pstmt.setString(index++, company.getWeb_address());
-        pstmt.setInt(index++, company.getIs_original_price());
+        pstmt.setString(index++, company.getWebAddress());
+        pstmt.setInt(index++, company.getIsOriginalPrice());
         pstmt.setInt(index++, company.getVersion());
         pstmt.setInt(index++, company.getState());
 
@@ -32,41 +32,21 @@ public class CompanyParameterBinder {
         int index = 1;
         pstmt.setInt(index++, company.getCategory());
         pstmt.setString(index++, company.getName());
-        pstmt.setString(index++, company.getName_kana());
-        pstmt.setString(index++, company.getTel_number());
-        pstmt.setString(index++, company.getFax_number());
-        pstmt.setString(index++, company.getPostal_code());
-        pstmt.setString(index++, company.getFull_address());
+        pstmt.setString(index++, company.getNameKana());
+        pstmt.setString(index++, company.getTelNumber());
+        pstmt.setString(index++, company.getFaxNumber());
+        pstmt.setString(index++, company.getPostalCode());
+        pstmt.setString(index++, company.getFullAddress());
         pstmt.setString(index++, company.getEmail());
-        pstmt.setString(index++, company.getWeb_address());
-        pstmt.setInt(index++, company.getIs_original_price());
+        pstmt.setString(index++, company.getWebAddress());
+        pstmt.setInt(index++, company.getIsOriginalPrice());
         pstmt.setInt(index++, company.getVersion() +1);
         pstmt.setInt(index++, company.getState());
 
-        pstmt.setInt(index++, company.getCompany_id());  // WHERE句用ID
+        pstmt.setInt(index++, company.getCompanyId());  // WHERE句用ID
         pstmt.setInt(index++, company.getVersion());
 
         pstmt.setString(index++, editor);  // ログ用エディタ
-        return index;
-    }
-
-    public static int bindFindById(PreparedStatement ps, Integer companyId) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, companyId);
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
-
-    public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
-
-    public static int bindFindAllClient(PreparedStatement ps, Void unused) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, 0);
-        ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }
 

@@ -70,14 +70,14 @@ public class OrderRepository {
             List<DeliveryStaffEntity> staffs,
             List<WorkContentEntity> works
     ) {
-        entity.setItem_list(items);
-        entity.setStaff_list(staffs);
-        entity.setWork_list(works);
+        entity.setItemList(items);
+        entity.setStaffList(staffs);
+        entity.setWorkList(works);
     }
 
     // insert/update 判定
     private boolean isUpdate(OrderEntity entity) {
-        return entity.getOrder_id() > 0;
+        return entity.getOrderId() > 0;
     }
 
     /**
@@ -139,7 +139,7 @@ public class OrderRepository {
         StringBuilder sql = new StringBuilder();
         int index = 1;
 
-        if (entity.getOrder_id() > 0) {
+        if (entity.getOrderId() > 0) {
             sql.append(OrderSqlBuilder.buildUpdate());
         } else {
             sql.append(OrderSqlBuilder.buildInsert());
@@ -147,17 +147,17 @@ public class OrderRepository {
 
         // 商品
         for (OrderItemEntity item : items) {
-            sql.append(resolveItemSql(item, entity.getOrder_id() > 0, index++));
+            sql.append(resolveItemSql(item, entity.getOrderId() > 0, index++));
         }
 
         // 作業
         for (WorkContentEntity work : works) {
-            sql.append(resolveWorkSql(work, entity.getOrder_id() > 0, index++));
+            sql.append(resolveWorkSql(work, entity.getOrderId() > 0, index++));
         }
 
         // 配送スタッフ
         for (DeliveryStaffEntity staff : staffs) {
-            sql.append(resolveStaffSql(staff, entity.getOrder_id() > 0, index++));
+            sql.append(resolveStaffSql(staff, entity.getOrderId() > 0, index++));
         }
 
         return sql.toString();
@@ -172,7 +172,7 @@ public class OrderRepository {
      */
     private String resolveItemSql(OrderItemEntity e, boolean isUpdate, int index) {
         if (e.getState() == Enums.state.DELETE.getCode()) return OrderItemSqlBuilder.buildDelete(index);
-        if (isUpdate && e.getOrder_item_id() > 0) return OrderItemSqlBuilder.buildUpdate(index);
+        if (isUpdate && e.getOrderItemId() > 0) return OrderItemSqlBuilder.buildUpdate(index);
         if (isUpdate) return OrderItemSqlBuilder.buildInsert(index);
         return OrderItemSqlBuilder.buildInsertByNewOrder(index);
     }
@@ -186,7 +186,7 @@ public class OrderRepository {
      */
     private String resolveWorkSql(WorkContentEntity e, boolean isUpdate, int index) {
         if (e.getState() == Enums.state.DELETE.getCode()) return WorkContentSqlBuilder.buildDelete(index);
-        if (isUpdate && e.getWork_content_id() > 0) return WorkContentSqlBuilder.buildUpdate(index);
+        if (isUpdate && e.getWorkContentId() > 0) return WorkContentSqlBuilder.buildUpdate(index);
         if (isUpdate) return WorkContentSqlBuilder.buildInsert(index);
         return WorkContentSqlBuilder.buildInsertByNewOrder(index);
     }
@@ -200,7 +200,7 @@ public class OrderRepository {
      */
     private String resolveStaffSql(DeliveryStaffEntity e, boolean isUpdate, int index) {
         if (e.getState() == Enums.state.DELETE.getCode()) return DeliveryStaffSqlBuilder.buildDelete(index);
-        if (isUpdate && e.getDelivery_staff_id() > 0) return DeliveryStaffSqlBuilder.buildUpdate(index);
+        if (isUpdate && e.getDeliveryStaffId() > 0) return DeliveryStaffSqlBuilder.buildUpdate(index);
         if (isUpdate) return DeliveryStaffSqlBuilder.buildInsert(index);
         return DeliveryStaffSqlBuilder.buildInsertByNewOrder(index);
     }

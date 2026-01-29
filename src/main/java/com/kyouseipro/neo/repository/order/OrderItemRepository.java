@@ -85,7 +85,7 @@ public class OrderItemRepository {
             if (entity.getState() == Enums.state.DELETE.getCode()) {
                 sql += OrderItemSqlBuilder.buildDelete(index++);
             } else {
-                if (entity.getOrder_item_id() > 0) {
+                if (entity.getOrderItemId() > 0) {
                     sql += OrderItemSqlBuilder.buildUpdate(index++);
                 } else {
                     sql += OrderItemSqlBuilder.buildInsert(index++);

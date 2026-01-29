@@ -8,8 +8,8 @@ import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
 public class QualificationFilesEntityMapper {
      public static QualificationFilesEntity map(ResultSet rs) throws SQLException {
         QualificationFilesEntity entity = new QualificationFilesEntity();
-        entity.setQualifications_files_id(rs.getInt("qualifications_files_id"));
-        entity.setQualifications_id(rs.getInt("qualifications_id"));
+        entity.setQualificationsFilesId(rs.getInt("qualifications_files_id"));
+        entity.setQualificationsId(rs.getInt("qualifications_id"));
         entity.setFileName(rs.getString("file_name"));
         entity.setInternalName(rs.getString("internal_name"));
         entity.setFolderName(rs.getString("folder_name"));

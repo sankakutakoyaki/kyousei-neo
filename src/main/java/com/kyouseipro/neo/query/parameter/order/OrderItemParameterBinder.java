@@ -11,25 +11,25 @@ import com.kyouseipro.neo.entity.order.OrderItemEntity;
 public class OrderItemParameterBinder {
     public static int bindInsert(PreparedStatement pstmt, OrderItemEntity o, String editor, int index, boolean isNew) throws SQLException {
         if (isNew == false) {
-            pstmt.setInt(index++, o.getOrder_id());
+            pstmt.setInt(index++, o.getOrderId());
         }
-        pstmt.setInt(index++, o.getCompany_id());
-        pstmt.setInt(index++, o.getOffice_id());
-        pstmt.setString(index++, o.getDelivery_address());
-        if (o.getArrival_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(o.getArrival_date()));
+        pstmt.setInt(index++, o.getCompanyId());
+        pstmt.setInt(index++, o.getOfficeId());
+        pstmt.setString(index++, o.getDeliveryAddress());
+        if (o.getArrivalDate() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(o.getArrivalDate()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
-        pstmt.setInt(index++, o.getInspector_id());
-        pstmt.setInt(index++, o.getShipping_company_id());
-        pstmt.setString(index++, o.getDocument_number());
-        pstmt.setString(index++, o.getItem_maker());
-        pstmt.setString(index++, o.getItem_name());
-        pstmt.setString(index++, o.getItem_model());
-        pstmt.setInt(index++, o.getItem_quantity());
-        pstmt.setInt(index++, o.getItem_payment());
-        pstmt.setInt(index++, o.getBuyer_id());
+        pstmt.setInt(index++, o.getInspectorId());
+        pstmt.setInt(index++, o.getShippingCompanyId());
+        pstmt.setString(index++, o.getDocumentNumber());
+        pstmt.setString(index++, o.getItemMaker());
+        pstmt.setString(index++, o.getItemName());
+        pstmt.setString(index++, o.getItemModel());
+        pstmt.setInt(index++, o.getItemQuantity());
+        pstmt.setInt(index++, o.getItemPayment());
+        pstmt.setInt(index++, o.getBuyerId());
         pstmt.setString(index++, o.getRemarks());
         pstmt.setInt(index++, o.getClassification());
 
@@ -41,31 +41,31 @@ public class OrderItemParameterBinder {
     }
 
     public static int bindUpdate(PreparedStatement pstmt, OrderItemEntity o, String editor, int index) throws SQLException {
-        pstmt.setInt(index++, o.getOrder_id());
-        pstmt.setInt(index++, o.getCompany_id());
-        pstmt.setInt(index++, o.getOffice_id());
-        pstmt.setString(index++, o.getDelivery_address());
-        if (o.getArrival_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(o.getArrival_date()));
+        pstmt.setInt(index++, o.getOrderId());
+        pstmt.setInt(index++, o.getCompanyId());
+        pstmt.setInt(index++, o.getOfficeId());
+        pstmt.setString(index++, o.getDeliveryAddress());
+        if (o.getArrivalDate() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(o.getArrivalDate()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
-        pstmt.setInt(index++, o.getInspector_id());
-        pstmt.setInt(index++, o.getShipping_company_id());
-        pstmt.setString(index++, o.getDocument_number());
-        pstmt.setString(index++, o.getItem_maker());
-        pstmt.setString(index++, o.getItem_name());
-        pstmt.setString(index++, o.getItem_model());
-        pstmt.setInt(index++, o.getItem_quantity());
-        pstmt.setInt(index++, o.getItem_payment());
-        pstmt.setInt(index++, o.getBuyer_id());
+        pstmt.setInt(index++, o.getInspectorId());
+        pstmt.setInt(index++, o.getShippingCompanyId());
+        pstmt.setString(index++, o.getDocumentNumber());
+        pstmt.setString(index++, o.getItemMaker());
+        pstmt.setString(index++, o.getItemName());
+        pstmt.setString(index++, o.getItemModel());
+        pstmt.setInt(index++, o.getItemQuantity());
+        pstmt.setInt(index++, o.getItemPayment());
+        pstmt.setInt(index++, o.getBuyerId());
         pstmt.setString(index++, o.getRemarks());
         pstmt.setInt(index++, o.getClassification());
 
         pstmt.setInt(index++, o.getVersion() +1);
         pstmt.setInt(index++, o.getState());
 
-        pstmt.setInt(index++, o.getOrder_item_id()); // WHERE句
+        pstmt.setInt(index++, o.getOrderItemId()); // WHERE句
         pstmt.setInt(index++, o.getVersion());
 
         pstmt.setString(index++, editor);
@@ -132,10 +132,10 @@ public class OrderItemParameterBinder {
         for (OrderItemEntity entity : list) {
             // 削除の場合
             if (entity.getState() == Enums.state.DELETE.getCode()) {
-                index = OrderItemParameterBinder.bindDelete(pstmt, entity.getOrder_item_id(), editor, index);
+                index = OrderItemParameterBinder.bindDelete(pstmt, entity.getOrderItemId(), editor, index);
             } else {
                 // 更新か新規かで分岐
-                if (entity.getOrder_item_id() > 0){
+                if (entity.getOrderItemId() > 0){
                     index = OrderItemParameterBinder.bindUpdate(pstmt, entity, editor, index);
                 } else {
                     index = OrderItemParameterBinder.bindInsert(pstmt, entity, editor, index, false);

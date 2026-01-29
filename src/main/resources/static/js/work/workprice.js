@@ -10,7 +10,7 @@ function createTableContent(tableId, list) {
         const row = createSelectableRow({
             table,
             item,
-            idKey: "work_price_id"
+            idKey: "workPriceId"
         });
 
         createTable01Row(row, item);
@@ -24,15 +24,15 @@ function createTable01Row(newRow, item) {
     // 選択用チェックボックス
     newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
     // コード
-    newRow.insertAdjacentHTML('beforeend', '<td class="text-right">' + (item.full_code ?? "-----") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td class="text-right">' + (item.fullCode ?? "-----") + '</td>');
     // 分類
-    newRow.insertAdjacentHTML('beforeend', '<td>' + (item.category_name ?? "-----") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td>' + (item.categoryName ?? "-----") + '</td>');
     // 作業項目
-    newRow.insertAdjacentHTML('beforeend', '<td>' + (item.work_item_name ?? "-----") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td>' + (item.workItemName ?? "-----") + '</td>');
     // 料金
     newRow.insertAdjacentHTML('beforeend', '<td class="editable text-right" data-edit-type="number">' + (item.price ?? 0).toLocaleString('ja-JP') + '</td>');
     // 荷主
-    newRow.insertAdjacentHTML('beforeend', '<td>' + (item.company_name ?? "-----") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td>' + (item.companyName ?? "-----") + '</td>');
 }
 
 /******************************************************************************************************* 保存 */
@@ -43,7 +43,7 @@ function handleTdChange(editor) {
     const row = td.closest('tr');
     const id = row.dataset.id;
 
-    let entity = origin.find(value => value.work_price_id == id);
+    let entity = origin.find(value => value.workPriceId == id);
     if (entity == null) return;
     
     const ent = structuredClone(entity);
@@ -53,28 +53,20 @@ function handleTdChange(editor) {
 
 // 保存処理
 async function execSave(ent) {
-    // スピナー表示
-    startProcessing();
-
     // 保存処理
-    const result = await updateFetch("/api/work/price/save", JSON.stringify(ent), token, "application/json");
-    if (result.success) {
+    const result = await updateFetch("/api/work/price/save", JSON.stringify(ent), token);
+    if (result.ok) {
         // 画面更新
-        refleshDisplay();
+        await refleshDisplay();
         // 追加・変更行に移動
         scrollIntoTableList("table-01-content", result.id);
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
     }
-
-    // スピナー消去
-    processingEnd();
 }
 
 /******************************************************************************************************* ダウンロード */
 
-async function execDownloadCsv(tableId, url, self) {
-    await downloadCsv(tableId, url);
+async function execDownloadCsv(self) {
+    await downloadCsv('table-01-content', '/work/price/download/csv');
 }
 
 /******************************************************************************************************* 画面更新 */
@@ -88,9 +80,7 @@ async function refleshDisplay() {
 
 // 最新のリストを取得
 async function execUpdate() {
-    const companyCombo = document.getElementById('company1');
-    const data = "id=" + encodeURIComponent(parseInt(companyCombo.value));
-    origin = await searchFetch('/api/work/price/get/list/companyid', data, token, 'application/x-www-form-urlencoded');
+    origin = await searchFetch('/api/work/price/get/list/companyid', JSON.stringify({id:parseInt(companyCombo.value)}), token);
 }
 
 // 荷主フィルター選択時の処理
@@ -117,10 +107,6 @@ function getCategoryFilterList(list) {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
-    // hamburgerItemAddSelectClass('.header-title', 'regist');
-    // hamburgerItemAddSelectClass('.normal-sidebar', 'work-price');
-    // スピナー表示
-    startProcessing();
 
     // コンボボックス
     const company1Area = document.getElementById('company1')
@@ -142,7 +128,4 @@ window.addEventListener("load", async () => {
     // 画面更新
     const list = getCategoryFilterList(origin);
     await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTableContent);
-
-    // スピナー消去
-    processingEnd();
 });

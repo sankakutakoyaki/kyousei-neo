@@ -125,7 +125,7 @@ public class RecycleRepository {
         for (RecycleEntity entity : list) {
             if (entity.getState() == Enums.state.DELETE.getCode()) {
                 sql.append(RecycleSqlBuilder.buildDelete(index++));
-            } else if (entity.getRecycle_id() > 0) {
+            } else if (entity.getRecycleId() > 0) {
                 sql.append(RecycleSqlBuilder.buildUpdate(index++));
             } else {
                 sql.append(RecycleSqlBuilder.buildInsert(index++));
@@ -210,7 +210,7 @@ public class RecycleRepository {
         int index = 1;
 
         for (RecycleDateEntity entity : itemList) {
-            if (entity.getRecycle_id() == 0) {
+            if (entity.getRecycleId() == 0) {
                 sql.append(RecycleSqlBuilder.buildInsertForDate(index++));
             } else {
                 sql.append(RecycleSqlBuilder.buildUpdateForDate(index++, type));

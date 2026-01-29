@@ -53,7 +53,7 @@ public class QualificationsService {
         action = "保存"
     )
     public int save(QualificationsEntity entity, String editor) {
-        if (entity.getQualifications_id() > 0) {
+        if (entity.getQualificationsId() > 0) {
             return qualificationsRepository.update(entity, editor);
         } else {
             return qualificationsRepository.insert(entity, editor);

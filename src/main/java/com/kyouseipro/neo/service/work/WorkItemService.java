@@ -58,7 +58,7 @@ public class WorkItemService {
         action = "保存"
     )
     public int save(WorkItemEntity item, String editor) {
-        if (item.getWork_item_id() > 0) {
+        if (item.getWorkItemId() > 0) {
             return workItemRepository.update(item, editor);
         } else {
             return workItemRepository.insert(item, editor);

@@ -13,24 +13,24 @@ import com.kyouseipro.neo.entity.order.WorkContentEntity;
 public class OrderParameterBinder {
     public static int bindInsert(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
         int index = 1;
-        pstmt.setString(index++, o.getRequest_number());
-        if (o.getStart_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(o.getStart_date()));
+        pstmt.setString(index++, o.getRequestNumber());
+        if (o.getStartDate() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(o.getStartDate()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
-        if (o.getEnd_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(o.getEnd_date()));
+        if (o.getEndDate() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(o.getEndDate()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
-        pstmt.setInt(index++, o.getPrime_constractor_id());
-        pstmt.setInt(index++, o.getPrime_constractor_office_id());
+        pstmt.setInt(index++, o.getPrimeConstractorId());
+        pstmt.setInt(index++, o.getPrimeConstractorOfficeId());
         pstmt.setString(index++, o.getTitle());
-        pstmt.setString(index++, o.getOrder_postal_code());
-        pstmt.setString(index++, o.getOrder_full_address());
-        pstmt.setString(index++, o.getContact_information());
-        pstmt.setString(index++, o.getContact_information2());
+        pstmt.setString(index++, o.getOrderPostalCode());
+        pstmt.setString(index++, o.getOrderFullAddress());
+        pstmt.setString(index++, o.getContactInformation());
+        pstmt.setString(index++, o.getContactInformation2());
         pstmt.setString(index++, o.getRemarks());
 
         pstmt.setInt(index++, o.getVersion());
@@ -38,15 +38,15 @@ public class OrderParameterBinder {
 
         pstmt.setString(index++, editor);
 
-        for (OrderItemEntity orderItemEntity : o.getItem_list()) {
+        for (OrderItemEntity orderItemEntity : o.getItemList()) {
             index = OrderItemParameterBinder.bindInsert(pstmt, orderItemEntity, editor, index, true);
         }
 
-        for (WorkContentEntity workContentEntity : o.getWork_list()) {
+        for (WorkContentEntity workContentEntity : o.getWorkList()) {
             index = WorkContentParameterBinder.bindInsert(pstmt, workContentEntity, editor, index, true);
         }
 
-        for (DeliveryStaffEntity deliveryStaffEntity : o.getStaff_list()) {
+        for (DeliveryStaffEntity deliveryStaffEntity : o.getStaffList()) {
             index = DeliveryStaffParameterBinder.bindInsert(pstmt, deliveryStaffEntity, editor, index, true);
         }
         return index;
@@ -54,39 +54,39 @@ public class OrderParameterBinder {
 
     public static int bindUpdate(PreparedStatement pstmt, OrderEntity o, String editor) throws SQLException {
         int index = 1;
-        pstmt.setString(index++, o.getRequest_number());
-        if (o.getStart_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(o.getStart_date()));
+        pstmt.setString(index++, o.getRequestNumber());
+        if (o.getStartDate() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(o.getStartDate()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
-        if (o.getEnd_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(o.getEnd_date()));
+        if (o.getEndDate() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(o.getEndDate()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
-        pstmt.setInt(index++, o.getPrime_constractor_id());
-        pstmt.setInt(index++, o.getPrime_constractor_office_id());
+        pstmt.setInt(index++, o.getPrimeConstractorId());
+        pstmt.setInt(index++, o.getPrimeConstractorOfficeId());
         pstmt.setString(index++, o.getTitle());
-        pstmt.setString(index++, o.getOrder_postal_code());
-        pstmt.setString(index++, o.getOrder_full_address());
-        pstmt.setString(index++, o.getContact_information());
-        pstmt.setString(index++, o.getContact_information2());
+        pstmt.setString(index++, o.getOrderPostalCode());
+        pstmt.setString(index++, o.getOrderFullAddress());
+        pstmt.setString(index++, o.getContactInformation());
+        pstmt.setString(index++, o.getContactInformation2());
         pstmt.setString(index++, o.getRemarks());
 
         pstmt.setInt(index++, o.getVersion() +1);
         pstmt.setInt(index++, o.getState());
 
-        pstmt.setInt(index++, o.getOrder_id()); // WHERE句
+        pstmt.setInt(index++, o.getOrderId()); // WHERE句
         pstmt.setInt(index++, o.getVersion());
         pstmt.setString(index++, editor);          // ログ用
 
         // 商品リスト
-        index = OrderItemParameterBinder.setSave(pstmt, o.getItem_list(), editor, index);
+        index = OrderItemParameterBinder.setSave(pstmt, o.getItemList(), editor, index);
         // 作業リスト
-        index = WorkContentParameterBinder.setSave(pstmt, o.getWork_list(), editor, index);
+        index = WorkContentParameterBinder.setSave(pstmt, o.getWorkList(), editor, index);
         // 配送担当リスト
-        index = DeliveryStaffParameterBinder.setSave(pstmt, o.getStaff_list(), editor, index);
+        index = DeliveryStaffParameterBinder.setSave(pstmt, o.getStaffList(), editor, index);
         return index;
     }
 

@@ -10,11 +10,11 @@ import com.kyouseipro.neo.entity.order.WorkContentEntity;
 public class WorkContentParameterBinder {
     public static int bindInsert(PreparedStatement pstmt, WorkContentEntity w, String editor, int index, boolean isNew) throws SQLException {
         if (isNew == false) {
-            pstmt.setInt(index++, w.getOrder_id());
+            pstmt.setInt(index++, w.getOrderId());
         }
-        pstmt.setString(index++, w.getWork_content());
-        pstmt.setInt(index++, w.getWork_quantity());
-        pstmt.setInt(index++, w.getWork_payment());
+        pstmt.setString(index++, w.getWorkContent());
+        pstmt.setInt(index++, w.getWorkQuantity());
+        pstmt.setInt(index++, w.getWorkPayment());
 
         pstmt.setInt(index++, w.getVersion());
         pstmt.setInt(index++, w.getState());
@@ -24,15 +24,15 @@ public class WorkContentParameterBinder {
     }
 
     public static int bindUpdate(PreparedStatement pstmt, WorkContentEntity w, String editor, int index) throws SQLException {
-        pstmt.setInt(index++, w.getOrder_id());
-        pstmt.setString(index++, w.getWork_content());
-        pstmt.setInt(index++, w.getWork_quantity());
-        pstmt.setInt(index++, w.getWork_payment());
+        pstmt.setInt(index++, w.getOrderId());
+        pstmt.setString(index++, w.getWorkContent());
+        pstmt.setInt(index++, w.getWorkQuantity());
+        pstmt.setInt(index++, w.getWorkPayment());
 
         pstmt.setInt(index++, w.getVersion() +1);
         pstmt.setInt(index++, w.getState());
 
-        pstmt.setInt(index++, w.getWork_content_id()); // WHERE句
+        pstmt.setInt(index++, w.getWorkContentId()); // WHERE句
         pstmt.setInt(index++, w.getVersion());
         pstmt.setString(index++, editor);          // ログ用
         return index;
@@ -56,10 +56,10 @@ public class WorkContentParameterBinder {
         for (WorkContentEntity workContentEntity : list) {
             // 削除の場合
             if (workContentEntity.getState() == Enums.state.DELETE.getCode()) {
-                index = WorkContentParameterBinder.bindDelete(pstmt, workContentEntity.getWork_content_id(), editor, index);
+                index = WorkContentParameterBinder.bindDelete(pstmt, workContentEntity.getWorkContentId(), editor, index);
             } else {
                 // 更新か新規かで分岐
-                if (workContentEntity.getWork_content_id() > 0){
+                if (workContentEntity.getWorkContentId() > 0){
                     index = WorkContentParameterBinder.bindUpdate(pstmt, workContentEntity, editor, index);
                 } else {
                     index = WorkContentParameterBinder.bindInsert(pstmt, workContentEntity, editor, index, false);

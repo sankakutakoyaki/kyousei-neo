@@ -7,7 +7,7 @@ const MODE_CONFIG = {
         searchId: "search-box-01",
         category: categoryPartnerCode,
         categoryName: "company",
-        dataId: "company_id",
+        dataId: "companyId",
         formDialogId: "form-dialog-01",
         formId: "form-01",
         entity: companyEntity,
@@ -19,7 +19,7 @@ const MODE_CONFIG = {
         searchId: "search-box-02",
         category: categoryConstructCode,
         categoryName: "staff",
-        dataId: "employee_id",
+        dataId: "employeeId",
         formDialogId: "form-dialog-02",
         formId: "form-02",
         entity: staffEntity,
@@ -69,25 +69,25 @@ const SAVE_CONFIG = {
         url: "/api/employee/save",
         baseEntity: () => structuredClone(staffEntity),
         fields: {
-            staff_id: v => Number(v),
-            office_id: v => Number(v),
-            phone_number: v => v.trim()
+            staffId: v => Number(v),
+            officeId: v => Number(v),
+            phoneNumber: v => v.trim()
         }
     }
 };
 
 const COMMON_FIELDS = {
-    company_id: v => Number(v),
+    companyId: v => Number(v),
     name: v => v.trim(),
-    name_kana: v => v.trim(),
+    nameKana: v => v.trim(),
     email: v => v.trim(),
-    tel_number: v => v.trim(),
-    fax_number: v => v.trim(),
-    postal_code: v => v.trim(),
-    full_address: v => v.trim(),
-    web_address: v => v.trim(),
+    telNumber: v => v.trim(),
+    faxNumber: v => v.trim(),
+    postalCode: v => v.trim(),
+    fullAddress: v => v.trim(),
+    webAddress: v => v.trim(),
     version: v => Number(v),
-    is_original_price: v => v != null ? Number(v) : 0
+    isOriginalPrice: v => v != null ? Number(v) : 0
 };
 
 const ORIGIN_CONFIG = {

@@ -13,10 +13,10 @@ function createTable01Content(tableId, list) {
         const row = createSelectableRow({
             table,
             item,
-            idKey: "recycle_id",
-            validCheck: item => item.loss_date !== "9999-12-31",
+            idKey: "recycleId",
+            validCheck: item => item.lossDate !== "9999-12-31",
             onDoubleClick: (item) => {
-                execEdit(item.recycle_id, 'edit', this);
+                execEdit(item.recycleId, 'edit', this);
             }
         });
 
@@ -33,7 +33,7 @@ function createFormTableContent(mode, list) {
         const row = createSelectableRow({
             table,
             item,
-            idKey: "recycle_id",
+            idKey: "recycleId",
             validCheck: item => item.state !== deleteCode,
         });
 
@@ -48,17 +48,17 @@ function createTable01Row(newRow, item) {
     // 選択用チェックボックス
     newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
     // お問合せ管理票番号
-    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.molding_number ?? "") + '</span></span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.moldingNumber ?? "") + '</span></span></td>');
     // 使用日　引渡日
-    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.use_date == '9999-12-31' ? "-----": item.use_date) + '</span><br><span>' + (item.delivery_date == '9999-12-31' ? "-----": item.delivery_date) + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.useDate == '9999-12-31' ? "-----": item.useDate) + '</span><br><span>' + (item.deliveryDate == '9999-12-31' ? "-----": item.deliveryDate) + '</span></td>');
     // 発送日　ロス処理日
-    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.shipping_date == '9999-12-31' ? "-----": item.shipping_date) + '</span><br><span>' + (item.loss_date == '9999-12-31' ? "-----": item.loss_date) + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.shippingDate == '9999-12-31' ? "-----": item.shippingDate) + '</span><br><span>' + (item.lossDate == '9999-12-31' ? "-----": item.lossDate) + '</span></td>');
     // 登録日　最終更新日
-    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.regist_date == '9999-12-31' ? "-----": item.regist_date) + '</span><br><span>' + (item.update_date == '9999-12-31' ? "-----": item.update_date) + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.registDate == '9999-12-31' ? "-----": item.registDate) + '</span><br><span>' + (item.updateDate == '9999-12-31' ? "-----": item.updateDate) + '</span></td>');
     // 小売業者
-    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.company_name ?? "") + '</span><br><span>' + (item.office_name ?? "") + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.companyName ?? "") + '</span><br><span>' + (item.officeName ?? "") + '</span></td>');
     // 製造業者等名　品目・料金区分
-    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.maker_name ?? "") + '</span><br><span>' + (item.item_name ?? "") + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.makerName ?? "") + '</span><br><span>' + (item.itemName ?? "") + '</span></td>');
 }
 
 // フォームテーブル行を作成する
@@ -66,37 +66,37 @@ function createFormTableRow(newRow, item, mode) {
     switch (mode) {
         case "regist":
             // お問合せ管理票番号 使用日
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.molding_number ?? "") + '</span><br><span>' + (item.use_date == '9999-12-31' ? "-----": item.use_date) + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.moldingNumber ?? "") + '</span><br><span>' + (item.useDate == '9999-12-31' ? "-----": item.useDate) + '</span></td>');
             // 小売業者
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.company_name ?? "") + '</span><br><span>' + (item.office_name ?? "") + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.companyName ?? "") + '</span><br><span>' + (item.officeName ?? "") + '</span></td>');
             // 製造業者等名　品目・料金区分
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.maker_name ?? "") + '</span><br><span>' + (item.item_name ?? "") + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.makerName ?? "") + '</span><br><span>' + (item.itemName ?? "") + '</span></td>');
             // 削除ボタン
-            newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycle_id + ')"><img src="/icons/dust.png"></div></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycleId + ')"><img src="/icons/dust.png"></div></td>');
             break;
         case "delivery":
             // 引渡日
             newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.date == '9999-12-31' ? "-----": item.date) + '</span></td>');
             // お問合せ管理票番号
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.molding_number ?? "") + '</span></span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.moldingNumber ?? "") + '</span></span></td>');
             // 削除ボタン
-            newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycle_id + ')"><img src="/icons/dust.png"></div></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycleId + ')"><img src="/icons/dust.png"></div></td>');
             break;
         case "shipping":
             // 発送日
             newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.date == '9999-12-31' ? "-----": item.date) + '</span></td>');
             // お問合せ管理票番号
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.molding_number ?? "") + '</span></span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.moldingNumber ?? "") + '</span></span></td>');
             // 削除ボタン
-            newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycle_id + ')"><img src="/icons/dust.png"></div></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycleId + ')"><img src="/icons/dust.png"></div></td>');
             break;
         case "loss":
             // ロス処理日
             newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.date == '9999-12-31' ? "-----": item.date) + '</span></td>');
             // お問合せ管理票番号
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.molding_number ?? "") + '</span></span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.moldingNumber ?? "") + '</span></span></td>');
             // 削除ボタン
-            newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycle_id + ')"><img src="/icons/dust.png"></div></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td name="delete-btn"><div class="img-btn" onclick="deleteItem(this, ' + item.recycleId + ')"><img src="/icons/dust.png"></div></td>');
             break;
     }
 }
@@ -112,10 +112,9 @@ async function execEdit(id, mode, self) {
 
     if (id > 0) {
         // 選択されたIDのエンティティを取得
-        const data = "id=" + encodeURIComponent(parseInt(id));
-        const result = await searchFetch('/api/recycle/get/id', data, token, 'application/x-www-form-urlencoded');
+        const result = await searchFetch('/api/recycle/get/id', JSON.stringify({id:id}), token);
 
-        if (result == null) {
+        if (!result.ok) {
             openMsgDialog("msg-dialog", "データがありません", "red");
             return;
         }
@@ -126,8 +125,6 @@ async function execEdit(id, mode, self) {
         deleteElements(config.tableId);
     }
 
-    // openFormByMode(mode, MODE_CONFIG);
-
     if (typeof mode === "string" && mode !== "edit") {
         ID_CONFIG[mode].date.value = getDate();
     }
@@ -135,7 +132,8 @@ async function execEdit(id, mode, self) {
     if (typeof mode === "string" && mode === "regist") {
         setCompanyComboBox(form, entity, companyComboList, officeComboList);
     } else if (typeof mode === "string" && mode === "edit") {
-        setFormContent(form, entity);
+        applyFormConfig(form, entity, RECYCLE_FORM_CONFIG);
+        applyComboConfig(form, entity, RECYCLE_COMBO_CONFIG);
         setCompanyComboBox(form, entity, companyComboList, officeComboList);
     }
 
@@ -144,62 +142,6 @@ async function execEdit(id, mode, self) {
     ID_CONFIG[mode].number.focus();
 }
 
-// コンテンツ部分作成
-function setFormContent(form, entity) {
-    // form.querySelector('[name="recycle-id"]').value = entity.recycle_id;
-    // form.querySelector('[name="version"]').value = entity.version;
-    // form.querySelector('[name="number"]').value = entity.molding_number;
-    // form.querySelector('[name="recycle-number"]').value = entity.recycle_number;
-    // form.querySelector('[name="molding-number"]').value = entity.molding_number;
-    // form.querySelector('[name="maker-code"]').value = entity.maker_code;
-    // form.querySelector('[name="maker-name"]').value = entity.maker_name;
-    // form.querySelector('[name="maker-id"]').value = entity.maker_id;
-    // form.querySelector('[name="item-code"]').value = entity.item_code;
-    // form.querySelector('[name="item-name"]').value = entity.item_name;
-    // form.querySelector('[name="item-id"]').value = entity.item_id;
-    // form.querySelector('[name="recycling-fee"]').value = entity.recycling_fee;
-
-    // form.querySelector('[name="use-date"]').value = entity.use_date === "9999-12-31" ? "": entity.use_date;
-    // form.querySelector('[name="delivery-date"]').value = entity.delivery_date === "9999-12-31" ? "": entity.delivery_date;
-    // form.querySelector('[name="shipping-date"]').value = entity.shipping_date === "9999-12-31" ? "": entity.shipping_date;
-    // form.querySelector('[name="loss-date"]').value = entity.loss_date === "9999-12-31" ? "": entity.loss_date;
-    // // if (entity.use_date === "9999-12-31") {
-    // //     form.querySelector('[name="use-date"]').value = "";
-    // // } else {
-    // //     form.querySelector('[name="use-date"]').value = entity.use_date;
-    // // }
-
-    // // if (entity.delivery_date === "9999-12-31") {
-    // //     form.querySelector('[name="delivery-date"]').value = "";
-    // // } else {
-    // //     form.querySelector('[name="delivery-date"]').value = entity.delivery_date;
-    // // }
-
-    // // if (entity.shipping_date === "9999-12-31") {
-    // //     form.querySelector('[name="shipping-date"]').value = "";
-    // // } else {
-    // //     form.querySelector('[name="shipping-date"]').value = entity.shipping_date;
-    // // }
-
-    // // if (entity.loss_date === "9999-12-31") {
-    // //     form.querySelector('[name="loss-date"]').value = "";
-    // // } else {
-    // //     form.querySelector('[name="loss-date"]').value = entity.loss_date;
-    // // }
-
-    // // 製造業者等名コンボボックス
-    // setCompanyComboBox(form, entity, companyComboList, officeComboList);
-
-    // // 処分場コンボボックス
-    // const disposalSiteArea = form.querySelector('select[name="disposal-site"]');
-    // if (disposalSiteArea != null) {
-    //     createComboBoxWithTop(disposalSiteArea, disposalSiteComboList, "");
-    //     setComboboxSelected(disposalSiteArea, entity.disposal_site_id); 
-    // }
-    
-    applyFormConfig(form, entity, RECYCLE_FORM_CONFIG);
-    applyComboConfig(form, entity, RECYCLE_COMBO_CONFIG);
-}
 // 保存用のformdataを作成する
 function createFormdata(form, mode) {
     const config = ID_CONFIG[mode];
@@ -231,9 +173,6 @@ function setInsertFormData(form) {
         formdata.recycle_id = itemId;
     }
     formdata.state = 0;
-    // formdata.version = formData.get('version');
-    // formdata.recycle_number = formData.get('recycle-number');
-    // formdata.molding_number = formData.get('molding-number');
 
     Object.entries(FIELD_MAP).forEach(([key, name]) => {
         const v = formData.get(name);
@@ -247,131 +186,55 @@ function setInsertFormData(form) {
 
     setSelectValue(form, formData, formdata, {
         valueName: 'company',
-        idKey: 'company_id',
-        nameKey: 'company_name'
+        idKey: 'company-id',
+        nameKey: 'company-name'
     });
 
     setSelectValue(form, formData, formdata, {
         valueName: 'office',
-        idKey: 'office_id',
-        nameKey: 'office_name'
+        idKey: 'office-id',
+        nameKey: 'office-name'
     });
 
     setSelectValue(form, formData, formdata, {
         valueName: 'disposal-site',
-        idKey: 'disposal-site_id',
-        nameKey: 'disposal-site_name'
+        idKey: 'disposal-site-id',
+        nameKey: 'disposal-site-name'
     });
-    // formdata.use_date = "9999-12-31";
-    // formdata.delivery_date = "9999-12-31";
-    // formdata.shipping_date = "9999-12-31";
-    // formdata.loss_date = "9999-12-31";
-
-    // if (formData.get('use-date') != null) {
-    //     if (formData.get('use-date') != "") {
-    //         formdata.use_date = formData.get('use-date');
-    //     }
-    // }
-
-    // if (formData.get('delivery-date') != null) {
-    //     if (formData.get('delivery-date') != "") {
-    //         formdata.delivery_date = formData.get('delivery-date');
-    //     }
-    // }
-
-    // if (formData.get('shipping-date') != null) {
-    //     if (formData.get('shipping-date') != "") {
-    //         formdata.shipping_date = formData.get('shipping-date');
-    //     }
-    // }
-
-    // if (formData.get('loss-date') != null) {
-    //     if (formData.get('loss-date') != "") {
-    //         formdata.loss_date = formData.get('loss-date');
-    //     }
-    // }
-
-    // if (formData.get('company') != null) {
-    //     formdata.company_id = formData.get('company');
-    //     const selectCompany = form.querySelector('[name="company"]');
-    //     const companyName = selectCompany.options[selectCompany.selectedIndex].text;
-    //     formdata.company_name = companyName;
-    // }
-
-    // if (formData.get('office') != null) {
-    //     formdata.office_id = formData.get('office');
-    //     const selectOffice = form.querySelector('[name="office"]');
-    //     const officeName = selectOffice.options[selectOffice.selectedIndex].text;
-    //     formdata.office_name = officeName;
-    // }
 
     if (formData.get('maker-code') != null) {
         if (formData.get('maker-code') == "") {
-            formdata.maker_id = 0;
-            formdata.maker_name = "";
+            formdata.makerId = 0;
+            formdata.makerName = "";
         } else {
-            formdata.maker_id = formData.get('maker-id');
-            formdata.maker_code = formData.get('maker-code');
-            formdata.maker_name = formData.get('maker-name');
+            formdata.makerId = formData.get('maker-id');
+            formdata.makerCode = formData.get('maker-code');
+            formdata.makerName = formData.get('maker-name');
         }
     }
 
     if (formData.get('item-code') != null) {
         if (formData.get('item-code') == "") {
-            formdata.item_id = 0;
-            formdata.item_name = "";
+            formdata.itemId = 0;
+            formdata.itemName = "";
         } else {
-            formdata.item_id = formData.get('item-id');
-            formdata.item_code = formData.get('item-code');
-            formdata.item_name = formData.get('item-name');
+            formdata.itemId = formData.get('item-id');
+            formdata.itemCode = formData.get('item-code');
+            formdata.itemName = formData.get('item-name');
         }
     }
-
-    // if (formData.get('recycling-fee') != null) {
-    //     formdata.recycling_fee = formData.get('recycling_fee');
-    // }
-
-    // if (formData.get('disposal-site') != null) {
-    //     formdata.disposal_site_id = formData.get('disposal-site');
-    //     const selectDisposalSite = form.querySelector('[name="disposal-site"]');
-    //     const disposalSiteName = selectDisposalSite.options[selectDisposalSite.selectedIndex].text;
-    //     formdata.disposal_site_name = disposalSiteName;
-    // }
 
     return formdata;
 }
 
-// 日付データを更新したformdataを取得する
-// function setDateUpdateFormData(form) {
-//     const formData = new FormData(form);
-//     // let formdata = {};
-//     const formdata = structuredClone(formEntity);
 
-//     formdata.recycle_id = formData.get('recycle-id');
-//     formdata.recycle_number = formData.get('recycle-number');
-//     formdata.molding_number = formData.get('molding-number');
-
-//     if (formData.get('use-date') != null && formData.get('use-date') != "") {
-//         formdata.date = formData.get('use-date');
-//     } else if (formData.get('delivery-date') != null && formData.get('delivery-date') != "") {
-//         formdata.date = formData.get('delivery-date');
-//     } else if (formData.get('shipping-date') != null && formData.get('shipping-date') != "") {
-//         formdata.date = formData.get('shipping-date');
-//     } else if (formData.get('loss-date') != null && formData.get('loss-date') != "") {
-//         formdata.date = formData.get('loss-date');
-//     } else {
-//         formdata.date = "9999-12-31";
-//     }
-
-//     return formdata;
-// }
 function setDateUpdateFormData(form) {
     const formData = new FormData(form);
     const formdata = structuredClone(formEntity);
 
-    formdata.recycle_id = formData.get('recycle-id');
-    formdata.recycle_number = formData.get('recycle-number');
-    formdata.molding_number = formData.get('molding-number');
+    formdata.recycleId = formData.get('recycle-id');
+    formdata.recycleNumber = formData.get('recycle-number');
+    formdata.moldingNumber = formData.get('molding-number');
 
     // 初期化
     formdata.date = DEFAULT_DATE;
@@ -394,48 +257,6 @@ function clearNumber(numberBox) {
     }
 }
 
-/******************************************************************************************************* チェック */
-
-// // 入力チェック
-// function formDataCheck(form, mode) {
-//     let msg = "";
-//     const num = form.querySelector('input[name="recycle-number"]');
-//     if (num.value == 0) msg += '\nお問合せ管理票番号を入力して下さい';
-
-//     switch (mode) {
-//         case "regist":
-//             if (form.querySelector('select[name="company"]').value === 0) msg += '\n小売業者を選択して下さい';
-//             if (form.querySelector('input[name="maker-code"]').value === "") msg += '\n製造業者等名を選択して下さい';
-//             if (form.querySelector('input[name="item-code"]').value === "") msg += '\n品目・料金区分を選択して下さい';
-//             if (form.querySelector('input[name="use-date"]').value === "") msg += '\n使用日を入力して下さい';
-//             break;
-//         case "delivery":
-//             if (form.querySelector('input[name="delivery-date"]').value === "") msg += '\n引渡日を入力して下さい';
-//             break;
-//         case "shipping":
-//             if (form.querySelector('input[name="shipping-date"]').value === "") msg += '\n発送日を入力して下さい';
-//             break;
-//         case "loss":
-//             if (form.querySelector('input[name="loss-date"]').value === "") msg += '\nロス処理日を入力して下さい';
-//             break;
-//         case "edit":
-//             if (form.querySelector('select[name="company"]').value === 0) msg += '\n小売業者を選択して下さい';
-//             if (form.querySelector('input[name="maker-code"]').value === "") msg += '\n製造業者等名を選択して下さい';
-//             if (form.querySelector('input[name="item-code"]').value === "") msg += '\n品目・料金区分を選択して下さい';
-//             if (form.querySelector('input[name="use-date"]').value === "") msg += '\n使用日を入力して下さい';
-//             break;
-//         default:
-//             break;
-//     }
-
-//     // エラーが一つ以上あればエラーメッセージダイアログを表示する
-//     if (msg != "") {
-//         openMsgDialog("msg-dialog", msg, "red");
-//         return false;
-//     }
-//     return true;
-// }
-
 /******************************************************************************************************* リセット */
 
 // 入力フォームの内容をリセットする
@@ -452,7 +273,6 @@ function resetFormInput(form, mode) {
 
 // お問合せ管理票番号を取得して検証
 async function execNumberBlur(e, mode) {
-    // e.preventDefault();
     if (e.currentTarget == null) return;
 
     const config = ID_CONFIG[mode];
@@ -487,7 +307,6 @@ async function execNumberBlur(e, mode) {
     // DBを確認する
     const item = await existsRecycleByNumber(number);
     
-    // let item = {};
     let msg = "";
 
     if (item == null) {
@@ -499,24 +318,24 @@ async function execNumberBlur(e, mode) {
             msg = `「${molNumber}」は、使用登録されていません`;
         } else if (
             item &&
-            item.delivery_date !== "9999-12-31" &&
+            item.deliveryDate !== "9999-12-31" &&
             mode === "delivery"
         ) {
             msg = `「${molNumber}」は、引渡しされています`;
         } else if (
             item &&
-            item.delivery_date === "9999-12-31" &&
+            item.deliveryDate === "9999-12-31" &&
             mode === "shopping"
         ) {
             msg = `「${molNumber}」は、引渡しされていません`;
         } else if (
             item &&
-            item.shopping_date !== "9999-12-31" &&
+            item.shoppingDate !== "9999-12-31" &&
             mode === "shopping"
         ) {
             msg = `「${molNumber}」は、発送されています`;
         }
-    } else if (item && item.recycle_id !== Number(config.recycleId.value)) {
+    } else if (item && item.recycleId !== Number(config.recycleId.value)) {
         openMsgDialog("msg-dialog", `「${molNumber}」は、すでに登録されています`, 'red');
         setFocusElement("msg-dialog", config.number);
         config.number.value = config.moldingNumber.value;
@@ -528,7 +347,7 @@ async function execNumberBlur(e, mode) {
         setFocusElement("msg-dialog", config.number);
         clearNumber(config.number);
     } else {
-        config.recycleId.value = item ? item.recycle_id : 0;
+        config.recycleId.value = item ? item.recycleId : 0;
         config.version.value = item ? item.version : 0;
         config.recycleNumber.value = number;
         config.moldingNumber.value = molNumber;
@@ -558,9 +377,9 @@ async function execMakerCodeBlur(e, mode) {
     }
 
     const entity = await getMakerByCode(Number(makerCode.value));
-    if (entity != null && entity.recycle_maker_id > 0) {
-        makerName.value = entity.abbr_name;
-        makerId.value = entity.recycle_maker_id;
+    if (entity != null && entity.recycleMakerId > 0) {
+        makerName.value = entity.abbrName;
+        makerId.value = entity.recycleMakerId;
     } else {
         makerCode.value = "";
         makerName.value = "";
@@ -592,9 +411,9 @@ async function execItemCodeBlur(e, mode) {
     }
 
     const entity = await getItemByCode(Number(itemCode.value));
-    if (entity != null && entity.recycle_item_id > 0) {
+    if (entity != null && entity.recycleItemId > 0) {
         itemName.value = entity.name;
-        itemId.value = entity.recycle_item_id;
+        itemId.value = entity.recycleItemId;
     } else {
         itemCode.value = "";
         itemName.value = "";
@@ -617,8 +436,6 @@ async function execDelete(self) {
     if (result.ok) {
         await refleshDisplay01();
         openMsgDialog("msg-dialog", result.message, "blue");
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
     }
 }
 
@@ -626,12 +443,11 @@ async function execDelete(self) {
 async function deleteItem(self, id) {
     const area = self.closest('[data-mode]');
     if (!area) return;
-    // const config = MODE_CONFIG[area.mode];
 
     if (id < 0) {
-        itemList = itemList.filter(value => value.recycle_id != id);
+        itemList = itemList.filter(value => value.recycleId != id);
     } else {
-        const item = itemList.find(value => value.recycle_id == id);
+        const item = itemList.find(value => value.recycleId == id);
         item.state = deleteCode;
     }
 
@@ -641,15 +457,9 @@ async function deleteItem(self, id) {
 /******************************************************************************************************* 登録 */
 
 // フォームリストにアイテムを登録する
-async function execRegistItem(self, mode) {
+async function execRegistItem(mode, self) {
     const config = MODE_CONFIG[mode];
     const form = document.getElementById(config.formId);
-    // if (formDataCheck(form, mode) == false) {
-    //     return;
-    // }
-    // if (!validateForm(form, mode)) {
-    //     return;
-    // }
     if (!validateByConfig(form, { ...ERROR_CONFIG.recycle, mode: mode })) {
         return;
     }
@@ -667,21 +477,22 @@ async function execRegistItem(self, mode) {
 /******************************************************************************************************* 保存 */
 
 // 保存処理
-async function execSave(formId, tableId, mode) {
+async function execSave(mode) {
+    const config = MODE_CONFIG[mode];
+
     // 保存処理
-    const result = await updateFetch("/api/recycle/save/" + mode, JSON.stringify({list:itemList}), token, "application/json");
+    const result = await updateFetch("/api/recycle/save/" + mode, JSON.stringify({list:itemList}), token);
 
     if (result.ok) {        
         await refleshDisplay01();
         // 追加・変更行に移動
-        scrollIntoTableList(tableId, result.id);
+        scrollIntoTableList(config.tableId, result.id);
 
         openMsgDialog("msg-dialog", result.message, "blue");
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
     }
+
     // ダイアログを閉じる
-    closeFormDialog(formId);
+    closeFormDialog(config.formId);
 }
 
 // 更新処理
@@ -689,24 +500,16 @@ async function execUpdate(mode) {
     const config = MODE_CONFIG[mode];
 
     const form = document.getElementById(config.formId);
-    // if (formDataCheck(form, mode) == false) {
-    //     return;
-    // }
-    // if (!validateForm(form, mode)) {
-    //     return;
-    // }
     if (!validateByConfig(form, { ...ERROR_CONFIG.recycle, mode: mode })) {
         return;
     }
 
     const formdata = setInsertFormData(form);
-    const result = await updateFetch("/api/recycle/save/" + mode, JSON.stringify({entity:formdata}), token, "application/json");
+    const result = await updateFetch("/api/recycle/save/" + mode, JSON.stringify({entity:formdata}), token);
     if (result.ok) {
         // 画面更新
         await refleshDisplay01();
         openMsgDialog("msg-dialog", result.message, "blue");
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
     }
 
     // ダイアログを閉じる
@@ -761,9 +564,6 @@ async function getRecyclesBetween(startId, endId, url) {
         end: document.getElementById(endId).value,
         type: document.getElementById('date-category01').value
     };
-    // const data = "&start=" + encodeURIComponent(start) + "&end=" + encodeURIComponent(end) + "&col=" + encodeURIComponent(col);
-    // const contentType = 'application/x-www-form-urlencoded';
-    // List<Recycle>を取得
     return await searchFetch(url, JSON.stringify(data), token);
 }
 
@@ -794,10 +594,6 @@ function itemCheckedAfter() {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
-    // hamburgerItemAddSelectClass('.header-title', 'recycle');
-    // hamburgerItemAddSelectClass('.normal-sidebar', 'regist');
-    // スピナー表示
-    startProcessing();
 
     // 日付フィルターコンボボックス
     const dateCategoryArea = document.querySelector('select[name="date-category"]')
@@ -832,7 +628,4 @@ window.addEventListener("load", async () => {
 
     // 画面更新
     await refleshDisplay01();
-
-    // スピナー消去
-    processingEnd();
 });

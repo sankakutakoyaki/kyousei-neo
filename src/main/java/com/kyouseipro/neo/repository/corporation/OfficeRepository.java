@@ -28,12 +28,6 @@ public class OfficeRepository {
     public Optional<OfficeEntity> findById(int id) {
         String sql = OfficeSqlBuilder.buildFindById();
 
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, comp) -> OfficeParameterBinder.bindFindById(pstmt, comp),
-        //     rs -> rs.next() ? OfficeEntityMapper.map(rs) : null,
-        //     officeId
-        // );
         return sqlRepository.executeQuery(
             sql,
             (ps, en) -> OfficeParameterBinder.bindFindById(ps, en),
@@ -80,35 +74,22 @@ public class OfficeRepository {
     public int insert(OfficeEntity entity, String editor) {
         String sql = OfficeSqlBuilder.buildInsert();
 
-        // // return sqlRepository.executeRequired(
-        // //     sql,
-        // //     (pstmt, e) -> OfficeParameterBinder.bindInsert(pstmt, e, editor),
-        // //     rs -> rs.next() ? rs.getInt("office_id") : null,
-        // //     entity
-        // // );
-        // try {
-            return sqlRepository.executeRequired(
-                sql,
-                (ps, en) -> OfficeParameterBinder.bindInsert(ps, en, editor),
-                rs -> {
-                    if (!rs.next()) {
-                        throw new BusinessException("登録に失敗しました");
-                    }
-                    int id = rs.getInt("office_id");
+        return sqlRepository.executeRequired(
+            sql,
+            (ps, en) -> OfficeParameterBinder.bindInsert(ps, en, editor),
+            rs -> {
+                if (!rs.next()) {
+                    throw new BusinessException("登録に失敗しました");
+                }
+                int id = rs.getInt("office_id");
 
-                    if (rs.next()) {
-                        throw new IllegalStateException("ID取得結果が複数行です");
-                    }
-                    return id;
-                },
-                entity
-            );
-        // } catch (RuntimeException e) {
-        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
-        //         throw new BusinessException("このコードはすでに使用されています。");
-        //     }
-        //     throw e;
-        // }
+                if (rs.next()) {
+                    throw new IllegalStateException("ID取得結果が複数行です");
+                }
+                return id;
+            },
+            entity
+        );
     }
 
     /**
@@ -119,30 +100,16 @@ public class OfficeRepository {
     public int update(OfficeEntity entity, String editor) {
         String sql = OfficeSqlBuilder.buildUpdate();
 
-        // // return sqlRepository.execute(
-        // //     sql,
-        // //     (pstmt, off) -> OfficeParameterBinder.bindUpdate(pstmt, off, editor),
-        // //     rs -> rs.next() ? rs.getInt("office_id") : null,
-        // //     office
-        // // );
-        // try {
-            int count = sqlRepository.executeUpdate(
-                sql,
-                ps -> OfficeParameterBinder.bindUpdate(ps, entity, editor)
-            );
+        int count = sqlRepository.executeUpdate(
+            sql,
+            ps -> OfficeParameterBinder.bindUpdate(ps, entity, editor)
+        );
 
-            if (count == 0) {
-                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-            }
+        if (count == 0) {
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
+        }
 
-            return count;
-
-        // } catch (RuntimeException e) {
-        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
-        //         throw new BusinessException("このコードはすでに使用されています。");
-        //     }
-        //     throw e;
-        // }
+        return count;
     }
 
     /**
@@ -152,15 +119,8 @@ public class OfficeRepository {
      * @return 成功件数を返す。
      */
     public int deleteByIds(IdListRequest list, String editor) {
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
         String sql = OfficeSqlBuilder.buildDeleteByIds(list.getIds().size());
 
-        // int result = sqlRepository.executeUpdate(
-        //     sql,
-        //     ps -> OfficeParameterBinder.bindDeleteForIds(ps, officeIds, editor)
-        // );
-
-        // return result; // 成功件数。0なら削除なし
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
@@ -183,19 +143,10 @@ public class OfficeRepository {
      * @return Idsで選択したEntityリストを返す。
      */
     public List<OfficeEntity> downloadCsvByIds(IdListRequest list, String editor) {
-        // List<Integer> officeIds = Utilities.createSequenceByIds(ids);
-        // String sql = OfficeSqlBuilder.buildDownloadCsvByIds(officeIds.size());
-
-        // return sqlRepository.findAll(
-        //     sql,
-        //     ps -> OfficeParameterBinder.bindDownloadCsvForIds(ps, officeIds),
-        //     OfficeEntityMapper::map // ← ここで ResultSet を map
-        // );
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
         String sql = OfficeSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
 
         return sqlRepository.findAll(

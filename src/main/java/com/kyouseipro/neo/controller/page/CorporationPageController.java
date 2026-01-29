@@ -4,12 +4,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.controller.abstracts.BaseController;
@@ -48,58 +45,47 @@ public class CorporationPageController extends BaseController {
 	 * @return
 	 */
 	@GetMapping("/client")
-	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getClient(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
-		mv.setViewName("layouts/main");
-        mv.addObject("title", "取引先");
-        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/common/menu :: registFragment");
-        mv.addObject("bodyFragmentName", "contents/corporation/client :: bodyFragment");
-        mv.addObject("insertCss", "/css/corporation/client.css");
-
+	public String getClient(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         EmployeeEntity user = getLoginUser(session, response);
-        if (user == null) return null; // リダイレクト済みなので処理は止まる
-		// // ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
+		if (user == null) return null; // リダイレクト
+
+		historyService.save(user.getAccount(), "client", "閲覧", 200, "");
+
+        model.addAttribute("title", "取引先");
+		model.addAttribute("activeMenu", "regist");
+        model.addAttribute("activeSidebar", "client");
+        model.addAttribute("insertCss", "/css/corporation/client.css");
 
         // 初期化されたエンティティ
-        mv.addObject("companyEntity", new CompanyEntity());
-        mv.addObject("officeEntity", new OfficeEntity());
-        mv.addObject("staffEntity", new StaffEntity());
+        model.addAttribute("companyEntity", new CompanyEntity());
+        model.addAttribute("officeEntity", new OfficeEntity());
+        model.addAttribute("staffEntity", new StaffEntity());
 
         // 初期表示用Clientリスト取得
         List<CompanyListEntity> companyOrigin = companyListService.getClientList();
-        // List<CompanyListEntity> companyOrigin = companyListService.getListByCategoryId(Enums.clientCategory.SHIPPER.getCode());
-        mv.addObject("companyOrigin", companyOrigin);
+        model.addAttribute("companyOrigin", companyOrigin);
         // 初期表示用Officeリスト取得
         List<OfficeListEntity> officeOrigin = officeListService.getClientList();
-        mv.addObject("officeOrigin", officeOrigin);
+        model.addAttribute("officeOrigin", officeOrigin);
         // 初期表示用Staffリスト取得
         List<StaffListEntity> staffOrigin = staffListService.getList();
-        mv.addObject("staffOrigin", staffOrigin);
+        model.addAttribute("staffOrigin", staffOrigin);
 
         // コンボボックスアイテム取得
         List<SimpleData> companyComboList = comboBoxService.getClientList();
-        mv.addObject("companyComboList", companyComboList);
+        model.addAttribute("companyComboList", companyComboList);
         List<OfficeListEntity> officeComboList = comboBoxService.getOfficeList();
-        mv.addObject("officeComboList", officeComboList);
+        model.addAttribute("officeComboList", officeComboList);
 
         // 保存用コード
-        mv.addObject("categoryPartnerCode", Enums.clientCategory.PARTNER.getCode());
-        mv.addObject("categoryShipperCode", Enums.clientCategory.SHIPPER.getCode());
-        mv.addObject("categorySupplierCode", Enums.clientCategory.SUPPLIER.getCode());
-        mv.addObject("categoryServiceCode", Enums.clientCategory.SERVICE.getCode());
-        mv.addObject("categoryTransportCode", Enums.clientCategory.TRANSPORT.getCode());
-
-        // EmployeeEntity user = getLoginUser(session);
-        // // 履歴保存
-        historyService.save(user.getAccount(), "companies", "閲覧", 200, "");
-
-        // mv.addObject("user", user);
+        model.addAttribute("categoryPartnerCode", Enums.clientCategory.PARTNER.getCode());
+        model.addAttribute("categoryShipperCode", Enums.clientCategory.SHIPPER.getCode());
+        model.addAttribute("categorySupplierCode", Enums.clientCategory.SUPPLIER.getCode());
+        model.addAttribute("categoryServiceCode", Enums.clientCategory.SERVICE.getCode());
+        model.addAttribute("categoryTransportCode", Enums.clientCategory.TRANSPORT.getCode());
 		
-        return mv;
+        return "contents/corporation/client";
     }
 
     /**
@@ -108,45 +94,41 @@ public class CorporationPageController extends BaseController {
 	 * @return
 	 */
 	@GetMapping("/partner")
-	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getPartner(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
-		mv.setViewName("layouts/main");
-        mv.addObject("title", "パートナー");
-        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-		mv.addObject("sidebarFragmentName", "fragments/common/menu :: registFragment");
-        mv.addObject("bodyFragmentName", "contents/corporation/partner :: bodyFragment");
-        mv.addObject("insertCss", "/css/corporation/partner.css");
-
+	public String getPartner(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         EmployeeEntity user = getLoginUser(session, response);
-        if (user == null) return null; // リダイレクト済みなので処理は止まる
+		if (user == null) return null; // リダイレクト
+
+		historyService.save(user.getAccount(), "partner", "閲覧", 200, "");
+
+        model.addAttribute("title", "パートナー");
+		model.addAttribute("sidebarFragmentName", "~{fragments/common/menu :: registFragment}");
+		model.addAttribute("activeMenu", "regist");
+        model.addAttribute("activeSidebar", "partner");
+        model.addAttribute("insertCss", "/css/corporation/partner.css");
 
         // 初期化されたエンティティ
-        mv.addObject("companyEntity", new CompanyEntity());
-        mv.addObject("staffEntity", new StaffEntity());
+        model.addAttribute("companyEntity", new CompanyEntity());
+        model.addAttribute("staffEntity", new StaffEntity());
 
         // 初期表示用Clientリスト取得
         List<CompanyListEntity> companyOrigin = companyListService.getListByCategoryId(Enums.clientCategory.PARTNER.getCode());
-        mv.addObject("companyOrigin", companyOrigin);
+        model.addAttribute("companyOrigin", companyOrigin);
         // 初期表示用Staffリスト取得
-        // List<EmployeeListEntity> staffOrigin = employeeListService.getListByCategoryId(Enums.employeeCategory.CONSTRUCT.getCode());
         List<EmployeeListEntity> staffOrigin = employeeListService.getList();
-        mv.addObject("staffOrigin", staffOrigin);
+        model.addAttribute("staffOrigin", staffOrigin);
 
         // コンボボックスアイテム取得
         List<SimpleData> companyComboList = comboBoxService.getCompanyListByCategory(Enums.clientCategory.PARTNER.getCode());
-        mv.addObject("companyComboList", companyComboList);
+        model.addAttribute("companyComboList", companyComboList);
 
-        mv.addObject("url", "/company/get/id");
-        mv.addObject("owner_category", Enums.clientCategory.PARTNER.getCode());
+        model.addAttribute("url", "/company/get/id");
+        model.addAttribute("owner_category", Enums.clientCategory.PARTNER.getCode());
 
         // 保存用コード
-        mv.addObject("categoryPartnerCode", Enums.clientCategory.PARTNER.getCode());
-        mv.addObject("categoryConstructCode", Enums.employeeCategory.CONSTRUCT.getCode());
+        model.addAttribute("categoryPartnerCode", Enums.clientCategory.PARTNER.getCode());
+        model.addAttribute("categoryConstructCode", Enums.employeeCategory.CONSTRUCT.getCode());
 
-        // 履歴保存
-        historyService.save(user.getAccount(), "companies", "閲覧", 200, "");
-
-        return mv;
+        return "contents/corporation/partner";
     }
 }

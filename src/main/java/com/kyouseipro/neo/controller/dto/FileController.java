@@ -133,7 +133,7 @@ public class FileController {
     public List<QualificationFilesEntity> fileUpload(@RequestParam("files") MultipartFile[] files, @RequestParam("folder_name") String folderName, @RequestParam("id") int id, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
         QualificationFilesEntity entity = new QualificationFilesEntity();
-        entity.setQualifications_id(id);
+        entity.setQualificationsId(id);
 
         List<FileUpload> entities = fileService.fileUpload(files, folderName, entity);
         qualificationFilesService.saveQualificationsFiles(entities, userName, id);

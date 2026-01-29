@@ -2,13 +2,7 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/with-sidebar}">
 <body>
-    <!-- 本体 -->
-    <!-- <div class="normal-content" layout:fragment="content"> -->
-    <!-- <div class="normal-content" th:fragment="bodyFragment"> -->
-    <!-- ハンバーガー -->
-    <!-- <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div> -->
     <!-- サイドバー -->
-    <!-- <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div> -->
     <div layout:fragment="sidebar-content">
         <div th:replace="~{fragments/common/menu :: personnelFragment}"></div>
     </div>

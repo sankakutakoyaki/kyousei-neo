@@ -11,15 +11,15 @@ public class OfficeParameterBinder {
 
     public static int bindInsert(PreparedStatement pstmt, OfficeEntity office, String editor) throws SQLException {
         int index = 1;
-        pstmt.setInt(index++, office.getCompany_id());
+        pstmt.setInt(index++, office.getCompanyId());
         pstmt.setString(index++, office.getName());
-        pstmt.setString(index++, office.getName_kana());
-        pstmt.setString(index++, office.getTel_number());
-        pstmt.setString(index++, office.getFax_number());
-        pstmt.setString(index++, office.getPostal_code());
-        pstmt.setString(index++, office.getFull_address());
+        pstmt.setString(index++, office.getNameKana());
+        pstmt.setString(index++, office.getTelNumber());
+        pstmt.setString(index++, office.getFaxNumber());
+        pstmt.setString(index++, office.getPostalCode());
+        pstmt.setString(index++, office.getFullAddress());
         pstmt.setString(index++, office.getEmail());
-        pstmt.setString(index++, office.getWeb_address());
+        pstmt.setString(index++, office.getWebAddress());
         pstmt.setInt(index++, office.getVersion());
         pstmt.setInt(index++, office.getState());
 
@@ -29,19 +29,19 @@ public class OfficeParameterBinder {
 
     public static int bindUpdate(PreparedStatement pstmt, OfficeEntity office, String editor) throws SQLException {
         int index = 1;
-        pstmt.setInt(index++, office.getCompany_id());
+        pstmt.setInt(index++, office.getCompanyId());
         pstmt.setString(index++, office.getName());
-        pstmt.setString(index++, office.getName_kana());
-        pstmt.setString(index++, office.getTel_number());
-        pstmt.setString(index++, office.getFax_number());
-        pstmt.setString(index++, office.getPostal_code());
-        pstmt.setString(index++, office.getFull_address());
+        pstmt.setString(index++, office.getNameKana());
+        pstmt.setString(index++, office.getTelNumber());
+        pstmt.setString(index++, office.getFaxNumber());
+        pstmt.setString(index++, office.getPostalCode());
+        pstmt.setString(index++, office.getFullAddress());
         pstmt.setString(index++, office.getEmail());
-        pstmt.setString(index++, office.getWeb_address());
+        pstmt.setString(index++, office.getWebAddress());
         pstmt.setInt(index++, office.getVersion() +1);
         pstmt.setInt(index++, office.getState());
 
-        pstmt.setInt(index++, office.getOffice_id());  // WHERE句
+        pstmt.setInt(index++, office.getOfficeId());  // WHERE句
         pstmt.setInt(index++, office.getVersion());
         
         pstmt.setString(index++, editor);

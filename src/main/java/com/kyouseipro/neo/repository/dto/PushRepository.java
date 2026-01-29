@@ -8,8 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.entity.dto.SubscriptionRequest;
 import com.kyouseipro.neo.mapper.dto.SubscriptionRequestMapper;
-import com.kyouseipro.neo.query.parameter.common.PushParameterBinder;
-import com.kyouseipro.neo.query.sql.common.PushSqlBuilder;
 import com.kyouseipro.neo.repository.common.SqlRepository;
 
 import lombok.Data;
@@ -25,11 +23,14 @@ public class PushRepository {
      * @return　見つからなければNullを返す
      */
     public Optional<SubscriptionRequest> findByEndpoint(String endpoint){
-        String sql = PushSqlBuilder.buildFindByEndpoint();
+        String sql = "SELECT * FROM subscriptions WHERE endpoint = ?";
 
         return sqlRepository.executeQuery(
             sql,
-            (ps, en) -> PushParameterBinder.bindFindByEndpoint(ps, en),
+            (ps, p) -> {
+                int index = 1;
+                ps.setString(index++, endpoint);
+            },
             rs -> rs.next() ? SubscriptionRequestMapper.map(rs) : null,
             endpoint
         );
@@ -41,37 +42,33 @@ public class PushRepository {
      * @return
      */
     public int save(SubscriptionRequest subscription, String editor){
-        String sql = PushSqlBuilder.buildInsertSubscription();
+        String sql = """
+            INSERT INTO subscriptions (endpoint, p256dh, auth, username) VALUES (?,?,?,?);
+            DECLARE @NEW_ID int; SET @NEW_ID = @@IDENTITY;SELECT @NEW_ID as subscription_id;""";
 
-        // // return sqlRepositry.execute(
-        // //     sql,
-        // //     (pstmt, sub) -> PushParameterBinder.bindInsertSubscription(pstmt, sub, editor),
-        // //     rs -> rs.next() ? rs.getInt("subscrioption_id") : null,
-        // //     subscription
-        // // );
-        // try {
-            return sqlRepository.executeRequired(
-                sql,
-                (ps, en) -> PushParameterBinder.bindInsertSubscription(ps, en, editor),
-                rs -> {
-                    if (!rs.next()) {
-                        throw new BusinessException("登録に失敗しました");
-                    }
-                    int id = rs.getInt("subscription_id");
+        return sqlRepository.executeRequired(
+            sql,
+            (ps, s) -> {
+                int index = 1;
+                ps.setString(index++, s.getEndpoint());
+                ps.setString(index++, s.getP256dh());
+                ps.setString(index++, s.getAuth());
 
-                    if (rs.next()) {
-                        throw new IllegalStateException("ID取得結果が複数行です");
-                    }
-                    return id;
-                },
-                subscription
-            );
-        // } catch (RuntimeException e) {
-        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
-        //         throw new BusinessException("このコードはすでに使用されています。");
-        //     }
-        //     throw e;
-        // }
+                ps.setString(index++, editor);
+            },
+            rs -> {
+                if (!rs.next()) {
+                    throw new BusinessException("登録に失敗しました");
+                }
+                int id = rs.getInt("subscription_id");
+
+                if (rs.next()) {
+                    throw new IllegalStateException("ID取得結果が複数行です");
+                }
+                return id;
+            },
+            subscription
+        );
     }
     
     /**
@@ -79,12 +76,11 @@ public class PushRepository {
      * @return
      */
     public List<SubscriptionRequest> findAll() {
-        String sql = PushSqlBuilder.buildFindAll();
+        String sql = "SELECT * FROM subscriptions ";
 
         return sqlRepository.findAll(
             sql,
             null,
-            // ps -> PushParameterBinder.bindFindAll(ps, null),
             SubscriptionRequestMapper::map // ← ここで ResultSet を map
         );
     }
@@ -95,17 +91,17 @@ public class PushRepository {
      * @return
      */
     public int deleteByEndpoint(String endpoint, String editor){
-        String sql = PushSqlBuilder.buildDeleteSubscriptionForEndpoint();
-
-        // Integer result = sqlRepository.executeUpdate(
-        //     sql,
-        //     ps -> PushParameterBinder.bindDeleteSubscriptionForEndpoint(ps, endpoint, editor)
-        // );
+        String sql = """
+            DELETE FROM subscriptions WHERE endpoint = ?;
+            DECLARE @ROW_COUNT int; SET @ROW_COUNT = @@ROWCOUNT;SELECT @ROW_COUNT as subscription_id;""";
 
         // return result; // 成功件数。0なら削除なし
         int count = sqlRepository.executeUpdate(
             sql,
-            ps -> PushParameterBinder.bindDeleteSubscriptionForEndpoint(ps, endpoint, editor)
+            ps -> {
+                int index = 1;
+                ps.setString(index++, endpoint);
+            }
         );
         if (count == 0) {
             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");

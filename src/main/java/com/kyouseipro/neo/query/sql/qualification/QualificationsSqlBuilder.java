@@ -164,12 +164,4 @@ public class QualificationsSqlBuilder {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return "SELECT * FROM qualifications WHERE qualifications_id IN (" + placeholders + ") \" + NOT (state = ?)";
     }
-
-    public static String buildFindAllByQualificationMasterCombo() {
-        return "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = ?) ORDER BY code;";
-    }
-
-    public static String buildFindAllByLicenseMasterCombo() {
-        return "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = ?) AND category_name = '許可' ORDER BY code;";
-    }
 }

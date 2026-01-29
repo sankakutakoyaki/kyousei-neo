@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class TimeworksRegistRequest {
-
     private TimeworksRequestDto dto;
     private Enums.timeworksCategory category;
 }

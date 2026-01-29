@@ -54,7 +54,7 @@ public class WorkingConditionsService {
         action = "保存"
     )
     public int save(WorkingConditionsEntity entity, String editor) {
-        if (entity.getWorking_conditions_id() > 0) {
+        if (entity.getWorkingConditionsId() > 0) {
             return workingConditionsRepository.update(entity, editor);
         } else {
             return workingConditionsRepository.insert(entity, editor);

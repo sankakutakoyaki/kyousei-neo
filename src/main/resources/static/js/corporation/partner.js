@@ -38,15 +38,15 @@ function createTableRow(newRow, item, tab) {
         newRow.insertAdjacentHTML('beforeend', '<td class="editable text-center" data-col="code" data-edit-type="text">' + (item.code == 0 ? "": item.code) + '</td>');
     }
     // 名前
-    newRow.insertAdjacentHTML('beforeend', '<td name="name-cell"><span class="kana">' + item.name_kana + '</span><br><span>' + item.name + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td name="name-cell"><span class="kana">' + item.nameKana + '</span><br><span>' + item.name + '</span></td>');
     switch (tab) {
         case "01":
             // 電話番号
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.tel_number ?? "登録なし") + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.telNumber ?? "登録なし") + '</span></td>');
             break;
         case "02":
             // 電話番号
-            newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="phone" data-edit-type="text"><span>' + (item.phone_number ?? "登録なし") + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="phone" data-edit-type="text"><span>' + (item.phoneNumber ?? "登録なし") + '</span></td>');
             break;
     }
     // メールアドレス
@@ -61,17 +61,11 @@ async function execEdit(id, self) {
     const tab = panel.dataset.panel;
     const config = MODE_CONFIG[tab];
 
-    // openFormDialog(config.formDialogId);
     const form = document.getElementById(config.formId);
 
     let entity = {};
     if (id > 0) {
-        // 選択されたIDのエンティティを取得
-        // const data = "id=" + encodeURIComponent(parseInt(id));
-        // const url = "/api/" + config.categoryName + "/get/id";
-
         const result = await searchFetch("/api/" + config.categoryName + "/get/id", JSON.stringify({id:parseInt(id)}), token);
-        // const result = await resultResponse.json();
         if (!result?.ok) return;
 
         entity = structuredClone(result);
@@ -90,7 +84,7 @@ async function execEdit(id, self) {
                     setFocusElement(config.tableId, code01);
                     return;
                 }
-                entity.company_id = code01.value;
+                entity.companyId = code01.value;
                 break;
             default:
                 break;
@@ -117,9 +111,9 @@ function setFormContent(form, entity, tab) {
 
     // 共通項目
     const commonFields = {
-        "company-id": entity.company_id,
+        "company-id": entity.companyId,
         "name": entity.name,
-        "name-kana": entity.name_kana,
+        "name-kana": entity.nameKana,
         "email": entity.email,
         "version": entity.version
     };
@@ -247,8 +241,7 @@ async function handleTdChange(editor) {
     const row = td.closest('tr');
     const id = row.dataset.id;
 
-    const ent = origin.find(value => value.employee_id == id);
-    // const ent = getEmployee(id);
+    const ent = origin.find(value => value.employeeId == id);
     switch (type) {
         case "code":
             if (existsSameCode(Number(editor.value))) {
@@ -266,8 +259,6 @@ async function handleTdChange(editor) {
             return;
     }
 
-    // const data = "id=" + encodeURIComponent(parseInt(id)) + "&data=" + (editor.value);
-    // await searchFetch('/api/employee/update/' + col, data, token, 'application/x-www-form-urlencoded');
     await searchFetch('/api/employee/update/' + type, JSON.stringify({primaryId:parseInt(id), secondaryId:parseInt(editor.value)}), token);
     await execUpdate();
 }
@@ -288,11 +279,9 @@ async function execDelete(self) {
 
     const result = await deleteTablelist(config.tableId, '/api/' + config.categoryName + '/delete');
 
-    if (result.success) {                
+    if (result.ok) {                
         await execUpdate();
         openMsgDialog("msg-dialog", result.message, "blue");
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
     }
 }
 
@@ -389,7 +378,7 @@ async function updateStaffTableDisplay() {
     const resultResponse = await fetch('api/staff/get/list');
     const result = await resultResponse.json();
     if (result != null) {
-        let list = result.filter(function(value) { return value.company_id == codeValue});
+        let list = result.filter(function(value) { return value.companyId == codeValue});
         await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
     }
 
@@ -424,23 +413,20 @@ function refleshCode() {
 /******************************************************************************************************* 初期化時 */
 
 window.addEventListener("load", async () => {
-    // hamburgerItemAddSelectClass('.header-title', 'regist');
-    // hamburgerItemAddSelectClass('.normal-sidebar', 'partner');
-    startProcessing();
 
     Object.values(MODE_CONFIG).forEach(cfg => {
         setEnterFocus(cfg.formId);
         const el = document.getElementById(cfg.searchId);
         if (!el) return;
 
-        el.addEventListener('search', e => {
-            execFilterDisplay(e.currentTarget);
+        el.addEventListener('search', async e => {
+            await execFilterDisplay(e.currentTarget);
         });
     });
 
     // 郵便番号
     document.getElementById('postal-code')
-        .addEventListener('keydown', e => getAddress(e,'postal-code','full-address'));
+        .addEventListener('keydown', async e => await getAddress(e,'postal-code','full-address'));
 
     for (const [tab, cfg] of Object.entries(MODE_CONFIG)) {
         if (!cfg.category) continue;
@@ -463,6 +449,4 @@ window.addEventListener("load", async () => {
     // タブ
     document.querySelectorAll('.tab-menu-item')
         .forEach(tab => tab.addEventListener('click', tabSwitch));
-
-    processingEnd();
 });

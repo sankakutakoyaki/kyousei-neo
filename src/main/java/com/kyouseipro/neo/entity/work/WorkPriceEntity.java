@@ -7,14 +7,14 @@ import lombok.Data;
 
 @Data
 public class WorkPriceEntity implements CsvExportable  {
-    private int work_price_id;
-    private int work_item_id;
-    private String work_item_name;
-    private int full_code;
-    private int company_id;
-    private String company_name;
-    private int category_id;
-    private String category_name;
+    private int workPriceId;
+    private int workItemId;
+    private String workItemName;
+    private int fullCode;
+    private int companyId;
+    private String companyName;
+    private int categoryId;
+    private String categoryName;
     private int price;
     private int version;
     private int state;
@@ -26,9 +26,9 @@ public class WorkPriceEntity implements CsvExportable  {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(work_price_id)) + "," +
-               Utilities.escapeCsv(work_item_name) + "," +
-               Utilities.escapeCsv(company_name) + "," +
+        return Utilities.escapeCsv(String.valueOf(workPriceId)) + "," +
+               Utilities.escapeCsv(workItemName) + "," +
+               Utilities.escapeCsv(companyName) + "," +
                Utilities.escapeCsv(String.valueOf(price));
     }
 }

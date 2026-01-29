@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.dto.SimpleData;
 import com.kyouseipro.neo.mapper.corporation.OfficeListEntityMapper;
@@ -55,11 +57,11 @@ public class OfficeListRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllCombo() {
-        String sql = OfficeListSqlBuilder.buildFindAllCombo();
+        String sql = "SELECT office_id as number, name as text FROM offices WHERE NOT (state = ?) ORDER BY name_kana;";
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> OfficeListParameterBinder.bindFindAllCombo(ps),
+            (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
             SimpleDataMapper::map
         );
     }
@@ -70,11 +72,15 @@ public class OfficeListRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findByOwnCombo() {
-        String sql = OfficeListSqlBuilder.buildFindByOwn();
+        String sql = "SELECT office_id as number, name as text FROM offices WHERE NOT (state = ?) AND company_id = ?";
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> OfficeListParameterBinder.bindFindByOwn(ps),
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Utilities.getOwnCompanyId());
+            },
             SimpleDataMapper::map
         );
     }

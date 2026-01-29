@@ -8,11 +8,11 @@ import com.kyouseipro.neo.entity.order.WorkContentEntity;
 public class WorkContentEntityMapper {
     public static WorkContentEntity map(ResultSet rs) throws SQLException {
         WorkContentEntity entity = new WorkContentEntity();
-        entity.setWork_content_id(rs.getInt("work_content_id"));
-        entity.setOrder_id(rs.getInt("order_id"));
-        entity.setWork_content(rs.getString("work_content"));
-        entity.setWork_quantity(rs.getInt("work_quantity"));
-        entity.setWork_payment(rs.getInt("work_payment"));
+        entity.setWorkContentId(rs.getInt("work_content_id"));
+        entity.setOrderId(rs.getInt("order_id"));
+        entity.setWorkContent(rs.getString("work_content"));
+        entity.setWorkQuantity(rs.getInt("work_quantity"));
+        entity.setWorkPayment(rs.getInt("work_payment"));
         entity.setVersion(rs.getInt("version"));
         entity.setState(rs.getInt("state"));
         return entity;

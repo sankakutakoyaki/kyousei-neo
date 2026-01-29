@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class TimeworksSummaryEntity {
-    private int employee_id;
-    private String full_name;
-    private int total_working_date;
-    private double total_working_time;
+    private int employeeId;
+    private String fullName;
+    private int totalWorkingDate;
+    private double totalWorkingTime;
 }

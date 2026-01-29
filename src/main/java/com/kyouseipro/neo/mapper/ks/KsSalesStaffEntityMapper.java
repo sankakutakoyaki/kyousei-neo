@@ -8,10 +8,10 @@ import com.kyouseipro.neo.entity.ks.KsSalesEntity;
 public class KsSalesStaffEntityMapper {
     public static KsSalesEntity map(ResultSet rs) throws SQLException {
         KsSalesEntity entity = new KsSalesEntity();
-        entity.setStore_name(rs.getString("store_name"));
+        entity.setStoreName(rs.getString("store_name"));
         entity.setAmount(rs.getInt("amount"));
-        entity.setStaff_company(rs.getString("staff_company"));
-        entity.setStaff_name_1(rs.getString("staff_name_1"));
+        entity.setStaffCompany(rs.getString("staff_company"));
+        entity.setStaffName1(rs.getString("staff_name_1"));
         return entity;
     }
 }

@@ -50,7 +50,7 @@ public class RecycleItemService {
         action = "保存"
     )
     public int save(RecycleItemEntity entity, String userName) {
-        if (entity.getRecycle_item_id() > 0) {
+        if (entity.getRecycleItemId() > 0) {
             return recycleItemRepository.update(entity, userName);
         } else {
             return recycleItemRepository.insert(entity, userName);

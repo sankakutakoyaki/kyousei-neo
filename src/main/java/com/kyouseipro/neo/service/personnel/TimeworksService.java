@@ -25,9 +25,6 @@ public class TimeworksService {
     private final TimeworksRepository timeworksRepository;
     private final EmployeeRepository employeeRepository;
 
-    // public TimeworksService(TimeworksRepository timeworksRepository) {
-    //     this.timeworksRepository = timeworksRepository;
-    // }
     public List<TimeworksEntity> getTodaysList() {
         LocalDate date = LocalDate.now();
         return timeworksRepository.findAllByBaseDate(date);
@@ -37,10 +34,6 @@ public class TimeworksService {
      * 指定したIDの今日の勤怠情報を取得する
      * @return
      */
-    // public Optional<TimeworksEntity> getTodaysEntity(Integer id) {
-    //     LocalDate date = LocalDate.now();
-    //     return timeworksRepository.findToday(id, date);
-    // }
     public Optional<TimeworksEntity> getTodaysEntity(Integer employeeId) {
 
         LocalDate today = calcWorkBaseDate(LocalDateTime.now());
@@ -93,10 +86,6 @@ public class TimeworksService {
         // ===== insert =====
         if (opt.isEmpty()) {
 
-            // TimeworksEntity e = new TimeworksEntity();
-            // e.setEmployeeId(dto.getEmployeeId());
-            // e.setWorkBaseDate(workBaseDate);
-            // e.setState(Enums.timeworksState.WORKING);
             TimeworksEntity e = new TimeworksEntity();
             e.setEmployeeId(dto.getEmployeeId());
             e.setWorkBaseDate(workBaseDate);
@@ -173,50 +162,7 @@ public class TimeworksService {
     private LocalDateTime getDefaultStartTime(LocalDate workBaseDate) {
         return LocalDateTime.of(workBaseDate, DEFAULT_START_TIME);
     }
-    // /** 出勤 */
-    // public void startWork(TimeworksRequestDto dto) {
-
-    //     // ① 二重出勤防止
-    //     Optional<TimeworksEntity> working = timeworksRepository.findWorking(dto.getEmployeeId());
-    //     if (working != null) {
-    //         throw new IllegalStateException("already working");
-    //     }
-
-    //     // ② 基準日決定（夜勤対応）
-    //     LocalDate baseDate = calcBaseDate(dto.getStartDt());
-
-    //     TimeworksEntity e = new TimeworksEntity();
-    //     e.setEmployeeId(dto.getEmployeeId());
-    //     e.setStartDt(dto.getStartDt());
-    //     e.setBreakMinutes(
-    //         dto.getBreakMinutes() != null ? dto.getBreakMinutes() : 60
-    //     );
-    //     e.setWorkBaseDate(baseDate);
-    //     e.setWorkType(0);
-    //     e.setState(TimeworksState.WORKING);
-
-    //     timeworksRepository.insertStart(e);
-    // }
-
-    // /** 退勤 */
-    // public void endWork(TimeworksRequestDto dto) {
-
-    //     Optional<TimeworksEntity> e = timeworksRepository.findWorking(dto.getEmployeeId());
-    //     if (e == null) {
-    //         throw new IllegalStateException("working record not found");
-    //     }
-
-    //     // 終了が開始より前は不可
-    //     if (dto.getEndDt().isBefore(e.get().getStartDt())) {
-    //         throw new IllegalArgumentException("endDt < startDt");
-    //     }
-
-    //     e.get().setEndDt(dto.getEndDt());
-    //     e.get().setState(TimeworksState.FINISHED);
-
-    //     timeworksRepository.updateEnd(e.get());
-    // }
-
+    
     /**
      * 夜勤基準日ロジック
      * @param startDt

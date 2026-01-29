@@ -12,13 +12,13 @@ public class WorkingConditionsParameterBinder {
 
     public static int bindInsert(PreparedStatement pstmt, WorkingConditionsEntity w, String editor) throws SQLException {
         int index = 1;
-        pstmt.setInt(index++, w.getEmployee_id());
-        pstmt.setInt(index++, w.getPayment_method());
-        pstmt.setInt(index++, w.getPay_type());
-        pstmt.setInt(index++, w.getBase_salary());
-        pstmt.setInt(index++, w.getTrans_cost());
-        pstmt.setTime(index++, Time.valueOf(w.getBasic_start_time()));
-        pstmt.setTime(index++, Time.valueOf(w.getBasic_end_time()));
+        pstmt.setInt(index++, w.getEmployeeId());
+        pstmt.setInt(index++, w.getPaymentMethod());
+        pstmt.setInt(index++, w.getPayType());
+        pstmt.setInt(index++, w.getBaseSalary());
+        pstmt.setInt(index++, w.getTransCost());
+        pstmt.setTime(index++, Time.valueOf(w.getBasicStartTime()));
+        pstmt.setTime(index++, Time.valueOf(w.getBasicEndTime()));
         pstmt.setInt(index++, w.getVersion());
         pstmt.setInt(index++, w.getState());
 
@@ -28,17 +28,17 @@ public class WorkingConditionsParameterBinder {
 
     public static int bindUpdate(PreparedStatement pstmt, WorkingConditionsEntity w, String editor) throws SQLException {
         int index = 1;
-        pstmt.setInt(index++, w.getEmployee_id());
-        pstmt.setInt(index++, w.getPayment_method());
-        pstmt.setInt(index++, w.getPay_type());
-        pstmt.setInt(index++, w.getBase_salary());
-        pstmt.setInt(index++, w.getTrans_cost());
-        pstmt.setTime(index++, Time.valueOf(w.getBasic_start_time()));
-        pstmt.setTime(index++, Time.valueOf(w.getBasic_end_time()));
+        pstmt.setInt(index++, w.getEmployeeId());
+        pstmt.setInt(index++, w.getPaymentMethod());
+        pstmt.setInt(index++, w.getPayType());
+        pstmt.setInt(index++, w.getBaseSalary());
+        pstmt.setInt(index++, w.getTransCost());
+        pstmt.setTime(index++, Time.valueOf(w.getBasicStartTime()));
+        pstmt.setTime(index++, Time.valueOf(w.getBasicEndTime()));
         pstmt.setInt(index++, w.getVersion() +1);
         pstmt.setInt(index++, w.getState());
 
-        pstmt.setInt(index++, w.getWorking_conditions_id());
+        pstmt.setInt(index++, w.getWorkingConditionsId());
         pstmt.setInt(index++, w.getVersion());
         pstmt.setString(index++, editor);
         return index;

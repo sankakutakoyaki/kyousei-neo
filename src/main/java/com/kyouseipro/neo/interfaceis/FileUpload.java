@@ -1,9 +1,8 @@
 package com.kyouseipro.neo.interfaceis;
 
 public interface FileUpload {
-    void setFileName(String file_name);
-    void setInternalName(String internal_name);
-    void setFolderName(String folder_name);
-    // Integer insertFilesTable();
+    void setFileName(String fileName);
+    void setInternalName(String internalName);
+    void setFolderName(String folderName);
     FileUpload create();
 }

@@ -12,12 +12,12 @@ public class QualificationsParameterBinder {
 
     public static int bindInsert(PreparedStatement pstmt, QualificationsEntity q, String editor) throws SQLException {
         int index = 1;
-        pstmt.setInt(index++, q.getOwner_id());
-        pstmt.setInt(index++, q.getOwner_category());
-        pstmt.setInt(index++, q.getQualification_master_id());
+        pstmt.setInt(index++, q.getOwnerId());
+        pstmt.setInt(index++, q.getOwnerCategory());
+        pstmt.setInt(index++, q.getQualificationMasterId());
         pstmt.setString(index++, q.getNumber());
-        pstmt.setDate(index++, Date.valueOf(q.getAcquisition_date()));
-        pstmt.setDate(index++, Date.valueOf(q.getExpiry_date()));
+        pstmt.setDate(index++, Date.valueOf(q.getAcquisitionDate()));
+        pstmt.setDate(index++, Date.valueOf(q.getExpiryDate()));
         pstmt.setInt(index++, q.getVersion());
         pstmt.setInt(index++, q.getState());
 
@@ -27,16 +27,16 @@ public class QualificationsParameterBinder {
 
     public static int bindUpdate(PreparedStatement pstmt, QualificationsEntity q, String editor) throws SQLException {
         int index = 1;
-        pstmt.setInt(index++, q.getOwner_id());
-        pstmt.setInt(index++, q.getOwner_category());
-        pstmt.setInt(index++, q.getQualification_master_id());
+        pstmt.setInt(index++, q.getOwnerId());
+        pstmt.setInt(index++, q.getOwnerCategory());
+        pstmt.setInt(index++, q.getQualificationMasterId());
         pstmt.setString(index++, q.getNumber());
-        pstmt.setDate(index++, Date.valueOf(q.getAcquisition_date()));
-        pstmt.setDate(index++, Date.valueOf(q.getExpiry_date()));
+        pstmt.setDate(index++, Date.valueOf(q.getAcquisitionDate()));
+        pstmt.setDate(index++, Date.valueOf(q.getExpiryDate()));
         pstmt.setInt(index++, q.getVersion() +1);
         pstmt.setInt(index++, q.getState());
 
-        pstmt.setInt(index++, q.getQualifications_id());
+        pstmt.setInt(index++, q.getQualificationsId());
         pstmt.setInt(index++, q.getVersion());
 
         pstmt.setString(index++, editor);
@@ -115,18 +115,6 @@ public class QualificationsParameterBinder {
             ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
         }
         ps.setInt(index, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
-        return index;
-    }
-
-    public static int bindFindAllByQualificationMasterCombo(PreparedStatement ps, Void unused) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
-
-    public static int bindFindAllByLicenseMasterCombo(PreparedStatement ps, Void unused) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }
 }

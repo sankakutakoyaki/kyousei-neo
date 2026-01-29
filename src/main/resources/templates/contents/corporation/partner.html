@@ -1,42 +1,41 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/with-sidebar}">
 <body>
+    <!-- サイドバー -->
+    <div layout:fragment="sidebar-content">
+        <div th:replace="~{fragments/common/menu :: registFragment}"></div>
+    </div>
+
     <!-- 本体 -->
-    <div class="normal-content" th:fragment="bodyFragment">
-        <!-- ハンバーガー -->
-        <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
-        <!-- サイドバー -->
-        <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
-        <!-- ボディ -->
-        <div class="normal-body">
-            <div class="tab-area">
-                <ul class="tab-menu">
-                    <li class="tab-menu-item is-active" data-tab="01">施工店</li>
-                    <li class="tab-menu-item" data-tab="02">担当者</li>
-                </ul>
-                <div class="tab-panel is-show" data-panel="01">
-                    <div class="table-area">
-                        <!-- ヘッダー -->
-                        <header th:replace="~{fragments/corporation/partner :: headerFragment('search-box-01')}"></header>
-                        <!-- コンテンツ -->
-                        <main th:replace="~{fragments/corporation/partner :: mainPartnerFragment('table-01', 'table-01-content')}"></main>
-                        <!-- フッター -->
-                        <footer id="footer-01" class="pc-style" th:insert="~{fragments/corporation/partner :: footerFragment()}"></footer>
-                    </div>
+    <main layout:fragment="content">
+        <div class="tab-area">
+            <ul class="tab-menu">
+                <li class="tab-menu-item is-active" data-tab="01">施工店</li>
+                <li class="tab-menu-item" data-tab="02">担当者</li>
+            </ul>
+            <div class="tab-panel is-show" data-panel="01">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/corporation/partner :: headerFragment('search-box-01')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/corporation/partner :: mainPartnerFragment('table-01', 'table-01-content')}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-01" class="pc-style" th:insert="~{fragments/corporation/partner :: footerFragment()}"></footer>
                 </div>
-                <div class="tab-panel" data-panel="02">
-                    <div class="table-area">
-                        <!-- ヘッダー -->
-                        <header th:replace="~{fragments/corporation/partner :: headerStaffFragment()}"></header>
-                        <!-- コンテンツ -->
-                        <main th:replace="~{fragments/corporation/partner :: mainStaffFragment('table-02', 'table-02-content')}"></main>
-                        <!-- フッター -->
-                        <footer id="footer-02" class="pc-style" th:insert="~{fragments/corporation/partner :: footerFragment()}"></footer>
-                    </div>
+            </div>
+            <div class="tab-panel" data-panel="02">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/corporation/partner :: headerStaffFragment()}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/corporation/partner :: mainStaffFragment('table-02', 'table-02-content')}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-02" class="pc-style" th:insert="~{fragments/corporation/partner :: footerFragment()}"></footer>
                 </div>
             </div>
         </div>
+        <!-- </main> -->
         <div id="form-dialog-area">
             <!-- フォーム画面をここに記入する -->
             <div id="form-dialog-01" class="form-dialog none">
@@ -78,6 +77,6 @@
         </script>
         <script th:src="@{/js/corporation/config/partner.js}"></script>
         <script th:src="@{/js/corporation/partner.js}"></script>
-    </div>
+    </main>
 
 </body>

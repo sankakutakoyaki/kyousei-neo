@@ -13,34 +13,34 @@ import com.kyouseipro.neo.entity.recycle.RecycleEntity;
 
 public class RecycleParameterBinder {
     public static int bindInsert(PreparedStatement pstmt, RecycleEntity r, String editor, int index) throws SQLException {
-        pstmt.setString(index++, r.getRecycle_number());
+        pstmt.setString(index++, r.getRecycleNumber());
         pstmt.setString(index++, r.getMolding_number());
-        pstmt.setInt(index++, r.getMaker_id());
-        pstmt.setInt(index++, r.getItem_id());
-        if (r.getUse_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(r.getUse_date()));
+        pstmt.setInt(index++, r.getMakerId());
+        pstmt.setInt(index++, r.getItemId());
+        if (r.getUseDate() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(r.getUseDate()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
-        if (r.getDelivery_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(r.getDelivery_date()));
+        if (r.getDeliveryDate() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(r.getDeliveryDate()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
-        if (r.getShipping_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(r.getShipping_date()));
+        if (r.getShippingDate() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(r.getShippingDate()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
-        if (r.getLoss_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(r.getLoss_date()));
+        if (r.getLossDate() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(r.getLossDate()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
-        pstmt.setInt(index++, r.getCompany_id());
-        pstmt.setInt(index++, r.getOffice_id());
-        pstmt.setInt(index++, r.getRecycling_fee());
-        pstmt.setInt(index++, r.getDisposal_site_id());
+        pstmt.setInt(index++, r.getCompanyId());
+        pstmt.setInt(index++, r.getOfficeId());
+        pstmt.setInt(index++, r.getRecyclingFee());
+        pstmt.setInt(index++, r.getDisposalSiteId());
 
         pstmt.setInt(index++, r.getVersion());
         pstmt.setInt(index++, r.getState());
@@ -50,40 +50,40 @@ public class RecycleParameterBinder {
     }
 
     public static int bindUpdate(PreparedStatement pstmt, RecycleEntity r, String editor, int index) throws SQLException {
-        pstmt.setString(index++, r.getRecycle_number());
+        pstmt.setString(index++, r.getRecycleNumber());
         pstmt.setString(index++, r.getMolding_number());
-        pstmt.setInt(index++, r.getMaker_id());
-        pstmt.setInt(index++, r.getItem_id());
-        if (r.getUse_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(r.getUse_date()));
+        pstmt.setInt(index++, r.getMakerId());
+        pstmt.setInt(index++, r.getItemId());
+        if (r.getUseDate() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(r.getUseDate()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
-        if (r.getDelivery_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(r.getDelivery_date()));
+        if (r.getDeliveryDate() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(r.getDeliveryDate()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
-        if (r.getShipping_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(r.getShipping_date()));
+        if (r.getShippingDate() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(r.getShippingDate()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
-        if (r.getLoss_date() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(r.getLoss_date()));
+        if (r.getLossDate() != null) {
+            pstmt.setDate(index++, java.sql.Date.valueOf(r.getLossDate()));
         } else {
             pstmt.setNull(index++, java.sql.Types.DATE);
         }
-        pstmt.setInt(index++, r.getCompany_id());
-        pstmt.setInt(index++, r.getOffice_id());
-        pstmt.setInt(index++, r.getRecycling_fee());
-        pstmt.setInt(index++, r.getDisposal_site_id());
+        pstmt.setInt(index++, r.getCompanyId());
+        pstmt.setInt(index++, r.getOfficeId());
+        pstmt.setInt(index++, r.getRecyclingFee());
+        pstmt.setInt(index++, r.getDisposalSiteId());
 
         pstmt.setInt(index++, r.getVersion() +1);
         pstmt.setInt(index++, r.getState());
         pstmt.setTimestamp(index++, Timestamp.valueOf(LocalDateTime.now()));
 
-        pstmt.setInt(index++, r.getRecycle_id());
+        pstmt.setInt(index++, r.getRecycleId());
         pstmt.setInt(index++, r.getVersion());
         pstmt.setString(index++, editor);
         return index;
@@ -141,8 +141,8 @@ public class RecycleParameterBinder {
     }
 
     public static int bindInsertForDate(PreparedStatement ps, RecycleDateEntity r, String editor, int index) throws SQLException {
-        ps.setString(index++, r.getRecycle_number());
-        ps.setString(index++, r.getMolding_number());
+        ps.setString(index++, r.getRecycleNumber());
+        ps.setString(index++, r.getMoldingNumber());
         ps.setDate(index++, java.sql.Date.valueOf(r.getDate()));
         ps.setTimestamp(index++, Timestamp.valueOf(LocalDateTime.now()));
         ps.setString(index++, editor);
@@ -175,7 +175,7 @@ public class RecycleParameterBinder {
     public static int bindSave(PreparedStatement pstmt, List<RecycleEntity> list, String editor) throws SQLException {
         int index = 1;
         for (RecycleEntity entity : list) {
-            if (entity.getRecycle_id() > 0){
+            if (entity.getRecycleId() > 0){
                 index = RecycleParameterBinder.bindUpdate(pstmt, entity, editor, index);
             } else {
                 index = RecycleParameterBinder.bindInsert(pstmt, entity, editor, index);
@@ -187,8 +187,8 @@ public class RecycleParameterBinder {
     public static int bindUpdateForDate(PreparedStatement pstmt, List<RecycleDateEntity> list, String editor) throws SQLException {
         int index = 1;
         for (RecycleDateEntity entity : list) {
-            if (entity.getRecycle_id() > 0){
-                index = RecycleParameterBinder.bindUpdateForDate(pstmt, entity.getRecycle_id(), entity.getDate(), editor, index);
+            if (entity.getRecycleId() > 0){
+                index = RecycleParameterBinder.bindUpdateForDate(pstmt, entity.getRecycleId(), entity.getDate(), editor, index);
             } else {
                 index = RecycleParameterBinder.bindInsertForDate(pstmt, entity, editor, index);
             }

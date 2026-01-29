@@ -75,18 +75,6 @@ public class CompanySqlBuilder {
             "SELECT company_id FROM @Deleted;";
     }
 
-    public static String buildFindById() {
-        return "SELECT * FROM companies WHERE company_id = ? AND NOT (state = ?)";
-    }
-
-    public static String buildFindAll() {
-        return "SELECT * FROM companies WHERE NOT (state = ?)";
-    }
-
-    public static String buildFindAllClient() {
-        return "SELECT * FROM companies WHERE NOT (category = ?) AND NOT (state = ?)";
-    }
-
     public static String buildDownloadCsvByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
         return "SELECT * FROM companies WHERE company_id IN (" + placeholders + ") AND NOT (state = ?)";

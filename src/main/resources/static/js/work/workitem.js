@@ -10,7 +10,7 @@ function createTableContent(tableId, list) {
         const row = createSelectableRow({
             table,
             item,
-            idKey: "work_item_id"
+            idKey: "workItemId"
         });
 
         createTable01Row(row, item);
@@ -24,9 +24,9 @@ function createTable01Row(newRow, item) {
     // 選択用チェックボックス
     newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
     // コード
-    newRow.insertAdjacentHTML('beforeend', '<td class="text-right">' + (item.full_code ?? "") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td class="text-right">' + (item.fullCode ?? "") + '</td>');
     // 分類
-    newRow.insertAdjacentHTML('beforeend', '<td>' + (item.category_name ?? "-----") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td>' + (item.categoryName ?? "-----") + '</td>');
     // コード
     newRow.insertAdjacentHTML('beforeend', '<td data-col="itemcode" class="editable text-right" data-edit-type="text">' + (item.code ?? "") + '</td>');
     // 作業項目
@@ -48,7 +48,7 @@ async function execCreate(self) {
         baseName: '新しい項目'
     });
     
-    const ent = {'work_item_id':0, 'category_id':selectCombo.value, 'code':maxCode ,'name':uniqueName};
+    const ent = {'workItemId':0, 'categoryId':selectCombo.value, 'code':maxCode ,'name':uniqueName};
     execSave(ent);
 }
 
@@ -60,7 +60,7 @@ function handleTdChange(editor) {
     const id = row.dataset.id;
     const cate = row.dataset.cate;
 
-    const ent = origin.find(value => value.work_item_id == id);
+    const ent = origin.find(value => value.workItemId == id);
     switch (col) {
         case "itemcode":
             if (existsSameCode(Number(cate), Number(editor.value))) {
@@ -87,7 +87,7 @@ function handleTdChange(editor) {
 // リスト内に同じコードがないかチェック
 function existsSameCode(categoryId, code) {
     return origin.some(item =>
-        item.category_id === categoryId &&
+        item.categoryId === categoryId &&
         item.code === code
     );
 }
@@ -95,7 +95,7 @@ function existsSameCode(categoryId, code) {
 // リスト内に同じ作業名がないかチェック
 function existsSameName(categoryId, name) {
     return origin.some(item =>
-        item.category_id === categoryId &&
+        item.categoryId === categoryId &&
         item.name.trim() === name.trim()
     );
 }
@@ -103,7 +103,7 @@ function existsSameName(categoryId, name) {
 // リスト内のコード最大値を取得
 function createMaxCode(list, selectId) {
     return list.reduce((max, item) => {
-        if (item.category_id === selectId) {
+        if (item.categoryId === selectId) {
             return Math.max(max, item.code);
         }
         return max;
@@ -113,34 +113,30 @@ function createMaxCode(list, selectId) {
 // 保存処理
 async function execSave(ent) {
     // 保存処理
-    const result = await updateFetch("/api/work/item/save", JSON.stringify(ent), token, "application/json");
-    if (result.success) {
+    const result = await updateFetch("/api/work/item/save", JSON.stringify(ent), token);
+    if (result.ok) {
         // 画面更新
-        refleshDisplay();
+        await refleshDisplay();
         // 追加・変更行に移動
         scrollIntoTableList("table-01-content", result.id);
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
     }
 }
 
 /******************************************************************************************************* 削除 */
 
-async function execDelete(tableId, footerId, searchId, url, self) {
-    const result = await deleteTablelist(tableId, url);
+async function execDelete(self) {
+    const result = await deleteTablelist('table-01-content', '/work/item/delete');
 
-    if (result.success) {
-        refleshDisplay();
+    if (result.ok) {
+        await refleshDisplay();
         openMsgDialog("msg-dialog", result.message, "blue");
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
     }
 }
 
 /******************************************************************************************************* ダウンロード */
 
-async function execDownloadCsv(tableId, url, self) {
-    await downloadCsv(tableId, url);
+async function execDownloadCsv(self) {
+    await downloadCsv('table-01-content', '/work/item/download/csv');
 }
 
 /******************************************************************************************************* 画面更新 */
@@ -168,7 +164,7 @@ function getCategoryFilterList() {
     if (Number(categoryCombo.value) === 0) {
         return origin;
     } else {
-        return origin.filter(value => value.category_id === Number(categoryCombo.value));
+        return origin.filter(value => value.categoryId === Number(categoryCombo.value));
     }
 }
 
@@ -176,10 +172,6 @@ function getCategoryFilterList() {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
-    // hamburgerItemAddSelectClass('.header-title', 'regist');
-    // hamburgerItemAddSelectClass('.normal-sidebar', 'work-item');
-    // スピナー表示
-    startProcessing();
 
     // コンボボックス
     const category1Area = document.getElementById('category1')
@@ -196,7 +188,4 @@ window.addEventListener("load", async () => {
     // 画面更新
     const list = getCategoryFilterList();
     await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTableContent);
-
-    // スピナー消去
-    processingEnd();
 });

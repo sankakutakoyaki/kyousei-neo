@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.entity.corporation.CompanyListEntity;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class CompanyListApiController {
     private final CompanyListService companyListService;
     private final ComboBoxService comboBoxService;
@@ -26,7 +28,7 @@ public class CompanyListApiController {
      * EntityListを取得する
      * @return
      */
-    @GetMapping("/api/company/get/list")
+    @GetMapping("/company/get/list")
 	@ResponseBody
     public List<CompanyListEntity> getList() {
         return companyListService.getList();
@@ -36,7 +38,7 @@ public class CompanyListApiController {
      * EntityListを取得する
      * @return
      */
-    @GetMapping("/api/client/get/list")
+    @GetMapping("/client/get/list")
 	@ResponseBody
     public List<CompanyListEntity> getClientList() {
         return companyListService.getClientList();
@@ -46,7 +48,7 @@ public class CompanyListApiController {
      * カテゴリー別のEntityListを取得する
      * @return
      */
-    @PostMapping("/api/company/get/list/category")
+    @PostMapping("/company/get/list/category")
 	@ResponseBody
     public List<CompanyListEntity> getListByCategoryId(@RequestBody IdRequest req) {
         return companyListService.getListByCategoryId(req.getId());
@@ -56,7 +58,7 @@ public class CompanyListApiController {
      * EntityListを取得する
      * @return
      */
-    @GetMapping("/api/client/get/combo")
+    @GetMapping("/client/get/combo")
 	@ResponseBody
     public List<SimpleData> getClientCombo() {
         return comboBoxService.getClientList();

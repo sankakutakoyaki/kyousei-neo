@@ -18,7 +18,7 @@ public class EmployeeListEntityMapper {
         entity.setFullName(rs.getString("full_name"));
         entity.setFullNameKana(rs.getString("full_name_kana"));
         String phone = rs.getString("phone_number");
-        entity.setPhone_number(phone.isEmpty() ? null: phone);
+        entity.setPhoneNumber(phone.isEmpty() ? null: phone);
         int category = rs.getInt("category");
         entity.setCategory(category);
         entity.setCategoryName(category == 0 ? null: Enums.employeeCategory.getDescriptionByNum(category));

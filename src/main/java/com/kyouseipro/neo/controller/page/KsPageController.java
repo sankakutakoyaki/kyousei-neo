@@ -56,7 +56,7 @@ public class KsPageController extends BaseController {
         List<KsSalesEntity> origin01 = ksSalesService.getAllFromBetween(monthStart, monthEnd.plusDays(1), "staff");
         mv.addObject("origin01", origin01);
 
-        List<String> storeNames = origin01.stream().map(KsSalesEntity::getStore_name).filter(Objects::nonNull).distinct().toList();
+        List<String> storeNames = origin01.stream().map(KsSalesEntity::getStoreName).filter(Objects::nonNull).distinct().toList();
         mv.addObject("storeComboList01", storeNames);
 
         // EmployeeEntity user = getLoginUser(session);

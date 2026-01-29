@@ -9,6 +9,7 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.corporation.OfficeListEntity;
 import com.kyouseipro.neo.entity.corporation.StaffListEntity;
 import com.kyouseipro.neo.entity.dto.SimpleData;
+import com.kyouseipro.neo.interfaceis.CodeEnum;
 import com.kyouseipro.neo.repository.corporation.CompanyListRepository;
 import com.kyouseipro.neo.repository.corporation.OfficeListRepository;
 import com.kyouseipro.neo.repository.corporation.StaffListRepository;
@@ -28,79 +29,55 @@ public class ComboBoxService {
     private final RecycleRepository recycleRepository;
     private final WorkItemRepository workItemRepository;
 
+    private <E extends Enum<E> & CodeEnum> List<SimpleData> toSimpleDataList(E[] values) {
+    List<SimpleData> list = new ArrayList<>();
+        for (E ent : values) {
+            SimpleData sd = new SimpleData();
+            sd.setNumber(ent.getCode());
+            sd.setText(ent.getDescription());
+            list.add(sd);
+        }
+        return list;
+    }
+
     /**
-     * 性別のリスト
+     * 性別
      * @return
      */
     public List<SimpleData> getGender() {
-        List<SimpleData> list = new ArrayList<>();
-        for(Enums.gender ent: Enums.gender.values()) {
-            SimpleData simpleData = new SimpleData();
-            simpleData.setNumber(ent.getCode());
-            simpleData.setText(ent.getDescription());
-            list.add(simpleData);
-        }
-        return list;
+        return toSimpleDataList(Enums.gender.values());
     }
-    
+
     /**
-     * 血液型のリスト
+     * 血液型
      * @return
      */
     public List<SimpleData> getBloodType() {
-        List<SimpleData> list = new ArrayList<>();
-        for(Enums.bloodType ent: Enums.bloodType.values()) {
-            SimpleData simpleData = new SimpleData();
-            simpleData.setNumber(ent.getCode());
-            simpleData.setText(ent.getDescription());
-            list.add(simpleData);
-        }
-        return list;
+        return toSimpleDataList(Enums.bloodType.values());
     }
 
     /**
-     * 雇用形態のリスト
+     * 雇用形態
      * @return
      */
     public List<SimpleData> getEmployeeCategory() {
-        List<SimpleData> list = new ArrayList<>();
-        for(Enums.employeeCategory ent: Enums.employeeCategory.values()) {
-            SimpleData simpleData = new SimpleData();
-            simpleData.setNumber(ent.getCode());
-            simpleData.setText(ent.getDescription());
-            list.add(simpleData);
-        }
-        return list;
+        return toSimpleDataList(Enums.employeeCategory.values());
     }
 
     /**
-     * 支払い形態のリスト
+     * 支払い携帯
      * @return
      */
     public List<SimpleData> getPaymentMethod() {
-        List<SimpleData> list = new ArrayList<>();
-        for(Enums.paymentMethod ent: Enums.paymentMethod.values()) {
-            SimpleData simpleData = new SimpleData();
-            simpleData.setNumber(ent.getCode());
-            simpleData.setText(ent.getDescription());
-            list.add(simpleData);
-        }
-        return list;
+        return toSimpleDataList(Enums.paymentMethod.values());
     }
 
     /**
-     * 血液型のリスト
+     * 給与携帯
      * @return
      */
     public List<SimpleData> getPayType() {
-        List<SimpleData> list = new ArrayList<>();
-        for(Enums.payType ent: Enums.payType.values()) {
-            SimpleData simpleData = new SimpleData();
-            simpleData.setNumber(ent.getCode());
-            simpleData.setText(ent.getDescription());
-            list.add(simpleData);
-        }
-        return list;
+        return toSimpleDataList(Enums.payType.values());
     }
 
     /**
@@ -108,27 +85,99 @@ public class ComboBoxService {
      * @return
      */
     public List<SimpleData> getItemClass() {
-        List<SimpleData> list = new ArrayList<>();
-        for(Enums.ItemClass ent: Enums.ItemClass.values()) {
-            SimpleData simpleData = new SimpleData();
-            simpleData.setNumber(ent.getCode());
-            simpleData.setText(ent.getDescription());
-            list.add(simpleData);
-        }
-        return list;
+        return toSimpleDataList(Enums.ItemClass.values());
     }
 
     // /**
-    //  * すべての会社リスト
+    //  * 性別のリスト
     //  * @return
     //  */
-    // public List<SimpleData> getCompany() {
-    //     StringBuilder sb = new StringBuilder();
-    //     sb.append("SELECT company_id as number, name as text FROM companies WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") ORDER BY name_kana;");
-    //     SqlData sqlData = new SqlData();
-    //     sqlData.setData(sb.toString(), new SimpleData());
-    //     return sqlRepository.getEntityList(sqlData);
+    // public List<SimpleData> getGender() {
+    //     List<SimpleData> list = new ArrayList<>();
+    //     for(Enums.gender ent: Enums.gender.values()) {
+    //         SimpleData simpleData = new SimpleData();
+    //         simpleData.setNumber(ent.getCode());
+    //         simpleData.setText(ent.getDescription());
+    //         list.add(simpleData);
+    //     }
+    //     return list;
     // }
+    
+    // /**
+    //  * 血液型のリスト
+    //  * @return
+    //  */
+    // public List<SimpleData> getBloodType() {
+    //     List<SimpleData> list = new ArrayList<>();
+    //     for(Enums.bloodType ent: Enums.bloodType.values()) {
+    //         SimpleData simpleData = new SimpleData();
+    //         simpleData.setNumber(ent.getCode());
+    //         simpleData.setText(ent.getDescription());
+    //         list.add(simpleData);
+    //     }
+    //     return list;
+    // }
+
+    // /**
+    //  * 雇用形態のリスト
+    //  * @return
+    //  */
+    // public List<SimpleData> getEmployeeCategory() {
+    //     List<SimpleData> list = new ArrayList<>();
+    //     for(Enums.employeeCategory ent: Enums.employeeCategory.values()) {
+    //         SimpleData simpleData = new SimpleData();
+    //         simpleData.setNumber(ent.getCode());
+    //         simpleData.setText(ent.getDescription());
+    //         list.add(simpleData);
+    //     }
+    //     return list;
+    // }
+
+    // /**
+    //  * 支払い形態のリスト
+    //  * @return
+    //  */
+    // public List<SimpleData> getPaymentMethod() {
+    //     List<SimpleData> list = new ArrayList<>();
+    //     for(Enums.paymentMethod ent: Enums.paymentMethod.values()) {
+    //         SimpleData simpleData = new SimpleData();
+    //         simpleData.setNumber(ent.getCode());
+    //         simpleData.setText(ent.getDescription());
+    //         list.add(simpleData);
+    //     }
+    //     return list;
+    // }
+
+    // /**
+    //  * 血液型のリスト
+    //  * @return
+    //  */
+    // public List<SimpleData> getPayType() {
+    //     List<SimpleData> list = new ArrayList<>();
+    //     for(Enums.payType ent: Enums.payType.values()) {
+    //         SimpleData simpleData = new SimpleData();
+    //         simpleData.setNumber(ent.getCode());
+    //         simpleData.setText(ent.getDescription());
+    //         list.add(simpleData);
+    //     }
+    //     return list;
+    // }
+
+    // /**
+    //  * 分類リスト　商品：材料：備品：返品
+    //  * @return
+    //  */
+    // public List<SimpleData> getItemClass() {
+    //     List<SimpleData> list = new ArrayList<>();
+    //     for(Enums.ItemClass ent: Enums.ItemClass.values()) {
+    //         SimpleData simpleData = new SimpleData();
+    //         simpleData.setNumber(ent.getCode());
+    //         simpleData.setText(ent.getDescription());
+    //         list.add(simpleData);
+    //     }
+    //     return list;
+    // }
+
     public List<SimpleData> getOwnCompanyList() {
         return companyListRepository.findAllComboOwnCompany();
     }
@@ -204,52 +253,4 @@ public class ComboBoxService {
     public List<SimpleData> getRecycleGroupList() {
         return recycleRepository.findGroupCombo();
     }
-
-    // /**
-    //  * すべての会社リスト
-    //  * @return
-    //  */
-    // public List<SimpleData> getClient() {
-    //     StringBuilder sb = new StringBuilder();
-    //     sb.append("SELECT company_id as number, name as text FROM companies WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") AND NOT (category = 0) ORDER BY name_kana;");
-    //     SqlData sqlData = new SqlData();
-    //     sqlData.setData(sb.toString(), new SimpleData());
-    //     return sqlRepository.getEntityList(sqlData);
-    // }
-
-    // /**
-    //  * すべての営業所リスト
-    //  * @return
-    //  */
-    // public List<SimpleData> getOffice() {
-    //     StringBuilder sb = new StringBuilder();
-    //     sb.append("SELECT company_id, office_id, name as office_name FROM offices WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") ORDER BY name_kana;");
-    //     SqlData sqlData = new SqlData();
-    //     sqlData.setData(sb.toString(), new OfficeComboEntity());
-    //     return sqlRepository.getEntityList(sqlData);
-    // }
-
-    // /**
-    //  * すべての資格リスト
-    //  * @return
-    //  */
-    // public List<SimpleData> getQualificationMaster() {
-    //     StringBuilder sb = new StringBuilder();
-    //     sb.append("SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") ORDER BY code;");
-    //     SqlData sqlData = new SqlData();
-    //     sqlData.setData(sb.toString(), new SimpleData());
-    //     return sqlRepository.getEntityList(sqlData);
-    // }
-
-    // /**
-    //  * すべての許可証リスト
-    //  * @return
-    //  */
-    // public List<SimpleData> getLicenseMaster() {
-    //     StringBuilder sb = new StringBuilder();
-    //     sb.append("SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = " + Enums.state.DELETE.getCode() + ") AND category_name = '許可' ORDER BY code;");
-    //     SqlData sqlData = new SqlData();
-    //     sqlData.setData(sb.toString(), new SimpleData());
-    //     return sqlRepository.getEntityList(sqlData);
-    // }
 }

@@ -4,10 +4,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.entity.common.AddressEntity;
 import com.kyouseipro.neo.mapper.common.AddressEntityMapper;
-import com.kyouseipro.neo.query.parameter.common.AddressParameterBinder;
-import com.kyouseipro.neo.query.sql.common.AddressSqlBuilder;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,11 +17,15 @@ public class AddressRepository {
 
     // IDによる取得
     public Optional<AddressEntity> findByPostalCode(String code) {
-        String sql = AddressSqlBuilder.buildFindByPostalCode();
+        String sql = "SELECT * FROM address WHERE NOT (state = ?) AND postal_code = ?";
 
         return sqlRepository.executeQuery(
             sql,
-            (pstmt, en) -> AddressParameterBinder.bindFindByPostalCode(pstmt, en),
+            (ps, p) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setString(index++, code);
+            },
             rs -> rs.next() ? AddressEntityMapper.map(rs) : null,
             code
         );

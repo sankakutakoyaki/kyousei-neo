@@ -7,17 +7,17 @@ import lombok.Data;
 
 @Data
 public class CompanyEntity implements CsvExportable {
-    private int company_id;
+    private int companyId;
     private int category;
     private String name;
-    private String name_kana;
-    private String tel_number;
-    private String fax_number;
-    private String postal_code;
-    private String full_address;
+    private String nameKana;
+    private String telNumber;
+    private String faxNumber;
+    private String postalCode;
+    private String fullAddress;
     private String email;
-    private String web_address;
-    private int is_original_price;
+    private String webAddress;
+    private int isOriginalPrice;
     private int version;
     private int state;
 
@@ -28,42 +28,14 @@ public class CompanyEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(company_id)) + "," +
+        return Utilities.escapeCsv(String.valueOf(companyId)) + "," +
                Utilities.escapeCsv(name) + "," +
-               Utilities.escapeCsv(name_kana) + "," +
-               Utilities.escapeCsv(tel_number) + "," +
-               Utilities.escapeCsv(fax_number) + "," +
-               Utilities.escapeCsv(postal_code) + "," +
-               Utilities.escapeCsv(full_address) + "," +
+               Utilities.escapeCsv(nameKana) + "," +
+               Utilities.escapeCsv(telNumber) + "," +
+               Utilities.escapeCsv(faxNumber) + "," +
+               Utilities.escapeCsv(postalCode) + "," +
+               Utilities.escapeCsv(fullAddress) + "," +
                Utilities.escapeCsv(email) + "," +
-               Utilities.escapeCsv(web_address);
+               Utilities.escapeCsv(webAddress);
     }
-
-    // private String user_name;
-
-    // @Override
-    // public void setEntity(ResultSet rs) {
-    //     try {
-    //         this.company_id = rs.getInt("company_id");
-    //         this.category = rs.getInt("category");
-    //         this.name = rs.getString("name");
-    //         this.name_kana = rs.getString("name_kana");
-    //         this.tel_number = rs.getString("tel_number");
-    //         this.fax_number = rs.getString("fax_number");
-    //         this.postal_code = rs.getString("postal_code");
-    //         this.full_address = rs.getString("full_address");
-    //         this.email = rs.getString("email");
-    //         this.web_address = rs.getString("web_address");
-    //         this.version = rs.getInt("version");
-    //         this.state = rs.getInt("state");
-    //     } catch (Exception e) {
-    //         System.out.println(e);
-    //     }
-    // }
-
-    // public static CompanyEntity from(ResultSet rs) {
-    //     CompanyEntity entity = new CompanyEntity();
-    //     entity.setEntity(rs);
-    //     return entity;
-    // }
 }

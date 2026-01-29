@@ -59,17 +59,17 @@ public class RecycleItemRepository {
      * @return 新規IDを返す。
      */
     public int insert(RecycleItemEntity entity, String userName) {
-        String sql = RecycleItemSqlBuilder.buildInsert();
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, emp) -> RecycleItemParameterBinder.bindInsert(pstmt, emp),
-        //     rs -> rs.next() ? rs.getInt("recycle_maker_id") : null,
-        //     entity
-        // );
+        String sql = "INSERT INTO recycle_items (code, name, version, state) OUTPUT INSERTED.recycle_item_id VALUES (?, ?, ?, ?);";
         try {
             return sqlRepository.executeRequired(
                 sql,
-                (ps, en) -> RecycleItemParameterBinder.bindInsert(ps, en),
+                (ps, en) -> {
+                    int index = 1;
+                    ps.setInt(index++, en.getCode());
+                    ps.setString(index++, en.getName());
+                    ps.setInt(index++, en.getVersion());
+                    ps.setInt(index++, en.getState());
+                },
                 rs -> {
                     if (!rs.next()) {
                         throw new BusinessException("登録に失敗しました");
@@ -99,12 +99,6 @@ public class RecycleItemRepository {
     public int update(RecycleItemEntity entity, String userName) {
         String sql = RecycleItemSqlBuilder.buildUpdate();
 
-        // Integer result = sqlRepository.executeUpdate(
-        //     sql,
-        //     pstmt -> RecycleItemParameterBinder.bindUpdate(pstmt, entity)
-        // );
-
-        // return result; // 成功件数。0なら削除なし
         try {
             int count = sqlRepository.executeUpdate(
                 sql,
@@ -132,14 +126,8 @@ public class RecycleItemRepository {
      * @return 成功件数を返す。
      */
     public int deleteByIds(IdListRequest list, String userName) {
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
         String sql = RecycleItemSqlBuilder.buildDeleteByIds(list.getIds().size());
 
-        // return sqlRepository.executeUpdate(
-        //     sql,
-        //     ps -> RecycleItemParameterBinder.bindDeleteForIds(ps, recycleItemIds)
-        // );
-        // return result; // 成功件数。0なら削除なし
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
@@ -162,19 +150,10 @@ public class RecycleItemRepository {
      * @return Idsで選択したEntityリストを返す。
      */
     public List<RecycleItemEntity> downloadCsvByIds(IdListRequest list, String userName) {
-        // List<Integer> recycleItemIds = Utilities.createSequenceByIds(ids);
-        // String sql = RecycleItemSqlBuilder.buildDownloadCsvByIds(recycleItemIds.size());
-
-        // return sqlRepository.findAll(
-        //     sql,
-        //     ps -> RecycleItemParameterBinder.bindDownloadCsvForIds(ps, recycleItemIds),
-        //     RecycleItemEntityMapper::map // ← ここで ResultSet を map
-        // );
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
         String sql = RecycleItemSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
 
         return sqlRepository.findAll(

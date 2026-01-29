@@ -26,9 +26,6 @@ public class CompanyService {
      * @param id 会社ID
      * @return CompanyEntity または null
      */
-    // public Optional<CompanyEntity> getById(int id) {
-    //     return companyRepository.findById(id);
-    // }
     public Optional<CompanyEntity> getById(int id) {
         return companyRepository.findById(id);
     }
@@ -46,7 +43,7 @@ public class CompanyService {
         action = "保存"
     )
     public int save(CompanyEntity entity, String editor) {
-        if (entity.getCompany_id() > 0) {
+        if (entity.getCompanyId() > 0) {
             return companyRepository.update(entity, editor);
         } else {
             return companyRepository.insert(entity, editor);
@@ -62,9 +59,6 @@ public class CompanyService {
         table = HistoryTables.COMPANIES,
         action = "削除"
     )
-    // public int deleteByIds(List<SimpleData> list, String userName) {
-    //     return companyRepository.deleteByIds(list, userName);
-    // }
     public int deleteByIds(IdListRequest list, String userName) {
         return companyRepository.deleteByIds(list, userName);
     }

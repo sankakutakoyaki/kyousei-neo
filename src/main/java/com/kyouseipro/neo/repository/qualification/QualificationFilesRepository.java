@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.entity.qualification.QualificationFilesEntity;
 import com.kyouseipro.neo.interfaceis.FileUpload;
@@ -26,11 +27,15 @@ public class QualificationFilesRepository {
      * @return IDから取得したEntityを返す。
      */
     public Optional<QualificationFilesEntity> findById(int id) {
-        String sql = QualificationFilesSqlBuilder.buildFindById();
+        String sql = "SELECT * FROM qualifications_files WHERE NOT (state = ?) AND qualifications_files_id = ?";
 
         return sqlRepository.executeQuery(
             sql,
-            (ps, en) -> QualificationFilesParameterBinder.bindFindById(ps, en),
+            (ps, en) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+            },
             rs -> rs.next() ? QualificationFilesEntityMapper.map(rs) : null,
             id
         );
@@ -42,11 +47,15 @@ public class QualificationFilesRepository {
      * @return IDから取得したEntityを返す。
      */
     public List<QualificationFilesEntity> findByQualificationsId(int id) {
-        String sql = QualificationFilesSqlBuilder.buildFindAllByQualificationsId();
+        String sql = "SELECT * FROM qualifications_files WHERE NOT (state = ?) AND qualifications_id = ?";
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> QualificationFilesParameterBinder.bindFindAllByQualificationsId(ps, id),
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+            },
             QualificationFilesEntityMapper::map
         );
     }
@@ -58,36 +67,17 @@ public class QualificationFilesRepository {
      */
     public int insert(List<FileUpload> list, String editor, int id) {
         String sql = QualificationFilesSqlBuilder.buildInsert(list.size());
-        // // return sqlRepository.executeUpdate(
-        // //     sql,
-        // //     ps -> QualificationFilesParameterBinder.bindInsert(ps, entities, editor, id)
-        // // );
-        // // String sql = TimeworksListSqlBuilder.buildUpdate(); // UPDATE ... WHERE id = ?
+        int count = sqlRepository.executeBatch(
+            sql,
+            (ps, en) -> QualificationFilesParameterBinder.bindInsert(ps, en, editor, id),
+            list
+        );
 
-        // // return sqlRepository.executeBatch(
-        // //     sql,
-        // //     (ps, en) -> TimeworksListParameterBinder.bindUpdate(ps, en, editor),
-        // //     list
-        // // );
-        // try {
-            int count = sqlRepository.executeBatch(
-                sql,
-                (ps, en) -> QualificationFilesParameterBinder.bindInsert(ps, en, editor, id),
-                list
-            );
+        if (count == 0) {
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
+        }
 
-            if (count == 0) {
-                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-            }
-
-            return count;
-
-        // } catch (RuntimeException e) {
-        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
-        //         throw new BusinessException("このコードはすでに使用されています。");
-        //     }
-        //     throw e;
-        // }
+        return count;
     }
 
     /**
@@ -99,10 +89,6 @@ public class QualificationFilesRepository {
     public int delete(String url, String editor) {
         String sql = QualificationFilesSqlBuilder.buildDelete();
 
-        // return sqlRepository.executeUpdate(
-        //     sql,
-        //     ps -> QualificationFilesParameterBinder.bindDelete(ps, url, editor)
-        // );
         int count = sqlRepository.executeUpdate(
             sql,
             ps -> QualificationFilesParameterBinder.bindDelete(ps, url, editor)

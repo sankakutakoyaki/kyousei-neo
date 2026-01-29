@@ -10,9 +10,9 @@ import com.kyouseipro.neo.entity.order.DeliveryStaffEntity;
 public class DeliveryStaffParameterBinder {
     public static int bindInsert(PreparedStatement pstmt, DeliveryStaffEntity d, String editor, int index, boolean isNew) throws SQLException {
         if (isNew == false) {
-            pstmt.setInt(index++, d.getOrder_id());
+            pstmt.setInt(index++, d.getOrderId());
         }
-        pstmt.setInt(index++, d.getEmployee_id());
+        pstmt.setInt(index++, d.getEmployeeId());
         pstmt.setInt(index++, d.getVersion());
         pstmt.setInt(index++, d.getState());
 
@@ -21,12 +21,12 @@ public class DeliveryStaffParameterBinder {
     }
 
     public static int bindUpdate(PreparedStatement pstmt, DeliveryStaffEntity d, String editor, int index) throws SQLException {
-        pstmt.setInt(index++, d.getOrder_id());
-        pstmt.setInt(index++, d.getEmployee_id());
+        pstmt.setInt(index++, d.getOrderId());
+        pstmt.setInt(index++, d.getEmployeeId());
         pstmt.setInt(index++, d.getVersion());
         pstmt.setInt(index++, d.getState() +1);
 
-        pstmt.setInt(index++, d.getDelivery_staff_id()); // WHERE句
+        pstmt.setInt(index++, d.getDeliveryStaffId()); // WHERE句
         pstmt.setInt(index++, d.getVersion());
         
         pstmt.setString(index++, editor);          // ログ用
@@ -54,10 +54,10 @@ public class DeliveryStaffParameterBinder {
         for (DeliveryStaffEntity deliveryStaffEntity : list) {
             // 削除の場合
             if (deliveryStaffEntity.getState() == Enums.state.DELETE.getCode()) {
-                index = DeliveryStaffParameterBinder.bindDelete(pstmt, deliveryStaffEntity.getDelivery_staff_id(), editor, index);
+                index = DeliveryStaffParameterBinder.bindDelete(pstmt, deliveryStaffEntity.getDeliveryStaffId(), editor, index);
             } else {
                 // 更新か新規かで分岐
-                if (deliveryStaffEntity.getDelivery_staff_id() > 0){
+                if (deliveryStaffEntity.getDeliveryStaffId() > 0){
                     index = DeliveryStaffParameterBinder.bindUpdate(pstmt, deliveryStaffEntity, editor, index);
                 } else {
                     index = DeliveryStaffParameterBinder.bindInsert(pstmt, deliveryStaffEntity, editor, index, false);

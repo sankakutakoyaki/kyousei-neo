@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
 import com.kyouseipro.neo.service.dto.HistoryService;
@@ -35,43 +34,6 @@ public class IndexController {
 	 */
 	@GetMapping("/")
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	// public ModelAndView getIndex(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
-	// 	mv.setViewName("layouts/main");
-	// 	mv.addObject("title", "ホーム");
-    //     mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-	// 	mv.addObject("sidebarFragmentName", "fragments/common/menu :: homeFragment");
-    //     mv.addObject("bodyFragmentName", "contents/index/home :: bodyFragment");
-	// 	mv.addObject("insertCss", "/css/index/home.css");
-	// 	// ユーザー名
-	// 	String userName = principal.getAttribute("preferred_username");
-
-	// 	EmployeeEntity loginUser = employeeService.getByAccount(userName)
-	// 		.orElseThrow(() -> new IllegalStateException("ユーザーが存在しません"));
-	// 	// セッションに保持
-	// 	session.setAttribute("loginUser", loginUser);
-    //     mv.addObject("user", loginUser);
-
-	// 	historyService.save(loginUser.getAccount(), "", "ログイン", 200, "ログインしました。");
-
-    //     return mv;
-    // }
-	// public ModelAndView getIndex(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
-	// 	// ユーザー名
-	// 	String userName = principal.getAttribute("preferred_username");
-	// 	EmployeeEntity loginUser = employeeService.getByAccount(userName)
-	// 		.orElseThrow(() -> new IllegalStateException("ユーザーが存在しません"));
-	// 	// セッションに保持
-	// 	session.setAttribute("loginUser", loginUser);
-    //     mv.addObject("user", loginUser);
-
-	// 	mv.setViewName("contents/index/home");
-	// 	mv.addObject("title", "ホーム");
-
-	// 	historyService.save(loginUser.getAccount(), "", "ログイン", 200, "ログインしました。");
-
-	// 	return mv;
-    //     // return "contents/index/home";
-    // }
 	public String getIndex(Model model, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
 		// ユーザー名
 		String userName = principal.getAttribute("preferred_username");
@@ -82,11 +44,13 @@ public class IndexController {
         model.addAttribute("user", loginUser);
 
 		model.addAttribute("title", "ホーム");
+        model.addAttribute("insertCss", "/css/index/home.css");
 
 		historyService.save(loginUser.getAccount(), "", "ログイン", 200, "ログインしました。");
 
         return "contents/index/home";
     }
+	
 	/**
 	 * ログアウト
 	 * @param httpRequest

@@ -9,30 +9,30 @@ import lombok.Data;
 
 @Data
 public class RecycleEntity implements CsvExportable {
-    private int recycle_id;
-    private String recycle_number;//　お問合せ管理票番号
+    private int recycleId;
+    private String recycleNumber;//　お問合せ管理票番号
     private String molding_number;//　成形後の管理票番号
-    private int maker_id;//　メーカー
-    private int maker_code;
-    private String maker_name;
-    private int item_id;//　品目・料金区分
-    private int item_code;
-    private String item_name;
-    private LocalDate use_date = LocalDate.of(9999, 12, 31);//　使用日
-    private LocalDate delivery_date = LocalDate.of(9999, 12, 31);//　引渡日
-    private LocalDate shipping_date = LocalDate.of(9999, 12, 31);//　発送日
-    private LocalDate loss_date = LocalDate.of(9999, 12, 31);//　ロス処理日
-    private int company_id;//　小売業者
-    private String company_name;
-    private int office_id;
-    private String office_name;
-    private int recycling_fee;//　法定リサイクル料
-    private int disposal_site_id;//　処分場
-    private String disposal_site_name;
+    private int makerId;//　メーカー
+    private int makerCode;
+    private String makerName;
+    private int itemId;//　品目・料金区分
+    private int itemCode;
+    private String itemName;
+    private LocalDate useDate = LocalDate.of(9999, 12, 31);//　使用日
+    private LocalDate deliveryDate = LocalDate.of(9999, 12, 31);//　引渡日
+    private LocalDate shippingDate = LocalDate.of(9999, 12, 31);//　発送日
+    private LocalDate lossDate = LocalDate.of(9999, 12, 31);//　ロス処理日
+    private int companyId;//　小売業者
+    private String companyName;
+    private int officeId;
+    private String officeName;
+    private int recyclingFee;//　法定リサイクル料
+    private int disposalSiteId;//　処分場
+    private String disposalSiteName;
     private int version;
     private int state;
-    private LocalDate regist_date;// 登録日
-    private LocalDate update_date;// 更新日
+    private LocalDate registDate;// 登録日
+    private LocalDate updateDate;// 更新日
 
     // CSVヘッダーを返す static メソッド（必須ではないですが慣例的に付ける）
     public static String getCsvHeader() {
@@ -41,21 +41,21 @@ public class RecycleEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(recycle_id)) + "," +
+        return Utilities.escapeCsv(String.valueOf(recycleId)) + "," +
                Utilities.escapeCsv(molding_number) + "," +
-               Utilities.escapeCsv(String.valueOf(maker_code)) + "," +
-               Utilities.escapeCsv(maker_name) + "," +
-               Utilities.escapeCsv(String.valueOf(item_code)) + "," +
-               Utilities.escapeCsv(item_name) + "," + 
-               Utilities.escapeCsv(String.valueOf(use_date)) + "," +
-               Utilities.escapeCsv(String.valueOf(delivery_date)) + "," +
-               Utilities.escapeCsv(String.valueOf(shipping_date)) + "," +
-               Utilities.escapeCsv(String.valueOf(loss_date)) + "," +
-               Utilities.escapeCsv(company_name) + "," +
-               Utilities.escapeCsv(office_name) + "," +
-               Utilities.escapeCsv(String.valueOf(recycling_fee)) + "," +
-               Utilities.escapeCsv(String.valueOf(disposal_site_name)) + "," +
-               Utilities.escapeCsv(String.valueOf(regist_date)) + "," +
-               Utilities.escapeCsv(String.valueOf(update_date));
+               Utilities.escapeCsv(String.valueOf(makerCode)) + "," +
+               Utilities.escapeCsv(makerName) + "," +
+               Utilities.escapeCsv(String.valueOf(itemCode)) + "," +
+               Utilities.escapeCsv(itemName) + "," + 
+               Utilities.escapeCsv(String.valueOf(useDate)) + "," +
+               Utilities.escapeCsv(String.valueOf(deliveryDate)) + "," +
+               Utilities.escapeCsv(String.valueOf(shippingDate)) + "," +
+               Utilities.escapeCsv(String.valueOf(lossDate)) + "," +
+               Utilities.escapeCsv(companyName) + "," +
+               Utilities.escapeCsv(officeName) + "," +
+               Utilities.escapeCsv(String.valueOf(recyclingFee)) + "," +
+               Utilities.escapeCsv(String.valueOf(disposalSiteName)) + "," +
+               Utilities.escapeCsv(String.valueOf(registDate)) + "," +
+               Utilities.escapeCsv(String.valueOf(updateDate));
     }
 }

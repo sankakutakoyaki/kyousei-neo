@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class RecycleItemEntity implements CsvExportable {
-    private int recycle_item_id;
+    private int recycleItemId;
     private int code;
     private String name;
     private int version;
@@ -20,7 +20,7 @@ public class RecycleItemEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(recycle_item_id)) + "," +
+        return Utilities.escapeCsv(String.valueOf(recycleItemId)) + "," +
                Utilities.escapeCsv(String.valueOf(code)) + "," +
                Utilities.escapeCsv(name);
     }

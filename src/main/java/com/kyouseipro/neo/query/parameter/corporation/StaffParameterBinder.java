@@ -11,11 +11,11 @@ public class StaffParameterBinder {
 
     public static int bindInsert(PreparedStatement pstmt, StaffEntity staff, String editor) throws SQLException {
         int index = 1;
-        pstmt.setInt(index++, staff.getCompany_id());
-        pstmt.setInt(index++, staff.getOffice_id());
+        pstmt.setInt(index++, staff.getCompanyId());
+        pstmt.setInt(index++, staff.getOfficeId());
         pstmt.setString(index++, staff.getName());
-        pstmt.setString(index++, staff.getName_kana());
-        pstmt.setString(index++, staff.getPhone_number());
+        pstmt.setString(index++, staff.getNameKana());
+        pstmt.setString(index++, staff.getPhoneNumber());
         pstmt.setString(index++, staff.getEmail());
         pstmt.setInt(index++, staff.getVersion());
         pstmt.setInt(index++, staff.getState());
@@ -26,16 +26,16 @@ public class StaffParameterBinder {
 
     public static int bindUpdate(PreparedStatement pstmt, StaffEntity staff, String editor) throws SQLException {
         int index = 1;
-        pstmt.setInt(index++, staff.getCompany_id());
-        pstmt.setInt(index++, staff.getOffice_id());
+        pstmt.setInt(index++, staff.getCompanyId());
+        pstmt.setInt(index++, staff.getOfficeId());
         pstmt.setString(index++, staff.getName());
-        pstmt.setString(index++, staff.getName_kana());
-        pstmt.setString(index++, staff.getPhone_number());
+        pstmt.setString(index++, staff.getNameKana());
+        pstmt.setString(index++, staff.getPhoneNumber());
         pstmt.setString(index++, staff.getEmail());
         pstmt.setInt(index++, staff.getVersion());
         pstmt.setInt(index++, staff.getState() +1);
 
-        pstmt.setInt(index++, staff.getStaff_id());
+        pstmt.setInt(index++, staff.getStaffId());
         pstmt.setInt(index++, staff.getVersion());
         
         pstmt.setString(index++, editor);

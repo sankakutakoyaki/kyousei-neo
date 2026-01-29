@@ -54,20 +54,12 @@ public class RecycleMakerService {
      * @param editor
      * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
     */
-    // public Integer save(RecycleMakerEntity entity) {
-    //     Integer id = entity.getRecycle_maker_id();
-    //     if (id != null && id > 0) {
-    //         return recycleMakerRepository.update(entity);
-    //     }
-    //     return recycleMakerRepository.insert(entity);
-    // }
-    // @Transactional
     @HistoryTarget(
         table = HistoryTables.RECYCLEMAKERS,
         action = "保存"
     )
     public int save(RecycleMakerEntity entity, String userName) {
-        int id = entity.getRecycle_maker_id();
+        int id = entity.getRecycleMakerId();
 
         if (id > 0) {
             id = recycleMakerRepository.update(entity);

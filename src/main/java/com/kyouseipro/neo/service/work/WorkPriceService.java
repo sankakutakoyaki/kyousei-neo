@@ -39,8 +39,8 @@ public class WorkPriceService {
 
         int tempId = -1;
         for (WorkPriceEntity entity : list) {
-            if (entity.getWork_price_id() == 0) {
-                entity.setWork_price_id(tempId);
+            if (entity.getWorkPriceId() == 0) {
+                entity.setWorkPriceId(tempId);
                 tempId--;
             }
         }
@@ -60,7 +60,7 @@ public class WorkPriceService {
         action = "保存"
     )
     public int save(WorkPriceEntity item, String userName) {
-        if (item.getWork_price_id() > 0) {
+        if (item.getWorkPriceId() > 0) {
             return workPriceRepository.update(item, userName);
         } else {
             return workPriceRepository.insert(item, userName);

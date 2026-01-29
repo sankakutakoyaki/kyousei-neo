@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.query.parameter.document;
+package com.kyouseipro.neo.query.parameter.dto;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -11,8 +11,8 @@ public class HistoryParameterBinder {
         pstmt.setString(index++, history.getUser_name());
         pstmt.setString(index++, history.getTable_name());
         pstmt.setString(index++, history.getAction());
-        pstmt.setInt(index++, history.getResult_code());
-        pstmt.setString(index++, history.getResult_message());
+        pstmt.setInt(index++, history.getResultCode());
+        pstmt.setString(index++, history.getResultMessage());
         return index;
     }
 }

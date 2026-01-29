@@ -11,10 +11,6 @@
             </div>
             <!-- フィルターボックス -->
             <div class="flex-area">
-                <!-- <div class="form-parts">
-                    <label>荷主</label>
-                    <select id="company1" name="company1" class="normal-select"></select>
-                </div> -->
                 <div class="form-parts">
                     <label>分類</label>
                     <select id="category1" name="category1" class="normal-select"></select> 
@@ -26,11 +22,11 @@
                     <img title="新規" src="/icons/add.png">
                     <span>登録</span>
                 </div>
-                <div class="img-btn" onclick="execDelete('table-01-content', 'footer-01', 'search-box-01', '/work/item/delete', this)">
+                <div class="img-btn" onclick="execDelete(this)">
                     <img title="削除" src="/icons/dust.png">
                     <span>削除</span>
                 </div>
-                <div class="img-btn" onclick="execDownloadCsv('table-01-content', '/work/item/download/csv', this)">
+                <div class="img-btn" onclick="execDownloadCsv(this)">
                     <img title="ダウンロード" src="/icons/download.png">
                     <span>取得</span>
                 </div>

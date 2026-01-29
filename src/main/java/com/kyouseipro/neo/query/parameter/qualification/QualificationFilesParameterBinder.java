@@ -19,9 +19,9 @@ public class QualificationFilesParameterBinder {
         // for (FileUpload e : entities) {
             QualificationFilesEntity entity = (QualificationFilesEntity)e;
             pstmt.setInt(index++, id);
-            pstmt.setString(index++, entity.getFile_name());
-            pstmt.setString(index++, entity.getInternal_name());
-            pstmt.setString(index++, entity.getFolder_name());
+            pstmt.setString(index++, entity.getFileName());
+            pstmt.setString(index++, entity.getInternalName());
+            pstmt.setString(index++, entity.getFolderName());
             pstmt.setInt(index++, entity.getVersion());
             pstmt.setInt(index++, entity.getState());
 
@@ -59,20 +59,6 @@ public class QualificationFilesParameterBinder {
         pstmt.setString(index++, url);
 
         pstmt.setString(index++, editor);
-        return index;
-    }
-
-    public static int bindFindById(PreparedStatement ps, Integer qualificationFilesId) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, qualificationFilesId);
-        return index;
-    }
-
-    public static int bindFindAllByQualificationsId(PreparedStatement ps, Integer qualificationsId) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, qualificationsId);
         return index;
     }
 }

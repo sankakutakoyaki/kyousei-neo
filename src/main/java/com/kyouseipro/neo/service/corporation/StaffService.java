@@ -43,7 +43,7 @@ public class StaffService {
         action = "保存"
     )
     public int save(StaffEntity entity, String editor) {
-        if (entity.getStaff_id() > 0) {
+        if (entity.getStaffId() > 0) {
             return staffRepository.update(entity, editor);
         } else {
             return staffRepository.insert(entity, editor);

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.entity.corporation.CompanyEntity;
 import com.kyouseipro.neo.entity.dto.IdListRequest;
@@ -26,11 +27,15 @@ public class CompanyRepository {
      * @return IDから取得したEntityを返す。
      */
     public Optional<CompanyEntity> findById(int id) {
-        String sql = CompanySqlBuilder.buildFindById();
+        String sql = "SELECT * FROM companies WHERE company_id = ? AND NOT (state = ?)";
 
         return sqlRepository.executeQuery(
             sql,
-            (ps, en) -> CompanyParameterBinder.bindFindById(ps, en),
+            (ps, en) -> {
+                int index = 1;
+                ps.setInt(index++, id);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
             rs -> rs.next() ? CompanyEntityMapper.map(rs) : null,
             id
         );
@@ -42,11 +47,11 @@ public class CompanyRepository {
      * @return 取得したリストを返す
      */
     public List<CompanyEntity> findAll() {
-        String sql = CompanySqlBuilder.buildFindAll();
+        String sql = "SELECT * FROM companies WHERE NOT (state = ?)";
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> CompanyParameterBinder.bindFindAll(ps, null),
+            (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
             CompanyEntityMapper::map // ← ここで ResultSet を map
         );
     }
@@ -57,11 +62,15 @@ public class CompanyRepository {
      * @return 取得したリストを返す
      */
     public List<CompanyEntity> findAllClient() {
-        String sql = CompanySqlBuilder.buildFindAllClient();
+        String sql = "SELECT * FROM companies WHERE NOT (category = ?) AND NOT (state = ?)";
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> CompanyParameterBinder.bindFindAllClient(ps, null),
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, 0);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
             CompanyEntityMapper::map
         );
     }
@@ -74,35 +83,22 @@ public class CompanyRepository {
     public int insert(CompanyEntity entity, String editor) {
         String sql = CompanySqlBuilder.buildInsert();
 
-        // // return sqlRepository.execute(
-        // //     sql,
-        // //     (pstmt, comp) -> CompanyParameterBinder.bindInsert(pstmt, comp, editor),
-        // //     rs -> rs.next() ? rs.getInt("company_id") : null,
-        // //     company
-        // // );
-        // try {
-            return sqlRepository.executeRequired(
-                sql,
-                (ps, en) -> CompanyParameterBinder.bindInsert(ps, en, editor),
-                rs -> {
-                    if (!rs.next()) {
-                        throw new BusinessException("登録に失敗しました");
-                    }
-                    int id = rs.getInt("company_id");
+        return sqlRepository.executeRequired(
+            sql,
+            (ps, en) -> CompanyParameterBinder.bindInsert(ps, en, editor),
+            rs -> {
+                if (!rs.next()) {
+                    throw new BusinessException("登録に失敗しました");
+                }
+                int id = rs.getInt("company_id");
 
-                    if (rs.next()) {
-                        throw new IllegalStateException("ID取得結果が複数行です");
-                    }
-                    return id;
-                },
-                entity
-            );
-        // } catch (RuntimeException e) {
-        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
-        //         throw new BusinessException("このコードはすでに使用されています。");
-        //     }
-        //     throw e;
-        // }
+                if (rs.next()) {
+                    throw new IllegalStateException("ID取得結果が複数行です");
+                }
+                return id;
+            },
+            entity
+        );
     }
 
     /**
@@ -113,30 +109,16 @@ public class CompanyRepository {
     public int update(CompanyEntity entity, String editor) {
         String sql = CompanySqlBuilder.buildUpdate();
 
-        // // return sqlRepository.execute(
-        // //     sql,
-        // //     (pstmt, comp) -> CompanyParameterBinder.bindUpdate(pstmt, comp, editor),
-        // //     rs -> rs.next() ? rs.getInt("company_id") : null,
-        // //     company
-        // // );
-        // try {
-            int count = sqlRepository.executeUpdate(
-                sql,
-                ps -> CompanyParameterBinder.bindUpdate(ps, entity, editor)
-            );
+        int count = sqlRepository.executeUpdate(
+            sql,
+            ps -> CompanyParameterBinder.bindUpdate(ps, entity, editor)
+        );
 
-            if (count == 0) {
-                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-            }
+        if (count == 0) {
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
+        }
 
-            return count;
-
-        // } catch (RuntimeException e) {
-        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
-        //         throw new BusinessException("このコードはすでに使用されています。");
-        //     }
-        //     throw e;
-        // }
+        return count;
     }
 
     /**
@@ -146,15 +128,8 @@ public class CompanyRepository {
      * @return 成功件数を返す。
      */
     public int deleteByIds(IdListRequest list, String editor) {
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
         String sql = CompanySqlBuilder.buildDeleteByIds(list.getIds().size());
 
-        // int result = sqlRepository.executeUpdate(
-        //     sql,
-        //     ps -> CompanyParameterBinder.bindDeleteByIds(ps, companyIds, editor)
-        // );
-
-        // return result; // 成功件数。0なら削除なし
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
@@ -177,14 +152,8 @@ public class CompanyRepository {
      * @return Idsで選択したEntityリストを返す。
      */
     public List<CompanyEntity> downloadCsvByIds(IdListRequest list, String editor) {
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
         String sql = CompanySqlBuilder.buildDownloadCsvByIds(list.getIds().size());
 
-        // return sqlRepository.findAll(
-        //     sql,
-        //     ps -> CompanyParameterBinder.bindDownloadCsvByIds(ps, companyIds),
-        //     CompanyEntityMapper::map // ← ここで ResultSet を map
-        // );
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }

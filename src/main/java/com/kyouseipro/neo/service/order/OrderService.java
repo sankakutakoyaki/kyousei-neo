@@ -35,16 +35,6 @@ public class OrderService {
      * @param id 受注ID
      * @return OrderEntity または null
      */
-    // public Optional<OrderEntity> getById(int id) {
-    //     Optional<OrderEntity> orderEntity = orderRepository.findById(id);
-    //     List<OrderItemEntity> orderItemEntityList = orderItemRepository.findAllByOrderId(id, null);
-    //     List<DeliveryStaffEntity> deliveryStaffEntityList = deliveryStaffRepository.findAllByOrderId(id, null);
-    //     List<WorkContentEntity> workContentEntityList = workContentRepository.findAllByOrderId(id, null);
-    //     orderEntity.setItem_list(orderItemEntityList);
-    //     orderEntity.setStaff_list(deliveryStaffEntityList);
-    //     orderEntity.setWork_list(workContentEntityList);
-    //     return orderEntity;
-    // }
     public Optional<OrderEntity> getById(int id) {
         Optional<OrderEntity> opt = orderRepository.findById(id);
 
@@ -54,13 +44,13 @@ public class OrderService {
 
         OrderEntity order = opt.get();
 
-        order.setItem_list(
+        order.setItemList(
             orderItemRepository.findAllByOrderId(id, null)
         );
-        order.setStaff_list(
+        order.setStaffList(
             deliveryStaffRepository.findAllByOrderId(id, null)
         );
-        order.setWork_list(
+        order.setWorkList(
             workContentRepository.findAllByOrderId(id, null)
         );
 

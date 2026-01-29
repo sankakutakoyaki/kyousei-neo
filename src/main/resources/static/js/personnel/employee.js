@@ -35,7 +35,7 @@ function createTableRow(newRow, item) {
     // 携帯番号
     newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="phone" data-edit-type="text"><span>' + (item.phoneNumber ?? "登録なし") + '</span></td>');
     // 会社名
-    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.companyName ?? "登録なし") + '</span></td>');
+    // newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.companyName ?? "登録なし") + '</span></td>');
     // 営業所名
     newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.officeName ?? "登録なし") + '</span></td>');
 }

@@ -9,8 +9,8 @@ import com.kyouseipro.neo.entity.work.WorkPriceEntity;
 
 public class WorkPriceParameterBinder {
     public static int bindInsert(PreparedStatement pstmt, WorkPriceEntity w, String editor, int index) throws SQLException {
-        pstmt.setInt(index++, w.getWork_item_id());
-        pstmt.setInt(index++, w.getCompany_id());
+        pstmt.setInt(index++, w.getWorkItemId());
+        pstmt.setInt(index++, w.getCompanyId());
         pstmt.setInt(index++, w.getPrice());
         pstmt.setInt(index++, w.getVersion());
         pstmt.setInt(index++, w.getState());
@@ -20,13 +20,13 @@ public class WorkPriceParameterBinder {
     }
 
     public static int bindUpdate(PreparedStatement pstmt, WorkPriceEntity w, String editor, int index) throws SQLException {
-        pstmt.setInt(index++, w.getWork_item_id());
-        pstmt.setInt(index++, w.getCompany_id());
+        pstmt.setInt(index++, w.getWorkItemId());
+        pstmt.setInt(index++, w.getCompanyId());
         pstmt.setInt(index++, w.getPrice());
         pstmt.setInt(index++, w.getVersion() +1);
         pstmt.setInt(index++, w.getState());
 
-        pstmt.setInt(index++, w.getWork_price_id()); // WHERE句
+        pstmt.setInt(index++, w.getWorkPriceId()); // WHERE句
         pstmt.setInt(index++, w.getVersion());
         pstmt.setString(index++, editor);          // ログ用
         return index;

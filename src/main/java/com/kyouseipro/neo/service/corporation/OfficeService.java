@@ -43,7 +43,7 @@ public class OfficeService {
         action = "保存"
     )
     public int save(OfficeEntity entity, String editor) {
-        if (entity.getOffice_id() > 0) {
+        if (entity.getOfficeId() > 0) {
             return officeRepository.update(entity, editor);
         } else {
             return officeRepository.insert(entity, editor);
@@ -59,9 +59,6 @@ public class OfficeService {
         table = HistoryTables.OFFICES,
         action = "削除"
     )
-    // public int deleteByIds(List<SimpleData> list, String userName) {
-    //     return officeRepository.deleteByIds(list, userName);
-    // }
     public int deleteByIds(IdListRequest list, String userName) {
         return officeRepository.deleteByIds(list, userName);
     }

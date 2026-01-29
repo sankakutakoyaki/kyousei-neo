@@ -60,13 +60,5 @@ public class QualificationFilesSqlBuilder {
             buildInsertLog("@Deleted", "DELETE") +
             "SELECT qualifications_files_id FROM @Deleted;";
     }
-
-    public static String buildFindById() {
-        return "SELECT * FROM qualifications_files WHERE NOT (state = ?) AND qualifications_files_id = ?";
-    }
-
-    public static String buildFindAllByQualificationsId() {
-        return "SELECT * FROM qualifications_files WHERE NOT (state = ?) AND qualifications_id = ?";
-    }
 }
 

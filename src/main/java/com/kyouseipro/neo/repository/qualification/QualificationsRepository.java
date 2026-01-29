@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.entity.dto.SimpleData;
@@ -22,13 +23,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QualificationsRepository {
 
-    // private final TimeworksListApiController timeworksListApiController;
     private final SqlRepository sqlRepository;
     private final EmployeeRepository employeeRepository;
-
-    // QualificationsRepository(TimeworksListApiController timeworksListApiController) {
-    //     this.timeworksListApiController = timeworksListApiController;
-    // }
 
     /**
      * IDによる取得。
@@ -37,8 +33,6 @@ public class QualificationsRepository {
      */
     public List<QualificationsEntity> findAllByEmployeeId(int id) {
         String sql = QualificationsSqlBuilder.buildFindAllByEmployeeId();
-            // EmployeeEntity entity = employeeRepository.findById(employeeId);
-            // int id = entity.getEmployee_id();
         EmployeeEntity entity = employeeRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
 
@@ -102,25 +96,26 @@ public class QualificationsRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllByQualificationMasterCombo() {
-        String sql = QualificationsSqlBuilder.buildFindAllByQualificationMasterCombo();
+        String sql = "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = ?) ORDER BY code;";
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> QualificationsParameterBinder.bindFindAllByQualificationMasterCombo(ps, null),
+            (ps, v) ->  ps.setInt(1, Enums.state.DELETE.getCode()),
             SimpleDataMapper::map
         );
     }
+
     /**
      * コンボボックス用リスト全件取得。
      * 0件の場合は空リストを返す。
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllByLicenseMasterCombo() {
-        String sql = QualificationsSqlBuilder.buildFindAllByLicenseMasterCombo();
+        String sql = "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = ?) AND category_name = '許可' ORDER BY code;";
 
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> QualificationsParameterBinder.bindFindAllByLicenseMasterCombo(ps, null),
+            (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
             SimpleDataMapper::map
         );
     }
@@ -133,35 +128,22 @@ public class QualificationsRepository {
     public int insert(QualificationsEntity entity, String editor) {
         String sql = QualificationsSqlBuilder.buildInsert();
 
-        // // return sqlRepository.execute(
-        // //     sql,
-        // //     (pstmt, ent) -> QualificationsParameterBinder.bindInsert(pstmt, ent, editor),
-        // //     rs -> rs.next() ? rs.getInt("qualifications_id") : null,
-        // //     q
-        // // );
-        // try {
-            return sqlRepository.executeRequired(
-                sql,
-                (ps, en) -> QualificationsParameterBinder.bindInsert(ps, en, editor),
-                rs -> {
-                    if (!rs.next()) {
-                        throw new BusinessException("登録に失敗しました");
-                    }
-                    int id = rs.getInt("qualifications_id");
+        return sqlRepository.executeRequired(
+            sql,
+            (ps, en) -> QualificationsParameterBinder.bindInsert(ps, en, editor),
+            rs -> {
+                if (!rs.next()) {
+                    throw new BusinessException("登録に失敗しました");
+                }
+                int id = rs.getInt("qualifications_id");
 
-                    if (rs.next()) {
-                        throw new IllegalStateException("ID取得結果が複数行です");
-                    }
-                    return id;
-                },
-                entity
-            );
-        // } catch (RuntimeException e) {
-        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
-        //         throw new BusinessException("このコードはすでに使用されています。");
-        //     }
-        //     throw e;
-        // }
+                if (rs.next()) {
+                    throw new IllegalStateException("ID取得結果が複数行です");
+                }
+                return id;
+            },
+            entity
+        );
     }
 
     /**
@@ -172,30 +154,16 @@ public class QualificationsRepository {
     public int update(QualificationsEntity entity, String editor) {
         String sql = QualificationsSqlBuilder.buildUpdate();
 
-        // // return sqlRepository.execute(
-        // //     sql,
-        // //     (pstmt, ent) -> QualificationsParameterBinder.bindUpdate(pstmt, ent, editor),
-        // //     rs -> rs.next() ? rs.getInt("qualifications_id") : null,
-        // //     q
-        // // );
-        // try {
-            int count = sqlRepository.executeUpdate(
-                sql,
-                ps -> QualificationsParameterBinder.bindUpdate(ps, entity, editor)
-            );
+        int count = sqlRepository.executeUpdate(
+            sql,
+            ps -> QualificationsParameterBinder.bindUpdate(ps, entity, editor)
+        );
 
-            if (count == 0) {
-                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-            }
+        if (count == 0) {
+            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
+        }
 
-            return count;
-
-        // } catch (RuntimeException e) {
-        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
-        //         throw new BusinessException("このコードはすでに使用されています。");
-        //     }
-        //     throw e;
-        // }
+        return count;
     }
 
     /**
@@ -207,12 +175,6 @@ public class QualificationsRepository {
     public int delete(int id, String editor) {
         String sql = QualificationsSqlBuilder.buildDelete();
 
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, ent) -> QualificationsParameterBinder.bindDelete(pstmt, ent, editor),
-        //     rs -> rs.next() ? rs.getInt("qualifications_id") : null,
-        //     id
-        // );
         int count = sqlRepository.executeUpdate(
             sql,
             ps -> QualificationsParameterBinder.bindDelete(ps, id, editor)
@@ -234,10 +196,6 @@ public class QualificationsRepository {
         List<Integer> ids = Utilities.createSequenceByIds(list);
         String sql = QualificationsSqlBuilder.buildDeleteByIds(ids.size());
 
-        // return sqlRepository.executeUpdate(
-        //     sql,
-        //     ps -> QualificationsParameterBinder.bindDeleteForIds(ps, qualificationsIds, editor)
-        // );
         if (list == null || list.isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
@@ -260,14 +218,6 @@ public class QualificationsRepository {
      * @return Idsで選択したEntityリストを返す。
      */
     public List<QualificationsEntity> downloadCsvByIds(List<SimpleData> list, String editor) {
-        // List<Integer> qualificationsIds = Utilities.createSequenceByIds(ids);
-        // String sql = QualificationsSqlBuilder.buildDownloadCsvByIds(qualificationsIds.size());
-
-        // return sqlRepository.findAll(
-        //     sql,
-        //     ps -> QualificationsParameterBinder.bindDownloadCsvForIds(ps, qualificationsIds),
-        //     QualificationsEntityMapper::map // ← ここで ResultSet を map
-        // );
         if (list == null || list.isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }

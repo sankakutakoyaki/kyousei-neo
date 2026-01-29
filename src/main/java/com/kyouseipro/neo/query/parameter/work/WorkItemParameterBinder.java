@@ -11,12 +11,12 @@ public class WorkItemParameterBinder {
     public static int bindInsert(PreparedStatement pstmt, WorkItemEntity w, String editor, int index) throws SQLException {
         pstmt.setInt(index++, w.getCode());
         pstmt.setInt(index++, w.getCode());
-        pstmt.setInt(index++, w.getCategory_id());
+        pstmt.setInt(index++, w.getCategoryId());
         pstmt.setString(index++, w.getName());
         pstmt.setInt(index++, w.getVersion());
         pstmt.setInt(index++, w.getState());
 
-        pstmt.setInt(index++, w.getCategory_id());
+        pstmt.setInt(index++, w.getCategoryId());
         pstmt.setString(index++, editor);
         return index;
     }
@@ -24,12 +24,12 @@ public class WorkItemParameterBinder {
     public static int bindUpdate(PreparedStatement pstmt, WorkItemEntity w, String editor, int index) throws SQLException {
         pstmt.setInt(index++, w.getCode());
         pstmt.setInt(index++, w.getCode());
-        pstmt.setInt(index++, w.getCategory_id());
+        pstmt.setInt(index++, w.getCategoryId());
         pstmt.setString(index++, w.getName());
         pstmt.setInt(index++, w.getVersion() +1);
         pstmt.setInt(index++, w.getState());
 
-        pstmt.setInt(index++, w.getWork_item_id()); // WHERE句
+        pstmt.setInt(index++, w.getWorkItemId()); // WHERE句
         pstmt.setInt(index++, w.getVersion());
         pstmt.setString(index++, editor);          // ログ用
         return index;

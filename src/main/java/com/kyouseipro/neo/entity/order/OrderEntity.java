@@ -11,24 +11,24 @@ import lombok.Data;
 
 @Data
 public class OrderEntity implements CsvExportable {
-    private int order_id;
-    private String request_number;
-    private LocalDate start_date = LocalDate.of(9999, 12, 31);
-    private LocalDate end_date = LocalDate.of(9999, 12, 31);
-    private int prime_constractor_id;
-    private String prime_constractor_name;
-    private int prime_constractor_office_id;
-    private String prime_constractor_office_name;
+    private int orderId;
+    private String requestNumber;
+    private LocalDate startDate = LocalDate.of(9999, 12, 31);
+    private LocalDate endDate = LocalDate.of(9999, 12, 31);
+    private int primeConstractorId;
+    private String primeConstractorName;
+    private int primeConstractorOfficeId;
+    private String primeConstractorOfficeName;
     private String title;
-    private String order_postal_code;
-    private String order_full_address;
-    private String contact_information;
-    private String contact_information2;
+    private String orderPostalCode;
+    private String orderFullAddress;
+    private String contactInformation;
+    private String contactInformation2;
     private String remarks;
 
-    private List<OrderItemEntity> item_list = new ArrayList();
-    private List<DeliveryStaffEntity> staff_list = new ArrayList();
-    private List<WorkContentEntity> work_list = new ArrayList<>();
+    private List<OrderItemEntity> itemList = new ArrayList();
+    private List<DeliveryStaffEntity> staffList = new ArrayList();
+    private List<WorkContentEntity> workList = new ArrayList<>();
 
     private int version;
     private int state;
@@ -40,17 +40,17 @@ public class OrderEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(order_id)) + "," +
-               Utilities.escapeCsv(request_number) + "," +
-               Utilities.escapeCsv(String.valueOf(start_date)) + "," +
-               Utilities.escapeCsv(String.valueOf(end_date)) + "," +
-               Utilities.escapeCsv(prime_constractor_name) + "," +
-               Utilities.escapeCsv(prime_constractor_office_name) + "," +
+        return Utilities.escapeCsv(String.valueOf(orderId)) + "," +
+               Utilities.escapeCsv(requestNumber) + "," +
+               Utilities.escapeCsv(String.valueOf(startDate)) + "," +
+               Utilities.escapeCsv(String.valueOf(endDate)) + "," +
+               Utilities.escapeCsv(primeConstractorName) + "," +
+               Utilities.escapeCsv(primeConstractorOfficeName) + "," +
                Utilities.escapeCsv(title) + "," +
-               Utilities.escapeCsv(String.valueOf(order_postal_code)) + "," +
-               Utilities.escapeCsv(String.valueOf(order_full_address)) + "," +
-               Utilities.escapeCsv(String.valueOf(contact_information)) + "," +
-               Utilities.escapeCsv(String.valueOf(contact_information2)) + "," +
+               Utilities.escapeCsv(String.valueOf(orderPostalCode)) + "," +
+               Utilities.escapeCsv(String.valueOf(orderFullAddress)) + "," +
+               Utilities.escapeCsv(String.valueOf(contactInformation)) + "," +
+               Utilities.escapeCsv(String.valueOf(contactInformation2)) + "," +
                Utilities.escapeCsv(remarks);
     }
 }
