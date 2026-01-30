@@ -76,14 +76,6 @@ body {
     height: 100%;
     overflow: auto;
 }
-/* .normal-content {
-    position: relative;
-    display: grid;
-    width: 100%;
-    height: 100%;
-    grid-template-columns: 1fr;
-    overflow: hidden;
-} */
 
 .normal-body {
     position: relative;
@@ -91,8 +83,10 @@ body {
     width: 100%;
     height: 100%;
     overflow: auto;
-    /* display: grid; */
-    /* grid-template-columns: auto 1fr; */
+
+    /* 画面を中央よせ */
+    /* display: flex;
+    justify-content: center; */
 }
 
 .normal-sidebar {

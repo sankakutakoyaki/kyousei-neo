@@ -157,13 +157,13 @@ async function execSave() {
 
     // tab 固有項目
     Object.entries(config.fields).forEach(([key, converter]) => {
-        const name = key.replace(/_/g, "-");
-        entity[key] = converter(formData.get(name));
+        const formName = camelToKebab(key);
+        entity[key] = converter(formData.get(formName));
     });
 
     // 共通項目
     Object.entries(COMMON_FIELDS).forEach(([key, converter]) => {
-        const name = key.replace(/_/g, "-");
+        const name = camelToKebab(key);
         if (formData.has(name)) {
             entity[key] = converter(formData.get(name));
         }
@@ -176,17 +176,15 @@ async function execSave() {
     const result = await updateFetch(
         config.url,
         JSON.stringify(entity),
-        token,
-        "application/json"
+        token
     );
 
-    if (result.success) {
-        openMsgDialog("msg-dialog", result.message, "blue");
-        await execUpdate();
-        scrollIntoTableList("table-" + tab + "-content", result.data);
+    if (result.ok) {
         closeFormDialog(config.dialogId);
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
+        await execUpdate();
+        scrollIntoTableList(config.tableId, result.data);
+        
+        openMsgDialog("msg-dialog", result.message, "blue");
     }
 }
 
@@ -305,27 +303,14 @@ async function execUpdate() {
 
     // entity ごとの元データ更新
     if (config.categoryName === "company") {
-        await updateCompanyOrigin();
-        await updateOfficeOrigin();
-
-        const list = companyOrigin.filter(v => v.category === config.category);
-
+        companyOrigin = await updateOrigin("company");
         await updateTableDisplay(
             config.tableId,
             config.footerId,
             config.searchId,
-            list,
+            companyOrigin,
             createTableContent
         );
-
-        makeSortable(config.tableId);
-        setPageTopButton(config.tableId);
-        return;
-    }
-
-    if (config.categoryName === "office") {
-        await updateOfficeOrigin();
-        await updateOfficeTableDisplay();
         return;
     }
 
@@ -333,11 +318,6 @@ async function execUpdate() {
         await updateStaffTableDisplay();
         return;
     }
-}
-
-// company-tab 更新処理
-async function updateCompanyOrigin() {
-    await updateOrigin("company");
 }
 
 async function updateOrigin(type) {
@@ -358,6 +338,8 @@ async function updateOrigin(type) {
     targets.forEach(target => {
         createComboBoxWithTop(target, comboList, "");
     });
+
+    return window[config.originKey];
 }
 
 /******************************************************************************************************* 画面更新 */

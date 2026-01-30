@@ -24,14 +24,15 @@ const VIEW_CONFIG = [
 ];
 
 const FORM_CONFIG = [
-    { name: 'working-conditions-id', key: 'working_conditions_id' },
-    { name: 'employee-id', value: (e, ctx) => ctx.employeeId },
+    { name: 'working-conditions-id', key: 'workingConditionsId' },
+    // { name: 'employee-id', value: (e, ctx) => ctx.employeeId },
+    { name: 'employee-id', key: 'employeeId' },
     { name: 'category', key: 'category' },
 
-    { name: 'base-salary', key: 'base_salary' },
-    { name: 'trans-cost', key: 'trans_cost' },
-    { name: 'basic-start-time', key: 'basic_start_time' },
-    { name: 'basic-end-time', key: 'basic_end_time' },
+    { name: 'base-salary', key: 'baseSalary' },
+    { name: 'trans-cost', key: 'transCost' },
+    { name: 'basic-start-time', key: 'basicStartTime' },
+    { name: 'basic-end-time', key: 'basicEndTime' },
 
     { name: 'version', key: 'version' }
 ];
@@ -40,24 +41,24 @@ const COMBO_CONFIG = [
     {
         selector: 'select[name="payment-method"]',
         list: paymentMethodComboList,
-        key: 'payment_method'
+        key: 'paymentMethod'
     },
     {
         selector: 'select[name="pay-type"]',
         list: payTypeComboList,
-        key: 'pay_type'
+        key: 'payType'
     }
 ];
 
 const SAVE_CONFIG = [
     {
         name: 'working-conditions-id',
-        key: 'working_conditions_id',
+        key: 'workingConditionsId',
         parse: v => Number(v)
     },
     {
         name: 'employee-id',
-        key: 'employee_id',
+        key: 'employeeId',
         parse: v => Number(v)
     },
     {
@@ -67,30 +68,30 @@ const SAVE_CONFIG = [
     },
     {
         name: 'payment-method',
-        key: 'payment_method'
+        key: 'paymentMethod'
     },
     {
         name: 'pay-type',
-        key: 'pay_type'
+        key: 'payType'
     },
     {
         name: 'base-salary',
-        key: 'base_salary',
+        key: 'baseSalary',
         parse: v => v === '' ? 0 : Number(v)
     },
     {
         name: 'trans-cost',
-        key: 'trans_cost',
+        key: 'transCost',
         parse: v => v === '' ? 0 : Number(v)
     },
     {
         name: 'basic-start-time',
-        key: 'basic_start_time',
+        key: 'basicStartTime',
         parse: v => v ? v : '00:00'
     },
     {
         name: 'basic-end-time',
-        key: 'basic_end_time',
+        key: 'basicEndTime',
         parse: v => v ? v : '00:00'
     },
     {

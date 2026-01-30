@@ -57,6 +57,7 @@ const SAVE_CONFIG = {
     "01": {
         formId: "form-01",
         dialogId: "form-dialog-01",
+        tableId: "table-01-content",
         url: "/api/company/save",
         baseEntity: () => structuredClone(companyEntity),
         fields: {
@@ -66,6 +67,7 @@ const SAVE_CONFIG = {
     "02": {
         formId: "form-02",
         dialogId: "form-dialog-02",
+        tableId: "table-02-content",
         url: "/api/employee/save",
         baseEntity: () => structuredClone(staffEntity),
         fields: {
@@ -92,8 +94,8 @@ const COMMON_FIELDS = {
 
 const ORIGIN_CONFIG = {
     company: {
-        listUrl: "/api/client/get/list",
-        comboUrl: "/api/client/get/combo",
+        listUrl: "/api/partner/get/list",
+        comboUrl: "/api/partner/get/combo",
         originKey: "companyOrigin",
         comboKey: "companyComboList",
         comboTargetIds: ["name01"]

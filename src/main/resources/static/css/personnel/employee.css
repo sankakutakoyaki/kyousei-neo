@@ -3,6 +3,7 @@
 .tab-area {
     display: grid;
     grid-template-rows: auto 1fr;
+    max-width: 55rem;
 }
 
 .tab-panel header {
@@ -21,7 +22,7 @@
     grid-template-rows: auto 1fr;
     margin-top: 2rem;
     overflow: hidden;
-    max-width: 55rem;
+    /* max-width: 55rem; */
 }
 
 #form-dialog-01 {

@@ -45,6 +45,16 @@ public class CompanyListApiController {
     }
 
     /**
+     * EntityListを取得する
+     * @return
+     */
+    @GetMapping("/partner/get/list")
+	@ResponseBody
+    public List<CompanyListEntity> getPartnerList() {
+        return companyListService.getPartnerList();
+    }
+
+    /**
      * カテゴリー別のEntityListを取得する
      * @return
      */
@@ -62,5 +72,15 @@ public class CompanyListApiController {
 	@ResponseBody
     public List<SimpleData> getClientCombo() {
         return comboBoxService.getClientList();
+    }
+
+    /**
+     * EntityListを取得する
+     * @return
+     */
+    @GetMapping("/partner/get/combo")
+	@ResponseBody
+    public List<SimpleData> getPartnerCombo() {
+        return comboBoxService.getPartnerList();
     }
 }

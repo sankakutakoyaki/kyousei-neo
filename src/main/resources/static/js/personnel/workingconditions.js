@@ -12,9 +12,9 @@ function createTableContent(tableId, list) {
         const row = createSelectableRow({
             table,
             item,
-            idKey: "working_conditions_id",
+            idKey: "workingConditionsId",
             onDoubleClick: (item) => {
-                execEdit(item.employee_id, item.full_name, tab);
+                execEdit(item.employeeId, item.fullName, tab);
             }
         });
 
@@ -29,11 +29,11 @@ function createTableRow(newRow, item) {
     // 選択用チェックボックス
     newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
     // ID
-    newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.employee_id + ', \'' + item.full_name + '\', this)">' + String(item.employee_id).padStart(4, '0') + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.employeeId + ', \'' + item.fullName + '\', this)">' + String(item.employeeId).padStart(4, '0') + '</td>');
     // 名前
-    newRow.insertAdjacentHTML('beforeend', '<td name="name-cell"><span class="kana">' + item.full_name_kana + '</span><br><span>' + item.full_name + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td name="name-cell"><span class="kana">' + item.fullNameKana + '</span><br><span>' + item.fullName + '</span></td>');
     // 営業所名
-    newRow.insertAdjacentHTML('beforeend', '<td name="office-cell"><span>' + (item.office_name ?? "登録なし") + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td name="office-cell"><span>' + (item.officeName ?? "登録なし") + '</span></td>');
 }
 
 /******************************************************************************************************* 入力画面 */
@@ -41,14 +41,15 @@ function createTableRow(newRow, item) {
 // 勤務条件登録画面を開く
 async function execEdit(id, name, tab) {
 
-    const result = await searchFetch('/api/working_conditions/get/employeeid', JSON.stringify({id:parseInt(id)}), token);console.log(result)
+    const result = await searchFetch('/api/working_conditions/get/employeeid', JSON.stringify({id:parseInt(id)}), token);
     if (!result?.ok) return;
 
     let entity = {};
-    if (result.working_conditions_id > 0) {
+    if (result.workingConditionsId > 0) {
         entity = structuredClone(result);
     } else {
         entity = structuredClone(formEntity);
+        entity.employeeId = id;
         const config = MODE_CONFIG[tab];
         entity.category = config.category;
     }
@@ -84,17 +85,18 @@ async function execSave() {
         formdata.user_name = user.account == null ? 'kyousei@kyouseibin.com': user.account;
 
         // 保存処理
-        const result = await postFetch("/api/working_conditions/save", JSON.stringify(formdata), token);
+        const result = await updateFetch("/api/working_conditions/save", JSON.stringify(formdata), token);
         if (result?.ok) {
-            // 画面更新
-            openMsgDialog("msg-dialog", result.message, "blue");
+            // ダイアログを閉じる
+            closeFormDialog('form-dialog-01');
             await execUpdate();
             // 追加・変更行に移動
             const tableId = getTableIdByCategory(formdata.category);
             scrollIntoTableList(tableId, result.id);
+            
+            // 画面更新
+            openMsgDialog("msg-dialog", result.message, "blue");
         }
-        // ダイアログを閉じる
-        closeFormDialog('form-dialog-01');
     }
 }
 

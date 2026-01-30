@@ -39,14 +39,32 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<CompanyListEntity> findAllClient() {
-        String sql = "SELECT * FROM companies WHERE NOT (state = ?) AND NOT(category = ? OR category = ?)";
+        String sql = "SELECT * FROM companies WHERE NOT (state = ?) category = ?";
 
         return sqlRepository.findAll(
             sql,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, 0);
+                ps.setInt(index++, Enums.clientCategory.SHIPPER.getCode());
+            },
+            CompanyListEntityMapper::map
+        );
+    }
+
+    /**
+     * 荷主以外全件取得。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
+    public List<CompanyListEntity> findAllPartner() {
+        String sql = "SELECT * FROM companies WHERE NOT (state = ?) AND category = ?";
+
+        return sqlRepository.findAll(
+            sql,
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
             },
             CompanyListEntityMapper::map
@@ -115,14 +133,32 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllClientCombo() {
-        String sql = "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND NOT (category = ? OR category = ?) ORDER BY name_kana, category;";
+        String sql = "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana, category;";
 
         return sqlRepository.findAll(
             sql,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, 0);
+                ps.setInt(index++, Enums.clientCategory.SHIPPER.getCode());
+            },
+            SimpleDataMapper::map
+        );
+    }
+
+    /**
+     * コンボボックス用リスト取得（荷主）。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
+    public List<SimpleData> findAllPartnerCombo() {
+        String sql = "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana, category;";
+
+        return sqlRepository.findAll(
+            sql,
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
             },
             SimpleDataMapper::map

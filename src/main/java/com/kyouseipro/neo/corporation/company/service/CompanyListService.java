@@ -23,6 +23,15 @@ public class CompanyListService {
         return companyListRepository.findAllClient();
     }
 
+        
+    /**
+     * すべてのPartnerを取得
+     * @return
+     */
+    public List<CompanyListEntity> getPartnerList() {
+        return companyListRepository.findAllPartner();
+    }
+
     /**
      * すべてのCompanyを取得
      * @return

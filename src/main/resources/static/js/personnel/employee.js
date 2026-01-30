@@ -93,12 +93,12 @@ async function execSave() {
 
     const result = await updateFetch("/api/employee/save", JSON.stringify(formdata), token, "application/json");
     if (result.ok) {
-        openMsgDialog("msg-dialog", result.message, "blue");
-        
         closeFormDialog('form-dialog-01');
         await execUpdate();
         const config = MODE_CONFIG[tab.dataset.tab];
         scrollIntoTableList(config.tableId, result.employeeId);
+        
+        openMsgDialog("msg-dialog", result.message, "blue");
     }
 }
 

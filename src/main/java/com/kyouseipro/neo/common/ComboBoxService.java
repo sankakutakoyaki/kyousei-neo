@@ -189,6 +189,10 @@ public class ComboBoxService {
         return companyListRepository.findAllClientCombo();
     }
 
+    public List<SimpleData> getPartnerList() {
+        return companyListRepository.findAllPartnerCombo();
+    }
+
     public List<SimpleData> getPrimeConstractorList() {
         return companyListRepository.findAllPrimeConstractorCombo();
     }
