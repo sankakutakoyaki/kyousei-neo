@@ -9,8 +9,8 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.interfaceis.HistoryTarget;
-import com.kyouseipro.neo.service.dto.HistoryService;
+import com.kyouseipro.neo.common.history.service.HistoryService;
+import com.kyouseipro.neo.interfaces.HistoryTarget;
 
 import lombok.RequiredArgsConstructor;
 

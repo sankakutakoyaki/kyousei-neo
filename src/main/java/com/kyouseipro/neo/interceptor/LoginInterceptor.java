@@ -1,7 +1,7 @@
 package com.kyouseipro.neo.interceptor;
 
 import com.kyouseipro.neo.common.exception.SessionExpiredException;
-import com.kyouseipro.neo.entity.personnel.EmployeeEntity;
+import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

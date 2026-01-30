@@ -1,0 +1,118 @@
+package com.kyouseipro.neo.qualification;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.kyouseipro.neo.abstracts.controller.BaseController;
+import com.kyouseipro.neo.common.ComboBoxService;
+import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.common.history.service.HistoryService;
+import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
+import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
+import com.kyouseipro.neo.qualification.entity.QualificationsEntity;
+import com.kyouseipro.neo.qualification.service.QualificationsService;
+
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequiredArgsConstructor
+public class QualificationPageController extends BaseController {
+    private final HistoryService historyService;
+    private final ComboBoxService comboBoxService;
+    private final QualificationsService qualificationsService;
+
+    /**
+	 * 資格
+	 * @param mv
+	 * @return
+	 */
+	@GetMapping("/qualifications")
+	@ResponseBody
+	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
+	public ModelAndView getQualifications(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
+		mv.setViewName("layouts/main");
+        mv.addObject("title", "資格");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+        mv.addObject("sidebarFragmentName", "fragments/common/menu :: managementFragment");
+        mv.addObject("bodyFragmentName", "contents/qualifications/qualifications :: bodyFragment");
+        mv.addObject("insertCss", "/css/qualifications/qualifications.css");
+
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
+		// ユーザー名
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity user = employeeService.getByAccount(userName);
+		// mv.addObject("user", user);
+        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
+
+        // 初期化されたエンティティ
+        mv.addObject("formEntity", new QualificationsEntity());
+        // 初期表示用資格情報リスト取得
+        List<QualificationsEntity> qualificationsOrigin = qualificationsService.getListForEmployee();
+        mv.addObject("origin", qualificationsOrigin);
+        // コンボボックスアイテム取得
+        List<SimpleData> qualificationComboList = comboBoxService.getQualificationMaster();
+        mv.addObject("qualificationComboList", qualificationComboList);
+
+        mv.addObject("url", "/employee/get/id");
+        mv.addObject("owner_category", 0);
+
+        // EmployeeEntity user = getLoginUser(session);
+        historyService.save(user.getAccount(), "qualifications", "閲覧", 200, "");
+		
+        return mv;
+    }
+
+    /**
+	 * 許認可
+	 * @param mv
+	 * @return
+	 */
+	@GetMapping("/license")
+	@ResponseBody
+	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
+	public ModelAndView getLicense(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
+		mv.setViewName("layouts/main");
+        mv.addObject("title", "許認可");
+        mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
+        mv.addObject("sidebarFragmentName", "fragments/common/menu :: managementFragment");
+        mv.addObject("bodyFragmentName", "contents/qualifications/qualifications :: bodyFragment");
+        mv.addObject("insertCss", "/css/qualifications/qualifications.css");
+
+        EmployeeEntity user = getLoginUser(session, response);
+        if (user == null) return null; // リダイレクト済みなので処理は止まる
+		// ユーザー名
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity user = employeeService.getByAccount(userName);
+		// mv.addObject("user", user);
+        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
+
+        // 初期化されたエンティティ
+        mv.addObject("formEntity", new QualificationsEntity());
+
+        // 初期表示用資格情報リスト取得
+        List<QualificationsEntity> licensesOrigin = qualificationsService.getListFroCompany();
+        mv.addObject("origin", licensesOrigin);
+        // コンボボックスアイテム取得
+        List<SimpleData> licenseComboList = comboBoxService.getLicenseMaster();
+        mv.addObject("qualificationComboList", licenseComboList);
+
+        mv.addObject("url", "/company/get/id");
+        mv.addObject("owner_category", Enums.clientCategory.PARTNER.getCode());
+
+        // EmployeeEntity user = getLoginUser(session);
+        historyService.save(user.getAccount(), "qualifications", "閲覧", 200, "");
+		
+        return mv;
+    }
+}

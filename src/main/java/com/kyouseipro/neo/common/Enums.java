@@ -1,6 +1,6 @@
 package com.kyouseipro.neo.common;
 
-import com.kyouseipro.neo.interfaceis.CodeEnum;
+import com.kyouseipro.neo.interfaces.CodeEnum;
 
 public class Enums {
     /**

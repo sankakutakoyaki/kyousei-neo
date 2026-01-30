@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import com.kyouseipro.neo.ai.api.AiApiClient;
 import com.kyouseipro.neo.ai.entity.AiKnowledgeChunk;
 import com.kyouseipro.neo.ai.entity.AiPromptTemplate;
-import com.kyouseipro.neo.ai.reepository.AiAskLogRepository;
-import com.kyouseipro.neo.ai.reepository.AiKnowledgeChunkRepository;
-import com.kyouseipro.neo.ai.reepository.AiPromptTemplateRepository;
+import com.kyouseipro.neo.ai.repository.AiAskLogRepository;
+import com.kyouseipro.neo.ai.repository.AiKnowledgeChunkRepository;
+import com.kyouseipro.neo.ai.repository.AiPromptTemplateRepository;
 
 import lombok.RequiredArgsConstructor;
 

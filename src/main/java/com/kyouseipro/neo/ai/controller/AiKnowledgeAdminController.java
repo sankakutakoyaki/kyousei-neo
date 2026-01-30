@@ -5,7 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.kyouseipro.neo.ai.reepository.AiKnowledgeRepository;
+import com.kyouseipro.neo.ai.repository.AiKnowledgeRepository;
 
 import lombok.RequiredArgsConstructor;
 

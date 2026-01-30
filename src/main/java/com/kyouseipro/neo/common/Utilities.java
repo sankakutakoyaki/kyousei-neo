@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.kyouseipro.neo.entity.dto.SimpleData;
-import com.kyouseipro.neo.interfaceis.CodeEnum;
-import com.kyouseipro.neo.interfaceis.CsvExportable;
+import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
+import com.kyouseipro.neo.interfaces.CodeEnum;
+import com.kyouseipro.neo.interfaces.CsvExportable;
 
 public class Utilities {
     /**
