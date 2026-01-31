@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 public class RecycleDateEntity {
-    private int recycleId;
-    private String recycleNumber;
-    private String moldingNumber;
+    private int id;
+    private String number;
+    private String molding;
     private LocalDate date;
 }

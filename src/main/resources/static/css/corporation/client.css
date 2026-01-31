@@ -1,9 +1,9 @@
 @charset "UTF-8";
 
-.tab-area {
+/* .tab-area {
     display: grid;
     grid-template-rows: auto 1fr;
-}
+} */
 
 .tab-panel header {
     display: grid;

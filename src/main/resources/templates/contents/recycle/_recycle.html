@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/with-sidebar}">
+<body>
+    <!-- サイドバー -->
+    <div layout:fragment="sidebar-content">
+        <div th:replace="~{fragments/common/menu :: recycleFragment}"></div>
+    </div>
+
+    <!-- ボディ -->
+    <main layout:fragment="content">
+        <div class="tab-area">
+            <ul class="tab-menu">
+                <li class="tab-menu-item is-active" data-tab="01">一覧</li>
+                <li class="tab-menu-item" data-tab="02">登録</li>
+                <li class="tab-menu-item" data-tab="03">引渡</li>
+                <li class="tab-menu-item" data-tab="04">発送</li>
+                <li class="tab-menu-item" data-tab="05">ロス</li>
+            </ul>
+            <div class="tab-panel is-show" data-panel="01">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/recycle/recycle :: header01Fragment('search-box-01', 'start-date01', 'end-date01')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/recycle/recycle :: main01Fragment('table-01', 'table-01-content')}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-01" class="pc-style" th:insert="~{fragments/recycle/recycle :: footerFragment()}"></footer>
+                </div>
+            </div>
+            <div class="tab-panel is-show" data-panel="01">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/recycle/recycle :: header02Fragment('start-date01')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/recycle/recycle :: main01Fragment('table-02', 'table-02-content', '使用日')}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-02" class="pc-style" th:insert="~{fragments/recycle/recycle :: footerFragment()}"></footer>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="form-dialog-area">
+        <!-- フォーム画面をここに記入する -->
+        <div id="form-dialog-01" class="form-dialog none">
+            <div class="dialog-main">
+                <!-- ヘッダー -->
+                <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-01', '')}"></div>
+                <!-- コンテンツ -->
+                <form th:replace="~{fragments/recycle/recycle :: form01Fragment()}"></form>
+                <!-- フッター -->
+                <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-01', 'execSave(\'regist\')', '保存')}"></div>
+            </div>
+        </div>
+        <div id="form-dialog-02" class="form-dialog none">
+            <div class="dialog-main">
+                <!-- ヘッダー -->
+                <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-02', '')}"></div>
+                <!-- コンテンツ -->
+                <form th:replace="~{fragments/recycle/recycle :: form02Fragment()}"></form>
+                <!-- フッター -->
+                <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-02', 'execSave(\'delivery\')', '保存')}"></div>
+            </div>
+        </div>
+        <div id="form-dialog-03" class="form-dialog none">
+            <div class="dialog-main">
+                <!-- ヘッダー -->
+                <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-03', '')}"></div>
+                <!-- コンテンツ -->
+                <form th:replace="~{fragments/recycle/recycle :: form03Fragment()}"></form>
+                <!-- フッター -->
+                <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-03', 'execSave(\'shipping\')', '保存')}"></div>
+            </div>
+        </div>
+        <div id="form-dialog-04" class="form-dialog none">
+            <div class="dialog-main">
+                <!-- ヘッダー -->
+                <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-04', '')}"></div>
+                <!-- コンテンツ -->
+                <form th:replace="~{fragments/recycle/recycle :: form04Fragment()}"></form>
+                <!-- フッター -->
+                <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-04', 'execSave(\'loss\)', '保存')}"></div>
+            </div>
+        </div>
+        <div id="form-dialog-05" class="form-dialog none">
+            <div class="dialog-main">
+                <!-- ヘッダー -->
+                <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-05', '')}"></div>
+                <!-- コンテンツ -->
+                <form th:replace="~{fragments/recycle/recycle :: form05Fragment()}"></form>
+                <!-- フッター -->
+                <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-05', 'execUpdate(\'edit\')', '保存')}"></div>
+            </div>
+        </div>
+        <div id="msg-dialog-area">
+            <div th:replace="~{fragments/common/dialog :: messageFragment}"></div>
+        </div>
+        <script type="text/JavaScript" th:inline="JavaScript">
+            const token = /*[[${_csrf.token}]]*/;
+            const user = /*[[${user}]]*/;
+            const formEntity = /*[[${formEntity}]]*/;
+            const deleteCode = /*[[${deleteCode}]]*/;
+            const companyComboList = /*[[${companyComboList}]]*/;
+            const officeComboList = /*[[${officeComboList}]]*/;
+            const disposalSiteComboList = /*[[${disposalSiteComboList}]]*/;
+            const dateComboList = [
+                {"number":"update","text":"更新日"},
+                {"number":"regist","text":"登録日"},
+                {"number":"use", "text":"使用日"},
+                {"number":"delivery", "text":"引渡日"},
+                {"number":"shipping", "text":"発送日"},
+                {"number":"loss", "text":"ロス処理日"}
+            ]
+            let origin = /*[[${origin}]]*/; // 初期リスト記憶用
+        </script>
+        <script th:src="@{/js/recycle/recycle.js}"></script>
+        <script th:src="@{/js/recycle/config/regist.js}"></script>
+        <script th:src="@{/js/recycle/regist.js}"></script>
+    </main>
+
+</body>

@@ -1,8 +1,8 @@
 @charset "UTF-8";
 
 .tab-area {
-    display: grid;
-    grid-template-rows: auto 1fr;
+    /* display: grid;
+    grid-template-rows: auto 1fr; */
     max-width: 55rem;
 }
 

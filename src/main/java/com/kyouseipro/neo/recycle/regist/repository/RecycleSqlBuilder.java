@@ -79,30 +79,30 @@ public class RecycleSqlBuilder {
 
             buildOutputLog() + "INTO " + rowTableName  + " " +
             
-            "WHERE recycle_id = ? ; " +
+            "WHERE recycle_number = ? ; " +
 
             buildInsertLog(rowTableName, "UPDATE") +
 
             "SELECT recycle_id FROM " + rowTableName + ";";
     }
 
-    public static String buildInsertForDate(int index) {
-        String rowTableName = "@InsertedRows" + index;
-        return
-            buildLogTable(rowTableName) +
+    // public static String buildInsertForDate(int index) {
+    //     String rowTableName = "@InsertedRows" + index;
+    //     return
+    //         buildLogTable(rowTableName) +
 
-            "INSERT INTO recycles (" +
-            " recycle_number, molding_number, loss_date, update_date" +
-            ") " +
+    //         "INSERT INTO recycles (" +
+    //         " recycle_number, molding_number, loss_date, update_date" +
+    //         ") " +
 
-            buildOutputLog() + "INTO " + rowTableName + " " +
+    //         buildOutputLog() + "INTO " + rowTableName + " " +
 
-            "VALUES (?, ?, ?, ?); " +
+    //         "VALUES (?, ?, ?, ?); " +
 
-            buildInsertLog(rowTableName, "INSERT") +
+    //         buildInsertLog(rowTableName, "INSERT") +
 
-            "SELECT recycle_id FROM " + rowTableName + ";";
-    }
+    //         "SELECT recycle_id FROM " + rowTableName + ";";
+    // }
 
     public static String buildDelete(int index) {
         String rowTableName = "@UpdatedRows" + index;

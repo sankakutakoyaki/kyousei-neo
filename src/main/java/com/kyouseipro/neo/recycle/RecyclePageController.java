@@ -59,7 +59,7 @@ public class RecyclePageController extends BaseController {
         List<OfficeListEntity> officeComboList = comboBoxService.getOfficeList();
         model.addAttribute("officeComboList", officeComboList);
 
-        model.addAttribute("deleteCode", Enums.state.DELETE.getCode());
+        // model.addAttribute("deleteCode", Enums.state.DELETE.getCode());
 		
         return "contents/recycle/recycle";
     }

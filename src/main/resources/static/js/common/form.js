@@ -475,3 +475,62 @@ function setFormContentValue(form, name, value) {
         el.textContent = v;
     }
 }
+
+// 上下キーで日付を操作する
+function enableDateArrowControl(container) {
+    container.addEventListener('keydown', e => {
+        const el = document.activeElement;
+
+        if (!el || el.type !== 'date') return;
+        if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+
+        e.preventDefault();
+
+        const step = e.shiftKey ? 7 : 1;
+        const diff = e.key === 'ArrowUp' ? step : -step;
+
+        const base = el.value ? new Date(el.value) : new Date();
+        base.setDate(base.getDate() + diff);
+
+        el.value = base.toISOString().slice(0, 10);
+    });
+}
+
+// end-dateがある場合のみ、2つの日付を連動させる（start > end 防止）。
+function bindDateRange(startId, endId) {
+    const start = document.getElementById(startId);
+    const end = document.getElementById(endId);
+
+    // end-date が存在しない画面もある前提
+    if (!start || !end) return;
+
+    // start → end
+    start.addEventListener('change', () => {
+        if (!start.value) return;
+
+        end.min = start.value;
+
+        // start > end になったら end を補正
+        if (end.value && end.value < start.value) {
+            end.value = start.value;
+        }
+    });
+
+    // end → start
+    end.addEventListener('change', () => {
+        if (!end.value) return;
+
+        start.max = end.value;
+
+        // end < start になったら start を補正
+        if (start.value && start.value > end.value) {
+            start.value = end.value;
+        }
+    });
+
+    start.addEventListener('blur', () => {
+    if (end.value && start.value > end.value) {
+        end.value = start.value;
+    }
+});
+}

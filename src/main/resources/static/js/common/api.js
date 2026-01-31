@@ -92,7 +92,8 @@ async function searchFetch(url, data, token, contentType = "application/json") {
     return {
         ok: response.ok,
         status: response.status,
-        ...json
+        // ...json
+        data: json
     };
 }
 

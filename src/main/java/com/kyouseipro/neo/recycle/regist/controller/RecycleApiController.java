@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kyouseipro.neo.dto.ApiResponse;
 import com.kyouseipro.neo.dto.BetweenRequest;
+import com.kyouseipro.neo.dto.IdDateRequest;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.IdRequest;
 import com.kyouseipro.neo.dto.StringRequest;
@@ -34,27 +35,27 @@ public class RecycleApiController {
     private final RecycleService recycleService;
     private final ObjectMapper objectMapper;
 
-    /**
-     * IDからEntityを取得する
-     * @param ID
-     * @return 
-     */
-    @PostMapping("/get/id")
-	@ResponseBody
-    public ResponseEntity<RecycleEntity> getById(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(recycleService.getById(req.getId()).orElse(null));
-    }
+    // /**
+    //  * IDからEntityを取得する
+    //  * @param ID
+    //  * @return 
+    //  */
+    // @PostMapping("/get/id")
+	// @ResponseBody
+    // public ResponseEntity<RecycleEntity> getById(@RequestBody IdRequest req) {
+    //     return ResponseEntity.ok(recycleService.getById(req.getId()).orElse(null));
+    // }
 
-    /**
-     * 
-     * @param str
-     * @return
-     */
-    @PostMapping("/exists/number")
-    @ResponseBody
-    public ResponseEntity<RecycleEntity> findByNumber(@RequestBody StringRequest str) {
-        return ResponseEntity.ok(recycleService.existsByNumber(str.getValue()).orElse(null));
-    }
+    // /**
+    //  * 
+    //  * @param str
+    //  * @return
+    //  */
+    // @PostMapping("/exists/number")
+    // @ResponseBody
+    // public ResponseEntity<RecycleEntity> findByNumber(@RequestBody StringRequest str) {
+    //     return ResponseEntity.ok(recycleService.existsByNumber(str.getValue()).orElse(null));
+    // }
 
     /**
      * 
@@ -69,30 +70,43 @@ public class RecycleApiController {
         return recycleService.getBetween(req.getStart(), req.getEnd(), req.getType());
     }
 
+    // /**
+    //  * 情報を保存する
+    //  * @param ENTITY
+    //  * @return 
+    //  */
+    // @PostMapping("/save/{type}")
+	// @ResponseBody
+    // public ResponseEntity<ApiResponse<Integer>> save(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     Integer id = 0;
+    //     switch (type) {
+    //         case "regist":
+    //             List<RecycleEntity> itemList1 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleEntity>>() {});
+    //             id = recycleService.save(itemList1, userName);
+    //             break;
+    //         case "edit":
+    //             RecycleEntity entity = objectMapper.convertValue(body.get("entity"), new TypeReference<RecycleEntity>() {});
+    //             id = recycleService.update(entity, userName);
+    //             break;
+    //         // default:
+    //         //     List<RecycleDateEntity> itemList2 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
+    //         //     id = recycleService.updateForDate(itemList2, userName, type);
+    //         //     break;
+    //     }
+    //     return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+    // }
+
     /**
      * 情報を保存する
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/save/{type}")
+    @PostMapping("/update/{type}")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
+    public ResponseEntity<ApiResponse<Integer>> update(@RequestBody RecycleDateEntity req, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = 0;
-        switch (type) {
-            case "regist":
-                List<RecycleEntity> itemList1 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleEntity>>() {});
-                id = recycleService.save(itemList1, userName);
-                break;
-            case "edit":
-                RecycleEntity entity = objectMapper.convertValue(body.get("entity"), new TypeReference<RecycleEntity>() {});
-                id = recycleService.update(entity, userName);
-                break;
-            default:
-                List<RecycleDateEntity> itemList2 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleDateEntity>>() {});
-                id = recycleService.updateForDate(itemList2, userName, type);
-                break;
-        }
+        int id = recycleService.updateForDate(req, userName, type);
         return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
     }
 

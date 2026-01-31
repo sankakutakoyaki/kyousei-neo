@@ -238,8 +238,8 @@ async function execNumberSearch01(number) {
 window.addEventListener("load", async () => {
     // hamburgerItemAddSelectClass('.header-title', 'recycle');
     // hamburgerItemAddSelectClass('.normal-sidebar', 'maker');
-    // スピナー表示
-    startProcessing();
+    // // スピナー表示
+    // startProcessing();
 
     const config = MODE_CONFIG["01"];
     // 検索ボックス入力時の処理
@@ -255,6 +255,6 @@ window.addEventListener("load", async () => {
     // 画面更新
     await updateTableDisplay(config.tableId, config.footerId, config.searchId, origin, createTable01Content);
 
-    // スピナー消去
-    processingEnd();
+    // // スピナー消去
+    // processingEnd();
 });

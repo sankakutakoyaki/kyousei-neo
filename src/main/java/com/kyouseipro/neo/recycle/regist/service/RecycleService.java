@@ -21,32 +21,32 @@ import lombok.RequiredArgsConstructor;
 public class RecycleService {
     private final RecycleRepository recycleRepository;
 
-    /**
-     * IDによる取得。
-     * @param id
-     * @return IDから取得したEntityを返す。
-     */
-    public Optional<RecycleEntity> getById(int id) {
-        return recycleRepository.findById(id);
-    }
+    // /**
+    //  * IDによる取得。
+    //  * @param id
+    //  * @return IDから取得したEntityを返す。
+    //  */
+    // public Optional<RecycleEntity> getById(int id) {
+    //     return recycleRepository.findById(id);
+    // }
 
-    /**
-     * 指定されたNumberのリサイクル情報存在するか確認
-     * @param number
-     * @return RecycleEntity または null
-     */
-    public Optional<RecycleEntity> existsByNumber(String str) {
-        return recycleRepository.existsByNumber(str);
-    }
+    // /**
+    //  * 指定されたNumberのリサイクル情報存在するか確認
+    //  * @param number
+    //  * @return RecycleEntity または null
+    //  */
+    // public Optional<RecycleEntity> existsByNumber(String str) {
+    //     return recycleRepository.existsByNumber(str);
+    // }
 
-    /**
-     * Numberによる取得。
-     * @param number
-     * @return Numberから取得したEntityを返す。
-     */
-    public Optional<RecycleEntity> getByNumber(String number) {
-        return recycleRepository.findByNumber(number);
-    }
+    // /**
+    //  * Numberによる取得。
+    //  * @param number
+    //  * @return Numberから取得したEntityを返す。
+    //  */
+    // public Optional<RecycleEntity> getByNumber(String number) {
+    //     return recycleRepository.findByNumber(number);
+    // }
     
     /**
      * 指定した期間のEntityを取得。
@@ -59,34 +59,34 @@ public class RecycleService {
         return recycleRepository.findByBetween(start, end, col);
     }
 
-    /**
-     * Entityを登録・更新します。
-     * IDが０の時は登録・０以上の時は更新します。
-     * @param entity
-     * @param editor
-     * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
-    */
-    @HistoryTarget(
-        table = HistoryTables.RECYCLES,
-        action = "保存"
-    )
-    public int save(List<RecycleEntity> itemList, String editor) {
-        return recycleRepository.save(itemList, editor);
-    }
+    // /**
+    //  * Entityを登録・更新します。
+    //  * IDが０の時は登録・０以上の時は更新します。
+    //  * @param entity
+    //  * @param editor
+    //  * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
+    // */
+    // @HistoryTarget(
+    //     table = HistoryTables.RECYCLES,
+    //     action = "保存"
+    // )
+    // public int save(List<RecycleEntity> itemList, String editor) {
+    //     return recycleRepository.save(itemList, editor);
+    // }
 
-    /**
-     * リサイクル情報を更新します。
-     * @param entity
-     * @param editor
-     * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
-    */
-    @HistoryTarget(
-        table = HistoryTables.RECYCLEITEMS,
-        action = "更新"
-    )
-    public int update(RecycleEntity entity, String editor) {
-        return recycleRepository.update(entity, editor);
-    }
+    // /**
+    //  * リサイクル情報を更新します。
+    //  * @param entity
+    //  * @param editor
+    //  * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
+    // */
+    // @HistoryTarget(
+    //     table = HistoryTables.RECYCLEITEMS,
+    //     action = "更新"
+    // )
+    // public int update(RecycleEntity entity, String editor) {
+    //     return recycleRepository.update(entity, editor);
+    // }
 
     /**
      * 日付情報を登録・更新します。
@@ -99,8 +99,8 @@ public class RecycleService {
         table = HistoryTables.RECYCLEITEMS,
         action = "日付更新"
     )
-    public int updateForDate(List<RecycleDateEntity> itemList, String editor, String type) {
-        return recycleRepository.updateForDate(itemList, editor, type);
+    public int updateForDate(RecycleDateEntity entity, String editor, String type) {
+        return recycleRepository.updateForDate(entity, editor, type);
     }
 
     /**

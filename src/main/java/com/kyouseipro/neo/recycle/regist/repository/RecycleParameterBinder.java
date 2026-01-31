@@ -141,8 +141,8 @@ public class RecycleParameterBinder {
     }
 
     public static int bindInsertForDate(PreparedStatement ps, RecycleDateEntity r, String editor, int index) throws SQLException {
-        ps.setString(index++, r.getRecycleNumber());
-        ps.setString(index++, r.getMoldingNumber());
+        ps.setString(index++, r.getNumber());
+        ps.setString(index++, r.getMolding());
         ps.setDate(index++, java.sql.Date.valueOf(r.getDate()));
         ps.setTimestamp(index++, Timestamp.valueOf(LocalDateTime.now()));
         ps.setString(index++, editor);
@@ -184,15 +184,20 @@ public class RecycleParameterBinder {
         return index;
     }
     
-    public static int bindUpdateForDate(PreparedStatement pstmt, List<RecycleDateEntity> list, String editor) throws SQLException {
+    public static int bindUpdateForDate(PreparedStatement ps, RecycleDateEntity entity, String editor) throws SQLException {
         int index = 1;
-        for (RecycleDateEntity entity : list) {
-            if (entity.getRecycleId() > 0){
-                index = RecycleParameterBinder.bindUpdateForDate(pstmt, entity.getRecycleId(), entity.getDate(), editor, index);
-            } else {
-                index = RecycleParameterBinder.bindInsertForDate(pstmt, entity, editor, index);
-            }
-        }
+        ps.setDate(index++, java.sql.Date.valueOf(entity.getDate()));
+        ps.setTimestamp(index++, Timestamp.valueOf(LocalDateTime.now()));
+        ps.setString(index++, entity.getNumber());
+        ps.setString(index++, editor);
+        // return RecycleParameterBinder.bindUpdateForDate(pstmt, entity.getId(), entity.getDate(), editor, index);
+        // for (RecycleDateEntity entity : list) {
+        //     if (entity.getRecycleId() > 0){
+        //         index = RecycleParameterBinder.bindUpdateForDate(pstmt, entity.getRecycleId(), entity.getDate(), editor, index);
+        //     } else {
+        //         index = RecycleParameterBinder.bindInsertForDate(pstmt, entity, editor, index);
+        //     }
+        // }
         return index;
     }
 
