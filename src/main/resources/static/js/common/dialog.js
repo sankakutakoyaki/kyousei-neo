@@ -62,11 +62,11 @@ function openMsgDialog(dialogId, msg, color) {
     // ボタンを使用不可にする
     setInertState(true);
 
-    // ダイアログが重なる場合は背景を透明にする
-    const check = document.querySelector('.dialog');
-    if (check != null) {
-        check.classList.add('trans');
-    }
+    // // ダイアログが重なる場合は背景を透明にする
+    // const check = document.querySelector('.dialog');
+    // if (check != null) {
+    //     check.classList.add('trans');
+    // }
 
     // メッセージエリアにダイアログクラスを付与する
     const parent = document.getElementById('msg-dialog-area');
@@ -101,12 +101,12 @@ function closeMsgDialog(dialogId, e) {
     // メッセージ画面エリアからダイアログクラスを取り除く
     const mArea = document.getElementById('msg-dialog-area');
     if (mArea == null) return;
-    const fArea = document.getElementById('form-dialog-area');
-    // ダイアログが重なっている場合の処理
-    if (!fArea.querySelector(".dialog")) {
-        mArea.classList.remove('dialog');
-        fArea.classList.remove('trans');
-    }
+    // const fArea = document.getElementById('form-dialog-area');
+    // // ダイアログが重なっている場合の処理
+    // if (!fArea.querySelector(".dialog")) {
+    mArea.classList.remove('dialog');
+        // fArea.classList.remove('trans');
+    // }
 
     // メッセージ画面に[none]クラスを付与して画面を消去する
     const dialog = document.getElementById(dialogId);

@@ -86,15 +86,15 @@ async function execSave() {
 
         // 保存処理
         const result = await updateFetch("/api/working_conditions/save", JSON.stringify(formdata), token);
-        if (result?.ok) {
+        if (result?.ok) {                        
             // ダイアログを閉じる
             closeFormDialog('form-dialog-01');
+            // 画面更新
             await execUpdate();
             // 追加・変更行に移動
             const tableId = getTableIdByCategory(formdata.category);
             scrollIntoTableList(tableId, result.id);
             
-            // 画面更新
             openMsgDialog("msg-dialog", result.message, "blue");
         }
     }

@@ -119,13 +119,13 @@ function setFormContent(form, entity, tab) {
     };
 
     Object.entries(commonFields).forEach(([k, v]) =>
-        setValue(form, k, v)
+        setFormContentValue(form, k, v)
     );
 
     // フィールド反映
     config.fields.forEach(name => {
         const key = name.replace(/-/g, "_"); // JS ↔ Entity 対応
-        setValue(form, name, entity[key]);
+        setFormContentValue(form, name, entity[key]);
     });
 
     // 表示制御
@@ -134,10 +134,10 @@ function setFormContent(form, entity, tab) {
     });
 }
 
-function setValue(form, name, value) {
-    const el = form.querySelector(`[name="${name}"]`);
-    if (el) el.value = value ?? "";
-}
+// function setValue(form, name, value) {
+//     const el = form.querySelector(`[name="${name}"]`);
+//     if (el) el.value = value ?? "";
+// }
 
 /******************************************************************************************************* 保存 */
 
@@ -170,7 +170,7 @@ async function execSave() {
     });
 
     // ユーザー名
-    entity.user_name = user?.account ?? "kyousei@kyouseibin.com";
+    entity.user_name = user?.account ?? "guest@kyouseibin.com";
 
     // 保存
     const result = await updateFetch(

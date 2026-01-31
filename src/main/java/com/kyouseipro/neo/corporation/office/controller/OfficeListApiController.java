@@ -34,6 +34,16 @@ public class OfficeListApiController {
     }
 
     /**
+     * EntityListを取得する
+     * @return
+     */
+    @GetMapping("/get/client/list")
+	@ResponseBody
+    public List<OfficeListEntity> getClientList() {
+        return officeListService.getClientList();
+    }
+
+    /**
      * カテゴリー別のEntityListを取得する
      * @return
      */

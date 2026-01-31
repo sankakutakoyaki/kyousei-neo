@@ -79,7 +79,6 @@ public class CorporationPageController extends BaseController {
         model.addAttribute("officeComboList", officeComboList);
 
         // 保存用コード
-        model.addAttribute("categoryPartnerCode", Enums.clientCategory.PARTNER.getCode());
         model.addAttribute("categoryShipperCode", Enums.clientCategory.SHIPPER.getCode());
         model.addAttribute("categorySupplierCode", Enums.clientCategory.SUPPLIER.getCode());
         model.addAttribute("categoryServiceCode", Enums.clientCategory.SERVICE.getCode());

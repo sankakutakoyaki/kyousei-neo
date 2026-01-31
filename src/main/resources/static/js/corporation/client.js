@@ -73,25 +73,30 @@ async function execEdit(id, self) {
             case "02":
             case "03":
             case "04":
-            case "07":
                 entity.category = config.category;
                 break;
             case "05":
-                if (code01.value == "") {
+                const code51 = document.getElementById(config.codeBox);
+                if (code51.value == "") {
                     // ダイアログを閉じる
                     closeFormDialog(config.formDialogId);
                     return;
                 }
-                entity.companyId = code01.value;
+                entity.companyId = code51.value;
                 break;
             case "06":
-                if (name02.value < 1) {
+                const name61 = document.getElementById(config.nameBox);
+                const name62 = document.getElementById(config.nameBox2);
+                if (name61.value < 1) {
                     // ダイアログを閉じる
-                    closeFormDialog('form-dialog-02');
+                    closeFormDialog(config.formDialogId);
                     return;
                 }
-                entity.companyId = name02.value;
-                entity.officeId = name03.value;
+                entity.companyId = name61.value;
+                entity.officeId = name62.value;
+                const option = name61.selectedOptions[0];
+                entity.companyName = option ? option.text : "";
+
                 break;
             default:
                 break;
@@ -126,13 +131,15 @@ function setFormContent(form, entity, tab) {
     };
 
     Object.entries(commonFields).forEach(([k, v]) =>
-        setValue(form, k, v)
+        setFormContentValue(form, k, v)
     );
 
     // フィールド反映
     config.fields.forEach(name => {
-        const key = name.replace(/-/g, "_"); // JS ↔ Entity 対応
-        setValue(form, name, entity[key]);
+        // const key = name.replace(/-/g, "_"); // JS ↔ Entity 対応
+        const key = kebabToCamel(name);
+        // const key = camelToKebab(name);
+        setFormContentValue(form, name, entity[key]);
     });
 
     // 表示制御
@@ -141,10 +148,20 @@ function setFormContent(form, entity, tab) {
     });
 }
 
-function setValue(form, name, value) {
-    const el = form.querySelector(`[name="${name}"]`);
-    if (el) el.value = value ?? "";
-}
+// function setValue(form, name, value) {
+//     const el = form.querySelector(`[name="${name}"]`);
+//     if (!el) return;
+
+//     const v = value ?? "";
+
+//     if ('value' in el) {
+//         // input / select / textarea
+//         el.value = v;
+//     } else {
+//         // span / div / p など
+//         el.textContent = v;
+//     }
+// }
 
 /******************************************************************************************************* 保存 */
 
@@ -163,37 +180,37 @@ async function execSave() {
     const entity = config.baseEntity();
 
     // tab 固有項目
-    Object.entries(config.fields).forEach(([key, converter]) => {
-        const name = key.replace(/_/g, "-");
-        entity[key] = converter(formData.get(name));
+    Object.entries(config.fields).forEach(([key, field]) => {
+        const name = field.name ?? camelToKebab(key);
+        const raw  = formData.get(name);
+        entity[key] = field.convert(raw);
     });
 
     // 共通項目
     Object.entries(COMMON_FIELDS).forEach(([key, converter]) => {
-        const name = key.replace(/_/g, "-");
+        // const name = key.replace(/_/g, "-");
+        const name = camelToKebab(key);
         if (formData.has(name)) {
             entity[key] = converter(formData.get(name));
         }
     });
 
     // ユーザー名
-    entity.userName = user?.account ?? "kyousei@kyouseibin.com";
+    entity.userName = user?.account ?? "guest@kyouseibin.com";
 
     // 保存
     const result = await updateFetch(
         config.url,
         JSON.stringify(entity),
-        token,
-        "application/json"
+        token
     );
 
-    if (result.success) {
+    if (result.ok) {
         openMsgDialog("msg-dialog", result.message, "blue");
+
         await execUpdate();
-        scrollIntoTableList("table-" + tab + "-content", result.data);
+        scrollIntoTableList("table-" + tab + "-content", result);
         closeFormDialog(config.dialogId);
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
     }
 }
 
@@ -250,9 +267,9 @@ async function execDelete(self) {
 
     const result = await deleteTablelist(config.tableId, '/api/' + config.categoryName + '/delete');
 
-    if (result.ok) {                
-        await execUpdate();
+    if (result.ok) {
         openMsgDialog("msg-dialog", result.message, "blue");
+        await execUpdate();
     }
 }
 
@@ -276,8 +293,8 @@ async function execUpdate() {
 
     // entity ごとの元データ更新
     if (config.categoryName === "company") {
-        await updateCompanyOrigin();
-        await updateOfficeOrigin();
+        companyOrigin = await updateOrigin("company");
+        officeOrigin = await updateOrigin("office");
 
         const list = companyOrigin.filter(v => v.category === config.category);
 
@@ -289,13 +306,13 @@ async function execUpdate() {
             createTableContent
         );
 
-        makeSortable(config.tableId);
-        setPageTopButton(config.tableId);
+        // makeSortable(config.tableId);
+        // setPageTopButton(config.tableId);
         return;
     }
 
     if (config.categoryName === "office") {
-        await updateOfficeOrigin();
+        officeOrigin = await updateOrigin("office");
         await updateOfficeTableDisplay();
         return;
     }
@@ -304,16 +321,6 @@ async function execUpdate() {
         await updateStaffTableDisplay();
         return;
     }
-}
-
-// company-tab 更新処理
-async function updateCompanyOrigin() {
-    await updateOrigin("company");
-}
-
-// office-tab 更新処理
-async function updateOfficeOrigin() {
-    await updateOrigin("office");
 }
 
 // コンボ更新処理
@@ -335,53 +342,68 @@ async function updateOrigin(type) {
     targets.forEach(target => {
         createComboBoxWithTop(target, comboList, "");
     });
+
+    return window[config.originKey];
 }
 
-// 支店画面更新
+//　共通更新関数
+async function updateTableByCompany({
+    apiUrl,
+    extraFilter,        // (list, panel) => list
+    requireCompany = false
+}) {
+    const panel = document.querySelector('.tab-panel.is-show');
+    const tab = panel.dataset.panel;
+    const config = MODE_CONFIG[tab];
+    if (!config) return;
+
+    const code = panel.querySelector('[name="code"]');
+    const com = panel.querySelector('[name="company"]');
+
+    const codeValue = Number(com.value);
+    code.value = codeValue === 0 ? "" : codeValue;
+
+    if (requireCompany && codeValue < 1) return;
+
+    const res = await fetch(apiUrl);
+    const result = await res.json();
+    if (!result) return;
+
+    let list = result.filter(v => v.companyId === codeValue);
+
+    if (extraFilter) {
+        list = extraFilter(list, panel);
+    }
+
+    await updateTableDisplay(
+        config.tableId,
+        config.footerId,
+        config.searchId,
+        list,
+        createTableContent
+    );
+}
+
+//　支店画面更新
 async function updateOfficeTableDisplay() {
-    const panel = document.querySelector('.tab-panel.is-show');
-    const tab = panel.dataset.panel;
-    const config = MODE_CONFIG[tab];
-    if (!config) return;
-
-    const code = panel.querySelector('[name="code"]');
-    const com = panel.querySelector('[name="company"]');
-
-    const codeValue = com.value;
-    code.value = Number(codeValue) === 0 ? "": codeValue;
-    
-    const resultResponse = await fetch('api/office/get/list');
-    const result = await resultResponse.json();
-    if (result != null) {
-        const list = result.filter(function(value) { return value.company_id === Number(codeValue) });
-        await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
-    }
+    await updateTableByCompany({
+        apiUrl: 'api/office/get/client/list'
+    });
 }
 
-//staff画面更新
+// スタッフ画面更新
 async function updateStaffTableDisplay() {
-    const panel = document.querySelector('.tab-panel.is-show');
-    const tab = panel.dataset.panel;
-    const config = MODE_CONFIG[tab];
-    if (!config) return;
-
-    const code = panel.querySelector('[name="code"]');
-    const com = panel.querySelector('[name="company"]');
-
-    const codeValue = com.value;
-    code.value = Number(codeValue) === 0 ? "": codeValue;
-    if (codeValue < 1) return;
-
-    const resultResponse = await fetch('api/staff/get/list');
-    const result = await resultResponse.json();
-    if (result != null) {
-        let list = result.filter(function(value) { return value.company_id == codeValue});
-        const ofc = panel.querySelector('[name="office"]');
-        if (Number(ofc.value) > 0) {
-            list = list.filter(function(value) { return value.office_id == Number(ofc.value) });
+    await updateTableByCompany({
+        apiUrl: 'api/staff/get/list',
+        requireCompany: true,
+        extraFilter: (list, panel) => {
+            const ofc = panel.querySelector('[name="office"]');
+            const officeId = Number(ofc.value);
+            return officeId > 0
+                ? list.filter(v => v.officeId === officeId)
+                : list;
         }
-        await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
-    }
+    });
 }
 
 // 画面をフィルターにとおす
@@ -418,7 +440,7 @@ async function createOfficeComboBoxFromClient() {
         const companyArea = panel.querySelector('select[name="company"]');
         const officeArea = panel.querySelector('select[name="office"]');
         const selectId = companyArea.value;  
-        const list = result.filter(value => { return value.company_id === Number(selectId) }).map(item => ({number:item.office_id, text:item.name}));
+        const list = result.filter(value => { return value.companyId === Number(selectId) }).map(item => ({number:item.officeId, text:item.name}));
         createComboBoxWithTop(officeArea, list, "");
         officeArea.onchange = () => updateStaffTableDisplay();
     }
@@ -432,7 +454,7 @@ async function createFormOfficeComboBox(formId, id) {
         const form = document.getElementById(formId);
         const companyArea = form.querySelector('[name="company-id"]');
         const officeArea = form.querySelector('select[name="office"]');
-        const list = result.filter(value => { return value.company_id === Number(companyArea.value) }).map(item => ({number:item.office_id, text:item.name}));
+        const list = result.filter(value => { return value.companyId === Number(companyArea.value) }).map(item => ({number:item.officeId, text:item.name}));
         createComboBoxWithTop(officeArea, list, "");
         setComboboxSelected(officeArea, id);
     }

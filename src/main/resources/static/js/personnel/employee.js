@@ -173,7 +173,7 @@ async function execDelete(self) {
     
     const result = await deleteTablelist(config.tableId, '/api/employee/delete');
 
-    if (result.ok) {                
+    if (result.ok) {
         await execUpdate();
         openMsgDialog("msg-dialog", result.message, "blue");
     }

@@ -92,9 +92,6 @@ function checkTimeWorksStartSaved(entity) {
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 初期化時の処理
 window.addEventListener("load", async () => {
-    // hamburgerItemAddSelectClass('.header-title', 'personnel');
-    // hamburgerItemAddSelectClass('.normal-sidebar', 'timeworks');
-
     // 1秒ごとにclock関数を呼び出す
     setInterval(clock, 1000);
 

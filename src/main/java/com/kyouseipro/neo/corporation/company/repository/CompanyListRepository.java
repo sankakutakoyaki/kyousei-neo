@@ -24,7 +24,7 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<CompanyListEntity> findAll() {
-        String sql = "SELECT company_id, category, name, name_kana, tel_number, email FROM companies WHERE NOT (state = ?)";
+        String sql = "SELECT company_id, category, name, name_kana, tel_number, email FROM companies WHERE NOT (state = ?) ORDER BY name_kana";
 
         return sqlRepository.findAll(
             sql,
@@ -34,19 +34,20 @@ public class CompanyListRepository {
     }
 
     /**
-     * 荷主以外全件取得。
+     * パートナー以外の会社を全件取得。
      * 0件の場合は空リストを返す。
      * @return 取得したリストを返す
      */
     public List<CompanyListEntity> findAllClient() {
-        String sql = "SELECT * FROM companies WHERE NOT (state = ?) category = ?";
+        String sql = "SELECT * FROM companies WHERE NOT (state = ?) AND NOT (category = ? OR category = ?) ORDER BY category, name_kana;";
 
         return sqlRepository.findAll(
             sql,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, Enums.clientCategory.SHIPPER.getCode());
+                ps.setInt(index++, 0);
+                ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
             },
             CompanyListEntityMapper::map
         );
@@ -58,7 +59,7 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<CompanyListEntity> findAllPartner() {
-        String sql = "SELECT * FROM companies WHERE NOT (state = ?) AND category = ?";
+        String sql = "SELECT * FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana";
 
         return sqlRepository.findAll(
             sql,
@@ -77,7 +78,7 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<CompanyListEntity> findByCategoryId(int id) {
-        String sql = "SELECT * FROM companies WHERE NOT (state = ?) AND category = ?";
+        String sql = "SELECT * FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana";
 
         return sqlRepository.findAll(
             sql,
@@ -115,7 +116,7 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllCombo() {
-        String sql = "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) ORDER BY name_kana, category;";
+        String sql = "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) ORDER BY category, name_kana;";
 
         return sqlRepository.findAll(
             sql,
@@ -133,14 +134,15 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllClientCombo() {
-        String sql = "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana, category;";
+        String sql = "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND NOT (category = ? OR category = ?) ORDER BY name_kana;";
 
         return sqlRepository.findAll(
             sql,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, Enums.clientCategory.SHIPPER.getCode());
+                ps.setInt(index++, 0);
+                ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
             },
             SimpleDataMapper::map
         );

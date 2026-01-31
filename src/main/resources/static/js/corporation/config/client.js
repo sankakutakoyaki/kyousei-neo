@@ -1,22 +1,22 @@
 "use strict"
 
 const MODE_CONFIG = {
-    // "01": {
-    //     tableId: "table-01-content",
-    //     footerId: "footer-01",
-    //     searchId: "search-box-01",
-    //     category: categoryPartnerCode,
-    //     categoryName: "company",
-    //     dataId: "company_id",
-    //     formDialogId: "form-dialog-01",
-    //     formId: "form-01",
-    //     entity: companyEntity
-    // },
+    "01": {
+        tableId: "table-01-content",
+        footerId: "footer-01",
+        searchId: "search-box-01",
+        category: categoryShipperCode,
+        categoryName: "company",
+        dataId: "companyId",
+        formDialogId: "form-dialog-01",
+        formId: "form-01",
+        entity: companyEntity
+    },
     "02": {
         tableId: "table-02-content",
         footerId: "footer-02",
         searchId: "search-box-02",
-        category: categoryShipperCode,
+        category: categorySupplierCode,
         categoryName: "company",
         dataId: "companyId",
         formDialogId: "form-dialog-01",
@@ -27,7 +27,7 @@ const MODE_CONFIG = {
         tableId: "table-03-content",
         footerId: "footer-03",
         searchId: "search-box-03",
-        category: categorySupplierCode,
+        category: categoryServiceCode,
         categoryName: "company",
         dataId: "companyId",
         formDialogId: "form-dialog-01",
@@ -38,7 +38,7 @@ const MODE_CONFIG = {
         tableId: "table-04-content",
         footerId: "footer-04",
         searchId: "search-box-04",
-        category: categoryServiceCode,
+        category: categoryTransportCode,
         categoryName: "company",
         dataId: "companyId",
         formDialogId: "form-dialog-01",
@@ -53,7 +53,9 @@ const MODE_CONFIG = {
         dataId: "officeId",
         formDialogId: "form-dialog-01",
         formId: "form-01",
-        entity: officeEntity
+        entity: officeEntity,
+        codeBox: "code-box-51",
+        nameBox: "name-box-51"
     },
     "06": {
         tableId: "table-06-content",
@@ -63,34 +65,15 @@ const MODE_CONFIG = {
         dataId: "staffId",
         formDialogId: "form-dialog-02",
         formId: "form-02",
-        entity: staffEntity
-    },
-    "07": {
-        tableId: "table-07-content",
-        footerId: "footer-07",
-        searchId: "search-box-07",
-        category: categoryTransportCode,
-        categoryName: "company",
-        dataId: "companyId",
-        formDialogId: "form-dialog-01",
-        formId: "form-01",
-        entity: companyEntity
+        entity: staffEntity,
+        codeBox: "code-box-61",
+        nameBox: "name-box-61",
+        nameBox2: "name-box-62"
     }
 };
 
 const ID_CONFIG = {
-    // "01": {
-    //     common: true,
-    //     fields: [
-    //         "tel-number",
-    //         "fax-number",
-    //         "postal-code",
-    //         "full-address",
-    //         "web-address",
-    //         "category"
-    //     ]
-    // },
-    "02": {
+    "01": {
         common: true,
         fields: [
             "tel-number",
@@ -103,7 +86,7 @@ const ID_CONFIG = {
         ],
         show: ["priceArea"]
     },
-    "03": {
+    "02": {
         common: true,
         fields: [
             "tel-number",
@@ -114,7 +97,7 @@ const ID_CONFIG = {
             "category"
         ],
     },
-    "04": {
+    "03": {
         common: true,
         fields: [
             "tel-number",
@@ -123,6 +106,15 @@ const ID_CONFIG = {
             "full-address",
             "web-address",
             "category"
+        ]
+    },
+    "04": {
+        common: false,
+        fields: [
+            "category",
+            "staff-id",
+            "office-id",
+            "phone-number"
         ]
     },
     "05": {
@@ -143,35 +135,17 @@ const ID_CONFIG = {
             "postal-code",
             "full-address",
             "web-address",
-            "office-id"
-        ],
-        init: (config, entity) => {
-            createFormOfficeComboBox(config.formId, entity.office_id);
-        }
-    },
-    "07": {
-        common: false,
-        fields: [
-            "category",
             "staff-id",
             "office-id",
-            "phone-number"
-        ]
+            "company-name"
+        ],
+        init: (config, entity) => {
+            createFormOfficeComboBox(config.formId, entity.officeId);
+        }
     }
 };
 
 const SAVE_CONFIG = {
-    "06": {
-        formId: "form-02",
-        dialogId: "form-dialog-02",
-        url: "/api/staff/save",
-        baseEntity: () => structuredClone(staffEntity),
-        fields: {
-            staffId: v => Number(v),
-            officeId: v => Number(v),
-            phoneNumber: v => v.trim()
-        }
-    },
     "05": {
         formId: "form-01",
         dialogId: "form-dialog-01",
@@ -179,6 +153,17 @@ const SAVE_CONFIG = {
         baseEntity: () => structuredClone(officeEntity),
         fields: {
             officeId: v => Number(v)
+        }
+    },
+    "06": {
+        formId: "form-02",
+        dialogId: "form-dialog-02",
+        url: "/api/staff/save",
+        baseEntity: () => structuredClone(staffEntity),
+        fields: {
+            staffId:    { convert: Number },           // name = staff-id
+            officeId:   { name: 'office', convert: Number },
+            phoneNumber:{ convert: v => v.trim() }    // name = phone-number
         }
     },
     "default": {
@@ -212,28 +197,28 @@ const ORIGIN_CONFIG = {
         comboUrl: "/api/client/get/combo",
         originKey: "companyOrigin",
         comboKey: "companyComboList",
-        comboTargetIds: ["name-box-01", "name-box-02"]
+        comboTargetIds: ["name-box-51", "name-box-61"]
     },
     office: {
         listUrl: "/api/office/get/list",
         comboUrl: "/api/office/get/combo",
         originKey: "officeOrigin",
         comboKey: "officeComboList",
-        comboTargetIds: ["name-box-03"]
+        comboTargetIds: ["name-box-62"]
     }
 };
 
 const COMPANY_UI_CONFIG = [
     {
-        codeId: "code-box-01",
-        nameId: "name-box-01",
+        codeId: "code-box-51",
+        nameId: "name-box-51",
         onChange: async () => {
             await updateOfficeTableDisplay();
         }
     },
     {
-        codeId: "code-box-02",
-        nameId: "name-box-02",
+        codeId: "code-box-61",
+        nameId: "name-box-61",
         onChange: async () => {
             await updateStaffTableDisplay();
             createOfficeComboBoxFromClient();

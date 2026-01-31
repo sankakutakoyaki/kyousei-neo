@@ -15,7 +15,8 @@
     align-content: center;
 }
 
-.dialog.trans {
+ /* ダイアログが重なった時の処理 */
+#form-dialog-area.dialog:has(+ #msg-dialog-area.dialog) {
     background-color: transparent;
 }
 

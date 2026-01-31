@@ -11,14 +11,24 @@
     <main layout:fragment="content">
         <div class="tab-area">
             <ul class="tab-menu">
-                <li class="tab-menu-item is-active" data-tab="02">荷主</li>
-                <li class="tab-menu-item" data-tab="03">購買</li>
-                <li class="tab-menu-item" data-tab="04">サービス</li>
-                <li class="tab-menu-item" data-tab="07">運送</li>
+                <li class="tab-menu-item is-active" data-tab="01">荷主</li>
+                <li class="tab-menu-item" data-tab="02">購買</li>
+                <li class="tab-menu-item" data-tab="03">サービス</li>
+                <li class="tab-menu-item" data-tab="04">運送</li>
                 <li class="tab-menu-item" data-tab="05">支店</li>
                 <li class="tab-menu-item" data-tab="06">スタッフ</li>
             </ul>
-            <div class="tab-panel is-show" data-panel="02">
+            <div class="tab-panel is-show" data-panel="01">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-01')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/corporation/client :: mainFragment('table-01', 'table-01-content')}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-01" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
+                </div>
+            </div>
+            <div class="tab-panel" data-panel="02">
                 <div class="table-area">
                     <!-- ヘッダー -->
                     <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-02')}"></header>
@@ -48,20 +58,10 @@
                     <footer id="footer-04" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
                 </div>
             </div>
-            <div class="tab-panel" data-panel="07">
-                <div class="table-area">
-                    <!-- ヘッダー -->
-                    <header th:replace="~{fragments/corporation/client :: headerFragment('search-box-07')}"></header>
-                    <!-- コンテンツ -->
-                    <main th:replace="~{fragments/corporation/client :: mainFragment('table-07', 'table-07-content')}"></main>
-                    <!-- フッター -->
-                    <footer id="footer-07" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
-                </div>
-            </div>
             <div class="tab-panel" data-panel="05">
                 <div class="table-area">
                     <!-- ヘッダー -->
-                    <header th:replace="~{fragments/corporation/client :: headerOfficeFragment('code-box-01', 'name-box-01')}"></header>
+                    <header th:replace="~{fragments/corporation/client :: headerOfficeFragment('code-box-51', 'name-box-51')}"></header>
                     <!-- コンテンツ -->
                     <main th:replace="~{fragments/corporation/client :: mainFragment('table-05', 'table-05-content')}"></main>
                     <!-- フッター -->
@@ -71,7 +71,7 @@
             <div class="tab-panel" data-panel="06">
                 <div class="table-area">
                     <!-- ヘッダー -->
-                    <header th:replace="~{fragments/corporation/client :: headerStaffFragment('code-box-02', 'name-box-02', 'name-box-03')}"></header>
+                    <header th:replace="~{fragments/corporation/client :: headerStaffFragment('code-box-61', 'name-box-61', 'name-box-62')}"></header>
                     <!-- コンテンツ -->
                     <main th:replace="~{fragments/corporation/client :: mainStaffFragment('table-06', 'table-06-content')}"></main>
                     <!-- フッター -->
@@ -111,7 +111,6 @@
             const companyEntity = /*[[${companyEntity}]]*/;
             const officeEntity = /*[[${officeEntity}]]*/;
             const staffEntity = /*[[${staffEntity}]]*/;
-            const categoryPartnerCode = /*[[${categoryPartnerCode}]]*/;
             const categoryShipperCode = /*[[${categoryShipperCode}]]*/;
             const categorySupplierCode = /*[[${categorySupplierCode}]]*/;
             const categoryServiceCode = /*[[${categoryServiceCode}]]*/;

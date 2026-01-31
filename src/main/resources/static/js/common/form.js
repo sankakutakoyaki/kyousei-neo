@@ -459,3 +459,19 @@ function registerSearchEvents(ID_CONFIG) {
         );
     }
 }
+
+// setFormContentで、種類に応じて値を代入していく
+function setFormContentValue(form, name, value) {
+    const el = form.querySelector(`[name="${name}"]`);
+    if (!el) return;
+
+    const v = value ?? "";
+
+    if ('value' in el) {
+        // input / select / textarea
+        el.value = v;
+    } else {
+        // span / div / p など
+        el.textContent = v;
+    }
+}
