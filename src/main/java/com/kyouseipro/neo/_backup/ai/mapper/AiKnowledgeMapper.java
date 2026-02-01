@@ -1,9 +1,9 @@
-package com.kyouseipro.neo.ai.mapper;
+package com.kyouseipro.neo._backup.ai.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.kyouseipro.neo.ai.entity.AiKnowledge;
+import com.kyouseipro.neo._backup.ai.entity.AiKnowledge;
 
 public class AiKnowledgeMapper {
     public static AiKnowledge map(ResultSet rs) throws SQLException {

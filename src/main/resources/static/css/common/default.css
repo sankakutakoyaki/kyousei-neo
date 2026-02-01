@@ -96,6 +96,7 @@ body {
     height: 100%;
     overflow: auto;
     padding: 2rem 0;
+    min-width: 15rem;
 }
 
 .normal-sidebar>div.hamburger-item.selected {

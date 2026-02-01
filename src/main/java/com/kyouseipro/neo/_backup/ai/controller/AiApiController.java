@@ -1,11 +1,11 @@
-package com.kyouseipro.neo.ai.controller;
+package com.kyouseipro.neo._backup.ai.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.kyouseipro.neo.ai.service.AiQuestionService;
+import com.kyouseipro.neo._backup.ai.service.AiQuestionService;
 
 import lombok.RequiredArgsConstructor;
 

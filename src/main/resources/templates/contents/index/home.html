@@ -5,17 +5,18 @@
     <!-- 本体 -->
     <main layout:fragment="content">
         <!-- ボディ -->
-        <section>
-            <form class="input-prompt">
+        <section class="input-prompt">
+            <form id="ai-form">
                 <div class="flex-area">
-                    <input class="normal-input" type="text" name="question" placeholder="質問を入力してください" />
-                    <button class="normal-btn" type="button">質問</button>
+                    <input class="normal-input"
+                        type="text"
+                        name="question"
+                        placeholder="質問を入力してください" />
+                    <button class="normal-btn" type="submit">質問</button>
                 </div>
             </form>
 
-            <div th:if="${answer}">
-                <pre th:text="${answer}"></pre>
-            </div>
+            <div id="answer-area"></div>
         </section>
         <div id="form-dialog-area">
             <!-- フォーム画面をここに記入する -->

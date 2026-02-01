@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.ai.entity;
+package com.kyouseipro.neo._backup.ai.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

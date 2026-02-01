@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.kyouseipro.neo.abstracts.controller.BaseController;
 import com.kyouseipro.neo.common.ComboBoxService;
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.common.combo.entity.ComboData;
 import com.kyouseipro.neo.common.history.service.HistoryService;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.corporation.office.entity.OfficeListEntity;
@@ -52,12 +53,18 @@ public class RecyclePageController extends BaseController {
         // 初期表示用リスト取得
         List<RecycleEntity> origin = recycleService.getBetween(LocalDate.now(), LocalDate.now(), "regist");
         model.addAttribute("origin", origin);
-        // コンボボックスアイテム取得
+        // コンボボックスアイテム取得（自社含む小売業者）
         List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorListAddTopOfOwnCompany();
         model.addAttribute("companyComboList", companyComboList);
         // 支店リストを取得
         List<OfficeListEntity> officeComboList = comboBoxService.getOfficeList();
         model.addAttribute("officeComboList", officeComboList);
+        // メーカーコンボボックスアイテム取得
+        List<ComboData> makerComboList = comboBoxService.getRecycleMakerComboList();
+        model.addAttribute("makerComboList", makerComboList);
+        // 品目コンボボックスアイテム取得
+        List<ComboData> itemComboList = comboBoxService.getRecycleItemComboList();
+        model.addAttribute("itemComboList", itemComboList);
 
         // model.addAttribute("deleteCode", Enums.state.DELETE.getCode());
 		

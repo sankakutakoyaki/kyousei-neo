@@ -59,34 +59,34 @@ public class RecycleService {
         return recycleRepository.findByBetween(start, end, col);
     }
 
-    // /**
-    //  * Entityを登録・更新します。
-    //  * IDが０の時は登録・０以上の時は更新します。
-    //  * @param entity
-    //  * @param editor
-    //  * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
-    // */
-    // @HistoryTarget(
-    //     table = HistoryTables.RECYCLES,
-    //     action = "保存"
-    // )
-    // public int save(List<RecycleEntity> itemList, String editor) {
-    //     return recycleRepository.save(itemList, editor);
-    // }
+    /**
+     * Entityを登録・更新します。
+     * IDが０の時は登録・０以上の時は更新します。
+     * @param entity
+     * @param editor
+     * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
+    */
+    @HistoryTarget(
+        table = HistoryTables.RECYCLES,
+        action = "保存"
+    )
+    public int save(RecycleEntity entity, String editor) {
+        return recycleRepository.save(entity, editor);
+    }
 
-    // /**
-    //  * リサイクル情報を更新します。
-    //  * @param entity
-    //  * @param editor
-    //  * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
-    // */
-    // @HistoryTarget(
-    //     table = HistoryTables.RECYCLEITEMS,
-    //     action = "更新"
-    // )
-    // public int update(RecycleEntity entity, String editor) {
-    //     return recycleRepository.update(entity, editor);
-    // }
+    /**
+     * リサイクル情報を更新します。
+     * @param entity
+     * @param editor
+     * @return 成功した場合はIDまたは更新件数を返す。失敗した場合は０を返す。
+    */
+    @HistoryTarget(
+        table = HistoryTables.RECYCLEITEMS,
+        action = "更新"
+    )
+    public int update(RecycleEntity entity, String editor) {
+        return recycleRepository.update(entity, editor);
+    }
 
     /**
      * 日付情報を登録・更新します。

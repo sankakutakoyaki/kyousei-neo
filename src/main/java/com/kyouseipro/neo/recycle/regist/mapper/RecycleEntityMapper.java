@@ -10,7 +10,7 @@ public class RecycleEntityMapper {
         RecycleEntity entity = new RecycleEntity();
         entity.setRecycleId(rs.getInt("recycle_id"));
         entity.setRecycleNumber(rs.getString("recycle_number"));
-        entity.setMolding_number(rs.getString("molding_number"));
+        entity.setMoldingNumber(rs.getString("molding_number"));
         entity.setMakerId(rs.getInt("maker_id"));
         entity.setMakerCode(rs.getInt("maker_code"));
         entity.setMakerName(rs.getString("maker_name"));

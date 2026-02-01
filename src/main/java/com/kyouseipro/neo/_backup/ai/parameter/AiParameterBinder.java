@@ -1,9 +1,9 @@
-package com.kyouseipro.neo.ai.parameter;
+package com.kyouseipro.neo._backup.ai.parameter;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.kyouseipro.neo.ai.entity.AiInsertParam;
+import com.kyouseipro.neo._backup.ai.entity.AiInsertParam;
 
 public class AiParameterBinder {
     

@@ -1,13 +1,13 @@
-package com.kyouseipro.neo.ai.repository;
+package com.kyouseipro.neo._backup.ai.repository;
 
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.ai.entity.AiKnowledgeChunk;
-import com.kyouseipro.neo.ai.mapper.AiKnowledgeChunkMapper;
-import com.kyouseipro.neo.ai.parameter.AiParameterBinder;
-import com.kyouseipro.neo.ai.sql.AiSqlBuilder;
+import com.kyouseipro.neo._backup.ai.entity.AiKnowledgeChunk;
+import com.kyouseipro.neo._backup.ai.mapper.AiKnowledgeChunkMapper;
+import com.kyouseipro.neo._backup.ai.parameter.AiParameterBinder;
+import com.kyouseipro.neo._backup.ai.sql.AiSqlBuilder;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;

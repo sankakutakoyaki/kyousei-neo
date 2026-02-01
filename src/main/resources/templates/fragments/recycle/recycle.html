@@ -11,6 +11,10 @@
             </div>
             <!-- 各種ボタン -->
             <div class="kebab-btns">
+                <div class="img-btn" onclick="execEdit(this)">
+                    <img title="削除" src="/icons/edit.png">
+                    <span>編集</span>
+                </div>
                 <div class="img-btn" onclick="execDelete(this)">
                     <img title="削除" src="/icons/dust.png">
                     <span>削除</span>
@@ -31,7 +35,7 @@
                 <input th:id="${start}" class="normal-input date-area" type="date" value="" onfocus="this.select();">
                 <span class="pc-style">〜</span>
                 <input th:id="${end}" class="normal-input date-area" type="date" value="" onfocus="this.select();">
-                <button id="date-search-btn01" class="normal-btn ok" type="button" onclick="refleshDisplay()">
+                <button id="date-search-btn" class="normal-btn ok" type="button" onclick="refleshDisplay()">
                     <span>検索</span>
                 </button>                    
             </div>
@@ -42,37 +46,57 @@
         </div>
     </header>
     <header class="form-parts pc-style" th:fragment="header02Fragment(box, start)">
-        <!-- 期間指定ボックス -->
-        <div class="flex-area">
+        <div id="code-area" class="flex-area">
             <div class="form-parts">
-                <label></label>
-                <input tabindex="1" th:id="${start}" class="normal-input date-area" type="date" value="" onfocus="this.select();">
+                <label>ID</label>
+                <input tabindex="1" id="company-code02" name="company-code" class="normal-input" type="text" value="">
             </div>
             <div class="form-parts">
-                <label>お問合せ管理票番号</label>
-                <input tabindex="2" th:id="${box}" name="number" class="normal-input" type="text" data-reset value="" onfocus="this.select();">
+                <label>小売業者</label>
+                <select tabindex="2" id="company02" name="company" class="normal-select"></select>
+            </div>
+            <div class="form-parts">
+                <label>支店</label>
+                <select tabindex="3" id="office02" name="office" class="normal-select"></select>
+            </div>
+            <div class="form-parts">
+                <label></label>
+                <label class="checkbox-label"><input type="checkbox" id="fix-item-checkbox"><span>品目固定</span></label>
             </div>
         </div>
         <div class="flex-area">
             <div class="form-parts">
+                <label></label>
+                <input tabindex="4" th:id="${start}" class="normal-input date-area" type="date" value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>お問合せ管理票番号</label>
+                <input tabindex="5" th:id="${box}" name="number" class="normal-input" type="text" data-reset value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
                 <label>品目・料金区分</label>
-                <input tabindex="2" id="item-code" name="item-code" class="normal-input" type="text" data-reset
+                <input tabindex="6" id="item-code02" name="item-code" class="normal-input" type="text" data-reset
                     value="" onfocus="this.select();">
             </div>
             <div class="form-parts">
                 <label></label>
-                <input id="item-name" name="item-name" class="normal-input" type="text" readonly data-reset
+                <input id="item-name02" name="item-name" class="normal-input" type="text" readonly data-reset
                     value="" onfocus="this.select();">
             </div>
             <div class="form-parts">
                 <label>製造業者等名</label>
-                <input tabindex="3" id="maker-code" name="maker-code" class="normal-input" type="text" data-reset
+                <input tabindex="7" id="maker-code02" name="maker-code" class="normal-input" type="text" data-reset
                     value="" onfocus="this.select();">
             </div>
             <div class="form-parts">
                 <label></label>
-                <input id="maker-name" name="maker-name" class="normal-input" type="text" readonly data-reset
+                <input id="maker-name02" name="maker-name" class="normal-input" type="text" readonly data-reset
                     value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label></label>
+                <button tabindex="17" id="regist-btn11" name="regist-btn" class="normal-btn ok" type="button"
+                    onclick="execRegist()"><span>登録</span></button>
             </div>
         </div>
     </header>
@@ -81,72 +105,72 @@
         <div class="flex-area">
             <div class="form-parts">
                 <label>伝票番号</label>
-                <input tabindex="1" id="number" name="number" class="normal-input" type="text" data-reset
+                <input tabindex="1" id="number11" name="number" class="normal-input" type="text" data-reset
                     value="" onfocus="this.select();">
             </div>
         </div>
         <div class="flex-area">
             <div class="form-parts">
                 <label>品目・料金区分</label>
-                <input tabindex="2" id="item-code" name="item-code" class="normal-input" type="text" data-reset
+                <input tabindex="2" id="item-code11" name="item-code" class="normal-input" type="text" data-reset
                     value="" onfocus="this.select();">
             </div>
             <div class="form-parts">
                 <label></label>
-                <input id="item-name" name="item-name" class="normal-input" type="text" readonly data-reset
+                <input id="item-name" name="item-name11" class="normal-input" type="text" readonly data-reset
                     value="" onfocus="this.select();">
             </div>
         </div>
         <div class="flex-area">
             <div class="form-parts">
                 <label>製造業者等名</label>
-                <input tabindex="3" id="maker-code" name="maker-code" class="normal-input" type="text" data-reset
+                <input tabindex="3" id="maker-code11" name="maker-code" class="normal-input" type="text" data-reset
                     value="" onfocus="this.select();">
             </div>
             <div class="form-parts">
                 <label></label>
-                <input id="maker-name" name="maker-name" class="normal-input" type="text" readonly data-reset
+                <input id="maker-name" name="maker-name11" class="normal-input" type="text" readonly data-reset
                     value="" onfocus="this.select();">
             </div>
             <div class="form-parts">
                 <label>リサイクル料</label>
-                <input tabindex="4" id="recycling-fee" name="recycling-fee" class="normal-input text-right" data-reset
+                <input tabindex="4" id="recycling-fee11" name="recycling-fee" class="normal-input text-right" data-reset
                     type="text" value="" onfocus="this.select();">
             </div>
         </div>
         <div class="flex-area">
             <div class="form-parts">
                 <label>使用日</label>
-                <input tabindex="5" id="use-date" name="use-date" class="normal-input" type="date" value="" data-reset
+                <input tabindex="5" id="use-date11" name="use-date" class="normal-input" type="date" value="" data-reset
                     onfocus="this.select();">
             </div>
             <div class="form-parts">
                 <label>引渡日</label>
-                <input tabindex="6" id="delivery-date" name="delivery-date" class="normal-input" type="date" value="" data-reset
+                <input tabindex="6" id="delivery-date11" name="delivery-date" class="normal-input" type="date" value="" data-reset
                     onfocus="this.select();">
             </div>
             <div class="form-parts">
                 <label>発送日</label>
-                <input tabindex="7" id="shipping-date" name="shipping-date" class="normal-input" type="date" value="" data-reset
+                <input tabindex="7" id="shipping-date11" name="shipping-date" class="normal-input" type="date" value="" data-reset
                     onfocus="this.select();">
             </div>
             <div class="form-parts">
                 <label>ロス処理日</label>
-                <input tabindex="8" id="loss-date" name="loss-date" class="normal-input" type="date" value="" data-reset
+                <input tabindex="8" id="loss-date11" name="loss-date" class="normal-input" type="date" value="" data-reset
                     onfocus="this.select();">
             </div>
         </div>
         <div class="flex-area">
             <div class="form-parts">
                 <label>小売業者</label>
-                <select tabindex="9" id="company" name="company" data-reset
+                <select tabindex="9" id="company11" name="company" data-reset
                     class="normal-select"></select>
             </div>
         </div>
         <div class="flex-area">
             <div class="form-parts">
                 <label>支店</label>
-                <select tabindex="10" id="office" name="office" data-reset
+                <select tabindex="10" id="office11" name="office" data-reset
                     class="normal-select"></select>
             </div>
         </div>
@@ -159,9 +183,9 @@
                 <th><span>お問合せ管理票番号</span></th>
                 <th><span>使用日</span><br><span>引渡日</span></th>
                 <th><span>発送日</span><br><span>ロス処理日</span></th>
-                <th><span>登録日</span><br><span>伝票番号</span></th>
-                <th><span>小売業者</span></th>
+                <th><span>登録日</span><br><span>伝票番号</span></th>                
                 <th><span>製造業者等名</span><br><span>品目・料金区分</span></th>
+                <th><span>小売業者</span></th>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>
         </table>
@@ -183,9 +207,12 @@
     <main th:fragment="main02Fragment(tableId, scrollId, title)">
         <table th:id="${tableId}" class="normal-table">
             <tr name="table-header" class="pc-style">
-                <th><span>お問合せ管理票番号</span><br><span th:value="${title}"></span></th>
+                <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
+                <th><span>お問合せ管理票番号</span></th>
+                <th><span th:text="${title}"></span></th>
+                <th><span>製造業者等名</span></th>
+                <th><span>品目・料金区分</span></th>
                 <th><span>小売業者</span></th>
-                <th><span>製造業者等名</span><br><span>品目・料金区分</span></th>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>
         </table>

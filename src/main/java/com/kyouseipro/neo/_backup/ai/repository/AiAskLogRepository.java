@@ -1,10 +1,10 @@
-package com.kyouseipro.neo.ai.repository;
+package com.kyouseipro.neo._backup.ai.repository;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.ai.entity.AiInsertParam;
-import com.kyouseipro.neo.ai.parameter.AiParameterBinder;
-import com.kyouseipro.neo.ai.sql.AiSqlBuilder;
+import com.kyouseipro.neo._backup.ai.entity.AiInsertParam;
+import com.kyouseipro.neo._backup.ai.parameter.AiParameterBinder;
+import com.kyouseipro.neo._backup.ai.sql.AiSqlBuilder;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;

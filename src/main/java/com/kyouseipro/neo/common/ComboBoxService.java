@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.combo.entity.ComboData;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.corporation.company.repository.CompanyListRepository;
 import com.kyouseipro.neo.corporation.office.entity.OfficeListEntity;
@@ -253,7 +254,18 @@ public class ComboBoxService {
         return list;        
     }
 
+    // グループ用
     public List<SimpleData> getRecycleGroupList() {
         return recycleRepository.findGroupCombo();
+    }
+
+    // メーカー用
+    public List<ComboData> getRecycleMakerComboList() {
+        return recycleRepository.findRecycleMakerCombo();
+    }
+
+    // 品目用
+    public List<ComboData> getRecycleItemComboList() {
+        return recycleRepository.findRecycleItemCombo();
     }
 }

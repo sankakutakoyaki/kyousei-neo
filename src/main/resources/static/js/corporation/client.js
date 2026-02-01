@@ -417,19 +417,19 @@ async function execFilterDisplay(self) {
 
 }
 
-// 初期化処理登録
-function initCompanyInputs() {
-    COMPANY_UI_CONFIG.forEach(cfg => {
-        const codeElm = document.getElementById(cfg.codeId);
-        const nameElm = document.getElementById(cfg.nameId);
+// // 初期化処理登録
+// function initCompanyInputs() {
+//     COMPANY_UI_CONFIG.forEach(cfg => {
+//         const codeElm = document.getElementById(cfg.codeId);
+//         const nameElm = document.getElementById(cfg.nameId);
 
-        // code → combo
-        bindCodeInput(codeElm, nameElm, cfg.onChange);
+//         // code → combo
+//         bindCodeInput(codeElm, nameElm, cfg.onChange);
 
-        // combo change
-        initCompanyCombo(nameElm, cfg.onChange);
-    });
-}
+//         // combo change
+//         initCompanyCombo(nameElm, cfg.onChange);
+//     });
+// }
 
 // 選択した会社の支店をコンボボックスに登録する
 async function createOfficeComboBoxFromClient() {

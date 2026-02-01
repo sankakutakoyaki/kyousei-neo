@@ -1,15 +1,11 @@
 @charset "UTF-8";
 
-.time-btn button {
-    margin-bottom: 1rem;
-}
-
-.time-btn span {
-    text-align: center;
-}
-
 .input-prompt {
     margin-top: 3rem;
-    width: 30rem;
+    width: 40rem;
     justify-self: center;
+}
+
+#ai-form {
+    margin-bottom: 2rem;
 }

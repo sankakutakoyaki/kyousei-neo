@@ -61,6 +61,8 @@
             const deleteCode = /*[[${deleteCode}]]*/;
             const companyComboList = /*[[${companyComboList}]]*/;
             const officeComboList = /*[[${officeComboList}]]*/;
+            const makerComboList = /*[[${makerComboList}]]*/;
+            const itemComboList = /*[[${itemComboList}]]*/;
             const disposalSiteComboList = /*[[${disposalSiteComboList}]]*/;
             const dateComboList = [
                 {"number":"update","text":"更新日"},
@@ -71,6 +73,7 @@
                 {"number":"loss", "text":"ロス処理日"}
             ]
             let origin = /*[[${origin}]]*/; // 初期リスト記憶用
+            let tempElm = {};
         </script>
         <script th:src="@{/js/recycle/recycle.js}"></script>
         <script th:src="@{/js/recycle/config/regist.js}"></script>

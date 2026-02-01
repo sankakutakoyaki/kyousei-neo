@@ -30,10 +30,10 @@ function createTableContent(tableId, list) {
 function createTableRow(newRow, item, tab) {
     // 選択用チェックボックス
     newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
+    // お問合せ管理票番号
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.moldingNumber ?? "") + '</span></span></td>');
     switch (tab) {
         case "01":
-            // お問合せ管理票番号
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.moldingNumber ?? "") + '</span></span></td>');
             // 使用日　引渡日
             newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.useDate == '9999-12-31' ? "-----": item.useDate) + '</span><br><span>' + (item.deliveryDate == '9999-12-31' ? "-----": item.deliveryDate) + '</span></td>');
             // 発送日　ロス処理日
@@ -42,31 +42,33 @@ function createTableRow(newRow, item, tab) {
             newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.registDate == '9999-12-31' ? "-----": item.registDate) + '</span><br><span>' + (item.slipNumber ?? "-----") + '</span></td>');
             break;
         case "02":
-            // お問合せ管理票番号 使用日
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.moldingNumber ?? "") + '</span><br><span>' + (item.useDate == '9999-12-31' ? "-----": item.useDate) + '</span></td>');
+            // 使用日
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.useDate == '9999-12-31' ? "-----": item.useDate) + '</span></td>');
             break;
         case "03":
-            // お問合せ管理票番号 引渡日
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.moldingNumber ?? "") + '</span><br><span>' + (item.deliveryDate == '9999-12-31' ? "-----": item.deliveryDate) + '</span></td>');
+            // 引渡日
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.deliveryDate == '9999-12-31' ? "-----": item.deliveryDate) + '</span></td>');
             break;
         case "04":
-            // お問合せ管理票番号 使用日
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.moldingNumber ?? "") + '</span><br><span>' + (item.shippingDate == '9999-12-31' ? "-----": item.shippingDate) + '</span></td>');
+            // 使用日
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.shippingDate == '9999-12-31' ? "-----": item.shippingDate) + '</span></td>');
             break;
         case "05":
-            // お問合せ管理票番号 使用日
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.moldingNumber ?? "") + '</span><br><span>' + (item.lossDate == '9999-12-31' ? "-----": item.lossDate) + '</span></td>');
+            // 使用日
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.lossDate == '9999-12-31' ? "-----": item.lossDate) + '</span></td>');
             break;
     }
+    // 製造業者等名
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.makerName ?? "") + '</span></td>');
+    // 品目・料金区分
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.itemName ?? "") + '</span></td>');
     // 小売業者
-    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.companyName ?? "") + '</span><br><span>' + (item.officeName ?? "") + '</span></td>');
-    // 製造業者等名　品目・料金区分
-    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.makerName ?? "") + '</span><br><span>' + (item.itemName ?? "") + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.companyName ?? "") + (item.officeName ?? "") + '</span></td>');
 }
 
 /******************************************************************************************************* 入力画面 */
 
-// 商品登録画面を開く
+// 登録画面を開く
 async function execEdit(id, tab, self) {
     // let entity = {};
     // const config = MODE_CONFIG[tab];
@@ -123,7 +125,7 @@ function resetFormInput(tab) {
 async function execNumberBlur(e, tab) {
     if (e.currentTarget == null) return;
 
-    const config = ID_CONFIG[tab];
+    const config = MODE_CONFIG[tab];
     if (config.number.value == null) return;
 
     // 入力値が正しいかチェックする
@@ -142,8 +144,9 @@ async function execNumberBlur(e, tab) {
     // 0000-00000000-0 に成型する
     const molNumber = moldingNumber(number);
 
-    config.recycleNumber.value = number;
-    config.moldingNumber.value = molNumber;
+    tempElm.recycleNumber = number;
+    tempElm.moldingNumber = molNumber;
+
     config.number.value = molNumber;
 
     if (tab !== "01" && tab !== "02") {
@@ -151,68 +154,37 @@ async function execNumberBlur(e, tab) {
     }
 }
 
-// コードから[maker]を取得して、名前を表示
-async function execMakerCodeBlur(e, tab) {
+// コードから名前を表示
+function execCodeBlur(e, tab, mode) {
     e.preventDefault();
-    if (e.currentTarget == null) return;
+    if (!e.currentTarget) return;
 
-    const config = ID_CONFIG[tab];
-    const makerCode = config.makerCode;
-    const makerName = config.makerName;
-    const makerId = config.makerId;
+    const modeCfg = MODE_CONFIG[tab][mode];
+    const codeEl = modeCfg.code;
+    const nameEl = modeCfg.name;
 
-    if (makerCode.value === "" || isNaN(makerCode.value)) {
-        makerCode.value = "";
-        makerName.value = "";
-        makerId.value = "";
+    if (codeEl.value === "" || isNaN(codeEl.value)) {
+        clearFields(codeEl, nameEl);
         return;
     }
 
-    const entity = await getMakerByCode(Number(makerCode.value));
-    if (entity != null && entity.recycleMakerId > 0) {
-        makerName.value = entity.abbrName;
-        makerId.value = entity.recycleMakerId;
-    } else {
-        makerCode.value = "";
-        makerName.value = "";
-        makerId.value = "";
-        openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
-        setFocusElement("msg-dialog", makerCode);
+    const code = Number(codeEl.value);
+    
+    const codeCfg = CODE_CONFIG[mode];
+    const entity = codeCfg.list.find(v => v.number === code);
 
-        const dialog = document.getElementById("msg-dialog");
-        const focusBtn = dialog.querySelector('[name="focus-btn"]');
-        if (focusBtn != null) focusBtn.focus();
+    if (entity && entity.id > 0) {
+        nameEl.value = entity.text;
+        tempElm[codeCfg.idKey] = entity.id;
+    } else {
+        clearFields(codeEl, nameEl);
+        openMsgDialog("msg-dialog", "コードが登録されていません", "red");
+        setFocusElement("msg-dialog", codeEl);
     }
 }
 
-// コードから[item]を取得して、名前を表示
-async function execItemCodeBlur(e, tab) {
-    e.preventDefault();
-    if (e.currentTarget == null) return;
-
-    const config = ID_CONFIG[tab];
-    const itemCode = config.itemCode;
-    const itemName = config.itemName;
-    const itemId = config.itemId;
-
-    if (itemCode.value === "" || isNaN(itemCode.value)) {
-        itemCode.value = "";
-        itemName.value = "";
-        itemId.value = "";
-        return;
-    }
-
-    const entity = await getItemByCode(Number(itemCode.value));
-    if (entity != null && entity.recycleItemId > 0) {
-        itemName.value = entity.name;
-        itemId.value = entity.recycleItemId;
-    } else {
-        itemCode.value = "";
-        itemName.value = "";
-        itemId.value = "";
-        openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
-        setFocusElement("msg-dialog", itemCode);
-    }
+function clearFields(...els) {
+    els.forEach(el => el.value = "");
 }
 
 /******************************************************************************************************* 削除 */
@@ -251,35 +223,57 @@ async function execDelete(self) {
 //     // ダイアログを閉じる
 //     closeFormDialog(config.formId);
 // }
+// 新規作成処理
+async function execRegist() {
+    const config = MODE_CONFIG["02"];
 
-// // 更新処理
-// async function execUpdate(tab) {
-//     const config = MODE_CONFIG[tab];
+    if (!validateByConfig(config.panel, { ...ERROR_CONFIG.recycle, tab: "02" })) {
+        return;
+    }
 
-//     const form = document.getElementById(config.formId);
-//     if (!validateByConfig(form, { ...ERROR_CONFIG.recycle, tab: tab })) {
-//         return;
-//     }
+    // tempElm.useDate = config.start;
+    const data = buildEntityFromForm(config.panel, tempElm, SAVE_FORM_CONFIG["02"]);
 
-//     const formdata = setInsertFormData(form);
-//     const result = await updateFetch("/api/recycle/save/" + tab, JSON.stringify({entity:formdata}), token);
-//     if (result.ok) {
-//         // // 画面更新
-//         // await refleshDisplay();
-//         // openMsgDialog("msg-dialog", result.message, "blue");
-//     }
+    const result = await updateFetch("/api/recycle/save/regist", JSON.stringify(data), token);
+    if (result.ok) {
+        // ダイアログを閉じる
+        closeFormDialog(config.dialogId);
+        // 画面更新
+        await refleshDisplay();
+        openMsgDialog("msg-dialog", result.message, "blue");
+    }
+}
 
-//     // ダイアログを閉じる
-//     closeFormDialog(config.dialogId);
-// }
+// 更新処理
+async function execSave() {
+    const config = MODE_CONFIG("06");
+
+    if (!validateByConfig(config.panel, { ...ERROR_CONFIG.recycle, tab: tab })) {
+        return;
+    }
+
+    // const formdata = setInsertFormData(form);
+    const result = await updateFetch("/api/recycle/save/edit", JSON.stringify(tempElm), token);
+    if (result.ok) {
+        // // 画面更新
+        // await refleshDisplay();
+        // openMsgDialog("msg-dialog", result.message, "blue");
+    }
+
+    // ダイアログを閉じる
+    closeFormDialog(config.dialogId);
+}
 
 // 更新処理
 async function execDateUpdate(tab) {
     const config = MODE_CONFIG[tab];
 
+    if (!validateByConfig(config.panel, { ...ERROR_CONFIG.recycle, tab: tab })) {
+        return;
+    }
 
     const formdata = {id:0, number:config.number.value, date:config.start.velue} 
-    const result = await updateFetch("/api/recycle/save/" + tab, JSON.stringify({entity:formdata}), token);
+    const result = await updateFetch("/api/recycle/update/" + tab, JSON.stringify({entity:formdata}), token);
     if (result.ok) {
         // // 画面更新
         // await refleshDisplay();
@@ -316,7 +310,10 @@ async function refleshDisplay() {
 
 function clearTable(e) {
     const tab = e.currentTarget.dataset.tab;
-    console.log(tab);
+    const cfg = MODE_CONFIG[tab];
+    cfg.start.focus();
+
+    tempElm = structuredClone(formEntity);
 }
 
 /******************************************************************************************************* チェック時の処理 */
@@ -337,6 +334,18 @@ function itemCheckedAfter() {
     resetEnterFocus();
 }
 
+// 選択した会社の支店をコンボボックスに登録する
+async function updateOfficeCombo(tab) {
+    const cfg = COMPANY_COMBO_CONFIG[tab];
+
+    const companyArea = document.getElementById(cfg.nameId)
+    const officeArea = document.getElementById(cfg.officeId)
+    const selectId = companyArea.value;  
+
+    const list = officeComboList.filter(value => { return value.companyId === Number(selectId) }).map(item => ({number:item.officeId, text:item.name}));
+    createComboBoxWithTop(officeArea, list, "");
+}
+
 /******************************************************************************************************* 初期化時 */
 
 // ページ読み込み後の処理
@@ -346,6 +355,8 @@ window.addEventListener("load", async () => {
     const dateCategoryArea = document.querySelector('select[name="date-category"]');
     createComboBoxValueString(dateCategoryArea, dateComboList);
 
+    const date = new Date();
+
     for (const tab of Object.keys(MODE_CONFIG)) {
         let config = MODE_CONFIG[tab];
         if (config != null) {
@@ -353,13 +364,23 @@ window.addEventListener("load", async () => {
             if (config.number) {
                 config.number.addEventListener('blur', function (e) { execNumberBlur(e, tab); });
             }
+
             let panel = document.querySelector('[data-panel="' + tab + '"]');
             setEnterFocus(panel);
+
             if (tab === "02") {
                 // メーカーコード入力ボックスのフォーカスが外れた時の処理を登録
-                config.makerCode.addEventListener('blur', function (e) { execMakerCodeBlur(e, tab); });
+                config.makerCode.addEventListener('blur', function (e) { execCodeBlur(e, tab, 'maker'); });
                 // 品目コード入力ボックスのフォーカスが外れた時の処理を登録
-                config.itemCode.addEventListener('blur', function (e) { execItemCodeBlur(e, tab); });
+                config.itemCode.addEventListener('blur', function (e) { execCodeBlur(e, tab, 'item'); });
+            }
+
+            if (tab === "01") {
+                execSpecifyPeriod("today", 'start-date01', 'end-date01');
+            } else {
+                if (config.start) {
+                    config.start.value = date.toLocaleDateString('sv-SE');
+                }
             }
         }
     }
@@ -377,7 +398,11 @@ window.addEventListener("load", async () => {
         await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTableContent);
     }, false);
 
-    execSpecifyPeriod("today", 'start-date01', 'end-date01');
+    initCompanyInputs();
+    const companyCombo = document.getElementById('company02');
+    setComboboxSelected(companyCombo, 1000);
+    const cfg = MODE_CONFIG["01"];
+    cfg.start.focus();
 
     // 画面更新
     await refleshDisplay();

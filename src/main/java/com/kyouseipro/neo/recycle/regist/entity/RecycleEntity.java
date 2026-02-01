@@ -11,7 +11,7 @@ import lombok.Data;
 public class RecycleEntity implements CsvExportable {
     private int recycleId;
     private String recycleNumber;//　お問合せ管理票番号
-    private String molding_number;//　成形後の管理票番号
+    private String moldingNumber;//　成形後の管理票番号
     private int makerId;//　メーカー
     private int makerCode;
     private String makerName;
@@ -42,7 +42,7 @@ public class RecycleEntity implements CsvExportable {
     @Override
     public String toCsvRow() {
         return Utilities.escapeCsv(String.valueOf(recycleId)) + "," +
-               Utilities.escapeCsv(molding_number) + "," +
+               Utilities.escapeCsv(moldingNumber) + "," +
                Utilities.escapeCsv(String.valueOf(makerCode)) + "," +
                Utilities.escapeCsv(makerName) + "," +
                Utilities.escapeCsv(String.valueOf(itemCode)) + "," +

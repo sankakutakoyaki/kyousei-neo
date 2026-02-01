@@ -1,9 +1,9 @@
-package com.kyouseipro.neo.ai.mapper;
+package com.kyouseipro.neo._backup.ai.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.kyouseipro.neo.ai.entity.AiPromptTemplate;
+import com.kyouseipro.neo._backup.ai.entity.AiPromptTemplate;
 
 public class AiPromptTemplateMapper {
     public static AiPromptTemplate map(ResultSet rs) throws SQLException {

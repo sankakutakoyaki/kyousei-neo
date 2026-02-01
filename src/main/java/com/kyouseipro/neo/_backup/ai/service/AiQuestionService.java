@@ -1,16 +1,16 @@
-package com.kyouseipro.neo.ai.service;
+package com.kyouseipro.neo._backup.ai.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.kyouseipro.neo.ai.api.AiApiClient;
-import com.kyouseipro.neo.ai.entity.AiKnowledgeChunk;
-import com.kyouseipro.neo.ai.entity.AiPromptTemplate;
-import com.kyouseipro.neo.ai.repository.AiAskLogRepository;
-import com.kyouseipro.neo.ai.repository.AiKnowledgeChunkRepository;
-import com.kyouseipro.neo.ai.repository.AiPromptTemplateRepository;
+import com.kyouseipro.neo._backup.ai.api.AiApiClient;
+import com.kyouseipro.neo._backup.ai.entity.AiKnowledgeChunk;
+import com.kyouseipro.neo._backup.ai.entity.AiPromptTemplate;
+import com.kyouseipro.neo._backup.ai.repository.AiAskLogRepository;
+import com.kyouseipro.neo._backup.ai.repository.AiKnowledgeChunkRepository;
+import com.kyouseipro.neo._backup.ai.repository.AiPromptTemplateRepository;
 
 import lombok.RequiredArgsConstructor;
 

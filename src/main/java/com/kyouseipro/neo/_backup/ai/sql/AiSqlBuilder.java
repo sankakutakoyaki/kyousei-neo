@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.ai.sql;
+package com.kyouseipro.neo._backup.ai.sql;
 
 public class AiSqlBuilder {
     

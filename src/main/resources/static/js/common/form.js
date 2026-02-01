@@ -283,6 +283,20 @@ async function openFormByMode(mode, modeConfig) {
     resetEnterFocus();
 }
 
+// コード付きの会社選択ボックスを登録する
+function initCompanyInputs() {
+    COMPANY_UI_CONFIG.forEach(cfg => {
+        const codeElm = document.getElementById(cfg.codeId);
+        const nameElm = document.getElementById(cfg.nameId);
+
+        // code → combo
+        bindCodeInput(codeElm, nameElm, cfg.onChange);
+
+        // combo change
+        initCompanyCombo(nameElm, cfg.onChange);
+    });
+}
+
 // コードBOX変更時の処理
 function bindCodeInput(codeInput, nameSelect, onBlurCallback) {
 

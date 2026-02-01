@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.ai.api;
+package com.kyouseipro.neo._backup.ai.api;
 
 public interface AiApiClient {
 

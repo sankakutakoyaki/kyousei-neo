@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 
-
 public class SimpleDataMapper {
     public static SimpleData map(ResultSet rs) throws SQLException {
         SimpleData entity = new SimpleData();

@@ -375,18 +375,18 @@ async function execFilterDisplay(self) {
     await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
 }
 
-function initCompanyInputs() {
-    COMPANY_UI_CONFIG.forEach(cfg => {
-        const codeElm = document.getElementById(cfg.codeId);
-        const nameElm = document.getElementById(cfg.nameId);
+// function initCompanyInputs() {
+//     COMPANY_UI_CONFIG.forEach(cfg => {
+//         const codeElm = document.getElementById(cfg.codeId);
+//         const nameElm = document.getElementById(cfg.nameId);
 
-        // code → combo
-        bindCodeInput(codeElm, nameElm, cfg.onChange);
+//         // code → combo
+//         bindCodeInput(codeElm, nameElm, cfg.onChange);
 
-        // combo change
-        initCompanyCombo(nameElm, cfg.onChange);
-    });
-}
+//         // combo change
+//         initCompanyCombo(nameElm, cfg.onChange);
+//     });
+// }
 
 function refleshCode() {
     code01.value = code01.value !== name01.value ? name01.value: code01.value;

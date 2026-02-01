@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.common.combo.entity.ComboData;
+import com.kyouseipro.neo.common.combo.mapper.ComboDataMapper;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
@@ -88,67 +90,68 @@ public class RecycleRepository {
         );
     }
 
-    // /**
-    //  * 新規作成。
-    //  * @param list
-    //  * @param editor
-    //  * @return 新規IDを返す。
-    //  */
-    // public int save(List<RecycleEntity> list, String editor) {
-    //     StringBuilder sql = new StringBuilder();
-    //     int index = 1;
+    /**
+     * 新規作成。
+     * @param entity
+     * @param editor
+     * @return 新規IDを返す。
+     */
+    public int save(RecycleEntity entity, String editor) {
+        // StringBuilder sql = new StringBuilder();
+        // int index = 1;
 
-    //     for (RecycleEntity entity : list) {
-    //         if (entity.getState() == Enums.state.DELETE.getCode()) {
-    //             sql.append(RecycleSqlBuilder.buildDelete(index++));
-    //         } else if (entity.getRecycleId() > 0) {
-    //             sql.append(RecycleSqlBuilder.buildUpdate(index++));
-    //         } else {
-    //             sql.append(RecycleSqlBuilder.buildInsert(index++));
-    //         }
-    //     }
+        // for (RecycleEntity entity : list) {
+        //     if (entity.getState() == Enums.state.DELETE.getCode()) {
+        //         sql.append(RecycleSqlBuilder.buildDelete(index++));
+        //     } else if (entity.getRecycleId() > 0) {
+        //         sql.append(RecycleSqlBuilder.buildUpdate(index++));
+        //     } else {
+        //         sql.append(RecycleSqlBuilder.buildInsert(index++));
+        //     }
+        // }
+        String sql = RecycleSqlBuilder.buildInsert(1);
 
-    //     try {
-    //         return sqlRepository.executeRequired(
-    //             sql.toString(),
-    //             (ps, en) -> RecycleParameterBinder.bindSave(ps, list, editor),
-    //             rs -> 1,   // ← IDは見ない
-    //             list
-    //         );
-    //     } catch (RuntimeException e) {
-    //         if (SqlExceptionUtil.isDuplicateKey(e)) {
-    //             throw new BusinessException("この番号はすでに使用されています。");
-    //         }
-    //         throw e;
-    //     }
-    // }
+        try {
+            return sqlRepository.executeRequired(
+                sql.toString(),
+                (ps, en) -> RecycleParameterBinder.bindInsert(ps, entity, editor, 1),
+                rs -> 1,   // ← IDは見ない
+                entity
+            );
+        } catch (RuntimeException e) {
+            if (SqlExceptionUtil.isDuplicateKey(e)) {
+                throw new BusinessException("この番号はすでに使用されています。");
+            }
+            throw e;
+        }
+    }
 
-    // /**
-    //  * 更新。
-    //  * @param entity
-    //  * @return 成功件数を返す。
-    //  */
-    // public int update(RecycleEntity entity, String editor) {
-    //     String sql = RecycleSqlBuilder.buildUpdate(1);
-    //     try {
-    //         int count = sqlRepository.executeUpdate(
-    //             sql,
-    //             ps -> RecycleParameterBinder.bindUpdate(ps, entity, editor, 1)
-    //         );
+    /**
+     * 更新。
+     * @param entity
+     * @return 成功件数を返す。
+     */
+    public int update(RecycleEntity entity, String editor) {
+        String sql = RecycleSqlBuilder.buildUpdate(1);
+        try {
+            int count = sqlRepository.executeUpdate(
+                sql,
+                ps -> RecycleParameterBinder.bindUpdate(ps, entity, editor, 1)
+            );
 
-    //         if (count == 0) {
-    //             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-    //         }
+            if (count == 0) {
+                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
+            }
 
-    //         return count;
+            return count;
 
-    //     } catch (RuntimeException e) {
-    //         if (SqlExceptionUtil.isDuplicateKey(e)) {
-    //             throw new BusinessException("この番号はすでに使用されています。");
-    //         }
-    //         throw e;
-    //     }
-    // }
+        } catch (RuntimeException e) {
+            if (SqlExceptionUtil.isDuplicateKey(e)) {
+                throw new BusinessException("この番号はすでに使用されています。");
+            }
+            throw e;
+        }
+    }
 
     /**
      * 日付の更新
@@ -248,12 +251,40 @@ public class RecycleRepository {
      * @return
      */
     public List<SimpleData> findGroupCombo() {
-        String sql = RecycleSqlBuilder.buildFindGroupCombo();
+        String sql = "SELECT recycle_group_id as number, name as text FROM recycle_groups WHERE NOT (state = ?)";
         
         return sqlRepository.findAll(
             sql,
-            (ps, v) -> RecycleParameterBinder.bindFindGroupCombo(ps, null),
+            (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
             SimpleDataMapper::map // ← ここで ResultSet を map
+        );
+    }
+
+    /**
+     * リサイクルメーカーコンボボックス用のリストを取得する
+     * @return
+     */
+    public List<ComboData> findRecycleMakerCombo() {
+        String sql = "SELECT recycle_maker_id as id, code as number, name as text FROM recycle_makers WHERE NOT (state = ?)";
+        
+        return sqlRepository.findAll(
+            sql,
+            (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
+            ComboDataMapper::map // ← ここで ResultSet を map
+        );
+    }
+
+    /**
+     * リサイクル品目コンボボックス用のリストを取得する
+     * @return
+     */
+    public List<ComboData> findRecycleItemCombo() {
+        String sql = "SELECT recycle_item_id as id, code as number, name as text FROM recycle_items WHERE NOT (state = ?)";
+        
+        return sqlRepository.findAll(
+            sql,
+            (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
+            ComboDataMapper::map // ← ここで ResultSet を map
         );
     }
 }

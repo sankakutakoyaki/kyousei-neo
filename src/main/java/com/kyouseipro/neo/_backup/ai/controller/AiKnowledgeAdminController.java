@@ -1,11 +1,11 @@
-package com.kyouseipro.neo.ai.controller;
+package com.kyouseipro.neo._backup.ai.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.kyouseipro.neo.ai.repository.AiKnowledgeRepository;
+import com.kyouseipro.neo._backup.ai.repository.AiKnowledgeRepository;
 
 import lombok.RequiredArgsConstructor;
 
