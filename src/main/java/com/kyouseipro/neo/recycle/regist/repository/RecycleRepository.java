@@ -26,21 +26,21 @@ import lombok.RequiredArgsConstructor;
 public class RecycleRepository {
     private final SqlRepository sqlRepository;
     
-    // /**
-    //  * IDによる取得。
-    //  * @param orderId
-    //  * @return IDから取得したEntityをかえす。
-    //  */
-    // public Optional<RecycleEntity> findById(int id) {
-    //     String sql = RecycleSqlBuilder.buildFindById();
+    /**
+     * IDによる取得。
+     * @param orderId
+     * @return IDから取得したEntityをかえす。
+     */
+    public Optional<RecycleEntity> findById(int id) {
+        String sql = RecycleSqlBuilder.buildFindById();
 
-    //     return sqlRepository.executeQuery(
-    //         sql,
-    //         (ps, en) -> RecycleParameterBinder.bindFindById(ps, en),
-    //         rs -> rs.next() ? RecycleEntityMapper.map(rs) : null,
-    //         id
-    //     );
-    // }
+        return sqlRepository.executeQuery(
+            sql,
+            (ps, en) -> RecycleParameterBinder.bindFindById(ps, en),
+            rs -> rs.next() ? RecycleEntityMapper.map(rs) : null,
+            id
+        );
+    }
 
     // /**
     //  * お問合せ管理票番号でアイテムを抽出
@@ -111,11 +111,29 @@ public class RecycleRepository {
         // }
         String sql = RecycleSqlBuilder.buildInsert(1);
 
+        // try {
+        //     return sqlRepository.executeQuery(
+        //         sql,
+        //         (ps, en) -> RecycleParameterBinder.bindInsert(ps, entity, editor, 1),
+        //         // rs -> 1,   // ← IDは見ない
+        //         rs -> rs.next() ? RecycleEntityMapper.map(rs) : null,
+        //         entity
+        //     );
         try {
             return sqlRepository.executeRequired(
-                sql.toString(),
+                sql,
                 (ps, en) -> RecycleParameterBinder.bindInsert(ps, entity, editor, 1),
-                rs -> 1,   // ← IDは見ない
+                rs -> {
+                    if (!rs.next()) {
+                        throw new BusinessException("登録に失敗しました");
+                    }
+                    int id = rs.getInt("recycle_id");
+
+                    if (rs.next()) {
+                        throw new IllegalStateException("ID取得結果が複数行です");
+                    }
+                    return id;
+                },
                 entity
             );
         } catch (RuntimeException e) {
@@ -134,6 +152,12 @@ public class RecycleRepository {
     public int update(RecycleEntity entity, String editor) {
         String sql = RecycleSqlBuilder.buildUpdate(1);
         try {
+            // return sqlRepository.executeQuery(
+            //     sql,
+            //     (ps, en) -> RecycleParameterBinder.bindUpdate(ps, entity, editor, 1),
+            //     rs -> rs.next() ? RecycleEntityMapper.map(rs) : null,
+            //     entity
+            // );
             int count = sqlRepository.executeUpdate(
                 sql,
                 ps -> RecycleParameterBinder.bindUpdate(ps, entity, editor, 1)

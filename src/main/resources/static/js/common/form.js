@@ -460,6 +460,29 @@ function buildEntityFromForm(form, baseEntity, config) {
     return entity;
 }
 
+// 要素からentityへ変換する
+function buildEntityFromElement(area, baseEntity, config) {
+    // const fd = new FormData(form);
+    const entity = structuredClone(baseEntity);
+
+    config.forEach(c => {
+        let v = area.querySelector('[name="' + c.name + '"')?.value;
+
+        if (c.trim && typeof v === 'string') {
+        v = v.trim();
+        }
+        if ((v === '' || v == null) && c.emptyTo !== undefined) {
+        v = c.emptyTo;
+        }
+        if (c.number && v !== '' && v != null) {
+        v = Number(v);
+        }
+        entity[c.key] = v;
+    });
+
+    return entity;
+}
+
 // 検索ボックスの初期設定
 function registerSearchEvents(ID_CONFIG) {
     for (const cfg of Object.values(ID_CONFIG)) {

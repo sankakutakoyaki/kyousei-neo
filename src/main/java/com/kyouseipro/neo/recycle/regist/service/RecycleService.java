@@ -70,8 +70,14 @@ public class RecycleService {
         table = HistoryTables.RECYCLES,
         action = "保存"
     )
-    public int save(RecycleEntity entity, String editor) {
-        return recycleRepository.save(entity, editor);
+    public Optional<RecycleEntity> save(RecycleEntity entity, String editor) {
+        // return recycleRepository.save(entity, editor);
+        int id = recycleRepository.save(entity, editor);
+        if (id > 0) {
+            return recycleRepository.findById(id);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -84,8 +90,14 @@ public class RecycleService {
         table = HistoryTables.RECYCLEITEMS,
         action = "更新"
     )
-    public int update(RecycleEntity entity, String editor) {
-        return recycleRepository.update(entity, editor);
+    public Optional<RecycleEntity> update(RecycleEntity entity, String editor) {
+        // return recycleRepository.update(entity, editor);
+        int id = recycleRepository.save(entity, editor);
+        if (id > 0) {
+            return recycleRepository.findById(id);
+        } else {
+            return null;
+        }
     }
 
     /**

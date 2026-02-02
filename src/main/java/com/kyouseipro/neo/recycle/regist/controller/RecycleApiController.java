@@ -77,22 +77,24 @@ public class RecycleApiController {
      */
     @PostMapping("/save/{type}")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody RecycleEntity entity, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
+    public ResponseEntity<RecycleEntity> save(@RequestBody RecycleEntity entity, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
         String userName = principal.getAttribute("preferred_username");
-        Integer id = 0;
         switch (type) {
             case "regist":
                 // List<RecycleEntity> itemList1 = objectMapper.convertValue(body.get("list"), new TypeReference<List<RecycleEntity>>() {});
-                id = recycleService.save(entity, userName);
-                break;
+                // id = recycleService.save(entity, userName);
+                return ResponseEntity.ok(recycleService.save(entity, userName).orElse(null));
+                // break;
             case "edit":
                 // RecycleEntity entity = objectMapper.convertValue(body.get("entity"), new TypeReference<RecycleEntity>() {});
-                id = recycleService.update(entity, userName);
-                break;
+                // id = recycleService.update(entity, userName);
+                return ResponseEntity.ok(recycleService.update(entity, userName).orElse(null));
+                // break;
             default:
-                break;
+                return null;
+                // break;
         }
-        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        // return ResponseEntity.ok(ApiResponse.ok("保存しました。", entity));
     }
 
     /**

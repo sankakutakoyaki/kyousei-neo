@@ -241,6 +241,8 @@ const DEFAULT_DATE = "9999-12-31";
 
 const SAVE_FORM_CONFIG = {
     "02": [
+        { name: 'company', key: 'companyId' },
+        { name: 'office', key: 'officeId' },
         { name: 'use-date', key: 'useDate' }
     ],
     "03": [

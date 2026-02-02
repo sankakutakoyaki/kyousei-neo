@@ -26,6 +26,7 @@ public class RecycleSqlBuilder {
     }
 
     private static String buildOutputLog() {
+        // return "OUTPUT INSERTED.* ";
         return
             "OUTPUT INSERTED.recycle_id, INSERTED.recycle_number, INSERTED.molding_number, INSERTED.maker_id, INSERTED.item_id," +
             "  INSERTED.use_date, INSERTED.delivery_date, INSERTED.shipping_date, INSERTED.loss_date," +

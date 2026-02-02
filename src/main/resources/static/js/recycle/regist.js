@@ -58,10 +58,23 @@ function createTableRow(newRow, item, tab) {
             newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.lossDate == '9999-12-31' ? "-----": item.lossDate) + '</span></td>');
             break;
     }
-    // 製造業者等名
-    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.makerName ?? "") + '</span></td>');
-    // 品目・料金区分
-    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.itemName ?? "") + '</span></td>');
+    switch (tab) {
+        case "01":
+            // 製造業者等名
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.makerName ?? "") + '</span><br<span>' + (item.itemName ?? "") + '</span></td>');
+            break;
+        case "02",
+             "03",
+             "04",
+             "05":
+            // 製造業者等名
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.makerName ?? "") + '</span></td>');
+            // 品目・料金区分
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.itemName ?? "") + '</span></td>');
+            break;
+        default:
+            break;
+    }
     // 小売業者
     newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.companyName ?? "") + (item.officeName ?? "") + '</span></td>');
 }
@@ -133,7 +146,7 @@ async function execNumberBlur(e, tab) {
 
     // Null、または不正な値はエラー
     if (number == null) {
-        clearNumber(config.number);
+        config.number.value = null;
         return;   
     } else if (!number) {
         openMsgDialog("msg-dialog", "不正な番号です。", 'red');
@@ -191,15 +204,15 @@ function clearFields(...els) {
 
 // 削除する
 async function execDelete(self) {
-    const area = self.closest('[data-tab]');
+    const area = self.closest('[data-panel]');
     if (!area) return;
-    const config = MODE_CONFIG[area.dataset.tab];
+    const config = MODE_CONFIG[area.dataset.panel];
 
     const result = await deleteTablelist(config.tableId, '/api/recycle/delete');
 
     if (result.ok) {
         await refleshDisplay();
-        openMsgDialog("msg-dialog", result.message, "blue");
+        openMsgDialog("msg-dialog", result.data.message, "blue");
     }
 }
 
@@ -225,22 +238,20 @@ async function execDelete(self) {
 // }
 // 新規作成処理
 async function execRegist() {
-    const config = MODE_CONFIG["02"];
+    const cfg = MODE_CONFIG["02"];
 
-    if (!validateByConfig(config.panel, { ...ERROR_CONFIG.recycle, tab: "02" })) {
+    if (!validateByConfig(cfg.panel, { ...ERROR_CONFIG.recycle, tab: "02" })) {
         return;
     }
 
-    // tempElm.useDate = config.start;
-    const data = buildEntityFromForm(config.panel, tempElm, SAVE_FORM_CONFIG["02"]);
+    const data = buildEntityFromElement(cfg.panel, tempElm, SAVE_FORM_CONFIG["02"]);
 
     const result = await updateFetch("/api/recycle/save/regist", JSON.stringify(data), token);
     if (result.ok) {
-        // ダイアログを閉じる
-        closeFormDialog(config.dialogId);
-        // 画面更新
-        await refleshDisplay();
-        openMsgDialog("msg-dialog", result.message, "blue");
+        itemList.push(result.data);
+        await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, itemList, createTableContent);
+        resetFormInput("02");
+        cfg.number.focus();
     }
 }
 
@@ -309,11 +320,12 @@ async function refleshDisplay() {
 }
 
 function clearTable(e) {
+    itemList = [];
+    tempElm = structuredClone(formEntity);
+
     const tab = e.currentTarget.dataset.tab;
     const cfg = MODE_CONFIG[tab];
     cfg.start.focus();
-
-    tempElm = structuredClone(formEntity);
 }
 
 /******************************************************************************************************* チェック時の処理 */
@@ -326,10 +338,12 @@ function itemCheckedAfter() {
         // チェックON → 固定 → reset対象から外す
         itemInput.readOnly = true;
         itemInput.removeAttribute("tabindex");
+        itemInput.removeAttribute("data-reset");
     } else {
         // チェックOFF → reset対象に戻す
         itemInput.readOnly = false;
-        itemInput.setAttribute("tabindex", "2");
+        itemInput.setAttribute("tabindex", "6");
+        itemInput.setAttribute("data-reset");
     }
     resetEnterFocus();
 }
@@ -401,6 +415,8 @@ window.addEventListener("load", async () => {
     initCompanyInputs();
     const companyCombo = document.getElementById('company02');
     setComboboxSelected(companyCombo, 1000);
+    updateOfficeCombo("02");
+
     const cfg = MODE_CONFIG["01"];
     cfg.start.focus();
 
