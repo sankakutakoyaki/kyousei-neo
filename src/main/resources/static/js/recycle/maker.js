@@ -72,7 +72,10 @@ async function execCreate01(self) {
         formdata.abbrName = formData.get('maker-abbr').trim();
 
         const result = execSave(config.tableId, config.footerId, config.searchId, formdata, createTable01Content);
-        if (result.ok) {
+        if (result) {
+            closeFormDialog('form-dialog-01');
+
+            await refleshDisplay();
             openMsgDialog("msg-dialog", "保存しました", "blue");
         }
     }
@@ -152,27 +155,29 @@ async function handleTdChange(editor) {
             break;
     }
 
-    const result = await execSave(config.tableId, config.footerId, config.searchId, ent, createTable01Content);
-    if (!result.ok) reverseCode(config.tableId, ent.recycleMakerId, type);
+    const result = await execSave(config.tableId, ent);
+    if (!result) reverseCode(config.tableId, ent.recycleMakerId, type);
 }
 
 // 保存処理
-async function execSave(tableId, footerId, searchId, ent, createContent) {
+async function execSave(tableId, ent) {
     // 保存処理
-    const result = await updateFetch("/api/recycle/maker/save", JSON.stringify(ent), token, "application/json");
+    const result = await updateFetch("/api/recycle/maker/save", JSON.stringify(ent), token);
 
     if (result.ok) {
         // 画面更新
-        origin = await execUpdate();
-        await updateTableDisplay(tableId, footerId, searchId, origin, createContent);
+        refleshDisplay();
+        // origin = await execUpdate();
+        // await updateTableDisplay(tableId, footerId, searchId, origin, createContent);
         // 追加・変更行に移動
         scrollIntoTableList(tableId, result.data.recycleMakerId);
     // } else {
     //     reverseCode(tableId, ent.recycle_maker_id);
     //     // openMsgDialog("msg-dialog", result.message, "red");
+        return true;
+    } else {
+        return false;
     }
-
-    return result;
 }
 
 // 変更した部分を元に戻す
@@ -195,7 +200,9 @@ async function execDelete01(self) {
     const result = await deleteTablelist(config.tableId, '/api/recycle/maker/delete');
 
     if (result.ok) {
-        await updateTableDisplay(config.tableId, config.footerId, config.searchId, origin, createTable01Content);
+        closeFormDialog('form-dialog-01');
+
+        await refleshDisplay();
         openMsgDialog("msg-dialog", result.data.message, "blue");
     }
 }
@@ -210,8 +217,12 @@ async function execDownloadCsv01(self) {
 /******************************************************************************************************* 画面更新 */
 // 画面を更新する
 async function refleshDisplay() {
-    const cfg = MODE_CONFIG["01"];
-    const btn = document.querySelector('.norml-btn.selected');
+    // 最新のリストを取得
+    const resultResponse = await fetch('/api/recycle/maker/get/list');
+    origin = await resultResponse.json();
+
+    // const cfg = MODE_CONFIG["01"];
+    const btn = document.querySelector('[name="filter-area"] .normal-btn.selected');
     const num = btn.dataset.code;
 
     execNumberSearch01(num, btn);
@@ -228,17 +239,17 @@ function addSelectClassToEntity(areaId) {
     item.classList.add('selected');
 }
 
-// 最新のリストを取得
-async function execUpdate() {
-    const resultResponse = await fetch('/api/recycle/maker/get/list');
+// // 最新のリストを取得
+// async function execUpdate() {
+//     const resultResponse = await fetch('/api/recycle/maker/get/list');
 
-    if (!resultResponse) {
-        openMsgDialog("msg-dialog", "一覧の取得に失敗しました", "red");
-        return origin;
-    }
+//     if (!resultResponse) {
+//         openMsgDialog("msg-dialog", "一覧の取得に失敗しました", "red");
+//         return origin;
+//     }
 
-    return await resultResponse.json();
-}
+//     return await resultResponse.json();
+// }
 
 async function execNumberSearch01(number, self) {
     const items = document.querySelectorAll('[name="filter-area"] .normal-btn');
@@ -282,6 +293,8 @@ window.addEventListener("load", async () => {
     // 作成フォームのグループコンボボックス
     const groupArea = document.getElementById('maker-group')
     createComboBoxWithTop(groupArea, groupComboList, "");
+
+    setEnterFocus(config.formId);
 
     // 画面更新
     await updateTableDisplay(config.tableId, config.footerId, config.searchId, origin, createTable01Content);
