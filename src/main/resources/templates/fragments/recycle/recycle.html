@@ -28,9 +28,8 @@
         <!-- 期間指定ボックス -->
         <div class="flex-area">
             <!-- フィルターボックス -->
-            <!-- <div class="flex-area"> -->
-                <select id="date-category" name="date-category" class="normal-select"></select> 
-            <!-- </div> -->
+            <select id="date-category" name="date-category" class="normal-select"></select> 
+            <!-- 日付範囲ボックス -->
             <div>
                 <input th:id="${start}" class="normal-input date-area" type="date" value="" onfocus="this.select();">
                 <span class="pc-style">〜</span>
@@ -45,6 +44,7 @@
             <div th:replace="~{fragments/common/header::header-week-move-btn-fragment('__${start}__', '__${end}__')}"></div>
         </div>
     </header>
+
     <header class="form-parts pc-style" th:fragment="header02Fragment(box, start)">
         <div id="code-area" class="flex-area">
             <div class="form-parts">
@@ -66,7 +66,7 @@
         </div>
         <div class="flex-area">
             <div class="form-parts">
-                <label></label>
+                <label>使用日</label>
                 <input tabindex="4" th:id="${start}" name="use-date" class="normal-input date-area" type="date" value="" onfocus="this.select();">
             </div>
             <div class="form-parts">
@@ -95,8 +95,90 @@
             </div>
             <div class="form-parts">
                 <label></label>
-                <button tabindex="17" id="regist-btn11" name="regist-btn" class="normal-btn ok" type="button"
-                    onclick="execRegist()"><span>登録</span></button>
+                <button tabindex="17" id="regist-btn02" name="regist-btn" class="normal-btn ok" type="button"
+                    onclick="execRegist('02')"><span>登録</span></button>
+            </div>
+        </div>
+    </header>
+
+    <header class="form-parts pc-style" th:fragment="header03Fragment(box, start)">
+        <div id="code-area" class="flex-area">
+            <div class="form-parts">
+                <label>ID</label>
+                <input tabindex="1" id="disposal-site-code03" name="disposal-site-code" class="normal-input" type="text" value="">
+            </div>
+            <div class="form-parts">
+                <label>処分先</label>
+                <select tabindex="2" id="disposal-site03" name="disposal-site-name" class="normal-select"></select>
+            </div>
+            <!-- <div class="form-parts">
+                <label>支店</label>
+                <select tabindex="3" id="office03" name="office" class="normal-select"></select>
+            </div> -->
+        </div>
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>引渡日</label>
+                <input tabindex="4" th:id="${start}" name="delivery-date" class="normal-input date-area" type="date" value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>お問合せ管理票番号</label>
+                <input tabindex="5" th:id="${box}" name="number" class="normal-input" type="text" data-reset value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label></label>
+                <button tabindex="6" id="regist-btn03" name="regist-btn" class="normal-btn ok" type="button"
+                    onclick="execRegist('03')"><span>登録</span></button>
+            </div>
+        </div>
+    </header>
+
+    <header class="form-parts pc-style" th:fragment="header04Fragment(box, start)">
+        <!-- <div id="code-area" class="flex-area">
+            <div class="form-parts">
+                <label>ID</label>
+                <input tabindex="1" id="company-code04" name="company-code" class="normal-input" type="text" value="">
+            </div>
+            <div class="form-parts">
+                <label>発送先</label>
+                <select tabindex="2" id="company04" name="company" class="normal-select"></select>
+            </div>
+            <div class="form-parts">
+                <label>支店</label>
+                <select tabindex="3" id="office04" name="office" class="normal-select"></select>
+            </div>
+        </div> -->
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>発送日</label>
+                <input tabindex="4" th:id="${start}" name="shipping-date" class="normal-input date-area" type="date" value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>お問合せ管理票番号</label>
+                <input tabindex="5" th:id="${box}" name="number" class="normal-input" type="text" data-reset value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label></label>
+                <button tabindex="6" id="regist-btn04" name="regist-btn" class="normal-btn ok" type="button"
+                    onclick="execRegist('04')"><span>登録</span></button>
+            </div>
+        </div>
+    </header>
+
+    <header class="form-parts pc-style" th:fragment="header05Fragment(box, start)">
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>ロス処理日</label>
+                <input tabindex="1" th:id="${start}" name="loss-date" class="normal-input date-area" type="date" value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label>お問合せ管理票番号</label>
+                <input tabindex="2" th:id="${box}" name="number" class="normal-input" type="text" data-reset value="" onfocus="this.select();">
+            </div>
+            <div class="form-parts">
+                <label></label>
+                <button tabindex="3" id="regist-btn05" name="regist-btn" class="normal-btn ok" type="button"
+                    onclick="execRegist('05')"><span>登録</span></button>
             </div>
         </div>
     </header>
@@ -160,18 +242,18 @@
                     onfocus="this.select();">
             </div>
         </div>
-        <div class="flex-area">
+        <div id="code-area" class="flex-area">
+            <div class="form-parts">
+                <label>ID</label>
+                <input tabindex="10" id="company-code11" name="company-code" class="normal-input" type="text" value="">
+            </div>
             <div class="form-parts">
                 <label>小売業者</label>
-                <select tabindex="9" id="company11" name="company" data-reset
-                    class="normal-select"></select>
+                <select tabindex="11" id="company11" name="company" class="normal-select"></select>
             </div>
-        </div>
-        <div class="flex-area">
             <div class="form-parts">
                 <label>支店</label>
-                <select tabindex="10" id="office11" name="office" data-reset
-                    class="normal-select"></select>
+                <select tabindex="12" id="office11" name="office" class="normal-select"></select>
             </div>
         </div>
     </form>
@@ -204,7 +286,7 @@
         <button type="button" class="page-top"></button>
     </main> -->
 
-    <main th:fragment="main02Fragment(tableId, scrollId, title)">
+    <main th:fragment="mainFragment(tableId, scrollId, title)">
         <table th:id="${tableId}" class="normal-table">
             <tr name="table-header" class="pc-style">
                 <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>

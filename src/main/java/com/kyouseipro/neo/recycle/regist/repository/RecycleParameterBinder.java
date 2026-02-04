@@ -49,42 +49,61 @@ public class RecycleParameterBinder {
         return index;
     }
 
-    public static int bindUpdate(PreparedStatement pstmt, RecycleEntity r, String editor, int index) throws SQLException {
-        pstmt.setString(index++, r.getRecycleNumber());
-        pstmt.setString(index++, r.getMoldingNumber());
-        pstmt.setInt(index++, r.getMakerId());
-        pstmt.setInt(index++, r.getItemId());
-        if (r.getUseDate() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(r.getUseDate()));
-        } else {
-            pstmt.setNull(index++, java.sql.Types.DATE);
+    public static int bindUpdate(PreparedStatement pstmt, RecycleEntity r, String type, String editor, int index) throws SQLException {
+
+        switch (type) {
+            case "delivery":
+                pstmt.setDate(index++, java.sql.Date.valueOf(r.getDeliveryDate()));
+                pstmt.setInt(index++, r.getDisposalSiteId());
+                break;
+            case "shipping":
+                pstmt.setDate(index++, java.sql.Date.valueOf(r.getShippingDate()));
+                break;
+            case "loss":
+                pstmt.setDate(index++, java.sql.Date.valueOf(r.getLossDate()));
+                break;
+            case "edit":
+                pstmt.setString(index++, r.getRecycleNumber());
+                pstmt.setString(index++, r.getMoldingNumber());
+                pstmt.setInt(index++, r.getMakerId());
+                pstmt.setInt(index++, r.getItemId());
+                if (r.getUseDate() != null) {
+                    pstmt.setDate(index++, java.sql.Date.valueOf(r.getUseDate()));
+                } else {
+                    pstmt.setNull(index++, java.sql.Types.DATE);
+                }
+                if (r.getDeliveryDate() != null) {
+                    pstmt.setDate(index++, java.sql.Date.valueOf(r.getDeliveryDate()));
+                } else {
+                    pstmt.setNull(index++, java.sql.Types.DATE);
+                }
+                if (r.getShippingDate() != null) {
+                    pstmt.setDate(index++, java.sql.Date.valueOf(r.getShippingDate()));
+                } else {
+                    pstmt.setNull(index++, java.sql.Types.DATE);
+                }
+                if (r.getLossDate() != null) {
+                    pstmt.setDate(index++, java.sql.Date.valueOf(r.getLossDate()));
+                } else {
+                    pstmt.setNull(index++, java.sql.Types.DATE);
+                }
+                pstmt.setInt(index++, r.getCompanyId());
+                pstmt.setInt(index++, r.getOfficeId());
+                pstmt.setInt(index++, r.getRecyclingFee());
+                pstmt.setInt(index++, r.getDisposalSiteId());
+                break;
+            default:
+                break;
         }
-        if (r.getDeliveryDate() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(r.getDeliveryDate()));
-        } else {
-            pstmt.setNull(index++, java.sql.Types.DATE);
-        }
-        if (r.getShippingDate() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(r.getShippingDate()));
-        } else {
-            pstmt.setNull(index++, java.sql.Types.DATE);
-        }
-        if (r.getLossDate() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(r.getLossDate()));
-        } else {
-            pstmt.setNull(index++, java.sql.Types.DATE);
-        }
-        pstmt.setInt(index++, r.getCompanyId());
-        pstmt.setInt(index++, r.getOfficeId());
-        pstmt.setInt(index++, r.getRecyclingFee());
-        pstmt.setInt(index++, r.getDisposalSiteId());
 
         pstmt.setInt(index++, r.getVersion() +1);
         pstmt.setInt(index++, r.getState());
         pstmt.setTimestamp(index++, Timestamp.valueOf(LocalDateTime.now()));
 
-        pstmt.setInt(index++, r.getRecycleId());
-        pstmt.setInt(index++, r.getVersion());
+        pstmt.setString(index++, r.getRecycleNumber());
+        // pstmt.setInt(index++, r.getRecycleId());
+        // pstmt.setInt(index++, r.getVersion());
+        pstmt.setInt(index++, Enums.state.DELETE.getCode());
         pstmt.setString(index++, editor);
         return index;
     }

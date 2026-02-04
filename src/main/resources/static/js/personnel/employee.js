@@ -57,7 +57,7 @@ async function execEdit(id, self) {
         const result = await searchFetch('/api/employee/get/id', JSON.stringify({id:parseInt(id)}), token);
         if (!result?.ok) return;
 
-        entity = structuredClone(result);
+        entity = structuredClone(result.data);
     } else {
         entity = structuredClone(formEntity);
         entity.companyId = ownCompanyId;
@@ -96,9 +96,9 @@ async function execSave() {
         closeFormDialog('form-dialog-01');
         await execUpdate();
         const config = MODE_CONFIG[tab.dataset.tab];
-        scrollIntoTableList(config.tableId, result.employeeId);
+        scrollIntoTableList(config.tableId, result.data.employeeId);
         
-        openMsgDialog("msg-dialog", result.message, "blue");
+        openMsgDialog("msg-dialog", result.data.message, "blue");
     }
 }
 
@@ -175,7 +175,7 @@ async function execDelete(self) {
 
     if (result.ok) {
         await execUpdate();
-        openMsgDialog("msg-dialog", result.message, "blue");
+        openMsgDialog("msg-dialog", result.data.message, "blue");
     }
 }
 
@@ -197,8 +197,8 @@ async function execUpdate() {
     const config = MODE_CONFIG[tab.dataset.tab];
 
     // リスト取得
-    const resultResponse = await fetch('/api/employee/get/list');
-    origin = await resultResponse.json();
+    const result = await fetch('/api/employee/get/list');
+    origin = result.data;
 
     // 画面更新
     const list = origin.filter(function(value) { return value.category == config.category });

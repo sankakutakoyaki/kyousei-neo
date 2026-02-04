@@ -46,7 +46,7 @@ public class Enums {
         PARTNER(1, "施工"),
         SHIPPER(2, "荷主"),
         SUPPLIER(3, "購買"),
-        SERVICE(4, "サービス"),
+        FACILITY(4, "施設"),
         TRANSPORT(5, "運送");
 
         private int num;

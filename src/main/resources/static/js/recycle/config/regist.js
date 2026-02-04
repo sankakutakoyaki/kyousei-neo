@@ -116,7 +116,7 @@ const MODE_CONFIG = {
         dateKey: "use",
         tableId: "table-02-content",
         footerId: "footer-02",
-        regBtnId: "regist-btn02",
+        regBtn: document.getElementById("regist-btn02"),
         number: document.getElementById('number-box-02'),
         makerCode: document.getElementById('maker-code02'),
         itemCode: document.getElementById('item-code02'),
@@ -129,6 +129,7 @@ const MODE_CONFIG = {
             code: document.getElementById("item-code02"),
             name: document.getElementById("item-name02"),
         },
+        url: "/api/recycle/save/regist"
     },
     "03": {
         panel: document.querySelector('[data-panel="03"]'),
@@ -136,8 +137,9 @@ const MODE_CONFIG = {
         tableId: "table-03-content",
         footerId: "footer-03",
         number: document.getElementById('number-box-03'),
-        regBtnId: "regist-btn03",
-        start: document.getElementById("start-date03")
+        regBtn: document.getElementById("regist-btn03"),
+        start: document.getElementById("start-date03"),
+        url: "/api/recycle/save/delivery"
     },
     "04": {
         panel: document.querySelector('[data-panel="04"]'),
@@ -145,8 +147,9 @@ const MODE_CONFIG = {
         tableId: "table-04-content",
         footerId: "footer-04",
         number: document.getElementById('number-box-04'),
-        regBtnId: "regist-btn04",
-        start: document.getElementById("start-date04")
+        regBtn: document.getElementById("regist-btn04"),
+        start: document.getElementById("start-date04"),
+        url: "/api/recycle/save/shipping"
     },
     "05": {
         panel: document.querySelector('[data-panel="05"]'),
@@ -154,8 +157,9 @@ const MODE_CONFIG = {
         tableId: "table-05-content",
         footerId: "footer-05",
         number: document.getElementById('number-box-05'),
-        regBtnId: "regist-btn05",
-        start: document.getElementById("start-date05")
+        regBtn: document.getElementById("regist-btn05"),
+        start: document.getElementById("start-date05"),
+        url: "/api/recycle/save/loss"
     }
 };
 
@@ -163,7 +167,7 @@ const ERROR_CONFIG = {
     recycle: {
         common: [
             {
-                selector: 'input[name="recycle-number"]',
+                selector: 'input[name="number"]',
                 focus: true,
                 checks: [
                     { test: v => v !== "", message: 'お問合せ管理票番号を入力して下さい'}
@@ -246,6 +250,7 @@ const SAVE_FORM_CONFIG = {
         { name: 'use-date', key: 'useDate' }
     ],
     "03": [
+        { name: 'company', key: 'companyId' },
         { name: 'delivery-date', key: 'deliveryDate' }
     ],
     "04": [
@@ -309,6 +314,18 @@ const COMPANY_UI_CONFIG = [
         onChange: async () => {
             await updateOfficeCombo("02");
         }
+    },
+    {
+        codeId: "disposal-site-code03",
+        nameId: "disposal-site03",
+        onChange: async () => {}
+    },
+    {
+        codeId: "company-code11",
+        nameId: "company11",
+        onChange: async () => {
+            await updateOfficeCombo("06");
+        }
     }
 ];
 
@@ -318,6 +335,11 @@ const COMPANY_COMBO_CONFIG = {
         codeId: "company-code02",
         nameId: "company02",
         officeId: "office02"
+    },
+    "03": {
+        // area: document.querySelector('[data-panel="02"]'),
+        codeId: "disposal-site-code03",
+        nameId: "disposal-site03",
     },
     "06": {
         // area: document.querySelector('[data-panel="06"]'),

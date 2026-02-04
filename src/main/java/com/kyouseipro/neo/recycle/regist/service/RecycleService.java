@@ -90,9 +90,9 @@ public class RecycleService {
         table = HistoryTables.RECYCLEITEMS,
         action = "更新"
     )
-    public Optional<RecycleEntity> update(RecycleEntity entity, String editor) {
-        // return recycleRepository.update(entity, editor);
-        int id = recycleRepository.save(entity, editor);
+    public Optional<RecycleEntity> update(RecycleEntity entity, String type, String editor) {
+        int id = recycleRepository.update(entity, type, editor);
+        // int id = recycleRepository.save(entity, editor);
         if (id > 0) {
             return recycleRepository.findById(id);
         } else {

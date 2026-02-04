@@ -81,7 +81,7 @@ public class CorporationPageController extends BaseController {
         // 保存用コード
         model.addAttribute("categoryShipperCode", Enums.clientCategory.SHIPPER.getCode());
         model.addAttribute("categorySupplierCode", Enums.clientCategory.SUPPLIER.getCode());
-        model.addAttribute("categoryServiceCode", Enums.clientCategory.SERVICE.getCode());
+        model.addAttribute("categoryFacilityCode", Enums.clientCategory.FACILITY.getCode());
         model.addAttribute("categoryTransportCode", Enums.clientCategory.TRANSPORT.getCode());
 		
         return "contents/corporation/client";

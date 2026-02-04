@@ -10,7 +10,7 @@ function createTable01Content(tableId, list) {
         const row = createSelectableRow({
             table,
             item,
-            idKey: "recycle_maker_id"
+            idKey: "recycleMakerId"
         });
 
         createTable01Row(row, item);
@@ -26,11 +26,11 @@ function createTable01Row(newRow, item) {
     // コード
     newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="code">' + (item.code ?? "-----") + '</td>');
     // グループ
-    newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="group" data-edit-type="select" data-options-key="group" data-value="' + item.group + '">' + (item.group_name ?? "0") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="group" data-edit-type="select" data-options-key="group" data-value="' + item.group + '">' + (item.groupName ?? "0") + '</td>');
     // 製造業者等名
     newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="name" data-edit-type="text">' + (item.name ?? "-----") + '</td>');
     // 略称
-    newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="abbr_name" data-edit-type="text">' + (item.abbr_name ?? "-----") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="abbr-name" data-edit-type="text">' + (item.abbrName ?? "-----") + '</td>');
 }
 
 /******************************************************************************************************* 入力画面 */
@@ -57,7 +57,7 @@ async function execCreate01(self) {
     const config = MODE_CONFIG["01"];
     const form = document.getElementById(config.formId); 
 
-    if (!validateByConfig(form, { ...ERROR_CONFIG.recycle_maker, mode: mode })) {
+    if (!validateByConfig(form, { ...ERROR_CONFIG.recycleMaker, mode: "01" })) {
         return;
     } else {
     // // エラーチェック
@@ -69,9 +69,12 @@ async function execCreate01(self) {
         formdata.code = Number(formData.get('maker-code'));
         formdata.group = Number(formData.get('maker-group'));
         formdata.name = formData.get('maker-name').trim();
-        formdata.abbr_name = formData.get('maker-abbr').trim();
+        formdata.abbrName = formData.get('maker-abbr').trim();
 
-        execSave(config.tableId, config.footerId, config.searchId, formdata, createTable01Content);
+        const result = execSave(config.tableId, config.footerId, config.searchId, formdata, createTable01Content);
+        if (result.ok) {
+            openMsgDialog("msg-dialog", "保存しました", "blue");
+        }
     }
 }
 
@@ -130,7 +133,7 @@ async function handleTdChange(editor) {
     const row = td.closest('tr');
     const id = row.dataset.id;
 
-    const entity = origin.find(v => v.recycle_maker_id == id);
+    const entity = origin.find(v => v.recycleMakerId == id);
     if (!entity) return;
 
     const ent = structuredClone(entity);
@@ -144,13 +147,13 @@ async function handleTdChange(editor) {
         case "name":
             ent.name = editor.value;
             break;
-        case "abbr_name":
-            ent.abbr_name = editor.value;
+        case "abbr-name":
+            ent.abbrName = editor.value;
             break;
     }
 
     const result = await execSave(config.tableId, config.footerId, config.searchId, ent, createTable01Content);
-    if (!result) reverseCode(config.tableId, ent.recycle_maker_id, type);
+    if (!result.ok) reverseCode(config.tableId, ent.recycleMakerId, type);
 }
 
 // 保存処理
@@ -158,25 +161,25 @@ async function execSave(tableId, footerId, searchId, ent, createContent) {
     // 保存処理
     const result = await updateFetch("/api/recycle/maker/save", JSON.stringify(ent), token, "application/json");
 
-    if (result.success) {
+    if (result.ok) {
         // 画面更新
         origin = await execUpdate();
         await updateTableDisplay(tableId, footerId, searchId, origin, createContent);
         // 追加・変更行に移動
-        scrollIntoTableList(tableId, result.recycle_maker_id);
+        scrollIntoTableList(tableId, result.data.recycleMakerId);
     // } else {
     //     reverseCode(tableId, ent.recycle_maker_id);
     //     // openMsgDialog("msg-dialog", result.message, "red");
     }
 
-    return result.success;
+    return result;
 }
 
 // 変更した部分を元に戻す
 function reverseCode(tableId, id, type) {
-    const entity = origin.find(value => value.recycle_maker_id === id);
+    const entity = origin.find(value => value.recycleMakerId === id);
     const tbl = document.getElementById(tableId);
-    const row = tbl.querySelector('tr[data-id="' + entity.recycle_maker_id + '"]');
+    const row = tbl.querySelector('tr[data-id="' + entity.recycleMakerId + '"]');
     if (!row) return;
 
     const box = row.querySelector('td[data-col="' + type + '"]');
@@ -189,35 +192,63 @@ function reverseCode(tableId, id, type) {
 // 削除する
 async function execDelete01(self) {
     const config = MODE_CONFIG["01"];
-    const result = await deleteTablelist(config.dialogId, config.footerId, config.searchId, '/recycle/maker/download/csv');
+    const result = await deleteTablelist(config.tableId, '/api/recycle/maker/delete');
 
-    if (!result) return;
-
-    await updateTableDisplay(config.dialogId, config.footerId, config.searchId, origin, createTable01Content);
+    if (result.ok) {
+        await updateTableDisplay(config.tableId, config.footerId, config.searchId, origin, createTable01Content);
+        openMsgDialog("msg-dialog", result.data.message, "blue");
+    }
 }
 
 /******************************************************************************************************* ダウンロード */
 
 async function execDownloadCsv01(self) {
     const config = MODE_CONFIG["01"];
-    await downloadCsv(config.tableId, '/recycle/maker/download/csv', );
+    await downloadCsv(config.tableId, '/api/recycle/maker/download/csv', );
 }
 
 /******************************************************************************************************* 画面更新 */
+// 画面を更新する
+async function refleshDisplay() {
+    const cfg = MODE_CONFIG["01"];
+    const btn = document.querySelector('.norml-btn.selected');
+    const num = btn.dataset.code;
+
+    execNumberSearch01(num, btn);
+}
+
+function addSelectClassToEntity(areaId) {
+    let item;
+    if(areaId instanceof HTMLElement) {
+        item = areaId;
+    } else {
+        item = document.getElementById(areaId);
+    }
+    if (item == null) return;
+    item.classList.add('selected');
+}
 
 // 最新のリストを取得
 async function execUpdate() {
-    const response = await fetch('/api/recycle/maker/get/list');
+    const resultResponse = await fetch('/api/recycle/maker/get/list');
 
-    if (!response.ok) {
+    if (!resultResponse) {
         openMsgDialog("msg-dialog", "一覧の取得に失敗しました", "red");
         return origin;
     }
 
-    return await response.json();
+    return await resultResponse.json();
 }
 
-async function execNumberSearch01(number) {
+async function execNumberSearch01(number, self) {
+    const items = document.querySelectorAll('[name="filter-area"] .normal-btn');
+    if (!items) return;
+
+    items.forEach(value => {
+        if (value.classList.contains('selected')) value.classList.remove('selected');
+    })
+    self.classList.add('selected');
+
     const num = Number(number);
     if (Number.isNaN(num)) {
         console.log("数字じゃない")

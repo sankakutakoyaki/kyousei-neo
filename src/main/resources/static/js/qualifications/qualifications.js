@@ -91,15 +91,13 @@ async function execSave() {
         formdata.version = Number(formData.get('version'));
 
         // 保存処理
-        const resultResponse = await postFetch("/api/qualifications/save", JSON.stringify(formdata), token, "application/json");
-        const result = await resultResponse.json();
-        if (result.success) {
+        const result = await searchFetch("/api/qualifications/save", JSON.stringify(formdata), token);
+        // const result = await resultResponse.json();
+        if (result.ok) {
             // 画面更新
             updatePanels();
             await execUpdate();
-            openMsgDialog("msg-dialog", result.message, "blue");
-        } else {
-            openMsgDialog("msg-dialog", result.message, "red");
+            openMsgDialog("msg-dialog", result.data.message, "blue");
         }
     }
 }
@@ -295,14 +293,12 @@ async function handleFiles(files) {
 /******************************************************************************************************* 削除 */
 
 async function removeQualificationById(id) {
-    const data = "id=" + encodeURIComponent(parseInt(id));
-    const resultResponse = await postFetch('/api/qualifications/delete/id', data, token, 'application/x-www-form-urlencoded');
-    const result = await resultResponse.json();
-    if (result.success) {
+    // const data = "id=" + encodeURIComponent(parseInt(id));
+    const result = await searchFetch('/api/qualifications/delete/id', JSON.stringify({id:id}), token);
+    // const result = await resultResponse.json();
+    if (result.ok) {
         openMsgDialog("msg-dialog", result.message, "blue");
         updatePanels();
-    } else {
-        openMsgDialog("msg-dialog", result.message, "red");
     }
 }
 
@@ -325,17 +321,17 @@ async function getQualifications(e, codeId, nameId) {
         // const data = "id=" + encodeURIComponent(parseInt(code.value)) + "&category=" + encodeURIComponent(parseInt(owner_category));
         // const resultResponse = await postFetch("/api/qualifications/get/id", data, token, 'application/x-www-form-urlencoded');
         const data = JSON.stringify({primaryId:parseInt(code.value), secondaryId:parseInt(owner_category)});
-        const resultResponse = await postFetch("/api/qualifications/get/id", data, token);
-        const result = await resultResponse.json();
+        const result = await searchFetch("/api/qualifications/get/id", data, token);
+        // const result = await resultResponse.json();
 
-        if (result.length > 0) {
-            name.value = result[0].owner_name;
+        if (result.data.length > 0) {
+            name.value = result.data[0].owner_name;
 
             switch (tab) {
                 case "03":
                     qualificationList01.innerHTML = "";
                     initialForm03();
-                    for (const item of result) {
+                    for (const item of result.data) {
                         // 選択機能付きリストアイテムを取得する
                         const li = createListItemWithSelection(item.qualifications_id, item.qualification_name);
                         const removeBtn = createRemoveBtn();
@@ -382,7 +378,7 @@ async function getQualifications(e, codeId, nameId) {
                     qualificationList02.innerHTML = "";
                     fileList.innerHTML = "";
                     updatePlaceholder(fileList);
-                    for (const item of result) {
+                    for (const item of result.data) {
                         // 選択機能付きリストアイテムを取得する
                         const li = createListItemWithSelection(item.qualifications_id, item.qualification_name);
                         // クリック時にIDをリセットする処理を登録する
@@ -403,9 +399,9 @@ async function getQualifications(e, codeId, nameId) {
                     break;
             }
         } else {                        
-            const data = "id=" + encodeURIComponent(parseInt(code.value));
-            const resultResponse2 = await postFetch(url, data, token, 'application/x-www-form-urlencoded');
-            const result2 = await resultResponse2.json();
+            // const data = "id=" + encodeURIComponent(parseInt(code.value));
+            const result2 = await searchFetch(url, JSON.stringify({id:parseInt(code.value)}), token);
+            // const result2 = await resultResponse2.json();
 
             // リストの初期化
             switch (tab) {
@@ -421,13 +417,13 @@ async function getQualifications(e, codeId, nameId) {
                 default:
                     break;
             }
-            if (result2 != null) {
+            if (result2.ok) {
                 switch (url) {
                     case "/api/employee/get/id":
-                        name.value = result2.full_name;
+                        name.value = result2.data.full_name;
                         break;
                     case "/api/company/get/id":
-                        name.value = result2.name;
+                        name.value = result2.data.name;
                         break;             
                     default:
                         name.value = "";
@@ -448,12 +444,12 @@ async function getQualificationsFiles(id) {
     startProcessing();
     
     const folderName = id;
-    const data = "id=" + encodeURIComponent(parseInt(id));
-    const resultResponse = await postFetch('/api/files/get/qualifications', data, token, 'application/x-www-form-urlencoded');
-    const result = await resultResponse.json();
+    // const data = "id=" + encodeURIComponent(parseInt(id));
+    const result = await postFetch('/api/files/get/qualifications', JSON.stringify({id:id}), token);
+    // const result = await resultResponse.json();
 
-    if (result.length > 0) {
-        for (const file of result) {
+    if (result.data.length > 0) {
+        for (const file of result.data) {
             // リストに登録する
             setPdfListItem(folderName, file.file_name, file.internal_name);
         }

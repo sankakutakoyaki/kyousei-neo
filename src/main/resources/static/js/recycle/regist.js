@@ -63,10 +63,10 @@ function createTableRow(newRow, item, tab) {
             // 製造業者等名
             newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.makerName ?? "") + '</span><br<span>' + (item.itemName ?? "") + '</span></td>');
             break;
-        case "02",
-             "03",
-             "04",
-             "05":
+        case "02":
+        case "03":
+        case "04":
+        case "05":
             // 製造業者等名
             newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.makerName ?? "") + '</span></td>');
             // 品目・料金区分
@@ -117,9 +117,9 @@ async function execEdit(id, tab, self) {
 // 入力フォームの内容をリセットする
 function resetFormInput(tab) {
     const cfg = MODE_CONFIG[tab];
-    const form = document.getElementById(cfg.dialogId);
+    // const panel = document.getElementById(cfg.panel);
 
-    form.querySelectorAll('[data-reset]').forEach(el => {
+    cfg.panel.querySelectorAll('[data-reset]').forEach(el => {
         if ('value' in el) {
             // input / select / textarea
             el.value = el.type === 'number' ? 0 : '';
@@ -237,60 +237,61 @@ async function execDelete(self) {
 //     closeFormDialog(config.formId);
 // }
 // 新規作成処理
-async function execRegist() {
-    const cfg = MODE_CONFIG["02"];
+async function execRegist(tab) {
+    const cfg = MODE_CONFIG[tab];
 
-    if (!validateByConfig(cfg.panel, { ...ERROR_CONFIG.recycle, tab: "02" })) {
+    if (!validateByConfig(cfg.panel, { ...ERROR_CONFIG.recycle, tab: tab })) {
         return;
     }
 
-    const data = buildEntityFromElement(cfg.panel, tempElm, SAVE_FORM_CONFIG["02"]);
+    const data = buildEntityFromElement(cfg.panel, tempElm, SAVE_FORM_CONFIG[tab]);
 
-    const result = await updateFetch("/api/recycle/save/regist", JSON.stringify(data), token);
+    const result = await updateFetch(cfg.url, JSON.stringify(data), token);
     if (result.ok) {
         itemList.push(result.data);
         await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, itemList, createTableContent);
-        resetFormInput("02");
+        resetFormInput(tab);
         cfg.number.focus();
     }
 }
 
-// 更新処理
-async function execSave() {
-    const config = MODE_CONFIG("06");
+// // 更新処理
+// async function execSave() {
+//     const config = MODE_CONFIG("06");
 
-    if (!validateByConfig(config.panel, { ...ERROR_CONFIG.recycle, tab: tab })) {
-        return;
-    }
+//     if (!validateByConfig(config.panel, { ...ERROR_CONFIG.recycle, tab: "06" })) {
+//         return;
+//     }
 
-    // const formdata = setInsertFormData(form);
-    const result = await updateFetch("/api/recycle/save/edit", JSON.stringify(tempElm), token);
-    if (result.ok) {
-        // // 画面更新
-        // await refleshDisplay();
-        // openMsgDialog("msg-dialog", result.message, "blue");
-    }
+//     // const formdata = setInsertFormData(form);
+//     const result = await updateFetch("/api/recycle/save/edit", JSON.stringify(tempElm), token);
+//     if (result.ok) {
+//         // // 画面更新
+//         // await refleshDisplay();
+//         // openMsgDialog("msg-dialog", result.message, "blue");
+//     }
 
-    // ダイアログを閉じる
-    closeFormDialog(config.dialogId);
-}
+//     // ダイアログを閉じる
+//     closeFormDialog(config.dialogId);
+// }
 
-// 更新処理
-async function execDateUpdate(tab) {
-    const config = MODE_CONFIG[tab];
+// // 更新処理
+// async function execDateUpdate(tab) {
+//     const config = MODE_CONFIG[tab];
 
-    if (!validateByConfig(config.panel, { ...ERROR_CONFIG.recycle, tab: tab })) {
-        return;
-    }
+//     if (!validateByConfig(config.panel, { ...ERROR_CONFIG.recycle, tab: tab })) {
+//         return;
+//     }
 
-    const formdata = {id:0, number:config.number.value, date:config.start.velue} 
-    const result = await updateFetch("/api/recycle/update/" + tab, JSON.stringify({entity:formdata}), token);
-    if (result.ok) {
-        // // 画面更新
-        // await refleshDisplay();
-        // openMsgDialog("msg-dialog", result.message, "blue");
-    }
-}
+//     const formdata = buildEntityFromElement(cfg.panel, tempElm, SAVE_FORM_CONFIG["02"]);
+//     // const formdata = {id:0, number:config.number.value, date:config.start.velue} 
+//     const result = await updateFetch("/api/recycle/update/" + tab, JSON.stringify({entity:formdata}), token);
+//     if (result.ok) {
+//         // // 画面更新
+//         // await refleshDisplay();
+//         // openMsgDialog("msg-dialog", result.message, "blue");
+//     }
+// }
 
 /******************************************************************************************************* ダウンロード */
 
@@ -319,31 +320,47 @@ async function refleshDisplay() {
     }
 }
 
-function clearTable(e) {
+async function clearTable(e) {
     itemList = [];
     tempElm = structuredClone(formEntity);
 
     const tab = e.currentTarget.dataset.tab;
     const cfg = MODE_CONFIG[tab];
     cfg.start.focus();
+    switch (tab) {
+        case "01":
+            refleshDisplay();
+        case "02":
+        case "03":
+        case "04":
+        case "05":
+            itemList = [];
+            await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, itemList, createTableContent);
+            // deleteElements(cfg.tableId);
+    }
 }
 
 /******************************************************************************************************* チェック時の処理 */
 
 // 品目固定チェックボックスをクリックした時の処理
-function itemCheckedAfter() {
-    const itemInput = document.getElementById("item-code");
+function itemCheckedAfter(e) {
+    if (!e.currentTarget) return;
 
-    if (this.checked) {
+    const itemCode = document.getElementById("item-code02");
+    const itemName = document.getElementById("item-name02");
+
+    if (e.currentTarget.checked) {
         // チェックON → 固定 → reset対象から外す
-        itemInput.readOnly = true;
-        itemInput.removeAttribute("tabindex");
-        itemInput.removeAttribute("data-reset");
+        itemCode.readOnly = true;
+        itemCode.removeAttribute("tabindex");
+        itemCode.removeAttribute("data-reset");
+        itemName.removeAttribute("data-reset");
     } else {
         // チェックOFF → reset対象に戻す
-        itemInput.readOnly = false;
-        itemInput.setAttribute("tabindex", "6");
-        itemInput.setAttribute("data-reset");
+        itemCode.readOnly = false;
+        itemCode.setAttribute("tabindex", "6");
+        itemCode.setAttribute("data-reset");
+        itemName.setAttribute("data-reset");
     }
     resetEnterFocus();
 }
@@ -402,10 +419,10 @@ window.addEventListener("load", async () => {
     // キーボードの上下で日付を操作する
     enableDateArrowControl(document);
 
-    // // 品目固定チェックボッスクス押下時の処理を登録
-    // document.getElementById("fix-item-checkbox").addEventListener("change", function () {
-    //     itemCheckedAfter();
-    // });
+    // 品目固定チェックボッスクス押下時の処理を登録
+    document.getElementById("fix-item-checkbox").addEventListener("change", function (e) {
+        itemCheckedAfter(e);
+    });
 
     // 検索ボックス入力時の処理
     document.getElementById('search-box-01').addEventListener('search', async function(e) {
@@ -416,6 +433,10 @@ window.addEventListener("load", async () => {
     const companyCombo = document.getElementById('company02');
     setComboboxSelected(companyCombo, 1000);
     updateOfficeCombo("02");
+
+    const disposalSiteCombo = document.getElementById('disposal-site03');
+    createComboBoxWithTop(disposalSiteCombo, disposalSiteComboList, "");
+    setComboboxSelected(disposalSiteCombo, 1066);
 
     const cfg = MODE_CONFIG["01"];
     cfg.start.focus();

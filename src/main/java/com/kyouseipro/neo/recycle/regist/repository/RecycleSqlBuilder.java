@@ -53,18 +53,38 @@ public class RecycleSqlBuilder {
             "SELECT recycle_id FROM " + rowTableName + ";";
     }
 
-    public static String buildUpdate(int index) {
+    public static String buildUpdate(int index, String type) {
         String rowTableName = "@UpdatedRows" + index;
-        return
-            buildLogTable(rowTableName) +
+        String sql = "UPDATE recycles SET ";
 
-            "UPDATE recycles SET " +
-            " recycle_number=?, molding_number=?, maker_id=?, item_id=?, use_date=?, delivery_date=?, shipping_date=?, loss_date=?," +
-            " company_id=?, office_id=?, recycling_fee=?, disposal_site_id=?, version=?, state=? , update_date=?" +
+        switch (type) {
+            case "edit":
+                sql += """
+                     recycle_number=?, molding_number=?, maker_id=?, item_id=?, use_date=?, delivery_date=?, shipping_date=?, loss_date=?,
+                     company_id=?, office_id=?, recycling_fee=?, disposal_site_id=?, version=?, state=? , update_date=? """;
+                break;
+            case "delivery":
+                sql += """
+                     delivery_date=?, disposal_site_id=?, version=?, state=?, update_date=? """;
+                break;
+            case "shipping":
+                sql += """
+                     shipping_date=?, version=?, state=? , update_date=? """;
+                break;
+            case "loss":
+                sql += """
+                     loss_date=?, version=?, state=? , update_date=? """;
+                break;
+            default:
+                break;
+        }
+        return
+            buildLogTable(rowTableName) + sql +
             
             buildOutputLog() + "INTO " + rowTableName + " " +
 
-            "WHERE recycle_id=? AND version=?; " +
+            // "WHERE recycle_id=? AND version=?; " +
+            "WHERE recycle_number=? AND NOT (state=?); " +
 
             buildInsertLog(rowTableName, "UPDATE") +
 

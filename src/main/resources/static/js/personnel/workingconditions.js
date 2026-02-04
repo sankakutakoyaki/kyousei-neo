@@ -45,8 +45,8 @@ async function execEdit(id, name, tab) {
     if (!result?.ok) return;
 
     let entity = {};
-    if (result.workingConditionsId > 0) {
-        entity = structuredClone(result);
+    if (result.data.workingConditionsId > 0) {
+        entity = structuredClone(result.data);
     } else {
         entity = structuredClone(formEntity);
         entity.employeeId = id;
@@ -93,9 +93,9 @@ async function execSave() {
             await execUpdate();
             // 追加・変更行に移動
             const tableId = getTableIdByCategory(formdata.category);
-            scrollIntoTableList(tableId, result.id);
+            scrollIntoTableList(tableId, result.data.id);
             
-            openMsgDialog("msg-dialog", result.message, "blue");
+            openMsgDialog("msg-dialog", result.data.message, "blue");
         }
     }
 }
@@ -140,7 +140,7 @@ async function execDelete(self) {
 
     if (result?.ok) {                
         await execUpdate();
-        openMsgDialog("msg-dialog", result.message, "blue");
+        openMsgDialog("msg-dialog", result.data.message, "blue");
     }
 }
 

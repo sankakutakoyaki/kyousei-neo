@@ -27,7 +27,7 @@ const MODE_CONFIG = {
         tableId: "table-03-content",
         footerId: "footer-03",
         searchId: "search-box-03",
-        category: categoryServiceCode,
+        category: categoryFacilityCode,
         categoryName: "company",
         dataId: "companyId",
         formDialogId: "form-dialog-01",
@@ -171,8 +171,13 @@ const SAVE_CONFIG = {
         dialogId: "form-dialog-01",
         url: "/api/company/save",
         baseEntity: () => structuredClone(companyEntity),
+        // fields: {
+        //     category: v => Number(v)
+        // }
         fields: {
-            category: v => Number(v)
+            category: {
+                convert: v => Number(v)
+            }
         }
     }
 };

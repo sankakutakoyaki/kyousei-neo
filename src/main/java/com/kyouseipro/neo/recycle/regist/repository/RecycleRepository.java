@@ -97,28 +97,8 @@ public class RecycleRepository {
      * @return 新規IDを返す。
      */
     public int save(RecycleEntity entity, String editor) {
-        // StringBuilder sql = new StringBuilder();
-        // int index = 1;
-
-        // for (RecycleEntity entity : list) {
-        //     if (entity.getState() == Enums.state.DELETE.getCode()) {
-        //         sql.append(RecycleSqlBuilder.buildDelete(index++));
-        //     } else if (entity.getRecycleId() > 0) {
-        //         sql.append(RecycleSqlBuilder.buildUpdate(index++));
-        //     } else {
-        //         sql.append(RecycleSqlBuilder.buildInsert(index++));
-        //     }
-        // }
         String sql = RecycleSqlBuilder.buildInsert(1);
 
-        // try {
-        //     return sqlRepository.executeQuery(
-        //         sql,
-        //         (ps, en) -> RecycleParameterBinder.bindInsert(ps, entity, editor, 1),
-        //         // rs -> 1,   // ← IDは見ない
-        //         rs -> rs.next() ? RecycleEntityMapper.map(rs) : null,
-        //         entity
-        //     );
         try {
             return sqlRepository.executeRequired(
                 sql,
@@ -149,25 +129,27 @@ public class RecycleRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    public int update(RecycleEntity entity, String editor) {
-        String sql = RecycleSqlBuilder.buildUpdate(1);
+    public int update(RecycleEntity entity, String type, String editor) {
+        String sql = RecycleSqlBuilder.buildUpdate(1, type);
         try {
-            // return sqlRepository.executeQuery(
+            // int count = sqlRepository.executeQuery(
             //     sql,
-            //     (ps, en) -> RecycleParameterBinder.bindUpdate(ps, entity, editor, 1),
-            //     rs -> rs.next() ? RecycleEntityMapper.map(rs) : null,
-            //     entity
+            //     (ps, en) -> RecycleParameterBinder.bindUpdate(ps, entity, type, editor, 1),
+            //     rs -> rs.next() ? rs.getInt("recycle_id") : null
             // );
-            int count = sqlRepository.executeUpdate(
-                sql,
-                ps -> RecycleParameterBinder.bindUpdate(ps, entity, editor, 1)
-            );
 
-            if (count == 0) {
+            Optional<Integer> recycleId = sqlRepository.executeQuery(
+                sql,
+                (ps, en) -> RecycleParameterBinder.bindUpdate(ps, en, type, editor, 1),
+                rs -> rs.next() ? rs.getInt("recycle_id") : null,
+                entity
+            );
+            Integer id = recycleId.orElse(null);
+            if (id == 0) {
                 throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
             }
 
-            return count;
+            return id;
 
         } catch (RuntimeException e) {
             if (SqlExceptionUtil.isDuplicateKey(e)) {

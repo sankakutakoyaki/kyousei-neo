@@ -68,7 +68,7 @@ async function execEdit(id, self) {
         const result = await searchFetch("/api/" + config.categoryName + "/get/id", JSON.stringify({id:parseInt(id)}), token);
         if (!result?.ok) return;
 
-        entity = structuredClone(result);
+        entity = structuredClone(result.data);
     } else {
         entity = structuredClone(config.entity);
         switch (tab) {
@@ -184,7 +184,7 @@ async function execSave() {
         await execUpdate();
         scrollIntoTableList(config.tableId, result.data);
         
-        openMsgDialog("msg-dialog", result.message, "blue");
+        openMsgDialog("msg-dialog", result.data.message, "blue");
     }
 }
 
@@ -279,7 +279,7 @@ async function execDelete(self) {
 
     if (result.ok) {                
         await execUpdate();
-        openMsgDialog("msg-dialog", result.message, "blue");
+        openMsgDialog("msg-dialog", result.data.message, "blue");
     }
 }
 

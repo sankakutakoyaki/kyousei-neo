@@ -56,6 +56,9 @@ public class RecyclePageController extends BaseController {
         // コンボボックスアイテム取得（自社含む小売業者）
         List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorListAddTopOfOwnCompany();
         model.addAttribute("companyComboList", companyComboList);
+        // コンボボックスアイテム取得（処理場）
+        List<SimpleData> disposalSiteComboList = comboBoxService.getCompanyListByCategory(Enums.clientCategory.FACILITY.getCode());
+        model.addAttribute("disposalSiteComboList", disposalSiteComboList);
         // 支店リストを取得
         List<OfficeListEntity> officeComboList = comboBoxService.getOfficeList();
         model.addAttribute("officeComboList", officeComboList);

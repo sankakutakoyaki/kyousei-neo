@@ -63,29 +63,29 @@ async function execDownloadCsv(self) {
 
 /******************************************************************************************************* 画面更新 */
 
-// テーブルリスト画面を更新する
-async function updateTableDisplay(tableId, footerId, searchId, list) {
-    // フィルター処理
-    const result = filterDisplay(searchId, list);
-    // リスト画面を初期化
-    deleteElements(tableId);
-    // リスト作成
-    createTableContent(tableId, result);
-    // フッター作成
-    createTableFooter(footerId, list);
-    // チェックボタン押下時の処理を登録する
-    registCheckButtonClicked(tableId);
-    // すべて選択ボタンをオフにする
-    turnOffAllCheckBtn(tableId);
-    // テーブルのソートをリセットする
-    resetSortable(tableId);
-    // スクロール時のページトップボタン処理を登録する
-    setPageTopButton(tableId);
-    // テーブルにスクロールバーが表示されたときの処理を登録する
-    document.querySelectorAll('.scroll-area').forEach(el => {
-        toggleScrollbar(el);
-    });
-}
+// // テーブルリスト画面を更新する
+// async function updateTableDisplay(tableId, footerId, searchId, list) {
+//     // フィルター処理
+//     const result = filterDisplay(searchId, list);
+//     // リスト画面を初期化
+//     deleteElements(tableId);
+//     // リスト作成
+//     createTableContent(tableId, result);
+//     // フッター作成
+//     createTableFooter(footerId, list);
+//     // チェックボタン押下時の処理を登録する
+//     registCheckButtonClicked(tableId);
+//     // すべて選択ボタンをオフにする
+//     turnOffAllCheckBtn(tableId);
+//     // テーブルのソートをリセットする
+//     resetSortable(tableId);
+//     // スクロール時のページトップボタン処理を登録する
+//     setPageTopButton(tableId);
+//     // テーブルにスクロールバーが表示されたときの処理を登録する
+//     document.querySelectorAll('.scroll-area').forEach(el => {
+//         toggleScrollbar(el);
+//     });
+// }
 
 async function execDateSearch(self) {
     const panel = self.closest('.tab-panel');
@@ -150,7 +150,8 @@ async function getKsSalesBetween(startId, endId, url) {
     // // // スピナー消去
     // // processingEnd();
     // return await resultResponse.json();
-    return await searchFetch(url, JSON.stringify({start:start, end:end}), token);
+    const result = await searchFetch(url, JSON.stringify({start:start, end:end}), token);
+    return result.data;
 }
 
 // 

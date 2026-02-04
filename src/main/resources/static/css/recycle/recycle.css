@@ -105,7 +105,7 @@
     grid-template-columns: 3rem 12rem 8rem 1fr 1fr 1fr;
 }
 
-/*******************************************************************************************************  */
+/******************************************************************************************************* 02 */
 
 [data-panel="02"]>.table-area header>.flex-area:first-child {
     display: grid;
@@ -115,7 +115,30 @@
 
 [data-panel="02"]>.table-area header>.flex-area:nth-child(2) {
     display: grid;
-    grid-template-columns: auto 15rem 5rem 20rem 5rem 20rem 1fr;;
+    grid-template-columns: auto 15rem 5rem 20rem 5rem 20rem 6rem 1fr;;
+    margin-bottom: 1rem;
+}
+
+/******************************************************************************************************* 03,04 */
+
+[data-panel="03"]>.table-area header>.flex-area:first-child {
+    display: grid;
+    grid-template-columns: 5rem auto 1fr;;
+    margin-bottom: 1rem;
+}
+
+[data-panel="03"]>.table-area header>.flex-area:nth-child(2) {
+    display: grid;
+    grid-template-columns: auto 15rem 6rem 1fr;;
+    margin-bottom: 1rem;
+}
+
+/******************************************************************************************************* 05 */
+
+[data-panel="04"]>.table-area header>.flex-area:first-child,
+[data-panel="05"]>.table-area header>.flex-area:first-child {
+    display: grid;
+    grid-template-columns: auto 15rem 6rem 1fr;;
     margin-bottom: 1rem;
 }
 

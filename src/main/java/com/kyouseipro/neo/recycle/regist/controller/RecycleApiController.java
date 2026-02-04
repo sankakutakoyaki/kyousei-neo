@@ -85,10 +85,13 @@ public class RecycleApiController {
                 // id = recycleService.save(entity, userName);
                 return ResponseEntity.ok(recycleService.save(entity, userName).orElse(null));
                 // break;
+            case "delivery":
+            case "shipping":
+            case "loss":
             case "edit":
                 // RecycleEntity entity = objectMapper.convertValue(body.get("entity"), new TypeReference<RecycleEntity>() {});
                 // id = recycleService.update(entity, userName);
-                return ResponseEntity.ok(recycleService.update(entity, userName).orElse(null));
+                return ResponseEntity.ok(recycleService.update(entity, type, userName).orElse(null));
                 // break;
             default:
                 return null;

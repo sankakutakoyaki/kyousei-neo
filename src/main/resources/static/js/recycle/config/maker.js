@@ -11,7 +11,7 @@ const MODE_CONFIG = {
 };
 
 const ERROR_CONFIG = {
-    recycle_maker: [
+    recycleMaker: [
         {
             selector: 'input[name="maker-code"]',
             focus: true,
