@@ -17,6 +17,7 @@ import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleDateEntity;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleEntity;
+import com.kyouseipro.neo.recycle.regist.entity.RecycleEntityRequest;
 import com.kyouseipro.neo.recycle.regist.mapper.RecycleEntityMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -138,15 +139,21 @@ public class RecycleRepository {
             //     rs -> rs.next() ? rs.getInt("recycle_id") : null
             // );
 
-            Optional<Integer> recycleId = sqlRepository.executeQuery(
+            // Optional<Integer> recycleId = sqlRepository.executeQuery(
+            int id = sqlRepository.executeUpdate(
                 sql,
-                (ps, en) -> RecycleParameterBinder.bindUpdate(ps, en, type, editor, 1),
-                rs -> rs.next() ? rs.getInt("recycle_id") : null,
-                entity
+                ps -> RecycleParameterBinder.bindUpdate(ps, entity, type, editor, 1)
+                // rs -> rs.next() ? rs.getInt("recycle_id") : null,
+                // entity
             );
-            Integer id = recycleId.orElse(null);
+            // Integer id = recycleId.orElse(null);
             if (id == 0) {
-                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
+                switch (type) {
+                    case "shipping":
+                        throw new BusinessException("この番号は登録または引渡されていません。");
+                    default:
+                        throw new BusinessException("この番号は使用登録されていません。");
+                }
             }
 
             return id;
@@ -157,6 +164,21 @@ public class RecycleRepository {
             }
             throw e;
         }
+    }
+
+    /**
+     * 変更箇所のみを更新する
+     * @param req
+     * @return
+     */
+    public int bulkUpdate(RecycleEntityRequest req) {
+
+        String sql = RecycleSqlBuilder.buildBulkUpdate(req);
+
+        return sqlRepository.executeUpdate(
+            sql,
+            ps -> RecycleParameterBinder.bindBulkUpdate(ps, req, 1)
+        );
     }
 
     /**

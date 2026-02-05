@@ -364,6 +364,35 @@ function getAllSelectedIds(tableId) {
 }
 
 /**
+ * 
+ * @param {*} tableId 
+ * @returns 
+ */
+function getAllSelectedValues(tableId) {
+    let tbl = tableId instanceof HTMLElement
+        ? tableId
+        : document.getElementById(tableId);
+
+    if (!tbl) return null;
+
+    const values = tbl.querySelectorAll('input[name="chk-box"]:checked');
+    const checked_data = [];
+
+    for (let data of values) {
+        const v = data.closest('tr')?.dataset.value;
+        if (v) checked_data.push(v);
+    }
+
+    if (checked_data.length === 0) {
+        openMsgDialog("msg-dialog", "選択されていません", "red");
+        return null;
+    }
+
+    // ★ オブジェクトで返す
+    return { values: checked_data };
+}
+
+/**
  * 指定した要素へスクロールさせる
  * @param {*} tableId 
  * @param {*} id 

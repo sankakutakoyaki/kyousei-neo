@@ -268,7 +268,7 @@ async function execNumberSearch01(number, self) {
         if (num === 0) {
             await updateTableDisplay(config.tableId, config.footerId, config.searchId, origin, createTable01Content);
         } else {
-            const list = origin.filter(value => value.code >= num && value.code <= (num + 99));
+            const list = origin.filter(value => value.code >= num && value.code <= (num + 199));
             await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTable01Content);
         }
     }

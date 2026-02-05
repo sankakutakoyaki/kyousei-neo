@@ -1,5 +1,14 @@
 @charset "UTF-8";
 
+.normal-btn.frameless {
+    border-bottom: 2px solid var(--white);
+}
+
+.normal-btn.frameless.selected {
+    border-bottom: 2px solid var(--theme-blue);
+    border-image: linear-gradient(to right, transparent 2%, var(--theme-blue) 2%, var(--theme-blue) 98%, transparent 98%) 1;
+}
+
 .table-area {
     display: grid;
     grid-template-rows: auto 1fr auto;
@@ -24,7 +33,7 @@
 
 .table-area header>.flex-area:nth-child(2) {
     display: grid;
-    grid-template-columns: 1fr auto auto auto auto auto auto auto auto auto auto 1fr;
+    grid-template-columns: 1fr auto auto auto auto auto auto 1fr;
     margin-bottom: 1rem;
 }
 

@@ -12,6 +12,7 @@ import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.interfaces.HistoryTarget;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleDateEntity;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleEntity;
+import com.kyouseipro.neo.recycle.regist.entity.RecycleEntityRequest;
 import com.kyouseipro.neo.recycle.regist.repository.RecycleRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -98,6 +99,14 @@ public class RecycleService {
         } else {
             return null;
         }
+    }
+
+    @HistoryTarget(
+        table = HistoryTables.RECYCLEITEMS,
+        action = "一括更新"
+    )
+    public int bulkUpdate(RecycleEntityRequest entity) {
+        return recycleRepository.bulkUpdate(entity);
     }
 
     /**

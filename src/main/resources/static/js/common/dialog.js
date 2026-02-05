@@ -115,6 +115,8 @@ function closeMsgDialog(dialogId, e) {
 
     // 要素のクリック禁止を解除する
     setInertState(false);
+    
+    // if (errorMsgAfterFocus) errorMsgAfterFocus.focus();
 }
 
 /**
@@ -129,6 +131,22 @@ function setFocusElement(msgId, elm) {
         closeMsgDialog(msgId, e);// 上書きされて消えるため再度設定
         elm.focus();
     };
+}
+
+/**
+ * 閉じた時の実行する関数を指定する
+ * @param {*} msgId 
+ * @param {*} elm 
+ */
+function setCancelFunction(msgId, func) {
+    const dialog = document.getElementById(msgId);
+    const btns =dialog.querySelectorAll('[name="cancel-btn]');
+    btns.forEach(btn => {
+        btn.onclick = (e) => {
+            closeMsgDialog(msgId, e);// 上書きされて消えるため再度設定
+            func();
+        };
+    });
 }
 
 // ボタンを使用不可にする

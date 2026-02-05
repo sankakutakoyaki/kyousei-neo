@@ -11,7 +11,7 @@
 </body> -->
 <div class="dialog-footer"
      th:fragment="footerFragment(formId, execFuncName, btnName)">
-    <button class="normal-btn frameless" type="button"
+    <button class="normal-btn frameless" type="button" name="cancel-btn"
         th:onclick="closeFormDialog([[${formId}]], event)">
         <span>キャンセル</span>
     </button>

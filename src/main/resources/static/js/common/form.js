@@ -437,7 +437,29 @@ function applySaveConfig(form, baseEntity) {
   return entity;
 }
 
-// フォームからentityへ変換する
+// // フォームからentityへ変換する
+// function buildEntityFromForm(form, baseEntity, config) {
+//     const fd = new FormData(form);
+//     const entity = structuredClone(baseEntity);
+
+//     config.forEach(c => {
+//         let v = fd.get(c.name);
+
+//         if (c.trim && typeof v === 'string') {
+//         v = v.trim();
+//         }
+//         if ((v === '' || v == null) && c.emptyTo !== undefined) {
+//         v = c.emptyTo;
+//         }
+//         if (c.number && v !== '' && v != null) {
+//         v = Number(v);
+//         }
+//         entity[c.key] = v;
+//     });
+
+//     return entity;
+// }
+
 function buildEntityFromForm(form, baseEntity, config) {
     const fd = new FormData(form);
     const entity = structuredClone(baseEntity);
@@ -445,15 +467,31 @@ function buildEntityFromForm(form, baseEntity, config) {
     config.forEach(c => {
         let v = fd.get(c.name);
 
+        // trim
         if (c.trim && typeof v === 'string') {
-        v = v.trim();
+            v = v.trim();
         }
-        if ((v === '' || v == null) && c.emptyTo !== undefined) {
-        v = c.emptyTo;
+
+        // empty → null
+        if ((v === '' || v == null) && c.emptyToNull) {
+            v = null;
         }
-        if (c.number && v !== '' && v != null) {
-        v = Number(v);
+
+        // number
+        if (c.number && v !== null && v !== '') {
+            v = Number(v);
         }
+
+        // 0 → null
+        if (c.zeroToNull && v === 0) {
+            v = null;
+        }
+
+        // ★ null のとき代入しない
+        if (v === null && c.skipIfNull) {
+            return;
+        }
+
         entity[c.key] = v;
     });
 

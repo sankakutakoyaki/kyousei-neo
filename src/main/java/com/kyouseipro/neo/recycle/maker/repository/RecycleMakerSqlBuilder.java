@@ -42,7 +42,7 @@ public class RecycleMakerSqlBuilder {
 
     public static String buildFindAll() {
         return
-            baseSelectString() + " WHERE NOT (rm.state = ?)";
+            baseSelectString() + " WHERE NOT (rm.state = ?) ORDER BY rm.abbr_name, rm.code";
     }
 
     public static String buildDownloadCsvByIds(int count) {

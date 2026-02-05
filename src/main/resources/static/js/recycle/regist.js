@@ -19,7 +19,7 @@ function createTableContent(tableId, list) {
                 execEdit(item.recycleId, this);
             }
         });
-
+        row.setAttribute('data-value', item.recycleNumber);
         createTableRow(row, item, tab);
     });
 }
@@ -39,7 +39,7 @@ function createTableRow(newRow, item, tab) {
             // 発送日　ロス処理日
             newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.shippingDate == '9999-12-31' ? "-----": item.shippingDate) + '</span><br><span>' + (item.lossDate == '9999-12-31' ? "-----": item.lossDate) + '</span></td>');
             // 登録日　伝票番号
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.registDate == '9999-12-31' ? "-----": item.registDate) + '</span><br><span>' + (item.slipNumber ?? "-----") + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.registDate == '9999-12-31' ? "-----": item.registDate) + '</span><br><span>' + (item.slipNumber > 0 ? item.slipNumber : "-----") + '</span></td>');
             break;
         case "02":
             // 使用日
@@ -50,18 +50,18 @@ function createTableRow(newRow, item, tab) {
             newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.deliveryDate == '9999-12-31' ? "-----": item.deliveryDate) + '</span></td>');
             break;
         case "04":
-            // 使用日
+            // 発送日
             newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.shippingDate == '9999-12-31' ? "-----": item.shippingDate) + '</span></td>');
             break;
         case "05":
-            // 使用日
+            // ロス処理日
             newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.lossDate == '9999-12-31' ? "-----": item.lossDate) + '</span></td>');
             break;
     }
     switch (tab) {
         case "01":
             // 製造業者等名
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.makerName ?? "") + '</span><br<span>' + (item.itemName ?? "") + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.makerName ?? "") + '</span><br><span>' + (item.itemName ?? "") + '</span></td>');
             break;
         case "02":
         case "03":
@@ -82,7 +82,33 @@ function createTableRow(newRow, item, tab) {
 /******************************************************************************************************* 入力画面 */
 
 // 登録画面を開く
-async function execEdit(id, tab, self) {
+async function execEdit(id, self) {
+    const area = self.closest('[data-panel]');
+    if (!area) return;
+    const tab = area.dataset.panel;
+    const cfg = MODE_CONFIG[tab];
+
+    // フォーム画面を取得
+    const form = document.getElementById('form-dialog-01');              
+
+    // let entity = {};
+    // if (id > 0) {
+    //     // 選択されたIDのエンティティを取得
+    //     const result = await searchFetch('/api/employee/get/id', JSON.stringify({id:parseInt(id)}), token);
+    //     if (!result?.ok) return;
+
+    //     entity = structuredClone(result.data);
+    // } else {
+        tempElm = {};
+        // resetFormInput(tab);
+        // entity.companyId = ownCompanyId;
+        // entity.category = config.category;
+    // }
+
+    // setFormContent(form, entity);
+    // 入力フォームダイアログを開く
+    openFormDialog("form-dialog-01");
+
     // let entity = {};
     // const config = MODE_CONFIG[tab];
     // const form = document.getElementById(config.dialogId);
@@ -239,12 +265,16 @@ async function execDelete(self) {
 // 新規作成処理
 async function execRegist(tab) {
     const cfg = MODE_CONFIG[tab];
-
+    
     if (!validateByConfig(cfg.panel, { ...ERROR_CONFIG.recycle, tab: tab })) {
         return;
     }
 
+    cfg.regBtn.disabled = true;
+
     const data = buildEntityFromElement(cfg.panel, tempElm, SAVE_FORM_CONFIG[tab]);
+
+    // errorMsgAfterFocus = cfg.number;
 
     const result = await updateFetch(cfg.url, JSON.stringify(data), token);
     if (result.ok) {
@@ -252,7 +282,12 @@ async function execRegist(tab) {
         await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, itemList, createTableContent);
         resetFormInput(tab);
         cfg.number.focus();
+    } else {
+        cfg.number.value = null;
+        setFocusElement("msg-dialog", cfg.number);
     }
+    
+    cfg.regBtn.disabled = false;
 }
 
 // // 更新処理
@@ -275,23 +310,33 @@ async function execRegist(tab) {
 //     closeFormDialog(config.dialogId);
 // }
 
-// // 更新処理
-// async function execDateUpdate(tab) {
-//     const config = MODE_CONFIG[tab];
+// 更新処理
+async function execBulkUpdate(self) {
 
-//     if (!validateByConfig(config.panel, { ...ERROR_CONFIG.recycle, tab: tab })) {
-//         return;
-//     }
+    const cfg = MODE_CONFIG["06"];
 
-//     const formdata = buildEntityFromElement(cfg.panel, tempElm, SAVE_FORM_CONFIG["02"]);
-//     // const formdata = {id:0, number:config.number.value, date:config.start.velue} 
-//     const result = await updateFetch("/api/recycle/update/" + tab, JSON.stringify({entity:formdata}), token);
-//     if (result.ok) {
-//         // // 画面更新
-//         // await refleshDisplay();
-//         // openMsgDialog("msg-dialog", result.message, "blue");
-//     }
-// }
+    // if (!validateByConfig(config.panel, { ...ERROR_CONFIG.recycle, tab: tab })) {
+    //     return;
+    // }
+    
+    const form = document.getElementById(cfg.formId);
+    // const formdata = buildEntityFromElement(cfg.panel, tempElm, SAVE_FORM_CONFIG["06"]);
+    const formdata = buildEntityFromForm(form, tempElm, SAVE_FORM_CONFIG["06"]);
+
+    if (!formdata) return;
+
+    const list = getAllSelectedValues(cfg.tableId);
+    formdata.recycleNumbers = list.values;
+
+    const result = await updateFetch("/api/recycle/update", JSON.stringify(formdata), token);
+    if (result.ok) {
+        closeFormDialog(cfg.dialogId);
+
+        // 画面更新
+        await refleshDisplay();
+        openMsgDialog("msg-dialog", result.data.message, "blue");
+    }
+}
 
 /******************************************************************************************************* ダウンロード */
 
@@ -399,7 +444,7 @@ window.addEventListener("load", async () => {
             let panel = document.querySelector('[data-panel="' + tab + '"]');
             setEnterFocus(panel);
 
-            if (tab === "02") {
+            if (tab === "02" || tab === "06") {
                 // メーカーコード入力ボックスのフォーカスが外れた時の処理を登録
                 config.makerCode.addEventListener('blur', function (e) { execCodeBlur(e, tab, 'maker'); });
                 // 品目コード入力ボックスのフォーカスが外れた時の処理を登録
@@ -440,6 +485,8 @@ window.addEventListener("load", async () => {
 
     const cfg = MODE_CONFIG["01"];
     cfg.start.focus();
+
+    setCancelFunction("form-dialog-01", resetFormInput("06")); 
 
     // 画面更新
     await refleshDisplay();

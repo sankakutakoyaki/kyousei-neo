@@ -29,6 +29,7 @@ public class RecycleEntity implements CsvExportable {
     private int recyclingFee;//　法定リサイクル料
     private int disposalSiteId;//　処分場
     private String disposalSiteName;
+    private int slipNumber;
     private int version;
     private int state;
     private LocalDate registDate;// 登録日

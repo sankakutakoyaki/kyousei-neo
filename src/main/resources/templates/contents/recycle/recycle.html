@@ -77,7 +77,7 @@
                     <!-- コンテンツ -->
                     <form th:replace="~{fragments/recycle/recycle :: form01Fragment()}"></form>
                     <!-- フッター -->
-                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-01', 'execSave()', '変更')}"></div>
+                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-01', 'execBulkUpdate(this)', '変更')}"></div>
                 </div>
             </div>
         </div>
@@ -105,6 +105,7 @@
             let origin = /*[[${origin}]]*/; // 初期リスト記憶用
             let itemList = [];
             let tempElm = {};
+            // let errorMsgAfterFocus;
         </script>
         <script th:src="@{/js/recycle/recycle.js}"></script>
         <script th:src="@{/js/recycle/config/regist.js}"></script>

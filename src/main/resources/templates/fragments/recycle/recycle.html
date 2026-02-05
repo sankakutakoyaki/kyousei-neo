@@ -11,7 +11,7 @@
             </div>
             <!-- 各種ボタン -->
             <div class="kebab-btns">
-                <div class="img-btn" onclick="execEdit(this)">
+                <div class="img-btn" onclick="execEdit(0,this)">
                     <img title="削除" src="/icons/edit.png">
                     <span>編集</span>
                 </div>
@@ -186,20 +186,13 @@
     <form id="form-01" class="dialog-content" th:fragment="form01Fragment()">
         <div class="flex-area">
             <div class="form-parts">
-                <label>伝票番号</label>
-                <input tabindex="1" id="number11" name="slip-number" class="normal-input" type="text" data-reset
-                    value="" onfocus="this.select();">
-            </div>
-        </div>
-        <div class="flex-area">
-            <div class="form-parts">
                 <label>品目・料金区分</label>
                 <input tabindex="2" id="item-code11" name="item-code" class="normal-input" type="text" data-reset
                     value="" onfocus="this.select();">
             </div>
             <div class="form-parts">
                 <label></label>
-                <input id="item-name" name="item-name11" class="normal-input" type="text" readonly data-reset
+                <input id="item-name11" name="item-name" class="normal-input" type="text" readonly data-reset
                     value="" onfocus="this.select();">
             </div>
         </div>
@@ -211,13 +204,8 @@
             </div>
             <div class="form-parts">
                 <label></label>
-                <input id="maker-name" name="maker-name11" class="normal-input" type="text" readonly data-reset
+                <input id="maker-name11" name="maker-name" class="normal-input" type="text" readonly data-reset
                     value="" onfocus="this.select();">
-            </div>
-            <div class="form-parts">
-                <label>リサイクル料</label>
-                <input tabindex="4" id="recycling-fee11" name="recycling-fee" class="normal-input text-right" data-reset
-                    type="text" value="" onfocus="this.select();">
             </div>
         </div>
         <div class="flex-area">
@@ -236,13 +224,8 @@
                 <input tabindex="7" id="shipping-date11" name="shipping-date" class="normal-input" type="date" value="" data-reset
                     onfocus="this.select();">
             </div>
-            <div class="form-parts">
-                <label>ロス処理日</label>
-                <input tabindex="8" id="loss-date11" name="loss-date" class="normal-input" type="date" value="" data-reset
-                    onfocus="this.select();">
-            </div>
         </div>
-        <div id="code-area" class="flex-area">
+        <div class="flex-area">
             <div class="form-parts">
                 <label>ID</label>
                 <input tabindex="10" id="company-code11" name="company-code" class="normal-input" type="text" value="">
@@ -251,6 +234,8 @@
                 <label>小売業者</label>
                 <select tabindex="11" id="company11" name="company" class="normal-select"></select>
             </div>
+        </div>
+        <div class="flex-area">
             <div class="form-parts">
                 <label>支店</label>
                 <select tabindex="12" id="office11" name="office" class="normal-select"></select>

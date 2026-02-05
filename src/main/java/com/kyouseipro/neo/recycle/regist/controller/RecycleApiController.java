@@ -26,6 +26,7 @@ import com.kyouseipro.neo.dto.IdRequest;
 import com.kyouseipro.neo.dto.StringRequest;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleDateEntity;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleEntity;
+import com.kyouseipro.neo.recycle.regist.entity.RecycleEntityRequest;
 import com.kyouseipro.neo.recycle.regist.service.RecycleService;
 
 @Controller
@@ -105,14 +106,20 @@ public class RecycleApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/update/{type}")
+    // @PostMapping("/update/{type}")
+	// @ResponseBody
+    // public ResponseEntity<ApiResponse<Integer>> update(@RequestBody RecycleDateEntity req, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     int id = recycleService.updateForDate(req, userName, type);
+    //     return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+    // }
+    @PostMapping("/update")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> update(@RequestBody RecycleDateEntity req, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
-        String userName = principal.getAttribute("preferred_username");
-        int id = recycleService.updateForDate(req, userName, type);
+    public ResponseEntity<ApiResponse<Integer>> update(@RequestBody RecycleEntityRequest req) {
+        int id = recycleService.bulkUpdate(req);
         return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
     }
-
+    
     /**
      * IDリストのEntityを削除する
      * @param IDS

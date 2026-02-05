@@ -28,6 +28,7 @@ public class RecycleEntityMapper {
         entity.setRecyclingFee(rs.getInt("recycling_fee"));
         entity.setDisposalSiteId(rs.getInt("disposal_site_id"));
         entity.setDisposalSiteName(rs.getString("disposal_site_name"));
+        entity.setSlipNumber(rs.getInt("slip_number"));
         entity.setVersion(rs.getInt("version"));
         entity.setState(rs.getInt("state"));
         entity.setRegistDate(rs.getDate("regist_date").toLocalDate());

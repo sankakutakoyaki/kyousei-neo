@@ -160,7 +160,23 @@ const MODE_CONFIG = {
         regBtn: document.getElementById("regist-btn05"),
         start: document.getElementById("start-date05"),
         url: "/api/recycle/save/loss"
-    }
+    },
+    "06": {
+        panel: document.querySelector('[data-panel="06"]'),
+        tableId: "table-01-content",
+        formId: "form-01",
+        dialogId: "form-dialog-01",
+        makerCode: document.getElementById('maker-code11'),
+        itemCode: document.getElementById('item-code11'),
+        maker: {
+            code: document.getElementById("maker-code11"),
+            name: document.getElementById("maker-name11"),
+        },
+        item: {
+            code: document.getElementById("item-code11"),
+            name: document.getElementById("item-name11"),
+        },
+    },
 };
 
 const ERROR_CONFIG = {
@@ -259,6 +275,19 @@ const SAVE_FORM_CONFIG = {
     "05": [
         { name: 'loss-date', key: 'lossDate' }
     ],
+    "06": [
+        { name: 'company', key: 'companyId', number: true, zeroToNull: true, skipIfNull: true },
+        { name: 'office', key: 'officeId', number: true, zeroToNull: true, skipIfNull: true },
+        { name: 'maker-code', key: 'makerCode', number: true, emptyToNull: true, skipIfNull: true },
+        { name: 'item-code', key: 'itemCode', number: true, emptyToNull: true, skipIfNull: true },
+
+        { name: 'use-date', key: 'useDate', emptyToNull: true, skipIfNull: true },
+        { name: 'delivery-date', key: 'deliveryDate', emptyToNull: true, skipIfNull: true },
+        { name: 'shipping-date', key: 'shippingDate', emptyToNull: true, skipIfNull: true },
+        { name: 'loss-date', key: 'lossDate', emptyToNull: true, skipIfNull: true },
+
+        { name: 'slip-number', key: 'slipNumber', emptyToNull: true, skipIfNull: true }
+    ]
 }
 // const SAVE_FORM_CONFIG = [
 //     { name: 'employee-id', key: 'employeeId' },

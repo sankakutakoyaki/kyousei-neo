@@ -20,6 +20,7 @@ import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 import com.kyouseipro.neo.recycle.maker.entity.RecycleMakerEntity;
 import com.kyouseipro.neo.recycle.maker.service.RecycleMakerService;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleEntity;
+import com.kyouseipro.neo.recycle.regist.entity.RecycleEntityRequest;
 import com.kyouseipro.neo.recycle.regist.service.RecycleService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -48,7 +49,8 @@ public class RecyclePageController extends BaseController {
         model.addAttribute("insertCss", "/css/recycle/recycle.css");
 
         // 初期化されたエンティティ
-        model.addAttribute("formEntity", new RecycleEntity());
+        // model.addAttribute("formEntity", new RecycleEntity());
+        model.addAttribute("formEntity", new RecycleEntityRequest());
 
         // 初期表示用リスト取得
         List<RecycleEntity> origin = recycleService.getBetween(LocalDate.now(), LocalDate.now(), "regist");
