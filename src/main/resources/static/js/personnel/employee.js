@@ -51,20 +51,20 @@ async function execEdit(id, self) {
     // フォーム画面を取得
     const form = document.getElementById('form-dialog-01');              
 
-    let entity = {};
+    // let entity = {};
     if (id > 0) {
         // 選択されたIDのエンティティを取得
         const result = await searchFetch('/api/employee/get/id', JSON.stringify({id:parseInt(id)}), token);
         if (!result?.ok) return;
 
-        entity = structuredClone(result.data);
+        originEntity = structuredClone(result.data);
     } else {
-        entity = structuredClone(formEntity);
-        entity.companyId = ownCompanyId;
-        entity.category = config.category;
+        originEntity = structuredClone(formEntity);
+        originEntity.companyId = ownCompanyId;
+        originEntity.category = config.category;
     }
 
-    setFormContent(form, entity);
+    setFormContent(form, originEntity);
     // 入力フォームダイアログを開く
     openFormDialog("form-dialog-01");
 }
