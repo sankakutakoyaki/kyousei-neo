@@ -477,6 +477,10 @@ function buildEntityFromForm(form, baseEntity, config) {
             v = null;
         }
 
+        // if ((v === '' || v == null) && c.emptyTo !== undefined) {
+        //     v = c.emptyTo;
+        // }
+
         // number
         if (c.number && v !== null && v !== '') {
             v = Number(v);

@@ -33,7 +33,7 @@ public class EmployeeEntity implements CsvExportable {
     private LocalDate birthday = LocalDate.of(9999, 12, 31);
     private String emergencyContact;
     private String emergencyContactNumber;
-    private LocalDate dateOfHire;
+    private LocalDate dateOfHire = LocalDate.of(9999, 12, 31);
     private int version;
     private int state;
 

@@ -90,8 +90,8 @@ async function execSave() {
         formEntity,
         SAVE_FORM_CONFIG
     );
-
-    const result = await updateFetch("/api/employee/save", JSON.stringify(formdata), token, "application/json");
+console.log(formdata)
+    const result = await updateFetch("/api/employee/save", JSON.stringify(formdata), token);
     if (result.ok) {
         closeFormDialog('form-dialog-01');
         await execUpdate();
