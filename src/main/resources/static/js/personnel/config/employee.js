@@ -16,12 +16,11 @@ const MODE_CONFIG = {
 };
 
 const FORM_CONFIG = [
-    { name: 'employee-id', key: 'employeeId' },
-    { name: 'company-id', key: 'companyId' },
+    // { name: 'employee-id', key: 'employeeId' },
 
     { name: 'code', key: 'code', emptyIf: 0 },
 
-    { name: 'category', key: 'category' },
+    // { name: 'category', key: 'category' },
     { name: 'account', key: 'account' },
 
     { name: 'office', key: 'officeId' },
@@ -40,9 +39,7 @@ const FORM_CONFIG = [
     { name: 'date-of-hire', key: 'dateOfHire', emptyIf: '9999-12-31' },
 
     { name: 'emergency-contact', key: 'emergencyContact' },
-    { name: 'emergency-contact-number', key: 'emergencyContactNumber' },
-
-    { name: 'version', key: 'version' }
+    { name: 'emergency-contact-number', key: 'emergencyContactNumber' }
 ];
 
 // const SAVE_FORM_CONFIG = [
@@ -78,13 +75,13 @@ const FORM_CONFIG = [
 //     { name: 'version', key: 'version', number: true }
 // ];
 
-const SAVE_FORM_CONFIG = [
-    { name: 'employee-id', key: 'employeeId' },
-    { name: 'company-id', key: 'companyId' },
+const UPDATE_FORM_CONFIG = [
+    // { name: 'employee-id', key: 'employeeId' },
+    // { name: 'company-id', key: 'companyId' },
 
     { name: 'code', key: 'code', number: true, zeroToNull: true, skipIfNull: true },
 
-    { name: 'category', key: 'category', number: true, zeroToNull: true, skipIfNull: true },
+    // { name: 'category', key: 'category', number: true, zeroToNull: true, skipIfNull: true },
     { name: 'account', key: 'account', trim: true, emptyToNull: true, skipIfNull: true },
 
     { name: 'office', key: 'officeId', number: true, zeroToNull: true, skipIfNull: true },
@@ -108,8 +105,13 @@ const SAVE_FORM_CONFIG = [
     { name: 'emergency-contact', key: 'emergencyContact', trim: true, emptyToNull: true, skipIfNull: true },
     { name: 'emergency-contact-number', key: 'emergencyContactNumber', trim: true, emptyToNull: true, skipIfNull: true },
 
-    { name: 'version', key: 'version', number: true, zeroToNull: true, skipIfNull: true },
+    // { name: 'version', key: 'version', number: true, zeroToNull: true, skipIfNull: true },
 ];
+
+const SAVE_CONFIG = UPDATE_CONFIG.map(c => ({
+    ...c,
+    skipIfNull: false   // ← ここが重要
+}));
 
 const COMBO_CONFIG = [
     // {

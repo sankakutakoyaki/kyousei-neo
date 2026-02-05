@@ -1,11 +1,13 @@
 package com.kyouseipro.neo.personnel.employee.repository;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
+import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntityRequest;
 
 public class EmployeeParameterBinder {
     public static int bindInsert(PreparedStatement pstmt, EmployeeEntity e, String editor) throws SQLException {
@@ -97,6 +99,59 @@ public class EmployeeParameterBinder {
         pstmt.setInt(index++, id); // WHERE句
         pstmt.setString(index++, editor);          // ログ用
         return index;
+    }
+
+    public static void bindBulkUpdate(
+            PreparedStatement ps,
+            EmployeeEntityRequest req,
+            String editor
+    ) throws SQLException {
+
+        int idx = 1;
+
+        if (req.getCompanyId() != null) {
+            ps.setInt(idx++, req.getCompanyId());
+        }
+        if (req.getOfficeId() != null) {
+            ps.setInt(idx++, req.getOfficeId());
+        }
+        if (req.getCategory() != null) {
+            ps.setInt(idx++, req.getCategory());
+        }
+        if (req.getGender() != null) {
+            ps.setInt(idx++, req.getGender());
+        }
+        if (req.getBloodType() != null) {
+            ps.setInt(idx++, req.getBloodType());
+        }
+
+        if (req.getPhoneNumber() != null) {
+            ps.setString(idx++, req.getPhoneNumber());
+        }
+        if (req.getPostalCode() != null) {
+            ps.setString(idx++, req.getPostalCode());
+        }
+        if (req.getFullAddress() != null) {
+            ps.setString(idx++, req.getFullAddress());
+        }
+        if (req.getEmail() != null) {
+            ps.setString(idx++, req.getEmail());
+        }
+
+        if (req.getBirthday() != null) {
+            ps.setDate(idx++, Date.valueOf(req.getBirthday()));
+        }
+        if (req.getDateOfHire() != null) {
+            ps.setDate(idx++, Date.valueOf(req.getDateOfHire()));
+        }
+
+        // WHERE
+        ps.setInt(idx++, req.getEmployeeId());
+        ps.setInt(idx++, req.getVersion());
+        ps.setInt(idx++, Enums.state.DELETE.getCode());
+
+        // ログ用
+        ps.setString(idx++, editor);          
     }
 
     public static int bindUpdatePhone(PreparedStatement pstmt, int id, String phone, String editor) throws SQLException {

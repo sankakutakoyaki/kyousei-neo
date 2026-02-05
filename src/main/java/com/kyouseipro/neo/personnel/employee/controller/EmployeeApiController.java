@@ -15,6 +15,7 @@ import com.kyouseipro.neo.dto.ApiResponse;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.IdRequest;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
+import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntityRequest;
 import com.kyouseipro.neo.personnel.employee.service.EmployeeService;
 
 import lombok.RequiredArgsConstructor;
@@ -41,10 +42,24 @@ public class EmployeeApiController {
      * @param ENTITY
      * @return 
      */
+    // @PostMapping("/save")
+	// @ResponseBody
+    // public ResponseEntity<ApiResponse<Integer>> save(@RequestBody EmployeeEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
+    //     int id = employeeService.save(entity, principal.getAttribute("preferred_username"));
+    //     return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+    // }
+
     @PostMapping("/save")
 	@ResponseBody
     public ResponseEntity<ApiResponse<Integer>> save(@RequestBody EmployeeEntity entity, @AuthenticationPrincipal OidcUser principal) {
         int id = employeeService.save(entity, principal.getAttribute("preferred_username"));
+        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+    }
+
+    @PostMapping("/update")
+	@ResponseBody
+    public ResponseEntity<ApiResponse<Integer>> update(@RequestBody EmployeeEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
+        int id = employeeService.update(entity, principal.getAttribute("preferred_username"));
         return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
     }
 

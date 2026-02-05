@@ -78,20 +78,15 @@ function setFormContent(form, entity) {
 /******************************************************************************************************* 保存 */
 
 // 保存処理
-async function execSave() {
-    const form = document.getElementById('form-01');
-    const tab = document.querySelector('li.is-active');
-    if (!tab) return;
+async function exexSave() {
+    let result = null;
 
-    if (!formDataCheck(form)) return;
+    if (originEntity.employeeId > 0) {
+        result = await execUpdate();
+    } else {
+        result = await exexRegist();
+    }
 
-    const formdata = buildEntityFromForm(
-        form,
-        formEntity,
-        SAVE_FORM_CONFIG
-    );
-console.log(formdata)
-    const result = await updateFetch("/api/employee/save", JSON.stringify(formdata), token);
     if (result.ok) {
         closeFormDialog('form-dialog-01');
         await execUpdate();
@@ -101,6 +96,78 @@ console.log(formdata)
         openMsgDialog("msg-dialog", result.data.message, "blue");
     }
 }
+
+async function exexRegist() {
+    const form = document.getElementById('form-01');
+    const tab = document.querySelector('li.is-active');
+    if (!tab) return;
+
+    const cfg = MODE_CONFIG[tab]
+
+    if (!formDataCheck(form)) return;
+
+    const editedEntity = buildEntityFromForm(
+        form,
+        formEntity,
+        SAVE_FORM_CONFIG
+    );
+
+    editedEntity.companyId = ownCompanyId;
+    editedEntity.category = cfg.category;
+
+    return updateFetch("/api/employee/save", JSON.stringify(editedEntity), token);
+}
+
+async function exexUpdate() {
+    const form = document.getElementById('form-01');
+    const tab = document.querySelector('li.is-active');
+    if (!tab) return;
+
+    const cfg = MODE_CONFIG[tab]
+
+    if (!formDataCheck(form)) return;
+
+    const editedEntity = buildEntityFromForm(
+        form,
+        formEntity,
+        SAVE_FORM_CONFIG
+    );
+
+    const diff = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
+
+    if (Object.keys(diff).length === 0) {
+        openMsgDialog("msg-dialog", "変更がありません", "red");
+        return;
+    }
+
+    diff.employeeId = originEntity.employeeId;
+    diff.companyId = originEntity.companyId;
+    diff.category = originEntity.category;
+    diff.version = originEntity.version;
+
+    return await updateFetch("/api/employee/update", JSON.stringify(diff), token);
+}
+
+// // 差分抽出
+// function diffEntity(original, edited) {
+//     const diff = {};
+
+//     Object.keys(edited).forEach(key => {
+//         const o = original[key];
+//         const e = edited[key];
+
+//         // 日付（LocalDate対策）
+//         if (o instanceof Date || typeof o === 'string') {
+//             if (String(o) !== String(e)) {
+//                 diff[key] = e;
+//             }
+//         } else if (o !== e) {
+//             diff[key] = e;
+//         }
+//     });
+
+//     return diff;
+// }
 
 // 入力チェック
 function formDataCheck(area) {

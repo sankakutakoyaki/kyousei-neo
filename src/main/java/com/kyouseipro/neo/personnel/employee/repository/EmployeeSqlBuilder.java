@@ -1,6 +1,11 @@
 package com.kyouseipro.neo.personnel.employee.repository;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.kyouseipro.neo.common.Utilities;
+import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntityRequest;
 
 public class EmployeeSqlBuilder {
 
@@ -89,6 +94,70 @@ public class EmployeeSqlBuilder {
             "SELECT employee_id FROM @UpdatedRows;";
     }
 
+    public static String buildBulkUpdate(EmployeeEntityRequest req) {
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("UPDATE employees SET ");
+
+        List<String> sets = new ArrayList<>();
+
+        if (req.getCompanyId() != null) {
+            sets.add("company_id = ?");
+        }
+        if (req.getOfficeId() != null) {
+            sets.add("office_id = ?");
+        }
+        if (req.getCategory() != null) {
+            sets.add("category = ?");
+        }
+        if (req.getGender() != null) {
+            sets.add("gender = ?");
+        }
+        if (req.getBloodType() != null) {
+            sets.add("blood_type = ?");
+        }
+
+        if (req.getPhoneNumber() != null) {
+            sets.add("phone_number = ?");
+        }
+        if (req.getPostalCode() != null) {
+            sets.add("postal_code = ?");
+        }
+        if (req.getFullAddress() != null) {
+            sets.add("full_address = ?");
+        }
+        if (req.getEmail() != null) {
+            sets.add("email = ?");
+        }
+
+        if (req.getBirthday() != null) {
+            sets.add("birthday = ?");
+        }
+        if (req.getDateOfHire() != null) {
+            sets.add("date_of_hire = ?");
+        }
+
+        // 共通更新項目
+        sets.add("version = version + 1");
+        sets.add("update_date = SYSDATETIME()");
+
+        if (sets.isEmpty()) {
+            throw new IllegalArgumentException("更新項目がありません");
+        }
+
+        sql.append(String.join(", ", sets));
+
+        return 
+            buildLogTable("@UpdatedRows") + sql.toString() +
+
+            buildOutputLog() + "INTO @UpdatedRows " +
+
+            "WHERE employee_id = ? AND version = ? AND NOT (state = ?)" +
+
+            buildInsertLog("@UpdatedRows", "UPDATE") +
+
+            "SELECT employee_id FROM @UpdatedRows;";
+    }
 
     public static String buildUpdatePhone() {
         return

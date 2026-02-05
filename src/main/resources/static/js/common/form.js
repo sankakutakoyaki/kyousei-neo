@@ -460,6 +460,47 @@ function applySaveConfig(form, baseEntity) {
 //     return entity;
 // }
 
+function normalizeValue(v, c) {
+    if (c.trim && typeof v === 'string') {
+        v = v.trim();
+    }
+    if (c.emptyToNull && (v === '' || v == null)) {
+        v = null;
+    }
+    if (c.number && v !== null && v !== '') {
+        v = Number(v);
+    }
+    if (c.zeroToNull && v === 0) {
+        v = null;
+    }
+    if (typeof v === 'string' && v === '9999-12-31') {
+        v = null;
+    }
+    return v;
+}
+
+// 差分抽出
+function diffEntity(original, edited, config) {
+    const diff = {};
+
+    config.forEach(c => {
+        const key = c.key;
+
+        const o = normalizeValue(original[key], c);
+        const e = normalizeValue(edited[key], c);
+
+        // 値が同じなら差分なし
+        if (o === e) return;
+
+        // null かつ skipIfNull → 送らない
+        if (e === null && c.skipIfNull) return;
+
+        diff[key] = e;
+    });
+
+    return diff;
+}
+
 function buildEntityFromForm(form, baseEntity, config) {
     const fd = new FormData(form);
     const entity = structuredClone(baseEntity);

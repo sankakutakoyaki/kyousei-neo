@@ -1,7 +1,9 @@
 package com.kyouseipro.neo.personnel.employee.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +12,7 @@ import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
+import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntityRequest;
 import com.kyouseipro.neo.personnel.employee.mapper.EmployeeEntityMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -91,6 +94,75 @@ public class EmployeeRepository {
         );
     }
 
+    // /**
+    //  * 新規作成。
+    //  * @param entity
+    //  * @param editor
+    //  * @return 新規IDを返す。
+    //  */
+    // public int insert(EmployeeEntity entity, String editor) {
+    //     String sql = EmployeeSqlBuilder.buildInsert();
+
+    //     try {
+    //         return sqlRepository.executeRequired(
+    //             sql,
+    //             (ps, en) -> EmployeeParameterBinder.bindInsert(ps, en, editor),
+    //             rs -> {
+    //                 if (!rs.next()) {
+    //                     throw new BusinessException("登録に失敗しました");
+    //                 }
+    //                 int id = rs.getInt("employee_id");
+
+    //                 if (rs.next()) {
+    //                     throw new IllegalStateException("ID取得結果が複数行です");
+    //                 }
+    //                 return id;
+    //             },
+    //             entity
+    //         );
+    //     } catch (RuntimeException e) {
+    //         if (SqlExceptionUtil.isDuplicateKey(e)) {
+    //             throw new BusinessException("このコードはすでに使用されています。");
+    //         }
+    //         throw e;
+    //     }
+    // }
+
+    // /**
+    //  * 更新。
+    //  * @param entity
+    //  * @param editor
+    //  * @return 成功件数を返す。
+    //  */
+    // public int update(EmployeeEntity entity, String editor) {
+    //     String sql = EmployeeSqlBuilder.buildUpdate();
+
+    //     // Integer result = sqlRepository.executeUpdate(
+    //     //     sql,
+    //     //     pstmt -> EmployeeParameterBinder.bindUpdate(pstmt, employee, editor)
+    //     // );
+
+    //     // return result; // 成功件数。0なら削除なし
+    //     try {
+    //         int count = sqlRepository.executeUpdate(
+    //             sql,
+    //             ps -> EmployeeParameterBinder.bindUpdate(ps, entity, editor)
+    //         );
+
+    //         if (count == 0) {
+    //             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
+    //         }
+
+    //         return count;
+
+    //     } catch (RuntimeException e) {
+    //         if (SqlExceptionUtil.isDuplicateKey(e)) {
+    //             throw new BusinessException("このコードはすでに使用されています。");
+    //         }
+    //         throw e;
+    //     }
+    // }
+
     /**
      * 新規作成。
      * @param entity
@@ -100,12 +172,6 @@ public class EmployeeRepository {
     public int insert(EmployeeEntity entity, String editor) {
         String sql = EmployeeSqlBuilder.buildInsert();
 
-        // return sqlRepository.executeRequired(
-        //     sql,
-        //     (pstmt, emp) -> EmployeeParameterBinder.bindInsert(pstmt, emp, editor),
-        //     rs -> rs.next() ? rs.getInt("employee_id") : null,
-        //     employee
-        // );
         try {
             return sqlRepository.executeRequired(
                 sql,
@@ -137,19 +203,13 @@ public class EmployeeRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int update(EmployeeEntity entity, String editor) {
-        String sql = EmployeeSqlBuilder.buildUpdate();
+    public int update(EmployeeEntityRequest entity, String editor) {
+        String sql = EmployeeSqlBuilder.buildBulkUpdate(entity);
 
-        // Integer result = sqlRepository.executeUpdate(
-        //     sql,
-        //     pstmt -> EmployeeParameterBinder.bindUpdate(pstmt, employee, editor)
-        // );
-
-        // return result; // 成功件数。0なら削除なし
         try {
             int count = sqlRepository.executeUpdate(
                 sql,
-                ps -> EmployeeParameterBinder.bindUpdate(ps, entity, editor)
+                ps -> EmployeeParameterBinder.bindBulkUpdate(ps, entity, editor)
             );
 
             if (count == 0) {

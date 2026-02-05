@@ -10,6 +10,7 @@ import com.kyouseipro.neo.dto.CsvExporter;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.interfaces.HistoryTarget;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
+import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntityRequest;
 import com.kyouseipro.neo.personnel.employee.repository.EmployeeRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -42,11 +43,21 @@ public class EmployeeService {
         action = "保存"
     )
     public int save(EmployeeEntity entity, String editor) {
-        if (entity.getEmployeeId() > 0) {
-            return employeeRepository.update(entity, editor);
-        } else {
-            return employeeRepository.insert(entity, editor);
-        }
+        return employeeRepository.insert(entity, editor);
+    }
+
+    /**
+     * 
+     * @param entity
+     * @param editor
+     * @return
+     */
+    @HistoryTarget(
+        table = HistoryTables.EMPLOYEES,
+        action = "更新"
+    )
+    public int update(EmployeeEntityRequest entity, String editor) {
+        return employeeRepository.update(entity, editor);
     }
 
     /**
