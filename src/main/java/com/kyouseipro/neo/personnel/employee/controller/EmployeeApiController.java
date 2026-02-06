@@ -51,17 +51,17 @@ public class EmployeeApiController {
 
     @PostMapping("/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody EmployeeEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody EmployeeEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
         int id = employeeService.save(entity, principal.getAttribute("preferred_username"));
         return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
     }
 
-    @PostMapping("/update")
-	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> update(@RequestBody EmployeeEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
-        int id = employeeService.update(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
-    }
+    // @PostMapping("/update")
+	// @ResponseBody
+    // public ResponseEntity<ApiResponse<Integer>> update(@RequestBody EmployeeEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
+    //     int id = employeeService.update(entity, principal.getAttribute("preferred_username"));
+    //     return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+    // }
 
     /**
      * 情報を更新する

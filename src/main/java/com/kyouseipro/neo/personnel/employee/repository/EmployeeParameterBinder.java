@@ -101,14 +101,7 @@ public class EmployeeParameterBinder {
         return index;
     }
 
-    public static void bindBulkUpdate(
-            PreparedStatement ps,
-            EmployeeEntityRequest req,
-            String editor
-    ) throws SQLException {
-
-        int idx = 1;
-
+    private static int bindSaveParameter (PreparedStatement ps, EmployeeEntityRequest req, String editor, int idx) throws SQLException {
         if (req.getAccount() != null) {
             ps.setString(idx++, req.getAccount());
         }
@@ -151,12 +144,26 @@ public class EmployeeParameterBinder {
         if (req.getDateOfHire() != null) {
             ps.setDate(idx++, Date.valueOf(req.getDateOfHire()));
         }
+        
+        return idx;
+    }
+
+    public static void bindBulkInsert(PreparedStatement ps, EmployeeEntityRequest req, String editor) throws SQLException {
+
+        int idx = bindSaveParameter(ps, req, editor, 1);
 
         // WHERE
         ps.setInt(idx++, req.getEmployeeId());
         ps.setInt(idx++, req.getVersion());
         ps.setInt(idx++, Enums.state.DELETE.getCode());
 
+        // ログ用
+        ps.setString(idx++, editor);          
+    }
+
+    public static void bindBulkUpdate(PreparedStatement ps, EmployeeEntityRequest req, String editor) throws SQLException {
+
+        int idx = bindSaveParameter(ps, req, editor, 1);
         // ログ用
         ps.setString(idx++, editor);          
     }

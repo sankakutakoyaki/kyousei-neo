@@ -169,13 +169,15 @@ public class EmployeeRepository {
      * @param editor
      * @return 新規IDを返す。
      */
-    public int insert(EmployeeEntity entity, String editor) {
-        String sql = EmployeeSqlBuilder.buildInsert();
+    public int insert(EmployeeEntityRequest entity, String editor) {
+        // String sql = EmployeeSqlBuilder.buildInsert();
+        String sql = EmployeeSqlBuilder.buildBulkUpdate(entity);
 
         try {
             return sqlRepository.executeRequired(
                 sql,
-                (ps, en) -> EmployeeParameterBinder.bindInsert(ps, en, editor),
+                // (ps, en) -> EmployeeParameterBinder.bindInsert(ps, en, editor),
+                (ps, en) -> EmployeeParameterBinder.bindBulkInsert(ps, entity, editor),
                 rs -> {
                     if (!rs.next()) {
                         throw new BusinessException("登録に失敗しました");

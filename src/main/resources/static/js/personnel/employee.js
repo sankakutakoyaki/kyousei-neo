@@ -80,20 +80,40 @@ function setFormContent(form, entity) {
 // 保存処理
 async function execSave() {
     const form = document.getElementById('form-01');
-    const tab = document.querySelector('li.is-active');
-    if (!tab) return;
+    const panel = document.querySelector('.tab-panel.is-show');
+    if (!panel) return;
+    const tab = panel.dataset.panel
 
     if (!formDataCheck(form)) return;
 
     const cfg = MODE_CONFIG[tab];
-    
-    let result = null;
+  
+    // let result = null;
+    let tempEntity = {};
 
     if (originEntity.employeeId > 0) {
-        result = await execBulkUpdate(form);console.log(result)
+        // result = await execBulkUpdate(form);
+        const editedEntity = buildEntityFromForm(form, originEntity, SAVE_FORM_CONFIG);
+        tempEntity = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
+console.log(tempEntity)
+        tempEntity.companyId = ownCompanyId;
+        tempEntity.category = cfg.category;
     } else {
-        result = await execRegist(form, cfg);
+        // result = await execRegist(form, cfg);
+        // 差分抽出
+        const editedEntity = buildEntityFromForm(form, formEntity, SAVE_FORM_CONFIG);
+        tempEntity = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
+
+        if (Object.keys(tempEntity).length === 0) {
+            openMsgDialog("msg-dialog", "変更がありません", "red");
+            return;
+        }
+
+        tempEntity.employeeId = originEntity.employeeId;
+        tempEntity.version = originEntity.version;
     }
+
+    const result = await updateFetch("/api/employee/save", JSON.stringify(tempEntity), token);
 
     if (result.ok) {
         closeFormDialog('form-dialog-01');
@@ -104,33 +124,33 @@ async function execSave() {
     }
 }
 
-// 新規
-async function execRegist(form, cfg) {
+// // 新規
+// async function execRegist(form, cfg) {
 
-    const editedEntity = buildEntityFromForm(form, formEntity, UPDATE_FORM_CONFIG);
+//     const editedEntity = buildEntityFromForm(form, formEntity, UPDATE_FORM_CONFIG);
 
-    editedEntity.companyId = ownCompanyId;
-    editedEntity.category = cfg.category;
+//     editedEntity.companyId = ownCompanyId;
+//     editedEntity.category = cfg.category;
 
-    return await updateFetch("/api/employee/save", JSON.stringify(editedEntity), token);
-}
+//     return await updateFetch("/api/employee/save", JSON.stringify(editedEntity), token);
+// }
 
-// 更新
-async function execBulkUpdate(form) {
+// // 更新
+// async function execBulkUpdate(form) {
 
-    const editedEntity = buildEntityFromForm(form, formEntity, SAVE_FORM_CONFIG);
-    const diff = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
+//     const editedEntity = buildEntityFromForm(form, formEntity, SAVE_FORM_CONFIG);
+//     const diff = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
 
-    if (Object.keys(diff).length === 0) {
-        openMsgDialog("msg-dialog", "変更がありません", "red");
-        return;
-    }
+//     if (Object.keys(diff).length === 0) {
+//         openMsgDialog("msg-dialog", "変更がありません", "red");
+//         return;
+//     }
 
-    diff.employeeId = originEntity.employeeId;
-    diff.version = originEntity.version;
+//     diff.employeeId = originEntity.employeeId;
+//     diff.version = originEntity.version;
 
-    return await updateFetch("/api/employee/update", JSON.stringify(diff), token);
-}
+//     return await updateFetch("/api/employee/update", JSON.stringify(diff), token);
+// }
 
 // 入力チェック
 function formDataCheck(area) {

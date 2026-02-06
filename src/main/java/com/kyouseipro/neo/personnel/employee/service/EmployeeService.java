@@ -42,23 +42,28 @@ public class EmployeeService {
         table = HistoryTables.EMPLOYEES,
         action = "保存"
     )
-    public int save(EmployeeEntity entity, String editor) {
-        return employeeRepository.insert(entity, editor);
+    public int save(EmployeeEntityRequest entity, String editor) {
+        if (entity.getEmployeeId() > 0) {
+            return employeeRepository.update(entity, editor);
+        } else {
+            return employeeRepository.insert(entity, editor);
+        }
+        
     }
 
-    /**
-     * 
-     * @param entity
-     * @param editor
-     * @return
-     */
-    @HistoryTarget(
-        table = HistoryTables.EMPLOYEES,
-        action = "更新"
-    )
-    public int update(EmployeeEntityRequest entity, String editor) {
-        return employeeRepository.update(entity, editor);
-    }
+    // /**
+    //  * 
+    //  * @param entity
+    //  * @param editor
+    //  * @return
+    //  */
+    // @HistoryTarget(
+    //     table = HistoryTables.EMPLOYEES,
+    //     action = "更新"
+    // )
+    // public int update(EmployeeEntityRequest entity, String editor) {
+    //     return employeeRepository.update(entity, editor);
+    // }
 
     /**
      * 従業員コードを更新します。
