@@ -50,47 +50,47 @@ public class EmployeeParameterBinder {
         return index;
     }
 
-    public static int bindUpdate(PreparedStatement pstmt, EmployeeEntity e, String editor) throws SQLException {
-        int index = 1;
-        pstmt.setInt(index++, e.getCompanyId());
-        pstmt.setInt(index++, e.getOfficeId());
-        pstmt.setString(index++, e.getAccount());
-        pstmt.setInt(index++, e.getCode());
-        pstmt.setInt(index++, e.getCategory());
-        pstmt.setString(index++, e.getLastName());
-        pstmt.setString(index++, e.getFirstName());
-        pstmt.setString(index++, e.getLastNameKana());
-        pstmt.setString(index++, e.getFirstNameKana());
-        pstmt.setString(index++, e.getPhoneNumber());
-        pstmt.setString(index++, e.getPostalCode());
-        pstmt.setString(index++, e.getFullAddress());
-        pstmt.setString(index++, e.getEmail());
-        pstmt.setInt(index++, e.getGender());
-        pstmt.setInt(index++, e.getBloodType());
+    // public static int bindUpdate(PreparedStatement pstmt, EmployeeEntity e, String editor) throws SQLException {
+    //     int index = 1;
+    //     pstmt.setInt(index++, e.getCompanyId());
+    //     pstmt.setInt(index++, e.getOfficeId());
+    //     pstmt.setString(index++, e.getAccount());
+    //     pstmt.setInt(index++, e.getCode());
+    //     pstmt.setInt(index++, e.getCategory());
+    //     pstmt.setString(index++, e.getLastName());
+    //     pstmt.setString(index++, e.getFirstName());
+    //     pstmt.setString(index++, e.getLastNameKana());
+    //     pstmt.setString(index++, e.getFirstNameKana());
+    //     pstmt.setString(index++, e.getPhoneNumber());
+    //     pstmt.setString(index++, e.getPostalCode());
+    //     pstmt.setString(index++, e.getFullAddress());
+    //     pstmt.setString(index++, e.getEmail());
+    //     pstmt.setInt(index++, e.getGender());
+    //     pstmt.setInt(index++, e.getBloodType());
 
-        if (e.getBirthday() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(e.getBirthday()));
-        } else {
-            pstmt.setNull(index++, java.sql.Types.DATE);
-        }
+    //     if (e.getBirthday() != null) {
+    //         pstmt.setDate(index++, java.sql.Date.valueOf(e.getBirthday()));
+    //     } else {
+    //         pstmt.setNull(index++, java.sql.Types.DATE);
+    //     }
 
-        pstmt.setString(index++, e.getEmergencyContact());
-        pstmt.setString(index++, e.getEmergencyContactNumber());
+    //     pstmt.setString(index++, e.getEmergencyContact());
+    //     pstmt.setString(index++, e.getEmergencyContactNumber());
 
-        if (e.getDateOfHire() != null) {
-            pstmt.setDate(index++, java.sql.Date.valueOf(e.getDateOfHire()));
-        } else {
-            pstmt.setNull(index++, java.sql.Types.DATE);
-        }
+    //     if (e.getDateOfHire() != null) {
+    //         pstmt.setDate(index++, java.sql.Date.valueOf(e.getDateOfHire()));
+    //     } else {
+    //         pstmt.setNull(index++, java.sql.Types.DATE);
+    //     }
 
-        pstmt.setInt(index++, e.getVersion() +1);
-        pstmt.setInt(index++, e.getState());
+    //     pstmt.setInt(index++, e.getVersion() +1);
+    //     pstmt.setInt(index++, e.getState());
 
-        pstmt.setInt(index++, e.getEmployeeId()); // WHERE句
-        pstmt.setInt(index++, e.getVersion());
-        pstmt.setString(index++, editor);          // ログ用
-        return index;
-    }
+    //     pstmt.setInt(index++, e.getEmployeeId()); // WHERE句
+    //     pstmt.setInt(index++, e.getVersion());
+    //     pstmt.setString(index++, editor);          // ログ用
+    //     return index;
+    // }
 
     public static int bindUpdateCode(PreparedStatement pstmt, int id, int code, String editor) throws SQLException {
         int index = 1;
@@ -108,6 +108,13 @@ public class EmployeeParameterBinder {
     ) throws SQLException {
 
         int idx = 1;
+
+        if (req.getAccount() != null) {
+            ps.setString(idx++, req.getAccount());
+        }
+        if (req.getCode() != null) {
+            ps.setInt(idx++, req.getCode());
+        }
 
         if (req.getCompanyId() != null) {
             ps.setInt(idx++, req.getCompanyId());

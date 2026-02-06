@@ -101,6 +101,13 @@ public class EmployeeSqlBuilder {
 
         List<String> sets = new ArrayList<>();
 
+        if (req.getAccount() != null) {
+            sets.add("account = ?");
+        }
+        if (req.getCode() != null) {
+            sets.add("code = ?");
+        }
+        
         if (req.getCompanyId() != null) {
             sets.add("company_id = ?");
         }

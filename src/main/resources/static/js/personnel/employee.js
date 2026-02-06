@@ -49,7 +49,7 @@ async function execEdit(id, self) {
     const config = MODE_CONFIG[tab];
 
     // フォーム画面を取得
-    const form = document.getElementById('form-dialog-01');              
+    const form = document.getElementById('form-dialog-01');
 
     // let entity = {};
     if (id > 0) {
@@ -78,61 +78,47 @@ function setFormContent(form, entity) {
 /******************************************************************************************************* 保存 */
 
 // 保存処理
-async function exexSave() {
+async function execSave() {
+    const form = document.getElementById('form-01');
+    const tab = document.querySelector('li.is-active');
+    if (!tab) return;
+
+    if (!formDataCheck(form)) return;
+
+    const cfg = MODE_CONFIG[tab];
+    
     let result = null;
 
     if (originEntity.employeeId > 0) {
-        result = await execUpdate();
+        result = await execBulkUpdate(form);console.log(result)
     } else {
-        result = await exexRegist();
+        result = await execRegist(form, cfg);
     }
 
     if (result.ok) {
         closeFormDialog('form-dialog-01');
         await execUpdate();
-        const config = MODE_CONFIG[tab.dataset.tab];
-        scrollIntoTableList(config.tableId, result.data.employeeId);
+        scrollIntoTableList(cfg.tableId, result.data.employeeId);
         
         openMsgDialog("msg-dialog", result.data.message, "blue");
     }
 }
 
-async function exexRegist() {
-    const form = document.getElementById('form-01');
-    const tab = document.querySelector('li.is-active');
-    if (!tab) return;
+// 新規
+async function execRegist(form, cfg) {
 
-    const cfg = MODE_CONFIG[tab]
-
-    if (!formDataCheck(form)) return;
-
-    const editedEntity = buildEntityFromForm(
-        form,
-        formEntity,
-        SAVE_FORM_CONFIG
-    );
+    const editedEntity = buildEntityFromForm(form, formEntity, UPDATE_FORM_CONFIG);
 
     editedEntity.companyId = ownCompanyId;
     editedEntity.category = cfg.category;
 
-    return updateFetch("/api/employee/save", JSON.stringify(editedEntity), token);
+    return await updateFetch("/api/employee/save", JSON.stringify(editedEntity), token);
 }
 
-async function exexUpdate() {
-    const form = document.getElementById('form-01');
-    const tab = document.querySelector('li.is-active');
-    if (!tab) return;
+// 更新
+async function execBulkUpdate(form) {
 
-    const cfg = MODE_CONFIG[tab]
-
-    if (!formDataCheck(form)) return;
-
-    const editedEntity = buildEntityFromForm(
-        form,
-        formEntity,
-        SAVE_FORM_CONFIG
-    );
-
+    const editedEntity = buildEntityFromForm(form, formEntity, SAVE_FORM_CONFIG);
     const diff = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
 
     if (Object.keys(diff).length === 0) {
@@ -141,33 +127,10 @@ async function exexUpdate() {
     }
 
     diff.employeeId = originEntity.employeeId;
-    diff.companyId = originEntity.companyId;
-    diff.category = originEntity.category;
     diff.version = originEntity.version;
 
     return await updateFetch("/api/employee/update", JSON.stringify(diff), token);
 }
-
-// // 差分抽出
-// function diffEntity(original, edited) {
-//     const diff = {};
-
-//     Object.keys(edited).forEach(key => {
-//         const o = original[key];
-//         const e = edited[key];
-
-//         // 日付（LocalDate対策）
-//         if (o instanceof Date || typeof o === 'string') {
-//             if (String(o) !== String(e)) {
-//                 diff[key] = e;
-//             }
-//         } else if (o !== e) {
-//             diff[key] = e;
-//         }
-//     });
-
-//     return diff;
-// }
 
 // 入力チェック
 function formDataCheck(area) {
@@ -265,10 +228,10 @@ async function execUpdate() {
 
     // リスト取得
     const result = await fetch('/api/employee/get/list');
-    origin = result.data;
+    origin = await result.json();
 
     // 画面更新
-    const list = origin.filter(function(value) { return value.category == config.category });
+    const list = origin.filter(value => { return value.category === config.category });
     await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
 }
 
@@ -292,7 +255,7 @@ window.addEventListener("load", async () => {
     for (const mode of Object.keys(MODE_CONFIG)) {
         let config = MODE_CONFIG[mode];
         if (config != null) {
-            setEnterFocus(config.formId);
+            // setEnterFocus(config.formId);
             // 検索ボックス入力時の処理
             document.getElementById(config.searchId).addEventListener('search', async function(e) {
                 await execFilterDisplay(e.currentTarget);
@@ -306,6 +269,9 @@ window.addEventListener("load", async () => {
     document.getElementById('employee-postal-code').addEventListener('keydown', async function (e) {
         await getAddress(e, 'employee-postal-code', 'employee-full-address');                                                                                                                                                                                                                                                                                                                                                       ;
     });
+
+    // エンターフォーカス処理をイベントリスナーに登録する
+    setEnterFocus("form-01");
 
     // タブメニュー処理
     const tabMenus = document.querySelectorAll('.tab-menu-item');

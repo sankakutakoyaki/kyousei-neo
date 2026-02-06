@@ -108,7 +108,7 @@ const UPDATE_FORM_CONFIG = [
     // { name: 'version', key: 'version', number: true, zeroToNull: true, skipIfNull: true },
 ];
 
-const SAVE_CONFIG = UPDATE_CONFIG.map(c => ({
+const SAVE_FORM_CONFIG = UPDATE_FORM_CONFIG.map(c => ({
     ...c,
     skipIfNull: false   // ← ここが重要
 }));
