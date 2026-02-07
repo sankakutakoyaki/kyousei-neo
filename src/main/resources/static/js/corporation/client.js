@@ -206,7 +206,7 @@ async function execSave() {
     let tempEntity = {};
 
     const editedEntity = buildEntityFromForm(form, originEntity, SAVE_FORM_CONFIG[tab]);
-    tempEntity = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG[tab]);
+    tempEntity = diffEntity(originEntity, editedEntity, FORM_CONFIG[tab]);
 
     if (originEntity[cfg.dataId] > 0) {
         if (Object.keys(tempEntity).length === 0) {
@@ -418,6 +418,23 @@ async function execFilterDisplay(self) {
 
 }
 
+async function clearTable(e) {
+    itemList = [];
+    tempElm = structuredClone(formEntity);
+
+    const tab = e.currentTarget.dataset.tab;
+    const cfg = MODE_CONFIG[tab];
+    cfg.start.focus();
+    switch (tab) {
+        case "01":
+        case "02":
+        case "03":
+        case "04":
+        case "05":
+            await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, cfg.list, createTableContent);
+    }
+}
+
 // // 初期化処理登録
 // function initCompanyInputs() {
 //     COMPANY_UI_CONFIG.forEach(cfg => {
@@ -509,7 +526,7 @@ window.addEventListener("load", async () => {
     
     // タブ
     document.querySelectorAll('.tab-menu-item')
-        .forEach(tab => tab.addEventListener('click', tabSwitch));
+        .forEach(tab => tab.addEventListener('click', e => { tabSwitch(e); clearTable(e); }));
 
     processingEnd();
 });

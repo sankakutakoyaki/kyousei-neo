@@ -11,6 +11,7 @@ const MODE_CONFIG = {
         formDialogId: "form-dialog-01",
         formId: "form-01",
         entity: companyEntity,
+        list: companyOrigin,
         url: "/api/company/save"
     },
     "02": {
@@ -23,6 +24,7 @@ const MODE_CONFIG = {
         formDialogId: "form-dialog-01",
         formId: "form-01",
         entity: companyEntity,
+        list: companyOrigin,
         url: "/api/company/save"
     },
     "03": {
@@ -35,6 +37,7 @@ const MODE_CONFIG = {
         formDialogId: "form-dialog-01",
         formId: "form-01",
         entity: companyEntity,
+        list: companyOrigin,
         url: "/api/company/save"
     },
     "04": {
@@ -47,6 +50,7 @@ const MODE_CONFIG = {
         formDialogId: "form-dialog-01",
         formId: "form-01",
         entity: companyEntity,
+        list: companyOrigin,
         url: "/api/company/save"
     },
     "05": {
@@ -58,6 +62,7 @@ const MODE_CONFIG = {
         formDialogId: "form-dialog-01",
         formId: "form-01",
         entity: officeEntity,
+        list: officeOrigin,
         codeBox: "code-box-51",
         nameBox: "name-box-51",
         url: "/api/office/save"
@@ -71,6 +76,7 @@ const MODE_CONFIG = {
         formDialogId: "form-dialog-02",
         formId: "form-02",
         entity: staffEntity,
+        list: staffOrigin,
         codeBox: "code-box-61",
         nameBox: "name-box-61",
         nameBox2: "name-box-62",
@@ -86,33 +92,33 @@ const COMBO_CONFIG = [
     }
 ];
 
+// const COMMON_COMPANY_FIELDS = [
+//     { name: 'name', key: 'name' },
+//     { name: 'name-kana', key: 'nameKana' },
+//     { name: 'tel-number', key: 'telNumber' },
+//     { name: 'postal-code', key: 'postalCode' },
+//     { name: 'full-address', key: 'fullAddress' },
+//     { name: 'email', key: 'email' },
+//     { name: 'web-address', key: 'webAddress' },
+//     { name: 'is-original-price', key: 'isOriginalPrice' },
+// ];
+
+// const FORM_CONFIG = {
+//     "01": COMMON_COMPANY_FIELDS,
+//     "02": COMMON_COMPANY_FIELDS,
+//     "03": COMMON_COMPANY_FIELDS,
+//     "04": COMMON_COMPANY_FIELDS,
+//     "05": COMMON_COMPANY_FIELDS,
+//     "06": [
+//         { name: 'office', key: 'officeId' },
+//         { name: 'name', key: 'name' },
+//         { name: 'name-kana', key: 'nameKana' },
+//         { name: 'phone-number', key: 'phoneNumber' },
+//         { name: 'email', key: 'email' }
+//     ]
+// };
+
 const COMMON_COMPANY_FIELDS = [
-    { name: 'name', key: 'name' },
-    { name: 'name-kana', key: 'nameKana' },
-    { name: 'tel-number', key: 'telNumber' },
-    { name: 'postal-code', key: 'postalCode' },
-    { name: 'full-address', key: 'fullAddress' },
-    { name: 'email', key: 'email' },
-    { name: 'web-address', key: 'webAddress' },
-    { name: 'is-original-price', key: 'isOriginalPrice' },
-];
-
-const FORM_CONFIG = {
-    "01": COMMON_COMPANY_FIELDS,
-    "02": COMMON_COMPANY_FIELDS,
-    "03": COMMON_COMPANY_FIELDS,
-    "04": COMMON_COMPANY_FIELDS,
-    "05": COMMON_COMPANY_FIELDS,
-    "06": [
-        { name: 'office', key: 'officeId' },
-        { name: 'name', key: 'name' },
-        { name: 'name-kana', key: 'nameKana' },
-        { name: 'phone-number', key: 'phoneNumber' },
-        { name: 'email', key: 'email' }
-    ]
-};
-
-const UPDATE_COMMON_COMPANY_FIELDS = [
     { name: 'name', key: 'name', trim: true, emptyToNull: true, skipIfNull: true },
     { name: 'name-kana', key: 'nameKana', trim: true, emptyToNull: true, skipIfNull: true },
     { name: 'tel-number', key: 'telNumber', trim: true, emptyToNull: true, skipIfNull: true },
@@ -123,7 +129,7 @@ const UPDATE_COMMON_COMPANY_FIELDS = [
     { name: 'is-original-price', key: 'isOriginalPrice', number: true, zeroToNull: true, skipIfNull: true },
 ];
 
-const UPDATE_FORM_CONFIG = {
+const FORM_CONFIG = {
     "01": COMMON_COMPANY_FIELDS,
     "02": COMMON_COMPANY_FIELDS,
     "03": COMMON_COMPANY_FIELDS,
@@ -139,27 +145,27 @@ const UPDATE_FORM_CONFIG = {
 };
 
 const SAVE_FORM_CONFIG = {
-    "01": UPDATE_FORM_CONFIG["01"].map(c => ({
+    "01": FORM_CONFIG["01"].map(c => ({
         ...c,
         skipIfNull: false   // ← ここが重要
     })),
-    "02": UPDATE_FORM_CONFIG["01"].map(c => ({
+    "02": FORM_CONFIG["01"].map(c => ({
         ...c,
         skipIfNull: false   // ← ここが重要
     })),
-    "03": UPDATE_FORM_CONFIG["01"].map(c => ({
+    "03": FORM_CONFIG["01"].map(c => ({
         ...c,
         skipIfNull: false   // ← ここが重要
     })),
-    "04": UPDATE_FORM_CONFIG["01"].map(c => ({
+    "04": FORM_CONFIG["01"].map(c => ({
         ...c,
         skipIfNull: false   // ← ここが重要
     })),
-    "05": UPDATE_FORM_CONFIG["01"].map(c => ({
+    "05": FORM_CONFIG["01"].map(c => ({
         ...c,
         skipIfNull: false   // ← ここが重要
     })),
-    "06": UPDATE_FORM_CONFIG["02"].map(c => ({
+    "06": FORM_CONFIG["02"].map(c => ({
         ...c,
         skipIfNull: false   // ← ここが重要
     }))
