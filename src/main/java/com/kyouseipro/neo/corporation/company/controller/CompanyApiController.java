@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
+import com.kyouseipro.neo.corporation.company.entity.CompanyEntityRequest;
 import com.kyouseipro.neo.corporation.company.service.CompanyService;
 import com.kyouseipro.neo.dto.ApiResponse;
 import com.kyouseipro.neo.dto.IdListRequest;
@@ -42,7 +43,7 @@ public class CompanyApiController {
      */
     @PostMapping("/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody CompanyEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody CompanyEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
         Integer id = companyService.save(entity, principal.getAttribute("preferred_username"));
         return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
     }

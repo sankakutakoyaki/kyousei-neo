@@ -37,101 +37,120 @@ function createTableRow(newRow, item, tab) {
         // コード
         newRow.insertAdjacentHTML('beforeend', '<td class="editable text-center" data-col="code" data-edit-type="text">' + (item.code == 0 ? "": item.code) + '</td>');
     }
-    // 名前
-    newRow.insertAdjacentHTML('beforeend', '<td name="name-cell"><span class="kana">' + item.nameKana + '</span><br><span>' + item.name + '</span></td>');
     switch (tab) {
         case "01":
+            // 名前
+            newRow.insertAdjacentHTML('beforeend', '<td><span class="kana">' + (item.nameKana ?? "-----") + '</span><br><span>' + item.name + '</span></td>');
             // 電話番号
             newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.telNumber ?? "登録なし") + '</span></td>');
+            // メールアドレス
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.email ?? "登録なし") + '</span></td>');
             break;
         case "02":
+            // 名前
+            newRow.insertAdjacentHTML('beforeend', '<td><span class="kana">' + (item.fullNameKana ?? "-----") + '</span><br><span>' + item.fullName + '</span></td>');
             // 電話番号
-            newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="phone" data-edit-type="text"><span>' + (item.phoneNumber ?? "登録なし") + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.phoneNumber ?? "登録なし") + '</span></td>');
+            // 会社名
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.companyName ?? "-----") + '</span></td>');
             break;
     }
-    // メールアドレス
-    newRow.insertAdjacentHTML('beforeend', '<td name="email-cell"><span>' + (item.email ?? "登録なし") + '</span></td>');
 }
 
 /******************************************************************************************************* 入力画面 */
 
-// 取引先登録画面を開く
+// 登録画面を開く
 async function execEdit(id, self) {
-    const panel = self.closest('.tab-panel');
+    // const panel = self.closest('.tab-panel');
+    // const tab = panel.dataset.panel;
+    const panel = document.querySelector(".tab-panel.is-show");
     const tab = panel.dataset.panel;
     const config = MODE_CONFIG[tab];
 
     const form = document.getElementById(config.formId);
 
-    let entity = {};
+    originEntity = {};
     if (id > 0) {
         const result = await searchFetch("/api/" + config.categoryName + "/get/id", JSON.stringify({id:parseInt(id)}), token);
         if (!result?.ok) return;
 
-        entity = structuredClone(result.data);
+        originEntity = structuredClone(result.data);
     } else {
-        entity = structuredClone(config.entity);
+        originEntity = structuredClone(config.entity);
         switch (tab) {
             case "01":
-                entity.category = config.category;
+                originEntity.category = config.category;
                 break;
             case "02":
                 if (code01.value == "") {
                     // ダイアログを閉じる
-                    closeFormDialog(config.formDialogId);
+                    closeFormDialog(config.dialogId);
                     // エラーメッセージ表示
                     openMsgDialog("msg-dialog", "会社を選択してください", "red");
                     setFocusElement(config.tableId, code01);
                     return;
                 }
-                entity.companyId = code01.value;
+                originEntity.companyId = code01.value;
                 break;
             default:
                 break;
         }
     }
 
-    setFormContent(form, entity, tab);
-    openFormDialog(config.formDialogId);
+    setFormContent(form, originEntity, tab);
+    openFormDialog(config.dialogId);
 }
 
 // コンテンツ部分作成
 function setFormContent(form, entity, tab) {
 
-    const config = ID_CONFIG[tab];
-    if (!config) return;
-
-    const mode = MODE_CONFIG[tab];
-    if (!mode) return;
-
-    // 初期化処理（コンボ生成など）
-    if (typeof config.init === "function") {
-        config.init(mode, entity);
+    // if (tab === "01") {
+        // 表示制御
+        document.querySelectorAll('[name="priceArea"]').forEach(el => {
+            el.style.display = config.show?.includes("priceArea") ? "" : "none";
+        });        
+    // }
+    
+    if (tab === "02") {
+        applyComboConfig(form, entity, COMBO_CONFIG);
     }
+    applyFormConfig(form, entity, FORM_CONFIG[tab]);
 
-    // 共通項目
-    const commonFields = {
-        "company-id": entity.companyId,
-        "name": entity.name,
-        "name-kana": entity.nameKana,
-        "email": entity.email,
-        "version": entity.version
-    };
 
-    Object.entries(commonFields).forEach(([k, v]) =>
-        setFormContentValue(form, k, v)
-    );
+    // const config = ID_CONFIG[tab];
+    // if (!config) return;
 
-    // フィールド反映
-    config.fields.forEach(name => {
-        const key = name.replace(/-/g, "_"); // JS ↔ Entity 対応
-        setFormContentValue(form, name, entity[key]);
-    });
+    // const mode = MODE_CONFIG[tab];
+    // if (!mode) return;
 
-    // 表示制御
-    document.querySelectorAll('[name="priceArea"]').forEach(el => {
-        el.style.display = config.show?.includes("priceArea") ? "" : "none";
-    });
+    // // 初期化処理（コンボ生成など）
+    // if (typeof config.init === "function") {
+    //     config.init(mode, entity);
+    // }
+
+    // // 共通項目
+    // const commonFields = {
+    //     "company-id": entity.companyId,
+    //     "name": entity.name,
+    //     "name-kana": entity.nameKana,
+    //     "email": entity.email,
+    //     "version": entity.version
+    // };
+
+    // Object.entries(commonFields).forEach(([k, v]) =>
+    //     setFormContentValue(form, k, v)
+    // );
+
+    // // フィールド反映
+    // config.fields.forEach(name => {
+    //     const key = name.replace(/-/g, "_"); // JS ↔ Entity 対応
+    //     setFormContentValue(form, name, entity[key]);
+    // });
+
+    // // 表示制御
+    // document.querySelectorAll('[name="priceArea"]').forEach(el => {
+    //     el.style.display = config.show?.includes("priceArea") ? "" : "none";
+    // });
 }
 
 // function setValue(form, name, value) {
@@ -143,48 +162,60 @@ function setFormContent(form, entity, tab) {
 
 // 保存処理
 async function execSave() {
-    const panel = document.querySelector(".is-active");
-    const tab = panel.dataset.tab;
+    const panel = document.querySelector(".tab-panel.is-show");
+    const tab = panel.dataset.panel;
 
-    const config = SAVE_CONFIG[tab] ?? SAVE_CONFIG["default"];
-    const form = document.getElementById(config.formId);
+    // const cfg = SAVE_CONFIG[tab] ?? SAVE_CONFIG["default"];
+    const cfg = MODE_CONFIG[tab];
+    const form = document.getElementById(cfg.formId);
 
     // 入力チェック
     if (!formDataCheck(form)) return;
 
-    const formData = new FormData(form);
-    const entity = config.baseEntity();
+    // const formData = new FormData(form);
+    // const entity = config.baseEntity();
 
-    // tab 固有項目
-    Object.entries(config.fields).forEach(([key, converter]) => {
-        const formName = camelToKebab(key);
-        entity[key] = converter(formData.get(formName));
-    });
+    // // tab 固有項目
+    // Object.entries(config.fields).forEach(([key, converter]) => {
+    //     const formName = camelToKebab(key);
+    //     entity[key] = converter(formData.get(formName));
+    // });
 
-    // 共通項目
-    Object.entries(COMMON_FIELDS).forEach(([key, converter]) => {
-        const name = camelToKebab(key);
-        if (formData.has(name)) {
-            entity[key] = converter(formData.get(name));
+    // // 共通項目
+    // Object.entries(COMMON_FIELDS).forEach(([key, converter]) => {
+    //     const name = camelToKebab(key);
+    //     if (formData.has(name)) {
+    //         entity[key] = converter(formData.get(name));
+    //     }
+    // });
+
+    let tempEntity = {};
+
+    const editedEntity = buildEntityFromForm(form, originEntity, SAVE_FORM_CONFIG[tab]);
+    tempEntity = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG[tab]);
+
+    if (originEntity[cfg.dataId] > 0) {
+        if (Object.keys(tempEntity).length === 0) {
+            openMsgDialog("msg-dialog", "変更がありません", "red");
+            return;
         }
-    });
+        tempEntity.version = originEntity.version;
+    } else {
+        tempEntity.category = cfg.category;
+        if (tab === "02") tempEntity.companyId = originEntity.companyId;
+    }
 
-    // ユーザー名
-    entity.user_name = user?.account ?? "guest@kyouseibin.com";
+    tempEntity[cfg.dataId] = originEntity[cfg.dataId]; 
 
     // 保存
-    const result = await updateFetch(
-        config.url,
-        JSON.stringify(entity),
-        token
-    );
+    const result = await updateFetch(cfg.url, JSON.stringify(tempEntity), token);
 
     if (result.ok) {
-        closeFormDialog(config.dialogId);
+        closeFormDialog(cfg.dialogId);
         await execUpdate();
-        scrollIntoTableList(config.tableId, result.data);
+        scrollIntoTableList(cfg.tableId, result.data);
         
-        openMsgDialog("msg-dialog", result.data.message, "blue");
+        openMsgDialog("msg-dialog", result.message, "blue");
     }
 }
 
@@ -247,12 +278,12 @@ async function handleTdChange(editor) {
                 return;
             }
             break;
-        case "phone":
-            if (!checkPhoneNumber(editor)) {
-                editor.value = ent.phone_number;
-                return;
-            }
-            break;
+        // case "phone":
+        //     if (!checkPhoneNumber(editor)) {
+        //         editor.value = ent.phone_number;
+        //         return;
+        //     }
+        //     break;
         default:
             return;
     }
@@ -271,7 +302,7 @@ function existsSameCode(code) {
 /******************************************************************************************************* 削除 */
 
 async function execDelete(self) {
-    const panel = self.closest('.tab-panel');
+    const panel = document.querySelector(".tab-panel.is-show");
     const tab = panel.dataset.panel;
     const config = MODE_CONFIG[tab];
 
@@ -286,7 +317,7 @@ async function execDelete(self) {
 /******************************************************************************************************* ダウンロード */
 
 async function execDownloadCsv(self) {
-    const panel = self.closest('.tab-panel');
+    const panel = document.querySelector(".tab-panel.is-show");
     const tab = panel.dataset.panel;
     const config = MODE_CONFIG[tab];
 
@@ -296,30 +327,62 @@ async function execDownloadCsv(self) {
 /******************************************************************************************************* 画面更新 */
 
 async function execUpdate() {
-    const panel = document.querySelector('.is-active');
-    const tab = panel.dataset.tab;
+    const panel = document.querySelector(".tab-panel.is-show");
+    const tab = panel.dataset.panel;
     const config = MODE_CONFIG[tab];
     if (!config) return;
 
     // entity ごとの元データ更新
     if (config.categoryName === "company") {
         companyOrigin = await updateOrigin("company");
-        await updateTableDisplay(
-            config.tableId,
-            config.footerId,
-            config.searchId,
-            companyOrigin,
-            createTableContent
-        );
+        await updateTableDisplay(config.tableId, config.footerId, config.searchId, companyOrigin, createTableContent);
         return;
     }
 
-    if (config.categoryName === "staff") {
+    if (config.categoryName === "employee") {
         await updateStaffTableDisplay();
         return;
     }
 }
 
+async function updateStaffTableDisplay() {
+    const panel = document.querySelector('.tab-panel.is-show');
+    const tab = panel.dataset.panel;
+    const config = MODE_CONFIG[tab];
+    if (!config) return;
+
+    const code = panel.querySelector('[name="code"]');
+    const com = panel.querySelector('[name="company"]');
+
+    const codeValue = com.value;
+    code.value = Number(codeValue) === 0 ? "": codeValue;
+    // if (codeValue < 1) return;
+
+    const resultResponse = await fetch('api/employee/get/list/partner');
+    const result = await resultResponse.json();
+
+    let list = [];
+    if (result != null) {
+        if (codeValue > 0) {
+            list = result.filter(function(value) { return value.companyId == codeValue});
+        } else {
+            list = result;
+        }
+        
+        await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
+    }
+}
+
+async function execFilterDisplay(self) {
+    const panel = self.closest('.tab-panel');
+    const tab = panel.dataset.panel;
+    const config = MODE_CONFIG[tab];
+
+    const list = companyOrigin.filter(function(value) { return value.category == config.category });
+    await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
+}
+
+// コンボを再構成
 async function updateOrigin(type) {
     const config = ORIGIN_CONFIG[type];
     if (!config) return;
@@ -340,39 +403,6 @@ async function updateOrigin(type) {
     });
 
     return window[config.originKey];
-}
-
-/******************************************************************************************************* 画面更新 */
-
-async function updateStaffTableDisplay() {
-    const panel = document.querySelector('.tab-panel.is-show');
-    const tab = panel.dataset.panel;
-    const config = MODE_CONFIG[tab];
-    if (!config) return;
-
-    const code = panel.querySelector('[name="code"]');
-    const com = panel.querySelector('[name="company"]');
-
-    const codeValue = com.value;
-    code.value = Number(codeValue) === 0 ? "": codeValue;
-    if (codeValue < 1) return;
-
-    const resultResponse = await fetch('api/staff/get/list');
-    const result = await resultResponse.json();
-    if (result != null) {
-        let list = result.filter(function(value) { return value.companyId == codeValue});
-        await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
-    }
-
-}
-
-async function execFilterDisplay(self) {
-    const panel = self.closest('.tab-panel');
-    const tab = panel.dataset.panel;
-    const config = MODE_CONFIG[tab];
-
-    const list = companyOrigin.filter(function(value) { return value.category == config.category });
-    await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
 }
 
 // function initCompanyInputs() {
@@ -414,16 +444,10 @@ window.addEventListener("load", async () => {
         if (!cfg.category) continue;
         
         let list = cfg.list.filter(value => { return value.category === cfg.category });
-        await updateTableDisplay(
-            cfg.tableId,
-            cfg.footerId,
-            cfg.searchId,
-            list,
-            createTableContent
-        );
+        await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, list, createTableContent );
 
-        makeSortable(cfg.tableId);
-        setPageTopButton(cfg.tableId);
+        // makeSortable(cfg.tableId);
+        // setPageTopButton(cfg.tableId);
     }
 
     initCompanyInputs();

@@ -18,7 +18,8 @@ const MODE_CONFIG = {
 const FORM_CONFIG = [
     // { name: 'employee-id', key: 'employeeId' },
 
-    { name: 'code', key: 'code', emptyIf: 0 },
+    // { name: 'code', key: 'code', emptyIf: 0 },
+    { name: 'code', key: 'code' },
 
     // { name: 'category', key: 'category' },
     { name: 'account', key: 'account' },
@@ -35,8 +36,10 @@ const FORM_CONFIG = [
     { name: 'full-address', key: 'fullAddress' },
     { name: 'email', key: 'email' },
 
-    { name: 'birthday', key: 'birthday', emptyIf: '9999-12-31' },
-    { name: 'date-of-hire', key: 'dateOfHire', emptyIf: '9999-12-31' },
+    // { name: 'birthday', key: 'birthday', emptyIf: '9999-12-31' },
+    // { name: 'date-of-hire', key: 'dateOfHire', emptyIf: '9999-12-31' },
+    { name: 'birthday', key: 'birthday' },
+    { name: 'date-of-hire', key: 'dateOfHire' },
 
     { name: 'emergency-contact', key: 'emergencyContact' },
     { name: 'emergency-contact-number', key: 'emergencyContactNumber' }
@@ -79,7 +82,7 @@ const UPDATE_FORM_CONFIG = [
     // { name: 'employee-id', key: 'employeeId' },
     // { name: 'company-id', key: 'companyId' },
 
-    { name: 'code', key: 'code', number: true, zeroToNull: true, skipIfNull: true },
+    { name: 'code', key: 'code', number: true, emptyToNull: true, skipIfNull: true },
 
     // { name: 'category', key: 'category', number: true, zeroToNull: true, skipIfNull: true },
     { name: 'account', key: 'account', trim: true, emptyToNull: true, skipIfNull: true },
@@ -91,10 +94,10 @@ const UPDATE_FORM_CONFIG = [
     { name: 'last-name-kana', key: 'lastNameKana', trim: true, emptyToNull: true, skipIfNull: true },
     { name: 'first-name-kana', key: 'firstNameKana', trim: true, emptyToNull: true, skipIfNull: true },
 
-    { name: 'phone-number', key: 'phoneNumber', trim: true },
-    { name: 'postal-code', key: 'postalCode', trim: true },
-    { name: 'full-address', key: 'fullAddress', trim: true },
-    { name: 'email', key: 'email', trim: true },
+    { name: 'phone-number', key: 'phoneNumber', trim: true, emptyToNull: true },
+    { name: 'postal-code', key: 'postalCode', trim: true, emptyToNull: true },
+    { name: 'full-address', key: 'fullAddress', trim: true, emptyToNull: true },
+    { name: 'email', key: 'email', trim: true, emptyToNull: true },
 
     { name: 'gender', key: 'gender', number: true, zeroToNull: true, skipIfNull: true },
     { name: 'blood-type', key: 'bloodType', number: true, zeroToNull: true, skipIfNull: true },

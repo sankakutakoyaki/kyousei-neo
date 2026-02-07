@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.corporation.staff.entity.StaffEntity;
+import com.kyouseipro.neo.corporation.staff.entity.StaffEntityRequest;
 import com.kyouseipro.neo.corporation.staff.repository.StaffRepository;
 import com.kyouseipro.neo.dto.CsvExporter;
 import com.kyouseipro.neo.dto.IdListRequest;
@@ -42,7 +43,7 @@ public class StaffService {
         table = HistoryTables.STAFFS,
         action = "保存"
     )
-    public int save(StaffEntity entity, String editor) {
+    public int save(StaffEntityRequest entity, String editor) {
         if (entity.getStaffId() > 0) {
             return staffRepository.update(entity, editor);
         } else {

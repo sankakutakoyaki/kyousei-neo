@@ -30,10 +30,11 @@ public class EmployeeEntity implements CsvExportable {
     private String email;
     private int gender;
     private int bloodType;
-    private LocalDate birthday = LocalDate.of(9999, 12, 31);
+    private LocalDate birthday;
     private String emergencyContact;
     private String emergencyContactNumber;
-    private LocalDate dateOfHire = LocalDate.of(9999, 12, 31);
+    private LocalDate dateOfHire;
+    // private LocalDate dateOfHire = LocalDate.of(9999, 12, 31);
     private int version;
     private int state;
 

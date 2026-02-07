@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
+import com.kyouseipro.neo.corporation.office.entity.OfficeEntityRequest;
 import com.kyouseipro.neo.corporation.office.repository.OfficeRepository;
 import com.kyouseipro.neo.dto.CsvExporter;
 import com.kyouseipro.neo.dto.IdListRequest;
@@ -42,7 +43,7 @@ public class OfficeService {
         table = HistoryTables.OFFICES,
         action = "保存"
     )
-    public int save(OfficeEntity entity, String editor) {
+    public int save(OfficeEntityRequest entity, String editor) {
         if (entity.getOfficeId() > 0) {
             return officeRepository.update(entity, editor);
         } else {

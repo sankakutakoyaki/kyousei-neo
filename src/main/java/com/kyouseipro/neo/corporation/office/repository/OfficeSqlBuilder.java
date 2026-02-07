@@ -1,6 +1,11 @@
 package com.kyouseipro.neo.corporation.office.repository;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.kyouseipro.neo.common.Utilities;
+import com.kyouseipro.neo.corporation.office.entity.OfficeEntityRequest;
 
 public class OfficeSqlBuilder {
 
@@ -33,33 +38,148 @@ public class OfficeSqlBuilder {
             "FROM " + rowTableName + ";";
     }
 
-    public static String buildInsert() {
-        return
-            buildLogTable("@Inserted") +
+    // public static String buildInsert() {
+    //     return
+    //         buildLogTable("@Inserted") +
 
-            "INSERT INTO offices (" +
-            "  company_id, name, name_kana, tel_number, fax_number, " +
-            "  postal_code, full_address, email, web_address, version, state" +
-            ") " +
-            buildOutputLog() + "INTO @Inserted " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
+    //         "INSERT INTO offices (" +
+    //         "  company_id, name, name_kana, tel_number, fax_number, " +
+    //         "  postal_code, full_address, email, web_address, version, state" +
+    //         ") " +
+    //         buildOutputLog() + "INTO @Inserted " +
+    //         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
 
-            buildInsertLog("@Inserted", "INSERT") +
-            "SELECT office_id FROM @Inserted;";
+    //         buildInsertLog("@Inserted", "INSERT") +
+    //         "SELECT office_id FROM @Inserted;";
+    // }
+
+    // public static String buildUpdate() {
+    //     return
+    //         buildLogTable("@Updated") +
+
+    //         "UPDATE offices SET " +
+    //         "  company_id=?, name=?, name_kana=?, tel_number=?, fax_number=?, " +
+    //         "  postal_code=?, full_address=?, email=?, web_address=?, version=?, state=? " +
+    //         buildOutputLog() + "INTO @Updated " +
+    //         "WHERE office_id=? AND version=?; " +
+
+    //         buildInsertLog("@Updated", "UPDATE") +
+    //         "SELECT office_id FROM @Updated;";
+    // }
+
+    public static String buildBulkInsert(OfficeEntityRequest req) {
+
+        StringBuilder sql = new StringBuilder();
+        sql.append(buildLogTable("@InsertedRows"));
+        sql.append("INSERT INTO offices (");
+
+        List<String> sets = new ArrayList<>();
+
+        if (req.getCompanyId() != null) {
+            sets.add("company_id");
+        }
+
+        if (req.getName() != null) {
+            sets.add("name");
+        }
+        if (req.getNameKana() != null) {
+            sets.add("name_kana");
+        }
+
+        if (req.getTelNumber() != null) {
+            sets.add("tel_number");
+        }
+        if (req.getFaxNumber() != null) {
+            sets.add("fax_number");
+        }
+        if (req.getPostalCode() != null) {
+            sets.add("postal_code");
+        }
+        if (req.getFullAddress() != null) {
+            sets.add("full_address");
+        }
+        if (req.getEmail() != null) {
+            sets.add("email");
+        }
+
+        if (req.getWebAddress() != null) {
+            sets.add("web_address");
+        }
+
+        if (sets.isEmpty()) {
+            throw new IllegalArgumentException("更新項目がありません");
+        }
+
+        sql.append(String.join(", ", sets));
+        sql.append(") ");
+
+        sql.append(buildOutputLog() + "INTO @InsertedRows ");
+
+        sql.append("VALUES (");
+        sql.append(sets.stream().map(v -> "?").collect(Collectors.joining(",")));
+        sql.append(");");
+
+        sql.append(buildInsertLog("@InsertedRows", "INSERT"));
+        sql.append("SELECT office_id FROM @InsertedRows;");
+
+        return  sql.toString();
     }
 
-    public static String buildUpdate() {
-        return
-            buildLogTable("@Updated") +
+    public static String buildBulkUpdate(OfficeEntityRequest req) {
 
-            "UPDATE offices SET " +
-            "  company_id=?, name=?, name_kana=?, tel_number=?, fax_number=?, " +
-            "  postal_code=?, full_address=?, email=?, web_address=?, version=?, state=? " +
-            buildOutputLog() + "INTO @Updated " +
-            "WHERE office_id=? AND version=?; " +
+        StringBuilder sql = new StringBuilder();
 
-            buildInsertLog("@Updated", "UPDATE") +
-            "SELECT office_id FROM @Updated;";
+        sql.append(buildLogTable("@UpdatedRows"));
+        sql.append("UPDATE offices SET ");
+
+        List<String> sets = new ArrayList<>();
+
+        if (req.getCompanyId() != null) {
+            sets.add("company_id = ?");
+        }
+
+        if (req.getName() != null) {
+            sets.add("name = ?");
+        }
+        if (req.getNameKana() != null) {
+            sets.add("name_kana = ?");
+        }
+
+        if (req.getTelNumber() != null) {
+            sets.add("tel_number = ?");
+        }
+        if (req.getFaxNumber() != null) {
+            sets.add("fax_number = ?");
+        }
+        if (req.getPostalCode() != null) {
+            sets.add("postal_code = ?");
+        }
+        if (req.getFullAddress() != null) {
+            sets.add("full_address = ?");
+        }
+        if (req.getEmail() != null) {
+            sets.add("email = ?");
+        }
+        if (req.getWebAddress() != null) {
+            sets.add("web_address = ?");
+        }
+
+        // 共通更新項目
+        sets.add("version = version + 1");
+        sets.add("update_date = SYSDATETIME() ");
+
+        if (sets.isEmpty()) {
+            throw new IllegalArgumentException("更新項目がありません");
+        }
+
+        sql.append(String.join(", ", sets));
+
+        sql.append(buildOutputLog() + "INTO @UpdatedRows ");
+        sql.append("WHERE office_id = ? AND version = ? AND NOT (state = ?);");
+        sql.append(buildInsertLog("@UpdatedRows", "UPDATE"));
+        sql.append("SELECT office_id FROM @UpdatedRows;");
+
+        return sql.toString();
     }
 
     public static String buildDeleteByIds(int count) {

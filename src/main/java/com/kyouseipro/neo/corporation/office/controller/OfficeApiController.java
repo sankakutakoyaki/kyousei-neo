@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
+import com.kyouseipro.neo.corporation.office.entity.OfficeEntityRequest;
 import com.kyouseipro.neo.corporation.office.service.OfficeService;
 import com.kyouseipro.neo.dto.ApiResponse;
 import com.kyouseipro.neo.dto.IdListRequest;
@@ -41,7 +42,7 @@ public class OfficeApiController {
      */
     @PostMapping("/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody OfficeEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody OfficeEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
         int id = officeService.save(entity, principal.getAttribute("preferred_username"));
         return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
     }

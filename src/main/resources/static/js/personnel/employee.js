@@ -31,7 +31,7 @@ function createTableRow(newRow, item) {
     // コード
     newRow.insertAdjacentHTML('beforeend', '<td class="editable text-center" data-col="code" data-edit-type="text">' + (item.code == 0 ? "": item.code) + '</td>');
     // 名前
-    newRow.insertAdjacentHTML('beforeend', '<td><span class="kana">' + item.fullNameKana + '</span><br><span>' + item.fullName + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td><span class="kana">' + (item.fullNameKana ?? "-----") + '</span><br><span>' + item.fullName + '</span></td>');
     // 携帯番号
     newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="phone" data-edit-type="text"><span>' + (item.phoneNumber ?? "登録なし") + '</span></td>');
     // 会社名
@@ -44,9 +44,11 @@ function createTableRow(newRow, item) {
 
 // 従業員登録画面を開く
 async function execEdit(id, self) {
-    const tab = document.querySelector('li.is-active');
-    if (tab == null) return;
-    const config = MODE_CONFIG[tab];
+    const panel = document.querySelector('.tab-panel.is-show');
+    if (!panel) return;
+    const tab = panel.dataset.panel
+
+    const cfg = MODE_CONFIG[tab];
 
     // フォーム画面を取得
     const form = document.getElementById('form-dialog-01');
@@ -60,8 +62,6 @@ async function execEdit(id, self) {
         originEntity = structuredClone(result.data);
     } else {
         originEntity = structuredClone(formEntity);
-        originEntity.companyId = ownCompanyId;
-        originEntity.category = config.category;
     }
 
     setFormContent(form, originEntity);
@@ -71,8 +71,8 @@ async function execEdit(id, self) {
 
 // コンテンツ部分作成
 function setFormContent(form, entity) {
-    applyFormConfig(form, entity, FORM_CONFIG);
     applyComboConfig(form, entity, COMBO_CONFIG);
+    applyFormConfig(form, entity, FORM_CONFIG);
 }
 
 /******************************************************************************************************* 保存 */
@@ -91,36 +91,50 @@ async function execSave() {
     // let result = null;
     let tempEntity = {};
 
-    if (originEntity.employeeId > 0) {
-        // result = await execBulkUpdate(form);
-        const editedEntity = buildEntityFromForm(form, originEntity, SAVE_FORM_CONFIG);
-        tempEntity = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
-console.log(tempEntity)
-        tempEntity.companyId = ownCompanyId;
-        tempEntity.category = cfg.category;
-    } else {
-        // result = await execRegist(form, cfg);
-        // 差分抽出
-        const editedEntity = buildEntityFromForm(form, formEntity, SAVE_FORM_CONFIG);
-        tempEntity = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
+    // if (originEntity.employeeId > 0) {
+    //     // result = await execBulkUpdate(form);
+    //     const editedEntity = buildEntityFromForm(form, originEntity, SAVE_FORM_CONFIG);
+    //     tempEntity = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
 
+    //     if (Object.keys(tempEntity).length === 0) {
+    //         openMsgDialog("msg-dialog", "変更がありません", "red");
+    //         return;
+    //     }
+    // } else {
+    //     // result = await execRegist(form, cfg);
+    //     // 差分抽出
+    //     const editedEntity = buildEntityFromForm(form, originEntity, SAVE_FORM_CONFIG);
+    //     tempEntity = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
+
+    //     // tempEntity.companyId = ownCompanyId;
+    //     // tempEntity.category = cfg.category;
+    // }
+
+    const editedEntity = buildEntityFromForm(form, originEntity, SAVE_FORM_CONFIG);
+    tempEntity = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
+
+    if (originEntity.employeeId > 0) {
         if (Object.keys(tempEntity).length === 0) {
             openMsgDialog("msg-dialog", "変更がありません", "red");
             return;
         }
-
-        tempEntity.employeeId = originEntity.employeeId;
         tempEntity.version = originEntity.version;
+    } else {
+        tempEntity.companyId = ownCompanyId;
+        tempEntity.category = cfg.category;        
     }
+
+    tempEntity.employeeId = originEntity.employeeId;    
 
     const result = await updateFetch("/api/employee/save", JSON.stringify(tempEntity), token);
 
     if (result.ok) {
         closeFormDialog('form-dialog-01');
+
         await execUpdate();
-        scrollIntoTableList(cfg.tableId, result.data.employeeId);
+        scrollIntoTableList(cfg.tableId, result.data);
         
-        openMsgDialog("msg-dialog", result.data.message, "blue");
+        openMsgDialog("msg-dialog", result.message, "blue");
     }
 }
 
@@ -225,7 +239,7 @@ async function execDelete(self) {
 
     if (result.ok) {
         await execUpdate();
-        openMsgDialog("msg-dialog", result.data.message, "blue");
+        openMsgDialog("msg-dialog", result.message, "blue");
     }
 }
 

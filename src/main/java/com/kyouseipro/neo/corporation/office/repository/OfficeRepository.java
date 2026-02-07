@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
+import com.kyouseipro.neo.corporation.office.entity.OfficeEntityRequest;
 import com.kyouseipro.neo.corporation.office.mapper.OfficeEntityMapper;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
@@ -69,12 +70,12 @@ public class OfficeRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    public int insert(OfficeEntity entity, String editor) {
-        String sql = OfficeSqlBuilder.buildInsert();
+    public int insert(OfficeEntityRequest entity, String editor) {
+        String sql = OfficeSqlBuilder.buildBulkInsert(entity);
 
         return sqlRepository.executeRequired(
             sql,
-            (ps, en) -> OfficeParameterBinder.bindInsert(ps, en, editor),
+            (ps, en) -> OfficeParameterBinder.bindBulkInsert(ps, en, editor),
             rs -> {
                 if (!rs.next()) {
                     throw new BusinessException("登録に失敗しました");
@@ -95,12 +96,12 @@ public class OfficeRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    public int update(OfficeEntity entity, String editor) {
-        String sql = OfficeSqlBuilder.buildUpdate();
+    public int update(OfficeEntityRequest entity, String editor) {
+        String sql = OfficeSqlBuilder.buildBulkUpdate(entity);
 
         int count = sqlRepository.executeUpdate(
             sql,
-            ps -> OfficeParameterBinder.bindUpdate(ps, entity, editor)
+            ps -> OfficeParameterBinder.bindBulkUpdate(ps, entity, editor)
         );
 
         if (count == 0) {

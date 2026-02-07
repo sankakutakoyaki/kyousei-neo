@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.corporation.staff.entity.StaffEntity;
+import com.kyouseipro.neo.corporation.staff.entity.StaffEntityRequest;
 import com.kyouseipro.neo.corporation.staff.mapper.StaffEntityMapper;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
@@ -54,8 +55,8 @@ public class StaffRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    public int insert(StaffEntity entity, String editor) {
-        String sql = StaffSqlBuilder.buildInsert();
+    public int insert(StaffEntityRequest entity, String editor) {
+        String sql = StaffSqlBuilder.buildBulkInsert(entity);
 
         // // return sqlRepository.executeRequired(
         // //     sql,
@@ -66,7 +67,7 @@ public class StaffRepository {
         // try {
             return sqlRepository.executeRequired(
                 sql,
-                (ps, en) -> StaffParameterBinder.bindInsert(ps, en, editor),
+                (ps, en) -> StaffParameterBinder.bindBulkInsert(ps, en, editor),
                 rs -> {
                     if (!rs.next()) {
                         throw new BusinessException("登録に失敗しました");
@@ -93,8 +94,8 @@ public class StaffRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    public int update(StaffEntity entity, String editor) {
-        String sql = StaffSqlBuilder.buildUpdate();
+    public int update(StaffEntityRequest entity, String editor) {
+        String sql = StaffSqlBuilder.buildBulkUpdate(entity);
 
         // // return sqlRepository.execute(
         // //     sql,
@@ -105,7 +106,7 @@ public class StaffRepository {
         // try {
             int count = sqlRepository.executeUpdate(
                 sql,
-                ps -> StaffParameterBinder.bindUpdate(ps, entity, editor)
+                ps -> StaffParameterBinder.bindBulkUpdate(ps, entity, editor)
             );
 
             if (count == 0) {

@@ -36,8 +36,8 @@ async function updateFetch(url, data, token, contentType = "application/json") {
     return {
         ok: response.ok,
         status: response.status,
-        // ...json
-        data: json
+        data: json.data, 
+        message: json.message
     };
 }
 
@@ -93,8 +93,8 @@ async function searchFetch(url, data, token, contentType = "application/json") {
     return {
         ok: response.ok,
         status: response.status,
-        // ...json
-        data: json
+        data: json,
+        message: json.message
     };
 }
 

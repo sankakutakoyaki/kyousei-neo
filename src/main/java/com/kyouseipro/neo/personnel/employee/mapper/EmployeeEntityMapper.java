@@ -2,6 +2,7 @@ package com.kyouseipro.neo.personnel.employee.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 
@@ -28,10 +29,12 @@ public class EmployeeEntityMapper {
         entity.setEmail(rs.getString("email"));
         entity.setGender(rs.getInt("gender"));
         entity.setBloodType(rs.getInt("blood_type"));
-        entity.setBirthday(rs.getDate("birthday").toLocalDate());
+        // entity.setBirthday(rs.getDate("birthday").toLocalDate());
+        entity.setBirthday(rs.getObject("birthday", LocalDate.class));
         entity.setEmergencyContact(rs.getString("emergency_contact"));
         entity.setEmergencyContactNumber(rs.getString("emergency_contact_number"));
-        entity.setDateOfHire(rs.getDate("date_of_hire").toLocalDate());
+        // entity.setDateOfHire(rs.getDate("date_of_hire").toLocalDate());
+        entity.setDateOfHire(rs.getObject("date_of_hire", LocalDate.class));
         entity.setVersion(rs.getInt("version"));
         entity.setState(rs.getInt("state"));
         return entity;

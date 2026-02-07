@@ -61,19 +61,20 @@ async function execEdit(id, self) {
 
     const form = document.getElementById(config.formId);
 
-    let entity = {};
+    // let entity = {};
+    originEntity = {};
     if (id > 0) {
         const result = await searchFetch("/api/" + config.categoryName + "/get/id", JSON.stringify({id:parseInt(id)}), token);
         if (!result?.ok) return;
-        entity = structuredClone(result.data);
+        originEntity = structuredClone(result.data);
     } else {
-        entity = structuredClone(config.entity);
+        originEntity = structuredClone(config.entity);
         switch (tab) {
             case "01":
             case "02":
             case "03":
             case "04":
-                entity.category = config.category;
+                originEntity.category = config.category;
                 break;
             case "05":
                 const code51 = document.getElementById(config.codeBox);
@@ -82,7 +83,7 @@ async function execEdit(id, self) {
                     closeFormDialog(config.formDialogId);
                     return;
                 }
-                entity.companyId = code51.value;
+                originEntity.companyId = code51.value;
                 break;
             case "06":
                 const name61 = document.getElementById(config.nameBox);
@@ -92,10 +93,10 @@ async function execEdit(id, self) {
                     closeFormDialog(config.formDialogId);
                     return;
                 }
-                entity.companyId = name61.value;
-                entity.officeId = name62.value;
+                originEntity.companyId = name61.value;
+                originEntity.officeId = name62.value;
                 const option = name61.selectedOptions[0];
-                entity.companyName = option ? option.text : "";
+                originEntity.companyName = option ? option.text : "";
 
                 break;
             default:
@@ -103,44 +104,47 @@ async function execEdit(id, self) {
         }
     }
 
-    setFormContent(form, entity, tab);
+    setFormContent(form, originEntity, tab);
     openFormDialog(config.formDialogId);
 }
 
 // コンテンツ部分作成
 function setFormContent(form, entity, tab) {
 
-    const config = ID_CONFIG[tab];
-    if (!config) return;
+    // const config = ID_CONFIG[tab];
+    // if (!config) return;
 
-    const mode = MODE_CONFIG[tab];
-    if (!mode) return;
+    // const mode = MODE_CONFIG[tab];
+    // if (!mode) return;
 
-    // 初期化処理（コンボ生成など）
-    if (typeof config.init === "function") {
-        config.init(mode, entity);
-    }
+    // // 初期化処理（コンボ生成など）
+    // if (typeof config.init === "function") {
+    //     config.init(mode, entity);
+    // }
 
-    // 共通項目
-    const commonFields = {
-        "company-id": entity.companyId,
-        "name": entity.name,
-        "name-kana": entity.nameKana,
-        "email": entity.email,
-        "version": entity.version
-    };
+    // // 共通項目
+    // const commonFields = {
+    //     "company-id": entity.companyId,
+    //     "name": entity.name,
+    //     "name-kana": entity.nameKana,
+    //     "email": entity.email,
+    //     "version": entity.version
+    // };
 
-    Object.entries(commonFields).forEach(([k, v]) =>
-        setFormContentValue(form, k, v)
-    );
+    // Object.entries(commonFields).forEach(([k, v]) =>
+    //     setFormContentValue(form, k, v)
+    // );
 
-    // フィールド反映
-    config.fields.forEach(name => {
-        // const key = name.replace(/-/g, "_"); // JS ↔ Entity 対応
-        const key = kebabToCamel(name);
-        // const key = camelToKebab(name);
-        setFormContentValue(form, name, entity[key]);
-    });
+    // // フィールド反映
+    // config.fields.forEach(name => {
+    //     // const key = name.replace(/-/g, "_"); // JS ↔ Entity 対応
+    //     const key = kebabToCamel(name);
+    //     // const key = camelToKebab(name);
+    //     setFormContentValue(form, name, entity[key]);
+    // });
+
+    if (tab === "06") applyComboConfig(form, entity, COMBO_CONFIG);
+    applyFormConfig(form, entity, FORM_CONFIG[tab]);
 
     // 表示制御
     document.querySelectorAll('[name="priceArea"]').forEach(el => {
@@ -167,50 +171,65 @@ function setFormContent(form, entity, tab) {
 
 // 保存処理
 async function execSave() {
-    const panel = document.querySelector(".is-active");
-    const tab = panel.dataset.tab;
+    const panel = document.querySelector(".tab-panel.is-show");
+    const tab = panel.dataset.panel;
 
-    const config = SAVE_CONFIG[tab] ?? SAVE_CONFIG["default"];
-    const form = document.getElementById(config.formId);
+    // const cfg = SAVE_CONFIG[tab] ?? SAVE_CONFIG["default"];
+    const cfg = MODE_CONFIG[tab];
+    const form = document.getElementById(cfg.formId);
 
     // 入力チェック
     if (!formDataCheck(form)) return;
 
-    const formData = new FormData(form);
-    const entity = config.baseEntity();
+    // const formData = new FormData(form);
+    // const entity = config.baseEntity();
 
-    // tab 固有項目
-    Object.entries(config.fields).forEach(([key, field]) => {
-        const name = field.name ?? camelToKebab(key);
-        const raw  = formData.get(name);
-        entity[key] = field.convert(raw);
-    });
+    // // tab 固有項目
+    // Object.entries(config.fields).forEach(([key, field]) => {
+    //     const name = field.name ?? camelToKebab(key);
+    //     const raw  = formData.get(name);
+    //     entity[key] = field.convert(raw);
+    // });
 
-    // 共通項目
-    Object.entries(COMMON_FIELDS).forEach(([key, converter]) => {
-        // const name = key.replace(/_/g, "-");
-        const name = camelToKebab(key);
-        if (formData.has(name)) {
-            entity[key] = converter(formData.get(name));
+    // // 共通項目
+    // Object.entries(COMMON_FIELDS).forEach(([key, converter]) => {
+    //     // const name = key.replace(/_/g, "-");
+    //     const name = camelToKebab(key);
+    //     if (formData.has(name)) {
+    //         entity[key] = converter(formData.get(name));
+    //     }
+    // });
+
+    // // ユーザー名
+    // entity.userName = user?.account ?? "guest@kyouseibin.com";
+
+    let tempEntity = {};
+
+    const editedEntity = buildEntityFromForm(form, originEntity, SAVE_FORM_CONFIG[tab]);
+    tempEntity = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG[tab]);
+
+    if (originEntity[cfg.dataId] > 0) {
+        if (Object.keys(tempEntity).length === 0) {
+            openMsgDialog("msg-dialog", "変更がありません", "red");
+            return;
         }
-    });
+        tempEntity.version = originEntity.version;
+    } else {
+        tempEntity.category = cfg.category;
+        if (tab === "02") tempEntity.companyId = originEntity.companyId;
+    }
 
-    // ユーザー名
-    entity.userName = user?.account ?? "guest@kyouseibin.com";
+    tempEntity[cfg.dataId] = originEntity[cfg.dataId]; 
 
     // 保存
-    const result = await updateFetch(
-        config.url,
-        JSON.stringify(entity),
-        token
-    );
+    const result = await updateFetch(cfg.url, JSON.stringify(tempEntity), token);
 
     if (result.ok) {
-        openMsgDialog("msg-dialog", result.data.message, "blue");
+        openMsgDialog("msg-dialog", result.message, "blue");
 
         await execUpdate();
-        scrollIntoTableList("table-" + tab + "-content", result.data);
-        closeFormDialog(config.dialogId);
+        scrollIntoTableList(cfg.tableId, result.data);
+        closeFormDialog(cfg.dialogId);
     }
 }
 
@@ -261,14 +280,14 @@ function formDataCheck(area) {
 /******************************************************************************************************* 削除 */
 
 async function execDelete(self) {
-    const panel = self.closest('.tab-panel');
+    const panel = document.querySelector(".tab-panel.is-show");
     const tab = panel.dataset.panel;
     const config = MODE_CONFIG[tab];
 
     const result = await deleteTablelist(config.tableId, '/api/' + config.categoryName + '/delete');
 
     if (result.ok) {
-        openMsgDialog("msg-dialog", result.data.message, "blue");
+        openMsgDialog("msg-dialog", result.message, "blue");
         await execUpdate();
     }
 }
@@ -276,7 +295,7 @@ async function execDelete(self) {
 /******************************************************************************************************* ダウンロード */
 
 async function execDownloadCsv(self) {
-    const panel = self.closest('.tab-panel');
+    const panel = document.querySelector(".tab-panel.is-show");
     const tab = panel.dataset.panel;
     const config = MODE_CONFIG[tab];
 
@@ -286,8 +305,8 @@ async function execDownloadCsv(self) {
 /******************************************************************************************************* 画面更新 */
 
 async function execUpdate() {
-    const panel = document.querySelector('.is-active');
-    const tab = panel.dataset.tab;
+    const panel = document.querySelector(".tab-panel.is-show");
+    const tab = panel.dataset.panel;
     const config = MODE_CONFIG[tab];
     if (!config) return;
 
@@ -298,13 +317,7 @@ async function execUpdate() {
 
         const list = companyOrigin.filter(v => v.category === config.category);
 
-        await updateTableDisplay(
-            config.tableId,
-            config.footerId,
-            config.searchId,
-            list,
-            createTableContent
-        );
+        await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
 
         // makeSortable(config.tableId);
         // setPageTopButton(config.tableId);
@@ -347,11 +360,7 @@ async function updateOrigin(type) {
 }
 
 //　共通更新関数
-async function updateTableByCompany({
-    apiUrl,
-    extraFilter,        // (list, panel) => list
-    requireCompany = false
-}) {
+async function updateTableByCompany({apiUrl, extraFilter, requireCompany = false}) {
     const panel = document.querySelector('.tab-panel.is-show');
     const tab = panel.dataset.panel;
     const config = MODE_CONFIG[tab];
@@ -375,20 +384,12 @@ async function updateTableByCompany({
         list = extraFilter(list, panel);
     }
 
-    await updateTableDisplay(
-        config.tableId,
-        config.footerId,
-        config.searchId,
-        list,
-        createTableContent
-    );
+    await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
 }
 
 //　支店画面更新
 async function updateOfficeTableDisplay() {
-    await updateTableByCompany({
-        apiUrl: 'api/office/get/client/list'
-    });
+    await updateTableByCompany({apiUrl: 'api/office/get/client/list'});
 }
 
 // スタッフ画面更新

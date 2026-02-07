@@ -14,6 +14,7 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.history.service.HistoryService;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
+import com.kyouseipro.neo.corporation.company.entity.CompanyEntityRequest;
 import com.kyouseipro.neo.corporation.company.entity.CompanyListEntity;
 import com.kyouseipro.neo.corporation.company.service.CompanyListService;
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
@@ -108,21 +109,25 @@ public class CorporationPageController extends BaseController {
 
         // 初期化されたエンティティ
         model.addAttribute("companyEntity", new CompanyEntity());
-        model.addAttribute("staffEntity", new StaffEntity());
+        model.addAttribute("staffEntity", new EmployeeEntity());
 
         // 初期表示用Clientリスト取得
         List<CompanyListEntity> companyOrigin = companyListService.getListByCategoryId(Enums.clientCategory.PARTNER.getCode());
         model.addAttribute("companyOrigin", companyOrigin);
         // 初期表示用Staffリスト取得
-        List<EmployeeListEntity> staffOrigin = employeeListService.getList();
+        List<EmployeeListEntity> staffOrigin = employeeListService.getListByCategoryId((Enums.employeeCategory.CONSTRUCT.getCode()));
         model.addAttribute("staffOrigin", staffOrigin);
 
         // コンボボックスアイテム取得
         List<SimpleData> companyComboList = comboBoxService.getCompanyListByCategory(Enums.clientCategory.PARTNER.getCode());
         model.addAttribute("companyComboList", companyComboList);
-
-        model.addAttribute("url", "/company/get/id");
-        model.addAttribute("owner_category", Enums.clientCategory.PARTNER.getCode());
+        List<SimpleData> genderComboList = comboBoxService.getGender();
+        model.addAttribute("genderComboList", genderComboList);
+        List<SimpleData> bloodTypeComboList = comboBoxService.getBloodType();
+        model.addAttribute("bloodTypeComboList", bloodTypeComboList);
+        
+        // model.addAttribute("url", "/company/get/id");
+        // model.addAttribute("owner_category", Enums.clientCategory.PARTNER.getCode());
 
         // 保存用コード
         model.addAttribute("categoryPartnerCode", Enums.clientCategory.PARTNER.getCode());

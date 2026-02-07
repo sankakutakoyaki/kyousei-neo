@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
+import com.kyouseipro.neo.corporation.company.entity.CompanyEntityRequest;
 import com.kyouseipro.neo.corporation.company.mapper.CompanyEntityMapper;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
@@ -78,12 +79,12 @@ public class CompanyRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    public int insert(CompanyEntity entity, String editor) {
-        String sql = CompanySqlBuilder.buildInsert();
+    public int insert(CompanyEntityRequest entity, String editor) {
+        String sql = CompanySqlBuilder.buildBulkInsert(entity);
 
         return sqlRepository.executeRequired(
             sql,
-            (ps, en) -> CompanyParameterBinder.bindInsert(ps, en, editor),
+            (ps, en) -> CompanyParameterBinder.bindBulkInsert(ps, en, editor),
             rs -> {
                 if (!rs.next()) {
                     throw new BusinessException("登録に失敗しました");
@@ -104,12 +105,12 @@ public class CompanyRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    public int update(CompanyEntity entity, String editor) {
-        String sql = CompanySqlBuilder.buildUpdate();
+    public int update(CompanyEntityRequest entity, String editor) {
+        String sql = CompanySqlBuilder.buildBulkUpdate(entity);
 
         int count = sqlRepository.executeUpdate(
             sql,
-            ps -> CompanyParameterBinder.bindUpdate(ps, entity, editor)
+            ps -> CompanyParameterBinder.bindBulkUpdate(ps, entity, editor)
         );
 
         if (count == 0) {

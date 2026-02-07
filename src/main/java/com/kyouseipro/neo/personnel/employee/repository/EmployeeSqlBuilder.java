@@ -61,23 +61,23 @@ public class EmployeeSqlBuilder {
     //         "SELECT employee_id FROM @InsertedRows;";
     // }
 
-    public static String buildUpdate() {
-        return
-            buildLogTable("@UpdatedRows") +
+    // public static String buildUpdate() {
+    //     return
+    //         buildLogTable("@UpdatedRows") +
 
-            "UPDATE employees SET " +
-            "  company_id=?, office_id=?, account=?, code=?, category=?, last_name=?, first_name=?, " +
-            "  last_name_kana=?, first_name_kana=?, phone_number=?, postal_code=?, full_address=?, email=?, gender=?, " +
-            "  blood_type=?, birthday=?, emergency_contact=?, emergency_contact_number=?, date_of_hire=?, version=?, state=? " +
+    //         "UPDATE employees SET " +
+    //         "  company_id=?, office_id=?, account=?, code=?, category=?, last_name=?, first_name=?, " +
+    //         "  last_name_kana=?, first_name_kana=?, phone_number=?, postal_code=?, full_address=?, email=?, gender=?, " +
+    //         "  blood_type=?, birthday=?, emergency_contact=?, emergency_contact_number=?, date_of_hire=?, version=?, state=? " +
             
-            buildOutputLog() + "INTO @UpdatedRows " +
+    //         buildOutputLog() + "INTO @UpdatedRows " +
 
-            "WHERE employee_id=? AND version=?; " +
+    //         "WHERE employee_id=? AND version=?; " +
 
-            buildInsertLog("@UpdatedRows", "UPDATE") +
+    //         buildInsertLog("@UpdatedRows", "UPDATE") +
 
-            "SELECT employee_id FROM @UpdatedRows;";
-    }
+    //         "SELECT employee_id FROM @UpdatedRows;";
+    // }
 
     public static String buildUpdateCode() {
         return
@@ -103,46 +103,60 @@ public class EmployeeSqlBuilder {
         List<String> sets = new ArrayList<>();
 
         if (req.getAccount() != null) {
-            sets.add("account = ?");
+            sets.add("account");
         }
         if (req.getCode() != null) {
-            sets.add("code = ?");
+            sets.add("code");
         }
         
         if (req.getCompanyId() != null) {
-            sets.add("company_id = ?");
+            sets.add("company_id");
         }
         if (req.getOfficeId() != null) {
-            sets.add("office_id = ?");
+            sets.add("office_id");
         }
         if (req.getCategory() != null) {
-            sets.add("category = ?");
+            sets.add("category");
         }
+
+        if (req.getLastName() != null) {
+            sets.add("last_name");
+        }
+        if (req.getFirstName() != null) {
+            sets.add("first_name");
+        }
+        if (req.getLastNameKana() != null) {
+            sets.add("last_name_kana");
+        }
+        if (req.getFirstNameKana() != null) {
+            sets.add("first_name_kane");
+        }
+
         if (req.getGender() != null) {
-            sets.add("gender = ?");
+            sets.add("gender");
         }
         if (req.getBloodType() != null) {
-            sets.add("blood_type = ?");
+            sets.add("blood_type");
         }
 
         if (req.getPhoneNumber() != null) {
-            sets.add("phone_number = ?");
+            sets.add("phone_number");
         }
         if (req.getPostalCode() != null) {
-            sets.add("postal_code = ?");
+            sets.add("postal_code");
         }
         if (req.getFullAddress() != null) {
-            sets.add("full_address = ?");
+            sets.add("full_address");
         }
         if (req.getEmail() != null) {
-            sets.add("email = ?");
+            sets.add("email");
         }
 
         if (req.getBirthday() != null) {
-            sets.add("birthday = ?");
+            sets.add("birthday");
         }
         if (req.getDateOfHire() != null) {
-            sets.add("date_of_hire = ?");
+            sets.add("date_of_hire");
         }
 
         if (sets.isEmpty()) {
@@ -150,15 +164,16 @@ public class EmployeeSqlBuilder {
         }
 
         sql.append(String.join(", ", sets));
+        sql.append(") ");
 
         sql.append(buildOutputLog() + "INTO @InsertedRows ");
 
         sql.append("VALUES (");
         sql.append(sets.stream().map(v -> "?").collect(Collectors.joining(",")));
-        sql.append(")");
+        sql.append(");");
 
         sql.append(buildInsertLog("@InsertedRows", "INSERT"));
-        sql.append("SELECT employee_id FROM @UpdatedRows;");
+        sql.append("SELECT employee_id FROM @InsertedRows;");
 
         return  sql.toString();
     }
@@ -166,6 +181,8 @@ public class EmployeeSqlBuilder {
     public static String buildBulkUpdate(EmployeeEntityRequest req) {
 
         StringBuilder sql = new StringBuilder();
+
+        sql.append(buildLogTable("@UpdatedRows"));
         sql.append("UPDATE employees SET ");
 
         List<String> sets = new ArrayList<>();
@@ -186,6 +203,20 @@ public class EmployeeSqlBuilder {
         if (req.getCategory() != null) {
             sets.add("category = ?");
         }
+
+        if (req.getLastName() != null) {
+            sets.add("last_name = ?");
+        }
+        if (req.getFirstName() != null) {
+            sets.add("first_name = ?");
+        }
+        if (req.getLastNameKana() != null) {
+            sets.add("last_name_kana = ?");
+        }
+        if (req.getFirstNameKana() != null) {
+            sets.add("first_name_kane = ?");
+        }
+
         if (req.getGender() != null) {
             sets.add("gender = ?");
         }
@@ -215,7 +246,7 @@ public class EmployeeSqlBuilder {
 
         // 共通更新項目
         sets.add("version = version + 1");
-        sets.add("update_date = SYSDATETIME()");
+        sets.add("update_date = SYSDATETIME() ");
 
         if (sets.isEmpty()) {
             throw new IllegalArgumentException("更新項目がありません");
@@ -223,16 +254,12 @@ public class EmployeeSqlBuilder {
 
         sql.append(String.join(", ", sets));
 
-        return 
-            buildLogTable("@UpdatedRows") + sql.toString() +
+        sql.append(buildOutputLog() + "INTO @UpdatedRows ");
+        sql.append("WHERE employee_id = ? AND version = ? AND NOT (state = ?);");
+        sql.append(buildInsertLog("@UpdatedRows", "UPDATE"));
+        sql.append("SELECT employee_id FROM @UpdatedRows;");
 
-            buildOutputLog() + "INTO @UpdatedRows " +
-
-            "WHERE employee_id = ? AND version = ? AND NOT (state = ?)" +
-
-            buildInsertLog("@UpdatedRows", "UPDATE") +
-
-            "SELECT employee_id FROM @UpdatedRows;";
+        return sql.toString();
     }
 
     public static String buildUpdatePhone() {

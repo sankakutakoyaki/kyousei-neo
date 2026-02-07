@@ -171,7 +171,7 @@ public class EmployeeRepository {
      */
     public int insert(EmployeeEntityRequest entity, String editor) {
         // String sql = EmployeeSqlBuilder.buildInsert();
-        String sql = EmployeeSqlBuilder.buildBulkUpdate(entity);
+        String sql = EmployeeSqlBuilder.buildBulkInsert(entity);
 
         try {
             return sqlRepository.executeRequired(

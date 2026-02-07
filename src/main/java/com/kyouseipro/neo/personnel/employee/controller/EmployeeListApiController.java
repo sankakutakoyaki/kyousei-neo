@@ -47,14 +47,14 @@ public class EmployeeListApiController {
      * カテゴリー別のEntityListを取得する
      * @return
      */
-    @PostMapping("/get/list/{type}")
+    @GetMapping("/get/list/{type}")
 	@ResponseBody
     public List<EmployeeListEntity> getListByCategoryId(@PathVariable String type) {
         int category = 0;
 
         switch (type) {
             case "partner":
-                category = Enums.clientCategory.PARTNER.getCode();
+                category = Enums.employeeCategory.CONSTRUCT.getCode();
                 break;
         
             default:

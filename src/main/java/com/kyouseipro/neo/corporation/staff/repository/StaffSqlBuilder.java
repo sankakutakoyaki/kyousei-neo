@@ -1,6 +1,11 @@
 package com.kyouseipro.neo.corporation.staff.repository;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.kyouseipro.neo.common.Utilities;
+import com.kyouseipro.neo.corporation.staff.entity.StaffEntityRequest;
 
 public class StaffSqlBuilder {
 
@@ -30,32 +35,128 @@ public class StaffSqlBuilder {
             "FROM " + rowTableName + ";";
     }
 
-    public static String buildInsert() {
-        return
-            buildLogTable("@Inserted") +
+    public static String buildBulkInsert(StaffEntityRequest req) {
 
-            "INSERT INTO staffs (" +
-            "  company_id, office_id, name, name_kana, phone_number, email, version, state" +
-            ") " +
-            buildOutputLog() + "INTO @Inserted " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?); " +
+        StringBuilder sql = new StringBuilder();
+        sql.append(buildLogTable("@InsertedRows"));
+        sql.append("INSERT INTO staffs (");
 
-            buildInsertLog("@Inserted", "INSERT") +
-            "SELECT staff_id FROM @Inserted;";
+        List<String> sets = new ArrayList<>();
+
+        if (req.getCompanyId() != null) {
+            sets.add("company_id");
+        }
+        if (req.getOfficeId() != null) {
+            sets.add("office_id");
+        }
+
+        if (req.getName() != null) {
+            sets.add("name");
+        }
+        if (req.getNameKana() != null) {
+            sets.add("name_kana");
+        }
+
+        if (req.getPhoneNumber() != null) {
+            sets.add("phone_number");
+        }
+        if (req.getEmail() != null) {
+            sets.add("email");
+        }
+
+        if (sets.isEmpty()) {
+            throw new IllegalArgumentException("更新項目がありません");
+        }
+
+        sql.append(String.join(", ", sets));
+        sql.append(") ");
+
+        sql.append(buildOutputLog() + "INTO @InsertedRows ");
+
+        sql.append("VALUES (");
+        sql.append(sets.stream().map(v -> "?").collect(Collectors.joining(",")));
+        sql.append(");");
+
+        sql.append(buildInsertLog("@InsertedRows", "INSERT"));
+        sql.append("SELECT staff_id FROM @InsertedRows;");
+
+        return  sql.toString();
     }
 
-    public static String buildUpdate() {
-        return
-            buildLogTable("@Updated") +
+    public static String buildBulkUpdate(StaffEntityRequest req) {
 
-            "UPDATE staffs SET " +
-            "  company_id=?, office_id=?, name=?, name_kana=?, phone_number=?, email=?, version=?, state=? " +
-            buildOutputLog() + "INTO @Updated " +
-            "WHERE staff_id=? AND version=?; " +
+        StringBuilder sql = new StringBuilder();
 
-            buildInsertLog("@Updated", "UPDATE") +
-            "SELECT staff_id FROM @Updated;";
+        sql.append(buildLogTable("@UpdatedRows"));
+        sql.append("UPDATE staffs SET ");
+
+        List<String> sets = new ArrayList<>();
+
+        if (req.getCompanyId() != null) {
+            sets.add("company_id = ?");
+        }
+        if (req.getOfficeId() != null) {
+            sets.add("office_id = ?");
+        }
+
+        if (req.getName() != null) {
+            sets.add("name = ?");
+        }
+        if (req.getNameKana() != null) {
+            sets.add("name_kana = ?");
+        }
+
+        if (req.getPhoneNumber() != null) {
+            sets.add("phone_number = ?");
+        }
+        if (req.getEmail() != null) {
+            sets.add("email = ?");
+        }
+
+        // 共通更新項目
+        sets.add("version = version + 1");
+        sets.add("update_date = SYSDATETIME() ");
+
+        if (sets.isEmpty()) {
+            throw new IllegalArgumentException("更新項目がありません");
+        }
+
+        sql.append(String.join(", ", sets));
+
+        sql.append(buildOutputLog() + "INTO @UpdatedRows ");
+        sql.append("WHERE staff_id = ? AND version = ? AND NOT (state = ?);");
+        sql.append(buildInsertLog("@UpdatedRows", "UPDATE"));
+        sql.append("SELECT staff_id FROM @UpdatedRows;");
+
+        return sql.toString();
     }
+
+    // public static String buildInsert() {
+    //     return
+    //         buildLogTable("@Inserted") +
+
+    //         "INSERT INTO staffs (" +
+    //         "  company_id, office_id, name, name_kana, phone_number, email, version, state" +
+    //         ") " +
+    //         buildOutputLog() + "INTO @Inserted " +
+    //         "VALUES (?, ?, ?, ?, ?, ?, ?, ?); " +
+
+    //         buildInsertLog("@Inserted", "INSERT") +
+    //         "SELECT staff_id FROM @Inserted;";
+    // }
+
+    // public static String buildUpdate() {
+    //     return
+    //         buildLogTable("@Updated") +
+
+    //         "UPDATE staffs SET " +
+    //         "  company_id=?, office_id=?, name=?, name_kana=?, phone_number=?, email=?, version=?, state=? " +
+    //         buildOutputLog() + "INTO @Updated " +
+    //         "WHERE staff_id=? AND version=?; " +
+
+    //         buildInsertLog("@Updated", "UPDATE") +
+    //         "SELECT staff_id FROM @Updated;";
+    // }
 
     public static String buildDeleteByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count);

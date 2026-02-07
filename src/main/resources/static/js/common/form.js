@@ -649,8 +649,8 @@ function bindDateRange(startId, endId) {
     });
 
     start.addEventListener('blur', () => {
-    if (end.value && start.value > end.value) {
-        end.value = start.value;
-    }
-});
+        if (end.value && start.value > end.value) {
+            end.value = start.value;
+        }
+    });
 }

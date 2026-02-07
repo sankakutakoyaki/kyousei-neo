@@ -96,7 +96,7 @@ public class SqlRepository {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("SQL実行エラー", e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -111,7 +111,7 @@ public class SqlRepository {
             return ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("SQL実行エラー", e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -158,7 +158,7 @@ public class SqlRepository {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("SQL実行エラー", e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
