@@ -1,7 +1,10 @@
 package com.kyouseipro.neo.corporation;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -66,24 +69,30 @@ public class CorporationPageController extends BaseController {
         // 初期表示用Clientリスト取得
         List<CompanyListEntity> companyOrigin = companyListService.getClientList();
         model.addAttribute("companyOrigin", companyOrigin);
-        // 初期表示用Officeリスト取得
-        List<OfficeListEntity> officeOrigin = officeListService.getClientList();
-        model.addAttribute("officeOrigin", officeOrigin);
-        // 初期表示用Staffリスト取得
-        List<StaffListEntity> staffOrigin = staffListService.getList();
-        model.addAttribute("staffOrigin", staffOrigin);
+        // // 初期表示用Officeリスト取得
+        // List<OfficeListEntity> officeOrigin = officeListService.getClientList();
+        // model.addAttribute("officeOrigin", officeOrigin);
+        // // 初期表示用Staffリスト取得
+        // List<StaffListEntity> staffOrigin = staffListService.getList();
+        // model.addAttribute("staffOrigin", staffOrigin);
 
-        // コンボボックスアイテム取得
-        List<SimpleData> companyComboList = comboBoxService.getClientList();
-        model.addAttribute("companyComboList", companyComboList);
-        List<OfficeListEntity> officeComboList = comboBoxService.getOfficeList();
-        model.addAttribute("officeComboList", officeComboList);
+        // // コンボボックスアイテム取得
+        // List<SimpleData> companyComboList = comboBoxService.getClientList();
+        // model.addAttribute("companyComboList", companyComboList);
+        // List<OfficeListEntity> officeComboList = comboBoxService.getOfficeList();
+        // model.addAttribute("officeComboList", officeComboList);
 
         // 保存用コード
-        model.addAttribute("categoryShipperCode", Enums.clientCategory.SHIPPER.getCode());
-        model.addAttribute("categorySupplierCode", Enums.clientCategory.SUPPLIER.getCode());
-        model.addAttribute("categoryFacilityCode", Enums.clientCategory.FACILITY.getCode());
-        model.addAttribute("categoryTransportCode", Enums.clientCategory.TRANSPORT.getCode());
+        Map<String, Integer> categoryCodes = Arrays.stream(Enums.clientCategory.values())
+            .collect(Collectors.toMap(
+                Enums.clientCategory::name,
+                Enums.clientCategory::getCode
+            ));
+        model.addAttribute("categoryCodes", categoryCodes);
+        // model.addAttribute("categoryShipperCode", Enums.clientCategory.SHIPPER.getCode());
+        // model.addAttribute("categorySupplierCode", Enums.clientCategory.SUPPLIER.getCode());
+        // model.addAttribute("categoryFacilityCode", Enums.clientCategory.FACILITY.getCode());
+        // model.addAttribute("categoryTransportCode", Enums.clientCategory.TRANSPORT.getCode());
 		
         return "contents/corporation/client";
     }

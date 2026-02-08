@@ -5,7 +5,7 @@ const MODE_CONFIG = {
         tableId: "table-01-content",
         footerId: "footer-01",
         searchId: "search-box-01",
-        category: categoryShipperCode,
+        category: categoryCodes.SHIPPER,
         categoryName: "company",
         dataId: "companyId",
         formDialogId: "form-dialog-01",
@@ -18,7 +18,7 @@ const MODE_CONFIG = {
         tableId: "table-02-content",
         footerId: "footer-02",
         searchId: "search-box-02",
-        category: categorySupplierCode,
+        category: categoryCodes.SUPPLIER,
         categoryName: "company",
         dataId: "companyId",
         formDialogId: "form-dialog-01",
@@ -31,7 +31,7 @@ const MODE_CONFIG = {
         tableId: "table-03-content",
         footerId: "footer-03",
         searchId: "search-box-03",
-        category: categoryFacilityCode,
+        category: categoryCodes.FACILITY,
         categoryName: "company",
         dataId: "companyId",
         formDialogId: "form-dialog-01",
@@ -44,7 +44,7 @@ const MODE_CONFIG = {
         tableId: "table-04-content",
         footerId: "footer-04",
         searchId: "search-box-04",
-        category: categoryTransportCode,
+        category: categoryCodes.TRANSPORT,
         categoryName: "company",
         dataId: "companyId",
         formDialogId: "form-dialog-01",
@@ -313,19 +313,21 @@ const ORIGIN_CONFIG = {
 };
 
 const COMPANY_UI_CONFIG = [
-    // {
-    //     codeId: "code-box-51",
-    //     nameId: "name-box-51",
-    //     onChange: async () => {
-    //         await updateOfficeTableDisplay();
-    //     }
-    // },
-    // {
-    //     codeId: "code-box-61",
-    //     nameId: "name-box-61",
-    //     onChange: async () => {
-    //         await updateStaffTableDisplay();
-    //         createOfficeComboBoxFromClient();
-    //     }
-    // }
+    {
+        codeId: "code-box-51",
+        nameId: "name-box-51",
+        onChange: async () => {
+            // await updateOfficeTableDisplay();
+            // createOfficeComboBoxFromClient();
+            updateOfficeTableDisplay();
+        }
+    },
+    {
+        codeId: "code-box-61",
+        nameId: "name-box-61",
+        onChange: async () => {
+            updateStaffTableDisplay();
+            createOfficeComboBoxFromClient();
+        }
+    }
 ];

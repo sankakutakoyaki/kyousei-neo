@@ -111,15 +111,19 @@
             const companyEntity = /*[[${companyEntity}]]*/;
             const officeEntity = /*[[${officeEntity}]]*/;
             const staffEntity = /*[[${staffEntity}]]*/;
-            const categoryShipperCode = /*[[${categoryShipperCode}]]*/;
-            const categorySupplierCode = /*[[${categorySupplierCode}]]*/;
-            const categoryFacilityCode = /*[[${categoryFacilityCode}]]*/;
-            const categoryTransportCode = /*[[${categoryTransportCode}]]*/;
+
+            const categoryCodes = /*[[${categoryCodes}]]*/;
+            // const categoryShipperCode = /*[[${categoryShipperCode}]]*/;
+            // const categorySupplierCode = /*[[${categorySupplierCode}]]*/;
+            // const categoryFacilityCode = /*[[${categoryFacilityCode}]]*/;
+            // const categoryTransportCode = /*[[${categoryTransportCode}]]*/;
             let companyOrigin = /*[[${companyOrigin}]]*/; // 初期リスト記憶用
-            let officeOrigin = /*[[${officeOrigin}]]*/; // 初期リスト記憶用
-            let staffOrigin = /*[[${staffOrigin}]]*/; // 初期リスト記憶用
-            let companyComboList = /*[[${companyComboList}]]*/;
-            let officeComboList = /*[[${officeComboList}]]*/;
+            let officeOrigin = [];
+            let staffOrigin = [];
+            // let officeOrigin = /*[[${officeOrigin}]]*/; // 初期リスト記憶用
+            // let staffOrigin = /*[[${staffOrigin}]]*/; // 初期リスト記憶用
+            // let companyComboList = /*[[${companyComboList}]]*/;
+            // let officeComboList = /*[[${officeComboList}]]*/;
             let originEntity = {};
         </script>
         <script th:src="@{/js/corporation/config/client.js}"></script>
