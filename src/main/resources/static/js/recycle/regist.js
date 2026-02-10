@@ -266,7 +266,7 @@ async function execDelete(self) {
 async function execRegist(tab) {
     const cfg = MODE_CONFIG[tab];
     
-    if (!validateByConfig(cfg.panel, { ...ERROR_CONFIG.recycle, tab: tab })) {
+    if (!validateByConfig(cfg.panel,ERROR_CONFIG.recycle)) {
         return;
     }
 

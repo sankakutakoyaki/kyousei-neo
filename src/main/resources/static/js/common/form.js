@@ -342,10 +342,18 @@ function validateByConfig(area, config) {
     const messages = [];
     let focusTarget = null;
 
-    const rules = [
-        ...(config.common || []),
-        ...(config.mode ? (config[config.mode] || []) : [])
-    ];
+    const commonRules = Array.isArray(config.common) ? config.common : [];
+    const modeRules =
+        config.mode && Array.isArray(config[config.mode])
+            ? config[config.mode]
+            : [];
+
+    const rules = [...commonRules, ...modeRules];
+
+    // const rules = [
+    //     ...(config.common || []),
+    //     ...(config.mode ? (config[config.mode] || []) : [])
+    // ];
 
     for (const rule of rules) {
         const el = area.querySelector(rule.selector);
@@ -391,6 +399,8 @@ function setSelectValue(form, formData, formdata, {
 }
 
 //　フォーム画面にentityの情報を登録する
+// フォーム画面に entity の情報を登録する
+// フォーム画面に entity の情報を登録する（input / span 両対応）
 function applyFormConfig(form, entity, config) {
     config.forEach(c => {
         const el = form.querySelector(`[name="${c.name}"]`);
@@ -398,12 +408,31 @@ function applyFormConfig(form, entity, config) {
 
         let value = entity[c.key];
 
-        if (c.emptyIf !== undefined && value == c.emptyIf) {
+        // emptyIf
+        if (c.emptyIf !== undefined && value === c.emptyIf) {
             value = '';
         }
-        el.value = value ?? '';
+
+        // defaultValue
+        if (
+            (value === null || value === undefined || value === '') &&
+            c.defaultValue !== undefined
+        ) {
+            value = c.defaultValue;
+        }
+
+        const tag = el.tagName.toLowerCase();
+
+        if (tag === 'input' || tag === 'textarea' || tag === 'select') {
+            el.value = value ?? '';
+        } else {
+            // span / div / label など表示要素
+            el.textContent = value ?? '';
+        }
     });
 }
+
+
 
 //　フォーム画面のコンボボックスにentityの情報を登録する
 function applyComboConfig(form, entity, config) {

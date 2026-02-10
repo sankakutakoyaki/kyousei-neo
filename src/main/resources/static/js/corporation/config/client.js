@@ -6,9 +6,9 @@ const MODE_CONFIG = {
         footerId: "footer-01",
         searchId: "search-box-01",
         category: categoryCodes.SHIPPER,
-        categoryName: "company",
+        domain: "company",
         dataId: "companyId",
-        formDialogId: "form-dialog-01",
+        dialogId: "form-dialog-01",
         formId: "form-01",
         entity: companyEntity,
         list: companyOrigin,
@@ -19,9 +19,9 @@ const MODE_CONFIG = {
         footerId: "footer-02",
         searchId: "search-box-02",
         category: categoryCodes.SUPPLIER,
-        categoryName: "company",
+        domain: "company",
         dataId: "companyId",
-        formDialogId: "form-dialog-01",
+        dialogId: "form-dialog-01",
         formId: "form-01",
         entity: companyEntity,
         list: companyOrigin,
@@ -32,9 +32,9 @@ const MODE_CONFIG = {
         footerId: "footer-03",
         searchId: "search-box-03",
         category: categoryCodes.FACILITY,
-        categoryName: "company",
+        domain: "company",
         dataId: "companyId",
-        formDialogId: "form-dialog-01",
+        dialogId: "form-dialog-01",
         formId: "form-01",
         entity: companyEntity,
         list: companyOrigin,
@@ -45,9 +45,9 @@ const MODE_CONFIG = {
         footerId: "footer-04",
         searchId: "search-box-04",
         category: categoryCodes.TRANSPORT,
-        categoryName: "company",
+        domain: "company",
         dataId: "companyId",
-        formDialogId: "form-dialog-01",
+        dialogId: "form-dialog-01",
         formId: "form-01",
         entity: companyEntity,
         list: companyOrigin,
@@ -57,9 +57,9 @@ const MODE_CONFIG = {
         tableId: "table-05-content",
         footerId: "footer-05",
         searchId: "search-box-05",
-        categoryName: "office",
+        domain: "office",
         dataId: "officeId",
-        formDialogId: "form-dialog-01",
+        dialogId: "form-dialog-01",
         formId: "form-01",
         entity: officeEntity,
         list: officeOrigin,
@@ -71,9 +71,9 @@ const MODE_CONFIG = {
         tableId: "table-06-content",
         footerId: "footer-06",
         searchId: "search-box-06",
-        categoryName: "staff",
+        domain: "staff",
         dataId: "staffId",
-        formDialogId: "form-dialog-02",
+        dialogId: "form-dialog-02",
         formId: "form-02",
         entity: staffEntity,
         list: staffOrigin,
@@ -119,6 +119,7 @@ const COMBO_CONFIG = [
 // };
 
 const COMMON_COMPANY_FIELDS = [
+    // { name: 'company-name', key: 'companyName', trim: true, emptyToNull: true },
     { name: 'name', key: 'name', trim: true, emptyToNull: true, skipIfNull: true },
     { name: 'name-kana', key: 'nameKana', trim: true, emptyToNull: true, skipIfNull: true },
     { name: 'tel-number', key: 'telNumber', trim: true, emptyToNull: true, skipIfNull: true },
@@ -134,9 +135,14 @@ const FORM_CONFIG = {
     "02": COMMON_COMPANY_FIELDS,
     "03": COMMON_COMPANY_FIELDS,
     "04": COMMON_COMPANY_FIELDS,
-    "05": COMMON_COMPANY_FIELDS,
+    // "05": COMMON_COMPANY_FIELDS,
+    "05": [
+        ...COMMON_COMPANY_FIELDS,
+        { name: 'company-name', key: 'companyName', trim: true, emptyToNull: true }
+    ],
     "06": [
-        { name: 'office', key: 'officeId', number: true, zeroToNull: true, skipIfNull: true },
+        { name: 'company-name', key: 'companyName', trim: true, emptyToNull: true },
+        { name: 'office-name',  key: 'officeName', trim: true, emptyToNull: true, defaultValue: '-----' },
         { name: 'name', key: 'name', trim: true, emptyToNull: true, skipIfNull: true },
         { name: 'name-kana', key: 'nameKana', trim: true, emptyToNull: true, skipIfNull: true },
         { name: 'phone-number', key: 'phoneNumber', trim: true, emptyToNull: true, skipIfNull: true },
@@ -149,23 +155,23 @@ const SAVE_FORM_CONFIG = {
         ...c,
         skipIfNull: false   // ← ここが重要
     })),
-    "02": FORM_CONFIG["01"].map(c => ({
+    "02": FORM_CONFIG["02"].map(c => ({
         ...c,
         skipIfNull: false   // ← ここが重要
     })),
-    "03": FORM_CONFIG["01"].map(c => ({
+    "03": FORM_CONFIG["03"].map(c => ({
         ...c,
         skipIfNull: false   // ← ここが重要
     })),
-    "04": FORM_CONFIG["01"].map(c => ({
+    "04": FORM_CONFIG["04"].map(c => ({
         ...c,
         skipIfNull: false   // ← ここが重要
     })),
-    "05": FORM_CONFIG["01"].map(c => ({
+    "05": FORM_CONFIG["05"].map(c => ({
         ...c,
         skipIfNull: false   // ← ここが重要
     })),
-    "06": FORM_CONFIG["02"].map(c => ({
+    "06": FORM_CONFIG["06"].map(c => ({
         ...c,
         skipIfNull: false   // ← ここが重要
     }))
@@ -295,39 +301,101 @@ const SAVE_FORM_CONFIG = {
 //     isOriginalPrice: v => v != null ? Number(v) : 0
 // };
 
-const ORIGIN_CONFIG = {
-    company: {
-        listUrl: "/api/client/get/list",
-        comboUrl: "/api/client/get/combo",
-        originKey: "companyOrigin",
-        comboKey: "companyComboList",
-        comboTargetIds: ["name-box-51", "name-box-61"]
-    },
-    office: {
-        listUrl: "/api/office/get/list",
-        comboUrl: "/api/office/get/combo",
-        originKey: "officeOrigin",
-        comboKey: "officeComboList",
-        comboTargetIds: ["name-box-62"]
-    }
-};
+// const ORIGIN_CONFIG = {
+//     company: {
+//         listUrl: "/api/client/get/list",
+//         comboUrl: "/api/client/get/combo",
+//         originKey: "companyOrigin",
+//         comboKey: "companyComboList",
+//         comboTargetIds: ["name-box-51", "name-box-61"]
+//     },
+//     office: {
+//         listUrl: "/api/office/get/list",
+//         comboUrl: "/api/office/get/combo",
+//         originKey: "officeOrigin",
+//         comboKey: "officeComboList",
+//         comboTargetIds: ["name-box-62"]
+//     }
+// };
 
 const COMPANY_UI_CONFIG = [
     {
         codeId: "code-box-51",
         nameId: "name-box-51",
         onChange: async () => {
-            // await updateOfficeTableDisplay();
-            // createOfficeComboBoxFromClient();
-            updateOfficeTableDisplay();
+            // updateOfficeTableDisplay();
+            execUpdate();
         }
     },
     {
         codeId: "code-box-61",
         nameId: "name-box-61",
         onChange: async () => {
-            updateStaffTableDisplay();
+            // updateStaffTableDisplay();
+            execUpdate();
             createOfficeComboBoxFromClient();
         }
     }
 ];
+
+const ERROR_CONFIG = {
+    "form-01": [
+        {
+            selector: 'input[name="name"]',
+            checks: [
+                { test: v => v !== "", message: '名称が入力されていません'}
+            ]
+        },
+        {
+            selector: 'input[name="tel-number"]',
+            checks: [
+                { test: v => !checkPhoneNumber(v), message: '電話番号に誤りがあります'}
+            ]
+        },
+        {
+            selector: 'input[name="fax-number"]',
+            checks: [
+                { test: v => !checkPhoneNumber(v), message: 'FAX番号に誤りがあります'}
+            ]
+        },
+        {
+            selector: 'input[name="postal-code"]',
+            checks: [
+                { test: v => !checkPhoneNumber(v), message: '郵便番号に誤りがあります'}
+            ]
+        },
+        {
+            selector: 'input[name="email"]',
+            checks: [
+                { test: v => !checkMailAddress(v), message: 'メールアドレスに誤りがあります'}
+            ]
+        },
+        {
+            selector: 'input[name="web-address"]',
+            checks: [
+                { test: v => !checkWebAddress(v), message: 'WEBアドレスに誤りがあります'}
+            ]
+        }
+    ],
+    "form-02": [
+        {
+            selector: 'input[name="name"]',
+            checks: [
+                { test: v => v !== "", message: '名称が入力されていません'}
+            ]
+        },
+        {
+            selector: 'input[name="phone-number"]',
+            checks: [
+                { test: v => !checkPhoneNumber(v), message: '電話番号に誤りがあります'}
+            ]
+        },
+        {
+            selector: 'input[name="email"]',
+            checks: [
+                { test: v => !checkMailAddress(v), message: 'メールアドレスに誤りがあります'}
+            ]
+        }
+    ]
+
+}

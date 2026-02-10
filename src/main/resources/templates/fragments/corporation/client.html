@@ -33,10 +33,15 @@
     </header>
 
     <form id="form-01" class="dialog-content" th:fragment="form01Fragment()">
-        <input name="company-id" type="hidden" value="">
+        <!-- <input name="company-id" type="hidden" value="">
         <input name="office-id" type="hidden" value="">
         <input name="category" type="hidden" value="">
-        <input name="version" type="hidden" value="">
+        <input name="version" type="hidden" value=""> -->
+        <div class="flex-area">
+            <div class="form-parts">
+                <p name="company-name"></p>
+            </div>
+        </div>
         <div class="flex-area">
             <div class="form-parts">
                 <label>名称</label>
@@ -106,26 +111,17 @@
     </form>
 
     <form id="form-02" class="dialog-content" th:fragment="form02Fragment()">
-        <input name="staff-id" type="hidden" value="">
+        <!-- <input name="staff-id" type="hidden" value="">
         <input name="company-id" type="hidden" value="">
-        <input name="version" type="hidden" value="">
+        <input name="version" type="hidden" value=""> -->
         <div class="flex-area">
             <div class="form-parts">
-                <span name="company-name"></span>
+                <p name="company-name"></p>
             </div>
-        </div>
-        <div class="flex-area">
             <div class="form-parts">
-                <span name="office-name"></span>
-            </div>
+                <p name="office-name"></p>
+            </div>            
         </div>
-        <!-- <div class="flex-area">
-            <div class="form-parts">
-                <label>支店名</label>
-                <select tabindex="1" id="office-id" name="office" class="normal-select"
-                    value=""></select>
-            </div>
-        </div> -->
         <div class="flex-area">
             <div class="form-parts">
                 <label>担当者名</label>
