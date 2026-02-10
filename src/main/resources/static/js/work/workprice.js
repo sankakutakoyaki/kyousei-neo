@@ -73,34 +73,43 @@ async function execDownloadCsv(self) {
 
 // フィルターを通して画面を更新する
 async function refleshDisplay() {
-    await execUpdate();
-    const list = getCategoryFilterList(origin);
-    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTableContent);
+    origin = await execUpdate();
+    await getCategoryFilterList();
+    // await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTableContent);
 }
 
 // 最新のリストを取得
 async function execUpdate() {
-    origin = await searchFetch('/api/work/price/get/list/companyid', JSON.stringify({id:parseInt(companyCombo.value)}), token);
+    const companyId = Number(document.getElementById('company1')?.value);
+    if (companyId > 0) {
+        const result = await searchFetch('/api/work/price/get/list/companyid', JSON.stringify({id:companyId}), token);
+        if (result.ok) {
+            return result.data;
+        }
+    }
+    return [];
 }
 
-// 荷主フィルター選択時の処理
-function getCompanyFilterList(list) {
-    const companyCombo = document.getElementById('company1');
-    if (Number(companyCombo.value) === 0) {
-        return list;
-    } else {
-        return list.filter(value => value.company_id === Number(companyCombo.value));
-    }
-}
+// // 荷主フィルター選択時の処理
+// function getCompanyFilterList(list) {
+//     const companyId = Number(document.getElementById('company1')?.value);
+//     if (companyId === 0) {
+//         return list;
+//     } else {
+//         return list.filter(value => value.company_id === companyId);
+//     }
+// }
 
 // カテゴリーフィルター選択時の処理
-function getCategoryFilterList(list) {
-    const categoryCombo = document.getElementById('category1');
-    if (Number(categoryCombo.value) === 0) {
-        return list;
+async function getCategoryFilterList() {
+    const categoryId = Number(document.getElementById('category1')?.value);
+    let list = [];
+    if (categoryId === 0) {
+        list = origin;
     } else {
-        return list.filter(value => value.category_id === Number(categoryCombo.value));
+        list = origin.filter(v => v.categoryId === categoryId);        
     }
+    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTableContent);
 }
 
 /******************************************************************************************************* 初期化時 */
@@ -112,20 +121,22 @@ window.addEventListener("load", async () => {
     const company1Area = document.getElementById('company1')
     createComboBox(company1Area, companyComboList);
     company1Area.onchange = async function() {
-        refleshDisplay();
+        await refleshDisplay();
     };
     const category1Area = document.getElementById('category1')
     createComboBoxWithTop(category1Area, categoryComboList, "");
     category1Area.onchange = async function() {
-        refleshDisplay();
+        // refleshDisplay();
+        await getCategoryFilterList();
     };
 
     // 検索ボックス入力時の処理
     document.getElementById('search-box-01').addEventListener('search', async function() {
-        refleshDisplay();
+        await refleshDisplay();
     }, false);
 
     // 画面更新
-    const list = getCategoryFilterList(origin);
-    await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTableContent);
+    await refleshDisplay();
+    // const list = getCategoryFilterList(origin);
+    // await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTableContent);
 });

@@ -415,7 +415,7 @@
         <button type="button" class="page-top"></button>
     </main>
 
-    <main th:fragment="main02Fragment(tableId, scrollId, isForm)">
+    <main class="table-wrapper" th:fragment="main02Fragment(tableId, scrollId, isForm)">
         <table th:id="${tableId}" class="normal-table">
             <tr name="table-header" class="pc-style">
                 <th th:unless="${isForm}" name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
@@ -432,7 +432,7 @@
         <button type="button" class="page-top"></button>
     </main>
 
-    <main th:fragment="main03Fragment(tableId, scrollId, isForm)">
+    <main class="table-wrapper" th:fragment="main03Fragment(tableId, scrollId, isForm)">
         <table th:id="${tableId}" class="normal-table">
             <tr name="table-header" class="pc-style">
                 <th th:unless="${isForm}" name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
@@ -448,7 +448,7 @@
         <button type="button" class="page-top"></button>
     </main>
 
-    <main th:fragment="main04Fragment(tableId, scrollId, isForm)">
+    <main class="table-wrapper" th:fragment="main04Fragment(tableId, scrollId, isForm)">
         <table th:id="${tableId}" class="normal-table">
             <tr name="table-header" class="pc-style">
                 <th th:unless="${isForm}" name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>

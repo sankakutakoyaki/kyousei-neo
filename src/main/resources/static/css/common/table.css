@@ -147,3 +147,11 @@ th.sorted-asc>span,
 th.sorted-desc>span {
     position: relative;
 }
+
+/******************************************************************************************************* ページトップ用 */
+
+.table-wrapper {
+    position: relative;
+    /* max-height: 500px;
+    overflow: auto; */
+}

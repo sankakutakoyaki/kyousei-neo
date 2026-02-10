@@ -70,9 +70,9 @@ public class WorkPageController extends BaseController {
         model.addAttribute("activeSidebar", "price");
         model.addAttribute("insertCss", "/css/work/workprice.css");
 
-        // 初期表示用受注リスト取得
-        List<WorkPriceEntity> origin = workPriceService.getListByCompanyId(Utilities.getOwnCompanyId());
-        model.addAttribute("origin", origin);
+        // // 初期表示用受注リスト取得
+        // List<WorkPriceEntity> origin = workPriceService.getListByCompanyId(Utilities.getOwnCompanyId());
+        // model.addAttribute("origin", origin);
 
         // コンボボックスアイテム取得
         List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorListAddTopOfOwnCompanyHasOriginalPrice();

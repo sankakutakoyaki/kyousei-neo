@@ -209,7 +209,7 @@
         </div>
     </form>
 
-    <main th:fragment="mainPartnerFragment(tableId, scrollId)">
+    <main class="table-wrapper" th:fragment="mainPartnerFragment(tableId, scrollId)">
         <table th:id="${tableId}" class="normal-table">
             <tr id="row-0" name="table-header" class="pc-style">
                 <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
@@ -223,7 +223,7 @@
         <button type="button" class="page-top"></button>
     </main>
 
-    <main th:fragment="mainStaffFragment(tableId, scrollId)">
+    <main class="table-wrapper" th:fragment="mainStaffFragment(tableId, scrollId)">
         <table th:id="${tableId}" class="normal-table">
             <tr id="row-0" name="table-header" class="pc-style">
                 <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
