@@ -22,17 +22,25 @@ public class PushRepository {
      * @param endpoint
      * @return　見つからなければNullを返す
      */
-    public Optional<SubscriptionRequest> findByEndpoint(String endpoint){
+    public SubscriptionRequest findByEndpoint(String endpoint){
         String sql = "SELECT * FROM subscriptions WHERE endpoint = ?";
 
-        return sqlRepository.executeQuery(
+        // return sqlRepository.executeQuery(
+        //     sql,
+        //     (ps, p) -> {
+        //         int index = 1;
+        //         ps.setString(index++, endpoint);
+        //     },
+        //     rs -> rs.next() ? SubscriptionRequestMapper.map(rs) : null,
+        //     endpoint
+        // );
+        return sqlRepository.query(
             sql,
-            (ps, p) -> {
+            ps -> {
                 int index = 1;
                 ps.setString(index++, endpoint);
             },
-            rs -> rs.next() ? SubscriptionRequestMapper.map(rs) : null,
-            endpoint
+            rs -> rs.next() ? SubscriptionRequestMapper.map(rs) : null
         );
     }
 
