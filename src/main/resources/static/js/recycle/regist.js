@@ -76,7 +76,7 @@ function createTableRow(newRow, item, tab) {
             break;
     }
     // 小売業者
-    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.companyName ?? "") + (item.officeName ?? "") + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.companyName ?? "") + (" : " + (item.officeName ?? "-----")) + '</span></td>');
 }
 
 /******************************************************************************************************* 入力画面 */
