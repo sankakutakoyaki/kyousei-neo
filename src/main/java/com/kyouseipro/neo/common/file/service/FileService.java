@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -277,7 +276,7 @@ public class FileService {
         }
     }
 
-    public Optional<AddressEntity> getAddressByPostalCode(String postalCode) {
+    public AddressEntity getAddressByPostalCode(String postalCode) {
         return addressRepository.findByPostalCode(postalCode);
     }
 }

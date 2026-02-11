@@ -21,9 +21,25 @@ public class HistoryRepository {
     public int insert(HistoryEntity entity, String editor) {
         String sql = HistorySqlBuilder.buildInsert();
 
-        return sqlRepository.executeRequired(
+        // return sqlRepository.executeRequired(
+        //     sql,
+        //     (ps, en) -> HistoryParameterBinder.bindInsert(ps, en, editor),
+        //     rs -> {
+        //         if (!rs.next()) {
+        //             throw new BusinessException("登録に失敗しました");
+        //         }
+        //         int id = rs.getInt("history_id");
+
+        //         if (rs.next()) {
+        //             throw new IllegalStateException("ID取得結果が複数行です");
+        //         }
+        //         return id;
+        //     },
+        //     entity
+        // );
+        return sqlRepository.query(
             sql,
-            (ps, en) -> HistoryParameterBinder.bindInsert(ps, en, editor),
+            ps-> HistoryParameterBinder.bindInsert(ps, entity, editor),
             rs -> {
                 if (!rs.next()) {
                     throw new BusinessException("登録に失敗しました");
@@ -34,8 +50,7 @@ public class HistoryRepository {
                     throw new IllegalStateException("ID取得結果が複数行です");
                 }
                 return id;
-            },
-            entity
+            }
         );
     }
 }
