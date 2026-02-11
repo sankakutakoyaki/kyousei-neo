@@ -22,8 +22,8 @@ public class PushRepository {
      * @param endpoint
      * @return　見つからなければNullを返す
      */
-    public SubscriptionRequest findByEndpoint(String endpoint){
-        String sql = "SELECT * FROM subscriptions WHERE endpoint = ?";
+    public Optional<SubscriptionRequest> findByEndpoint(String endpoint){
+        // String sql = "SELECT * FROM subscriptions WHERE endpoint = ?";
 
         // return sqlRepository.executeQuery(
         //     sql,
@@ -34,13 +34,11 @@ public class PushRepository {
         //     rs -> rs.next() ? SubscriptionRequestMapper.map(rs) : null,
         //     endpoint
         // );
-        return sqlRepository.query(
-            sql,
-            ps -> {
-                int index = 1;
-                ps.setString(index++, endpoint);
-            },
-            rs -> rs.next() ? SubscriptionRequestMapper.map(rs) : null
+        return sqlRepository.queryOne(
+            "SELECT * FROM subscriptions WHERE endpoint = ?",
+            (ps, ep) -> ps.setString(1, ep),
+            SubscriptionRequestMapper::map,
+            endpoint
         );
     }
 
@@ -50,18 +48,42 @@ public class PushRepository {
      * @return
      */
     public int save(SubscriptionRequest subscription, String editor){
-        String sql = """
+        // String sql = """
+        //     INSERT INTO subscriptions (endpoint, p256dh, auth, username) VALUES (?,?,?,?);
+        //     DECLARE @NEW_ID int; SET @NEW_ID = @@IDENTITY;SELECT @NEW_ID as subscription_id;""";
+            
+        // return sqlRepository.executeRequired(
+        //     sql,
+        //     (ps, s) -> {
+        //         int index = 1;
+        //         ps.setString(index++, s.getEndpoint());
+        //         ps.setString(index++, s.getP256dh());
+        //         ps.setString(index++, s.getAuth());
+
+        //         ps.setString(index++, editor);
+        //     },
+        //     rs -> {
+        //         if (!rs.next()) {
+        //             throw new BusinessException("登録に失敗しました");
+        //         }
+        //         int id = rs.getInt("subscription_id");
+
+        //         if (rs.next()) {
+        //             throw new IllegalStateException("ID取得結果が複数行です");
+        //         }
+        //         return id;
+        //     },
+        //     subscription
+        // );
+        return sqlRepository.query(
+            """
             INSERT INTO subscriptions (endpoint, p256dh, auth, username) VALUES (?,?,?,?);
-            DECLARE @NEW_ID int; SET @NEW_ID = @@IDENTITY;SELECT @NEW_ID as subscription_id;""";
-
-        return sqlRepository.executeRequired(
-            sql,
-            (ps, s) -> {
+            DECLARE @NEW_ID int; SET @NEW_ID = @@IDENTITY;SELECT @NEW_ID as subscription_id;""",
+            ps -> {
                 int index = 1;
-                ps.setString(index++, s.getEndpoint());
-                ps.setString(index++, s.getP256dh());
-                ps.setString(index++, s.getAuth());
-
+                ps.setString(index++, subscription.getEndpoint());
+                ps.setString(index++, subscription.getP256dh());
+                ps.setString(index++, subscription.getAuth());
                 ps.setString(index++, editor);
             },
             rs -> {
@@ -74,8 +96,7 @@ public class PushRepository {
                     throw new IllegalStateException("ID取得結果が複数行です");
                 }
                 return id;
-            },
-            subscription
+            }
         );
     }
     
@@ -84,12 +105,18 @@ public class PushRepository {
      * @return
      */
     public List<SubscriptionRequest> findAll() {
-        String sql = "SELECT * FROM subscriptions ";
+        // String sql = "SELECT * FROM subscriptions ";
 
-        return sqlRepository.findAll(
-            sql,
+        // return sqlRepository.findAll(
+        //     sql,
+        //     null,
+        //     SubscriptionRequestMapper::map // ← ここで ResultSet を map
+        // );
+        return sqlRepository.queryList(
+            "SELECT * FROM subscriptions ",
             null,
-            SubscriptionRequestMapper::map // ← ここで ResultSet を map
+            SubscriptionRequestMapper::map,
+            null
         );
     }
 

@@ -184,15 +184,173 @@ package com.kyouseipro.neo.dto.sql.repository;
 //     }
 // }
 
+
+// import java.sql.*;
+// import java.util.ArrayList;
+// import java.util.List;
+// import java.util.Optional;
+// import java.util.function.Function;
+
+// import org.springframework.beans.factory.annotation.Value;
+// import org.springframework.stereotype.Repository;
+// import org.springframework.util.function.ThrowingConsumer;
+
+// @Repository
+// public class SqlRepository {
+
+//     @Value("${spring.datasource.url}")
+//     private String url;
+
+//     @Value("${spring.datasource.username}")
+//     private String userName;
+
+//     @Value("${spring.datasource.password}")
+//     private String password;
+
+//     /* =========================================================
+//        基本Query（すべての土台）
+//        ========================================================= */
+//     public <R> R query(
+//             String sql,
+//             ThrowingConsumer<PreparedStatement> binder,
+//             ResultSetExtractor<R> extractor
+//     ) {
+//         try (Connection conn = DriverManager.getConnection(url, userName, password);
+//              PreparedStatement ps = conn.prepareStatement(sql)) {
+
+//             if (binder != null) {
+//                 binder.accept(ps);
+//             }
+
+//             try (ResultSet rs = ps.executeQuery()) {
+//                 return extractor.extract(rs);
+//             }
+
+//         } catch (SQLException e) {
+//             throw new RuntimeException("SQL実行エラー", e);
+//         }
+//     }
+
+//     /* =========================================================
+//        単一取得（Optional）
+//        ========================================================= */
+//     public <T> Optional<T> queryOne(
+//             String sql,
+//             ThrowingConsumer<PreparedStatement> binder,
+//             Function<ResultSet, T> mapper
+//     ) {
+//         return query(sql, binder, rs -> {
+//             if (rs.next()) {
+//                 return Optional.ofNullable(mapper.apply(rs));
+//             }
+//             return Optional.empty();
+//         });
+//     }
+
+//     /* =========================================================
+//        List取得
+//        ========================================================= */
+//     public <T> List<T> queryList(
+//             String sql,
+//             ThrowingConsumer<PreparedStatement> binder,
+//             Function<ResultSet, T> mapper
+//     ) {
+//         return query(sql, binder, rs -> {
+//             List<T> list = new ArrayList<>();
+//             while (rs.next()) {
+//                 list.add(mapper.apply(rs));
+//             }
+//             return list;
+//         });
+//     }
+
+//     /* =========================================================
+//        exists（COUNT不要）
+//        ========================================================= */
+//     public boolean exists(
+//             String sql,
+//             ThrowingConsumer<PreparedStatement> binder
+//     ) {
+//         return query(sql, binder, ResultSet::next);
+//     }
+
+//     /* =========================================================
+//        update / insert / delete
+//        ========================================================= */
+//     public int update(
+//             String sql,
+//             ThrowingConsumer<PreparedStatement> binder
+//     ) {
+//         try (Connection conn = DriverManager.getConnection(url, userName, password);
+//              PreparedStatement ps = conn.prepareStatement(sql)) {
+
+//             if (binder != null) {
+//                 binder.accept(ps);
+//             }
+
+//             return ps.executeUpdate();
+
+//         } catch (SQLException e) {
+//             throw new RuntimeException("SQL更新エラー", e);
+//         }
+//     }
+
+//     /* =========================================================
+//        バッチ
+//        ========================================================= */
+//     public <T> int batch(
+//             String sql,
+//             BatchBinder<T> binder,
+//             List<T> entities
+//     ) {
+//         try (Connection conn = DriverManager.getConnection(url, userName, password);
+//              PreparedStatement ps = conn.prepareStatement(sql)) {
+
+//             for (T entity : entities) {
+//                 binder.bind(ps, entity);
+//                 ps.addBatch();
+//             }
+
+//             int[] results = ps.executeBatch();
+//             int sum = 0;
+//             for (int r : results) {
+//                 sum += r;
+//             }
+//             return sum;
+
+//         } catch (SQLException e) {
+//             throw new RuntimeException("SQLバッチエラー", e);
+//         }
+//     }
+
+//     /* =========================================================
+//        内部FunctionalInterface
+//        ========================================================= */
+//     @FunctionalInterface
+//     public interface ResultSetExtractor<R> {
+//         R extract(ResultSet rs) throws SQLException;
+//     }
+
+//     @FunctionalInterface
+//     public interface BatchBinder<T> {
+//         void bind(PreparedStatement ps, T entity) throws SQLException;
+//     }
+// }
+
+
+
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.function.ThrowingConsumer;
+
+import com.kyouseipro.neo.interfaces.sql.SQLBiConsumer;
+import com.kyouseipro.neo.interfaces.sql.SqlParameterBinder;
+import com.kyouseipro.neo.interfaces.sql.SqlResultExtractor;
 
 @Repository
 public class SqlRepository {
@@ -206,132 +364,168 @@ public class SqlRepository {
     @Value("${spring.datasource.password}")
     private String password;
 
-    /* =========================================================
-       基本Query（すべての土台）
-       ========================================================= */
-    public <R> R query(
+    /* ===============================
+       単一取得（存在しない可能性あり）
+       =============================== */
+    public <P, R> Optional<R> queryOne(
             String sql,
-            ThrowingConsumer<PreparedStatement> binder,
-            ResultSetExtractor<R> extractor
+            SqlParameterBinder<P> binder,
+            SqlResultExtractor<R> extractor,
+            P param
     ) {
-        try (Connection conn = DriverManager.getConnection(url, userName, password);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (
+            Connection conn = DriverManager.getConnection(url, userName, password);
+            PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
             if (binder != null) {
-                binder.accept(ps);
+                binder.bind(ps, param);
             }
 
             try (ResultSet rs = ps.executeQuery()) {
-                return extractor.extract(rs);
+                if (rs.next()) {
+                    return Optional.ofNullable(extractor.extract(rs));
+                }
+                return Optional.empty();
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("SQL実行エラー", e);
+            throw new RuntimeException("SQL error in queryOne", e);
         }
     }
 
-    /* =========================================================
-       単一取得（Optional）
-       ========================================================= */
-    public <T> Optional<T> queryOne(
+    /**
+     * paramなし
+     * @param <R>
+     * @param sql
+     * @param extractor
+     * @return
+     */
+    public <R> Optional<R> queryOne(
             String sql,
-            ThrowingConsumer<PreparedStatement> binder,
-            Function<ResultSet, T> mapper
+            SqlResultExtractor<R> extractor
     ) {
-        return query(sql, binder, rs -> {
-            if (rs.next()) {
-                return Optional.ofNullable(mapper.apply(rs));
-            }
-            return Optional.empty();
-        });
+        return queryOne(sql, null, extractor, null);
     }
 
-    /* =========================================================
-       List取得
-       ========================================================= */
-    public <T> List<T> queryList(
+    /* ===============================
+       複数取得
+       =============================== */
+    public <P, R> List<R> queryList(
             String sql,
-            ThrowingConsumer<PreparedStatement> binder,
-            Function<ResultSet, T> mapper
+            SqlParameterBinder<P> binder,
+            SqlResultExtractor<R> extractor,
+            P param
     ) {
-        return query(sql, binder, rs -> {
-            List<T> list = new ArrayList<>();
-            while (rs.next()) {
-                list.add(mapper.apply(rs));
-            }
-            return list;
-        });
-    }
-
-    /* =========================================================
-       exists（COUNT不要）
-       ========================================================= */
-    public boolean exists(
-            String sql,
-            ThrowingConsumer<PreparedStatement> binder
-    ) {
-        return query(sql, binder, ResultSet::next);
-    }
-
-    /* =========================================================
-       update / insert / delete
-       ========================================================= */
-    public int update(
-            String sql,
-            ThrowingConsumer<PreparedStatement> binder
-    ) {
-        try (Connection conn = DriverManager.getConnection(url, userName, password);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (
+            Connection conn = DriverManager.getConnection(url, userName, password);
+            PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
             if (binder != null) {
-                binder.accept(ps);
+                binder.bind(ps, param);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                List<R> list = new ArrayList<>();
+                while (rs.next()) {
+                    list.add(extractor.extract(rs));
+                }
+                return list;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("SQL error in queryList", e);
+        }
+    }
+
+    /**
+     * paramなし
+     * @param <R>
+     * @param sql
+     * @param extractor
+     * @return
+     */
+    public <R> List<R> queryList(
+            String sql,
+            SqlResultExtractor<R> extractor
+    ) {
+        return queryList(sql, null, extractor, null);
+    }
+
+    /* ===============================
+       件数取得（COUNTなど）
+       =============================== */
+    public <P> long queryCount(
+            String sql,
+            SqlParameterBinder<P> binder,
+            P param
+    ) {
+        try (
+            Connection conn = DriverManager.getConnection(url, userName, password);
+            PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
+
+            if (binder != null) {
+                binder.bind(ps, param);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getLong(1) : 0L;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("SQL error in queryCount", e);
+        }
+    }
+
+    /* ===============================
+       更新系（INSERT / UPDATE / DELETE）
+       =============================== */
+    public <P> int update(
+            String sql,
+            SqlParameterBinder<P> binder,
+            P param
+    ) {
+        try (
+            Connection conn = DriverManager.getConnection(url, userName, password);
+            PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
+
+            if (binder != null) {
+                binder.bind(ps, param);
             }
 
             return ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("SQL更新エラー", e);
+            throw new RuntimeException("SQL error in update", e);
         }
     }
 
-    /* =========================================================
-       バッチ
-       ========================================================= */
+    /* ===============================
+       バッチ処理
+       =============================== */
     public <T> int batch(
             String sql,
-            BatchBinder<T> binder,
+            SQLBiConsumer<PreparedStatement, T> binder,
             List<T> entities
     ) {
-        try (Connection conn = DriverManager.getConnection(url, userName, password);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (
+            Connection conn = DriverManager.getConnection(url, userName, password);
+            PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
             for (T entity : entities) {
-                binder.bind(ps, entity);
+                binder.accept(ps, entity);
                 ps.addBatch();
             }
 
-            int[] results = ps.executeBatch();
-            int sum = 0;
-            for (int r : results) {
-                sum += r;
-            }
-            return sum;
+            int[] result = ps.executeBatch();
+            return Arrays.stream(result).sum();
 
         } catch (SQLException e) {
-            throw new RuntimeException("SQLバッチエラー", e);
+            throw new RuntimeException("SQL error in batch", e);
         }
-    }
-
-    /* =========================================================
-       内部FunctionalInterface
-       ========================================================= */
-    @FunctionalInterface
-    public interface ResultSetExtractor<R> {
-        R extract(ResultSet rs) throws SQLException;
-    }
-
-    @FunctionalInterface
-    public interface BatchBinder<T> {
-        void bind(PreparedStatement ps, T entity) throws SQLException;
     }
 }
