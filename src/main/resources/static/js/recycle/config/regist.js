@@ -109,6 +109,7 @@ const MODE_CONFIG = {
         startId: "start-date01",
         endId: "end-date01",
         url: "/api/recycle/get/between",
+        number: document.getElementById('number-box-01'),
         start: document.getElementById("start-date01"),
     },
     "02": {

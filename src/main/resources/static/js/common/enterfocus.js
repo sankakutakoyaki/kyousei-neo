@@ -64,6 +64,11 @@ function setEnterFocus(areaId) {
     area.addEventListener("keydown", event => {
         // Enterキー押下の場合
         if (event.key === "Enter") {
+            // search inputは通常動作させる
+            if (event.target.type === "search") {
+                return;
+            }
+
             if (isComposing) {
                 // 日本語確定の Enter → 無視
                 return;

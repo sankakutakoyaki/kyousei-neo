@@ -43,22 +43,22 @@ public class RecycleRepository {
         );
     }
 
-    // /**
-    //  * お問合せ管理票番号でアイテムを抽出
-    //  * @param id
-    //  * @param editor
-    //  * @return
-    //  */
-    // public Optional<RecycleEntity> findByNumber(String number) {
-    //     String sql = RecycleSqlBuilder.buildFindByNumber();
+    /**
+     * お問合せ管理票番号でアイテムを抽出
+     * @param id
+     * @param editor
+     * @return
+     */
+    public Optional<RecycleEntity> findByNumber(String number) {
+        String sql = RecycleSqlBuilder.buildFindByNumber();
         
-    //     return sqlRepository.executeQuery(
-    //         sql,
-    //         (ps, en) -> RecycleParameterBinder.bindFindByNumber(ps, en),
-    //         rs -> rs.next() ? RecycleEntityMapper.map(rs) : null,
-    //         number
-    //     );
-    // }
+        return sqlRepository.executeQuery(
+            sql,
+            (ps, en) -> RecycleParameterBinder.bindFindByNumber(ps, en),
+            rs -> rs.next() ? RecycleEntityMapper.map(rs) : null,
+            number
+        );
+    }
 
     // /**
     //  * Numberによる存在確認。
@@ -133,20 +133,18 @@ public class RecycleRepository {
     public int update(RecycleEntity entity, String type, String editor) {
         String sql = RecycleSqlBuilder.buildUpdate(1, type);
         try {
-            // int count = sqlRepository.executeQuery(
-            //     sql,
-            //     (ps, en) -> RecycleParameterBinder.bindUpdate(ps, entity, type, editor, 1),
-            //     rs -> rs.next() ? rs.getInt("recycle_id") : null
-            // );
-
-            // Optional<Integer> recycleId = sqlRepository.executeQuery(
-            int id = sqlRepository.executeUpdate(
+            int id = sqlRepository.executeRequired(
                 sql,
-                ps -> RecycleParameterBinder.bindUpdate(ps, entity, type, editor, 1)
-                // rs -> rs.next() ? rs.getInt("recycle_id") : null,
-                // entity
+                (ps, en) -> RecycleParameterBinder.bindUpdate(ps, entity, type, editor, 1),
+                rs -> {
+                    if (!rs.next()) {
+                        throw new BusinessException("登録に失敗しました");
+                    }
+                    return rs.getInt("recycle_id");
+                },
+                entity
             );
-            // Integer id = recycleId.orElse(null);
+
             if (id == 0) {
                 switch (type) {
                     case "shipping":

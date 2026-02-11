@@ -2,6 +2,7 @@ package com.kyouseipro.neo.recycle.regist.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -57,6 +58,19 @@ public class RecycleApiController {
     // public ResponseEntity<RecycleEntity> findByNumber(@RequestBody StringRequest str) {
     //     return ResponseEntity.ok(recycleService.existsByNumber(str.getValue()).orElse(null));
     // }
+
+    /**
+     * 
+     * @param start
+     * @param end
+     * @param col
+     * @return
+     */
+    @PostMapping("/get/number")
+    @ResponseBody
+    public ResponseEntity<RecycleEntity> findByNumber(@RequestBody StringRequest req) {
+        return ResponseEntity.ok(recycleService.getByNumber(req.getValue()).orElse(null));
+    }
 
     /**
      * 

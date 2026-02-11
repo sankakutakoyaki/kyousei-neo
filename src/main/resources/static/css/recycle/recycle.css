@@ -20,8 +20,12 @@
 
 [data-panel="01"]>.table-area header>.flex-area:first-child {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr auto 15rem 6rem;
     margin-bottom: 1rem;
+    & >.form-parts:nth-child(3) {
+        margin-left: 3rem;
+        width: 12rem
+    }
 }
 
 [data-panel="01"]>.table-area header>.flex-area:nth-child(2) {
@@ -146,16 +150,6 @@
     margin-bottom: 1rem;
 }
 
-/*******************************************************************************************************  */
-
-/* #table-11 tr {
-    grid-template-columns: 12rem 1fr 1fr 3rem;
-}
-
-:is(#table-12, #table-13, #table-14) tr {
-    grid-template-columns: 8rem 1fr 3rem;
-    height: 3rem;
-} */
 
 /******************************************************************************************************* form */
 

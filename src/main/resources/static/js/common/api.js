@@ -36,8 +36,8 @@ async function updateFetch(url, data, token, contentType = "application/json") {
     return {
         ok: response.ok,
         status: response.status,
-        data: json.data, 
-        message: json.message
+        data: json, 
+        message: json?.message ?? ""
     };
 }
 
@@ -66,19 +66,8 @@ async function searchFetch(url, data, token, contentType = "application/json") {
         return null; // ← 正常
     }
 
-    // if (!response.ok) {        
-    //     handleHttpError(response);
-    //     return await response.json();
-    //     // throw new Error(`HTTP_ERROR_${response.status}`);
-    // }
-
     if (spinner) spinner.classList.add("loaded");
     
-    // // return await response.json();
-    // const text = await response.text();
-    // if (!text) return null;
-
-    // return JSON.parse(text);
     let json = null;
     const ct = response.headers.get("content-type");
     if (ct && ct.includes("application/json")) {
@@ -89,12 +78,11 @@ async function searchFetch(url, data, token, contentType = "application/json") {
         await handleHttpError(response.status, json);
     }
 
-    // return json;
     return {
         ok: response.ok,
         status: response.status,
-        data: json,
-        message: json.message
+        data: json ?? null,
+        message: json?.message ?? ""
     };
 }
 

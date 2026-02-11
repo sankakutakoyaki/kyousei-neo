@@ -40,14 +40,14 @@ public class RecycleService {
     //     return recycleRepository.existsByNumber(str);
     // }
 
-    // /**
-    //  * Numberによる取得。
-    //  * @param number
-    //  * @return Numberから取得したEntityを返す。
-    //  */
-    // public Optional<RecycleEntity> getByNumber(String number) {
-    //     return recycleRepository.findByNumber(number);
-    // }
+    /**
+     * Numberによる取得。
+     * @param number
+     * @return Numberから取得したEntityを返す。
+     */
+    public Optional<RecycleEntity> getByNumber(String number) {
+        return recycleRepository.findByNumber(number);
+    }
     
     /**
      * 指定した期間のEntityを取得。

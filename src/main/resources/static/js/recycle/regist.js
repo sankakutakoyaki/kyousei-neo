@@ -89,53 +89,12 @@ async function execEdit(id, self) {
     const cfg = MODE_CONFIG[tab];
 
     // フォーム画面を取得
-    const form = document.getElementById('form-dialog-01');              
+    const form = document.getElementById('form-dialog-01');   
 
-    // let entity = {};
-    // if (id > 0) {
-    //     // 選択されたIDのエンティティを取得
-    //     const result = await searchFetch('/api/employee/get/id', JSON.stringify({id:parseInt(id)}), token);
-    //     if (!result?.ok) return;
+    tempElm = {};
 
-    //     entity = structuredClone(result.data);
-    // } else {
-        tempElm = {};
-        // resetFormInput(tab);
-        // entity.companyId = ownCompanyId;
-        // entity.category = config.category;
-    // }
-
-    // setFormContent(form, entity);
     // 入力フォームダイアログを開く
     openFormDialog("form-dialog-01");
-
-    // let entity = {};
-    // const config = MODE_CONFIG[tab];
-    // const form = document.getElementById(config.dialogId);
-
-    // if (id > 0) {
-    //     // 選択されたIDのエンティティを取得
-    //     const result = await searchFetch('/api/recycle/get/id', JSON.stringify({id:id}), token);
-
-    //     if (!result.ok) {
-    //         openMsgDialog("msg-dialog", "データがありません", "red");
-    //         return;
-    //     }
-    //     entity = structuredClone(result);
-    // } else {
-    //     entity = structuredClone(formEntity);
-    //     // リスト画面を初期化
-    //     deleteElements(config.tableId);
-    // }
-
-    // applyFormConfig(form, entity, RECYCLE_FORM_CONFIG);
-    // applyComboConfig(form, entity, RECYCLE_COMBO_CONFIG);
-    // setCompanyComboBox(form, entity, companyComboList, officeComboList);
-
-
-    // openFormByMode(tab, MODE_CONFIG);
-
-    // ID_CONFIG[tab].number.focus();
 }
 
 /******************************************************************************************************* リセット */
@@ -143,7 +102,6 @@ async function execEdit(id, self) {
 // 入力フォームの内容をリセットする
 function resetFormInput(tab) {
     const cfg = MODE_CONFIG[tab];
-    // const panel = document.getElementById(cfg.panel);
 
     cfg.panel.querySelectorAll('[data-reset]').forEach(el => {
         if ('value' in el) {
@@ -244,24 +202,6 @@ async function execDelete(self) {
 
 /******************************************************************************************************* 保存 */
 
-// // 保存処理
-// async function execSave(tab) {
-//     const config = MODE_CONFIG[tab];
-
-//     // 保存処理
-//     const result = await updateFetch("/api/recycle/save/" + tab, JSON.stringify({list:itemList}), token);
-
-//     if (result.ok) {        
-//         await refleshDisplay();
-//         // 追加・変更行に移動
-//         scrollIntoTableList(config.tableId, result.id);
-
-//         openMsgDialog("msg-dialog", result.message, "blue");
-//     }
-
-//     // ダイアログを閉じる
-//     closeFormDialog(config.formId);
-// }
 // 新規作成処理
 async function execRegist(tab) {
     const cfg = MODE_CONFIG[tab];
@@ -273,16 +213,24 @@ async function execRegist(tab) {
     cfg.regBtn.disabled = true;
 
     const data = buildEntityFromElement(cfg.panel, tempElm, SAVE_FORM_CONFIG[tab]);
-
-    // errorMsgAfterFocus = cfg.number;
+    resetFormInput(tab);
 
     const result = await updateFetch(cfg.url, JSON.stringify(data), token);
-    if (result.ok) {
+
+
+    if (result.ok && result.data !== null) {
         itemList.push(result.data);
         await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, itemList, createTableContent);
-        resetFormInput(tab);
+        // resetFormInput(tab);
         cfg.number.focus();
     } else {
+        // if (tab === "02") {
+        //     openMsgDialog("msg-dialog", "すでに登録済みです。", "red");
+        // } else if (tab === "05") {
+        //     openMsgDialog("msg-dialog", "すでにロス処理ずみです。", "red");    
+        // } else {
+        //     openMsgDialog("msg-dialog", "使用登録されていません。", "red");    
+        // }
         cfg.number.value = null;
         setFocusElement("msg-dialog", cfg.number);
     }
@@ -290,37 +238,12 @@ async function execRegist(tab) {
     cfg.regBtn.disabled = false;
 }
 
-// // 更新処理
-// async function execSave() {
-//     const config = MODE_CONFIG("06");
-
-//     if (!validateByConfig(config.panel, { ...ERROR_CONFIG.recycle, tab: "06" })) {
-//         return;
-//     }
-
-//     // const formdata = setInsertFormData(form);
-//     const result = await updateFetch("/api/recycle/save/edit", JSON.stringify(tempElm), token);
-//     if (result.ok) {
-//         // // 画面更新
-//         // await refleshDisplay();
-//         // openMsgDialog("msg-dialog", result.message, "blue");
-//     }
-
-//     // ダイアログを閉じる
-//     closeFormDialog(config.dialogId);
-// }
-
 // 更新処理
 async function execBulkUpdate(self) {
 
     const cfg = MODE_CONFIG["06"];
-
-    // if (!validateByConfig(config.panel, { ...ERROR_CONFIG.recycle, tab: tab })) {
-    //     return;
-    // }
     
     const form = document.getElementById(cfg.formId);
-    // const formdata = buildEntityFromElement(cfg.panel, tempElm, SAVE_FORM_CONFIG["06"]);
     const formdata = buildEntityFromForm(form, tempElm, SAVE_FORM_CONFIG["06"]);
 
     if (!formdata) return;
@@ -353,15 +276,64 @@ async function execDownloadCsv(self) {
 // 画面を更新する
 async function refleshDisplay() {
     const cfg = MODE_CONFIG["01"];
+    const start = document.getElementById(cfg.startId);
+    const end = document.getElementById(cfg.endId);
+
+    if (!start || start.value === undefined || start.value === "") {
+        execSpecifyPeriod("today", 'start-date01', 'end-date01');
+        openMsgDialog("msg-dialog", "開始日が入力されていません", "red");
+        setFocusElement("msg-dialog", start);
+        return;        
+    }
+    
+    if (!end || end.value === undefined || end.value === "") {
+        execSpecifyPeriod("today", 'start-date01', 'end-date01');
+        openMsgDialog("msg-dialog", "終了日が入力されていません", "red");
+        setFocusElement("msg-dialog", end);
+        return;   
+    }
+    
     const data = {
-        start: document.getElementById(cfg.startId).value,
-        end: document.getElementById(cfg.endId).value,
+        start: start.value,
+        end: end.value,
         type: document.getElementById('date-category').value
     };
+
     const result = await searchFetch(cfg.url, JSON.stringify(data), token);
     if (result.ok) {
         origin = result.data;
         await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, origin, createTableContent);
+    }
+}
+
+async function searchNumber() {
+    const cfg = MODE_CONFIG["01"];
+    const number = document.getElementById('number-box-01');
+    if (!number) return;
+
+    if (number.value == "") {
+        refleshDisplay();
+        return;
+    }
+
+    const result = await searchFetch("/api/recycle/get/number", JSON.stringify({value:tempElm.recycleNumber}), token);
+    if (result.ok) {
+        if (result.data == null) {
+            openMsgDialog("msg-dialog", "お問合せ管理表番号が存在しません。", "red");
+            setFocusElement("msg-dialog", number);
+        }
+        itemList = [];
+        itemList.push(result.data);
+
+        const dateCategoryArea = document.querySelector('select[name="date-category"]');
+        setComboboxSelected(dateCategoryArea, "update");
+
+        const start = document.getElementById(cfg.startId);
+        const end = document.getElementById(cfg.endId);
+        start.value = result.data.updateDate;
+        end.value = result.data.updateDate;
+
+        await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, itemList, createTableContent);
     }
 }
 
@@ -371,7 +343,9 @@ async function clearTable(e) {
 
     const tab = e.currentTarget.dataset.tab;
     const cfg = MODE_CONFIG[tab];
+    resetFormInput(tab);
     cfg.start.focus();
+
     switch (tab) {
         case "01":
             refleshDisplay();
@@ -381,7 +355,6 @@ async function clearTable(e) {
         case "05":
             itemList = [];
             await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, itemList, createTableContent);
-            // deleteElements(cfg.tableId);
     }
 }
 
@@ -471,7 +444,7 @@ window.addEventListener("load", async () => {
 
     // 検索ボックス入力時の処理
     document.getElementById('search-box-01').addEventListener('search', async function(e) {
-        await updateTableDisplay("table-01-content", "footer-01", "search-box-01", origin, createTableContent);
+        await refleshDisplay();
     }, false);
 
     initCompanyInputs();
