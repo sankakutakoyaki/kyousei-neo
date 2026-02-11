@@ -258,7 +258,7 @@ const DATE_FIELDS = [
     { key: 'loss_date', name: 'loss-date' }
 ];
 
-const DEFAULT_DATE = "9999-12-31";
+// const DEFAULT_DATE = "9999-12-31";
 
 const SAVE_FORM_CONFIG = {
     "02": [
@@ -267,7 +267,7 @@ const SAVE_FORM_CONFIG = {
         { name: 'use-date', key: 'useDate' }
     ],
     "03": [
-        { name: 'company', key: 'companyId' },
+        { name: 'disposal-site', key: 'disposalSiteId' },
         { name: 'delivery-date', key: 'deliveryDate' }
     ],
     "04": [

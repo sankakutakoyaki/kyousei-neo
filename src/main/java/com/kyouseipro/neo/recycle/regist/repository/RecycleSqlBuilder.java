@@ -77,7 +77,7 @@ public class RecycleSqlBuilder {
                 sql += """
                      shipping_date=?, version=?, state=? , update_date=? """;
                 fil = """
-                     AND delivery_date <> '9999-12-31'; """;
+                     AND delivery_date IS NOT NULL; """;
                 break;
             case "loss":
                 sql += """
@@ -179,24 +179,6 @@ public class RecycleSqlBuilder {
             "SELECT recycle_id FROM " + rowTableName + ";";
     }
 
-    // public static String buildInsertForDate(int index) {
-    //     String rowTableName = "@InsertedRows" + index;
-    //     return
-    //         buildLogTable(rowTableName) +
-
-    //         "INSERT INTO recycles (" +
-    //         " recycle_number, molding_number, loss_date, update_date" +
-    //         ") " +
-
-    //         buildOutputLog() + "INTO " + rowTableName + " " +
-
-    //         "VALUES (?, ?, ?, ?); " +
-
-    //         buildInsertLog(rowTableName, "INSERT") +
-
-    //         "SELECT recycle_id FROM " + rowTableName + ";";
-    // }
-
     public static String buildDelete(int index) {
         String rowTableName = "@UpdatedRows" + index;
         return
@@ -260,31 +242,6 @@ public class RecycleSqlBuilder {
             baseSelectString() + " WHERE r.recycle_number = ? AND NOT (r.state = ?)";
     }
 
-    // public static String buildFindGroupCombo() {
-    //     return 
-    //         "SELECT recycle_group_id as number, name as text FROM recycle_groups WHERE NOT (state = ?)";
-    // }
-
-    // public static String buildFindRecycleMakerCombo() {
-    //     return 
-    //         "SELECT code as number, name as text FROM recycle_makers WHERE NOT (state = ?)";
-    // }
-
-    // public static String buildFindRecycleItemCombo() {
-    //     return 
-    //         "SELECT code as number, name as text FROM recycle_items WHERE NOT (state = ?)";
-    // }
-
-    // public static String buildExistsByShippingNumber() {
-    //     return 
-    //         "SELECT recycle_id as number, recycle_number as text FROM recycles WHERE recycle_number = ? AND NOT (state = ?) AND shipping_date != '9999-12-31'";
-    // }
-
-    // public static String buildExistsByLossNumber() {
-    //     return 
-    //         "SELECT recycle_id as number, recycle_number as text FROM recycles WHERE recycle_number = ? AND NOT (state = ?) AND loss_date != '9999-12-31'";
-    // }
-
     public static String buildDownloadCsvByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count);
         return 
@@ -297,18 +254,5 @@ public class RecycleSqlBuilder {
             " WHERE NOT (r.state = ?) AND " +
             " r." + col + "_date >= ? AND r." + col + "_date < ?";
     }
-
-    // public static String buildFindByBetweenRecycleLossEntity() {
-    //     return 
-    //         baseSelectString() +
-    //         " WHERE NOT (r.state = ?) AND " +
-    //         " r.loss_date >= ? AND r.loss_date <= ?";
-
-    //         // " WHERE NOT (r.state = ?) AND " +
-    //         // "((r." + col + "_date >= ? AND r." + col + "_date <= ?) OR " +
-    //         // "(r." + col + "_date >= ? AND r." + col + "_date <= '9999-12-31') OR " +
-    //         // "(r." + col + "_date >= '9999-12-31' AND r." + col + "_date <= ?) OR " +
-    //         // "(r." + col + "_date >= '9999-12-31' AND r." + col + "_date <= '9999-12-31'))";
-    // }
 }
 

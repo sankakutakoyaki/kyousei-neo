@@ -14,7 +14,7 @@ function createTableContent(tableId, list) {
             table,
             item,
             idKey: "recycleId",
-            validCheck: item => item.lossDate !== "9999-12-31",
+            validCheck: item => item.lossDate !== null,
             onDoubleClick: (item) => {
                 execEdit(item.recycleId, this);
             }
@@ -35,27 +35,27 @@ function createTableRow(newRow, item, tab) {
     switch (tab) {
         case "01":
             // 使用日　引渡日
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.useDate == '9999-12-31' ? "-----": item.useDate) + '</span><br><span>' + (item.deliveryDate == '9999-12-31' ? "-----": item.deliveryDate) + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.useDate ?? "-----") + '</span><br><span>' + (item.deliveryDate ?? "-----") + '</span></td>');
             // 発送日　ロス処理日
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.shippingDate == '9999-12-31' ? "-----": item.shippingDate) + '</span><br><span>' + (item.lossDate == '9999-12-31' ? "-----": item.lossDate) + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.shippingDate ?? "-----") + '</span><br><span>' + (item.lossDate ?? "-----") + '</span></td>');
             // 登録日　伝票番号
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.registDate == '9999-12-31' ? "-----": item.registDate) + '</span><br><span>' + (item.slipNumber > 0 ? item.slipNumber : "-----") + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.registDate ?? "-----") + '</span><br><span>' + (item.slipNumber > 0 ? item.slipNumber : "-----") + '</span></td>');
             break;
         case "02":
             // 使用日
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.useDate == '9999-12-31' ? "-----": item.useDate) + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.useDate ?? "-----") + '</span></td>');
             break;
         case "03":
             // 引渡日
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.deliveryDate == '9999-12-31' ? "-----": item.deliveryDate) + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.deliveryDate ?? "-----") + '</span></td>');
             break;
         case "04":
             // 発送日
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.shippingDate == '9999-12-31' ? "-----": item.shippingDate) + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.shippingDate ?? "-----") + '</span></td>');
             break;
         case "05":
             // ロス処理日
-            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.lossDate == '9999-12-31' ? "-----": item.lossDate) + '</span></td>');
+            newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.lossDate ?? "-----") + '</span></td>');
             break;
     }
     switch (tab) {
@@ -224,13 +224,6 @@ async function execRegist(tab) {
         // resetFormInput(tab);
         cfg.number.focus();
     } else {
-        // if (tab === "02") {
-        //     openMsgDialog("msg-dialog", "すでに登録済みです。", "red");
-        // } else if (tab === "05") {
-        //     openMsgDialog("msg-dialog", "すでにロス処理ずみです。", "red");    
-        // } else {
-        //     openMsgDialog("msg-dialog", "使用登録されていません。", "red");    
-        // }
         cfg.number.value = null;
         setFocusElement("msg-dialog", cfg.number);
     }
@@ -265,9 +258,7 @@ async function execBulkUpdate(self) {
 
 // CSVファイルをダウンロードする
 async function execDownloadCsv(self) {
-    const area = self.closest('[data-tab]');
-    if (!area) return;
-    const config = MODE_CONFIG[area.dataset.tab];
+    const config = MODE_CONFIG["06"];
     await downloadCsv(config.tableId, '/api/recycle/download/csv');
 }
 

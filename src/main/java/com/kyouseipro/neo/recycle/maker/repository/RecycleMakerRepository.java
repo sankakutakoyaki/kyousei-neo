@@ -134,7 +134,6 @@ public class RecycleMakerRepository {
      * @return 成功件数を返す。
      */
     public int deleteByIds(IdListRequest list, String userName) {
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
         String sql = RecycleMakerSqlBuilder.buildDeleteByIds(list.getIds().size());
 
         if (list == null || list.getIds().isEmpty()) {
@@ -164,7 +163,6 @@ public class RecycleMakerRepository {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
         String sql = RecycleMakerSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
 
         return sqlRepository.findAll(

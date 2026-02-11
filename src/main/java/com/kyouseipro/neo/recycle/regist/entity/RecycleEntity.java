@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.recycle.regist.entity;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.interfaces.CsvExportable;
@@ -18,10 +19,10 @@ public class RecycleEntity implements CsvExportable {
     private int itemId;//　品目・料金区分
     private int itemCode;
     private String itemName;
-    private LocalDate useDate = LocalDate.of(9999, 12, 31);//　使用日
-    private LocalDate deliveryDate = LocalDate.of(9999, 12, 31);//　引渡日
-    private LocalDate shippingDate = LocalDate.of(9999, 12, 31);//　発送日
-    private LocalDate lossDate = LocalDate.of(9999, 12, 31);//　ロス処理日
+    private LocalDate useDate;//　使用日
+    private LocalDate deliveryDate;//　引渡日
+    private LocalDate shippingDate;//　発送日
+    private LocalDate lossDate;//　ロス処理日
     private int companyId;//　小売業者
     private String companyName;
     private int officeId;
@@ -42,21 +43,21 @@ public class RecycleEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(recycleId)) + "," +
+        return Utilities.escapeCsv(Objects.toString(recycleId, "")) + "," +
                Utilities.escapeCsv(moldingNumber) + "," +
-               Utilities.escapeCsv(String.valueOf(makerCode)) + "," +
+               Utilities.escapeCsv(Objects.toString(makerCode, "")) + "," +
                Utilities.escapeCsv(makerName) + "," +
-               Utilities.escapeCsv(String.valueOf(itemCode)) + "," +
+               Utilities.escapeCsv(Objects.toString(itemCode, "")) + "," +
                Utilities.escapeCsv(itemName) + "," + 
-               Utilities.escapeCsv(String.valueOf(useDate)) + "," +
-               Utilities.escapeCsv(String.valueOf(deliveryDate)) + "," +
-               Utilities.escapeCsv(String.valueOf(shippingDate)) + "," +
-               Utilities.escapeCsv(String.valueOf(lossDate)) + "," +
+               Utilities.escapeCsv(Objects.toString(useDate, "")) + "," +
+               Utilities.escapeCsv(Objects.toString(deliveryDate, "")) + "," +
+               Utilities.escapeCsv(Objects.toString(shippingDate, "")) + "," +
+               Utilities.escapeCsv(Objects.toString(lossDate, "")) + "," +
                Utilities.escapeCsv(companyName) + "," +
                Utilities.escapeCsv(officeName) + "," +
-               Utilities.escapeCsv(String.valueOf(recyclingFee)) + "," +
-               Utilities.escapeCsv(String.valueOf(disposalSiteName)) + "," +
-               Utilities.escapeCsv(String.valueOf(registDate)) + "," +
-               Utilities.escapeCsv(String.valueOf(updateDate));
+               Utilities.escapeCsv(Objects.toString(recyclingFee, "")) + "," +
+               Utilities.escapeCsv(Objects.toString(disposalSiteName, "")) + "," +
+               Utilities.escapeCsv(Objects.toString(registDate, "")) + "," +
+               Utilities.escapeCsv(Objects.toString(updateDate, ""));
     }
 }

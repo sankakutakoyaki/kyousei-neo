@@ -22,24 +22,6 @@ import lombok.RequiredArgsConstructor;
 public class RecycleService {
     private final RecycleRepository recycleRepository;
 
-    // /**
-    //  * IDによる取得。
-    //  * @param id
-    //  * @return IDから取得したEntityを返す。
-    //  */
-    // public Optional<RecycleEntity> getById(int id) {
-    //     return recycleRepository.findById(id);
-    // }
-
-    // /**
-    //  * 指定されたNumberのリサイクル情報存在するか確認
-    //  * @param number
-    //  * @return RecycleEntity または null
-    //  */
-    // public Optional<RecycleEntity> existsByNumber(String str) {
-    //     return recycleRepository.existsByNumber(str);
-    // }
-
     /**
      * Numberによる取得。
      * @param number
@@ -72,7 +54,6 @@ public class RecycleService {
         action = "保存"
     )
     public Optional<RecycleEntity> save(RecycleEntity entity, String editor) {
-        // return recycleRepository.save(entity, editor);
         int id = recycleRepository.save(entity, editor);
         if (id > 0) {
             return recycleRepository.findById(id);
@@ -93,7 +74,6 @@ public class RecycleService {
     )
     public Optional<RecycleEntity> update(RecycleEntity entity, String type, String editor) {
         int id = recycleRepository.update(entity, type, editor);
-        // int id = recycleRepository.save(entity, editor);
         if (id > 0) {
             return recycleRepository.findById(id);
         } else {

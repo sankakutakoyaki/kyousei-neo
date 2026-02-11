@@ -16,8 +16,6 @@ import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 import com.kyouseipro.neo.work.item.entity.WorkItemEntity;
 import com.kyouseipro.neo.work.item.service.WorkItemService;
-import com.kyouseipro.neo.work.price.entity.WorkPriceEntity;
-import com.kyouseipro.neo.work.price.service.WorkPriceService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -27,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WorkPageController extends BaseController {
     private final WorkItemService workItemService;
-    private final WorkPriceService workPriceService;
     private final ComboBoxService comboBoxService;
     private final HistoryService historyService;
 
@@ -69,10 +66,6 @@ public class WorkPageController extends BaseController {
 		model.addAttribute("activeMenu", "regist");
         model.addAttribute("activeSidebar", "price");
         model.addAttribute("insertCss", "/css/work/workprice.css");
-
-        // // 初期表示用受注リスト取得
-        // List<WorkPriceEntity> origin = workPriceService.getListByCompanyId(Utilities.getOwnCompanyId());
-        // model.addAttribute("origin", origin);
 
         // コンボボックスアイテム取得
         List<SimpleData> companyComboList = comboBoxService.getPrimeConstractorListAddTopOfOwnCompanyHasOriginalPrice();

@@ -5,13 +5,13 @@ const MODE_CONFIG = {
         tableId: "table-01-content",
         footerId: "footer-01",
         searchId: "search-box-01",
-        category: categoryEmployeeCode
+        category: categoryCodes.FULLTIME
     },
     "02": {
         tableId: "table-02-content",
         footerId: "footer-02",
         searchId: "search-box-02",
-        category: categoryParttimeCode
+        category: categoryCodes.PARTTIME
     }
 };
 

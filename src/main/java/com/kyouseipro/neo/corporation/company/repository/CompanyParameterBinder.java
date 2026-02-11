@@ -1,56 +1,14 @@
 package com.kyouseipro.neo.corporation.company.repository;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntityRequest;
 
 public class CompanyParameterBinder {
 
-    // public static int bindInsert(PreparedStatement pstmt, CompanyEntity company, String editor) throws SQLException {
-    //     int index = 1;
-    //     pstmt.setInt(index++, company.getCategory());
-    //     pstmt.setString(index++, company.getName());
-    //     pstmt.setString(index++, company.getNameKana());
-    //     pstmt.setString(index++, company.getTelNumber());
-    //     pstmt.setString(index++, company.getFaxNumber());
-    //     pstmt.setString(index++, company.getPostalCode());
-    //     pstmt.setString(index++, company.getFullAddress());
-    //     pstmt.setString(index++, company.getEmail());
-    //     pstmt.setString(index++, company.getWebAddress());
-    //     pstmt.setInt(index++, company.getIsOriginalPrice());
-    //     pstmt.setInt(index++, company.getVersion());
-    //     pstmt.setInt(index++, company.getState());
-
-    //     pstmt.setString(index++, editor);  // ログ用エディタ
-    //     return index;
-    // }
-
-    // public static int bindUpdate(PreparedStatement pstmt, CompanyEntity company, String editor) throws SQLException {
-    //     int index = 1;
-    //     pstmt.setInt(index++, company.getCategory());
-    //     pstmt.setString(index++, company.getName());
-    //     pstmt.setString(index++, company.getNameKana());
-    //     pstmt.setString(index++, company.getTelNumber());
-    //     pstmt.setString(index++, company.getFaxNumber());
-    //     pstmt.setString(index++, company.getPostalCode());
-    //     pstmt.setString(index++, company.getFullAddress());
-    //     pstmt.setString(index++, company.getEmail());
-    //     pstmt.setString(index++, company.getWebAddress());
-    //     pstmt.setInt(index++, company.getIsOriginalPrice());
-    //     pstmt.setInt(index++, company.getVersion() +1);
-    //     pstmt.setInt(index++, company.getState());
-
-    //     pstmt.setInt(index++, company.getCompanyId());  // WHERE句用ID
-    //     pstmt.setInt(index++, company.getVersion());
-
-    //     pstmt.setString(index++, editor);  // ログ用エディタ
-    //     return index;
-    // }
     private static int bindSaveParameter (PreparedStatement ps, CompanyEntityRequest req, String editor, int idx) throws SQLException {
         if (req.getCategory() != null) {
             ps.setInt(idx++, req.getCategory());

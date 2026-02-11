@@ -1,7 +1,10 @@
 package com.kyouseipro.neo.personnel;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -67,9 +70,15 @@ public class PersonnelPageController extends BaseController {
 
         // 保存用コード
         model.addAttribute("ownCompanyId", Utilities.getOwnCompanyId());
-        model.addAttribute("categoryEmployeeCode", Enums.employeeCategory.FULLTIME.getCode());
-        model.addAttribute("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
 
+        // 保存用コード
+        Map<String, Integer> categoryCodes = Arrays.stream(Enums.employeeCategory.values())
+            .collect(Collectors.toMap(
+                Enums.employeeCategory::name,
+                Enums.employeeCategory::getCode
+            ));
+        model.addAttribute("categoryCodes", categoryCodes);
+        
         return "contents/personnel/employee";
     }
 
@@ -81,36 +90,6 @@ public class PersonnelPageController extends BaseController {
      */
 	@GetMapping("/timeworks")
     @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	// public ModelAndView showList(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
-    //     // mv.setViewName("layouts/main");
-    //     // mv.addObject("title", "勤怠");
-    //     // mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
-	// 	// mv.addObject("sidebarFragmentName", "fragments/common/menu :: personnelFragment");
-    //     // mv.addObject("bodyFragmentName", "contents/personnel/timeworks :: bodyFragment");
-    //     mv.addObject("insertCss", "/css/personnel/timeworks.css");
-
-    //     EmployeeEntity user = getLoginUser(session, response);
-    //     if (user == null) return null; // リダイレクト済みなので処理は止まる
-
-    //     // // 勤怠データ新規・更新用
-    //     // TimeworksListEntity entity = new TimeworksListEntity();
-    //     // mv.addObject("entity", entity);
-    //     // // 初期表示用営業所ID
-    //     // mv.addObject("officeId", session.getAttribute("officeId") == null ? "1000" : session.getAttribute("officeId").toString());
-    //     // // 営業所リスト
-    //     // List<SimpleData> officeList = comboBoxService.getSimpleOfficeList();
-    //     // mv.addObject("officeList", officeList);
-    //     // // 初期表示用従業員リスト取得
-    //     // List<EmployeeListEntity> employeeList = employeeListService.getList();
-    //     // mv.addObject("employeeList", employeeList);
-    //     // // 完了コードを取得
-    //     // mv.addObject("completeNum", Enums.state.COMPLETE.getCode());
-
-    //     // EmployeeEntity user = getLoginUser(session);
-    //     mv.addObject("username", user.getAccount());
-    //     historyService.save(user.getAccount(), "timeworks", "閲覧", 200, "");
-	//     return mv;
-    // }
     public String getTimeworks(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         
         EmployeeEntity user = getLoginUser(session, response);
@@ -160,8 +139,12 @@ public class PersonnelPageController extends BaseController {
         model.addAttribute("payTypeComboList", payTypeComboList);
 
         // 保存用コード
-        model.addAttribute("categoryEmployeeCode", Enums.employeeCategory.FULLTIME.getCode());
-        model.addAttribute("categoryParttimeCode", Enums.employeeCategory.PARTTIME.getCode());
+        Map<String, Integer> categoryCodes = Arrays.stream(Enums.employeeCategory.values())
+            .collect(Collectors.toMap(
+                Enums.employeeCategory::name,
+                Enums.employeeCategory::getCode
+            ));
+        model.addAttribute("categoryCodes", categoryCodes);
 
         return "contents/personnel/working_conditions";
     }

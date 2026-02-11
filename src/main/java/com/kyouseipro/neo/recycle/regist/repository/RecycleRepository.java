@@ -60,21 +60,6 @@ public class RecycleRepository {
         );
     }
 
-    // /**
-    //  * Numberによる存在確認。
-    //  * @param number
-    //  * @return。
-    //  */
-    // public Optional<RecycleEntity> existsByNumber(String number) {
-    //     String sql = RecycleSqlBuilder.buildExistsByNumber();
-    //     return sqlRepository.executeQuery(
-    //         sql,
-    //         (ps, en) -> RecycleParameterBinder.bindExistsByNumber(ps, en),
-    //         rs -> rs.next() ? RecycleEntityMapper.map(rs) : null,
-    //         number
-    //     );
-    // }
-
     /**
      * 期間内のアイテムリストを取得
      * @param start
@@ -187,46 +172,13 @@ public class RecycleRepository {
      * @return
      */
     public int updateForDate(RecycleDateEntity entity, String editor, String type) {
-        // String sql = "";
-        // int index = 1;
-
-        // for (RecycleDateEntity entity : itemList) {
-        //     if (entity.getRecycle_id() == 0) {
-        //         sql += RecycleSqlBuilder.buildInsertForDate(index++);
-        //     } else {
-        //         sql += RecycleSqlBuilder.buildUpdateForDate(index++, type);
-        //     }
-        // }
-
-        // return sqlRepository.execute(
-        //     sql,
-        //     (pstmt, emp) -> RecycleParameterBinder.bindUpdateForDate(pstmt, itemList, editor),
-        //     rs -> rs.next() ? rs.getInt("recycle_id") : null,
-        //     itemList
-        // );
-        // StringBuilder sql = new StringBuilder();
-        // int index = 1;
 
         String sql = RecycleSqlBuilder.buildUpdateForDate(1, type);
-        // for (RecycleDateEntity entity : itemList) {
-        //     if (entity.getRecycleId() == 0) {
-        //         sql.append(RecycleSqlBuilder.buildInsertForDate(index++));
-        //     } else {
-        //         sql.append(RecycleSqlBuilder.buildUpdateForDate(index++, type));
-        //     }
-        // }
-
-        // try {
+        
         return sqlRepository.executeUpdate(
             sql,
             ps -> RecycleParameterBinder.bindUpdateForDate(ps, entity, editor)
         );
-        // } catch (RuntimeException e) {
-        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
-        //         throw new BusinessException("この日付はすでに登録されています。");
-        //     }
-        //     throw e;
-        // }
     }
 
     /**

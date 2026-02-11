@@ -3,6 +3,7 @@ package com.kyouseipro.neo.recycle.regist.mapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleEntity;
 
 public class RecycleEntityMapper {
@@ -17,10 +18,10 @@ public class RecycleEntityMapper {
         entity.setItemId(rs.getInt("item_id"));
         entity.setItemCode(rs.getInt("item_code"));
         entity.setItemName(rs.getString("item_name"));
-        entity.setUseDate(rs.getDate("use_date").toLocalDate());
-        entity.setDeliveryDate(rs.getDate("delivery_date").toLocalDate());
-        entity.setShippingDate(rs.getDate("shipping_date").toLocalDate());
-        entity.setLossDate(rs.getDate("loss_date").toLocalDate());
+        entity.setUseDate(Utilities.toLocalDate(rs, "use_date"));
+        entity.setDeliveryDate(Utilities.toLocalDate(rs, "delivery_date"));
+        entity.setShippingDate(Utilities.toLocalDate(rs, "shipping_date"));
+        entity.setLossDate(Utilities.toLocalDate(rs, "loss_date"));
         entity.setCompanyId(rs.getInt("company_id"));
         entity.setCompanyName(rs.getString("company_name"));
         entity.setOfficeId(rs.getInt("office_id"));
@@ -31,8 +32,8 @@ public class RecycleEntityMapper {
         entity.setSlipNumber(rs.getInt("slip_number"));
         entity.setVersion(rs.getInt("version"));
         entity.setState(rs.getInt("state"));
-        entity.setRegistDate(rs.getDate("regist_date").toLocalDate());
-        entity.setUpdateDate(rs.getDate("update_date").toLocalDate());
+        entity.setRegistDate(Utilities.toLocalDate(rs, "regist_date"));
+        entity.setUpdateDate(Utilities.toLocalDate(rs, "update_date"));
         return entity;
     }
 }

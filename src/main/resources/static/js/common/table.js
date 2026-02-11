@@ -454,17 +454,8 @@ async function downloadCsv(tableId, url) {
     if (data) {
         funcDownloadCsv(data, url);
         // チェック状態を解除
-        detachmentCheckedToAllRow(config.tableId, false);
+        detachmentCheckedToAllRow(tableId, false);
     }
-    // if (data.length == 0) {
-    //     // 選択された要素がなければメッセージを表示して終了
-    //     openMsgDialog("msg-dialog", "選択されていません", "red");
-    //     // return {"success":false, "message":"選択されていないか、データがありません。"};
-    // } else {
-    //     funcDownloadCsv(data, url);
-    //     // チェック状態を解除
-    //     detachmentCheckedToAllRow(config.tableId, false);
-    // }
 }
 
 /**
@@ -520,10 +511,11 @@ async function funcDownloadCsv(data, url) {
                 "Content-Type": "application/json",
                 "X-CSRF-TOKEN": token
             },
-            body: JSON.stringify(data)
+            // body: JSON.stringify(data)
+            body: data
         });
 
-        if (!response.ok) {
+        if (!response) {
             openMsgDialog("msg-dialog", "CSVの取得に失敗しました", "red");
             return;
         }

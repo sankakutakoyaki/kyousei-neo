@@ -70,8 +70,6 @@ public class RecyclePageController extends BaseController {
         // 品目コンボボックスアイテム取得
         List<ComboData> itemComboList = comboBoxService.getRecycleItemComboList();
         model.addAttribute("itemComboList", itemComboList);
-
-        // model.addAttribute("deleteCode", Enums.state.DELETE.getCode());
 		
         return "contents/recycle/recycle";
     }

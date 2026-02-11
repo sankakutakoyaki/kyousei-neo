@@ -1,5 +1,9 @@
 package com.kyouseipro.neo.common;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,13 +36,6 @@ public class Utilities {
      * @param list
      * @return
      */
-    // public static String createSequenceByIds(List<SimpleData> list) {
-    //     StringBuilder idsStr = new StringBuilder();
-    //     list.forEach(value -> {
-    //         idsStr.append(value.getNumber()).append(", ");
-    //     });
-    //     return idsStr.substring(0, idsStr.length() - 2);
-    // }
     public static List<Integer> createSequenceByIds(List<SimpleData> list) {
         List<Integer> ids = new ArrayList<>();
         list.forEach(value -> {
@@ -90,5 +87,32 @@ public class Utilities {
     // 自社のcompanny_idを返す
     public static int getOwnCompanyId() {
         return 1000;
+    }
+
+    /**
+     * mapperでのnull回避
+     * @param rs
+     * @param column
+     * @return
+     * @throws SQLException
+     */
+    public static LocalDate toLocalDate(ResultSet rs, String column) throws SQLException {
+        java.sql.Date date = rs.getDate(column);
+        return date != null ? date.toLocalDate() : null;
+    }
+
+    /**
+     * parameterでのnull処理
+     * @param ps
+     * @param index
+     * @param value
+     * @throws SQLException
+     */
+    public static void setLocalDate(PreparedStatement ps, int index, LocalDate value) throws SQLException {
+        if (value != null) {
+            ps.setDate(index, java.sql.Date.valueOf(value));
+        } else {
+            ps.setNull(index, java.sql.Types.DATE);
+        }
     }
 }

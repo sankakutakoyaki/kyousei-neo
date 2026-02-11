@@ -17,15 +17,10 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.history.service.HistoryService;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
-import com.kyouseipro.neo.corporation.company.entity.CompanyEntityRequest;
 import com.kyouseipro.neo.corporation.company.entity.CompanyListEntity;
 import com.kyouseipro.neo.corporation.company.service.CompanyListService;
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
-import com.kyouseipro.neo.corporation.office.entity.OfficeListEntity;
-import com.kyouseipro.neo.corporation.office.service.OfficeListService;
 import com.kyouseipro.neo.corporation.staff.entity.StaffEntity;
-import com.kyouseipro.neo.corporation.staff.entity.StaffListEntity;
-import com.kyouseipro.neo.corporation.staff.service.StaffListService;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeListEntity;
 import com.kyouseipro.neo.personnel.employee.service.EmployeeListService;
@@ -38,8 +33,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CorporationPageController extends BaseController {
     private final CompanyListService companyListService;
-    private final OfficeListService officeListService;
-    private final StaffListService staffListService;
     private final EmployeeListService employeeListService;
     private final ComboBoxService comboBoxService;
     private final HistoryService historyService;
@@ -69,18 +62,6 @@ public class CorporationPageController extends BaseController {
         // 初期表示用Clientリスト取得
         List<CompanyListEntity> companyOrigin = companyListService.getClientList();
         model.addAttribute("companyOrigin", companyOrigin);
-        // // 初期表示用Officeリスト取得
-        // List<OfficeListEntity> officeOrigin = officeListService.getClientList();
-        // model.addAttribute("officeOrigin", officeOrigin);
-        // // 初期表示用Staffリスト取得
-        // List<StaffListEntity> staffOrigin = staffListService.getList();
-        // model.addAttribute("staffOrigin", staffOrigin);
-
-        // // コンボボックスアイテム取得
-        // List<SimpleData> companyComboList = comboBoxService.getClientList();
-        // model.addAttribute("companyComboList", companyComboList);
-        // List<OfficeListEntity> officeComboList = comboBoxService.getOfficeList();
-        // model.addAttribute("officeComboList", officeComboList);
 
         // 保存用コード
         Map<String, Integer> categoryCodes = Arrays.stream(Enums.clientCategory.values())
@@ -89,10 +70,6 @@ public class CorporationPageController extends BaseController {
                 Enums.clientCategory::getCode
             ));
         model.addAttribute("categoryCodes", categoryCodes);
-        // model.addAttribute("categoryShipperCode", Enums.clientCategory.SHIPPER.getCode());
-        // model.addAttribute("categorySupplierCode", Enums.clientCategory.SUPPLIER.getCode());
-        // model.addAttribute("categoryFacilityCode", Enums.clientCategory.FACILITY.getCode());
-        // model.addAttribute("categoryTransportCode", Enums.clientCategory.TRANSPORT.getCode());
 		
         return "contents/corporation/client";
     }
@@ -134,9 +111,6 @@ public class CorporationPageController extends BaseController {
         model.addAttribute("genderComboList", genderComboList);
         List<SimpleData> bloodTypeComboList = comboBoxService.getBloodType();
         model.addAttribute("bloodTypeComboList", bloodTypeComboList);
-        
-        // model.addAttribute("url", "/company/get/id");
-        // model.addAttribute("owner_category", Enums.clientCategory.PARTNER.getCode());
 
         // 保存用コード
         model.addAttribute("categoryPartnerCode", Enums.clientCategory.PARTNER.getCode());
