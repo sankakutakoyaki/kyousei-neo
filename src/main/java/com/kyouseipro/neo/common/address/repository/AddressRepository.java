@@ -14,28 +14,18 @@ import lombok.RequiredArgsConstructor;
 public class AddressRepository {
     private final SqlRepository sqlRepository;
 
-    // IDによる取得
+    // PostalCodeによる取得
     public AddressEntity findByPostalCode(String code) {
         String sql = "SELECT * FROM address WHERE NOT (state = ?) AND postal_code = ?";
-        return sqlRepository.query(
+        return sqlRepository.queryOne(
             sql,
-            ps -> {
+            (ps, e) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setString(index++, code);
             },
-            rs -> rs.next() ? AddressEntityMapper.map(rs) : null
+            AddressEntityMapper::map,
+            null
         );
-    // public Optional<AddressEntity> findByPostalCode(String code) {
-    //     return sqlRepository.executeQuery(
-    //         sql,
-    //         (ps, p) -> {
-    //             int index = 1;
-    //             ps.setInt(index++, Enums.state.DELETE.getCode());
-    //             ps.setString(index++, code);
-    //         },
-    //         rs -> rs.next() ? AddressEntityMapper.map(rs) : null,
-    //         code
-    //     );
     }
 }

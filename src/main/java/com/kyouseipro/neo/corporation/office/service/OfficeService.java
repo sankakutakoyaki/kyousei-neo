@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.corporation.office.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ public class OfficeService {
      * @param id 支店ID
      * @return OfficeEntity または null
      */
-    public Optional<OfficeEntity> getById(int id) {
+    public OfficeEntity getById(int id) {
         return officeRepository.findById(id);
     }
 

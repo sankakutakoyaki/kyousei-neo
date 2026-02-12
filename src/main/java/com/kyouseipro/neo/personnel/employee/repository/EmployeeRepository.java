@@ -1,12 +1,10 @@
 package com.kyouseipro.neo.personnel.employee.repository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.dto.IdListRequest;
@@ -27,22 +25,27 @@ public class EmployeeRepository {
      * @param id
      * @return IDから取得したEntityをかえす。
      */
-    public Optional<EmployeeEntity> findById(int id) {
+    public EmployeeEntity findById(int id) {
         String sql = EmployeeSqlBuilder.buildFindById();
 
         int targetId = id;
         // IDが3桁以下の場合はCODEなのでCODEからIDを取得する
         if (String.valueOf(Math.abs(id)).length() < 4) {
-            EmployeeEntity entity = findByCode(id)
-                .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
+            EmployeeEntity entity = findByCode(id);
 
             targetId = entity.getEmployeeId();
         }
 
-        return sqlRepository.executeQuery(
+        return sqlRepository.queryOne(
             sql,
-            (ps, en) -> EmployeeParameterBinder.bindFindById(ps, en),
-            rs -> rs.next() ? EmployeeEntityMapper.map(rs) : null,
+            (ps, i) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, i);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            EmployeeEntityMapper::map,
             targetId
         );
     }
@@ -52,13 +55,19 @@ public class EmployeeRepository {
      * @param code
      * @return CODEから取得したEntityをかえす。
      */
-    public Optional<EmployeeEntity> findByCode(int code) {
+    public EmployeeEntity findByCode(int code) {
         String sql = EmployeeSqlBuilder.buildFindByCode();
 
-        return sqlRepository.executeQuery(
+        return sqlRepository.queryOne(
             sql,
-            (ps, en) -> EmployeeParameterBinder.bindFindByCode(ps, en),
-            rs -> rs.next() ? EmployeeEntityMapper.map(rs) : null,
+            (ps, c) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, c);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            EmployeeEntityMapper::map,
             code
         );
     }
@@ -68,13 +77,19 @@ public class EmployeeRepository {
      * @param account
      * @return アカウントで指定したEntityを返す。
      */
-    public Optional<EmployeeEntity> findByAccount(String account) {
+    public EmployeeEntity findByAccount(String account) {
         String sql = EmployeeSqlBuilder.buildFindByAccount();
 
-        return sqlRepository.executeQuery(
+        return sqlRepository.queryOne(
             sql,
-            (ps, en) -> EmployeeParameterBinder.bindFindByAccount(ps, en),
-            rs -> rs.next() ? EmployeeEntityMapper.map(rs) : null,
+            (ps, a) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setString(index++, account);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            EmployeeEntityMapper::map,
             account
         );
     }
@@ -87,81 +102,17 @@ public class EmployeeRepository {
     public List<EmployeeEntity> findAll() {
         String sql = EmployeeSqlBuilder.buildFindAll();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> EmployeeParameterBinder.bindFindAll(ps, null),
-            EmployeeEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            EmployeeEntityMapper::map
         );
     }
-
-    // /**
-    //  * 新規作成。
-    //  * @param entity
-    //  * @param editor
-    //  * @return 新規IDを返す。
-    //  */
-    // public int insert(EmployeeEntity entity, String editor) {
-    //     String sql = EmployeeSqlBuilder.buildInsert();
-
-    //     try {
-    //         return sqlRepository.executeRequired(
-    //             sql,
-    //             (ps, en) -> EmployeeParameterBinder.bindInsert(ps, en, editor),
-    //             rs -> {
-    //                 if (!rs.next()) {
-    //                     throw new BusinessException("登録に失敗しました");
-    //                 }
-    //                 int id = rs.getInt("employee_id");
-
-    //                 if (rs.next()) {
-    //                     throw new IllegalStateException("ID取得結果が複数行です");
-    //                 }
-    //                 return id;
-    //             },
-    //             entity
-    //         );
-    //     } catch (RuntimeException e) {
-    //         if (SqlExceptionUtil.isDuplicateKey(e)) {
-    //             throw new BusinessException("このコードはすでに使用されています。");
-    //         }
-    //         throw e;
-    //     }
-    // }
-
-    // /**
-    //  * 更新。
-    //  * @param entity
-    //  * @param editor
-    //  * @return 成功件数を返す。
-    //  */
-    // public int update(EmployeeEntity entity, String editor) {
-    //     String sql = EmployeeSqlBuilder.buildUpdate();
-
-    //     // Integer result = sqlRepository.executeUpdate(
-    //     //     sql,
-    //     //     pstmt -> EmployeeParameterBinder.bindUpdate(pstmt, employee, editor)
-    //     // );
-
-    //     // return result; // 成功件数。0なら削除なし
-    //     try {
-    //         int count = sqlRepository.executeUpdate(
-    //             sql,
-    //             ps -> EmployeeParameterBinder.bindUpdate(ps, entity, editor)
-    //         );
-
-    //         if (count == 0) {
-    //             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-    //         }
-
-    //         return count;
-
-    //     } catch (RuntimeException e) {
-    //         if (SqlExceptionUtil.isDuplicateKey(e)) {
-    //             throw new BusinessException("このコードはすでに使用されています。");
-    //         }
-    //         throw e;
-    //     }
-    // }
 
     /**
      * 新規作成。
@@ -170,14 +121,12 @@ public class EmployeeRepository {
      * @return 新規IDを返す。
      */
     public int insert(EmployeeEntityRequest entity, String editor) {
-        // String sql = EmployeeSqlBuilder.buildInsert();
         String sql = EmployeeSqlBuilder.buildBulkInsert(entity);
 
         try {
-            return sqlRepository.executeRequired(
+            return sqlRepository.queryOne(
                 sql,
-                // (ps, en) -> EmployeeParameterBinder.bindInsert(ps, en, editor),
-                (ps, en) -> EmployeeParameterBinder.bindBulkInsert(ps, entity, editor),
+                (ps, en) -> EmployeeParameterBinder.bindBulkInsert(ps, en, editor),
                 rs -> {
                     if (!rs.next()) {
                         throw new BusinessException("登録に失敗しました");
@@ -209,9 +158,10 @@ public class EmployeeRepository {
         String sql = EmployeeSqlBuilder.buildBulkUpdate(entity);
 
         try {
-            int count = sqlRepository.executeUpdate(
+            int count = sqlRepository.update(
                 sql,
-                ps -> EmployeeParameterBinder.bindBulkUpdate(ps, entity, editor)
+                (ps, e) -> EmployeeParameterBinder.bindBulkUpdate(ps, e, editor),
+                entity
             );
 
             if (count == 0) {
@@ -237,9 +187,9 @@ public class EmployeeRepository {
     public int updateCode(int id, int code, String editor) {
         String sql = EmployeeSqlBuilder.buildUpdateCode();
         try {
-            int count = sqlRepository.executeUpdate(
+            int count = sqlRepository.update(
                 sql,
-                ps -> EmployeeParameterBinder.bindUpdateCode(ps, id, code, editor)
+                (ps, v) -> EmployeeParameterBinder.bindUpdateCode(ps, id, code, editor)
             );
 
             if (count == 0) {
@@ -265,9 +215,9 @@ public class EmployeeRepository {
     public int updatePhone(int id, String phone, String editor) {
         String sql = EmployeeSqlBuilder.buildUpdatePhone();
 
-        int count = sqlRepository.executeUpdate(
+        int count = sqlRepository.update(
             sql,
-            ps -> EmployeeParameterBinder.bindUpdatePhone(ps, id, phone, editor)
+            (ps, v) -> EmployeeParameterBinder.bindUpdatePhone(ps, id, phone, editor)
         );
 
         if (count == 0) {
@@ -284,22 +234,15 @@ public class EmployeeRepository {
      * @return 成功件数を返す。
      */
     public int deleteByIds(IdListRequest list, String editor) {
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = EmployeeSqlBuilder.buildDeleteByIds(list.getIds().size());
-
-        // Integer result = sqlRepository.executeUpdate(
-        //     sql,
-        //     ps -> EmployeeParameterBinder.bindDeleteByIds(ps, employeeIds, editor)
-        // );
-
-        // return result; // 成功件数。0なら削除なし
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
-        int count = sqlRepository.executeUpdate(
+        String sql = EmployeeSqlBuilder.buildDeleteByIds(list.getIds().size());
+        int count = sqlRepository.update(
             sql,
-            ps -> EmployeeParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
+            (ps, e) -> EmployeeParameterBinder.bindDeleteByIds(ps, e.getIds(), editor),
+            list
         );
         if (count == 0) {
             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
@@ -315,25 +258,16 @@ public class EmployeeRepository {
      * @return Idsで選択したEntityリストを返す。
      */
     public List<EmployeeEntity> downloadCsvByIds(IdListRequest list, String editor) {
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
-        // String sql = EmployeeSqlBuilder.buildDownloadCsvByIds(ids.size());
-
-        // return sqlRepository.findAll(
-        //     sql,
-        //     ps -> EmployeeParameterBinder.bindDownloadCsvByIds(ps, employeeIds),
-        //     EmployeeEntityMapper::map // ← ここで ResultSet を map
-        // );
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
         String sql = EmployeeSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
-
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> EmployeeParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
-            EmployeeEntityMapper::map
+            (ps, e) -> EmployeeParameterBinder.bindDownloadCsvByIds(ps, e.getIds()),
+            EmployeeEntityMapper::map,
+            list
         );
     }
 }

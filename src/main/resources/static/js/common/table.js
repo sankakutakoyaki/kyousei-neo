@@ -501,6 +501,38 @@ async function downloadCsvByBetweenDate(tableId, url, startStr, endStr) {
 //     // スピナー消去
 //     processingEnd();
 // }
+// async function funcDownloadCsv(data, url) {
+//     startProcessing();
+
+//     try {
+//         const response = await fetch(url, {
+//             method: "POST",
+//             headers: {
+//                 "Content-Type": "application/json",
+//                 "X-CSRF-TOKEN": token
+//             },
+//             // body: JSON.stringify(data)
+//             body: data
+//         });
+
+//         if (!response) {
+//             openMsgDialog("msg-dialog", "CSVの取得に失敗しました", "red");
+//             return;
+//         }
+
+//         const text = await response.text();
+
+//         if (!text) {
+//             openMsgDialog("msg-dialog", "取得できませんでした", "red");
+//             return;
+//         }
+
+//         createCsvThenDownload(text);
+
+//     } finally {
+//         processingEnd();
+//     }
+// }
 async function funcDownloadCsv(data, url) {
     startProcessing();
 
@@ -511,23 +543,24 @@ async function funcDownloadCsv(data, url) {
                 "Content-Type": "application/json",
                 "X-CSRF-TOKEN": token
             },
-            // body: JSON.stringify(data)
-            body: data
+            body: JSON.stringify(data)
         });
 
-        if (!response) {
+        if (!response.ok) {
             openMsgDialog("msg-dialog", "CSVの取得に失敗しました", "red");
             return;
         }
 
-        const text = await response.text();
+        const blob = await response.blob();
 
-        if (!text) {
-            openMsgDialog("msg-dialog", "取得できませんでした", "red");
-            return;
-        }
+        const objectUrl = URL.createObjectURL(blob);
+        const downloadLink = document.createElement("a");
+        downloadLink.href = objectUrl;
+        downloadLink.download = getNowNoBreak() + ".csv";
+        downloadLink.click();
+        downloadLink.remove();
 
-        createCsvThenDownload(text);
+        URL.revokeObjectURL(objectUrl);
 
     } finally {
         processingEnd();

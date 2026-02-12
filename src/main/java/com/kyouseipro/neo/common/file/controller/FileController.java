@@ -27,8 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.common.address.entity.AddressEntity;
 import com.kyouseipro.neo.common.file.service.FileService;
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.config.UploadConfig;
-import com.kyouseipro.neo.dto.ApiResponse;
 import com.kyouseipro.neo.interfaces.FileUpload;
 import com.kyouseipro.neo.qualification.entity.QualificationFilesEntity;
 import com.kyouseipro.neo.qualification.service.QualificationFilesService;
@@ -49,7 +49,6 @@ public class FileController {
     @PostMapping("/address/get/postalcode")
 	@ResponseBody
     public ResponseEntity getAddressFromPostalCode(@RequestParam String postal_code) {
-        // Optional<AddressEntity> entity = fileService.getAddressByPostalCode(postal_code);
         AddressEntity entity = fileService.getAddressByPostalCode(postal_code);
         return ResponseEntity.ok(entity);
     }
@@ -103,17 +102,17 @@ public class FileController {
      */
     @PostMapping("/files/delete/qualifications")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteQualificationsFilesByUrl(@RequestParam String url, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> deleteQualificationsFilesByUrl(@RequestParam String url, @AuthenticationPrincipal OidcUser principal) {
         String userName = principal.getAttribute("preferred_username");
         String uploadStr = UploadConfig.getUploadDir() + "qualification/" + url;
         boolean result = fileService.deleteFile(uploadStr);
         if (result) {
             Integer resultInt = qualificationFilesService.deleteQualificationsFilesByUrl(uploadStr, userName);
             if (resultInt != null && resultInt > 0) {
-                return ResponseEntity.ok(ApiResponse.ok("削除しました。", resultInt));
+                return ResponseEntity.ok(new SimpleResponse("削除しました。", resultInt));
             }
         }
-        return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
+        return ResponseEntity.badRequest().body(new SimpleResponse("削除に失敗しました", null));
     }
 
     /**

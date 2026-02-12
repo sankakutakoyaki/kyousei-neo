@@ -1,5 +1,10 @@
 package com.kyouseipro.neo.corporation.office.controller;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -9,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntityRequest;
 import com.kyouseipro.neo.corporation.office.service.OfficeService;
-import com.kyouseipro.neo.dto.ApiResponse;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.IdRequest;
 
@@ -31,8 +36,8 @@ public class OfficeApiController {
      */
     @PostMapping("/get/id")
 	@ResponseBody
-    public ResponseEntity<OfficeEntity> getById(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(officeService.getById(req.getId()).orElse(null));
+    public ResponseEntity<SimpleResponse<OfficeEntity>> getById(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(new SimpleResponse<>(null, officeService.getById(req.getId())));
     }
 
     /**
@@ -42,9 +47,9 @@ public class OfficeApiController {
      */
     @PostMapping("/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody OfficeEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody OfficeEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
         int id = officeService.save(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
     }
 
     /**
@@ -54,9 +59,9 @@ public class OfficeApiController {
      */
     @PostMapping("/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         Integer id = officeService.deleteByIds(ids, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
+        return ResponseEntity.ok(new SimpleResponse<>(id + "件削除しました。", id));
     }
 
     /**
@@ -64,9 +69,19 @@ public class OfficeApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/download/csv")
-	@ResponseBody
-    public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
-        return officeService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+    // @PostMapping("/download/csv")
+	// @ResponseBody
+    // public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+    //     return officeService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+    // }
+    @PostMapping(value = "/download/csv", produces = "text/csv")
+    public ResponseEntity<byte[]> downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+        String csv = officeService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+        String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".csv";
+
+        byte[] bytes = csv.getBytes(StandardCharsets.UTF_8);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .body(bytes);
     }
 }

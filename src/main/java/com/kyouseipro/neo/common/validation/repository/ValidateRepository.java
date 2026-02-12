@@ -20,7 +20,7 @@ public class ValidateRepository {
             "WHERE code = ? " +
             "  AND state <> 2";
 
-        return sqlRepository.executeRequired(
+        return sqlRepository.queryOne(
             sql,
             (pstmt, c) -> pstmt.setInt(1, c),
             rs -> rs.next() ? Optional.ofNullable(rs.getString(1)) : Optional.empty(),

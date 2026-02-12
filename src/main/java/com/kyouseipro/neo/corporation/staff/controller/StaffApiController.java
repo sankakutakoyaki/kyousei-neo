@@ -1,5 +1,10 @@
 package com.kyouseipro.neo.corporation.staff.controller;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -9,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.corporation.staff.entity.StaffEntity;
 import com.kyouseipro.neo.corporation.staff.entity.StaffEntityRequest;
 import com.kyouseipro.neo.corporation.staff.service.StaffService;
-import com.kyouseipro.neo.dto.ApiResponse;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.IdRequest;
 
@@ -31,8 +36,8 @@ public class StaffApiController {
      */
     @PostMapping("/get/id")
 	@ResponseBody
-    public ResponseEntity<StaffEntity> getById(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(staffService.getById(req.getId()).orElse(null));
+    public ResponseEntity<SimpleResponse<StaffEntity>> getById(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(new SimpleResponse<>(null, staffService.getById(req.getId())));
     }
    
     /**
@@ -42,9 +47,9 @@ public class StaffApiController {
      */
     @PostMapping("/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody StaffEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody StaffEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
         Integer id = staffService.save(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
     }
 
     /**
@@ -54,9 +59,9 @@ public class StaffApiController {
      */
     @PostMapping("/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         Integer id = staffService.deleteByIds(ids, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
+        return ResponseEntity.ok(new SimpleResponse<>(id + "件削除しました。", id));
     }
 
     /**
@@ -64,9 +69,19 @@ public class StaffApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/download/csv")
-	@ResponseBody
-    public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
-        return staffService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+    // @PostMapping("/download/csv")
+	// @ResponseBody
+    // public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+    //     return staffService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+    // }
+    @PostMapping(value = "/download/csv", produces = "text/csv")
+    public ResponseEntity<byte[]> downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+        String csv = staffService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+        String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".csv";
+
+        byte[] bytes = csv.getBytes(StandardCharsets.UTF_8);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .body(bytes);
     }
 }

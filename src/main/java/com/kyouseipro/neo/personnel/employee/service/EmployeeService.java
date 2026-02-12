@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.personnel.employee.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ public class EmployeeService {
      * @param id 従業員ID
      * @return EmployeeEntity または null
      */
-    public Optional<EmployeeEntity> getById(int id) {
+    public EmployeeEntity getById(int id) {
         return employeeRepository.findById(id);
     }
 
@@ -48,22 +47,7 @@ public class EmployeeService {
         } else {
             return employeeRepository.insert(entity, editor);
         }
-        
     }
-
-    // /**
-    //  * 
-    //  * @param entity
-    //  * @param editor
-    //  * @return
-    //  */
-    // @HistoryTarget(
-    //     table = HistoryTables.EMPLOYEES,
-    //     action = "更新"
-    // )
-    // public int update(EmployeeEntityRequest entity, String editor) {
-    //     return employeeRepository.update(entity, editor);
-    // }
 
     /**
      * 従業員コードを更新します。
@@ -106,7 +90,7 @@ public class EmployeeService {
      * @param account
      * @return
      */
-    public Optional<EmployeeEntity> getByAccount(String account) {
+    public EmployeeEntity getByAccount(String account) {
         return employeeRepository.findByAccount(account);
     }
 

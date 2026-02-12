@@ -6,15 +6,12 @@ import java.util.List;
 import java.util.Objects;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.abstracts.controller.BaseController;
-import com.kyouseipro.neo.common.history.service.HistoryService;
 import com.kyouseipro.neo.ks.entity.KsSalesEntity;
 import com.kyouseipro.neo.ks.service.KsSalesService;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
@@ -27,12 +24,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class KsPageController extends BaseController {
     private final KsSalesService ksSalesService;
-    private final HistoryService historyService;
 
     @GetMapping("/ks/sales")
 	@ResponseBody
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public ModelAndView getKsSales(ModelAndView mv, @AuthenticationPrincipal OidcUser principal, HttpSession session, HttpServletResponse response) throws IOException {
+	public ModelAndView getKsSales(ModelAndView mv, HttpSession session, HttpServletResponse response) throws IOException {
 		mv.setViewName("layouts/main");
         mv.addObject("title", "ケーズ");
         mv.addObject("headerFragmentName", "fragments/common/header :: headerFragment");
@@ -42,11 +38,6 @@ public class KsPageController extends BaseController {
 
         EmployeeEntity user = getLoginUser(session, response);
         if (user == null) return null; // リダイレクト済みなので処理は止まる
-		// ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// EmployeeEntity user = employeeService.getByAccount(userName);
-		// mv.addObject("user", user);
-        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
 
         LocalDate now = LocalDate.now();
         LocalDate monthStart = now.withDayOfMonth(1);
@@ -58,9 +49,6 @@ public class KsPageController extends BaseController {
         List<String> storeNames = origin01.stream().map(KsSalesEntity::getStoreName).filter(Objects::nonNull).distinct().toList();
         mv.addObject("storeComboList01", storeNames);
 
-        // EmployeeEntity user = getLoginUser(session);
-        historyService.save(user.getAccount(), "ks_sales", "閲覧", 0, "");
-		
         return mv;
     }
 }

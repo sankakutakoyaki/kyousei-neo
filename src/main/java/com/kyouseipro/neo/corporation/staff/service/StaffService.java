@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.corporation.staff.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ public class StaffService {
      * @param id 会社ID
      * @return OfficeEntity または null
      */
-    public Optional<StaffEntity> getById(int id) {
+    public StaffEntity getById(int id) {
         return staffRepository.findById(id);
     }
 

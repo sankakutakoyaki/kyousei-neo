@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
-import com.kyouseipro.neo.dto.ApiResponse;
 import com.kyouseipro.neo.dto.IdRequest;
 import com.kyouseipro.neo.personnel.paidholiday.entity.PaidHolidayEntity;
 import com.kyouseipro.neo.personnel.paidholiday.entity.PaidHolidayListEntity;
@@ -32,8 +32,8 @@ public class PaidHolidayApiController {
      */
     @PostMapping("/paidholiday/get/year")
 	@ResponseBody
-    public List<PaidHolidayListEntity> getByOfficeIdFromYear (@RequestBody SimpleData data) {
-        return paidHolidayService.getByOfficeIdFromYear(data.getNumber(), data.getText());
+    public SimpleResponse<List<PaidHolidayListEntity>> getByOfficeIdFromYear (@RequestBody SimpleData data) {
+        return new SimpleResponse<>(null, paidHolidayService.getByOfficeIdFromYear(data.getNumber(), data.getText()));
     }
 
     /**
@@ -42,8 +42,8 @@ public class PaidHolidayApiController {
      */
     @PostMapping("/paidholiday/get/employeeid")
 	@ResponseBody
-    public List<PaidHolidayEntity> getByEmployeeIdFromYear (@RequestBody SimpleData data) {
-        return paidHolidayService.getByEmployeeIdFromYear(data.getNumber(), data.getText());
+    public SimpleResponse<List<PaidHolidayEntity>> getByEmployeeIdFromYear (@RequestBody SimpleData data) {
+        return new SimpleResponse<>(null, paidHolidayService.getByEmployeeIdFromYear(data.getNumber(), data.getText()));
     }
 
     /**
@@ -52,9 +52,9 @@ public class PaidHolidayApiController {
      */
     @PostMapping("/paidholiday/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> save (@RequestBody PaidHolidayEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> save (@RequestBody PaidHolidayEntity entity, @AuthenticationPrincipal OidcUser principal) {
         int id = paidHolidayService.insert(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));              
+        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));              
     }
 
     /**
@@ -63,8 +63,8 @@ public class PaidHolidayApiController {
      */
     @PostMapping("/paidholiday/delete/id")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteById (@RequestBody IdRequest req, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> deleteById (@RequestBody IdRequest req, @AuthenticationPrincipal OidcUser principal) {
         int result = paidHolidayService.deleteById(req.getId(), principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok("削除しました。", result));
+        return ResponseEntity.ok(new SimpleResponse<>("削除しました。", result));
     }
 }

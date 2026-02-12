@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.dto.IdRequest;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeListEntity;
 import com.kyouseipro.neo.personnel.employee.service.EmployeeListService;
@@ -29,8 +30,8 @@ public class EmployeeListApiController {
      */
     @GetMapping("/get/list")
 	@ResponseBody
-    public List<EmployeeListEntity> getList() {
-        return employeeListService.getList();
+    public SimpleResponse<List<EmployeeListEntity>> getList() {
+        return new SimpleResponse<>(null, employeeListService.getList());
     }
 
     /**
@@ -39,8 +40,8 @@ public class EmployeeListApiController {
      */
     @PostMapping("/get/list/category")
 	@ResponseBody
-    public List<EmployeeListEntity> getListByCategoryId(@RequestBody IdRequest req) {
-        return employeeListService.getListByCategoryId(req.getId());
+    public SimpleResponse<List<EmployeeListEntity>> getListByCategoryId(@RequestBody IdRequest req) {
+        return new SimpleResponse<>(null, employeeListService.getListByCategoryId(req.getId()));
     }
 
     /**
@@ -49,7 +50,7 @@ public class EmployeeListApiController {
      */
     @GetMapping("/get/list/{type}")
 	@ResponseBody
-    public List<EmployeeListEntity> getListByCategoryId(@PathVariable String type) {
+    public SimpleResponse<List<EmployeeListEntity>> getListByCategoryId(@PathVariable String type) {
         int category = 0;
 
         switch (type) {
@@ -60,6 +61,6 @@ public class EmployeeListApiController {
             default:
                 break;
         }
-        return employeeListService.getListByCategoryId(category);
+        return new SimpleResponse<>(null, employeeListService.getListByCategoryId(category));
     }
 }

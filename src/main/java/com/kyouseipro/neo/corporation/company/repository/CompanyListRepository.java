@@ -24,12 +24,12 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<CompanyListEntity> findAll() {
-        String sql = "SELECT company_id, category, name, name_kana, tel_number, email FROM companies WHERE NOT (state = ?) ORDER BY name_kana";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT company_id, category, name, name_kana, tel_number, email FROM companies WHERE NOT (state = ?) ORDER BY name_kana
+            """,
             (ps, v) ->  ps.setInt(1, Enums.state.DELETE.getCode()),
-            CompanyListEntityMapper::map // ← ここで ResultSet を map
+            CompanyListEntityMapper::map
         );
     }
 
@@ -39,10 +39,10 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<CompanyListEntity> findAllClient() {
-        String sql = "SELECT * FROM companies WHERE NOT (state = ?) AND NOT (category = ? OR category = ?) ORDER BY category, name_kana;";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT * FROM companies WHERE NOT (state = ?) AND NOT (category = ? OR category = ?) ORDER BY category, name_kana;
+            """,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -59,10 +59,10 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<CompanyListEntity> findAllPartner() {
-        String sql = "SELECT * FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT * FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana
+            """,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -78,16 +78,16 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<CompanyListEntity> findByCategoryId(int id) {
-        String sql = "SELECT * FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT * FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana
+            """,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, id);
             },
-            CompanyListEntityMapper::map // ← ここで ResultSet を map
+            CompanyListEntityMapper::map
         );
     }
 
@@ -97,10 +97,10 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllComboOwnCompany() {
-        String sql = "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND (category = ?);";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND (category = ?);
+            """,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -116,10 +116,10 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllCombo() {
-        String sql = "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) ORDER BY category, name_kana;";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) ORDER BY category, name_kana;
+            """,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -134,10 +134,10 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllClientCombo() {
-        String sql = "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND NOT (category = ? OR category = ?) ORDER BY name_kana;";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND NOT (category = ? OR category = ?) ORDER BY name_kana;
+            """,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -154,10 +154,10 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllPartnerCombo() {
-        String sql = "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana, category;";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana, category;
+            """,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -173,10 +173,10 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllPrimeConstractorCombo() {
-        String sql = "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana, category;";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana, category;
+            """,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -192,10 +192,10 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllPrimeConstractorComboHasOriginalPrice() {
-        String sql = "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? AND is_original_price = ? ORDER BY name_kana, category;";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? AND is_original_price = ? ORDER BY name_kana, category;
+            """,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -212,10 +212,10 @@ public class CompanyListRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllComboByCategory(int category) {
-        String sql = "SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ?;";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ?;
+            """,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());

@@ -1,9 +1,9 @@
 package com.kyouseipro.neo.common.push.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.push.entity.SubscriptionRequest;
@@ -16,25 +16,14 @@ import lombok.Data;
 @Repository
 public class PushRepository {
     private final SqlRepository sqlRepository;
-
+    private record param(SubscriptionRequest s, String editor) {}
     /**
      * エンドポイントが一致するSubscriptionを取得する
      * @param endpoint
      * @return　見つからなければNullを返す
      */
-    public Optional<SubscriptionRequest> findByEndpoint(String endpoint){
-        // String sql = "SELECT * FROM subscriptions WHERE endpoint = ?";
-
-        // return sqlRepository.executeQuery(
-        //     sql,
-        //     (ps, p) -> {
-        //         int index = 1;
-        //         ps.setString(index++, endpoint);
-        //     },
-        //     rs -> rs.next() ? SubscriptionRequestMapper.map(rs) : null,
-        //     endpoint
-        // );
-        return sqlRepository.queryOne(
+    public SubscriptionRequest findByEndpoint(String endpoint){
+        return sqlRepository.queryOneOrNull(
             "SELECT * FROM subscriptions WHERE endpoint = ?",
             (ps, ep) -> ps.setString(1, ep),
             SubscriptionRequestMapper::map,
@@ -47,44 +36,18 @@ public class PushRepository {
      * @param subscription
      * @return
      */
+    @Transactional
     public int save(SubscriptionRequest subscription, String editor){
-        // String sql = """
-        //     INSERT INTO subscriptions (endpoint, p256dh, auth, username) VALUES (?,?,?,?);
-        //     DECLARE @NEW_ID int; SET @NEW_ID = @@IDENTITY;SELECT @NEW_ID as subscription_id;""";
-            
-        // return sqlRepository.executeRequired(
-        //     sql,
-        //     (ps, s) -> {
-        //         int index = 1;
-        //         ps.setString(index++, s.getEndpoint());
-        //         ps.setString(index++, s.getP256dh());
-        //         ps.setString(index++, s.getAuth());
-
-        //         ps.setString(index++, editor);
-        //     },
-        //     rs -> {
-        //         if (!rs.next()) {
-        //             throw new BusinessException("登録に失敗しました");
-        //         }
-        //         int id = rs.getInt("subscription_id");
-
-        //         if (rs.next()) {
-        //             throw new IllegalStateException("ID取得結果が複数行です");
-        //         }
-        //         return id;
-        //     },
-        //     subscription
-        // );
-        return sqlRepository.query(
+        return sqlRepository.queryOne(
             """
             INSERT INTO subscriptions (endpoint, p256dh, auth, username) VALUES (?,?,?,?);
             DECLARE @NEW_ID int; SET @NEW_ID = @@IDENTITY;SELECT @NEW_ID as subscription_id;""",
-            ps -> {
+            (ps, e) -> {
                 int index = 1;
-                ps.setString(index++, subscription.getEndpoint());
-                ps.setString(index++, subscription.getP256dh());
-                ps.setString(index++, subscription.getAuth());
-                ps.setString(index++, editor);
+                ps.setString(index++, e.s.getEndpoint());
+                ps.setString(index++, e.s.getP256dh());
+                ps.setString(index++, e.s.getAuth());
+                ps.setString(index++, e.editor);
             },
             rs -> {
                 if (!rs.next()) {
@@ -96,7 +59,8 @@ public class PushRepository {
                     throw new IllegalStateException("ID取得結果が複数行です");
                 }
                 return id;
-            }
+            },
+            new param(subscription, editor)
         );
     }
     
@@ -105,13 +69,6 @@ public class PushRepository {
      * @return
      */
     public List<SubscriptionRequest> findAll() {
-        // String sql = "SELECT * FROM subscriptions ";
-
-        // return sqlRepository.findAll(
-        //     sql,
-        //     null,
-        //     SubscriptionRequestMapper::map // ← ここで ResultSet を map
-        // );
         return sqlRepository.queryList(
             "SELECT * FROM subscriptions ",
             null,
@@ -125,19 +82,21 @@ public class PushRepository {
      * @param endpoint
      * @return
      */
+    @Transactional
     public int deleteByEndpoint(String endpoint, String editor){
-        String sql = """
-            DELETE FROM subscriptions WHERE endpoint = ?;
-            DECLARE @ROW_COUNT int; SET @ROW_COUNT = @@ROWCOUNT;SELECT @ROW_COUNT as subscription_id;""";
-
-        // return result; // 成功件数。0なら削除なし
-        int count = sqlRepository.executeUpdate(
-            sql,
-            ps -> {
+        int count = sqlRepository.queryOne(
+            """
+                DELETE FROM subscriptions WHERE endpoint = ?;
+                DECLARE @ROW_COUNT int; SET @ROW_COUNT = @@ROWCOUNT;SELECT @ROW_COUNT as subscription_id
+            """,
+            (ps, e) -> {
                 int index = 1;
                 ps.setString(index++, endpoint);
-            }
+            },
+            null,
+            endpoint
         );
+
         if (count == 0) {
             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }

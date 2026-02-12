@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.corporation.company.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ public class CompanyService {
      * @param id 会社ID
      * @return CompanyEntity または null
      */
-    public Optional<CompanyEntity> getById(int id) {
+    public CompanyEntity getById(int id) {
         return companyRepository.findById(id);
     }
 

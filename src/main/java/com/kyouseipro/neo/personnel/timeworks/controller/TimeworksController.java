@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.dto.IdRequest;
 import com.kyouseipro.neo.personnel.timeworks.entity.TimeworksEntity;
 import com.kyouseipro.neo.personnel.timeworks.entity.TimeworksRegistRequest;
@@ -31,8 +32,8 @@ public class TimeworksController {
      */
     @GetMapping("/get/today")
 	@ResponseBody
-    public List<TimeworksEntity> getTodaysList() {
-        return timeworksService.getTodaysList();
+    public SimpleResponse<List<TimeworksEntity>> getTodaysList() {
+        return new SimpleResponse<>(null, timeworksService.getTodaysList());
     }
 
     /**
@@ -41,8 +42,8 @@ public class TimeworksController {
      */
     @PostMapping("/get/today/id")
 	@ResponseBody
-    public ResponseEntity<TimeworksEntity> getTodaysEntity(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(timeworksService.getTodaysEntity(req.getId()).orElse(null));
+    public ResponseEntity<SimpleResponse<TimeworksEntity>> getTodaysEntity(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(new SimpleResponse(null, timeworksService.getTodaysEntity(req.getId())));
     }
 
     /**

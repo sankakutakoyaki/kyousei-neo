@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
@@ -29,10 +30,17 @@ public class PaidHolidayRepository {
     public List<PaidHolidayListEntity> findByOfficeIdFromYear(int id, String year) {
         String sql = PaidHolidaySqlBuilder.buildFindByOfficeIdFromYear();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> PaidHolidayParameterBinder.bindFindByOfficeIdFromYear(ps, id, year),
-            PaidHolidayListEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setString(index++, year);
+                ps.setString(index++, year);        
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+            },
+            PaidHolidayListEntityMapper::map
         );
     }
 
@@ -43,16 +51,22 @@ public class PaidHolidayRepository {
      */
     public List<PaidHolidayEntity> findByEmployeeIdFromYear(int id, String year) {
         String sql = PaidHolidaySqlBuilder.buildFindByEmployeeIdFromYear();
-        // EmployeeEntity entity = employeeRepository.findById(id);
 
-        EmployeeEntity entity = employeeRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
+        EmployeeEntity entity = employeeRepository.findById(id);
+            // .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
         int targetId = entity.getEmployeeId();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> PaidHolidayParameterBinder.bindFindByEmployeeIdFromYear(ps, targetId, year),
-            PaidHolidayEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, targetId);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setString(index++, year);
+                ps.setString(index++, year);
+            },
+            PaidHolidayEntityMapper::map
         );
     }
 
@@ -64,35 +78,22 @@ public class PaidHolidayRepository {
     public int insert(PaidHolidayEntity entity, String editor) {
         String sql = PaidHolidaySqlBuilder.buildInsert();
 
-        // // return sqlRepository.executeRequired(
-        // //     sql,
-        // //     (ps, en) -> PaidHolidayParameterBinder.bindInsert(ps, en, editor),
-        // //     rs -> rs.next() ? rs.getInt("paid_holiday_id") : null,
-        // //     p
-        // // );
-        // try {
-            return sqlRepository.executeRequired(
-                sql,
-                (ps, en) -> PaidHolidayParameterBinder.bindInsert(ps, en, editor),
-                rs -> {
-                    if (!rs.next()) {
-                        throw new BusinessException("登録に失敗しました");
-                    }
-                    int id = rs.getInt("paid_holiday_id");
+        return sqlRepository.queryOne(
+            sql,
+            (ps, en) -> PaidHolidayParameterBinder.bindInsert(ps, en, editor),
+            rs -> {
+                if (!rs.next()) {
+                    throw new BusinessException("登録に失敗しました");
+                }
+                int id = rs.getInt("paid_holiday_id");
 
-                    if (rs.next()) {
-                        throw new IllegalStateException("ID取得結果が複数行です");
-                    }
-                    return id;
-                },
-                entity
-            );
-        // } catch (RuntimeException e) {
-        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
-        //         throw new BusinessException("このコードはすでに使用されています。");
-        //     }
-        //     throw e;
-        // }
+                if (rs.next()) {
+                    throw new IllegalStateException("ID取得結果が複数行です");
+                }
+                return id;
+            },
+            entity
+        );
     }
 
     /**
@@ -104,16 +105,16 @@ public class PaidHolidayRepository {
     public int delete(int id, String editor) {
         String sql = PaidHolidaySqlBuilder.buildDelete();
 
-        // Integer result = sqlRepository.executeUpdate(
-        //     sql,
-        //     ps -> PaidHolidayParameterBinder.bindDelete(ps, id, editor)
-        // );
-
-        // return result; // 成功件数。0なら削除なし
-        int count = sqlRepository.executeUpdate(
+        int count = sqlRepository.update(
             sql,
-            ps -> PaidHolidayParameterBinder.bindDelete(ps, id, editor)
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+                ps.setString(index++, editor);
+            }
         );
+        
         if (count == 0) {
             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }

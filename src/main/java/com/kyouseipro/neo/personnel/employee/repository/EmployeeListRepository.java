@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeListEntity;
 import com.kyouseipro.neo.personnel.employee.mapper.EmployeeListEntityMapper;
@@ -23,10 +24,15 @@ public class EmployeeListRepository {
     public List<EmployeeListEntity> findAll() {
         String sql = EmployeeListSqlBuilder.buildFindAll();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> EmployeeListParameterBinder.bindFindAll(ps, null),
-            EmployeeListEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            EmployeeListEntityMapper::map
         );
     }
 
@@ -38,10 +44,16 @@ public class EmployeeListRepository {
     public List<EmployeeListEntity> findByCategoryId(int id) {
         String sql = EmployeeListSqlBuilder.buildFindAllByCategoryId();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> EmployeeListParameterBinder.bindFindAllByCategoryId(ps, id),
-            EmployeeListEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+            },
+            EmployeeListEntityMapper::map
         );
     }
 }

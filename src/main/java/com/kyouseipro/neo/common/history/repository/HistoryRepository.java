@@ -37,9 +37,9 @@ public class HistoryRepository {
         //     },
         //     entity
         // );
-        return sqlRepository.query(
+        return sqlRepository.queryOne(
             sql,
-            ps-> HistoryParameterBinder.bindInsert(ps, entity, editor),
+            (ps, e) -> HistoryParameterBinder.bindInsert(ps, e, editor),
             rs -> {
                 if (!rs.next()) {
                     throw new BusinessException("登録に失敗しました");
@@ -50,7 +50,8 @@ public class HistoryRepository {
                     throw new IllegalStateException("ID取得結果が複数行です");
                 }
                 return id;
-            }
+            },
+            entity
         );
     }
 }

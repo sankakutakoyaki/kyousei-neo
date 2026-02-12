@@ -1,19 +1,16 @@
 package com.kyouseipro.neo.common.exception;
 
 import java.security.Principal;
-import java.util.Map;
 
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.kyouseipro.neo.common.history.service.HistoryService;
-import com.kyouseipro.neo.dto.ApiResponse;
+import com.kyouseipro.neo.common.response.SimpleResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @RestControllerAdvice
@@ -21,27 +18,18 @@ import org.springframework.http.ResponseEntity;
 public class GlobalExceptionHandler {
     private final HistoryService historyService;
 
-    // @ExceptionHandler(BusinessException.class)
-    // @ResponseStatus(HttpStatus.OK)
-    // public Map<String, Object> handleBusiness(BusinessException e) {
+    // @ExceptionHandler(Exception.class)
+    // @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    // public Map<String, Object> handleSystem(Exception e) {
     //     return Map.of(
     //         "success", false,
-    //         "message", e.getMessage()
+    //         "message", "システムエラーが発生しました"
     //     );
     // }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, Object> handleSystem(Exception e) {
-        return Map.of(
-            "success", false,
-            "message", "システムエラーが発生しました"
-        );
-    }
-
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ApiResponse<Void>> handleBusiness(
+    public ResponseEntity<SimpleResponse<Void>> handleBusiness(
             BusinessException e,
             HttpServletRequest request
     ) {
@@ -57,7 +45,7 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.badRequest()
-                .body(ApiResponse.error(e.getMessage()));
+                .body(new SimpleResponse(e.getMessage(), null));
     }
 
     private String getUserName(HttpServletRequest request) {

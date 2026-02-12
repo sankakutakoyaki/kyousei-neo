@@ -1,5 +1,6 @@
 package com.kyouseipro.neo.common.push.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +9,7 @@ import com.kyouseipro.neo.common.history.service.HistoryService;
 import com.kyouseipro.neo.common.push.entity.SubscriptionRequest;
 import com.kyouseipro.neo.common.push.repository.PushRepository;
 import com.kyouseipro.neo.common.push.service.WebPushService;
+import com.kyouseipro.neo.common.response.SimpleResponse;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -15,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.security.Security;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 @RestController
@@ -58,20 +59,18 @@ public class PushApiController {
      * クライアントから Pushサブスクリプション情報を受け取る
      * @param subscriptionRequest
      */
+
     @PostMapping("/api/subscribe")
-    public boolean subscribe(@RequestBody SubscriptionRequest subscriptionRequest, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        Optional<SubscriptionRequest> result = pushRepository.findByEndpoint(subscriptionRequest.getEndpoint());
-        if (result == null) {
-            pushRepository.save(subscriptionRequest, userName);
-            System.out.println("Push scribe!");
-            historyService.save(userName, "subscribe", "保存", 200, "成功");
-            return true;
-        } else {
-            System.out.println("scribe failed");
-            historyService.save(userName, "subscribe", "保存", 400, "失敗");
-            return false;
-        }
+    public ResponseEntity<SimpleResponse<Boolean>> subscribe(
+            @RequestBody SubscriptionRequest request,
+            @AuthenticationPrincipal OidcUser principal
+    ) {
+
+        boolean exists =
+                pushRepository.findByEndpoint(request.getEndpoint()) != null;
+        return ResponseEntity.ok(
+                new SimpleResponse<>("保存しました", exists)
+        );
     }
 
     /**

@@ -1,10 +1,10 @@
 package com.kyouseipro.neo.corporation.office.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntityRequest;
@@ -24,14 +24,18 @@ public class OfficeRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public Optional<OfficeEntity> findById(int id) {
+    public OfficeEntity findById(int id) {
         String sql = OfficeSqlBuilder.buildFindById();
 
-        return sqlRepository.executeQuery(
+        return sqlRepository.queryOne(
             sql,
-            (ps, en) -> OfficeParameterBinder.bindFindById(ps, en),
-            rs -> rs.next() ? OfficeEntityMapper.map(rs) : null,
-            id
+            (ps, en) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+            },
+            OfficeEntityMapper::map
         );
     }
 
@@ -43,10 +47,10 @@ public class OfficeRepository {
     public List<OfficeEntity> findAll() {
         String sql = OfficeSqlBuilder.buildFindAll();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> OfficeParameterBinder.bindFindAll(ps, null),
-            OfficeEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
+            OfficeEntityMapper::map
         );
     }
 
@@ -58,9 +62,14 @@ public class OfficeRepository {
     public List<OfficeEntity> findAllClient() {
         String sql = OfficeSqlBuilder.buildFindAllClient();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> OfficeParameterBinder.bindFindAllClient(ps, null),
+            (ps, v) -> {
+                int index = 1;   
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, 0);
+            },
             OfficeEntityMapper::map
         );
     }
@@ -73,7 +82,7 @@ public class OfficeRepository {
     public int insert(OfficeEntityRequest entity, String editor) {
         String sql = OfficeSqlBuilder.buildBulkInsert(entity);
 
-        return sqlRepository.executeRequired(
+        return sqlRepository.queryOne(
             sql,
             (ps, en) -> OfficeParameterBinder.bindBulkInsert(ps, en, editor),
             rs -> {
@@ -99,9 +108,10 @@ public class OfficeRepository {
     public int update(OfficeEntityRequest entity, String editor) {
         String sql = OfficeSqlBuilder.buildBulkUpdate(entity);
 
-        int count = sqlRepository.executeUpdate(
+        int count = sqlRepository.update(
             sql,
-            ps -> OfficeParameterBinder.bindBulkUpdate(ps, entity, editor)
+            (ps, e) -> OfficeParameterBinder.bindBulkUpdate(ps, e, editor),
+            entity
         );
 
         if (count == 0) {
@@ -118,16 +128,16 @@ public class OfficeRepository {
      * @return 成功件数を返す。
      */
     public int deleteByIds(IdListRequest list, String editor) {
-        String sql = OfficeSqlBuilder.buildDeleteByIds(list.getIds().size());
-
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
-        int count = sqlRepository.executeUpdate(
+        String sql = OfficeSqlBuilder.buildDeleteByIds(list.getIds().size());
+        int count = sqlRepository.update(
             sql,
-            ps -> OfficeParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
+            (ps, v) -> OfficeParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
         );
+
         if (count == 0) {
             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
@@ -147,8 +157,7 @@ public class OfficeRepository {
         }
 
         String sql = OfficeSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
-
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
             (ps, v) -> OfficeParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
             OfficeEntityMapper::map

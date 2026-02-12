@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.common.ComboBoxService;
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.corporation.office.entity.OfficeListEntity;
 import com.kyouseipro.neo.corporation.office.service.OfficeListService;
 import com.kyouseipro.neo.dto.IdRequest;
@@ -29,8 +30,8 @@ public class OfficeListApiController {
      */
     @GetMapping("/get/list")
 	@ResponseBody
-    public List<OfficeListEntity> getList() {
-        return officeListService.getList();
+    public SimpleResponse<List<OfficeListEntity>> getList() {
+        return new SimpleResponse<>(null, officeListService.getList());
     }
 
     /**
@@ -39,8 +40,8 @@ public class OfficeListApiController {
      */
     @GetMapping("/get/client/list")
 	@ResponseBody
-    public List<OfficeListEntity> getClientList() {
-        return officeListService.getClientList();
+    public SimpleResponse<List<OfficeListEntity>> getClientList() {
+        return new SimpleResponse<>(null, officeListService.getClientList());
     }
 
     /**
@@ -49,8 +50,8 @@ public class OfficeListApiController {
      */
     @PostMapping("/get/list/category")
 	@ResponseBody
-    public List<OfficeListEntity> getListByCategoryId(@RequestBody IdRequest req) {
-        return officeListService.getListByCategoryId(req.getId());
+    public SimpleResponse<List<OfficeListEntity>> getListByCategoryId(@RequestBody IdRequest req) {
+        return new SimpleResponse<>(null, officeListService.getListByCategoryId(req.getId()));
     }
 
     /**
@@ -59,7 +60,7 @@ public class OfficeListApiController {
      */
     @GetMapping("/get/combo")
 	@ResponseBody
-    public List<OfficeListEntity> getCombo() {
-        return comboBoxService.getOfficeList();
+    public SimpleResponse<List<OfficeListEntity>> getCombo() {
+        return new SimpleResponse<>(null, comboBoxService.getOfficeList());
     }
 }

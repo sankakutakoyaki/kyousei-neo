@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.corporation.company.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -25,18 +24,17 @@ public class CompanyRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public Optional<CompanyEntity> findById(int id) {
-        String sql = "SELECT * FROM companies WHERE company_id = ? AND NOT (state = ?)";
-
-        return sqlRepository.executeQuery(
-            sql,
-            (ps, en) -> {
+    public CompanyEntity findById(int id) {
+        return sqlRepository.queryOne(
+            """
+            SELECT * FROM companies WHERE company_id = ? AND NOT (state = ?)
+            """,
+            (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, id);
                 ps.setInt(index++, Enums.state.DELETE.getCode());
             },
-            rs -> rs.next() ? CompanyEntityMapper.map(rs) : null,
-            id
+            CompanyEntityMapper::map
         );
     }
 
@@ -46,12 +44,12 @@ public class CompanyRepository {
      * @return 取得したリストを返す
      */
     public List<CompanyEntity> findAll() {
-        String sql = "SELECT * FROM companies WHERE NOT (state = ?)";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT * FROM companies WHERE NOT (state = ?)
+            """,
             (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
-            CompanyEntityMapper::map // ← ここで ResultSet を map
+            CompanyEntityMapper::map
         );
     }
 
@@ -61,10 +59,10 @@ public class CompanyRepository {
      * @return 取得したリストを返す
      */
     public List<CompanyEntity> findAllClient() {
-        String sql = "SELECT * FROM companies WHERE NOT (category = ?) AND NOT (state = ?)";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT * FROM companies WHERE NOT (category = ?) AND NOT (state = ?)
+            """,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, 0);
@@ -82,7 +80,7 @@ public class CompanyRepository {
     public int insert(CompanyEntityRequest entity, String editor) {
         String sql = CompanySqlBuilder.buildBulkInsert(entity);
 
-        return sqlRepository.executeRequired(
+        return sqlRepository.queryOne(
             sql,
             (ps, en) -> CompanyParameterBinder.bindBulkInsert(ps, en, editor),
             rs -> {
@@ -108,9 +106,10 @@ public class CompanyRepository {
     public int update(CompanyEntityRequest entity, String editor) {
         String sql = CompanySqlBuilder.buildBulkUpdate(entity);
 
-        int count = sqlRepository.executeUpdate(
+        int count = sqlRepository.update(
             sql,
-            ps -> CompanyParameterBinder.bindBulkUpdate(ps, entity, editor)
+            (ps, e) -> CompanyParameterBinder.bindBulkUpdate(ps, e, editor),
+            entity
         );
 
         if (count == 0) {
@@ -133,10 +132,12 @@ public class CompanyRepository {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
-        int count = sqlRepository.executeUpdate(
+        int count = sqlRepository.update(
             sql,
-            ps -> CompanyParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
+            (ps, e) -> CompanyParameterBinder.bindDeleteByIds(ps, e.getIds(), editor),
+            list
         );
+
         if (count == 0) {
             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }
@@ -157,7 +158,7 @@ public class CompanyRepository {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
             (ps, v) -> CompanyParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
             CompanyEntityMapper::map

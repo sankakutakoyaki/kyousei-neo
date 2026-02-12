@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.corporation.staff.entity.StaffListEntity;
 import com.kyouseipro.neo.corporation.staff.service.StaffListService;
 
@@ -24,7 +25,7 @@ public class StaffListApiController {
      */
     @GetMapping("/get/list")
 	@ResponseBody
-    public List<StaffListEntity> getList() {
-            return staffListService.getList();
+    public SimpleResponse<List<StaffListEntity>> getList() {
+            return new SimpleResponse<>(null, staffListService.getList());
     }
 }

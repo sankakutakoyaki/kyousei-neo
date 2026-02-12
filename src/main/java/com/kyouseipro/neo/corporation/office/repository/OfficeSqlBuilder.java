@@ -38,35 +38,6 @@ public class OfficeSqlBuilder {
             "FROM " + rowTableName + ";";
     }
 
-    // public static String buildInsert() {
-    //     return
-    //         buildLogTable("@Inserted") +
-
-    //         "INSERT INTO offices (" +
-    //         "  company_id, name, name_kana, tel_number, fax_number, " +
-    //         "  postal_code, full_address, email, web_address, version, state" +
-    //         ") " +
-    //         buildOutputLog() + "INTO @Inserted " +
-    //         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); " +
-
-    //         buildInsertLog("@Inserted", "INSERT") +
-    //         "SELECT office_id FROM @Inserted;";
-    // }
-
-    // public static String buildUpdate() {
-    //     return
-    //         buildLogTable("@Updated") +
-
-    //         "UPDATE offices SET " +
-    //         "  company_id=?, name=?, name_kana=?, tel_number=?, fax_number=?, " +
-    //         "  postal_code=?, full_address=?, email=?, web_address=?, version=?, state=? " +
-    //         buildOutputLog() + "INTO @Updated " +
-    //         "WHERE office_id=? AND version=?; " +
-
-    //         buildInsertLog("@Updated", "UPDATE") +
-    //         "SELECT office_id FROM @Updated;";
-    // }
-
     public static String buildBulkInsert(OfficeEntityRequest req) {
 
         StringBuilder sql = new StringBuilder();

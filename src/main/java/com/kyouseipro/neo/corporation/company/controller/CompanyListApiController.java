@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.common.ComboBoxService;
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.corporation.company.entity.CompanyListEntity;
 import com.kyouseipro.neo.corporation.company.service.CompanyListService;
@@ -30,8 +31,8 @@ public class CompanyListApiController {
      */
     @GetMapping("/company/get/list")
 	@ResponseBody
-    public List<CompanyListEntity> getList() {
-        return companyListService.getList();
+    public SimpleResponse<List<CompanyListEntity>> getList() {
+        return new SimpleResponse<>(null, companyListService.getList());
     }
 
     /**
@@ -40,8 +41,8 @@ public class CompanyListApiController {
      */
     @GetMapping("/client/get/list")
 	@ResponseBody
-    public List<CompanyListEntity> getClientList() {
-        return companyListService.getClientList();
+    public SimpleResponse<List<CompanyListEntity>> getClientList() {
+        return new SimpleResponse<>(null, companyListService.getClientList());
     }
 
     /**
@@ -50,8 +51,8 @@ public class CompanyListApiController {
      */
     @GetMapping("/partner/get/list")
 	@ResponseBody
-    public List<CompanyListEntity> getPartnerList() {
-        return companyListService.getPartnerList();
+    public SimpleResponse<List<CompanyListEntity>> getPartnerList() {
+        return new SimpleResponse<>(null, companyListService.getPartnerList());
     }
 
     /**
@@ -60,8 +61,8 @@ public class CompanyListApiController {
      */
     @PostMapping("/company/get/list/category")
 	@ResponseBody
-    public List<CompanyListEntity> getListByCategoryId(@RequestBody IdRequest req) {
-        return companyListService.getListByCategoryId(req.getId());
+    public SimpleResponse<List<CompanyListEntity>> getListByCategoryId(@RequestBody IdRequest req) {
+        return new SimpleResponse<>(null, companyListService.getListByCategoryId(req.getId()));
     }
 
     /**
@@ -70,8 +71,8 @@ public class CompanyListApiController {
      */
     @GetMapping("/client/get/combo")
 	@ResponseBody
-    public List<SimpleData> getClientCombo() {
-        return comboBoxService.getClientList();
+    public SimpleResponse<List<SimpleData>> getClientCombo() {
+        return new SimpleResponse<>(null, comboBoxService.getClientList());
     }
 
     /**
@@ -80,7 +81,7 @@ public class CompanyListApiController {
      */
     @GetMapping("/partner/get/combo")
 	@ResponseBody
-    public List<SimpleData> getPartnerCombo() {
-        return comboBoxService.getPartnerList();
+    public SimpleResponse<List<SimpleData>> getPartnerCombo() {
+        return new SimpleResponse<>(null, comboBoxService.getPartnerList());
     }
 }

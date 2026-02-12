@@ -5,30 +5,31 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.kyouseipro.neo.dto.ApiResponse;
+import com.kyouseipro.neo.common.response.SimpleResponse;
+
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ApiResponse<Void>> handleBusiness(BusinessException e) {
+    public ResponseEntity<SimpleResponse<Void>> handleBusiness(BusinessException e) {
         return ResponseEntity
                 .badRequest()
-                .body(ApiResponse.error(e.getMessage()));
+                .body(new SimpleResponse(e.getMessage(), null));
     }
 
     @ExceptionHandler(SystemException.class)
-    public ResponseEntity<ApiResponse<Void>> handleSystem(SystemException e) {
+    public ResponseEntity<SimpleResponse<Void>> handleSystem(SystemException e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("システムエラーが発生しました。"));
+                .body(new SimpleResponse("システムエラーが発生しました。", null));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleOther(Exception e) {
+    public ResponseEntity<SimpleResponse<Void>> handleOther(Exception e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("予期しないエラーが発生しました。"));
+                .body(new SimpleResponse("予期しないエラーが発生しました。", null));
     }
 }
 

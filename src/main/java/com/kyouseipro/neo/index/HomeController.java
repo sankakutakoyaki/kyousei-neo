@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.kyouseipro.neo.abstracts.controller.BaseController;
-import com.kyouseipro.neo.common.history.service.HistoryService;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class HomeController extends BaseController {
-    private final HistoryService historyService;
 
 	/**
 	 * 営業
@@ -30,8 +28,6 @@ public class HomeController extends BaseController {
 	public String getList(Model model, HttpSession session, HttpServletResponse response) throws IOException {
 		EmployeeEntity user = getLoginUser(session, response);
 		if (user == null) return null; // リダイレクト済み
-
-		historyService.save(user.getAccount(), "list", "閲覧", 200, "");
 
 		model.addAttribute("title", "一覧");
 		model.addAttribute("activeMenu", "list");
@@ -51,8 +47,6 @@ public class HomeController extends BaseController {
 		EmployeeEntity user = getLoginUser(session, response);
 		if (user == null) return null; // リダイレクト済み
 
-		historyService.save(user.getAccount(), "sales", "閲覧", 200, "");
-
 		model.addAttribute("title", "営業");
 		model.addAttribute("activeMenu", "sales");
         model.addAttribute("insertCss", "/css/index/sales.css");
@@ -68,11 +62,8 @@ public class HomeController extends BaseController {
 	@GetMapping("/personnel")
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
 	public String getPersonnel(Model model, HttpSession session, HttpServletResponse response) throws IOException {
-
 		EmployeeEntity user = getLoginUser(session, response);
 		if (user == null) return null; // リダイレクト済み
-
-		historyService.save(user.getAccount(), "personnel", "閲覧", 200, "");
 
 		model.addAttribute("title", "人事");
 		model.addAttribute("activeMenu", "personnel");
@@ -90,8 +81,6 @@ public class HomeController extends BaseController {
 	public String getManagement(Model model, HttpSession session, HttpServletResponse response) throws IOException {
 		EmployeeEntity user = getLoginUser(session, response);
 		if (user == null) return null; // リダイレクト済み
-
-		historyService.save(user.getAccount(), "management", "閲覧", 200, "");
 
 		model.addAttribute("title", "管理");
 		model.addAttribute("activeMenu", "management");
@@ -111,8 +100,6 @@ public class HomeController extends BaseController {
 		EmployeeEntity user = getLoginUser(session, response);
 		if (user == null) return null; // リダイレクト済み
 
-		historyService.save(user.getAccount(), "regist", "閲覧", 200, "");
-
 		model.addAttribute("title", "登録");
 		model.addAttribute("activeMenu", "regist");
         model.addAttribute("insertCss", "/css/index/regist.css");
@@ -130,8 +117,6 @@ public class HomeController extends BaseController {
 	public String getRecycle(Model model, HttpSession session, HttpServletResponse response) throws IOException {
 		EmployeeEntity user = getLoginUser(session, response);
 		if (user == null) return null; // リダイレクト済み
-
-		historyService.save(user.getAccount(), "recycle", "閲覧", 200, "");
 
 		model.addAttribute("title", "リサイクル");
 		model.addAttribute("activeMenu", "recycle");

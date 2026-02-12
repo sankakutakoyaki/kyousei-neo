@@ -27,10 +27,14 @@ public class OfficeListRepository {
     public List<OfficeListEntity> findAll() {
         String sql = OfficeListSqlBuilder.buildFindAll();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> OfficeListParameterBinder.bindFindAll(ps, null),
-            OfficeListEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            OfficeListEntityMapper::map
         );
     }
 
@@ -42,10 +46,14 @@ public class OfficeListRepository {
     public List<OfficeListEntity> findAllOrderByKana() {
         String sql = OfficeListSqlBuilder.buildFindAllOrderByKana();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> OfficeListParameterBinder.bindFindAll(ps, null),
-            OfficeListEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            OfficeListEntityMapper::map
         );
     }
 
@@ -55,10 +63,10 @@ public class OfficeListRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllCombo() {
-        String sql = "SELECT office_id as number, name as text FROM offices WHERE NOT (state = ?) ORDER BY name_kana;";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT office_id as number, name as text FROM offices WHERE NOT (state = ?) ORDER BY name_kana;
+            """,
             (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
             SimpleDataMapper::map
         );
@@ -70,10 +78,10 @@ public class OfficeListRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findByOwnCombo() {
-        String sql = "SELECT office_id as number, name as text FROM offices WHERE NOT (state = ?) AND company_id = ?";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT office_id as number, name as text FROM offices WHERE NOT (state = ?) AND company_id = ?
+            """,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -91,10 +99,15 @@ public class OfficeListRepository {
     public List<OfficeListEntity> findByCategoryId(int categoryId) {
         String sql = OfficeListSqlBuilder.buildFindAllByCategory();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> OfficeListParameterBinder.bindFindAllByCategoryId(ps, categoryId),
-            OfficeListEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, categoryId);
+            },
+            OfficeListEntityMapper::map
         );
     }
 
@@ -106,9 +119,14 @@ public class OfficeListRepository {
     public List<SimpleData> findAllClientCombo() {
         String sql = OfficeListSqlBuilder.buildFindAllClientCombo();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> OfficeListParameterBinder.bindFindAllClientCombo(ps),
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.clientCategory.SHIPPER.getCode());
+            },
             SimpleDataMapper::map
         );
     }

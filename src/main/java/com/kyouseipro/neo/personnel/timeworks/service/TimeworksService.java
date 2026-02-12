@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -30,41 +29,71 @@ public class TimeworksService {
         return timeworksRepository.findAllByBaseDate(date);
     }
 
-    /**
-     * 指定したIDの今日の勤怠情報を取得する
-     * @return
-     */
-    public Optional<TimeworksEntity> getTodaysEntity(Integer employeeId) {
+    // /**
+    //  * 指定したIDの今日の勤怠情報を取得する
+    //  * @return
+    //  */
+    // public TimeworksEntity getTodaysEntity(Integer employeeId) {
+
+    //     LocalDate today = calcWorkBaseDate(LocalDateTime.now());
+
+    //     TimeworksEntity opt = timeworksRepository.findToday(employeeId, today);
+
+    //     if (opt.isPresent()) {
+    //         return opt.get();
+    //     }
+
+    //     // ===== 勤怠なし → 従業員情報から空エンティティ作成 =====
+    //     EmployeeEntity emp = employeeRepository.findById(employeeId)
+    //             .orElseThrow(() ->
+    //                     new IllegalArgumentException("従業員が存在しません id=" + employeeId)
+    //             );
+
+    //     TimeworksEntity e = new TimeworksEntity();
+    //     e.setEmployeeId(emp.getEmployeeId());
+    //     e.setFullName(emp.getFullName());
+    //     e.setOfficeName(emp.getOfficeName());
+
+    //     e.setWorkBaseDate(today);
+    //     e.setState(Enums.timeworksState.NOT_STARTED);
+    //     e.setWorkType(Enums.timeworksType.NORMAL);
+
+    //     e.setStartDt(null);
+    //     e.setEndDt(null);
+    //     e.setBreakMinutes(60);
+
+    //     return e;
+    // }
+
+    public TimeworksEntity getTodaysEntity(Integer employeeId) {
 
         LocalDate today = calcWorkBaseDate(LocalDateTime.now());
 
-        Optional<TimeworksEntity> opt =
-            timeworksRepository.findToday(employeeId, today);
-
-        if (opt.isPresent()) {
-            return opt;
+        TimeworksEntity entity = timeworksRepository.findToday(employeeId, today);
+        if (entity != null) {
+            return entity;
         }
+        return createDefaultEntity(employeeId, today);
+    }
 
-        // ===== 勤怠なし → 従業員情報から空エンティティ作成 =====
-        EmployeeEntity emp = employeeRepository.findById(employeeId)
-            .orElseThrow(() ->
-                new IllegalArgumentException("従業員が存在しません id=" + employeeId)
-            );
+    private TimeworksEntity createDefaultEntity(Integer employeeId, LocalDate today) {
+        EmployeeEntity emp = employeeRepository.findById(employeeId);
+        if (emp == null) {
+            throw new IllegalArgumentException("従業員が存在しません id=" + employeeId);
+        }
 
         TimeworksEntity e = new TimeworksEntity();
         e.setEmployeeId(emp.getEmployeeId());
         e.setFullName(emp.getFullName());
         e.setOfficeName(emp.getOfficeName());
-
         e.setWorkBaseDate(today);
         e.setState(Enums.timeworksState.NOT_STARTED);
         e.setWorkType(Enums.timeworksType.NORMAL);
-
         e.setStartDt(null);
         e.setEndDt(null);
         e.setBreakMinutes(60);
 
-        return Optional.of(e);
+        return e;
     }
 
     /**
@@ -78,13 +107,13 @@ public class TimeworksService {
         LocalDateTime now = LocalDateTime.now();
         LocalDate workBaseDate = calcWorkBaseDate(now);
 
-        Optional<TimeworksEntity> opt = timeworksRepository.findToday(
+        TimeworksEntity opt = timeworksRepository.findToday(
             dto.getEmployeeId(),
             workBaseDate
         );
 
         // ===== insert =====
-        if (opt.isEmpty()) {
+        if (opt == null) {
 
             TimeworksEntity e = new TimeworksEntity();
             e.setEmployeeId(dto.getEmployeeId());
@@ -124,7 +153,7 @@ public class TimeworksService {
         }
 
         // ===== update =====
-        TimeworksEntity e = opt.get();
+        TimeworksEntity e = opt;
 
         if (category == Enums.timeworksCategory.START && e.getStartDt() == null) {
             e.setStartDt(now);

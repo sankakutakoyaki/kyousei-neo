@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.kyouseipro.neo.abstracts.controller.BaseController;
 import com.kyouseipro.neo.common.ComboBoxService;
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.common.history.service.HistoryService;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
 import com.kyouseipro.neo.corporation.company.entity.CompanyListEntity;
@@ -35,7 +34,6 @@ public class CorporationPageController extends BaseController {
     private final CompanyListService companyListService;
     private final EmployeeListService employeeListService;
     private final ComboBoxService comboBoxService;
-    private final HistoryService historyService;
     /**
 	 * 取引先
 	 * @param mv
@@ -46,8 +44,6 @@ public class CorporationPageController extends BaseController {
 	public String getClient(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         EmployeeEntity user = getLoginUser(session, response);
 		if (user == null) return null; // リダイレクト
-
-		historyService.save(user.getAccount(), "client", "閲覧", 200, "");
 
         model.addAttribute("title", "取引先");
 		model.addAttribute("activeMenu", "regist");
@@ -84,8 +80,6 @@ public class CorporationPageController extends BaseController {
 	public String getPartner(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         EmployeeEntity user = getLoginUser(session, response);
 		if (user == null) return null; // リダイレクト
-
-		historyService.save(user.getAccount(), "partner", "閲覧", 200, "");
 
         model.addAttribute("title", "パートナー");
 		model.addAttribute("sidebarFragmentName", "~{fragments/common/menu :: registFragment}");

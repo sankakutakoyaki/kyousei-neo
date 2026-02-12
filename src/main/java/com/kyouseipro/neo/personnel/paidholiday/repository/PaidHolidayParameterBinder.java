@@ -36,25 +36,25 @@ public class PaidHolidayParameterBinder {
         return index;
     }
 
-    public static int bindDelete(PreparedStatement pstmt, int id, String editor) throws SQLException {
-        int index = 1;
-        pstmt.setInt(index++, Enums.state.DELETE.getCode());
-        pstmt.setInt(index++, id);
+    // public static int bindDelete(PreparedStatement pstmt, int id, String editor) throws SQLException {
+    //     int index = 1;
+    //     pstmt.setInt(index++, Enums.state.DELETE.getCode());
+    //     pstmt.setInt(index++, id);
 
-        pstmt.setString(index++, editor);
-        return index;
-    }
+    //     pstmt.setString(index++, editor);
+    //     return index;
+    // }
 
-    // 有給休暇取得リスト
-    public static int bindFindByOfficeIdFromYear(PreparedStatement ps, Integer officeId, String year) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setString(index++, year);
-        ps.setString(index++, year);        
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, officeId);
-        return index;
-    }
+    // // 有給休暇取得リスト
+    // public static int bindFindByOfficeIdFromYear(PreparedStatement ps, Integer officeId, String year) throws SQLException {
+    //     int index = 1;
+    //     ps.setInt(index++, Enums.state.DELETE.getCode());
+    //     ps.setString(index++, year);
+    //     ps.setString(index++, year);        
+    //     ps.setInt(index++, Enums.state.DELETE.getCode());
+    //     ps.setInt(index++, officeId);
+    //     return index;
+    // }
 
     public static int bindFindByEmployeeIdFromYear(PreparedStatement ps, Integer employeeId, String year) throws SQLException {
         int index = 1;
