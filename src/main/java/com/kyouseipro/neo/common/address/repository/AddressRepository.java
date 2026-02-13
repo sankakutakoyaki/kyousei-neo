@@ -19,13 +19,12 @@ public class AddressRepository {
         String sql = "SELECT * FROM address WHERE NOT (state = ?) AND postal_code = ?";
         return sqlRepository.queryOne(
             sql,
-            (ps, e) -> {
+            (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setString(index++, code);
             },
-            AddressEntityMapper::map,
-            null
+            AddressEntityMapper::map
         );
     }
 }

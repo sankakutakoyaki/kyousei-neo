@@ -2,6 +2,7 @@ package com.kyouseipro.neo.ks.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +30,7 @@ public class KsSalesApiController {
      */
     @PostMapping("/sales/get/between/{type}")
 	@ResponseBody
-    public SimpleResponse<List<KsSalesEntity>> getAllFromBetween(@RequestBody BetweenRequest req) {
-        return new SimpleResponse<>(null, ksSalesService.getAllFromBetween(req.getStart(), req.getEnd(), req.getType()));
+    public ResponseEntity<SimpleResponse<List<KsSalesEntity>>> getAllFromBetween(@RequestBody BetweenRequest req) {
+        return ResponseEntity.ok(SimpleResponse.ok(ksSalesService.getAllFromBetween(req.getStart(), req.getEnd(), req.getType())));
     }
 }

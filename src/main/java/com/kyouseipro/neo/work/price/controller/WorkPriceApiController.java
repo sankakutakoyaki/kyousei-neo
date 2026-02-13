@@ -37,7 +37,7 @@ public class WorkPriceApiController {
     @PostMapping("/get/id")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<WorkPriceEntity>> getById(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(new SimpleResponse<>(null, workPriceService.getById(req.getId())));
+        return ResponseEntity.ok(SimpleResponse.ok(workPriceService.getById(req.getId())));
     }
 
     /**
@@ -47,8 +47,8 @@ public class WorkPriceApiController {
      */
     @PostMapping("/get/list/companyid")
 	@ResponseBody
-    public SimpleResponse<List<WorkPriceEntity>> getEntityByCompanyId(@RequestBody IdRequest req) {
-        return new SimpleResponse<>(null,  workPriceService.getListByCompanyId(req.getId()));
+    public ResponseEntity<SimpleResponse<List<WorkPriceEntity>>> getEntityByCompanyId(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(SimpleResponse.ok(workPriceService.getListByCompanyId(req.getId())));
     }
 
     /**
@@ -61,7 +61,7 @@ public class WorkPriceApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> saveWorkPrice(@RequestBody WorkPriceEntity entity, @AuthenticationPrincipal OidcUser principal) {
         Integer id = workPriceService.save(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
 
     /**

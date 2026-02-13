@@ -32,8 +32,8 @@ public class PaidHolidayApiController {
      */
     @PostMapping("/paidholiday/get/year")
 	@ResponseBody
-    public SimpleResponse<List<PaidHolidayListEntity>> getByOfficeIdFromYear (@RequestBody SimpleData data) {
-        return new SimpleResponse<>(null, paidHolidayService.getByOfficeIdFromYear(data.getNumber(), data.getText()));
+    public ResponseEntity<SimpleResponse<List<PaidHolidayListEntity>>> getByOfficeIdFromYear (@RequestBody SimpleData data) {
+        return ResponseEntity.ok(SimpleResponse.ok(paidHolidayService.getByOfficeIdFromYear(data.getNumber(), data.getText())));
     }
 
     /**
@@ -42,8 +42,8 @@ public class PaidHolidayApiController {
      */
     @PostMapping("/paidholiday/get/employeeid")
 	@ResponseBody
-    public SimpleResponse<List<PaidHolidayEntity>> getByEmployeeIdFromYear (@RequestBody SimpleData data) {
-        return new SimpleResponse<>(null, paidHolidayService.getByEmployeeIdFromYear(data.getNumber(), data.getText()));
+    public ResponseEntity<SimpleResponse<List<PaidHolidayEntity>>> getByEmployeeIdFromYear (@RequestBody SimpleData data) {
+        return ResponseEntity.ok(SimpleResponse.ok(paidHolidayService.getByEmployeeIdFromYear(data.getNumber(), data.getText())));
     }
 
     /**
@@ -54,7 +54,7 @@ public class PaidHolidayApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> save (@RequestBody PaidHolidayEntity entity, @AuthenticationPrincipal OidcUser principal) {
         int id = paidHolidayService.insert(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));              
+        return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));              
     }
 
     /**
@@ -65,6 +65,6 @@ public class PaidHolidayApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> deleteById (@RequestBody IdRequest req, @AuthenticationPrincipal OidcUser principal) {
         int result = paidHolidayService.deleteById(req.getId(), principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>("削除しました。", result));
+        return ResponseEntity.ok(SimpleResponse.ok("削除しました。", result));
     }
 }

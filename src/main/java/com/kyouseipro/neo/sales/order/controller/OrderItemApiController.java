@@ -41,7 +41,7 @@ public class OrderItemApiController {
     @PostMapping("/get/id")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<OrderItemEntity>> getById(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(new SimpleResponse<>(null, orderItemService.getById(req.getId())));
+        return ResponseEntity.ok(SimpleResponse.ok(orderItemService.getById(req.getId())));
     }
 
     /**
@@ -52,8 +52,8 @@ public class OrderItemApiController {
      */
     @PostMapping("/get/between")
 	@ResponseBody
-    public SimpleResponse<List<OrderItemEntity>> getBetween(@RequestBody BetweenRequest req) {
-        return new SimpleResponse<>(null, orderItemService.getBetween(req.getStart(), req.getEnd()));
+    public ResponseEntity<SimpleResponse<List<OrderItemEntity>>> getBetween(@RequestBody BetweenRequest req) {
+        return ResponseEntity.ok(SimpleResponse.ok(orderItemService.getBetween(req.getStart(), req.getEnd())));
     }
 
     /**
@@ -66,7 +66,7 @@ public class OrderItemApiController {
     public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal) {
         List<OrderItemEntity> itemList = objectMapper.convertValue(body.get("list"), new TypeReference<List<OrderItemEntity>>() {});
         int id = orderItemService.save(itemList, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
 
     /**
@@ -78,7 +78,7 @@ public class OrderItemApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest list, @AuthenticationPrincipal OidcUser principal) {
         Integer id = orderItemService.deleteByIds(list, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>(id + "件削除しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok(id + "件削除しました。", id));
     }
 
     /**

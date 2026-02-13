@@ -37,7 +37,7 @@ public class CompanyApiController {
     @PostMapping("/get/id")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<CompanyEntity>> getById(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(new SimpleResponse<>(null, companyService.getById(req.getId())));
+        return ResponseEntity.ok(SimpleResponse.ok(companyService.getById(req.getId())));
     }
 
     /**
@@ -49,7 +49,7 @@ public class CompanyApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody CompanyEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
         Integer id = companyService.save(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
 
     /**
@@ -61,7 +61,7 @@ public class CompanyApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         int id = companyService.deleteByIds(ids, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>(id + "件削除しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok(id + "件削除しました。", id));
     }
 
     /**

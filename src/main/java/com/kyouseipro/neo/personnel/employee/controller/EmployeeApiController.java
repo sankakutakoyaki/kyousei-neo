@@ -39,7 +39,7 @@ public class EmployeeApiController {
     @PostMapping("/get/id")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<EmployeeEntity>> getById(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(new SimpleResponse<>(null, employeeService.getById(req.getId())));
+        return ResponseEntity.ok(SimpleResponse.ok(employeeService.getById(req.getId())));
     }
 
     /**
@@ -51,7 +51,7 @@ public class EmployeeApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody EmployeeEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
         int id = employeeService.save(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
 
     /**
@@ -76,7 +76,7 @@ public class EmployeeApiController {
                 break;
         }
 
-        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", resultId));
+        return ResponseEntity.ok(SimpleResponse.ok("保存しました。", resultId));
     }
 
     /**
@@ -88,7 +88,7 @@ public class EmployeeApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         Integer id = employeeService.deleteByIds(ids, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>(id + "件削除しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok(id + "件削除しました。", id));
     }
 
     /**

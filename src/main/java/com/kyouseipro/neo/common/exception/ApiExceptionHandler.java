@@ -15,21 +15,21 @@ public class ApiExceptionHandler {
     public ResponseEntity<SimpleResponse<Void>> handleBusiness(BusinessException e) {
         return ResponseEntity
                 .badRequest()
-                .body(new SimpleResponse(e.getMessage(), null));
+                .body(SimpleResponse.error(e.getMessage()));
     }
 
     @ExceptionHandler(SystemException.class)
     public ResponseEntity<SimpleResponse<Void>> handleSystem(SystemException e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new SimpleResponse("システムエラーが発生しました。", null));
+                .body(SimpleResponse.error("システムエラーが発生しました。"));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<SimpleResponse<Void>> handleOther(Exception e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new SimpleResponse("予期しないエラーが発生しました。", null));
+                .body(SimpleResponse.error("予期しないエラーが発生しました。"));
     }
 }
 

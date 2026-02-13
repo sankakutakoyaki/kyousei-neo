@@ -31,12 +31,12 @@ public class QualificationsApiController {
      */
     @PostMapping("/api/qualifications/get/id")
 	@ResponseBody
-    public SimpleResponse<List<QualificationsEntity>> getById(@RequestBody IdPairRequest req) {
+    public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getById(@RequestBody IdPairRequest req) {
         switch (req.getSecondaryId()) {
             case 0:
-                return new SimpleResponse<>(null, qualificationsService.getByEmployeeId(req.getPrimaryId()));
+                return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getByEmployeeId(req.getPrimaryId())));
             default:
-                return new SimpleResponse<>(null, qualificationsService.getByCompanyId(req.getPrimaryId()));
+                return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getByCompanyId(req.getPrimaryId())));
         }
     }
 
@@ -49,7 +49,7 @@ public class QualificationsApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody QualificationsEntity entity, @AuthenticationPrincipal OidcUser principal) {
         Integer id = qualificationsService.save(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
 
     /**
@@ -61,7 +61,7 @@ public class QualificationsApiController {
     @ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> deleteById(@RequestBody IdRequest req, @AuthenticationPrincipal OidcUser principal) {
         Integer result = qualificationsService.deleteById(req.getId(), principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>("削除しました。", result));
+        return ResponseEntity.ok(SimpleResponse.ok("削除しました。", result));
     }
 
     /**
@@ -70,8 +70,8 @@ public class QualificationsApiController {
      */
     @GetMapping("/api/qualifications/get")
 	@ResponseBody
-    public SimpleResponse<List<QualificationsEntity>> getListForEmployee() {
-        return new SimpleResponse<>(null, qualificationsService.getListForEmployee());
+    public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getListForEmployee() {
+        return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getListForEmployee()));
     }
 
     /**
@@ -80,7 +80,7 @@ public class QualificationsApiController {
      */
     @GetMapping("/api/license/get")
 	@ResponseBody
-    public SimpleResponse<List<QualificationsEntity>> getListForCompany() {
-        return new SimpleResponse<>(null, qualificationsService.getListFroCompany());
+    public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getListForCompany() {
+        return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getListFroCompany()));
     }
 }

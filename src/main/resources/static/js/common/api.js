@@ -130,7 +130,7 @@ async function apiFetch(url, {
         return {
             ok: response.ok,
             status: response.status,
-            data: json ?? null,
+            data: json.data ?? null,
             message: json?.message ?? ""
         };
 

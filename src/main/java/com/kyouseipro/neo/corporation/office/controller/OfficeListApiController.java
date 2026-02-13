@@ -2,6 +2,7 @@ package com.kyouseipro.neo.corporation.office.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,8 +31,8 @@ public class OfficeListApiController {
      */
     @GetMapping("/get/list")
 	@ResponseBody
-    public SimpleResponse<List<OfficeListEntity>> getList() {
-        return new SimpleResponse<>(null, officeListService.getList());
+    public ResponseEntity<SimpleResponse<List<OfficeListEntity>>> getList() {
+        return ResponseEntity.ok(SimpleResponse.ok(officeListService.getList()));
     }
 
     /**
@@ -40,8 +41,8 @@ public class OfficeListApiController {
      */
     @GetMapping("/get/client/list")
 	@ResponseBody
-    public SimpleResponse<List<OfficeListEntity>> getClientList() {
-        return new SimpleResponse<>(null, officeListService.getClientList());
+    public ResponseEntity<SimpleResponse<List<OfficeListEntity>>> getClientList() {
+        return ResponseEntity.ok(SimpleResponse.ok(officeListService.getClientList()));
     }
 
     /**
@@ -50,8 +51,8 @@ public class OfficeListApiController {
      */
     @PostMapping("/get/list/category")
 	@ResponseBody
-    public SimpleResponse<List<OfficeListEntity>> getListByCategoryId(@RequestBody IdRequest req) {
-        return new SimpleResponse<>(null, officeListService.getListByCategoryId(req.getId()));
+    public ResponseEntity<SimpleResponse<List<OfficeListEntity>>> getListByCategoryId(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(SimpleResponse.ok(officeListService.getListByCategoryId(req.getId())));
     }
 
     /**
@@ -60,7 +61,7 @@ public class OfficeListApiController {
      */
     @GetMapping("/get/combo")
 	@ResponseBody
-    public SimpleResponse<List<OfficeListEntity>> getCombo() {
-        return new SimpleResponse<>(null, comboBoxService.getOfficeList());
+    public ResponseEntity<SimpleResponse<List<OfficeListEntity>>> getCombo() {
+        return ResponseEntity.ok(SimpleResponse.ok(comboBoxService.getOfficeList()));
     }
 }

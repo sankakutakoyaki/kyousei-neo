@@ -69,7 +69,7 @@ public class PushApiController {
         boolean exists =
                 pushRepository.findByEndpoint(request.getEndpoint()) != null;
         return ResponseEntity.ok(
-                new SimpleResponse<>("保存しました", exists)
+                SimpleResponse.ok("保存しました", exists)
         );
     }
 

@@ -36,7 +36,7 @@ public class WorkingConditionsApiController {
     @PostMapping("/get/id")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<WorkingConditionsEntity>> getById(@RequestBody IdRequest req) {
-            return ResponseEntity.ok(new SimpleResponse<>(null, workingConditionsService.getById(req.getId())));
+            return ResponseEntity.ok(SimpleResponse.ok(workingConditionsService.getById(req.getId())));
     }
 
     /**
@@ -47,7 +47,7 @@ public class WorkingConditionsApiController {
     @PostMapping("/get/employeeid")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<WorkingConditionsEntity>> getByEmployeeId(@RequestBody IdRequest req) {
-            return ResponseEntity.ok(new SimpleResponse<>(null, workingConditionsService.getByEmployeeId(req.getId())));
+            return ResponseEntity.ok(SimpleResponse.ok(workingConditionsService.getByEmployeeId(req.getId())));
     }
 
     /**
@@ -59,7 +59,7 @@ public class WorkingConditionsApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody WorkingConditionsEntity entity, @AuthenticationPrincipal OidcUser principal) {
         Integer id = workingConditionsService.save(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
 
     /**
@@ -71,7 +71,7 @@ public class WorkingConditionsApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         int id = workingConditionsService.deleteByIds(ids, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>(id + "件削除しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok(id + "件削除しました。", id));
     }
 
     /**

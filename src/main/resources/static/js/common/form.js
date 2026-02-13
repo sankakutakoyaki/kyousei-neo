@@ -350,11 +350,6 @@ function validateByConfig(area, config) {
 
     const rules = [...commonRules, ...modeRules];
 
-    // const rules = [
-    //     ...(config.common || []),
-    //     ...(config.mode ? (config[config.mode] || []) : [])
-    // ];
-
     for (const rule of rules) {
         const el = area.querySelector(rule.selector);
         if (!el) continue;
@@ -466,29 +461,6 @@ function applySaveConfig(form, baseEntity) {
   return entity;
 }
 
-// // フォームからentityへ変換する
-// function buildEntityFromForm(form, baseEntity, config) {
-//     const fd = new FormData(form);
-//     const entity = structuredClone(baseEntity);
-
-//     config.forEach(c => {
-//         let v = fd.get(c.name);
-
-//         if (c.trim && typeof v === 'string') {
-//         v = v.trim();
-//         }
-//         if ((v === '' || v == null) && c.emptyTo !== undefined) {
-//         v = c.emptyTo;
-//         }
-//         if (c.number && v !== '' && v != null) {
-//         v = Number(v);
-//         }
-//         entity[c.key] = v;
-//     });
-
-//     return entity;
-// }
-
 function normalizeValue(v, c) {
     if (c.trim && typeof v === 'string') {
         v = v.trim();
@@ -546,10 +518,6 @@ function buildEntityFromForm(form, baseEntity, config) {
         if ((v === '' || v == null) && c.emptyToNull) {
             v = null;
         }
-
-        // if ((v === '' || v == null) && c.emptyTo !== undefined) {
-        //     v = c.emptyTo;
-        // }
 
         // number
         if (c.number && v !== null && v !== '') {

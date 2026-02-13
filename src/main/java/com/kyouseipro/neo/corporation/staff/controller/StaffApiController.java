@@ -37,7 +37,7 @@ public class StaffApiController {
     @PostMapping("/get/id")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<StaffEntity>> getById(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(new SimpleResponse<>(null, staffService.getById(req.getId())));
+        return ResponseEntity.ok(SimpleResponse.ok(staffService.getById(req.getId())));
     }
    
     /**
@@ -49,7 +49,7 @@ public class StaffApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody StaffEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
         Integer id = staffService.save(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
 
     /**
@@ -61,7 +61,7 @@ public class StaffApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         Integer id = staffService.deleteByIds(ids, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>(id + "件削除しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok(id + "件削除しました。", id));
     }
 
     /**

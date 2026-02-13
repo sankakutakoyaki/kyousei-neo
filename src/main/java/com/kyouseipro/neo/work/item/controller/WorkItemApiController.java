@@ -38,7 +38,7 @@ public class WorkItemApiController {
     @PostMapping("/get/id")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<WorkItemEntity>> getById(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(new SimpleResponse<>(null, workItemService.getById(req.getId())));
+        return ResponseEntity.ok(SimpleResponse.ok(workItemService.getById(req.getId())));
     }
 
     /**
@@ -48,8 +48,8 @@ public class WorkItemApiController {
      */
     @PostMapping("/get/category")
 	@ResponseBody
-    public SimpleResponse<List<WorkItemEntity>> getByCategoryId(@RequestBody IdRequest req) {
-        return new SimpleResponse<>(null, workItemService.getByCategoryId(req.getId()));
+    public ResponseEntity<SimpleResponse<List<WorkItemEntity>>> getByCategoryId(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(SimpleResponse.ok(workItemService.getByCategoryId(req.getId())));
     }
 
     /**
@@ -58,8 +58,8 @@ public class WorkItemApiController {
      */
     @GetMapping("/get/list")
 	@ResponseBody
-    public SimpleResponse<List<WorkItemEntity>> getList() {
-        return new SimpleResponse<>(null, workItemService.getList());
+    public ResponseEntity<SimpleResponse<List<WorkItemEntity>>> getList() {
+        return ResponseEntity.ok(SimpleResponse.ok(workItemService.getList()));
     }
 
     /**
@@ -71,7 +71,7 @@ public class WorkItemApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody WorkItemEntity entity, @AuthenticationPrincipal OidcUser principal) {
         Integer id = workItemService.save(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
 
     /**
@@ -83,7 +83,7 @@ public class WorkItemApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         Integer id = workItemService.deleteByIds(ids, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>(id + "件削除しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok(id + "件削除しました。", id));
     }
 
     /**

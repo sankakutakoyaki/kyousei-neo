@@ -2,6 +2,7 @@ package com.kyouseipro.neo.sales.order.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,8 +29,8 @@ public class OrderListApiController {
      */
     @GetMapping("/get/list")
 	@ResponseBody
-    public SimpleResponse<List<OrderListEntity>> getList() {
-        return new SimpleResponse<>(null, orderListService.getList());
+    public ResponseEntity<SimpleResponse<List<OrderListEntity>>> getList() {
+        return ResponseEntity.ok(SimpleResponse.ok(orderListService.getList()));
     }
 
 
@@ -41,7 +42,7 @@ public class OrderListApiController {
      */
     @PostMapping("/get/between")
 	@ResponseBody
-    public SimpleResponse<List<OrderListEntity>> getBetween(@RequestBody BetweenRequest req) {
-        return new SimpleResponse<>(null, orderListService.getBetween(req.getStart(), req.getEnd()));
+    public ResponseEntity<SimpleResponse<List<OrderListEntity>>> getBetween(@RequestBody BetweenRequest req) {
+        return ResponseEntity.ok(SimpleResponse.ok(orderListService.getBetween(req.getStart(), req.getEnd())));
     }
 }

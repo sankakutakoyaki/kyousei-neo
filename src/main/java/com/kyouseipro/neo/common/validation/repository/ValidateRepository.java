@@ -1,7 +1,5 @@
 package com.kyouseipro.neo.common.validation.repository;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
@@ -13,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 public class ValidateRepository {
     private final SqlRepository sqlRepository;
 
-    public Optional<String> findAbbrNameByCode(int code) {
+    public String findAbbrNameByCode(int code) {
         String sql =
             "SELECT DISTINCT abbr_name " +
             "FROM recycle_makers " +
@@ -23,7 +21,7 @@ public class ValidateRepository {
         return sqlRepository.queryOne(
             sql,
             (pstmt, c) -> pstmt.setInt(1, c),
-            rs -> rs.next() ? Optional.ofNullable(rs.getString(1)) : Optional.empty(),
+            rs -> rs.getString(1),
             code
         );
     }

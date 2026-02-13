@@ -2,6 +2,7 @@ package com.kyouseipro.neo.personnel.employee.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,8 +31,8 @@ public class EmployeeListApiController {
      */
     @GetMapping("/get/list")
 	@ResponseBody
-    public SimpleResponse<List<EmployeeListEntity>> getList() {
-        return new SimpleResponse<>(null, employeeListService.getList());
+    public ResponseEntity<SimpleResponse<List<EmployeeListEntity>>> getList() {
+        return ResponseEntity.ok(SimpleResponse.ok(employeeListService.getList()));
     }
 
     /**
@@ -40,8 +41,8 @@ public class EmployeeListApiController {
      */
     @PostMapping("/get/list/category")
 	@ResponseBody
-    public SimpleResponse<List<EmployeeListEntity>> getListByCategoryId(@RequestBody IdRequest req) {
-        return new SimpleResponse<>(null, employeeListService.getListByCategoryId(req.getId()));
+    public ResponseEntity<SimpleResponse<List<EmployeeListEntity>>> getListByCategoryId(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(SimpleResponse.ok(employeeListService.getListByCategoryId(req.getId())));
     }
 
     /**
@@ -50,7 +51,7 @@ public class EmployeeListApiController {
      */
     @GetMapping("/get/list/{type}")
 	@ResponseBody
-    public SimpleResponse<List<EmployeeListEntity>> getListByCategoryId(@PathVariable String type) {
+    public ResponseEntity<SimpleResponse<List<EmployeeListEntity>>> getListByCategoryId(@PathVariable String type) {
         int category = 0;
 
         switch (type) {
@@ -61,6 +62,6 @@ public class EmployeeListApiController {
             default:
                 break;
         }
-        return new SimpleResponse<>(null, employeeListService.getListByCategoryId(category));
+        return ResponseEntity.ok(SimpleResponse.ok(employeeListService.getListByCategoryId(category)));
     }
 }

@@ -258,9 +258,8 @@ async function execUpdate() {
 async function execUpdateCompanyDisplay(tab) {
     const config = MODE_CONFIG[tab];
     const resultResponse = await fetch('/api/client/get/list');
-    companyOrigin = await resultResponse.json();
-
-    const list = companyOrigin.filter(v => v.category === config.category);
+    const result = await resultResponse.json();
+    companyOrigin = result.data;
 
     await execFilterDisplay(tab);
 }
@@ -290,9 +289,9 @@ async function updateTableByCompany({apiUrl, extraFilter, requireCompany = false
 
     const res = await fetch(apiUrl);
     const result = await res.json();
-    if (!result) return;
+    if (!result.ok) return;
 
-    let list = result.filter(v => v.companyId === codeValue);
+    let list = result.data.filter(v => v.companyId === codeValue);
 
     if (extraFilter) {
         list = extraFilter(list, panel);
@@ -304,7 +303,8 @@ async function updateTableByCompany({apiUrl, extraFilter, requireCompany = false
 // tab5画面更新
 async function execUpdateOfficeDisplay() {
     const resultResponse = await fetch('/api/office/get/list');
-    officeOrigin = await resultResponse.json();
+    const result = await resultResponse.json();
+    officeOrigin = result.data;
     await updateTableByCompany({apiUrl: 'api/office/get/client/list'});
 }
 
@@ -346,20 +346,14 @@ async function createOfficeComboBoxFromClient() {
     // 初期 office 作成
     await updateOfficeCombo(companySelect, officeSelect);
 
-    // // 初期 staff 表示
-    // // updateStaffTableDisplay();
-    // execUpdate();
-
     // company 変更
     companySelect.onchange = () => {
         createOfficeComboBoxFromClient();
-        // updateStaffTableDisplay();
         execUpdate();
     };
 
     // office 変更
     officeSelect.onchange = () => {
-        // updateStaffTableDisplay();
         execUpdate();
     };
 }

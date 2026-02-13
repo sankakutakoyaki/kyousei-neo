@@ -92,34 +92,7 @@ const COMBO_CONFIG = [
     }
 ];
 
-// const COMMON_COMPANY_FIELDS = [
-//     { name: 'name', key: 'name' },
-//     { name: 'name-kana', key: 'nameKana' },
-//     { name: 'tel-number', key: 'telNumber' },
-//     { name: 'postal-code', key: 'postalCode' },
-//     { name: 'full-address', key: 'fullAddress' },
-//     { name: 'email', key: 'email' },
-//     { name: 'web-address', key: 'webAddress' },
-//     { name: 'is-original-price', key: 'isOriginalPrice' },
-// ];
-
-// const FORM_CONFIG = {
-//     "01": COMMON_COMPANY_FIELDS,
-//     "02": COMMON_COMPANY_FIELDS,
-//     "03": COMMON_COMPANY_FIELDS,
-//     "04": COMMON_COMPANY_FIELDS,
-//     "05": COMMON_COMPANY_FIELDS,
-//     "06": [
-//         { name: 'office', key: 'officeId' },
-//         { name: 'name', key: 'name' },
-//         { name: 'name-kana', key: 'nameKana' },
-//         { name: 'phone-number', key: 'phoneNumber' },
-//         { name: 'email', key: 'email' }
-//     ]
-// };
-
 const COMMON_COMPANY_FIELDS = [
-    // { name: 'company-name', key: 'companyName', trim: true, emptyToNull: true },
     { name: 'name', key: 'name', trim: true, emptyToNull: true, skipIfNull: true },
     { name: 'name-kana', key: 'nameKana', trim: true, emptyToNull: true, skipIfNull: true },
     { name: 'tel-number', key: 'telNumber', trim: true, emptyToNull: true, skipIfNull: true },
@@ -135,7 +108,6 @@ const FORM_CONFIG = {
     "02": COMMON_COMPANY_FIELDS,
     "03": COMMON_COMPANY_FIELDS,
     "04": COMMON_COMPANY_FIELDS,
-    // "05": COMMON_COMPANY_FIELDS,
     "05": [
         ...COMMON_COMPANY_FIELDS,
         { name: 'company-name', key: 'companyName', trim: true, emptyToNull: true }
@@ -153,177 +125,35 @@ const FORM_CONFIG = {
 const SAVE_FORM_CONFIG = {
     "01": FORM_CONFIG["01"].map(c => ({
         ...c,
-        skipIfNull: false   // ← ここが重要
+        skipIfNull: false
     })),
     "02": FORM_CONFIG["02"].map(c => ({
         ...c,
-        skipIfNull: false   // ← ここが重要
+        skipIfNull: false
     })),
     "03": FORM_CONFIG["03"].map(c => ({
         ...c,
-        skipIfNull: false   // ← ここが重要
+        skipIfNull: false
     })),
     "04": FORM_CONFIG["04"].map(c => ({
         ...c,
-        skipIfNull: false   // ← ここが重要
+        skipIfNull: false
     })),
     "05": FORM_CONFIG["05"].map(c => ({
         ...c,
-        skipIfNull: false   // ← ここが重要
+        skipIfNull: false
     })),
     "06": FORM_CONFIG["06"].map(c => ({
         ...c,
-        skipIfNull: false   // ← ここが重要
+        skipIfNull: false 
     }))
 }
-
-// const ID_CONFIG = {
-//     "01": {
-//         common: true,
-//         fields: [
-//             "tel-number",
-//             "fax-number",
-//             "postal-code",
-//             "full-address",
-//             "web-address",
-//             "category",
-//             "price"
-//         ],
-//         show: ["priceArea"]
-//     },
-//     "02": {
-//         common: true,
-//         fields: [
-//             "tel-number",
-//             "fax-number",
-//             "postal-code",
-//             "full-address",
-//             "web-address",
-//             "category"
-//         ],
-//     },
-//     "03": {
-//         common: true,
-//         fields: [
-//             "tel-number",
-//             "fax-number",
-//             "postal-code",
-//             "full-address",
-//             "web-address",
-//             "category"
-//         ]
-//     },
-//     "04": {
-//         common: false,
-//         fields: [
-//             "category",
-//             "staff-id",
-//             "office-id",
-//             "phone-number"
-//         ]
-//     },
-//     "05": {
-//         common: true,
-//         fields: [
-//             "tel-number",
-//             "fax-number",
-//             "postal-code",
-//             "full-address",
-//             "web-address"
-//         ]
-//     },
-//     "06": {
-//         common: true,
-//         fields: [
-//             "tel-number",
-//             "fax-number",
-//             "postal-code",
-//             "full-address",
-//             "web-address",
-//             "staff-id",
-//             "office-id",
-//             "company-name"
-//         ],
-//         init: (config, entity) => {
-//             createFormOfficeComboBox(config.formId, entity.officeId);
-//         }
-//     }
-// };
-
-// const SAVE_CONFIG = {
-//     "05": {
-//         formId: "form-01",
-//         dialogId: "form-dialog-01",
-//         url: "/api/office/save",
-//         baseEntity: () => structuredClone(officeEntity),
-//         fields: {
-//             officeId: v => Number(v)
-//         }
-//     },
-//     "06": {
-//         formId: "form-02",
-//         dialogId: "form-dialog-02",
-//         url: "/api/staff/save",
-//         baseEntity: () => structuredClone(staffEntity),
-//         fields: {
-//             staffId:    { convert: Number },           // name = staff-id
-//             officeId:   { name: 'office', convert: Number },
-//             phoneNumber:{ convert: v => v.trim() }    // name = phone-number
-//         }
-//     },
-//     "default": {
-//         formId: "form-01",
-//         dialogId: "form-dialog-01",
-//         url: "/api/company/save",
-//         baseEntity: () => structuredClone(companyEntity),
-//         // fields: {
-//         //     category: v => Number(v)
-//         // }
-//         fields: {
-//             category: {
-//                 convert: v => Number(v)
-//             }
-//         }
-//     }
-// };
-
-// const COMMON_FIELDS = {
-//     companyId: v => Number(v),
-//     name: v => v.trim(),
-//     nameKana: v => v.trim(),
-//     email: v => v.trim(),
-//     telNumber: v => v.trim(),
-//     faxNumber: v => v.trim(),
-//     postalCode: v => v.trim(),
-//     fullAddress: v => v.trim(),
-//     webAddress: v => v.trim(),
-//     version: v => Number(v),
-//     isOriginalPrice: v => v != null ? Number(v) : 0
-// };
-
-// const ORIGIN_CONFIG = {
-//     company: {
-//         listUrl: "/api/client/get/list",
-//         comboUrl: "/api/client/get/combo",
-//         originKey: "companyOrigin",
-//         comboKey: "companyComboList",
-//         comboTargetIds: ["name-box-51", "name-box-61"]
-//     },
-//     office: {
-//         listUrl: "/api/office/get/list",
-//         comboUrl: "/api/office/get/combo",
-//         originKey: "officeOrigin",
-//         comboKey: "officeComboList",
-//         comboTargetIds: ["name-box-62"]
-//     }
-// };
 
 const COMPANY_UI_CONFIG = [
     {
         codeId: "code-box-51",
         nameId: "name-box-51",
         onChange: async () => {
-            // updateOfficeTableDisplay();
             execUpdate();
         }
     },
@@ -331,7 +161,6 @@ const COMPANY_UI_CONFIG = [
         codeId: "code-box-61",
         nameId: "name-box-61",
         onChange: async () => {
-            // updateStaffTableDisplay();
             execUpdate();
             createOfficeComboBoxFromClient();
         }

@@ -37,7 +37,7 @@ public class RecycleItemApiController {
     @PostMapping("/get/id")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<RecycleItemEntity>> getById(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(new SimpleResponse<>(null, recycleItemService.getById(req.getId())));
+        return ResponseEntity.ok(SimpleResponse.ok(recycleItemService.getById(req.getId())));
     }
 
     /**
@@ -48,7 +48,7 @@ public class RecycleItemApiController {
     @PostMapping("/get/code")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<RecycleItemEntity>> getByCode(@RequestBody NumberRequest req) {
-        return ResponseEntity.ok(new SimpleResponse<>(null, recycleItemService.getByCode(req.getNumber())));
+        return ResponseEntity.ok(SimpleResponse.ok(recycleItemService.getByCode(req.getNumber())));
     }
 
     /**
@@ -60,7 +60,7 @@ public class RecycleItemApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody RecycleItemEntity entity, @AuthenticationPrincipal OidcUser principal) {
         int id = recycleItemService.save(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
 
     /**
@@ -72,7 +72,7 @@ public class RecycleItemApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         int id = recycleItemService.deleteByIds(ids, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>(id + "件削除しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok(id + "件削除しました。", id));
     }
 
     /**

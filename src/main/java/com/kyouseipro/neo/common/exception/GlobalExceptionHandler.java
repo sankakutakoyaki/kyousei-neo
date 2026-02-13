@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.badRequest()
-                .body(new SimpleResponse(e.getMessage(), null));
+                .body(SimpleResponse.error(e.getMessage()));
     }
 
     private String getUserName(HttpServletRequest request) {

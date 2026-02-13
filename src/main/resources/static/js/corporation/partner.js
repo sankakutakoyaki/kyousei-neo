@@ -61,8 +61,6 @@ function createTableRow(newRow, item, tab) {
 
 // 登録画面を開く
 async function execEdit(id, self) {
-    // const panel = self.closest('.tab-panel');
-    // const tab = panel.dataset.panel;
     const panel = document.querySelector(".tab-panel.is-show");
     const tab = panel.dataset.panel;
     const config = MODE_CONFIG[tab];
@@ -115,48 +113,7 @@ function setFormContent(form, entity, tab) {
         applyComboConfig(form, entity, COMBO_CONFIG);
     }
     applyFormConfig(form, entity, FORM_CONFIG[tab]);
-
-
-    // const config = ID_CONFIG[tab];
-    // if (!config) return;
-
-    // const mode = MODE_CONFIG[tab];
-    // if (!mode) return;
-
-    // // 初期化処理（コンボ生成など）
-    // if (typeof config.init === "function") {
-    //     config.init(mode, entity);
-    // }
-
-    // // 共通項目
-    // const commonFields = {
-    //     "company-id": entity.companyId,
-    //     "name": entity.name,
-    //     "name-kana": entity.nameKana,
-    //     "email": entity.email,
-    //     "version": entity.version
-    // };
-
-    // Object.entries(commonFields).forEach(([k, v]) =>
-    //     setFormContentValue(form, k, v)
-    // );
-
-    // // フィールド反映
-    // config.fields.forEach(name => {
-    //     const key = name.replace(/-/g, "_"); // JS ↔ Entity 対応
-    //     setFormContentValue(form, name, entity[key]);
-    // });
-
-    // // 表示制御
-    // document.querySelectorAll('[name="priceArea"]').forEach(el => {
-    //     el.style.display = config.show?.includes("priceArea") ? "" : "none";
-    // });
 }
-
-// function setValue(form, name, value) {
-//     const el = form.querySelector(`[name="${name}"]`);
-//     if (el) el.value = value ?? "";
-// }
 
 /******************************************************************************************************* 保存 */
 
@@ -165,29 +122,11 @@ async function execSave() {
     const panel = document.querySelector(".tab-panel.is-show");
     const tab = panel.dataset.panel;
 
-    // const cfg = SAVE_CONFIG[tab] ?? SAVE_CONFIG["default"];
     const cfg = MODE_CONFIG[tab];
     const form = document.getElementById(cfg.formId);
 
     // 入力チェック
     if (!formDataCheck(form)) return;
-
-    // const formData = new FormData(form);
-    // const entity = config.baseEntity();
-
-    // // tab 固有項目
-    // Object.entries(config.fields).forEach(([key, converter]) => {
-    //     const formName = camelToKebab(key);
-    //     entity[key] = converter(formData.get(formName));
-    // });
-
-    // // 共通項目
-    // Object.entries(COMMON_FIELDS).forEach(([key, converter]) => {
-    //     const name = camelToKebab(key);
-    //     if (formData.has(name)) {
-    //         entity[key] = converter(formData.get(name));
-    //     }
-    // });
 
     let tempEntity = {};
 
@@ -278,12 +217,6 @@ async function handleTdChange(editor) {
                 return;
             }
             break;
-        // case "phone":
-        //     if (!checkPhoneNumber(editor)) {
-        //         editor.value = ent.phone_number;
-        //         return;
-        //     }
-        //     break;
         default:
             return;
     }
@@ -310,7 +243,7 @@ async function execDelete(self) {
 
     if (result.ok) {                
         await execUpdate();
-        openMsgDialog("msg-dialog", result.data.message, "blue");
+        openMsgDialog("msg-dialog", result.message, "blue");
     }
 }
 
@@ -356,17 +289,16 @@ async function updateStaffTableDisplay() {
 
     const codeValue = com.value;
     code.value = Number(codeValue) === 0 ? "": codeValue;
-    // if (codeValue < 1) return;
 
     const resultResponse = await fetch('api/employee/get/list/partner');
     const result = await resultResponse.json();
 
     let list = [];
-    if (result != null) {
+    if (result.ok) {
         if (codeValue > 0) {
-            list = result.filter(function(value) { return value.companyId == codeValue});
+            list = result.data.filter(function(value) { return value.companyId == codeValue});
         } else {
-            list = result;
+            list = result.data;
         }
         
         await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
@@ -389,34 +321,22 @@ async function updateOrigin(type) {
 
     // 一覧取得
     const listRes = await fetch(config.listUrl);
-    window[config.originKey] = await listRes.json();
+    const originList = await listRes.json();
+    window[config.originKey] = originList.data;
 
     // コンボ取得
     const comboRes = await fetch(config.comboUrl);
     const comboList = await comboRes.json();
-    window[config.comboKey] = comboList;
+    window[config.comboKey] = comboList.data;
 
     // コンボ反映
     const targets = getComboTargets(config.comboTargetIds);
     targets.forEach(target => {
-        createComboBoxWithTop(target, comboList, "");
+        createComboBoxWithTop(target, comboList.data, "");
     });
 
     return window[config.originKey];
 }
-
-// function initCompanyInputs() {
-//     COMPANY_UI_CONFIG.forEach(cfg => {
-//         const codeElm = document.getElementById(cfg.codeId);
-//         const nameElm = document.getElementById(cfg.nameId);
-
-//         // code → combo
-//         bindCodeInput(codeElm, nameElm, cfg.onChange);
-
-//         // combo change
-//         initCompanyCombo(nameElm, cfg.onChange);
-//     });
-// }
 
 function refleshCode() {
     code01.value = code01.value !== name01.value ? name01.value: code01.value;
@@ -445,9 +365,6 @@ window.addEventListener("load", async () => {
         
         let list = cfg.list.filter(value => { return value.category === cfg.category });
         await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, list, createTableContent );
-
-        // makeSortable(cfg.tableId);
-        // setPageTopButton(cfg.tableId);
     }
 
     initCompanyInputs();

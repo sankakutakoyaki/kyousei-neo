@@ -42,7 +42,7 @@ public class RecycleMakerApiController extends BaseController {
     @PostMapping("/get/id")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<RecycleMakerEntity>> getById(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(new SimpleResponse<>(null, recycleMakerService.getById(req.getId())));
+        return ResponseEntity.ok(SimpleResponse.ok(recycleMakerService.getById(req.getId())));
     }
    
     /**
@@ -53,7 +53,7 @@ public class RecycleMakerApiController extends BaseController {
     @PostMapping("/get/code")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<RecycleMakerEntity>> getByCode(@RequestBody NumberRequest req) {
-        return ResponseEntity.ok(new SimpleResponse<>(null, recycleMakerService.getByCode(req.getNumber())));
+        return ResponseEntity.ok(SimpleResponse.ok(recycleMakerService.getByCode(req.getNumber())));
     }
 
     /**
@@ -62,8 +62,8 @@ public class RecycleMakerApiController extends BaseController {
      */
     @GetMapping("/get/list")
 	@ResponseBody
-    public SimpleResponse<List<RecycleMakerEntity>> getList() {
-        return new SimpleResponse<>(null, recycleMakerService.getList());
+    public ResponseEntity<SimpleResponse<List<RecycleMakerEntity>>> getList() {
+        return ResponseEntity.ok(SimpleResponse.ok(recycleMakerService.getList()));
     }
 
     /**
@@ -77,7 +77,7 @@ public class RecycleMakerApiController extends BaseController {
         validateService.validateCodeAbbrRule(entity.getCode(), entity.getAbbrName());
 
         int id = recycleMakerService.save(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
 
     /**
@@ -89,7 +89,7 @@ public class RecycleMakerApiController extends BaseController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         int id = recycleMakerService.deleteByIds(ids, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(new SimpleResponse<>(id + "件削除しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok(id + "件削除しました。", id));
     }
 
     /**

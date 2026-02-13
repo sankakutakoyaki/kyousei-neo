@@ -148,7 +148,7 @@ public class CompanySqlBuilder {
         sql.append(buildOutputLog() + "INTO @UpdatedRows ");
         sql.append("WHERE company_id = ? AND version = ? AND NOT (state = ?);");
         sql.append(buildInsertLog("@UpdatedRows", "UPDATE"));
-        sql.append("SELECT company_id FROM @UpdatedRows;");
+        // sql.append("SELECT company_id FROM @UpdatedRows;");
 
         return sql.toString();
     }

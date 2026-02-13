@@ -43,7 +43,7 @@ public class RecycleApiController {
     @PostMapping("/get/number")
     @ResponseBody
     public ResponseEntity<SimpleResponse<RecycleEntity>> findByNumber(@RequestBody StringRequest req) {
-        return ResponseEntity.ok(new SimpleResponse<>(null, recycleService.getByNumber(req.getValue())));
+        return ResponseEntity.ok(SimpleResponse.ok(recycleService.getByNumber(req.getValue())));
     }
 
     /**
@@ -55,8 +55,8 @@ public class RecycleApiController {
      */
     @PostMapping("/get/between")
     @ResponseBody
-    public SimpleResponse<List<RecycleEntity>> getBetween(@RequestBody BetweenRequest req) {
-        return new SimpleResponse<>(null, recycleService.getBetween(req.getStart(), req.getEnd(), req.getType()));
+    public ResponseEntity<SimpleResponse<List<RecycleEntity>>> getBetween(@RequestBody BetweenRequest req) {
+        return ResponseEntity.ok(SimpleResponse.ok(recycleService.getBetween(req.getStart(), req.getEnd(), req.getType())));
     }
 
     /**
@@ -70,12 +70,12 @@ public class RecycleApiController {
         String userName = principal.getAttribute("preferred_username");
         switch (type) {
             case "regist":
-                return ResponseEntity.ok(new SimpleResponse<>(null, recycleService.save(entity, userName)));
+                return ResponseEntity.ok(SimpleResponse.ok(recycleService.save(entity, userName)));
             case "delivery":
             case "shipping":
             case "loss":
             case "edit":
-                return ResponseEntity.ok(new SimpleResponse<>(null, recycleService.update(entity, type, userName)));
+                return ResponseEntity.ok(SimpleResponse.ok(recycleService.update(entity, type, userName)));
             default:
                 return null;
         }
@@ -90,7 +90,7 @@ public class RecycleApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> update(@RequestBody RecycleEntityRequest req) {
         int id = recycleService.bulkUpdate(req);
-        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
+        return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
     
     /**
@@ -102,7 +102,7 @@ public class RecycleApiController {
     @ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         int num = recycleService.deleteByIds(ids, principal.getAttribute("preferred_userName"));
-        return ResponseEntity.ok(new SimpleResponse<>(num + "件削除しました。", num));
+        return ResponseEntity.ok(SimpleResponse.ok(num + "件削除しました。", num));
     }
 
     /**

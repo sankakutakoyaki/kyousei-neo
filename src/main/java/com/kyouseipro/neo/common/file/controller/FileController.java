@@ -109,10 +109,10 @@ public class FileController {
         if (result) {
             Integer resultInt = qualificationFilesService.deleteQualificationsFilesByUrl(uploadStr, userName);
             if (resultInt != null && resultInt > 0) {
-                return ResponseEntity.ok(new SimpleResponse("削除しました。", resultInt));
+                return ResponseEntity.ok(SimpleResponse.ok("削除しました。", resultInt));
             }
         }
-        return ResponseEntity.badRequest().body(new SimpleResponse("削除に失敗しました", null));
+        return ResponseEntity.badRequest().body(SimpleResponse.error("削除に失敗しました"));
     }
 
     /**

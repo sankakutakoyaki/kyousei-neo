@@ -32,8 +32,8 @@ public class TimeworksController {
      */
     @GetMapping("/get/today")
 	@ResponseBody
-    public SimpleResponse<List<TimeworksEntity>> getTodaysList() {
-        return new SimpleResponse<>(null, timeworksService.getTodaysList());
+    public ResponseEntity<SimpleResponse<List<TimeworksEntity>>> getTodaysList() {
+        return ResponseEntity.ok(SimpleResponse.ok(timeworksService.getTodaysList()));
     }
 
     /**
@@ -43,7 +43,7 @@ public class TimeworksController {
     @PostMapping("/get/today/id")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<TimeworksEntity>> getTodaysEntity(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(new SimpleResponse(null, timeworksService.getTodaysEntity(req.getId())));
+        return ResponseEntity.ok(SimpleResponse.ok(timeworksService.getTodaysEntity(req.getId())));
     }
 
     /**
