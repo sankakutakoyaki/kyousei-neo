@@ -1,10 +1,10 @@
 package com.kyouseipro.neo.recycle.maker.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.dto.IdListRequest;
@@ -24,14 +24,18 @@ public class RecycleMakerRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public Optional<RecycleMakerEntity> findById(int id) {
+    public RecycleMakerEntity findById(int id) {
         String sql = RecycleMakerSqlBuilder.buildFindById();
         
-        return sqlRepository.executeQuery(
+        return sqlRepository.queryOne(
             sql,
-            (ps, en) -> RecycleMakerParameterBinder.bindFindById(ps, en),
-            rs -> rs.next() ? RecycleMakerEntityMapper.map(rs) : null,
-            id
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            RecycleMakerEntityMapper::map
         );
     }
 
@@ -40,14 +44,18 @@ public class RecycleMakerRepository {
      * @param code
      * @return CODEから取得したEntityを返す。
      */
-    public Optional<RecycleMakerEntity> findByCode(int code) {
+    public RecycleMakerEntity findByCode(int code) {
         String sql = RecycleMakerSqlBuilder.buildFindByCode();
 
-        return sqlRepository.executeQuery(
+        return sqlRepository.queryOne(
             sql,
-            (ps, en) -> RecycleMakerParameterBinder.bindFindByCode(ps, en),
-            rs -> rs.next() ? RecycleMakerEntityMapper.map(rs) : null,
-            code
+            (ps, en) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, code);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            RecycleMakerEntityMapper::map
         );
     }
 
@@ -59,9 +67,13 @@ public class RecycleMakerRepository {
     public List<RecycleMakerEntity> findAll() {
         String sql = RecycleMakerSqlBuilder.buildFindAll();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> RecycleMakerParameterBinder.bindFindAll(ps, null),
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
             RecycleMakerEntityMapper::map
         );
     }
@@ -75,20 +87,10 @@ public class RecycleMakerRepository {
         String sql = RecycleMakerSqlBuilder.buildInsert();
 
         try {
-            return sqlRepository.executeRequired(
+            return sqlRepository.insert(
                 sql,
                 (ps, en) -> RecycleMakerParameterBinder.bindInsert(ps, en),
-                rs -> {
-                    if (!rs.next()) {
-                        throw new BusinessException("登録に失敗しました");
-                    }
-                    int id = rs.getInt("recycle_maker_id");
-
-                    if (rs.next()) {
-                        throw new IllegalStateException("ID取得結果が複数行です");
-                    }
-                    return id;
-                },
+                rs -> rs.getInt("recycle_maker_id"),
                 entity
             );
         } catch (RuntimeException e) {
@@ -108,14 +110,11 @@ public class RecycleMakerRepository {
         String sql = RecycleMakerSqlBuilder.buildUpdate();
 
         try {
-            int count = sqlRepository.executeUpdate(
+            int count = sqlRepository.updateRequired(
                 sql,
-                ps -> RecycleMakerParameterBinder.bindUpdate(ps, entity)
+                (ps, e) -> RecycleMakerParameterBinder.bindUpdate(ps, e),
+                entity
             );
-
-            if (count == 0) {
-                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-            }
 
             return count;
 
@@ -134,19 +133,16 @@ public class RecycleMakerRepository {
      * @return 成功件数を返す。
      */
     public int deleteByIds(IdListRequest list, String userName) {
-        String sql = RecycleMakerSqlBuilder.buildDeleteByIds(list.getIds().size());
-
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
-        int count = sqlRepository.executeUpdate(
+        String sql = RecycleMakerSqlBuilder.buildDeleteByIds(list.getIds().size());
+        int count = sqlRepository.updateRequired(
             sql,
-            ps -> RecycleMakerParameterBinder.bindDeleteByIds(ps, list.getIds())
+            (ps, e) -> RecycleMakerParameterBinder.bindDeleteByIds(ps, e.getIds()),
+            list
         );
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }
@@ -158,17 +154,17 @@ public class RecycleMakerRepository {
      * @return listで選択したEntityリストを返す。
      */
     public List<RecycleMakerEntity> downloadCsvByIds(IdListRequest list, String userName) {
-
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
         String sql = RecycleMakerSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> RecycleMakerParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
-            RecycleMakerEntityMapper::map
+            (ps, e) -> RecycleMakerParameterBinder.bindDownloadCsvByIds(ps, e.getIds()),
+            RecycleMakerEntityMapper::map,
+            list
         );
     }
 }

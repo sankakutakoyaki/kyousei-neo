@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.qualification.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -24,18 +23,17 @@ public class QualificationFilesRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public Optional<QualificationFilesEntity> findById(int id) {
-        String sql = "SELECT * FROM qualifications_files WHERE NOT (state = ?) AND qualifications_files_id = ?";
-
-        return sqlRepository.executeQuery(
-            sql,
-            (ps, en) -> {
+    public QualificationFilesEntity findById(int id) {
+        return sqlRepository.queryOne(
+            """
+            SELECT * FROM qualifications_files WHERE NOT (state = ?) AND qualifications_files_id = ?
+            """,
+            (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, id);
             },
-            rs -> rs.next() ? QualificationFilesEntityMapper.map(rs) : null,
-            id
+            QualificationFilesEntityMapper::map
         );
     }
 
@@ -45,10 +43,10 @@ public class QualificationFilesRepository {
      * @return IDから取得したEntityを返す。
      */
     public List<QualificationFilesEntity> findByQualificationsId(int id) {
-        String sql = "SELECT * FROM qualifications_files WHERE NOT (state = ?) AND qualifications_id = ?";
-
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT * FROM qualifications_files WHERE NOT (state = ?) AND qualifications_id = ?
+            """,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -65,16 +63,11 @@ public class QualificationFilesRepository {
      */
     public int insert(List<FileUpload> list, String editor, int id) {
         String sql = QualificationFilesSqlBuilder.buildInsert(list.size());
-        int count = sqlRepository.executeBatch(
+        int count = sqlRepository.batch(
             sql,
             (ps, en) -> QualificationFilesParameterBinder.bindInsert(ps, en, editor, id),
             list
         );
-
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
-
         return count;
     }
 
@@ -87,10 +80,11 @@ public class QualificationFilesRepository {
     public int delete(String url, String editor) {
         String sql = QualificationFilesSqlBuilder.buildDelete();
 
-        int count = sqlRepository.executeUpdate(
+        int count = sqlRepository.update(
             sql,
-            ps -> QualificationFilesParameterBinder.bindDelete(ps, url, editor)
+            (ps, v) -> QualificationFilesParameterBinder.bindDelete(ps, url, editor)
         );
+
         if (count == 0) {
             throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
         }

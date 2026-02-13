@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.recycle.maker.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -17,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class RecycleMakerService {
-    // private final HistoryService historyService;
     private final RecycleMakerRepository recycleMakerRepository;
 
     /**
@@ -25,7 +23,7 @@ public class RecycleMakerService {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public Optional<RecycleMakerEntity> getById(int id) {
+    public RecycleMakerEntity getById(int id) {
         return recycleMakerRepository.findById(id);
     }
 
@@ -34,7 +32,7 @@ public class RecycleMakerService {
      * @param code
      * @return Codeから取得したEntityを返す。
      */
-    public Optional<RecycleMakerEntity> getByCode(int code) {
+    public RecycleMakerEntity getByCode(int code) {
         return recycleMakerRepository.findByCode(code);
     }
 

@@ -8,48 +8,20 @@ import com.kyouseipro.neo.interfaces.FileUpload;
 import com.kyouseipro.neo.qualification.entity.QualificationFilesEntity;
 
 public class QualificationFilesParameterBinder {
-    public static int bindInsert(
-        PreparedStatement pstmt,
-        // List<FileUpload> entities,
-        FileUpload e,
-        String editor,
-        Integer id
-    ) throws SQLException {
+    public static int bindInsert(PreparedStatement pstmt, FileUpload e, String editor, Integer id) throws SQLException {
         int index = 1;
-        // for (FileUpload e : entities) {
-            QualificationFilesEntity entity = (QualificationFilesEntity)e;
-            pstmt.setInt(index++, id);
-            pstmt.setString(index++, entity.getFileName());
-            pstmt.setString(index++, entity.getInternalName());
-            pstmt.setString(index++, entity.getFolderName());
-            pstmt.setInt(index++, entity.getVersion());
-            pstmt.setInt(index++, entity.getState());
+        QualificationFilesEntity entity = (QualificationFilesEntity)e;
+        pstmt.setInt(index++, id);
+        pstmt.setString(index++, entity.getFileName());
+        pstmt.setString(index++, entity.getInternalName());
+        pstmt.setString(index++, entity.getFolderName());
+        pstmt.setInt(index++, entity.getVersion());
+        pstmt.setInt(index++, entity.getState());
 
-            pstmt.setString(index++, editor);
-        // }
-
+        pstmt.setString(index++, editor);
         return index;
     }
-    // public static int bindInsert(
-    //     PreparedStatement pstmt,
-    //     List<FileUpload> entities,
-    //     String editor,
-    //     Integer id
-    // ) throws SQLException {
-    //     int index = 1;
-    //     for (FileUpload e : entities) {
-    //         QualificationFilesEntity entity = (QualificationFilesEntity)e;
-    //         pstmt.setInt(index++, id);
-    //         pstmt.setString(index++, entity.getFile_name());
-    //         pstmt.setString(index++, entity.getInternal_name());
-    //         pstmt.setString(index++, entity.getFolder_name());
-    //         pstmt.setInt(index++, entity.getVersion());
-    //         pstmt.setInt(index++, entity.getState());
-
-    //         pstmt.setString(index++, editor);
-    //     }
-    //     return index;
-    // }
+    
     public static int bindDelete(PreparedStatement pstmt, String url, String editor) throws SQLException {
         int index = 1;
         pstmt.setInt(index++, Enums.state.DELETE.getCode());

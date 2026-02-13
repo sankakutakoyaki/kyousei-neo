@@ -44,49 +44,25 @@ public class WorkingConditionsParameterBinder {
         return index;
     }
 
-    public static int bindFindById(PreparedStatement ps, Integer workingConditionsId) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, workingConditionsId);
-        return index;
-    }
-
-    public static int bindFindByEmployeeId(PreparedStatement ps, Integer employeeId) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, employeeId);
-        return index;
-    }
-
-    public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
-
     public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {
-            ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
+            ps.setInt(index++, id);
         }
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setString(index, editor);
         return index;
     }
 
     public static int bindDownloadCsvByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {
-            ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
+            ps.setInt(index++, id);
         }
-        ps.setInt(index, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        ps.setInt(index, Enums.state.DELETE.getCode());
         return index;
     }
 }

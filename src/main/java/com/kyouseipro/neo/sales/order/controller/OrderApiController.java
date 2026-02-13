@@ -1,9 +1,12 @@
 package com.kyouseipro.neo.sales.order.controller;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -15,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kyouseipro.neo.dto.ApiResponse;
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.IdRequest;
 import com.kyouseipro.neo.sales.order.entity.DeliveryStaffEntity;
@@ -40,8 +43,8 @@ public class OrderApiController {
      */
     @PostMapping("/get/id")
 	@ResponseBody
-    public Optional<OrderEntity> getById(@RequestBody IdRequest req) {
-        return orderService.getById(req.getId());
+    public ResponseEntity<SimpleResponse<OrderEntity>> getById(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(new SimpleResponse<>(null, orderService.getById(req.getId())));
     }
 
     /**
@@ -51,7 +54,7 @@ public class OrderApiController {
      */
     @PostMapping("/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal) {
 
         OrderEntity orderEntity = objectMapper.convertValue(body.get("orderEntity"), OrderEntity.class);
         List<OrderItemEntity> itemList = objectMapper.convertValue(body.get("itemEntityList"), new TypeReference<List<OrderItemEntity>>() {});
@@ -59,7 +62,7 @@ public class OrderApiController {
         List<WorkContentEntity> workList = objectMapper.convertValue(body.get("workEntityList"), new TypeReference<List<WorkContentEntity>>() {});
 
         int id = orderService.save(orderEntity, itemList, staffList, workList, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
     }
 
     /**
@@ -69,9 +72,9 @@ public class OrderApiController {
      */
     @PostMapping("/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         int id = orderService.deleteByIds(ids, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
+        return ResponseEntity.ok(new SimpleResponse<>(id + "件削除しました。", id));
     }
 
     /**
@@ -79,9 +82,19 @@ public class OrderApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/download/csv")
-	@ResponseBody
-    public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
-        return orderService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+    // @PostMapping("/download/csv")
+	// @ResponseBody
+    // public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+    //     return orderService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+    // }
+    @PostMapping(value = "/download/csv", produces = "text/csv")
+    public ResponseEntity<byte[]> downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+        String csv = orderService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+        String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".csv";
+
+        byte[] bytes = csv.getBytes(StandardCharsets.UTF_8);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .body(bytes);
     }
 }

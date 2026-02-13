@@ -122,22 +122,12 @@ public class EmployeeRepository {
      */
     public int insert(EmployeeEntityRequest entity, String editor) {
         String sql = EmployeeSqlBuilder.buildBulkInsert(entity);
-
+        
         try {
-            return sqlRepository.queryOne(
+            return sqlRepository.insert(
                 sql,
                 (ps, en) -> EmployeeParameterBinder.bindBulkInsert(ps, en, editor),
-                rs -> {
-                    if (!rs.next()) {
-                        throw new BusinessException("登録に失敗しました");
-                    }
-                    int id = rs.getInt("employee_id");
-
-                    if (rs.next()) {
-                        throw new IllegalStateException("ID取得結果が複数行です");
-                    }
-                    return id;
-                },
+                rs -> rs.getInt("employee_id"),
                 entity
             );
         } catch (RuntimeException e) {
@@ -158,15 +148,11 @@ public class EmployeeRepository {
         String sql = EmployeeSqlBuilder.buildBulkUpdate(entity);
 
         try {
-            int count = sqlRepository.update(
+            int count = sqlRepository.updateRequired(
                 sql,
                 (ps, e) -> EmployeeParameterBinder.bindBulkUpdate(ps, e, editor),
                 entity
             );
-
-            if (count == 0) {
-                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-            }
 
             return count;
 
@@ -187,14 +173,10 @@ public class EmployeeRepository {
     public int updateCode(int id, int code, String editor) {
         String sql = EmployeeSqlBuilder.buildUpdateCode();
         try {
-            int count = sqlRepository.update(
+            int count = sqlRepository.updateRequired(
                 sql,
                 (ps, v) -> EmployeeParameterBinder.bindUpdateCode(ps, id, code, editor)
             );
-
-            if (count == 0) {
-                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-            }
 
             return count;
 
@@ -215,14 +197,10 @@ public class EmployeeRepository {
     public int updatePhone(int id, String phone, String editor) {
         String sql = EmployeeSqlBuilder.buildUpdatePhone();
 
-        int count = sqlRepository.update(
+        int count = sqlRepository.updateRequired(
             sql,
             (ps, v) -> EmployeeParameterBinder.bindUpdatePhone(ps, id, phone, editor)
         );
-
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }
@@ -239,14 +217,11 @@ public class EmployeeRepository {
         }
 
         String sql = EmployeeSqlBuilder.buildDeleteByIds(list.getIds().size());
-        int count = sqlRepository.update(
+        int count = sqlRepository.updateRequired(
             sql,
             (ps, e) -> EmployeeParameterBinder.bindDeleteByIds(ps, e.getIds(), editor),
             list
         );
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }

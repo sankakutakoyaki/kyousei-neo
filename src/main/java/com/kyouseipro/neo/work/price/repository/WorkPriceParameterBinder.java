@@ -26,32 +26,9 @@ public class WorkPriceParameterBinder {
         pstmt.setInt(index++, w.getVersion() +1);
         pstmt.setInt(index++, w.getState());
 
-        pstmt.setInt(index++, w.getWorkPriceId()); // WHERE句
+        pstmt.setInt(index++, w.getWorkPriceId());
         pstmt.setInt(index++, w.getVersion());
-        pstmt.setString(index++, editor);          // ログ用
-        return index;
-    }
-
-    public static int bindFindById(PreparedStatement ps, int id) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, id);
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
-
-
-    public static int bindFindAllByCompanyId(PreparedStatement ps, int id) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, id);
-        ps.setInt(index++, id);
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, id);
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
+        pstmt.setString(index++, editor);
         return index;
     }
 
@@ -61,9 +38,9 @@ public class WorkPriceParameterBinder {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {
-            ps.setInt(index++, id); // company_id IN (?, ?, ?)
+            ps.setInt(index++, id);
         }
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // AND NOT (state = ?)
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }
 }

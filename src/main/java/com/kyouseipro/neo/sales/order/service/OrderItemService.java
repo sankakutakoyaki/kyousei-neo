@@ -2,7 +2,6 @@ package com.kyouseipro.neo.sales.order.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ public class OrderItemService {
      * @param id 受注ID
      * @return OrderEntity または null
      */
-    public Optional<OrderItemEntity> getById(int id) {
+    public OrderItemEntity getById(int id) {
         return orderItemRepository.findById(id);
     }
 

@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.recycle.item.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,7 @@ public class RecycleItemService {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public Optional<RecycleItemEntity> getById(int id) {
+    public RecycleItemEntity getById(int id) {
         return recycleItemRepository.findById(id);
     }
 
@@ -33,7 +32,7 @@ public class RecycleItemService {
      * @param code
      * @return Codeから取得したEntityを返す。
      */
-    public Optional<RecycleItemEntity> getByCode(int code) {
+    public RecycleItemEntity getByCode(int code) {
         return recycleItemRepository.findByCode(code);
 
     }

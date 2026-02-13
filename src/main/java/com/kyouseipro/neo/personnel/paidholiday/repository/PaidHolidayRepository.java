@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 import com.kyouseipro.neo.personnel.employee.repository.EmployeeRepository;
@@ -51,9 +50,8 @@ public class PaidHolidayRepository {
      */
     public List<PaidHolidayEntity> findByEmployeeIdFromYear(int id, String year) {
         String sql = PaidHolidaySqlBuilder.buildFindByEmployeeIdFromYear();
-
         EmployeeEntity entity = employeeRepository.findById(id);
-            // .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
+
         int targetId = entity.getEmployeeId();
 
         return sqlRepository.queryList(
@@ -78,20 +76,10 @@ public class PaidHolidayRepository {
     public int insert(PaidHolidayEntity entity, String editor) {
         String sql = PaidHolidaySqlBuilder.buildInsert();
 
-        return sqlRepository.queryOne(
+        return sqlRepository.insert(
             sql,
             (ps, en) -> PaidHolidayParameterBinder.bindInsert(ps, en, editor),
-            rs -> {
-                if (!rs.next()) {
-                    throw new BusinessException("登録に失敗しました");
-                }
-                int id = rs.getInt("paid_holiday_id");
-
-                if (rs.next()) {
-                    throw new IllegalStateException("ID取得結果が複数行です");
-                }
-                return id;
-            },
+            rs -> rs.getInt("paid_holiday_id"),
             entity
         );
     }
@@ -105,7 +93,7 @@ public class PaidHolidayRepository {
     public int delete(int id, String editor) {
         String sql = PaidHolidaySqlBuilder.buildDelete();
 
-        int count = sqlRepository.update(
+        int count = sqlRepository.updateRequired(
             sql,
             (ps, v) -> {
                 int index = 1;
@@ -114,10 +102,6 @@ public class PaidHolidayRepository {
                 ps.setString(index++, editor);
             }
         );
-        
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }

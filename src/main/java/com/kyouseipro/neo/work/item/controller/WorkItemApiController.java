@@ -1,7 +1,11 @@
 package com.kyouseipro.neo.work.item.controller;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -12,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.kyouseipro.neo.dto.ApiResponse;
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.IdRequest;
 import com.kyouseipro.neo.work.item.entity.WorkItemEntity;
@@ -22,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/work")
+@RequestMapping("/api/work/item")
 public class WorkItemApiController {
     private final WorkItemService workItemService;
 
@@ -31,10 +35,10 @@ public class WorkItemApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/item/get/id")
+    @PostMapping("/get/id")
 	@ResponseBody
-    public ResponseEntity<WorkItemEntity> getById(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(workItemService.getById(req.getId()).orElse(null));
+    public ResponseEntity<SimpleResponse<WorkItemEntity>> getById(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(new SimpleResponse<>(null, workItemService.getById(req.getId())));
     }
 
     /**
@@ -42,20 +46,20 @@ public class WorkItemApiController {
      * @param id
      * @return
      */
-    @PostMapping("/item/get/category")
+    @PostMapping("/get/category")
 	@ResponseBody
-    public List<WorkItemEntity> getByCategoryId(@RequestBody IdRequest req) {
-        return workItemService.getByCategoryId(req.getId());
+    public SimpleResponse<List<WorkItemEntity>> getByCategoryId(@RequestBody IdRequest req) {
+        return new SimpleResponse<>(null, workItemService.getByCategoryId(req.getId()));
     }
 
     /**
      * Listを取得する
      * @return
      */
-    @GetMapping("/item/get/list")
+    @GetMapping("/get/list")
 	@ResponseBody
-    public List<WorkItemEntity> getList() {
-        return workItemService.getList();
+    public SimpleResponse<List<WorkItemEntity>> getList() {
+        return new SimpleResponse<>(null, workItemService.getList());
     }
 
     /**
@@ -63,11 +67,11 @@ public class WorkItemApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/item/save")
+    @PostMapping("/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody WorkItemEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody WorkItemEntity entity, @AuthenticationPrincipal OidcUser principal) {
         Integer id = workItemService.save(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
     }
 
     /**
@@ -75,11 +79,11 @@ public class WorkItemApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/item/delete")
+    @PostMapping("/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         Integer id = workItemService.deleteByIds(ids, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
+        return ResponseEntity.ok(new SimpleResponse<>(id + "件削除しました。", id));
     }
 
     /**
@@ -87,9 +91,19 @@ public class WorkItemApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/item/download/csv")
-	@ResponseBody
-    public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
-        return workItemService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+    // @PostMapping("/item/download/csv")
+	// @ResponseBody
+    // public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+    //     return workItemService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+    // }
+    @PostMapping(value = "/download/csv", produces = "text/csv")
+    public ResponseEntity<byte[]> downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+        String csv = workItemService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+        String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".csv";
+
+        byte[] bytes = csv.getBytes(StandardCharsets.UTF_8);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .body(bytes);
     }
 }

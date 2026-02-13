@@ -15,7 +15,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kyouseipro.neo.abstracts.controller.BaseController;
 import com.kyouseipro.neo.common.ComboBoxService;
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.common.history.service.HistoryService;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.corporation.office.entity.OfficeListEntity;
 import com.kyouseipro.neo.corporation.staff.entity.StaffListEntity;
@@ -38,7 +37,6 @@ public class SalesPageController extends BaseController {
     private final OrderListService orderListService;
     private final OrderItemService orderItemService;
     private final ComboBoxService comboBoxService;
-    private final HistoryService historyService;
 
 	@GetMapping("/order")
 	@ResponseBody
@@ -53,11 +51,6 @@ public class SalesPageController extends BaseController {
 
         EmployeeEntity user = getLoginUser(session, response);
         if (user == null) return null; // リダイレクト済みなので処理は止まる
-		// ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// EmployeeEntity user = employeeService.getByAccount(userName);
-		// mv.addObject("user", user);
-        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
 
         // 初期化されたエンティティ
         mv.addObject("formEntity", new OrderEntity());
@@ -78,9 +71,6 @@ public class SalesPageController extends BaseController {
         mv.addObject("salesStaffList", salesStaffList);
 
         mv.addObject("deleteCode", Enums.state.DELETE.getCode());
-
-        // EmployeeEntity user = getLoginUser(session);
-        historyService.save(user.getAccount(), "orders", "閲覧", 0, "");
 		
         return mv;
     }
@@ -98,11 +88,6 @@ public class SalesPageController extends BaseController {
 
         EmployeeEntity user = getLoginUser(session, response);
         if (user == null) return null; // リダイレクト済みなので処理は止まる
-		// ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// EmployeeEntity user = employeeService.getByAccount(userName);
-		// mv.addObject("user", user);
-        // mv.addObject("user", employeeService.getByAccount(userName).orElse(null));
 
         // // 初期化されたエンティティ
         mv.addObject("formEntity", new OrderItemEntity());
@@ -129,9 +114,6 @@ public class SalesPageController extends BaseController {
         mv.addObject("equipmentCode", Enums.ItemClass.EQUIPMENT.getCode());
         mv.addObject("returnsCode", Enums.ItemClass.RETURNS.getCode());
 
-        // EmployeeEntity user = getLoginUser(session);
-        historyService.save(user.getAccount(), "order_items", "閲覧", 0, "");
-		
         return mv;
     }
 }

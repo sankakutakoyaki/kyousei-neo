@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntityRequest;
 import com.kyouseipro.neo.corporation.company.mapper.CompanyEntityMapper;
@@ -80,20 +79,10 @@ public class CompanyRepository {
     public int insert(CompanyEntityRequest entity, String editor) {
         String sql = CompanySqlBuilder.buildBulkInsert(entity);
 
-        return sqlRepository.queryOne(
+        return sqlRepository.insert(
             sql,
             (ps, en) -> CompanyParameterBinder.bindBulkInsert(ps, en, editor),
-            rs -> {
-                if (!rs.next()) {
-                    throw new BusinessException("登録に失敗しました");
-                }
-                int id = rs.getInt("company_id");
-
-                if (rs.next()) {
-                    throw new IllegalStateException("ID取得結果が複数行です");
-                }
-                return id;
-            },
+            rs ->  rs.getInt("company_id"),
             entity
         );
     }
@@ -106,15 +95,11 @@ public class CompanyRepository {
     public int update(CompanyEntityRequest entity, String editor) {
         String sql = CompanySqlBuilder.buildBulkUpdate(entity);
 
-        int count = sqlRepository.update(
+        int count = sqlRepository.updateRequired(
             sql,
             (ps, e) -> CompanyParameterBinder.bindBulkUpdate(ps, e, editor),
             entity
         );
-
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }
@@ -132,15 +117,11 @@ public class CompanyRepository {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
-        int count = sqlRepository.update(
+        int count = sqlRepository.updateRequired(
             sql,
             (ps, e) -> CompanyParameterBinder.bindDeleteByIds(ps, e.getIds(), editor),
             list
         );
-
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }

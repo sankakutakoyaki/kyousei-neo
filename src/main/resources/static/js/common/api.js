@@ -1,7 +1,146 @@
 "use strict"
 
+// /**
+//  * 更新用
+//  * @param {*} url 
+//  * @param {*} data 
+//  * @param {*} token 
+//  * @param {*} contentType 
+//  * @returns 
+//  */
+// async function updateFetch(url, data, token, contentType = "application/json") {
+//     const spinner = document.getElementById("loading");
+//     if (spinner) spinner.classList.remove("loaded");
+
+//     const response = await fetch(url, {
+//         method: "POST",
+//         headers: {
+//             "X-CSRF-TOKEN": token,
+//             "Content-Type": contentType,
+//         },
+//         body: data,
+//     });
+
+//     if (spinner) spinner.classList.add("loaded");
+
+//     let json = null;
+//     const ct = response.headers.get("content-type");
+//     if (ct && ct.includes("application/json")) {
+//         json = await response.json();
+//     }
+
+//     if (!response.ok) {
+//         await handleHttpError(response.status, json);
+//     }
+
+//     return {
+//         ok: response.ok,
+//         status: response.status,
+//         data: json, 
+//         message: json?.message ?? ""
+//     };
+// }
+
+// /**
+//  * 検索用
+//  * @param {*} url 
+//  * @param {*} data 
+//  * @param {*} token 
+//  * @param {*} contentType 
+//  * @returns 
+//  */
+// async function searchFetch(url, data, token, contentType = "application/json") {
+//     const spinner = document.getElementById("loading");
+//     if (spinner) spinner.classList.remove("loaded");
+
+//     const response = await fetch(url, {
+//         method: "POST",
+//         headers: {
+//             "X-CSRF-TOKEN": token,
+//             "Content-Type": contentType,
+//         },
+//         body: data,
+//     });
+
+//     if (response.status === 404) {
+//         return null; // ← 正常
+//     }
+
+//     if (spinner) spinner.classList.add("loaded");
+    
+//     let json = null;
+//     const ct = response.headers.get("content-type");
+//     if (ct && ct.includes("application/json")) {
+//         json = await response.json();
+//     }
+
+//     if (!response.ok) {
+//         await handleHttpError(response.status, json);
+//     }
+
+//     return {
+//         ok: response.ok,
+//         status: response.status,
+//         data: json ?? null,
+//         message: json?.message ?? ""
+//     };
+// }
+
 /**
- * 更新用
+ * 共通関数
+ * @param {*} url 
+ * @param {*} param1 
+ * @returns 
+ */
+async function apiFetch(url, {
+    method = "POST",
+    data = null,
+    token,
+    contentType = "application/json",
+    allow404 = false
+} = {}) {
+
+    const spinner = document.getElementById("loading");
+    if (spinner) spinner.classList.remove("loaded");
+
+    try {
+        const response = await fetch(url, {
+            method,
+            headers: {
+                "X-CSRF-TOKEN": token,
+                "Content-Type": contentType,
+            },
+            body: data,
+        });
+
+        if (allow404 && response.status === 404) {
+            return null;
+        }
+
+        let json = null;
+        const ct = response.headers.get("content-type");
+        if (ct && ct.includes("application/json")) {
+            json = await response.json();
+        }
+
+        if (!response.ok) {
+            await handleHttpError(response.status, json);
+        }
+
+        return {
+            ok: response.ok,
+            status: response.status,
+            data: json ?? null,
+            message: json?.message ?? ""
+        };
+
+    } finally {
+        if (spinner) spinner.classList.add("loaded");
+    }
+}
+
+/**
+ * 更新
  * @param {*} url 
  * @param {*} data 
  * @param {*} token 
@@ -9,40 +148,17 @@
  * @returns 
  */
 async function updateFetch(url, data, token, contentType = "application/json") {
-    const spinner = document.getElementById("loading");
-    if (spinner) spinner.classList.remove("loaded");
-
-    const response = await fetch(url, {
+    return apiFetch(url, {
         method: "POST",
-        headers: {
-            "X-CSRF-TOKEN": token,
-            "Content-Type": contentType,
-        },
-        body: data,
+        data,
+        token,
+        contentType,
+        allow404: false
     });
-
-    if (spinner) spinner.classList.add("loaded");
-
-    let json = null;
-    const ct = response.headers.get("content-type");
-    if (ct && ct.includes("application/json")) {
-        json = await response.json();
-    }
-
-    if (!response.ok) {
-        await handleHttpError(response.status, json);
-    }
-
-    return {
-        ok: response.ok,
-        status: response.status,
-        data: json, 
-        message: json?.message ?? ""
-    };
 }
 
 /**
- * 検索用
+ * 取得
  * @param {*} url 
  * @param {*} data 
  * @param {*} token 
@@ -50,40 +166,13 @@ async function updateFetch(url, data, token, contentType = "application/json") {
  * @returns 
  */
 async function searchFetch(url, data, token, contentType = "application/json") {
-    const spinner = document.getElementById("loading");
-    if (spinner) spinner.classList.remove("loaded");
-
-    const response = await fetch(url, {
+    return apiFetch(url, {
         method: "POST",
-        headers: {
-            "X-CSRF-TOKEN": token,
-            "Content-Type": contentType,
-        },
-        body: data,
+        data,
+        token,
+        contentType,
+        allow404: true
     });
-
-    if (response.status === 404) {
-        return null; // ← 正常
-    }
-
-    if (spinner) spinner.classList.add("loaded");
-    
-    let json = null;
-    const ct = response.headers.get("content-type");
-    if (ct && ct.includes("application/json")) {
-        json = await response.json();
-    }
-
-    if (!response.ok) {
-        await handleHttpError(response.status, json);
-    }
-
-    return {
-        ok: response.ok,
-        status: response.status,
-        data: json ?? null,
-        message: json?.message ?? ""
-    };
 }
 
 /**

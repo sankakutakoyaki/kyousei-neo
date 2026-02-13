@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.personnel.workingconditions.entity.WorkingConditionsListEntity;
 import com.kyouseipro.neo.personnel.workingconditions.mapper.WorkingConditionsListEntityMapper;
@@ -23,10 +24,15 @@ public class WorkingConditionsListRepository {
     public List<WorkingConditionsListEntity> findAll() {
         String sql = WorkingConditionsListSqlBuilder.buildFindAll();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> WorkingConditionsListParameterBinder.bindFindAll(ps, null),
-            WorkingConditionsListEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            WorkingConditionsListEntityMapper::map
         );
     }
 
@@ -38,10 +44,16 @@ public class WorkingConditionsListRepository {
     public List<WorkingConditionsListEntity> findByCategoryId(int id) {
         String sql = WorkingConditionsListSqlBuilder.buildFindAllByCategoryId();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> WorkingConditionsListParameterBinder.bindFindAllByCategoryId(ps, id),
-            WorkingConditionsListEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+            },
+            WorkingConditionsListEntityMapper::map
         );
     }
 }

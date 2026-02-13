@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.dto.BetweenRequest;
 import com.kyouseipro.neo.sales.order.entity.OrderListEntity;
 import com.kyouseipro.neo.sales.order.service.OrderListService;
@@ -27,8 +28,8 @@ public class OrderListApiController {
      */
     @GetMapping("/get/list")
 	@ResponseBody
-    public List<OrderListEntity> getList() {
-        return orderListService.getList();
+    public SimpleResponse<List<OrderListEntity>> getList() {
+        return new SimpleResponse<>(null, orderListService.getList());
     }
 
 
@@ -40,8 +41,7 @@ public class OrderListApiController {
      */
     @PostMapping("/get/between")
 	@ResponseBody
-    public List<OrderListEntity> getBetween(@RequestBody BetweenRequest req) {
-        List<OrderListEntity> list = orderListService.getBetween(req.getStart(), req.getEnd());
-        return list;
+    public SimpleResponse<List<OrderListEntity>> getBetween(@RequestBody BetweenRequest req) {
+        return new SimpleResponse<>(null, orderListService.getBetween(req.getStart(), req.getEnd()));
     }
 }

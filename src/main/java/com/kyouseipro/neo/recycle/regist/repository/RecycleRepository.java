@@ -2,7 +2,6 @@ package com.kyouseipro.neo.recycle.regist.repository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -32,14 +31,13 @@ public class RecycleRepository {
      * @param orderId
      * @return IDから取得したEntityをかえす。
      */
-    public Optional<RecycleEntity> findById(int id) {
+    public RecycleEntity findById(int id) {
         String sql = RecycleSqlBuilder.buildFindById();
 
-        return sqlRepository.executeQuery(
+        return sqlRepository.queryOne(
             sql,
-            (ps, en) -> RecycleParameterBinder.bindFindById(ps, en),
-            rs -> rs.next() ? RecycleEntityMapper.map(rs) : null,
-            id
+            (ps, v) -> RecycleParameterBinder.bindFindById(ps, id),
+            RecycleEntityMapper::map
         );
     }
 
@@ -49,14 +47,13 @@ public class RecycleRepository {
      * @param editor
      * @return
      */
-    public Optional<RecycleEntity> findByNumber(String number) {
+    public RecycleEntity findByNumber(String number) {
         String sql = RecycleSqlBuilder.buildFindByNumber();
         
-        return sqlRepository.executeQuery(
+        return sqlRepository.queryOne(
             sql,
-            (ps, en) -> RecycleParameterBinder.bindFindByNumber(ps, en),
-            rs -> rs.next() ? RecycleEntityMapper.map(rs) : null,
-            number
+            (ps, v) -> RecycleParameterBinder.bindFindByNumber(ps, number),
+            RecycleEntityMapper::map
         );
     }
 
@@ -69,10 +66,10 @@ public class RecycleRepository {
     public List<RecycleEntity> findByBetween(LocalDate start, LocalDate end, String col) {
         String sql = RecycleSqlBuilder.buildFindByBetween(col);
         
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
             (ps, v) -> RecycleParameterBinder.bindFindByBetween(ps, start, end),
-            RecycleEntityMapper::map // ← ここで ResultSet を map
+            RecycleEntityMapper::map
         );
     }
 
@@ -86,20 +83,10 @@ public class RecycleRepository {
         String sql = RecycleSqlBuilder.buildInsert(1);
 
         try {
-            return sqlRepository.executeRequired(
+            return sqlRepository.insert(
                 sql,
-                (ps, en) -> RecycleParameterBinder.bindInsert(ps, entity, editor, 1),
-                rs -> {
-                    if (!rs.next()) {
-                        throw new BusinessException("登録に失敗しました");
-                    }
-                    int id = rs.getInt("recycle_id");
-
-                    if (rs.next()) {
-                        throw new IllegalStateException("ID取得結果が複数行です");
-                    }
-                    return id;
-                },
+                (ps, en) -> RecycleParameterBinder.bindInsert(ps, en, editor, 1),
+                rs -> rs.getInt("recycle_id"),
                 entity
             );
         } catch (RuntimeException e) {
@@ -118,15 +105,9 @@ public class RecycleRepository {
     public int update(RecycleEntity entity, String type, String editor) {
         String sql = RecycleSqlBuilder.buildUpdate(1, type);
         try {
-            int id = sqlRepository.executeRequired(
+            int id = sqlRepository.update(
                 sql,
-                (ps, en) -> RecycleParameterBinder.bindUpdate(ps, entity, type, editor, 1),
-                rs -> {
-                    if (!rs.next()) {
-                        throw new BusinessException("登録に失敗しました");
-                    }
-                    return rs.getInt("recycle_id");
-                },
+                (ps, en) -> RecycleParameterBinder.bindUpdate(ps, en, type, editor, 1),
                 entity
             );
 
@@ -158,9 +139,9 @@ public class RecycleRepository {
 
         String sql = RecycleSqlBuilder.buildBulkUpdate(req);
 
-        return sqlRepository.executeUpdate(
+        return sqlRepository.updateRequired(
             sql,
-            ps -> RecycleParameterBinder.bindBulkUpdate(ps, req, 1)
+            (ps, v) -> RecycleParameterBinder.bindBulkUpdate(ps, req, 1)
         );
     }
 
@@ -175,9 +156,10 @@ public class RecycleRepository {
 
         String sql = RecycleSqlBuilder.buildUpdateForDate(1, type);
         
-        return sqlRepository.executeUpdate(
+        return sqlRepository.updateRequired(
             sql,
-            ps -> RecycleParameterBinder.bindUpdateForDate(ps, entity, editor)
+            (ps, e) -> RecycleParameterBinder.bindUpdateForDate(ps, e, editor),
+            entity
         );
     }
 
@@ -187,19 +169,17 @@ public class RecycleRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int deleteByIds(IdListRequest list, String editor) {
-        String sql = RecycleSqlBuilder.buildDeleteByIds(list.getIds().size());
+    public int deleteByIds(IdListRequest list, String editor) {        
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
-
-        int count = sqlRepository.executeUpdate(
+        
+        String sql = RecycleSqlBuilder.buildDeleteByIds(list.getIds().size());
+        int count = sqlRepository.updateRequired(
             sql,
-            ps -> RecycleParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
+            (ps, e) -> RecycleParameterBinder.bindDeleteByIds(ps, e.getIds(), editor),
+            list
         );
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }
@@ -216,11 +196,11 @@ public class RecycleRepository {
         }
 
         String sql = RecycleSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
-
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> RecycleParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
-            RecycleEntityMapper::map
+            (ps, e) -> RecycleParameterBinder.bindDownloadCsvByIds(ps, e.getIds()),
+            RecycleEntityMapper::map,
+            list
         );
     }
 
@@ -229,12 +209,12 @@ public class RecycleRepository {
      * @return
      */
     public List<SimpleData> findGroupCombo() {
-        String sql = "SELECT recycle_group_id as number, name as text FROM recycle_groups WHERE NOT (state = ?)";
-        
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT recycle_group_id as number, name as text FROM recycle_groups WHERE NOT (state = ?)
+            """,
             (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
-            SimpleDataMapper::map // ← ここで ResultSet を map
+            SimpleDataMapper::map
         );
     }
 
@@ -243,12 +223,12 @@ public class RecycleRepository {
      * @return
      */
     public List<ComboData> findRecycleMakerCombo() {
-        String sql = "SELECT recycle_maker_id as id, code as number, name as text FROM recycle_makers WHERE NOT (state = ?)";
-        
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT recycle_maker_id as id, code as number, name as text FROM recycle_makers WHERE NOT (state = ?)
+            """,
             (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
-            ComboDataMapper::map // ← ここで ResultSet を map
+            ComboDataMapper::map
         );
     }
 
@@ -257,12 +237,12 @@ public class RecycleRepository {
      * @return
      */
     public List<ComboData> findRecycleItemCombo() {
-        String sql = "SELECT recycle_item_id as id, code as number, name as text FROM recycle_items WHERE NOT (state = ?)";
-        
-        return sqlRepository.findAll(
-            sql,
+        return sqlRepository.queryList(
+            """
+            SELECT recycle_item_id as id, code as number, name as text FROM recycle_items WHERE NOT (state = ?)
+            """,
             (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
-            ComboDataMapper::map // ← ここで ResultSet を map
+            ComboDataMapper::map 
         );
     }
 }

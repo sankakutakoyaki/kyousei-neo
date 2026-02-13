@@ -32,50 +32,20 @@ public class RecycleMakerParameterBinder {
         return index;
     }
 
-    public static int bindFindById(PreparedStatement ps, Integer recycleMakerId) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, recycleMakerId);
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
-
-    public static int bindFindByCode(PreparedStatement ps, Integer code) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, code);
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
-
-    public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
-
-    public static int bindDelete(PreparedStatement ps, int id) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, id);
-        return index;
-    }
-
     public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {
-            ps.setInt(index++, id); // 2. id IN (?, ?, ?)
+            ps.setInt(index++, id);
         }
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }
 
     public static int bindDownloadCsvByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
         for (Integer id : ids) {
-            ps.setInt(index++, id); // id IN (?, ?, ?)
+            ps.setInt(index++, id);
         }
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;

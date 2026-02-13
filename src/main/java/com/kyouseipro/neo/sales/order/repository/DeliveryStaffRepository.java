@@ -23,10 +23,10 @@ public class DeliveryStaffRepository {
     public List<DeliveryStaffEntity> findAllByOrderId(int id, String editor) {
         String sql = DeliveryStaffSqlBuilder.buildFindAllByOrderId();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
             (ps, v) -> DeliveryStaffParameterBinder.bindFindAllByOrderId(ps, id),
-            DeliveryStaffEntityMapper::map // ← ここで ResultSet を map
+            DeliveryStaffEntityMapper::map
         );
     }
 }

@@ -13,7 +13,6 @@ import com.kyouseipro.neo.abstracts.controller.BaseController;
 import com.kyouseipro.neo.common.ComboBoxService;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.combo.entity.ComboData;
-import com.kyouseipro.neo.common.history.service.HistoryService;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.corporation.office.entity.OfficeListEntity;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
@@ -32,7 +31,6 @@ import lombok.RequiredArgsConstructor;
 public class RecyclePageController extends BaseController {
     private final RecycleService recycleService;
     private final RecycleMakerService recycleMakerService;
-    private final HistoryService historyService;
     private final ComboBoxService comboBoxService;
 
 	@GetMapping("/recycle/regist")
@@ -40,8 +38,6 @@ public class RecyclePageController extends BaseController {
 	public String getRecycle(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         EmployeeEntity user = getLoginUser(session, response);
 		if (user == null) return null; // リダイレクト
-
-		historyService.save(user.getAccount(), "recycle", "閲覧", 200, "");
 
         model.addAttribute("title", "リサイクル");
 		model.addAttribute("activeMenu", "recycle");
@@ -79,8 +75,6 @@ public class RecyclePageController extends BaseController {
 	public String getMaker(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         EmployeeEntity user = getLoginUser(session, response);
 		if (user == null) return null; // リダイレクト
-
-		historyService.save(user.getAccount(), "recycle_maker", "閲覧", 200, "");
 
         model.addAttribute("title", "リサイクル");
 		model.addAttribute("activeMenu", "recycle");

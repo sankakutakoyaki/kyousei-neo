@@ -1,10 +1,10 @@
 package com.kyouseipro.neo.work.item.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
@@ -26,14 +26,18 @@ public class WorkItemRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public Optional<WorkItemEntity> findById(int id) {
+    public WorkItemEntity findById(int id) {
         String sql = WorkItemSqlBuilder.buildFindById();
 
-        return sqlRepository.executeQuery(
+        return sqlRepository.queryOne(
             sql,
-            (ps, en) -> WorkItemParameterBinder.bindFindById(ps, en),
-            rs -> rs.next() ? WorkItemEntityMapper.map(rs) : null,
-            id
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            WorkItemEntityMapper::map
         );
     }
 
@@ -45,10 +49,14 @@ public class WorkItemRepository {
     public List<WorkItemEntity> findAll() {
         String sql = WorkItemSqlBuilder.buildFindAll();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> WorkItemParameterBinder.bindFindAll(ps),
-            WorkItemEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            WorkItemEntityMapper::map
         );
     }
 
@@ -60,10 +68,15 @@ public class WorkItemRepository {
     public List<WorkItemEntity> findAllByCategoryId(int id) {
         String sql = WorkItemSqlBuilder.buildFindAllByCategoryId();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> WorkItemParameterBinder.bindFindAllByCategoryId(ps, id),
-            WorkItemEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            WorkItemEntityMapper::map
         );
     }
     
@@ -74,9 +87,9 @@ public class WorkItemRepository {
     public List<SimpleData> findParentCategoryCombo() {
         String sql = WorkItemSqlBuilder.buildFindParentCategoryCombo();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> WorkItemParameterBinder.bindFindParentCategoryCombo(ps),
+            (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
             SimpleDataMapper::map
         );
     }
@@ -89,27 +102,11 @@ public class WorkItemRepository {
     public int insert(WorkItemEntity entity, String editor) {
         String sql = WorkItemSqlBuilder.buildInsert(1);
 
-        // return sqlRepository.executeQuery(
-        //     sql,
-        //     (ps, en) -> WorkItemParameterBinder.bindInsert(ps, en, editor, 1),
-        //     rs -> rs.next() ? rs.getInt("work_item_id") : null,
-        //     entity
-        // );
         try {
-            return sqlRepository.executeRequired(
+            return sqlRepository.insert(
                 sql,
                 (ps, en) -> WorkItemParameterBinder.bindInsert(ps, en, editor, 1),
-                rs -> {
-                    if (!rs.next()) {
-                        throw new BusinessException("登録に失敗しました");
-                    }
-                    int id = rs.getInt("work_item_id");
-
-                    if (rs.next()) {
-                        throw new IllegalStateException("ID取得結果が複数行です");
-                    }
-                    return id;
-                },
+                rs -> rs.getInt("work_item_id"),
                 entity
             );
         } catch (RuntimeException e) {
@@ -128,24 +125,14 @@ public class WorkItemRepository {
     public int update(WorkItemEntity entity, String editor) {
         String sql = WorkItemSqlBuilder.buildUpdate(1);
 
-        // Integer result = sqlRepository.executeUpdate(
-        //     sql,
-        //     pstmt -> WorkItemParameterBinder.bindUpdate(pstmt, entity, editor, index)
-        // );
-
-        // return result; // 成功件数。0なら削除なし
         try {
-            int count = sqlRepository.executeUpdate(
+            int count = sqlRepository.updateRequired(
                 sql,
-                ps -> WorkItemParameterBinder.bindUpdate(ps, entity, editor, 1)
+                (ps, e) -> WorkItemParameterBinder.bindUpdate(ps, e, editor, 1),
+                entity
             );
 
-            if (count == 0) {
-                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-            }
-
             return count;
-
         } catch (RuntimeException e) {
             if (SqlExceptionUtil.isDuplicateKey(e)) {
                 throw new BusinessException("このコードはすでに使用されています。");
@@ -161,25 +148,16 @@ public class WorkItemRepository {
      * @return 成功件数を返す。
      */
     public int deleteByIds(IdListRequest list, String editor) {
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = WorkItemSqlBuilder.buildDeleteByIds(list.getIds().size());
-
-        // return sqlRepository.executeUpdate(
-        //     sql,
-        //     ps -> WorkItemParameterBinder.bindDeleteByIds(ps, workItemIds, editor)
-        // );
-        // return result; // 成功件数。0なら削除なし
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
-
-        int count = sqlRepository.executeUpdate(
+        
+        String sql = WorkItemSqlBuilder.buildDeleteByIds(list.getIds().size());
+        int count = sqlRepository.updateRequired(
             sql,
-            ps -> WorkItemParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
+            (ps, e) -> WorkItemParameterBinder.bindDeleteByIds(ps, e.getIds(), editor),
+            list
         );
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }
@@ -191,25 +169,16 @@ public class WorkItemRepository {
      * @return Idsで選択したEntityリストを返す。
      */
     public List<WorkItemEntity> downloadCsvByIds(IdListRequest list, String editor) {
-        // List<Integer> workItemIds = Utilities.createSequenceByIds(ids);
-        // String sql = WorkItemSqlBuilder.buildDownloadCsvByIds(workItemIds.size());
-
-        // return sqlRepository.findAll(
-        //     sql,
-        //     ps -> WorkItemParameterBinder.bindDownloadCsvByIds(ps, workItemIds),
-        //     WorkItemEntityMapper::map // ← ここで ResultSet を map
-        // );
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
         String sql = WorkItemSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
-
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> WorkItemParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
-            WorkItemEntityMapper::map
+            (ps, e) -> WorkItemParameterBinder.bindDownloadCsvByIds(ps, e.getIds()),
+            WorkItemEntityMapper::map,
+            list
         );
     }
 }

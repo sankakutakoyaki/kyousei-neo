@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.sales.order.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -35,14 +34,11 @@ public class OrderService {
      * @param id 受注ID
      * @return OrderEntity または null
      */
-    public Optional<OrderEntity> getById(int id) {
-        Optional<OrderEntity> opt = orderRepository.findById(id);
+    public OrderEntity getById(int id) {
+        OrderEntity opt = orderRepository.findById(id);
+        if (opt == null) return null;
 
-        if (opt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        OrderEntity order = opt.get();
+        OrderEntity order = opt;
 
         order.setItemList(
             orderItemRepository.findAllByOrderId(id, null)
@@ -54,7 +50,7 @@ public class OrderService {
             workContentRepository.findAllByOrderId(id, null)
         );
 
-        return Optional.of(order);
+        return order;
     }
 
     /**

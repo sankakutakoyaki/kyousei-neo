@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.dto.IdRequest;
 import com.kyouseipro.neo.personnel.workingconditions.entity.WorkingConditionsListEntity;
 import com.kyouseipro.neo.personnel.workingconditions.service.WorkingConditionsListService;
@@ -27,8 +28,8 @@ public class WorkingConditionsListApiController {
      */
     @GetMapping("/get/list")
 	@ResponseBody
-    public List<WorkingConditionsListEntity> getList() {
-        return workingConditionsListService.getList();
+    public SimpleResponse<List<WorkingConditionsListEntity>> getList() {
+        return new SimpleResponse<>(null, workingConditionsListService.getList());
     }
 
     /**
@@ -37,7 +38,7 @@ public class WorkingConditionsListApiController {
      */
     @PostMapping("/get/list/category")
 	@ResponseBody
-    public List<WorkingConditionsListEntity> getListByCategoryId(@RequestBody IdRequest req) {
-        return workingConditionsListService.getListByCategoryId(req.getId());
+    public SimpleResponse<List<WorkingConditionsListEntity>> getListByCategoryId(@RequestBody IdRequest req) {
+        return new SimpleResponse<>(null, workingConditionsListService.getListByCategoryId(req.getId()));
     }
 }

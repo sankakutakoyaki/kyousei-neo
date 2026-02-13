@@ -1,28 +1,25 @@
 package com.kyouseipro.neo.dto.sql.repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
+import java.sql.*;
+import java.util.*;
 import javax.sql.DataSource;
 
-import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.exception.BusinessException;
+import com.kyouseipro.neo.interfaces.sql.SQLBiConsumer;
 import com.kyouseipro.neo.interfaces.sql.SqlParameterBinder;
 import com.kyouseipro.neo.interfaces.sql.SqlResultExtractor;
 
-import lombok.RequiredArgsConstructor;
-
 @Repository
-@RequiredArgsConstructor
 public class SqlRepository {
 
     private final DataSource dataSource;
+
+    public SqlRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     /* =========================================================
        必須単一取得（OUTPUT対応）
@@ -34,53 +31,40 @@ public class SqlRepository {
             P param
     ) {
         Connection conn = DataSourceUtils.getConnection(dataSource);
-        try (
-            // Connection conn = dataSource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)
-        ) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             if (binder != null) {
                 binder.bind(ps, param);
             }
 
             boolean hasResult = ps.execute();
-
             while (!hasResult && ps.getUpdateCount() != -1) {
                 hasResult = ps.getMoreResults();
             }
 
             if (!hasResult) {
-                throw new BusinessException("対象データが存在しません");
+                throw new RuntimeException("対象データが存在しません");
             }
 
             try (ResultSet rs = ps.getResultSet()) {
-
                 if (!rs.next()) {
-                    throw new BusinessException("対象データが存在しません");
+                    throw new RuntimeException("対象データが存在しません");
                 }
-
                 R result = extractor.extract(rs);
-
                 if (rs.next()) {
                     throw new IllegalStateException("結果が複数行あります");
                 }
-
                 return result;
             }
 
         } catch (SQLException e) {
             throw new RuntimeException("SQL実行エラー", e);
-
         } finally {
             DataSourceUtils.releaseConnection(conn, dataSource);
         }
     }
 
-    public <R> R queryOne(
-            String sql,
-            SqlParameterBinder binder,
-            SqlResultExtractor<R> extractor
-    ) {
+    public <R> R queryOne(String sql, SqlParameterBinder binder, SqlResultExtractor<R> extractor) {
         return this.<Void, R>queryOne(sql, binder, extractor, null);
     }
 
@@ -94,36 +78,25 @@ public class SqlRepository {
             P param
     ) {
         Connection conn = DataSourceUtils.getConnection(dataSource);
-        try (
-            // Connection conn = dataSource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)
-        ) {
-
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             if (binder != null) {
                 binder.bind(ps, param);
             }
-
             try (ResultSet rs = ps.executeQuery()) {
-
-                if (!rs.next()) {
-                    return null;
-                }
-
+                if (!rs.next()) return null;
                 R result = extractor.extract(rs);
-
-                if (rs.next()) {
-                    throw new IllegalStateException("結果が複数行あります");
-                }
-
+                if (rs.next()) throw new IllegalStateException("結果が複数行あります");
                 return result;
             }
-
         } catch (SQLException e) {
             throw new RuntimeException("SQL実行エラー", e);
-
         } finally {
             DataSourceUtils.releaseConnection(conn, dataSource);
         }
+    }
+
+    public <R> R queryOneOrNull(String sql, SqlParameterBinder binder, SqlResultExtractor<R> extractor) {
+        return this.<Void, R>queryOneOrNull(sql, binder, extractor, null);
     }
 
     /* =========================================================
@@ -136,71 +109,140 @@ public class SqlRepository {
             P param
     ) {
         Connection conn = DataSourceUtils.getConnection(dataSource);
-        try (
-            PreparedStatement ps = conn.prepareStatement(sql)
-        ) {
-
-            if (binder != null) {
-                binder.bind(ps, param);
-            }
-
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            if (binder != null) binder.bind(ps, param);
             try (ResultSet rs = ps.executeQuery()) {
-
                 List<R> list = new ArrayList<>();
-
                 while (rs.next()) {
                     list.add(extractor.extract(rs));
                 }
-
                 return list;
             }
-
         } catch (SQLException e) {
             throw new RuntimeException("SQL実行エラー", e);
-
         } finally {
             DataSourceUtils.releaseConnection(conn, dataSource);
         }
     }
 
-    public <P, R> List<R> queryList(
-            String sql,
-            SqlParameterBinder binder,
-            SqlResultExtractor<R> extractor
-    ) {
+    public <R> List<R> queryList(String sql, SqlParameterBinder binder, SqlResultExtractor<R> extractor) {
         return this.<Void, R>queryList(sql, binder, extractor, null);
     }
 
     /* =========================================================
-       更新
+       更新・削除（UPDATE/DELETE）
        ========================================================= */
-    public <P> int update(
-            String sql,
-            SqlParameterBinder<P> binder,
-            P param
-    ) {
-        try (
-            Connection conn = dataSource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)
-        ) {
-
-            if (binder != null) {
-                binder.bind(ps, param);
-            }
-
+    public <P> int update(String sql, SqlParameterBinder<P> binder, P param) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            if (binder != null) binder.bind(ps, param);
             return ps.executeUpdate();
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public int update(
-        String sql,
-        SqlParameterBinder<Void> binder
-) {
-    return this.<Void>update(sql, binder, null);
-}
+    public int update(String sql, SqlParameterBinder<Void> binder) {
+        return this.<Void>update(sql, binder, null);
+    }
+
+    public <P> int updateRequired(
+            String sql,
+            SqlParameterBinder<P> binder,
+            P param
+    ) {
+        return updateRequired(
+            sql,
+            binder,
+            param,
+            "他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。"
+        );
+    }
+
+    public int updateRequired(String sql, SqlParameterBinder<Void> binder) {
+        return this.<Void>updateRequired(sql, binder, null);
+    }
+
+    //　メッセージ可変
+    public <P> int updateRequired(
+            String sql,
+            SqlParameterBinder<P> binder,
+            P param,
+            String errorMessage
+    ) {
+        int count = update(sql, binder, param);
+
+        if (count == 0) {
+            throw new BusinessException(errorMessage);
+        }
+
+        return count;
+    }
+
+    /* =========================================================
+       バッチ更新・削除
+       ========================================================= */
+    public <P> int batch(String sql, SQLBiConsumer<PreparedStatement, P> binder, List<P> entities) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            for (P entity : entities) {
+                binder.accept(ps, entity);
+                ps.addBatch();
+            }
+
+            int[] results = ps.executeBatch();
+            return Arrays.stream(results).sum();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("SQLバッチ実行エラー", e);
+        }
+    }
+
+    /* =========================================================
+       INSERT + OUTPUT（自動生成ID取得）
+       ========================================================= */
+    public <P, R> R insert(String sql, SqlParameterBinder<P> binder, SqlResultExtractor<R> extractor, P param) {
+        Connection conn = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            if (binder != null) binder.bind(ps, param);
+
+            boolean hasResult = ps.execute();
+            while (!hasResult && ps.getUpdateCount() != -1) {
+                hasResult = ps.getMoreResults();
+            }
+
+            if (!hasResult) {
+                throw new RuntimeException("INSERTに失敗しました");
+            }
+
+            try (ResultSet rs = ps.getResultSet()) {
+                if (!rs.next()) throw new RuntimeException("ID取得に失敗しました");
+                R id = extractor.extract(rs);
+                if (rs.next()) throw new IllegalStateException("ID取得結果が複数行です");
+                return id;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("SQL実行エラー", e);
+        } finally {
+            DataSourceUtils.releaseConnection(conn, dataSource);
+        }
+    }
+
+    public <P> boolean exists(
+            String sql,
+            SqlParameterBinder<P> binder,
+            P param
+    ) {
+        return queryOne(
+            sql,
+            binder,
+            rs -> true,   // 1行でもあればtrue
+            param
+        );
+    }
 }
 // import java.sql.Connection;
 // import java.sql.DriverManager;
@@ -708,26 +750,26 @@ public class SqlRepository {
 //     /* ===============================
 //        バッチ処理
 //        =============================== */
-//     public <T> int batch(
-//             String sql,
-//             SQLBiConsumer<PreparedStatement, T> binder,
-//             List<T> entities
-//     ) {
-//         try (
-//             Connection conn = DriverManager.getConnection(url, userName, password);
-//             PreparedStatement ps = conn.prepareStatement(sql)
-//         ) {
+    // public <T> int batch(
+    //         String sql,
+    //         SQLBiConsumer<PreparedStatement, T> binder,
+    //         List<T> entities
+    // ) {
+    //     try (
+    //         Connection conn = DriverManager.getConnection(url, userName, password);
+    //         PreparedStatement ps = conn.prepareStatement(sql)
+    //     ) {
 
-//             for (T entity : entities) {
-//                 binder.accept(ps, entity);
-//                 ps.addBatch();
-//             }
+    //         for (T entity : entities) {
+    //             binder.accept(ps, entity);
+    //             ps.addBatch();
+    //         }
 
-//             int[] result = ps.executeBatch();
-//             return Arrays.stream(result).sum();
+    //         int[] result = ps.executeBatch();
+    //         return Arrays.stream(result).sum();
 
-//         } catch (SQLException e) {
-//             throw new RuntimeException("SQL error in batch", e);
-//         }
-//     }
+    //     } catch (SQLException e) {
+    //         throw new RuntimeException("SQL error in batch", e);
+    //     }
+    // }
 // }

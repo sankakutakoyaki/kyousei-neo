@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.work.price.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,7 @@ public class WorkPriceService {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public Optional<WorkPriceEntity> getById(int id) {
+    public WorkPriceEntity getById(int id) {
         return workPriceRepository.findById(id);
     }
 
@@ -34,7 +33,6 @@ public class WorkPriceService {
      * @return IDから取得したEntityを返す。work_price_idが0の場合は-1からの仮IDを付与する
      */
     public List<WorkPriceEntity> getListByCompanyId(int id) {
-        // return workPriceRepository.findAllByCompanyId(id);
         List<WorkPriceEntity> list = workPriceRepository.findAllByCompanyId(id);
 
         int tempId = -1;

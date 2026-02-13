@@ -29,56 +29,20 @@ public class WorkItemParameterBinder {
         pstmt.setInt(index++, w.getVersion() +1);
         pstmt.setInt(index++, w.getState());
 
-        pstmt.setInt(index++, w.getWorkItemId()); // WHERE句
+        pstmt.setInt(index++, w.getWorkItemId());
         pstmt.setInt(index++, w.getVersion());
-        pstmt.setString(index++, editor);          // ログ用
-        return index;
-    }
-
-    public static int bindFindById(PreparedStatement ps, int id) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, id);
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
-
-    public static int bindFindAll(PreparedStatement ps) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
-
-    public static int bindFindAllByCategoryId(PreparedStatement ps, int id) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, id);
-        ps.setInt(index++, Enums.state.DELETE.getCode());
+        pstmt.setString(index++, editor);
         return index;
     }
 
     public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {
-            ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
+            ps.setInt(index++, id);
         }
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
-        ps.setString(index, editor); // 4. log
-        return index;
-    }
-
-    public static int bindDelete(PreparedStatement ps, int id, String editor, int index) throws SQLException {
         ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, id);
         ps.setString(index, editor);
-        return index;
-    }
-
-    public static int bindFindParentCategoryCombo(PreparedStatement ps) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }
 
@@ -86,7 +50,7 @@ public class WorkItemParameterBinder {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {
-            ps.setInt(index++, id); // id IN (?, ?, ?)
+            ps.setInt(index++, id);
         }
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;

@@ -1,5 +1,10 @@
 package com.kyouseipro.neo.personnel.workingconditions.controller;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -9,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.kyouseipro.neo.dto.ApiResponse;
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.IdRequest;
 import com.kyouseipro.neo.personnel.workingconditions.entity.WorkingConditionsEntity;
@@ -30,8 +35,8 @@ public class WorkingConditionsApiController {
      */
     @PostMapping("/get/id")
 	@ResponseBody
-    public ResponseEntity<WorkingConditionsEntity> getById(@RequestBody IdRequest req) {
-            return ResponseEntity.ok(workingConditionsService.getById(req.getId()).orElse(null));
+    public ResponseEntity<SimpleResponse<WorkingConditionsEntity>> getById(@RequestBody IdRequest req) {
+            return ResponseEntity.ok(new SimpleResponse<>(null, workingConditionsService.getById(req.getId())));
     }
 
     /**
@@ -41,8 +46,8 @@ public class WorkingConditionsApiController {
      */
     @PostMapping("/get/employeeid")
 	@ResponseBody
-    public ResponseEntity<WorkingConditionsEntity> getByEmployeeId(@RequestBody IdRequest req) {
-            return ResponseEntity.ok(workingConditionsService.getByEmployeeId(req.getId()).orElse(null));
+    public ResponseEntity<SimpleResponse<WorkingConditionsEntity>> getByEmployeeId(@RequestBody IdRequest req) {
+            return ResponseEntity.ok(new SimpleResponse<>(null, workingConditionsService.getByEmployeeId(req.getId())));
     }
 
     /**
@@ -52,9 +57,9 @@ public class WorkingConditionsApiController {
      */
     @PostMapping("/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody WorkingConditionsEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody WorkingConditionsEntity entity, @AuthenticationPrincipal OidcUser principal) {
         Integer id = workingConditionsService.save(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
     }
 
     /**
@@ -64,9 +69,9 @@ public class WorkingConditionsApiController {
      */
     @PostMapping("/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         int id = workingConditionsService.deleteByIds(ids, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
+        return ResponseEntity.ok(new SimpleResponse<>(id + "件削除しました。", id));
     }
 
     /**
@@ -74,9 +79,19 @@ public class WorkingConditionsApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/download/csv")
-	@ResponseBody
-    public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
-        return workingConditionsService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+    // @PostMapping("/download/csv")
+	// @ResponseBody
+    // public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+    //     return workingConditionsService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+    // }
+    @PostMapping(value = "/download/csv", produces = "text/csv")
+    public ResponseEntity<byte[]> downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+        String csv = workingConditionsService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+        String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".csv";
+
+        byte[] bytes = csv.getBytes(StandardCharsets.UTF_8);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .body(bytes);
     }
 }

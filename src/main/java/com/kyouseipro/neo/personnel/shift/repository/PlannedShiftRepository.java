@@ -25,7 +25,7 @@ public class PlannedShiftRepository {
             WHERE shift_date BETWEEN ? AND ?
         """;
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
             (ps, v) -> {
                 ps.setDate(1, Date.valueOf(start));
@@ -49,9 +49,9 @@ public class PlannedShiftRepository {
             VALUES (?, ?, ?)
         """;
 
-        sqlRepository.executeUpdate(
+        sqlRepository.update(
             sql,
-            ps -> {
+            (ps, v) -> {
                 ps.setLong(1, employeeId);
                 ps.setDate(2, Date.valueOf(date));
                 ps.setString(3, type);
@@ -67,9 +67,9 @@ public class PlannedShiftRepository {
             WHERE employee_id = ? AND shift_date = ?
         """;
 
-        sqlRepository.executeUpdate(
+        sqlRepository.update(
             sql,
-            ps -> {
+            (ps, v) -> {
                 ps.setString(1, type);
                 ps.setLong(2, employeeId);
                 ps.setDate(3, Date.valueOf(date));
@@ -85,9 +85,9 @@ public class PlannedShiftRepository {
             WHERE employee_id = ? AND shift_date = ?
         """;
 
-        sqlRepository.executeUpdate(
+        sqlRepository.update(
             sql,
-            ps -> {
+            (ps, v) -> {
                 ps.setLong(1, employeeId);
                 ps.setDate(2, Date.valueOf(date));
             }
@@ -99,21 +99,18 @@ public class PlannedShiftRepository {
     public boolean exists(Long employeeId, LocalDate date) {
 
         String sql = """
-            SELECT COUNT(*)
+            SELECT TOP 1 1
             FROM planned_shift
-            WHERE employee_id = ? AND shift_date = ?
+            WHERE employee_id = ?
+            AND shift_date = ?
         """;
-
-        ExistsParam param = new ExistsParam(employeeId, date);
-
-        return sqlRepository.executeQuery(
+        return sqlRepository.exists(
             sql,
             (ps, p) -> {
                 ps.setLong(1, p.employeeId());
                 ps.setDate(2, Date.valueOf(p.date()));
             },
-            rs -> rs.next() ? rs.getInt(1) > 0 : false,
-            param
-        ).orElse(false);
+            new ExistsParam(employeeId, date)
+        );
     }
 }

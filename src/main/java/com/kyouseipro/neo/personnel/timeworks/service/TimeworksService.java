@@ -9,6 +9,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.common.Enums.HistoryTables;
+import com.kyouseipro.neo.interfaces.HistoryTarget;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 import com.kyouseipro.neo.personnel.employee.repository.EmployeeRepository;
 import com.kyouseipro.neo.personnel.timeworks.entity.TimeworksEntity;
@@ -102,6 +104,10 @@ public class TimeworksService {
      * @param category
      * @return
      */
+    @HistoryTarget(
+        table = HistoryTables.TIMEWORKS,
+        action = "保存"
+    )
     public int registToday(TimeworksRequestDto dto, Enums.timeworksCategory category) {
 
         LocalDateTime now = LocalDateTime.now();

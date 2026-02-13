@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.kyouseipro.neo.dto.ApiResponse;
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.dto.IdPairRequest;
 import com.kyouseipro.neo.dto.IdRequest;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntity;
@@ -31,12 +31,12 @@ public class QualificationsApiController {
      */
     @PostMapping("/api/qualifications/get/id")
 	@ResponseBody
-    public List<QualificationsEntity> getById(@RequestBody IdPairRequest req) {
+    public SimpleResponse<List<QualificationsEntity>> getById(@RequestBody IdPairRequest req) {
         switch (req.getSecondaryId()) {
             case 0:
-                return qualificationsService.getByEmployeeId(req.getPrimaryId());
+                return new SimpleResponse<>(null, qualificationsService.getByEmployeeId(req.getPrimaryId()));
             default:
-                return qualificationsService.getByCompanyId(req.getPrimaryId());
+                return new SimpleResponse<>(null, qualificationsService.getByCompanyId(req.getPrimaryId()));
         }
     }
 
@@ -47,14 +47,9 @@ public class QualificationsApiController {
      */
     @PostMapping("/api/qualifications/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody QualificationsEntity entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody QualificationsEntity entity, @AuthenticationPrincipal OidcUser principal) {
         Integer id = qualificationsService.save(entity, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
-        // if (id != null && id > 0) {
-        //     return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
-        // } else {
-        //     return ResponseEntity.badRequest().body(ApiResponse.error("保存に失敗しました"));
-        // }
+        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
     }
 
     /**
@@ -64,20 +59,9 @@ public class QualificationsApiController {
      */
     @PostMapping("/api/qualifications/delete/id")
     @ResponseBody
-    // public ResponseEntity<ApiResponse<Integer>> deleteById(@RequestParam int id, @AuthenticationPrincipal OidcUser principal) {
-    //     String userName = principal.getAttribute("preferred_username");
-    //     Integer result = qualificationsService.deleteById(id, userName);
-    //     if (result != null && result > 0) {
-    //         historyService.save(userName, "qualifications", "削除", 200, "成功");
-    //         return ResponseEntity.ok(ApiResponse.ok("削除しました。", result));
-    //     } else {
-    //         historyService.save(userName, "qualifications", "削除", 400, "失敗");
-    //         return ResponseEntity.badRequest().body(ApiResponse.error("削除に失敗しました"));
-    //     }
-    // }
-    public ResponseEntity<ApiResponse<Integer>> deleteById(@RequestBody IdRequest req, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> deleteById(@RequestBody IdRequest req, @AuthenticationPrincipal OidcUser principal) {
         Integer result = qualificationsService.deleteById(req.getId(), principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok("削除しました。", result));
+        return ResponseEntity.ok(new SimpleResponse<>("削除しました。", result));
     }
 
     /**
@@ -86,8 +70,8 @@ public class QualificationsApiController {
      */
     @GetMapping("/api/qualifications/get")
 	@ResponseBody
-    public List<QualificationsEntity> getListForEmployee() {
-        return qualificationsService.getListForEmployee();
+    public SimpleResponse<List<QualificationsEntity>> getListForEmployee() {
+        return new SimpleResponse<>(null, qualificationsService.getListForEmployee());
     }
 
     /**
@@ -96,7 +80,7 @@ public class QualificationsApiController {
      */
     @GetMapping("/api/license/get")
 	@ResponseBody
-    public List<QualificationsEntity> getListForCompany() {
-        return qualificationsService.getListFroCompany();
+    public SimpleResponse<List<QualificationsEntity>> getListForCompany() {
+        return new SimpleResponse<>(null, qualificationsService.getListFroCompany());
     }
 }

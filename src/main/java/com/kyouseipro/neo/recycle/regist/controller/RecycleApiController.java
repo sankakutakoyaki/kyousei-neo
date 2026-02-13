@@ -1,7 +1,11 @@
 package com.kyouseipro.neo.recycle.regist.controller;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -15,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.kyouseipro.neo.dto.ApiResponse;
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.dto.BetweenRequest;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.StringRequest;
@@ -38,8 +42,8 @@ public class RecycleApiController {
      */
     @PostMapping("/get/number")
     @ResponseBody
-    public ResponseEntity<RecycleEntity> findByNumber(@RequestBody StringRequest req) {
-        return ResponseEntity.ok(recycleService.getByNumber(req.getValue()).orElse(null));
+    public ResponseEntity<SimpleResponse<RecycleEntity>> findByNumber(@RequestBody StringRequest req) {
+        return ResponseEntity.ok(new SimpleResponse<>(null, recycleService.getByNumber(req.getValue())));
     }
 
     /**
@@ -51,8 +55,8 @@ public class RecycleApiController {
      */
     @PostMapping("/get/between")
     @ResponseBody
-    public List<RecycleEntity> getBetween(@RequestBody BetweenRequest req) {
-        return recycleService.getBetween(req.getStart(), req.getEnd(), req.getType());
+    public SimpleResponse<List<RecycleEntity>> getBetween(@RequestBody BetweenRequest req) {
+        return new SimpleResponse<>(null, recycleService.getBetween(req.getStart(), req.getEnd(), req.getType()));
     }
 
     /**
@@ -62,18 +66,16 @@ public class RecycleApiController {
      */
     @PostMapping("/save/{type}")
 	@ResponseBody
-    public ResponseEntity<RecycleEntity> save(@RequestBody RecycleEntity entity, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
+    public ResponseEntity<SimpleResponse<RecycleEntity>> save(@RequestBody RecycleEntity entity, @AuthenticationPrincipal OidcUser principal, @PathVariable String type) {
         String userName = principal.getAttribute("preferred_username");
         switch (type) {
             case "regist":
-                return ResponseEntity.ok(recycleService.save(entity, userName).orElse(null));
-                // break;
+                return ResponseEntity.ok(new SimpleResponse<>(null, recycleService.save(entity, userName)));
             case "delivery":
             case "shipping":
             case "loss":
             case "edit":
-                return ResponseEntity.ok(recycleService.update(entity, type, userName).orElse(null));
-                // break;
+                return ResponseEntity.ok(new SimpleResponse<>(null, recycleService.update(entity, type, userName)));
             default:
                 return null;
         }
@@ -86,9 +88,9 @@ public class RecycleApiController {
      */
     @PostMapping("/update")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> update(@RequestBody RecycleEntityRequest req) {
+    public ResponseEntity<SimpleResponse<Integer>> update(@RequestBody RecycleEntityRequest req) {
         int id = recycleService.bulkUpdate(req);
-        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
     }
     
     /**
@@ -98,9 +100,9 @@ public class RecycleApiController {
      */
     @PostMapping("/delete")
     @ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         int num = recycleService.deleteByIds(ids, principal.getAttribute("preferred_userName"));
-        return ResponseEntity.ok(ApiResponse.ok(num + "件削除しました。", num));
+        return ResponseEntity.ok(new SimpleResponse<>(num + "件削除しました。", num));
     }
 
     /**
@@ -108,9 +110,19 @@ public class RecycleApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/download/csv")
-	@ResponseBody
-    public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
-        return recycleService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+    // @PostMapping("/download/csv")
+	// @ResponseBody
+    // public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+    //     return recycleService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+    // }
+    @PostMapping(value = "/download/csv", produces = "text/csv")
+    public ResponseEntity<byte[]> downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+        String csv = recycleService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+        String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".csv";
+
+        byte[] bytes = csv.getBytes(StandardCharsets.UTF_8);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .body(bytes);
     }
 }

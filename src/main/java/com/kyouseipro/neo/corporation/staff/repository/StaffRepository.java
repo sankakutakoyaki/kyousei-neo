@@ -68,20 +68,10 @@ public class StaffRepository {
     public int insert(StaffEntityRequest entity, String editor) {
         String sql = StaffSqlBuilder.buildBulkInsert(entity);
 
-        return sqlRepository.queryOne(
+        return sqlRepository.insert(
             sql,
             (ps, en) -> StaffParameterBinder.bindBulkInsert(ps, en, editor),
-            rs -> {
-                if (!rs.next()) {
-                    throw new BusinessException("登録に失敗しました");
-                }
-                int id = rs.getInt("staff_id");
-
-                if (rs.next()) {
-                    throw new IllegalStateException("ID取得結果が複数行です");
-                }
-                return id;
-            },
+            rs -> rs.getInt("staff_id"),
             entity
         );
     }

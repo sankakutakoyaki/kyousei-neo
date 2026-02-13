@@ -147,12 +147,12 @@ public class OrderItemParameterBinder {
 
     public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {
-            ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
+            ps.setInt(index++, id);
         }
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
-        ps.setString(index, editor); // 4. log
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setString(index, editor);
         return index;
     }
 
@@ -165,7 +165,7 @@ public class OrderItemParameterBinder {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {
-            ps.setInt(index++, id); // id IN (?, ?, ?)
+            ps.setInt(index++, id);
         }
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;

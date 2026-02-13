@@ -7,13 +7,13 @@ import java.time.LocalDate;
 import com.kyouseipro.neo.common.Enums;
 
 public class OrderListParameterBinder {
-    public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
+    // public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
+    //     int index = 1;
+    //     ps.setInt(index++, Enums.state.DELETE.getCode());
+    //     ps.setInt(index++, Enums.state.DELETE.getCode());
+    //     ps.setInt(index++, Enums.state.DELETE.getCode());
+    //     return index;
+    // }
 
     public static int bindFindByBetween(PreparedStatement ps, LocalDate start, LocalDate end) throws SQLException {
         int index = 1;

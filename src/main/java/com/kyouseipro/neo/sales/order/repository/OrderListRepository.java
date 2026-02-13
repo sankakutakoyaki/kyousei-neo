@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.sales.order.entity.OrderListEntity;
 import com.kyouseipro.neo.sales.order.mapper.OrderListEntityMapper;
@@ -24,10 +25,15 @@ public class OrderListRepository {
     public List<OrderListEntity> findAll() {
         String sql = OrderListSqlBuilder.buildFindAll();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> OrderListParameterBinder.bindFindAll(ps, null),
-            OrderListEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            OrderListEntityMapper::map
         );
     }
 
@@ -40,10 +46,10 @@ public class OrderListRepository {
     public List<OrderListEntity> findByBetween(LocalDate start, LocalDate end) {
         String sql = OrderListSqlBuilder.buildFindByBetween();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
             (ps, v) -> OrderListParameterBinder.bindFindByBetween(ps, start, end),
-            OrderListEntityMapper::map // ← ここで ResultSet を map
+            OrderListEntityMapper::map
         );
     }
 }

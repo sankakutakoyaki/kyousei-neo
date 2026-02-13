@@ -1,10 +1,10 @@
 package com.kyouseipro.neo.recycle.item.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.dto.IdListRequest;
@@ -24,14 +24,17 @@ public class RecycleItemRepository {
      * @param orderId
      * @return IDから取得したEntityをかえす。
      */
-    public Optional<RecycleItemEntity> findById(int id) {
+    public RecycleItemEntity findById(int id) {
         String sql = RecycleItemSqlBuilder.buildFindById();
 
-        return sqlRepository.executeQuery(
+        return sqlRepository.queryOne(
             sql,
-            (ps, en) -> RecycleItemParameterBinder.bindFindById(ps, en),
-            rs -> rs.next() ? RecycleItemEntityMapper.map(rs) : null,
-            id
+            (ps, en) -> {
+                int index = 1;
+                ps.setInt(index++, id);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            RecycleItemEntityMapper::map
         );
     } 
 
@@ -40,14 +43,17 @@ public class RecycleItemRepository {
      * @param code
      * @return IDから取得したEntityをかえす。
      */
-    public Optional<RecycleItemEntity> findByCode(int code) {
+    public RecycleItemEntity findByCode(int code) {
         String sql = RecycleItemSqlBuilder.buildFindByCode();
         
-        return sqlRepository.executeQuery(
+        return sqlRepository.queryOne(
             sql,
-            (ps, en) -> RecycleItemParameterBinder.bindFindByCode(ps, en),
-            rs -> rs.next() ? RecycleItemEntityMapper.map(rs) : null,
-            code
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, code);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            RecycleItemEntityMapper::map
         );
     }
 
@@ -59,7 +65,7 @@ public class RecycleItemRepository {
     public int insert(RecycleItemEntity entity, String userName) {
         String sql = "INSERT INTO recycle_items (code, name, version, state) OUTPUT INSERTED.recycle_item_id VALUES (?, ?, ?, ?);";
         try {
-            return sqlRepository.executeRequired(
+            return sqlRepository.insert(
                 sql,
                 (ps, en) -> {
                     int index = 1;
@@ -68,17 +74,7 @@ public class RecycleItemRepository {
                     ps.setInt(index++, en.getVersion());
                     ps.setInt(index++, en.getState());
                 },
-                rs -> {
-                    if (!rs.next()) {
-                        throw new BusinessException("登録に失敗しました");
-                    }
-                    int id = rs.getInt("recycle_maker_id");
-
-                    if (rs.next()) {
-                        throw new IllegalStateException("ID取得結果が複数行です");
-                    }
-                    return id;
-                },
+                rs -> rs.getInt("recycle_maker_id"),
                 entity
             );
         } catch (RuntimeException e) {
@@ -98,14 +94,11 @@ public class RecycleItemRepository {
         String sql = RecycleItemSqlBuilder.buildUpdate();
 
         try {
-            int count = sqlRepository.executeUpdate(
+            int count = sqlRepository.updateRequired(
                 sql,
-                ps -> RecycleItemParameterBinder.bindUpdate(ps, entity, userName)
+                (ps, e) -> RecycleItemParameterBinder.bindUpdate(ps, e, userName),
+                entity
             );
-
-            if (count == 0) {
-                throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-            }
 
             return count;
 
@@ -130,13 +123,11 @@ public class RecycleItemRepository {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
-        int count = sqlRepository.executeUpdate(
+        int count = sqlRepository.updateRequired(
             sql,
-            ps -> RecycleItemParameterBinder.bindDeleteForIds(ps, list.getIds())
+            (ps, e) -> RecycleItemParameterBinder.bindDeleteForIds(ps, e.getIds()),
+            list
         );
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }
@@ -154,10 +145,11 @@ public class RecycleItemRepository {
 
         String sql = RecycleItemSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> RecycleItemParameterBinder.bindDownloadCsvForIds(ps, list.getIds()),
-            RecycleItemEntityMapper::map
+            (ps, e) -> RecycleItemParameterBinder.bindDownloadCsvForIds(ps, e.getIds()),
+            RecycleItemEntityMapper::map,
+            list
         );
     }
 }

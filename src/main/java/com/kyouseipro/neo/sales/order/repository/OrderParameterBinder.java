@@ -77,9 +77,9 @@ public class OrderParameterBinder {
         pstmt.setInt(index++, o.getVersion() +1);
         pstmt.setInt(index++, o.getState());
 
-        pstmt.setInt(index++, o.getOrderId()); // WHERE句
+        pstmt.setInt(index++, o.getOrderId());
         pstmt.setInt(index++, o.getVersion());
-        pstmt.setString(index++, editor);          // ログ用
+        pstmt.setString(index++, editor);
 
         // 商品リスト
         index = OrderItemParameterBinder.setSave(pstmt, o.getItemList(), editor, index);
@@ -90,31 +90,31 @@ public class OrderParameterBinder {
         return index;
     }
 
-    public static int bindFindById(PreparedStatement ps, Integer orderId) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, orderId);
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
+    // public static int bindFindById(PreparedStatement ps, Integer orderId) throws SQLException {
+    //     int index = 1;
+    //     ps.setInt(index++, Enums.state.DELETE.getCode());
+    //     ps.setInt(index++, Enums.state.DELETE.getCode());
+    //     ps.setInt(index++, orderId);
+    //     ps.setInt(index++, Enums.state.DELETE.getCode());
+    //     return index;
+    // }
 
-    public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
-        int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, Enums.state.DELETE.getCode());
-        return index;
-    }
+    // public static int bindFindAll(PreparedStatement ps, Void unused) throws SQLException {
+    //     int index = 1;
+    //     ps.setInt(index++, Enums.state.DELETE.getCode());
+    //     ps.setInt(index++, Enums.state.DELETE.getCode());
+    //     ps.setInt(index++, Enums.state.DELETE.getCode());
+    //     return index;
+    // }
 
     public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
         int index = 1;
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // 1. SET state = ?
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {
-            ps.setInt(index++, id); // 2. company_id IN (?, ?, ?)
+            ps.setInt(index++, id);
         }
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // 3. AND NOT (state = ?)
-        ps.setString(index, editor); // 4. log
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setString(index, editor);
         return index;
     }
 
@@ -123,9 +123,9 @@ public class OrderParameterBinder {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {
-            ps.setInt(index++, id); // company_id IN (?, ?, ?)
+            ps.setInt(index++, id);
         }
-        ps.setInt(index++, Enums.state.DELETE.getCode()); // AND NOT (state = ?)
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }
 }

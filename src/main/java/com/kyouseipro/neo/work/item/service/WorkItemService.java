@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.work.item.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,7 @@ public class WorkItemService {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public Optional<WorkItemEntity> getById(int id) {
+    public WorkItemEntity getById(int id) {
         return workItemRepository.findById(id);
     }
 

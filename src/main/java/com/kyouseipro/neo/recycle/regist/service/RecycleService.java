@@ -2,7 +2,6 @@ package com.kyouseipro.neo.recycle.regist.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ public class RecycleService {
      * @param number
      * @return Numberから取得したEntityを返す。
      */
-    public Optional<RecycleEntity> getByNumber(String number) {
+    public RecycleEntity getByNumber(String number) {
         return recycleRepository.findByNumber(number);
     }
     
@@ -53,7 +52,7 @@ public class RecycleService {
         table = HistoryTables.RECYCLES,
         action = "保存"
     )
-    public Optional<RecycleEntity> save(RecycleEntity entity, String editor) {
+    public RecycleEntity save(RecycleEntity entity, String editor) {
         int id = recycleRepository.save(entity, editor);
         if (id > 0) {
             return recycleRepository.findById(id);
@@ -72,7 +71,7 @@ public class RecycleService {
         table = HistoryTables.RECYCLEITEMS,
         action = "更新"
     )
-    public Optional<RecycleEntity> update(RecycleEntity entity, String type, String editor) {
+    public RecycleEntity update(RecycleEntity entity, String type, String editor) {
         int id = recycleRepository.update(entity, type, editor);
         if (id > 0) {
             return recycleRepository.findById(id);

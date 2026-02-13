@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Utilities;
-import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.common.simpledata.mapper.SimpleDataMapper;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
@@ -31,15 +30,21 @@ public class QualificationsRepository {
      */
     public List<QualificationsEntity> findAllByEmployeeId(int id) {
         String sql = QualificationsSqlBuilder.buildFindAllByEmployeeId();
-        EmployeeEntity entity = employeeRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("従業員が見つかりません: " + id));
+        EmployeeEntity entity = employeeRepository.findById(id);
 
         int targetId = entity.getEmployeeId();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> QualificationsParameterBinder.bindFindAllByEmployeeId(ps, targetId),
-            QualificationsEntityMapper::map // ← ここで ResultSet を map
+            (ps, i) ->{
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, i);
+            },
+            QualificationsEntityMapper::map,
+            targetId
         );
     }
 
@@ -51,10 +56,18 @@ public class QualificationsRepository {
     public List<QualificationsEntity> findAllByCompanyId(int id) {
         String sql = QualificationsSqlBuilder.buildFindAllByCompanyId();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> QualificationsParameterBinder.bindFindAllByCompanyId(ps, id),
-            QualificationsEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+                ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
+                ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
+            },
+            QualificationsEntityMapper::map
         );
     }
 
@@ -66,10 +79,15 @@ public class QualificationsRepository {
     public List<QualificationsEntity> findAllByEmployeeStatus() {
         String sql = QualificationsSqlBuilder.buildFindAllByEmployeeStatus();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> QualificationsParameterBinder.bindFindAllByEmployeeStatus(ps, null),
-            QualificationsEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            QualificationsEntityMapper::map
         );
     }
 
@@ -81,10 +99,17 @@ public class QualificationsRepository {
     public List<QualificationsEntity> findAllByCompanyStatus() {
         String sql = QualificationsSqlBuilder.buildFindAllByCompanyStatus();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> QualificationsParameterBinder.bindFindAllByCompanyStatus(ps, null),
-            QualificationsEntityMapper::map // ← ここで ResultSet を map
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
+            },
+            QualificationsEntityMapper::map
         );
     }
 
@@ -96,7 +121,7 @@ public class QualificationsRepository {
     public List<SimpleData> findAllByQualificationMasterCombo() {
         String sql = "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = ?) ORDER BY code;";
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
             (ps, v) ->  ps.setInt(1, Enums.state.DELETE.getCode()),
             SimpleDataMapper::map
@@ -111,7 +136,7 @@ public class QualificationsRepository {
     public List<SimpleData> findAllByLicenseMasterCombo() {
         String sql = "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = ?) AND category_name = '許可' ORDER BY code;";
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
             (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
             SimpleDataMapper::map
@@ -126,20 +151,10 @@ public class QualificationsRepository {
     public int insert(QualificationsEntity entity, String editor) {
         String sql = QualificationsSqlBuilder.buildInsert();
 
-        return sqlRepository.executeRequired(
+        return sqlRepository.insert(
             sql,
             (ps, en) -> QualificationsParameterBinder.bindInsert(ps, en, editor),
-            rs -> {
-                if (!rs.next()) {
-                    throw new BusinessException("登録に失敗しました");
-                }
-                int id = rs.getInt("qualifications_id");
-
-                if (rs.next()) {
-                    throw new IllegalStateException("ID取得結果が複数行です");
-                }
-                return id;
-            },
+            rs -> rs.getInt("qualifications_id"),
             entity
         );
     }
@@ -152,14 +167,11 @@ public class QualificationsRepository {
     public int update(QualificationsEntity entity, String editor) {
         String sql = QualificationsSqlBuilder.buildUpdate();
 
-        int count = sqlRepository.executeUpdate(
+        int count = sqlRepository.updateRequired(
             sql,
-            ps -> QualificationsParameterBinder.bindUpdate(ps, entity, editor)
+            (ps, e) -> QualificationsParameterBinder.bindUpdate(ps, e, editor),
+            entity
         );
-
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }
@@ -173,13 +185,15 @@ public class QualificationsRepository {
     public int delete(int id, String editor) {
         String sql = QualificationsSqlBuilder.buildDelete();
 
-        int count = sqlRepository.executeUpdate(
+        int count = sqlRepository.updateRequired(
             sql,
-            ps -> QualificationsParameterBinder.bindDelete(ps, id, editor)
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+                ps.setString(index++, editor);
+            }
         );
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }
@@ -198,13 +212,10 @@ public class QualificationsRepository {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
-        int count = sqlRepository.executeUpdate(
+        int count = sqlRepository.updateRequired(
             sql,
-            ps -> QualificationsParameterBinder.bindDeleteForIds(ps, ids, editor)
+            (ps, v) -> QualificationsParameterBinder.bindDeleteForIds(ps, ids, editor)
         );
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }
@@ -223,10 +234,11 @@ public class QualificationsRepository {
         List<Integer> ids = Utilities.createSequenceByIds(list);
         String sql = QualificationsSqlBuilder.buildDownloadCsvByIds(ids.size());
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> QualificationsParameterBinder.bindDownloadCsvForIds(ps, ids),
-            QualificationsEntityMapper::map // ← ここで ResultSet を map
+            (ps, e) -> QualificationsParameterBinder.bindDownloadCsvForIds(ps, e),
+            QualificationsEntityMapper::map,
+            ids
         );
     }
 }

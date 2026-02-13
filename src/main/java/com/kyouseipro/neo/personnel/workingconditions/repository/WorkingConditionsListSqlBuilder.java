@@ -10,7 +10,6 @@ public class WorkingConditionsListSqlBuilder {
             " LEFT OUTER JOIN offices o ON o.office_id = e.office_id AND NOT (o.state = ?)";
     }
     public static String buildFindAll() {
-        // return "SELECT * FROM working_conditions WHERE NOT (state = ?)";
         return 
             basicSelectString() +
             " WHERE NOT (e.state = ?)";

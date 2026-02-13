@@ -2,12 +2,10 @@ package com.kyouseipro.neo.sales.order.repository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.sales.order.entity.OrderItemEntity;
@@ -25,14 +23,13 @@ public class OrderItemRepository {
      * @param id
      * @return IDから取得したEntityをかえす。
      */
-    public Optional<OrderItemEntity> findById(int id) {
+    public OrderItemEntity findById(int id) {
         String sql = OrderSqlBuilder.buildFindById();
 
-        return sqlRepository.executeQuery(
+        return sqlRepository.queryOne(
             sql,
-            (ps, en) -> OrderItemParameterBinder.bindFindById(ps, en),
-            rs -> rs.next() ? OrderItemEntityMapper.map(rs) : null,
-            id
+            (ps, v) -> OrderItemParameterBinder.bindFindById(ps, id),
+            OrderItemEntityMapper::map
         );
     }
 
@@ -45,7 +42,7 @@ public class OrderItemRepository {
     public List<OrderItemEntity> findAllByOrderId(int id, String editor) {
         String sql = OrderItemSqlBuilder.buildFindAllByOrderId();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
             (ps, v) -> OrderItemParameterBinder.bindFindAllByOrderId(ps, id),
             OrderItemEntityMapper::map // ← ここで ResultSet を map
@@ -61,10 +58,10 @@ public class OrderItemRepository {
     public List<OrderItemEntity> findByBetweenDate(LocalDate start, LocalDate end) {
         String sql = OrderItemSqlBuilder.buildFindByBetween();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
             (ps, v) -> OrderItemParameterBinder.bindFindByBetween(ps, start, end),
-            OrderItemEntityMapper::map // ← ここで ResultSet を map
+            OrderItemEntityMapper::map
         );
     }
 
@@ -90,35 +87,12 @@ public class OrderItemRepository {
             }
         }
 
-        // // return sqlRepository.execute(
-        // //     sql,
-        // //     (pstmt, emp) -> OrderItemParameterBinder.bindSave(pstmt, itemList, editor),
-        // //     rs -> rs.next() ? rs.getInt("order_item_id") : null,
-        // //     itemList
-        // // );
-        // try {
-            return sqlRepository.executeRequired(
-                sql,
-                (ps, en) -> OrderItemParameterBinder.bindSave(ps, list, editor),
-                rs -> {
-                    if (!rs.next()) {
-                        throw new BusinessException("登録に失敗しました");
-                    }
-                    int id = rs.getInt("order_item_id");
-
-                    if (rs.next()) {
-                        throw new IllegalStateException("ID取得結果が複数行です");
-                    }
-                    return id;
-                },
-                list
-            );
-        // } catch (RuntimeException e) {
-        //     if (SqlExceptionUtil.isDuplicateKey(e)) {
-        //         throw new BusinessException("このコードはすでに使用されています。");
-        //     }
-        //     throw e;
-        // }
+        return sqlRepository.insert(
+        sql,
+        (ps, e) -> OrderItemParameterBinder.bindSave(ps, e, editor),
+        rs -> rs.getInt("order_item_id"),
+        list
+    );
     }
 
     /**
@@ -128,26 +102,16 @@ public class OrderItemRepository {
      * @return 成功件数を返す。
      */
     public int deleteByIds(IdListRequest list, String editor) {
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
-        String sql = OrderItemSqlBuilder.buildDeleteByIds(list.getIds().size());
-
-        // return sqlRepository.executeUpdate(
-        //     sql,
-        //     ps -> OrderItemParameterBinder.bindDeleteByIds(ps, orderItemIds, editor)
-        // );
-        // // return result; // 成功件数。0なら削除なし
-
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
-        int count = sqlRepository.executeUpdate(
+        String sql = OrderItemSqlBuilder.buildDeleteByIds(list.getIds().size());
+        int count = sqlRepository.updateRequired(
             sql,
-            ps -> OrderItemParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
+            (ps, e) -> OrderItemParameterBinder.bindDeleteByIds(ps, e.getIds(), editor),
+            list
         );
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }
@@ -159,25 +123,16 @@ public class OrderItemRepository {
      * @return Idsで選択したEntityリストを返す。
      */
     public List<OrderItemEntity> downloadCsvByIds(IdListRequest list, String editor) {
-        // List<Integer> orderIds = Utilities.createSequenceByIds(ids);
-        // String sql = OrderItemSqlBuilder.buildDownloadCsvByIds(orderIds.size());
-
-        // return sqlRepository.findAll(
-        //     sql,
-        //     ps -> OrderItemParameterBinder.bindDownloadCsvByIds(ps, orderIds),
-        //     OrderItemEntityMapper::map // ← ここで ResultSet を map
-        // );
         if (list == null || list.getIds().isEmpty()) {
             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
         }
 
-        // List<Integer> ids = Utilities.createSequenceByIds(list);
         String sql = OrderItemSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
-
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
-            (ps, v) -> OrderItemParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
-            OrderItemEntityMapper::map
+            (ps, e) -> OrderItemParameterBinder.bindDownloadCsvByIds(ps, e.getIds()),
+            OrderItemEntityMapper::map,
+            list
         );
     }
 }

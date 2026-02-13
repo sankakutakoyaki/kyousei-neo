@@ -23,10 +23,10 @@ public class WorkContentRepository {
     public List<WorkContentEntity> findAllByOrderId(int id, String editor) {
         String sql = WorkContentSqlBuilder.buildFindAllByOrderId();
 
-        return sqlRepository.findAll(
+        return sqlRepository.queryList(
             sql,
             (ps, v) -> WorkContentParameterBinder.bindFindAllByOrderId(ps, id),
-            WorkContentEntityMapper::map // ← ここで ResultSet を map
+            WorkContentEntityMapper::map
         );
     }
 }

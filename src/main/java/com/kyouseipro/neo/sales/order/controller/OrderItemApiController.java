@@ -1,9 +1,12 @@
 package com.kyouseipro.neo.sales.order.controller;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -15,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kyouseipro.neo.dto.ApiResponse;
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.dto.BetweenRequest;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.IdRequest;
@@ -26,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/order")
+@RequestMapping("/api/order/item")
 public class OrderItemApiController {
     private final OrderItemService orderItemService;
     private final ObjectMapper objectMapper;
@@ -35,10 +38,10 @@ public class OrderItemApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/item/get/id")
+    @PostMapping("/get/id")
 	@ResponseBody
-    public Optional<OrderItemEntity> getById(@RequestBody IdRequest req) {
-        return orderItemService.getById(req.getId());
+    public ResponseEntity<SimpleResponse<OrderItemEntity>> getById(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(new SimpleResponse<>(null, orderItemService.getById(req.getId())));
     }
 
     /**
@@ -47,11 +50,10 @@ public class OrderItemApiController {
      * @param end
      * @return
      */
-    @PostMapping("/item/get/between")
+    @PostMapping("/get/between")
 	@ResponseBody
-    public List<OrderItemEntity> getBetween(@RequestBody BetweenRequest req) {
-        List<OrderItemEntity> list = orderItemService.getBetween(req.getStart(), req.getEnd());
-        return list;
+    public SimpleResponse<List<OrderItemEntity>> getBetween(@RequestBody BetweenRequest req) {
+        return new SimpleResponse<>(null, orderItemService.getBetween(req.getStart(), req.getEnd()));
     }
 
     /**
@@ -59,12 +61,12 @@ public class OrderItemApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/item/save")
+    @PostMapping("/save")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> save(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody Map<String, Object> body, @AuthenticationPrincipal OidcUser principal) {
         List<OrderItemEntity> itemList = objectMapper.convertValue(body.get("list"), new TypeReference<List<OrderItemEntity>>() {});
         int id = orderItemService.save(itemList, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok("保存しました。", id));
+        return ResponseEntity.ok(new SimpleResponse<>("保存しました。", id));
     }
 
     /**
@@ -72,11 +74,11 @@ public class OrderItemApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/item/delete")
+    @PostMapping("/delete")
 	@ResponseBody
-    public ResponseEntity<ApiResponse<Integer>> deleteByIds(@RequestBody IdListRequest list, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest list, @AuthenticationPrincipal OidcUser principal) {
         Integer id = orderItemService.deleteByIds(list, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(ApiResponse.ok(id + "件削除しました。", id));
+        return ResponseEntity.ok(new SimpleResponse<>(id + "件削除しました。", id));
     }
 
     /**
@@ -84,9 +86,19 @@ public class OrderItemApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/item/download/csv")
-	@ResponseBody
-    public String downloadCsvByIds(@RequestBody IdListRequest list, @AuthenticationPrincipal OidcUser principal) {
-        return orderItemService.downloadCsvByIds(list, principal.getAttribute("preferred_username"));
+    // @PostMapping("/item/download/csv")
+	// @ResponseBody
+    // public String downloadCsvByIds(@RequestBody IdListRequest list, @AuthenticationPrincipal OidcUser principal) {
+    //     return orderItemService.downloadCsvByIds(list, principal.getAttribute("preferred_username"));
+    // }
+    @PostMapping(value = "/download/csv", produces = "text/csv")
+    public ResponseEntity<byte[]> downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+        String csv = orderItemService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+        String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".csv";
+
+        byte[] bytes = csv.getBytes(StandardCharsets.UTF_8);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .body(bytes);
     }
 }

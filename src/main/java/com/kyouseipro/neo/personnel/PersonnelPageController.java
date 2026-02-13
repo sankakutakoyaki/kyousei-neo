@@ -15,7 +15,6 @@ import com.kyouseipro.neo.abstracts.controller.BaseController;
 import com.kyouseipro.neo.common.ComboBoxService;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Utilities;
-import com.kyouseipro.neo.common.history.service.HistoryService;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeListEntity;
@@ -34,7 +33,6 @@ public class PersonnelPageController extends BaseController {
     private final EmployeeListService employeeListService;
     private final WorkingConditionsListService workingConditionsListService;
     private final ComboBoxService comboBoxService;
-    private final HistoryService historyService;
 
     /**
 	 * 従業員
@@ -46,8 +44,6 @@ public class PersonnelPageController extends BaseController {
     public String getEmployee(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         EmployeeEntity user = getLoginUser(session, response);
 		if (user == null) return null; // リダイレクト
-
-		historyService.save(user.getAccount(), "emplloyees", "閲覧", 200, "");
 
         model.addAttribute("title", "従業員");
 		model.addAttribute("activeMenu", "regist");
@@ -95,8 +91,6 @@ public class PersonnelPageController extends BaseController {
         EmployeeEntity user = getLoginUser(session, response);
 		if (user == null) return null; // リダイレクト
 
-		historyService.save(user.getAccount(), "timeworks", "閲覧", 200, "");
-
         model.addAttribute("title", "勤怠");
 		model.addAttribute("activeMenu", "personnel");
         model.addAttribute("activeSidebar", "timeworks");
@@ -117,8 +111,6 @@ public class PersonnelPageController extends BaseController {
 
         EmployeeEntity user = getLoginUser(session, response);
 		if (user == null) return null; // リダイレクト
-
-		historyService.save(user.getAccount(), "working_conditions", "閲覧", 200, "");
 
         model.addAttribute("title", "勤務条件");
 		model.addAttribute("activeMenu", "personnel");

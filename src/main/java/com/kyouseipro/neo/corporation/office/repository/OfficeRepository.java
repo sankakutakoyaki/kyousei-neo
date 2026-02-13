@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntityRequest;
 import com.kyouseipro.neo.corporation.office.mapper.OfficeEntityMapper;
@@ -82,20 +81,10 @@ public class OfficeRepository {
     public int insert(OfficeEntityRequest entity, String editor) {
         String sql = OfficeSqlBuilder.buildBulkInsert(entity);
 
-        return sqlRepository.queryOne(
+        return sqlRepository.insert(
             sql,
             (ps, en) -> OfficeParameterBinder.bindBulkInsert(ps, en, editor),
-            rs -> {
-                if (!rs.next()) {
-                    throw new BusinessException("登録に失敗しました");
-                }
-                int id = rs.getInt("office_id");
-
-                if (rs.next()) {
-                    throw new IllegalStateException("ID取得結果が複数行です");
-                }
-                return id;
-            },
+            rs -> rs.getInt("office_id"),
             entity
         );
     }
@@ -108,15 +97,11 @@ public class OfficeRepository {
     public int update(OfficeEntityRequest entity, String editor) {
         String sql = OfficeSqlBuilder.buildBulkUpdate(entity);
 
-        int count = sqlRepository.update(
+        int count = sqlRepository.updateRequired(
             sql,
             (ps, e) -> OfficeParameterBinder.bindBulkUpdate(ps, e, editor),
             entity
         );
-
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }
@@ -133,14 +118,10 @@ public class OfficeRepository {
         }
 
         String sql = OfficeSqlBuilder.buildDeleteByIds(list.getIds().size());
-        int count = sqlRepository.update(
+        int count = sqlRepository.updateRequired(
             sql,
             (ps, v) -> OfficeParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
         );
-
-        if (count == 0) {
-            throw new BusinessException("他のユーザーにより更新されたか、対象が存在しません。再読み込みしてください。");
-        }
 
         return count;
     }
