@@ -4,22 +4,15 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.kyouseipro.neo.abstracts.controller.BaseController;
 import com.kyouseipro.neo.common.ComboBoxService;
-import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.common.history.service.HistoryService;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntity;
-import com.kyouseipro.neo.qualification.service.QualificationsService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -29,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QualificationPageController extends BaseController {
     private final ComboBoxService comboBoxService;
-    private final QualificationsService qualificationsService;
 
     /**
 	 * 資格
@@ -49,15 +41,9 @@ public class QualificationPageController extends BaseController {
 
         // 初期化されたエンティティ
         model.addAttribute("formEntity", new QualificationsEntity());
-        // 初期表示用資格情報リスト取得
-        List<QualificationsEntity> origin = qualificationsService.getListForEmployee();
-        model.addAttribute("origin", origin);
         // コンボボックスアイテム取得
         List<SimpleData> qualificationComboList = comboBoxService.getQualificationMaster();
-        model.addAttribute("qualificationComboList", qualificationComboList);
-
-        model.addAttribute("url", "/employee/get/id");
-        model.addAttribute("owner_category", 0);
+        model.addAttribute("comboList", qualificationComboList);
 
         return "contents/qualifications/qualifications";
     }
@@ -80,16 +66,9 @@ public class QualificationPageController extends BaseController {
 
         // 初期化されたエンティティ
         model.addAttribute("formEntity", new QualificationsEntity());
-
-        // 初期表示用資格情報リスト取得
-        List<QualificationsEntity> origin = qualificationsService.getListFroCompany();
-        model.addAttribute("origin", origin);
         // コンボボックスアイテム取得
         List<SimpleData> licenseComboList = comboBoxService.getLicenseMaster();
-        model.addAttribute("qualificationComboList", licenseComboList);
-
-        model.addAttribute("url", "/company/get/id");
-        model.addAttribute("owner_category", Enums.clientCategory.PARTNER.getCode());
+        model.addAttribute("comboList", licenseComboList);
 
         return "contents/qualifications/qualifications";
     }

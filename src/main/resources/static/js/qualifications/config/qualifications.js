@@ -6,14 +6,14 @@ const MODE_CONFIG = {
         footerId: "footer-01",
         searchId: "search-box-01"
     },
-    "02": {
-        codeBox: "code-box-01",
-        nameBox: "name-box-01",
-    },
-    "03": {
-        codeBox: "code-box-02",
-        nameBox: "name-box-02",
-    }
+    // "02": {
+    //     codeBox: "code-box-01",
+    //     nameBox: "name-box-01",
+    // },
+    // "03": {
+    //     codeBox: "code-box-02",
+    //     nameBox: "name-box-02",
+    // }
 }
 
 const CODE_CONFIG = [
