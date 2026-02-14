@@ -101,13 +101,10 @@ async function execEdit(id, self) {
 
 // コンテンツ部分作成
 function setFormContent(form, entity, tab) {
-
-    // if (tab === "01") {
-        // 表示制御
-        document.querySelectorAll('[name="priceArea"]').forEach(el => {
-            el.style.display = config.show?.includes("priceArea") ? "" : "none";
-        });        
-    // }
+    // 表示制御
+    document.querySelectorAll('[name="priceArea"]').forEach(el => {
+        el.style.display = config.show?.includes("priceArea") ? "" : "none";
+    });
     
     if (tab === "02") {
         applyComboConfig(form, entity, COMBO_CONFIG);
@@ -126,7 +123,9 @@ async function execSave() {
     const form = document.getElementById(cfg.formId);
 
     // 入力チェック
-    if (!formDataCheck(form)) return;
+    if (!validateByConfig(form, ERROR_CONFIG[cfg.formId])) {
+        return;
+    }
 
     let tempEntity = {};
 
@@ -156,73 +155,6 @@ async function execSave() {
         
         openMsgDialog("msg-dialog", result.message, "blue");
     }
-}
-
-// 入力チェック
-function formDataCheck(area) {
-    let msg = "";
-    // 名前が入力されていないとFalseを返す
-    const name = area.querySelector('input[name="name"]');
-    if (name != null && name.value == "") msg += '\n名称が入力されていません';
-    // 電話番号チェック
-    const tel = area.querySelector('input[name="tel-number"]');
-    if (tel != null) {
-        if (!checkPhoneNumber(tel)) msg += '\n電話番号に誤りがあります';
-    }                
-    // 携帯番号チェック
-    const phone = area.querySelector('input[name="phone-number"]');
-    if (phone != null) {
-        if (!checkPhoneNumber(phone)) msg += '\n携帯番号に誤りがあります';
-    }                
-    // ファックス番号チェック
-    const fax = area.querySelector('input[name="fax-number"]');
-    if (fax != null) {
-        if (!checkPhoneNumber(fax)) msg += '\nFAX番号に誤りがあります';
-    }                
-    // 郵便番号チェック
-    const postal = area.querySelector('input[name="postal-code"]');
-    if (postal != null) {
-        if (!checkPostalCode(postal)) msg += '\n郵便番号に誤りがあります';
-    }                
-    // メールアドレスチェック
-    const email = area.querySelector('input[name="email"]');
-    if (email != null) {
-        if (!checkMailAddress(email)) msg += '\nメールアドレスに誤りがあります';
-    }                
-    // webアドレスチェック
-    const web = area.querySelector('input[name="web-address"]');
-    if (web != null) {
-        if (!checkWebAddress(web)) msg += '\nWEBアドレスに誤りがあります';
-    }                
-    // エラーが一つ以上あればエラーメッセージダイアログを表示する
-    if (msg != "") {
-        openMsgDialog("msg-dialog", msg, "red");
-        return false;
-    }
-    return true;
-}
-
-// TDが変更された時の処理
-async function handleTdChange(editor) {
-    const td = editor.closest('td.editable');
-    const type = td.dataset.col;
-    const row = td.closest('tr');
-    const id = row.dataset.id;
-
-    const ent = origin.find(value => value.employeeId == id);
-    switch (type) {
-        case "code":
-            if (existsSameCode(Number(editor.value))) {
-                editor.value = ent.code;
-                return;
-            }
-            break;
-        default:
-            return;
-    }
-
-    await searchFetch('/api/employee/update/' + type, JSON.stringify({primaryId:parseInt(id), secondaryId:parseInt(editor.value)}), token);
-    await execUpdate();
 }
 
 // リスト内に同じコードがないかチェック
@@ -267,79 +199,53 @@ async function execUpdate() {
 
     // entity ごとの元データ更新
     if (config.categoryName === "company") {
-        companyOrigin = await updateOrigin("company");
-        await updateTableDisplay(config.tableId, config.footerId, config.searchId, companyOrigin, createTableContent);
+        await refleshCompanyDisplay();
         return;
     }
 
     if (config.categoryName === "employee") {
-        await updateStaffTableDisplay();
+        await refleshStaffDisplay();
         return;
     }
 }
 
-async function updateStaffTableDisplay() {
-    const panel = document.querySelector('.tab-panel.is-show');
-    const tab = panel.dataset.panel;
-    const config = MODE_CONFIG[tab];
+async function refleshCompanyDisplay() {
+    const config = MODE_CONFIG["01"];
     if (!config) return;
 
+    const resultResponse = await fetch('api/partner/get/list');
+    const result = await resultResponse.json();
+    origin = result.data;
+
+    await updateTableDisplay(config.tableId, config.footerId, config.searchId, origin, createTableContent);
+}
+
+async function refleshStaffDisplay() {
+    const config = MODE_CONFIG["02"];
+    if (!config) return;
+
+    const panel = document.querySelector('[data-panel="02"]');
     const code = panel.querySelector('[name="code"]');
     const com = panel.querySelector('[name="company"]');
 
     const codeValue = com.value;
-    code.value = Number(codeValue) === 0 ? "": codeValue;
 
     const resultResponse = await fetch('api/employee/get/list/partner');
     const result = await resultResponse.json();
 
     let list = [];
-    if (result.ok) {
+    if (resultResponse.ok) {
         if (codeValue > 0) {
             list = result.data.filter(function(value) { return value.companyId == codeValue});
-        } else {
-            list = result.data;
         }
-        
         await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
     }
 }
 
-async function execFilterDisplay(self) {
-    const panel = self.closest('.tab-panel');
-    const tab = panel.dataset.panel;
-    const config = MODE_CONFIG[tab];
-
-    const list = companyOrigin.filter(function(value) { return value.category == config.category });
-    await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
-}
-
-// コンボを再構成
-async function updateOrigin(type) {
-    const config = ORIGIN_CONFIG[type];
-    if (!config) return;
-
-    // 一覧取得
-    const listRes = await fetch(config.listUrl);
-    const originList = await listRes.json();
-    window[config.originKey] = originList.data;
-
-    // コンボ取得
-    const comboRes = await fetch(config.comboUrl);
-    const comboList = await comboRes.json();
-    window[config.comboKey] = comboList.data;
-
-    // コンボ反映
-    const targets = getComboTargets(config.comboTargetIds);
-    targets.forEach(target => {
-        createComboBoxWithTop(target, comboList.data, "");
-    });
-
-    return window[config.originKey];
-}
-
 function refleshCode() {
-    code01.value = code01.value !== name01.value ? name01.value: code01.value;
+    const code01 = document.getElementById("code01");
+    const name01 = document.getElementById("name01");
+    code01.value = code01.value === name01.value ? code01.value: Number(name01.value) === 0 ? "": name01.value ;
 }
 
 /******************************************************************************************************* 初期化時 */
@@ -352,7 +258,7 @@ window.addEventListener("load", async () => {
         if (!el) return;
 
         el.addEventListener('search', async e => {
-            await execFilterDisplay(e.currentTarget);
+            await refleshCompanyDisplay();
         });
     });
 
@@ -360,14 +266,8 @@ window.addEventListener("load", async () => {
     document.getElementById('postal-code')
         .addEventListener('keydown', async e => await getAddress(e,'postal-code','full-address'));
 
-    for (const [tab, cfg] of Object.entries(MODE_CONFIG)) {
-        if (!cfg.category) continue;
-        
-        let list = cfg.list.filter(value => { return value.category === cfg.category });
-        await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, list, createTableContent );
-    }
-
     initCompanyInputs();
+    refleshCompanyDisplay();
 
     // タブ
     document.querySelectorAll('.tab-menu-item')

@@ -323,7 +323,7 @@ public class EmployeeSqlBuilder {
     }
 
     public static String buildDownloadCsvByIds(int count) {
-        String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
-        return "SELECT * FROM employees WHERE employee_id IN (" + placeholders + ") AND NOT (state = ?)";
+        String placeholders = Utilities.generatePlaceholders(count);
+        return baseSelectString() + " WHERE employee_id IN (" + placeholders + ") AND NOT (e.state = ?)";
     }
 }

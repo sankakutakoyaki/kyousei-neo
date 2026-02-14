@@ -60,13 +60,19 @@ public class Utilities {
      * @param value
      * @return
      */
-    public static String escapeCsv(String value) {
+    public static String escapeCsv(Object value) {
         if (value == null) return "";
-        if (value.contains(",") || value.contains("\n") || value.contains("\"")) {
-            value = value.replace("\"", "\"\"");
-            return "\"" + value + "\"";
+
+        String str = value.toString();
+
+        if ("null".equals(str)) return "";
+
+        if (str.contains(",") || str.contains("\n") || str.contains("\"")) {
+            str = str.replace("\"", "\"\"");
+            return "\"" + str + "\"";
         }
-        return value;
+
+        return str;
     }
 
     /**

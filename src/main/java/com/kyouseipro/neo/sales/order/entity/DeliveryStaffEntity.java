@@ -25,8 +25,8 @@ public class DeliveryStaffEntity implements CsvExportable{
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(deliveryStaffId)) + "," +
-               Utilities.escapeCsv(String.valueOf(orderId)) + "," +
+        return Utilities.escapeCsv(deliveryStaffId) + "," +
+               Utilities.escapeCsv(orderId) + "," +
                Utilities.escapeCsv(companyName) + "," +
                Utilities.escapeCsv(officeName) + "," +
                Utilities.escapeCsv(fullName) + ",";

@@ -10,19 +10,6 @@ function registCheckButtonClicked(tableId) {
     } else {
         tbl = document.getElementById(tableId);
     }
-    // if (tbl == null) return;
-    // tbl.querySelectorAll('input[name="chk-box"]').forEach(function (value) {
-    //     value.addEventListener('change', function(e) {
-    //         const tbl = e.currentTarget.closest('.normal-table');
-    //         const items = tbl.querySelectorAll('[name="chk-box"]');
-    //         const checked = Array.from(items).filter(value => { return value.checked });
-    //         if (checked.length == items.length) {
-    //             tbl.querySelector('[name="all-chk-btn"]').checked = true;
-    //         } else {
-    //             tbl.querySelector('[name="all-chk-btn"]').checked = false
-    //         }
-    //     }, false)
-    // });
     if (!tbl) return;
 
     // チェックボタン押下時の処理
@@ -162,7 +149,6 @@ function turnOffAllCheckBtn(tableId) {
     if (!allChk) return; 
 
     allChk.checked = false;
-    // header.querySelector('[name="all-chk-btn"]').checked = false
 }
 
 /**
@@ -255,7 +241,6 @@ function makeSortable(tableId) {
     if (tbl == null) return;
 
     // テーブル内のすべてのヘッダーセルを取得
-    // const headers = tbl.querySelectorAll('th:not([name="chk-cell"])');
     const headers = tbl.querySelectorAll('th');
     
     // 各ヘッダーにクリックイベントを追加
@@ -311,29 +296,6 @@ function resetSortIndicators(headers) {
     });
 }
 
-// /**
-//  * 選択されているチェックボックスを全て取得する
-//  * @param {取得対象の親要素} parent 
-//  * @returns チェックされている要素のIDリストをJSON形式で返す { number:0 }
-//  */
-// function getAllSelectedIds(tableId) {
-//     let tbl;
-//     if(tableId instanceof HTMLElement) {
-//         tbl = tableId;
-//     } else {
-//         tbl = document.getElementById(tableId);
-//     }
-//     if (tbl == null) return;
-//     const ids = tbl.querySelectorAll('input[name="chk-box"]:checked');
-//     const checked_data = [];
-//     if (0 < ids.length) {
-//         for (let data of ids) {
-//             let num = parseInt(data.closest('tr').dataset.id);
-//             if (num > 0) checked_data.push({ 'number': num });
-//         }
-//     }
-//     return checked_data;
-// }
 /**
  * 選択されているチェックボックスを全て取得する
  * @param {取得対象の親要素} parent 
@@ -415,15 +377,12 @@ function scrollIntoTableList(tableId, id) {
 function filterDisplay(boxId, list) {
     // 検索ボックスを取得
     const box = document.getElementById(boxId);
-    // if (box == null) return origin;
     if (box == null) return list;
 
     // 検索ワードを取得
     const words = box.value;
     // if (words.length == 0) return origin;
     if (words.length == 0) return list;
-
-    // let list = structuredClone(origin);
 
     // 空白区切りで配列を作成
     let list_word = words.split(/\s+/);
@@ -454,6 +413,7 @@ async function downloadCsv(tableId, url) {
     if (data) {
         funcDownloadCsv(data, url);
         // チェック状態を解除
+        turnOffAllCheckBtn(tableId);
         detachmentCheckedToAllRow(tableId, false);
     }
 }
@@ -469,12 +429,6 @@ async function downloadCsvByBetweenDate(tableId, url, startStr, endStr) {
     if (data) {
         funcDownloadCsv({ids:data, start:startStr, end:endStr}, url);
     }
-    // if (data.length == 0) {
-    //     // 選択された要素がなければメッセージを表示して終了
-    //     openMsgDialog("msg-dialog", "選択されていません", "red");
-    // } else {
-    //     funcDownloadCsv({ids:data, start:startStr, end:endStr}, url);
-    // }
 }
 
 /**
@@ -482,57 +436,6 @@ async function downloadCsvByBetweenDate(tableId, url, startStr, endStr) {
  * @param {*} data 
  * @param {*} url 
  */
-// async function funcDownloadCsv(data, url) {
-//     // スピナー表示
-//     startProcessing();
-
-//     // 取得処理
-//     // const data = JSON.stringify(ids);
-//     const result = await updateFetch(url, JSON.stringify(data), token, "application/json");
-//     const text = await result.text();
-
-//     // 文字列データが返却されなければ、エラーメッセージを表示
-//     if (text == null || text == "") {
-//         openMsgDialog("msg-dialog", "取得できませんでした", "red");
-//     } else {
-//         createCsvThenDownload(text);
-//     }
-
-//     // スピナー消去
-//     processingEnd();
-// }
-// async function funcDownloadCsv(data, url) {
-//     startProcessing();
-
-//     try {
-//         const response = await fetch(url, {
-//             method: "POST",
-//             headers: {
-//                 "Content-Type": "application/json",
-//                 "X-CSRF-TOKEN": token
-//             },
-//             // body: JSON.stringify(data)
-//             body: data
-//         });
-
-//         if (!response) {
-//             openMsgDialog("msg-dialog", "CSVの取得に失敗しました", "red");
-//             return;
-//         }
-
-//         const text = await response.text();
-
-//         if (!text) {
-//             openMsgDialog("msg-dialog", "取得できませんでした", "red");
-//             return;
-//         }
-
-//         createCsvThenDownload(text);
-
-//     } finally {
-//         processingEnd();
-//     }
-// }
 async function funcDownloadCsv(data, url) {
     startProcessing();
 
@@ -543,7 +446,8 @@ async function funcDownloadCsv(data, url) {
                 "Content-Type": "application/json",
                 "X-CSRF-TOKEN": token
             },
-            body: JSON.stringify(data)
+            // body: JSON.stringify(data)
+            body: data
         });
 
         if (!response.ok) {
@@ -577,52 +481,8 @@ async function deleteTablelist(tableId, url) {
     if (data) {
         return await updateFetch(url, data, token);
     }
-    // if (data.length == 0) {
-    //     // 選択された要素がなければメッセージを表示して終了
-    //     openMsgDialog("msg-dialog", "選択されていません", "red");
-    //     return;
-    // } else {
-    //     // const resultResponse = await postFetch(url, JSON.stringify(data), token, 'application/json');
-    //     // return await resultResponse.json();
-    //     return await updateFetch(url, data, token, "application/json");
-    // }
 }
 
-// // クリックしたTDを編集可能にする
-// function tdEnableEdit(newRow) {
-//     newRow.addEventListener('click', function (e) {
-//         const td = e.target.closest('td.editable');
-//         if (!td) return;
-
-//         // すでに編集状態なら何もしない
-//         if (td.querySelector('input')) return;
-
-//         const currentValue = td.textContent.trim();
-
-//         const input = document.createElement('input');
-//         input.type = 'text';
-//         input.classList.add('normal-input');
-//         input.value = currentValue === '-----' ? '' : currentValue;
-//         input.style.width = '100%';
-
-//         td.textContent = '';
-//         td.appendChild(input);
-//         // フォーカス時に全選択
-//         input.addEventListener('focus', function () {
-//             this.select();
-//         });
-//         input.focus();
-
-//         function save() {
-//             td.textContent = input.value || currentValue;
-//         }
-
-//         input.addEventListener('blur', save);
-//         input.addEventListener('keydown', e => {
-//             if (e.key === 'Enter') input.blur();
-//         });
-//     });
-// }
 // クリックしたTDを編集可能にする
 function tdEnableEdit(newRow) {
     newRow.addEventListener('click', function (e) {
@@ -751,28 +611,6 @@ async function updateTableDisplay(
         toggleScrollbar(el);
     });
 }
-// async function updateTableDisplay(tableId, footerId, searchId, list) {
-//     // フィルター処理
-//     const result = filterDisplay(searchId, list);
-//     // リスト画面を初期化
-//     deleteElements(tableId);
-//     // リスト作成
-//     createTableContent(tableId, result);
-//     // フッター作成
-//     createTableFooter(footerId, list);
-//     // チェックボタン押下時の処理を登録する
-//     registCheckButtonClicked(tableId);
-//     // すべて選択ボタンをオフにする
-//     turnOffAllCheckBtn(tableId);
-//     // テーブルのソートをリセットする
-//     resetSortable(tableId);
-//     // スクロール時のページトップボタン処理を登録する
-//     setPageTopButton(tableId);
-//     // テーブルにスクロールバーが表示されたときの処理を登録する
-//     document.querySelectorAll('.scroll-area').forEach(el => {
-//         toggleScrollbar(el);
-//     });
-// }
 
 function createSelectableRow({
     table,

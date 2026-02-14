@@ -20,8 +20,8 @@ public class RecycleItemEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(recycleItemId)) + "," +
-               Utilities.escapeCsv(String.valueOf(code)) + "," +
+        return Utilities.escapeCsv(recycleItemId) + "," +
+               Utilities.escapeCsv(code) + "," +
                Utilities.escapeCsv(name);
     }
 }

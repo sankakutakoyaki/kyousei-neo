@@ -2,7 +2,6 @@ package com.kyouseipro.neo.personnel.workingconditions.repository;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
@@ -17,8 +16,6 @@ public class WorkingConditionsParameterBinder {
         pstmt.setInt(index++, w.getPayType());
         pstmt.setInt(index++, w.getBaseSalary());
         pstmt.setInt(index++, w.getTransCost());
-        pstmt.setTime(index++, Time.valueOf(w.getBasicStartTime()));
-        pstmt.setTime(index++, Time.valueOf(w.getBasicEndTime()));
         pstmt.setInt(index++, w.getVersion());
         pstmt.setInt(index++, w.getState());
 
@@ -33,8 +30,6 @@ public class WorkingConditionsParameterBinder {
         pstmt.setInt(index++, w.getPayType());
         pstmt.setInt(index++, w.getBaseSalary());
         pstmt.setInt(index++, w.getTransCost());
-        pstmt.setTime(index++, Time.valueOf(w.getBasicStartTime()));
-        pstmt.setTime(index++, Time.valueOf(w.getBasicEndTime()));
         pstmt.setInt(index++, w.getVersion() +1);
         pstmt.setInt(index++, w.getState());
 

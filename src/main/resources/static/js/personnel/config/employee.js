@@ -5,23 +5,20 @@ const MODE_CONFIG = {
         tableId: "table-01-content",
         footerId: "footer-01",
         searchId: "search-box-01",
+        formId: "form-01",
         category: categoryCodes.FULLTIME
     },
     "02": {
         tableId: "table-02-content",
         footerId: "footer-02",
         searchId: "search-box-02",
+        formId: "form-01",
         category: categoryCodes.PARTTIME
     }
 };
 
 const FORM_CONFIG = [
-    // { name: 'employee-id', key: 'employeeId' },
-
-    // { name: 'code', key: 'code', emptyIf: 0 },
     { name: 'code', key: 'code' },
-
-    // { name: 'category', key: 'category' },
     { name: 'account', key: 'account' },
 
     { name: 'office', key: 'officeId' },
@@ -36,8 +33,6 @@ const FORM_CONFIG = [
     { name: 'full-address', key: 'fullAddress' },
     { name: 'email', key: 'email' },
 
-    // { name: 'birthday', key: 'birthday', emptyIf: '9999-12-31' },
-    // { name: 'date-of-hire', key: 'dateOfHire', emptyIf: '9999-12-31' },
     { name: 'birthday', key: 'birthday' },
     { name: 'date-of-hire', key: 'dateOfHire' },
 
@@ -45,46 +40,8 @@ const FORM_CONFIG = [
     { name: 'emergency-contact-number', key: 'emergencyContactNumber' }
 ];
 
-// const SAVE_FORM_CONFIG = [
-//     { name: 'employee-id', key: 'employeeId' },
-//     { name: 'company-id', key: 'companyId' },
-
-//     { name: 'code', key: 'code', emptyTo: 0, number: true },
-
-//     { name: 'category', key: 'category', number: true },
-//     { name: 'account', key: 'account', trim: true },
-
-//     { name: 'office', key: 'officeId', number: true },
-
-//     { name: 'last-name', key: 'lastName', trim: true },
-//     { name: 'first-name', key: 'firstName', trim: true },
-//     { name: 'last-name-kana', key: 'lastNameKana', trim: true },
-//     { name: 'first-name-kana', key: 'firstNameKana', trim: true },
-
-//     { name: 'phone-number', key: 'phoneNumber', trim: true },
-//     { name: 'postal-code', key: 'postalCode', trim: true },
-//     { name: 'full-address', key: 'fullAddress', trim: true },
-//     { name: 'email', key: 'email', trim: true },
-
-//     { name: 'gender', key: 'gender' },
-//     { name: 'blood-type', key: 'bloodType' },
-
-//     { name: 'birthday', key: 'birthday', emptyTo: '9999-12-31' },
-//     { name: 'date-of-hire', key: 'dateOfHire', emptyTo: '9999-12-31' },
-
-//     { name: 'emergency-contact', key: 'emergencyContact', trim: true },
-//     { name: 'emergency-contact-number', key: 'emergencyContactNumber', trim: true },
-
-//     { name: 'version', key: 'version', number: true }
-// ];
-
 const UPDATE_FORM_CONFIG = [
-    // { name: 'employee-id', key: 'employeeId' },
-    // { name: 'company-id', key: 'companyId' },
-
     { name: 'code', key: 'code', number: true, emptyToNull: true, skipIfNull: true },
-
-    // { name: 'category', key: 'category', number: true, zeroToNull: true, skipIfNull: true },
     { name: 'account', key: 'account', trim: true, emptyToNull: true, skipIfNull: true },
 
     { name: 'office', key: 'officeId', number: true, zeroToNull: true, skipIfNull: true },
@@ -107,8 +64,6 @@ const UPDATE_FORM_CONFIG = [
 
     { name: 'emergency-contact', key: 'emergencyContact', trim: true, emptyToNull: true, skipIfNull: true },
     { name: 'emergency-contact-number', key: 'emergencyContactNumber', trim: true, emptyToNull: true, skipIfNull: true },
-
-    // { name: 'version', key: 'version', number: true, zeroToNull: true, skipIfNull: true },
 ];
 
 const SAVE_FORM_CONFIG = UPDATE_FORM_CONFIG.map(c => ({
@@ -117,12 +72,6 @@ const SAVE_FORM_CONFIG = UPDATE_FORM_CONFIG.map(c => ({
 }));
 
 const COMBO_CONFIG = [
-    // {
-    //   selector: 'select[name="company"]',
-    //   list: companyComboList,
-    //   key: 'companyId',
-    //   onChange: (form, el) => createOfficeComboBox(form, el, officeList)
-    // },
     {
         selector: 'select[name="office"]',
         list: officeComboList,
@@ -139,3 +88,38 @@ const COMBO_CONFIG = [
         key: 'bloodType'
     }
 ];
+
+const ERROR_CONFIG = {
+    "form-01": [
+        {
+            selector: 'input[name="last-name"]',
+            checks: [
+                { test: v => v !== "", message: '名前が入力されていません'}
+            ]
+        },
+        {
+            selector: 'input[name="phone-number"]',
+            checks: [
+                { test: v => !checkPhoneNumber(v), message: '電話番号に誤りがあります'}
+            ]
+        },
+        {
+            selector: 'input[name="postal-code"]',
+            checks: [
+                { test: v => !checkPhoneNumber(v), message: '郵便番号に誤りがあります'}
+            ]
+        },
+        {
+            selector: 'input[name="email"]',
+            checks: [
+                { test: v => !checkMailAddress(v), message: 'メールアドレスに誤りがあります'}
+            ]
+        },
+        {
+            selector: 'input[name="web-address"]',
+            checks: [
+                { test: v => !checkWebAddress(v), message: 'WEBアドレスに誤りがあります'}
+            ]
+        }
+    ]
+}

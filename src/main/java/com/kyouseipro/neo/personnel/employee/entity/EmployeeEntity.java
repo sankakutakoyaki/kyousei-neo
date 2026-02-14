@@ -34,7 +34,6 @@ public class EmployeeEntity implements CsvExportable {
     private String emergencyContact;
     private String emergencyContactNumber;
     private LocalDate dateOfHire;
-    // private LocalDate dateOfHire = LocalDate.of(9999, 12, 31);
     private int version;
     private int state;
 
@@ -45,9 +44,9 @@ public class EmployeeEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(employeeId)) + "," +
+        return Utilities.escapeCsv(employeeId) + "," +
                Utilities.escapeCsv(account) + "," +
-               Utilities.escapeCsv(String.valueOf(code)) + "," +
+               Utilities.escapeCsv(code) + "," +
                Utilities.escapeCsv(lastName) + "," +
                Utilities.escapeCsv(firstName) + "," +
                Utilities.escapeCsv(lastNameKana) + "," +
@@ -58,9 +57,9 @@ public class EmployeeEntity implements CsvExportable {
                Utilities.escapeCsv(email) + "," +
                Utilities.escapeCsv(Enums.gender.getDescriptionByNum(gender)) + "," +
                Utilities.escapeCsv(Enums.bloodType.getDescriptionByNum(bloodType)) + "," +
-               Utilities.escapeCsv(String.valueOf(birthday)) +
+               Utilities.escapeCsv(birthday) +
                Utilities.escapeCsv(emergencyContact) + "," +
                Utilities.escapeCsv(emergencyContactNumber) + "," +
-               Utilities.escapeCsv(String.valueOf(dateOfHire));
+               Utilities.escapeCsv(dateOfHire);
     }
 }

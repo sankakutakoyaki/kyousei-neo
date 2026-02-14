@@ -34,8 +34,6 @@ function createTableRow(newRow, item) {
     newRow.insertAdjacentHTML('beforeend', '<td><span class="kana">' + (item.fullNameKana ?? "-----") + '</span><br><span>' + item.fullName + '</span></td>');
     // 携帯番号
     newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="phone" data-edit-type="text"><span>' + (item.phoneNumber ?? "登録なし") + '</span></td>');
-    // 会社名
-    // newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.companyName ?? "登録なし") + '</span></td>');
     // 営業所名
     newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.officeName ?? "登録なし") + '</span></td>');
 }
@@ -84,31 +82,14 @@ async function execSave() {
     if (!panel) return;
     const tab = panel.dataset.panel
 
-    if (!formDataCheck(form)) return;
-
     const cfg = MODE_CONFIG[tab];
+
+    // 入力チェック
+    if (!validateByConfig(form, ERROR_CONFIG[cfg.formId])) {
+        return;
+    }
   
-    // let result = null;
     let tempEntity = {};
-
-    // if (originEntity.employeeId > 0) {
-    //     // result = await execBulkUpdate(form);
-    //     const editedEntity = buildEntityFromForm(form, originEntity, SAVE_FORM_CONFIG);
-    //     tempEntity = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
-
-    //     if (Object.keys(tempEntity).length === 0) {
-    //         openMsgDialog("msg-dialog", "変更がありません", "red");
-    //         return;
-    //     }
-    // } else {
-    //     // result = await execRegist(form, cfg);
-    //     // 差分抽出
-    //     const editedEntity = buildEntityFromForm(form, originEntity, SAVE_FORM_CONFIG);
-    //     tempEntity = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
-
-    //     // tempEntity.companyId = ownCompanyId;
-    //     // tempEntity.category = cfg.category;
-    // }
 
     const editedEntity = buildEntityFromForm(form, originEntity, SAVE_FORM_CONFIG);
     tempEntity = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
@@ -136,60 +117,6 @@ async function execSave() {
         
         openMsgDialog("msg-dialog", result.message, "blue");
     }
-}
-
-// // 新規
-// async function execRegist(form, cfg) {
-
-//     const editedEntity = buildEntityFromForm(form, formEntity, UPDATE_FORM_CONFIG);
-
-//     editedEntity.companyId = ownCompanyId;
-//     editedEntity.category = cfg.category;
-
-//     return await updateFetch("/api/employee/save", JSON.stringify(editedEntity), token);
-// }
-
-// // 更新
-// async function execBulkUpdate(form) {
-
-//     const editedEntity = buildEntityFromForm(form, formEntity, SAVE_FORM_CONFIG);
-//     const diff = diffEntity(originEntity, editedEntity, UPDATE_FORM_CONFIG);
-
-//     if (Object.keys(diff).length === 0) {
-//         openMsgDialog("msg-dialog", "変更がありません", "red");
-//         return;
-//     }
-
-//     diff.employeeId = originEntity.employeeId;
-//     diff.version = originEntity.version;
-
-//     return await updateFetch("/api/employee/update", JSON.stringify(diff), token);
-// }
-
-// 入力チェック
-function formDataCheck(area) {
-    let msg = "";
-    // アカウントが入力されていないとFalseを返す
-    const account = area.querySelector('input[name="account"]');
-    if (account != null && account.value == "") msg += '\nアカウントが入力されていません';
-    // 姓が入力されていないとFalseを返す
-    const name = area.querySelector('input[name="last-name"]');
-    if (name != null && name.value == "") msg += '\n姓が入力されていません';
-    // 電話番号チェック
-    const phone = area.querySelector('input[name="phone-number"]');
-    if (!checkPhoneNumber(phone)) msg += '\n電話番号に誤りがあります';
-    // 電話番号チェック
-    const postal = area.querySelector('input[name="postal-code"]');
-    if (!checkPostalCode(postal)) msg += '\n郵便番号に誤りがあります';
-    // メールアドレスチェック
-    const email = area.querySelector('input[name="email"]');
-    if (!checkMailAddress(email)) msg += '\nメールアドレスに誤りがあります';
-    // エラーが一つ以上あればエラーメッセージダイアログを表示する
-    if (msg != "") {
-        openMsgDialog("msg-dialog", msg, "red");
-        return false;
-    }
-    return true;
 }
 
 // TDが変更された時の処理
@@ -246,7 +173,7 @@ async function execDelete(self) {
 /******************************************************************************************************* ダウンロード */
 
 async function execDownloadCsv(self) {
-    const panel = self.closest('.tab-panel');
+    const panel = self.closest('.tab-panel.is-show');
     const tab = panel.dataset.panel;
     const config = MODE_CONFIG[tab];
 
@@ -261,12 +188,15 @@ async function execUpdate() {
     const config = MODE_CONFIG[tab.dataset.tab];
 
     // リスト取得
-    const result = await fetch('/api/employee/get/list');
-    origin = await result.json();
+    const resultResponse = await fetch('/api/employee/get/list');
+    const result = await resultResponse.json();
+    origin = result.data;
 
-    // 画面更新
-    const list = origin.filter(value => { return value.category === config.category });
-    await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
+    if (resultResponse.ok) {
+        // 画面更新
+        const list = origin.filter(value => { return value.category === config.category });
+        await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
+    }
 }
 
 /******************************************************************************************************* 画面更新 */
@@ -289,7 +219,6 @@ window.addEventListener("load", async () => {
     for (const mode of Object.keys(MODE_CONFIG)) {
         let config = MODE_CONFIG[mode];
         if (config != null) {
-            // setEnterFocus(config.formId);
             // 検索ボックス入力時の処理
             document.getElementById(config.searchId).addEventListener('search', async function(e) {
                 await execFilterDisplay(e.currentTarget);

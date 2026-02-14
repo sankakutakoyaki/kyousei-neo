@@ -92,14 +92,10 @@ async function execEditOffice(id, self) {
         originEntity = await fetchEntity(config, id);
         if (!originEntity) return;
     } else {
-        // const code = document.getElementById(config.codeBox);
-        // if (!code.value) return closeFormDialog(config.dialogId);
-
         const company = document.getElementById(config.nameBox);
         if (company.value < 1) return closeFormDialog(config.dialogId);
 
         originEntity = structuredClone(config.entity);
-        // entity.companyId = code.value;
         originEntity.companyId = company.value;
 
         const option = company.selectedOptions[0];
@@ -113,7 +109,6 @@ async function execEditOffice(id, self) {
 async function execEditStaff(id, self) {
     const { tab, config, form } = getEditContext(self);
 
-    // let entity;
     if (id > 0) {
         originEntity = await fetchEntity(config, id);
         if (!originEntity) return;
@@ -255,13 +250,28 @@ async function execUpdate() {
 }
 
 // tab1〜4画面更新
-async function execUpdateCompanyDisplay(tab) {
-    const config = MODE_CONFIG[tab];
+async function execUpdateCompanyDisplay(tab) {    
     const resultResponse = await fetch('/api/client/get/list');
     const result = await resultResponse.json();
     companyOrigin = result.data;
 
     await execFilterDisplay(tab);
+    companyComboList = companyOrigin.map(item => ({number:item.companyId, text:item.name}));
+    officeComboList = officeOrigin.map(item => ({number:item.officeId, text:item.name}));
+    initCompanyInputs();
+
+    await clearDisplay("05");
+    await clearDisplay("06");
+    const cfg = MODE_CONFIG["06"];
+    deleteElements(cfg.nameBox2)
+}
+
+// リスト画面消去
+async function clearDisplay(tab) {
+    const cfg = MODE_CONFIG[tab];
+    const code = document.getElementById(cfg.codeBox);
+    code.value = "";
+    await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, [], createTableContent);
 }
 
 // 画面をフィルターにとおす
@@ -289,7 +299,7 @@ async function updateTableByCompany({apiUrl, extraFilter, requireCompany = false
 
     const res = await fetch(apiUrl);
     const result = await res.json();
-    if (!result.ok) return;
+    if (!res.ok) return;
 
     let list = result.data.filter(v => v.companyId === codeValue);
 
@@ -339,7 +349,7 @@ async function clearStaffTable() {
 
 //　company変更時にofficeを更新する
 async function createOfficeComboBoxFromClient() {
-    const panel = document.querySelector('.tab-panel.is-show');
+    const panel = document.querySelector('[data-panel="06"]');
     const companySelect = panel.querySelector('select[name="company"]');
     const officeSelect  = panel.querySelector('select[name="office"]');
 
@@ -371,9 +381,9 @@ async function updateOfficeCombo(companySelect, officeSelect) {
 
     const res = await fetch('api/office/get/list');
     const list = await res.json();
-    if (!Array.isArray(list)) return;
+    if (!Array.isArray(list.data)) return;
 
-    const offices = list
+    const offices = list.data
         .filter(o => o.companyId === companyId)
         .map(o => ({
             number: o.officeId,

@@ -42,29 +42,29 @@ public class KsSalesEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(ksSalesId)) + "," +
+        return Utilities.escapeCsv(ksSalesId) + "," +
                Utilities.escapeCsv(targetYearMonth) + ","  +
-               Utilities.escapeCsv(String.valueOf(partnerStoreCode)) + "," +
+               Utilities.escapeCsv(partnerStoreCode) + "," +
                Utilities.escapeCsv(partnerStoreName) + "," +
-               Utilities.escapeCsv(String.valueOf(corporationCode)) + "," +
+               Utilities.escapeCsv(corporationCode) + "," +
                Utilities.escapeCsv(corporationName) + "," +
-               Utilities.escapeCsv(String.valueOf(storeCode)) + "," +
+               Utilities.escapeCsv(storeCode) + "," +
                Utilities.escapeCsv(storeName) + "," +
-               Utilities.escapeCsv(String.valueOf(slipDate)) + "," +
-               Utilities.escapeCsv(String.valueOf(purchaseSlipNumber)) + "," +
+               Utilities.escapeCsv(slipDate) + "," +
+               Utilities.escapeCsv(purchaseSlipNumber) + "," +
                Utilities.escapeCsv(purchaseSlipType) + "," +
                Utilities.escapeCsv(janCode) + "," +
                Utilities.escapeCsv(modelNumber) + "," +
-               Utilities.escapeCsv(String.valueOf(quantity)) + "," +
-               Utilities.escapeCsv(String.valueOf(amount)) + "," +
-               Utilities.escapeCsv(String.valueOf(deliveryPaymentMgmtNumber)) + "," +
-               Utilities.escapeCsv(String.valueOf(salesSlipNumber)) + "," +
-               Utilities.escapeCsv(String.valueOf(salesStoreCode)) + "," +
+               Utilities.escapeCsv(quantity) + "," +
+               Utilities.escapeCsv(amount) + "," +
+               Utilities.escapeCsv(deliveryPaymentMgmtNumber) + "," +
+               Utilities.escapeCsv(salesSlipNumber) + "," +
+               Utilities.escapeCsv(salesStoreCode) + "," +
                Utilities.escapeCsv(salesStoreName) + "," +
-               Utilities.escapeCsv(String.valueOf(staffCode1)) + "," +
+               Utilities.escapeCsv(staffCode1) + "," +
                Utilities.escapeCsv(staffName1) + "," +
-               Utilities.escapeCsv(String.valueOf(staffCode2)) + "," +
+               Utilities.escapeCsv(staffCode2) + "," +
                Utilities.escapeCsv(staffName2) + "," +
-               Utilities.escapeCsv(String.valueOf(deliveryDate));
+               Utilities.escapeCsv(deliveryDate);
     }
 }

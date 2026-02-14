@@ -96,11 +96,6 @@ public class EmployeeApiController {
      * @param IDS
      * @return 
      */
-    // @PostMapping("/download/csv")
-	// @ResponseBody
-    // public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
-    //     return employeeService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
-    // }
     @PostMapping(value = "/download/csv", produces = "text/csv")
     public ResponseEntity<byte[]> downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         String csv = employeeService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));

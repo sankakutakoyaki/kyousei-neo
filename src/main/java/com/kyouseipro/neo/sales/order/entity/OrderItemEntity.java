@@ -47,20 +47,20 @@ public class OrderItemEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(orderItemId)) + "," +
-               Utilities.escapeCsv(String.valueOf(orderId)) + "," +
+        return Utilities.escapeCsv(orderItemId) + "," +
+               Utilities.escapeCsv(orderId) + "," +
                Utilities.escapeCsv(companyName) + "," +
                Utilities.escapeCsv(officeName) + "," +
                Utilities.escapeCsv(deliveryAddress) + "," +
-               Utilities.escapeCsv(String.valueOf(arrivalDate)) + "," +
+               Utilities.escapeCsv(arrivalDate) + "," +
                Utilities.escapeCsv(inspectorName) + "," +
                Utilities.escapeCsv(shippingCompanyName) + "," +
                Utilities.escapeCsv(documentNumber) + "," +
                Utilities.escapeCsv(itemMaker) + "," +
                Utilities.escapeCsv(itemName) + "," +
                Utilities.escapeCsv(itemModel) + "," +
-               Utilities.escapeCsv(String.valueOf(itemQuantity)) + "," +
-               Utilities.escapeCsv(String.valueOf(itemPayment)) + "," +
+               Utilities.escapeCsv(itemQuantity) + "," +
+               Utilities.escapeCsv(itemPayment) + "," +
                Utilities.escapeCsv(buyerName) + "," +
                Utilities.escapeCsv(buyerCompanyName) + "," +
                Utilities.escapeCsv(remarks) + "," +

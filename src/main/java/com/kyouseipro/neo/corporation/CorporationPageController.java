@@ -21,8 +21,6 @@ import com.kyouseipro.neo.corporation.company.service.CompanyListService;
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
 import com.kyouseipro.neo.corporation.staff.entity.StaffEntity;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
-import com.kyouseipro.neo.personnel.employee.entity.EmployeeListEntity;
-import com.kyouseipro.neo.personnel.employee.service.EmployeeListService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -32,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CorporationPageController extends BaseController {
     private final CompanyListService companyListService;
-    private final EmployeeListService employeeListService;
     private final ComboBoxService comboBoxService;
     /**
 	 * 取引先
@@ -91,13 +88,6 @@ public class CorporationPageController extends BaseController {
         model.addAttribute("companyEntity", new CompanyEntity());
         model.addAttribute("staffEntity", new EmployeeEntity());
 
-        // 初期表示用Clientリスト取得
-        List<CompanyListEntity> companyOrigin = companyListService.getListByCategoryId(Enums.clientCategory.PARTNER.getCode());
-        model.addAttribute("companyOrigin", companyOrigin);
-        // 初期表示用Staffリスト取得
-        List<EmployeeListEntity> staffOrigin = employeeListService.getListByCategoryId((Enums.employeeCategory.CONSTRUCT.getCode()));
-        model.addAttribute("staffOrigin", staffOrigin);
-
         // コンボボックスアイテム取得
         List<SimpleData> companyComboList = comboBoxService.getCompanyListByCategory(Enums.clientCategory.PARTNER.getCode());
         model.addAttribute("companyComboList", companyComboList);
@@ -107,8 +97,12 @@ public class CorporationPageController extends BaseController {
         model.addAttribute("bloodTypeComboList", bloodTypeComboList);
 
         // 保存用コード
-        model.addAttribute("categoryPartnerCode", Enums.clientCategory.PARTNER.getCode());
-        model.addAttribute("categoryConstructCode", Enums.employeeCategory.CONSTRUCT.getCode());
+        Map<String, Integer> categoryCodes = Map.of(
+            "PARTNER", Enums.clientCategory.PARTNER.getCode(),
+            "CONSTRUCT", Enums.employeeCategory.CONSTRUCT.getCode()
+        );
+
+        model.addAttribute("categoryCodes", categoryCodes);
 
         return "contents/corporation/partner";
     }

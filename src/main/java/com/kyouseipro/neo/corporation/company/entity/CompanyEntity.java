@@ -28,7 +28,7 @@ public class CompanyEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(companyId)) + "," +
+        return Utilities.escapeCsv(companyId) + "," +
                Utilities.escapeCsv(name) + "," +
                Utilities.escapeCsv(nameKana) + "," +
                Utilities.escapeCsv(telNumber) + "," +

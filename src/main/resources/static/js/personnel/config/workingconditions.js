@@ -25,14 +25,11 @@ const VIEW_CONFIG = [
 
 const FORM_CONFIG = [
     { name: 'working-conditions-id', key: 'workingConditionsId' },
-    // { name: 'employee-id', value: (e, ctx) => ctx.employeeId },
     { name: 'employee-id', key: 'employeeId' },
     { name: 'category', key: 'category' },
 
     { name: 'base-salary', key: 'baseSalary' },
     { name: 'trans-cost', key: 'transCost' },
-    { name: 'basic-start-time', key: 'basicStartTime' },
-    { name: 'basic-end-time', key: 'basicEndTime' },
 
     { name: 'version', key: 'version' }
 ];
@@ -83,16 +80,6 @@ const SAVE_CONFIG = [
         name: 'trans-cost',
         key: 'transCost',
         parse: v => v === '' ? 0 : Number(v)
-    },
-    {
-        name: 'basic-start-time',
-        key: 'basicStartTime',
-        parse: v => v ? v : '00:00'
-    },
-    {
-        name: 'basic-end-time',
-        key: 'basicEndTime',
-        parse: v => v ? v : '00:00'
     },
     {
         name: 'version',

@@ -24,7 +24,7 @@ public class WorkItemEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(fullCode)) + "," +
+        return Utilities.escapeCsv(fullCode) + "," +
                Utilities.escapeCsv(categoryName) + "," +
                Utilities.escapeCsv(name);
     }

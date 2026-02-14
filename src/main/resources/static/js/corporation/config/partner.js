@@ -5,26 +5,23 @@ const MODE_CONFIG = {
         tableId: "table-01-content",
         footerId: "footer-01",
         searchId: "search-box-01",
-        category: categoryPartnerCode,
+        category: categoryCodes.PARTNER,
         categoryName: "company",
         dataId: "companyId",
         dialogId: "form-dialog-01",
         formId: "form-01",
         entity: companyEntity,
-        list: companyOrigin,
         url: "/api/company/save"
     },
     "02": {
         tableId: "table-02-content",
         footerId: "footer-02",
-        searchId: "search-box-02",
-        category: categoryConstructCode,
+        category: categoryCodes.CONSTRUCT,
         categoryName: "employee",
         dataId: "employeeId",
         dialogId: "form-dialog-02",
         formId: "form-02",
         entity: staffEntity,
-        list: staffOrigin,
         url: "/api/employee/save"
     }
 };
@@ -127,27 +124,74 @@ const SAVE_FORM_CONFIG = {
     }))
 }
 
-const ORIGIN_CONFIG = {
-    company: {
-        listUrl: "/api/partner/get/list",
-        comboUrl: "/api/partner/get/combo",
-        originKey: "companyOrigin",
-        comboKey: "companyComboList",
-        comboTargetIds: ["name01"]
-    },
-    staff: {
-        listUrl: "/api/employee/get/list/partner",
-        originKey: "staffOrigin"
-    }
-};
-
 const COMPANY_UI_CONFIG = [
     {
         codeId: "code01",
         nameId: "name01",
         onChange: async () => {
-            await updateStaffTableDisplay();
-            refleshCode;
+            await refleshStaffDisplay();
+            refleshCode();
         }
     }
 ];
+
+const ERROR_CONFIG = {
+    "form-01": [
+        {
+            selector: 'input[name="name"]',
+            checks: [
+                { test: v => v !== "", message: '名称が入力されていません'}
+            ]
+        },
+        {
+            selector: 'input[name="tel-number"]',
+            checks: [
+                { test: v => !checkPhoneNumber(v), message: '電話番号に誤りがあります'}
+            ]
+        },
+        {
+            selector: 'input[name="fax-number"]',
+            checks: [
+                { test: v => !checkPhoneNumber(v), message: 'FAX番号に誤りがあります'}
+            ]
+        },
+        {
+            selector: 'input[name="postal-code"]',
+            checks: [
+                { test: v => !checkPhoneNumber(v), message: '郵便番号に誤りがあります'}
+            ]
+        },
+        {
+            selector: 'input[name="email"]',
+            checks: [
+                { test: v => !checkMailAddress(v), message: 'メールアドレスに誤りがあります'}
+            ]
+        },
+        {
+            selector: 'input[name="web-address"]',
+            checks: [
+                { test: v => !checkWebAddress(v), message: 'WEBアドレスに誤りがあります'}
+            ]
+        }
+    ],
+    "form-02": [
+        {
+            selector: 'input[name="name"]',
+            checks: [
+                { test: v => v !== "", message: '名称が入力されていません'}
+            ]
+        },
+        {
+            selector: 'input[name="phone-number"]',
+            checks: [
+                { test: v => !checkPhoneNumber(v), message: '電話番号に誤りがあります'}
+            ]
+        },
+        {
+            selector: 'input[name="email"]',
+            checks: [
+                { test: v => !checkMailAddress(v), message: 'メールアドレスに誤りがあります'}
+            ]
+        }
+    ]
+}

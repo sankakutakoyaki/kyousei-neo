@@ -122,6 +122,8 @@ public class EmployeeParameterBinder {
 
     public static int bindDownloadCsvByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
         int index = 1;
+        ps.setInt(index++, Enums.state.DELETE.getCode());
+        ps.setInt(index++, Enums.state.DELETE.getCode());
         for (Integer id : ids) {
             ps.setInt(index++, id);
         }

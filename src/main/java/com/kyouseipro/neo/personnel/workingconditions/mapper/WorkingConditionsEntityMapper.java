@@ -19,8 +19,8 @@ public class WorkingConditionsEntityMapper {
         entity.setPayType(rs.getInt("pay_type"));
         entity.setBaseSalary(rs.getInt("base_salary"));
         entity.setTransCost(rs.getInt("trans_cost"));
-        entity.setBasicStartTime(rs.getTime("basic_start_time").toLocalTime());
-        entity.setBasicEndTime(rs.getTime("basic_end_time").toLocalTime());
+        // entity.setBasicStartTime(rs.getTime("basic_start_time").toLocalTime());
+        // entity.setBasicEndTime(rs.getTime("basic_end_time").toLocalTime());
         entity.setVersion(rs.getInt("version"));
         entity.setState(rs.getInt("state"));
         return entity;

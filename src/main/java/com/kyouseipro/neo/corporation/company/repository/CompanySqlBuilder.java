@@ -197,7 +197,7 @@ public class CompanySqlBuilder {
     }
 
     public static String buildDownloadCsvByIds(int count) {
-        String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."
+        String placeholders = Utilities.generatePlaceholders(count);
         return "SELECT * FROM companies WHERE company_id IN (" + placeholders + ") AND NOT (state = ?)";
     }
 }

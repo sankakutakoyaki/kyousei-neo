@@ -32,11 +32,11 @@ public class QualificationsEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(String.valueOf(ownerId)) + "," +
+        return Utilities.escapeCsv(ownerId) + "," +
                Utilities.escapeCsv(ownerName) + "," +
                Utilities.escapeCsv(qualificationName) + "," +
                Utilities.escapeCsv(number) + "," +
-               Utilities.escapeCsv(String.valueOf(expiryDate));
+               Utilities.escapeCsv(expiryDate);
     }
 }
 

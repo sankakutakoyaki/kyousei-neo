@@ -46,7 +46,7 @@ public class StaffParameterBinder {
         int idx = bindSaveParameter(ps, req, editor, 1);
 
         // WHERE
-        ps.setInt(idx++, req.getCompanyId());
+        ps.setInt(idx++, req.getStaffId());
         ps.setInt(idx++, req.getVersion());
         ps.setInt(idx++, Enums.state.DELETE.getCode());
 

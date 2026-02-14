@@ -30,11 +30,9 @@ public class EmployeeEntityMapper {
         entity.setGender(rs.getInt("gender"));
         entity.setBloodType(rs.getInt("blood_type"));
         entity.setBirthday(Utilities.toLocalDate(rs, "birthday"));
-        // entity.setBirthday(rs.getObject("birthday", LocalDate.class));
         entity.setEmergencyContact(rs.getString("emergency_contact"));
         entity.setEmergencyContactNumber(rs.getString("emergency_contact_number"));
         entity.setDateOfHire(Utilities.toLocalDate(rs, "date_of_hire"));
-        // entity.setDateOfHire(rs.getObject("date_of_hire", LocalDate.class));
         entity.setVersion(rs.getInt("version"));
         entity.setState(rs.getInt("state"));
         return entity;

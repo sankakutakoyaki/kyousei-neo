@@ -210,7 +210,7 @@ const ERROR_CONFIG = {
         {
             selector: 'input[name="name"]',
             checks: [
-                { test: v => v !== "", message: '名称が入力されていません'}
+                { test: v => v !== "", message: '名前が入力されていません'}
             ]
         },
         {
@@ -220,11 +220,16 @@ const ERROR_CONFIG = {
             ]
         },
         {
+            selector: 'input[name="postal-code"]',
+            checks: [
+                { test: v => !checkPhoneNumber(v), message: '郵便番号に誤りがあります'}
+            ]
+        },
+        {
             selector: 'input[name="email"]',
             checks: [
                 { test: v => !checkMailAddress(v), message: 'メールアドレスに誤りがあります'}
             ]
         }
     ]
-
 }

@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.recycle.regist.entity;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.interfaces.CsvExportable;
@@ -43,21 +42,21 @@ public class RecycleEntity implements CsvExportable {
 
     @Override
     public String toCsvRow() {
-        return Utilities.escapeCsv(Objects.toString(recycleId, "")) + "," +
+        return Utilities.escapeCsv(recycleId) + "," +
                Utilities.escapeCsv(moldingNumber) + "," +
-               Utilities.escapeCsv(Objects.toString(makerCode, "")) + "," +
+               Utilities.escapeCsv(makerCode) + "," +
                Utilities.escapeCsv(makerName) + "," +
-               Utilities.escapeCsv(Objects.toString(itemCode, "")) + "," +
+               Utilities.escapeCsv(itemCode) + "," +
                Utilities.escapeCsv(itemName) + "," + 
-               Utilities.escapeCsv(Objects.toString(useDate, "")) + "," +
-               Utilities.escapeCsv(Objects.toString(deliveryDate, "")) + "," +
-               Utilities.escapeCsv(Objects.toString(shippingDate, "")) + "," +
-               Utilities.escapeCsv(Objects.toString(lossDate, "")) + "," +
+               Utilities.escapeCsv(useDate) + "," +
+               Utilities.escapeCsv(deliveryDate) + "," +
+               Utilities.escapeCsv(shippingDate) + "," +
+               Utilities.escapeCsv(lossDate) + "," +
                Utilities.escapeCsv(companyName) + "," +
                Utilities.escapeCsv(officeName) + "," +
-               Utilities.escapeCsv(Objects.toString(recyclingFee, "")) + "," +
-               Utilities.escapeCsv(Objects.toString(disposalSiteName, "")) + "," +
-               Utilities.escapeCsv(Objects.toString(registDate, "")) + "," +
-               Utilities.escapeCsv(Objects.toString(updateDate, ""));
+               Utilities.escapeCsv(recyclingFee) + "," +
+               Utilities.escapeCsv(disposalSiteName) + "," +
+               Utilities.escapeCsv(registDate) + "," +
+               Utilities.escapeCsv(updateDate);
     }
 }
