@@ -95,8 +95,8 @@ public class SqlRepository {
         }
     }
 
-    public <R> R queryOneOrNull(String sql, SqlParameterBinder binder, SqlResultExtractor<R> extractor) {
-        return this.<Void, R>queryOneOrNull(sql, binder, extractor, null);
+    public <P, R> R queryOneOrNull(String sql, SqlParameterBinder<P> binder, SqlResultExtractor<R> extractor) {
+        return this.<P, R>queryOneOrNull(sql, binder, extractor, null);
     }
 
     /* =========================================================

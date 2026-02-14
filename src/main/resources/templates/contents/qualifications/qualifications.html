@@ -1,48 +1,45 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/with-sidebar}">
 <body>
-    <!-- 本体 -->
-    <div class="normal-content" th:fragment="bodyFragment">
-        <!-- ハンバーガー -->
-        <div th:replace="~{fragments/common/sidebar :: sidebarFragment}"></div>
-        <!-- サイドバー -->
-        <div class="normal-sidebar" th:insert="~{__${sidebarFragmentName}__}"></div>
-        <!-- ボディ -->
-        <div class="normal-body">
-            <div class="tab-area">
-                <ul class="tab-menu">
-                    <li class="tab-menu-item is-active" data-tab="01">取得一覧</li>
-                    <li class="tab-menu-item" data-tab="03">資格登録</li>
-                    <li class="tab-menu-item" data-tab="04">PDF登録</li>
-                </ul>
-                <div class="tab-panel is-show" data-panel="01">
-                    <div class="table-area">
-                        <!-- ヘッダー -->
-                        <header th:replace="~{fragments/qualifications/qualifications :: headerFragment('search-box-01')}"></header>
-                        <!-- コンテンツ -->
-                        <main th:replace="~{fragments/qualifications/qualifications :: mainFragment()}"></main>
-                        <!-- フッター -->
-                        <footer id="footer-01" class="pc-style" th:insert="~{fragments/qualifications/qualifications :: footerFragment()}"></footer>
-                    </div>
-                </div>
-                <div class="tab-panel" data-panel="03">
-                    <div class="qualification-area">
-                        <!-- ヘッダー -->
-                        <header th:replace="~{fragments/qualifications/qualifications :: headerOwnerFragment('code-box-01', 'name-box-01')}"></header>
-                        <!-- コンテンツ -->
-                        <main th:replace="~{fragments/qualifications/qualifications :: mainRegistFragment()}"></main>
-                    </div>
-                </div>
-                <div class="tab-panel" data-panel="04">
-                    <div class="qualification-area">
-                        <!-- ヘッダー -->
-                        <header th:replace="~{fragments/qualifications/qualifications :: headerOwnerFragment('code-box-02', 'name-box-02')}"></header>
-                        <!-- コンテンツ -->
-                        <main th:replace="~{fragments/qualifications/qualifications :: mainPdfFragment()}"></main>
-                    </div>
-                </div>
+    <!-- サイドバー -->
+    <div layout:fragment="sidebar-content">
+        <div th:replace="~{fragments/common/menu :: managementFragment}"></div>
+    </div>
 
+    <!-- ボディ -->
+    <main layout:fragment="content">
+        <div class="tab-area">
+            <ul class="tab-menu">
+                <li class="tab-menu-item is-active" data-tab="01">取得一覧</li>
+                <li class="tab-menu-item" data-tab="02">資格登録</li>
+                <li class="tab-menu-item" data-tab="03">PDF登録</li>
+            </ul>
+            <div class="tab-panel is-show" data-panel="01">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/qualifications/qualifications :: headerFragment('search-box-01')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/qualifications/qualifications :: mainFragment()}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-01" class="pc-style" th:insert="~{fragments/qualifications/qualifications :: footerFragment()}"></footer>
+                </div>
+            </div>
+            <div class="tab-panel" data-panel="02">
+                <div class="qualification-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/qualifications/qualifications :: headerOwnerFragment('code-area-01', 'code-box-01', 'name-box-01')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/qualifications/qualifications :: mainRegistFragment()}"></main>
+                </div>
+            </div>
+            <div class="tab-panel" data-panel="03">
+                <div class="qualification-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/qualifications/qualifications :: headerOwnerFragment('code-area-02', 'code-box-02', 'name-box-02')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/qualifications/qualifications :: mainPdfFragment()}"></main>
+                </div>
             </div>
         </div>
         <div id="form-dialog-area">
@@ -57,7 +54,7 @@
             const url = /*[[${url}]]*/;
             const owner_category = /*[[${owner_category}]]*/;
             const formEntity = /*[[${formEntity}]]*/;
-            let qualifcationsOrigin = /*[[${origin}]]*/; // 初期リスト記憶用
+            let origin = [];
             const qualificationComboList = /*[[${qualificationComboList}]]*/;
             const fileInput = document.getElementById('file-input');
             const fileList = document.getElementById('file-list');            
@@ -66,7 +63,8 @@
             const fileId01 = document.getElementById('qualifications-id-01');
             const fileId02 = document.getElementById('qualifications-id-02');
         </script>
+        <script th:src="@{/js/qualifications/config/qualifications.js}"></script>
         <script th:src="@{/js/qualifications/qualifications.js}"></script>
-    </div>
+    </main>
 
 </body>

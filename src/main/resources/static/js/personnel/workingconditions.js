@@ -95,7 +95,7 @@ async function execSave() {
             const tableId = getTableIdByCategory(formdata.category);
             scrollIntoTableList(tableId, result.data.id);
             
-            openMsgDialog("msg-dialog", result.data.message, "blue");
+            openMsgDialog("msg-dialog", result.message, "blue");
         }
     }
 }
@@ -140,7 +140,7 @@ async function execDelete(self) {
 
     if (result?.ok) {                
         await execUpdate();
-        openMsgDialog("msg-dialog", result.data.message, "blue");
+        openMsgDialog("msg-dialog", result.message, "blue");
     }
 }
 

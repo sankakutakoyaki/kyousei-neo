@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
-    <header class="flex-area pc-style" th:fragment="headerOwnerFragment(code, name)">
-        <div id="code-area" class="flex-area">
+    <header class="flex-area pc-style" th:fragment="headerOwnerFragment(area, code, name)">
+        <div th:id="${area}" class="flex-area">
             <div class="form-parts">
                 <label>ID</label>
                 <input tabindex="1" th:id="${code}" class="normal-input" type="text" value="">
@@ -17,8 +17,6 @@
 
     <main th:fragment="mainRegistFragment()">
         <form id="form-01">
-            <input id="qualifications-id-01" name="qualifications-id" type="hidden" value="0">
-            <input id="version01" name="version" type="hidden" value="0">
             <div class="flex-area">
                 <div class="form-parts">
                     <label>資格</label>
@@ -43,7 +41,6 @@
                 <button class="normal-btn" type="button" onclick="initialPanel('03')">リセット</button>
                 <button tabindex="6" class="normal-btn ok" type="button" onclick="execSave()">保存</button>
             </div>
-        </form>
         <ul id="qualification-list-01" class="normal-list qualification"></ul>
     </main>
 
@@ -92,12 +89,12 @@
     </header>
 
     <!-- テーブル -->
-    <main th:fragment="mainFragment()">
+    <main class="table-wrapper"th:fragment="mainFragment()">
         <table id="table-01" class="normal-table">
             <tr id="row-0" name="table-header" class="pc-style">
                 <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
                 <th><span>ID<span class="sort-arrow"></span></span></th>
-                <th><span>氏名<span class="sort-arrow"></span></span></th>
+                <th><span>所有者名<span class="sort-arrow"></span></span></th>
                 <th><span>資格名<span class="sort-arrow"></span></span></th>
                 <th><span>取得<span class="sort-arrow"></span></span></th>
                 <th><span>有効期限<span class="sort-arrow"></span></span></th>

@@ -197,7 +197,7 @@ async function execDelete(self) {
 
     if (result.ok) {
         await refleshDisplay();
-        openMsgDialog("msg-dialog", result.data.message, "blue");
+        openMsgDialog("msg-dialog", result.message, "blue");
     }
 }
 
@@ -248,7 +248,7 @@ async function execBulkUpdate(self) {
 
         // 画面更新
         await refleshDisplay();
-        openMsgDialog("msg-dialog", result.data.message, "blue");
+        openMsgDialog("msg-dialog", result.message, "blue");
     }
 }
 

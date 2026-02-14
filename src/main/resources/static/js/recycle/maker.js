@@ -203,7 +203,7 @@ async function execDelete01(self) {
         closeFormDialog('form-dialog-01');
 
         await refleshDisplay();
-        openMsgDialog("msg-dialog", result.data.message, "blue");
+        openMsgDialog("msg-dialog", result.message, "blue");
     }
 }
 

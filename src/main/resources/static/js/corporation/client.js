@@ -405,7 +405,10 @@ window.addEventListener("load", async () => {
         if (!el) return;
 
         el.addEventListener('search', async e => {
-            await execFilterDisplay(e.currentTarget);
+            const panel = e.currentTarget.closest('[data-panel]');
+            if (!panel) return;
+
+            await execFilterDisplay(panel.dataset.panel);
         });
     });
 
@@ -419,8 +422,8 @@ window.addEventListener("load", async () => {
 
         const list = companyOrigin.filter(v => v.category === cfg.category);
         await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, list, createTableContent);
-        makeSortable(cfg.tableId);
-        setPageTopButton(cfg.tableId);
+        // makeSortable(cfg.tableId);
+        // setPageTopButton(cfg.tableId);
     }
 
     companyComboList = companyOrigin.map(item => ({number:item.companyId, text:item.name}));

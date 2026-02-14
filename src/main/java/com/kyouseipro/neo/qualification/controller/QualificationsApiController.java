@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.common.response.SimpleResponse;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/api/qualifications")
 public class QualificationsApiController {
     private final QualificationsService qualificationsService;
 
@@ -29,7 +31,7 @@ public class QualificationsApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/api/qualifications/get/id")
+    @PostMapping("/get/id")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getById(@RequestBody IdPairRequest req) {
         switch (req.getSecondaryId()) {
@@ -45,7 +47,7 @@ public class QualificationsApiController {
      * @param IDS
      * @return 
      */
-    @PostMapping("/api/qualifications/save")
+    @PostMapping("/save")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody QualificationsEntity entity, @AuthenticationPrincipal OidcUser principal) {
         Integer id = qualificationsService.save(entity, principal.getAttribute("preferred_username"));
@@ -57,7 +59,7 @@ public class QualificationsApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/api/qualifications/delete/id")
+    @PostMapping("/delete/id")
     @ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> deleteById(@RequestBody IdRequest req, @AuthenticationPrincipal OidcUser principal) {
         Integer result = qualificationsService.deleteById(req.getId(), principal.getAttribute("preferred_username"));
@@ -68,7 +70,7 @@ public class QualificationsApiController {
      * すべての資格情報を取得する
      * @return
      */
-    @GetMapping("/api/qualifications/get")
+    @GetMapping("/get/")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getListForEmployee() {
         return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getListForEmployee()));
@@ -78,7 +80,7 @@ public class QualificationsApiController {
      * すべての許認可情報を取得する
      * @return
      */
-    @GetMapping("/api/license/get")
+    @GetMapping("/get/license")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getListForCompany() {
         return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getListFroCompany()));

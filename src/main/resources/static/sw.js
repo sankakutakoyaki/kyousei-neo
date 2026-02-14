@@ -1,31 +1,35 @@
-const CACHE_NAME = `temperature-converter-v1`;
+"use strict"
+
+const CACHE_NAME = 'temperature-converter-v1';
 
 self.addEventListener('install', event => {
     event.waitUntil((async () => {
         const cache = await caches.open(CACHE_NAME);
-        cache.addAll([
+        await cache.addAll([
             '/',
-            '/js/default.js',
-            '/js/dialog.js',
-            '/js/enterfocus.js',
-            '/js/file.js',
-            '/js/form.js',
-            '/js/info.js',
-            '/js/push.js',
-            '/js/table.js',
-            '/css/item/button.css',
-            '/css/item/color.css',
-            '/css/item/dialog.css',
-            '/css/item/form.css',
-            '/css/item/hover.css',
-            '/css/item/input.css',
-            '/css/item/pc-style.css',
-            '/css/item/sp-style.css',
-            '/css/item/table.css',
-            '/css/default.css',
-            '/css/employee.css',
-            '/css/personnel.css',
-            '/css/working_conditions.css'
+            '/js/common/api.js',
+            '/js/common/default.js',
+            '/js/common/dialog.js',
+            '/js/common/enterfocus.js',
+            '/js/common/file.js',
+            '/js/common/form.js',
+            '/js/common/info.js',
+            '/js/common/keyCaseConverter.js',
+            '/js/common/list.js',
+            '/js/common/name.js',
+            '/js/common/table.js',
+            '/js/common/time.js',
+            '/css/common/button.css',
+            '/css/common/color.css',
+            '/css/common/default.css',
+            '/css/common/dialog.css',
+            '/css/common/form.css',
+            '/css/common/hover.css',
+            '/css/common/input.css',
+            '/css/common/list.css',
+            '/css/common/pc-style.css',
+            '/css/common/sp-style.css',
+            '/css/common/table.css'
         ]);
     })());
 });
