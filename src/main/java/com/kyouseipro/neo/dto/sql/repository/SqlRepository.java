@@ -64,8 +64,8 @@ public class SqlRepository {
         }
     }
 
-    public <R> R queryOne(String sql, SqlParameterBinder binder, SqlResultExtractor<R> extractor) {
-        return this.<Void, R>queryOne(sql, binder, extractor, null);
+    public <P, R> R queryOne(String sql, SqlParameterBinder<P> binder, SqlResultExtractor<R> extractor) {
+        return this.<P, R>queryOne(sql, binder, extractor, null);
     }
 
     /* =========================================================
@@ -125,8 +125,8 @@ public class SqlRepository {
         }
     }
 
-    public <R> List<R> queryList(String sql, SqlParameterBinder binder, SqlResultExtractor<R> extractor) {
-        return this.<Void, R>queryList(sql, binder, extractor, null);
+    public <P, R> List<R> queryList(String sql, SqlParameterBinder<P> binder, SqlResultExtractor<R> extractor) {
+        return this.<P, R>queryList(sql, binder, extractor, null);
     }
 
     /* =========================================================
