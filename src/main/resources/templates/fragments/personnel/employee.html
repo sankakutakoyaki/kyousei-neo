@@ -33,14 +33,10 @@
     </header>
 
     <form id="form-01" class="dialog-content" th:fragment="form01Fragment()">
-        <!-- <input name="employee-id" type="hidden" value="">
-        <input name="company-id" type="hidden" value="">
-        <input name="category" type="hidden" value="">
-        <input name="version" type="hidden" value=""> -->
         <div class="flex-area">
             <div class="form-parts">
                 <label>アカウント</label>
-                <input tabindex="1" name="account" class="normal-input" type="text" value=""
+                <input tabindex="1" name="account" class="normal-input" type="text" value="" autofocus
                     placeholder="example@kyouseibin.com" onfocus="this.select();">
             </div>
             <div class="form-parts">
@@ -50,10 +46,6 @@
             </div>
         </div>
         <div class="flex-area">
-            <!-- <div class="form-parts">
-                <label>会社名</label>
-                <select tabindex="3" name="company" class="normal-select"></select>
-            </div> -->
             <div class="form-parts">
                 <label>営業所・支店</label>
                 <select tabindex="4" name="office" class="normal-select"></select>
@@ -149,7 +141,6 @@
                 <th><span>コード<span class="sort-arrow"></span></span></th>
                 <th><span>氏名<span class="sort-arrow"></span></span></th>
                 <th><span>携帯番号<span class="sort-arrow"></span></span></th>
-                <!-- <th><span>会社名<span class="sort-arrow"></span></span></th> -->
                 <th><span>営業所<span class="sort-arrow"></span></span></th>
             </tr>
             <tbody th:id="${scrollId}" class="scroll-area"></tbody>

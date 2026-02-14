@@ -16,6 +16,9 @@ function openFormDialog(dialogId) {
     if (form == null) return;
     form.classList.remove('none');
 
+    const el = area.querySelector('[autofocus]');
+    if (el) el.focus();
+    
     setInertState(true);
 }
 

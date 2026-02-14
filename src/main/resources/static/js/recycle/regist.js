@@ -95,6 +95,7 @@ async function execEdit(id, self) {
 
     // 入力フォームダイアログを開く
     openFormDialog("form-dialog-01");
+    setEnterFocus('form-01');
 }
 
 /******************************************************************************************************* リセット */
@@ -213,21 +214,18 @@ async function execRegist(tab) {
     cfg.regBtn.disabled = true;
 
     const data = buildEntityFromElement(cfg.panel, tempElm, SAVE_FORM_CONFIG[tab]);
-    resetFormInput(tab);
-
     const result = await updateFetch(cfg.url, JSON.stringify(data), token);
-
 
     if (result.ok && result.data !== null) {
         itemList.push(result.data);
         await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, itemList, createTableContent);
-        // resetFormInput(tab);
         cfg.number.focus();
     } else {
         cfg.number.value = null;
         setFocusElement("msg-dialog", cfg.number);
     }
-    
+
+    resetFormInput(tab);
     cfg.regBtn.disabled = false;
 }
 
