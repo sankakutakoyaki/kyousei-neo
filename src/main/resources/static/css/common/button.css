@@ -10,10 +10,9 @@ button:disabled:hover {
 }
 
 .normal-btn {
-    display: grid;
+    display: flex;
     align-items: center;
-    justify-items: center;
-    /* height: 2.5rem; */
+    justify-content: center;
     min-width: 5rem;
     border-radius: .3rem;
     transition: 0.1s;

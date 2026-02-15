@@ -9,6 +9,7 @@ import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.dto.CsvExporter;
 import com.kyouseipro.neo.interfaces.HistoryTarget;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntity;
+import com.kyouseipro.neo.qualification.entity.QualificationsEntityRequest;
 import com.kyouseipro.neo.qualification.repository.QualificationsRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class QualificationsService {
      * @param id 資格ID
      * @return QualificationsEntity または null
      */
-    public List<QualificationsEntity> getByEmployeeId(Integer id) {
+    public List<QualificationsEntity> getByEmployeeId(int id) {
         return qualificationsRepository.findAllByEmployeeId(id);
     }
 
@@ -36,7 +37,7 @@ public class QualificationsService {
      * @param id 資格ID
      * @return QualificationsEntity または null
      */
-    public List<QualificationsEntity> getByCompanyId(Integer id) {
+    public List<QualificationsEntity> getByCompanyId(int id) {
         return qualificationsRepository.findAllByCompanyId(id);
     }
 
@@ -52,11 +53,11 @@ public class QualificationsService {
         table = HistoryTables.QUALIFICATIONS,
         action = "保存"
     )
-    public int save(QualificationsEntity entity, String editor) {
-        if (entity.getQualificationsId() > 0) {
-            return qualificationsRepository.update(entity, editor);
+    public int save(QualificationsEntityRequest req, String editor) {
+        if (req.getQualificationsId() > 0) {
+            return qualificationsRepository.update(req, editor);
         } else {
-            return qualificationsRepository.insert(entity, editor);
+            return qualificationsRepository.insert(req, editor);
         }
     }
 
@@ -97,10 +98,26 @@ public class QualificationsService {
     }
 
     /**
-     * すべての資格情報を取得
+     * 取得済みの資格情報を取得
      * @return
      */
     public List<QualificationsEntity> getListForEmployee() {
+        return qualificationsRepository.findAllByEmployee();
+    }
+
+    /**
+     * 取得済みの許認可情報を取得
+     * @return
+     */
+    public List<QualificationsEntity> getListForCompany() {
+        return qualificationsRepository.findAllByCompany();
+    }
+
+    /**
+     * すべての資格情報を取得
+     * @return
+     */
+    public List<QualificationsEntity> getListForEmployeeAllStatus() {
         return qualificationsRepository.findAllByEmployeeStatus();
     }
 
@@ -108,7 +125,7 @@ public class QualificationsService {
      * すべての許認可情報を取得
      * @return
      */
-    public List<QualificationsEntity> getListFroCompany() {
+    public List<QualificationsEntity> getListForCompanyAllStatus() {
         return qualificationsRepository.findAllByCompanyStatus();
     }
 }

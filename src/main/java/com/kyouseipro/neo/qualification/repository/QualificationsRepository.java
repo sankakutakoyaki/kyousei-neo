@@ -9,8 +9,7 @@ import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.common.simpledata.mapper.SimpleDataMapper;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
-import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
-import com.kyouseipro.neo.personnel.employee.repository.EmployeeRepository;
+import com.kyouseipro.neo.qualification.entity.QualificationsEntityRequest;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntity;
 import com.kyouseipro.neo.qualification.mapper.QualificationsEntityMapper;
 
@@ -21,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 public class QualificationsRepository {
 
     private final SqlRepository sqlRepository;
-    private final EmployeeRepository employeeRepository;
 
     /**
      * IDによる取得。
@@ -30,10 +28,6 @@ public class QualificationsRepository {
      */
     public List<QualificationsEntity> findAllByEmployeeId(int id) {
         String sql = QualificationsSqlBuilder.buildFindAllByEmployeeId();
-        EmployeeEntity entity = employeeRepository.findById(id);
-
-        int targetId = entity.getEmployeeId();
-
         return sqlRepository.queryList(
             sql,
             (ps, i) ->{
@@ -41,10 +35,9 @@ public class QualificationsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, i);
+                ps.setInt(index++, id);
             },
-            QualificationsEntityMapper::map,
-            targetId
+            QualificationsEntityMapper::map
         );
     }
 
@@ -55,7 +48,6 @@ public class QualificationsRepository {
      */
     public List<QualificationsEntity> findAllByCompanyId(int id) {
         String sql = QualificationsSqlBuilder.buildFindAllByCompanyId();
-
         return sqlRepository.queryList(
             sql,
             (ps, v) -> {
@@ -64,8 +56,47 @@ public class QualificationsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, id);
-                ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
-                ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
+            },
+            QualificationsEntityMapper::map
+        );
+  
+    }
+
+    /**
+     * 取得済み全件取得。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
+    public List<QualificationsEntity> findAllByEmployee() {
+        String sql = QualificationsSqlBuilder.buildFindAllByEmployee();
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            QualificationsEntityMapper::map
+        );
+    }
+
+    /**
+     * 取得済み全件取得。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
+    public List<QualificationsEntity> findAllByCompany() {
+        String sql = QualificationsSqlBuilder.buildFindAllByCompany();
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
             },
             QualificationsEntityMapper::map
         );
@@ -104,10 +135,8 @@ public class QualificationsRepository {
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
             },
             QualificationsEntityMapper::map
         );
@@ -119,7 +148,7 @@ public class QualificationsRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllByQualificationMasterCombo() {
-        String sql = "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = ?) ORDER BY code;";
+        String sql = "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE state <> ? AND category_name <> '許可' ORDER BY category_name, name;";
 
         return sqlRepository.queryList(
             sql,
@@ -134,7 +163,7 @@ public class QualificationsRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllByLicenseMasterCombo() {
-        String sql = "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE NOT (state = ?) AND category_name = '許可' ORDER BY code;";
+        String sql = "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE state <> ? AND category_name = '許可' ORDER BY category_name, name;";
 
         return sqlRepository.queryList(
             sql,
@@ -148,14 +177,14 @@ public class QualificationsRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    public int insert(QualificationsEntity entity, String editor) {
-        String sql = QualificationsSqlBuilder.buildInsert();
+    public int insert(QualificationsEntityRequest req, String editor) {
+        String sql = QualificationsSqlBuilder.buildBulkInsert(req);
 
         return sqlRepository.insert(
             sql,
-            (ps, en) -> QualificationsParameterBinder.bindInsert(ps, en, editor),
+            (ps, en) -> QualificationsParameterBinder.bindBulkInsert(ps, en, editor),
             rs -> rs.getInt("qualifications_id"),
-            entity
+            req
         );
     }
 
@@ -164,13 +193,13 @@ public class QualificationsRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    public int update(QualificationsEntity entity, String editor) {
-        String sql = QualificationsSqlBuilder.buildUpdate();
+    public int update(QualificationsEntityRequest req, String editor) {
+        String sql = QualificationsSqlBuilder.buildBulkUpdate(req);
 
         int count = sqlRepository.updateRequired(
             sql,
-            (ps, e) -> QualificationsParameterBinder.bindUpdate(ps, e, editor),
-            entity
+            (ps, e) -> QualificationsParameterBinder.bindBulkUpdate(ps, e, editor),
+            req
         );
 
         return count;

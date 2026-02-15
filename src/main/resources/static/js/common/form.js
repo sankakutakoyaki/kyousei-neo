@@ -57,13 +57,21 @@ function createComboBoxWithTop(selectArea, items, text) {
  * @returns 
  */
 function setComboboxSelected(selectArea, id) {
-    if (selectArea == null) return;
-    const select = selectArea.querySelectorAll('option');
-    if (select != null) {
-        select.forEach(function (opt) {
-            if (opt.value == id) opt.selected = true;
-        })
-    }
+    if (!selectArea) return false;
+
+    const options = selectArea.querySelectorAll('option');
+    let found = false;
+
+    options.forEach(function (opt) {
+        if (opt.value == id) {
+            opt.selected = true;
+            found = true;
+        } else {
+            opt.selected = false; // 他は解除（安全のため）
+        }
+    });
+
+    return found;
 }
 
 /**
@@ -303,7 +311,11 @@ function bindCodeInput(codeInput, nameSelect, onBlurCallback) {
     // Enterキー処理
     codeInput.addEventListener('keydown', function (e) {
         if (e.key === "Enter") {
-            setComboboxSelected(nameSelect, this.value);
+            const found = setComboboxSelected(nameSelect, this.value);
+
+            if (!found) {
+                this.value = "";
+            }
             nameSelect.focus();
         }
     });
@@ -650,4 +662,48 @@ function bindDateRange(startId, endId) {
             end.value = start.value;
         }
     });
+}
+
+// コード入力ボックスからフォーカスが外れた時の処理
+async function changeCodeToName(cfg, url) {
+    const codeBox = document.getElementById(cfg.codeId);
+    const nameBox = document.getElementById(cfg.nameId);
+
+    const value = codeBox.value?.trim();
+
+    if (!value) {
+        nameBox.value = "";
+        return;
+    }
+
+    const id = Number(value);
+    if (Number.isNaN(id)) {
+        codeBox.value = "";
+        nameBox.value = "";
+        return;
+    }
+
+    const entity = await searchFetch(url, JSON.stringify({ id }), token);
+
+    if (!entity?.ok) {
+        codeBox.value = "";
+        nameBox.value = "";
+        return;
+    }
+
+    if (Array.isArray(entity.data) && entity.data.length === 0) {
+        codeBox.value = "";
+        nameBox.value = "";
+        return;
+    }
+
+    const data = Array.isArray(entity.data) ? entity.data[0]: entity.data;
+
+    nameBox.value = data?.[cfg.changeNameId] ?? "";
+
+    if (cfg.codeChange && entity.data) {
+        cfg.codeChange(entity.data);
+    }
+
+    return data;
 }

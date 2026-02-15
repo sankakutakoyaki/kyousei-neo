@@ -11,18 +11,28 @@
     <main layout:fragment="content">
         <div class="tab-area">
             <ul class="tab-menu">
-                <li class="tab-menu-item is-active" data-tab="01">取得一覧</li>
-                <!-- <li class="tab-menu-item" data-tab="02">資格登録</li>
-                <li class="tab-menu-item" data-tab="03">PDF登録</li> -->
+                <li class="tab-menu-item is-active" data-tab="01">許認可</li>
+                <li class="tab-menu-item" data-tab="02">資格</li>
+                <!-- <li class="tab-menu-item" data-tab="03">PDF登録</li> -->
             </ul>
             <div class="tab-panel is-show" data-panel="01">
                 <div class="table-area">
                     <!-- ヘッダー -->
-                    <header th:replace="~{fragments/qualifications/qualifications :: headerFragment('search-box-01')}"></header>
+                    <header th:replace="~{fragments/qualifications/qualifications :: header01Fragment('search-box-01', 'code01', 'name01', 'filter01')}"></header>
                     <!-- コンテンツ -->
-                    <main th:replace="~{fragments/qualifications/qualifications :: mainFragment()}"></main>
+                    <main th:replace="~{fragments/qualifications/qualifications :: main01Fragment()}"></main>
                     <!-- フッター -->
                     <footer id="footer-01" class="pc-style" th:insert="~{fragments/qualifications/qualifications :: footerFragment()}"></footer>
+                </div>
+            </div>
+            <div class="tab-panel" data-panel="02">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/qualifications/qualifications :: header02Fragment('search-box-01', 'code02', 'name02', 'filter02')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/qualifications/qualifications :: main02Fragment()}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-02" class="pc-style" th:insert="~{fragments/qualifications/qualifications :: footerFragment()}"></footer>
                 </div>
             </div>
         </div>
@@ -36,6 +46,7 @@
             const token = /*[[${_csrf.token}]]*/;
             const user = /*[[${user}]]*/;
             const formEntity = /*[[${formEntity}]]*/;
+            const companyComboList = /*[[${companyComboList}]]*/;
             const comboList = /*[[${comboList}]]*/;
             let origin = [];
             let tempEntity = {};

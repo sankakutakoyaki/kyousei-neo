@@ -214,7 +214,7 @@ public class CompanyListRepository {
     public List<SimpleData> findAllComboByCategory(int category) {
         return sqlRepository.queryList(
             """
-            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ?;
+            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana;
             """,
             (ps, v) -> {
                 int index = 1;

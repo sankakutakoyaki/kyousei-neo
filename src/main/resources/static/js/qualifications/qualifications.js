@@ -38,6 +38,60 @@ function createTableRow(newRow, item, tab) {
     newRow.insertAdjacentHTML('beforeend', '<td name="enabled-cell"><span>' + (item.status == "取得済み" && item.is_enabled == 0 ? "期限切れ": "") + '</span></td>');
 }
 
+/******************************************************************************************************* 画面更新 */
+
+async function execUpdate(tab) {
+    // const result = await getQualifications(tab);
+    const cfg = MODE_CONFIG[tab];
+    const result = await fetch(cfg.getUrl);
+
+    if (result.ok){
+        origin = result.data;
+        // 画面更新
+        await execFilterDisplay(tab);        
+    }
+}
+
+// コードでフィルターする
+async function codeFilter(codeId, list, keyName) {
+    const cfg = MODE_CONFIG["02"];
+    const code = document.getElementById(codeId);
+    if (code.value == "") return list;
+    if (isNaN(Number(code.value))) return list;
+
+    return list.filter(value => value[keyName] === Number(code.value));
+}
+
+// 資格情報フィルター
+function qualificationFilter(filterId, list) {
+    const combo = document.getElementById(filterId);
+    let searchList;
+    if (combo.value === "0") {
+        // 0 の場合は全件表示
+        searchList = list;
+    } else {
+        searchList = list.filter(value => value.qualificationMasterId === Number(combo.value));
+    }
+    return searchList;
+}
+
+// 一括フィルター
+async function execFilterDisplay(tab) {
+    const cfg = MODE_CONFIG[tab];
+    let list = structuredClone(origin);
+    list = codeFilter(cfg.codeId, cfg.keyName, list);
+    list = filterQualificationCombo(cfg.filterId, list);
+    await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, list, createTableContent);
+}
+
+// companyCombo変更時の処理
+function refleshCode() {
+    const code01 = document.getElementById("code01");
+    const name01 = document.getElementById("name01");
+    code01.value = code01.value === name01.value ? code01.value: Number(name01.value) === 0 ? "": name01.value ;
+}
+
+
 /******************************************************************************************************* 保存 */
 
 
@@ -52,80 +106,6 @@ function createTableRow(newRow, item, tab) {
 
 /******************************************************************************************************* 取得 */
 
-// コードから担当者と登録資格を取得してリストに表示する
-async function getQualifications(codeId, nameId) {
-    // if ((e.key === "Enter") || e === "Enter") {
-        const code = document.getElementById(codeId);
-        const name = document.getElementById(nameId);
-
-        if (code.value == "") return;
-        if (isNaN(parseInt(code.value))) return;
-        
-        const panel = code.closest('.tab-panel');
-        const tab = panel.dataset.panel;
-
-        const data = JSON.stringify({primaryId:parseInt(code.value), secondaryId:parseInt(owner_category)});
-        const result = await searchFetch("/api/qualifications/get/id", data, token);
-
-        
-}
-
-/******************************************************************************************************* 画面更新 */
-
-async function execUpdate(tab) {
-    let getUrl = "";
-    // リスト取得
-    if (owner_category == 0) {
-        // 従業員の場合
-        getUrl = "/api/qualifications/get";
-    } else {
-        // 会社の場合
-        getUrl = "/api/qualifications/get/license";
-    }
-    const resultResponse = await fetch(getUrl);
-    const result = await resultResponse.json();
-    
-    if (resultResponse.ok){
-        origin = result.data;
-        // 画面更新
-        await execFilterDisplay(tab);        
-    }
-}
-
-// 資格情報フィルター
-function filterQualificationCombo(list) {
-    const qualification = document.getElementById('qualification-search');
-    let searchList;
-    if (qualification.value === "0") {
-        // 0 の場合は全件表示
-        searchList = list;
-    } else {
-        searchList = list.filter(value => value.qualificationMasterId === Number(qualification.value));
-    }
-    return searchList;
-}
-
-// 取得状況フィルター
-function filterStatusCombo(list) {
-    const status = document.getElementById('status-search');
-    let searchList;
-    if (status.value === "すべて") {
-        // すべて の場合は全件表示
-        searchList = list;
-    } else {
-        searchList = list.filter(value => value.status === status.value);
-    }
-    return searchList;
-}
-
-// 一括フィルター
-async function execFilterDisplay(tab) {
-    const cfg = MODE_CONFIG[tab];
-    let list = structuredClone(origin);
-    list = filterQualificationCombo(list);
-    list = filterStatusCombo(list);
-    await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, list, createTableContent);
-}
 
 /******************************************************************************************************* 初期化時 */
 
@@ -136,33 +116,32 @@ window.addEventListener("load", async () => {
         await execFilterDisplay("01");
     }, false);
 
-    Object.values(CODE_CONFIG).forEach(cfg => {
-        setEnterFocus(cfg.area);
-        const el = document.getElementById(cfg.codeId);
-        if (!el) return;
+    for (const tab of Object.keys(MODE_CONFIG)) {
+        const cfg = MODE_CONFIG[tab];
 
-        el.addEventListener('blur', async () => {
-            await getQualifications(cfg.codeId, cfg.nameId);
+        const se = document.getElementById(cfg.filterId);
+        if (!se) return;
+        createComboBoxWithTop(se, comboList, "すべて");
+        se.addEventListener('change', async () => {
+            await execFilterDisplay(tab);
         });
-    });
+    };
 
-    // 検索用資格コンボボックスを作成する
-    const qualificationSearchArea = document.getElementById('qualification-search');
-    createComboBoxWithTop(qualificationSearchArea, qualificationComboList, "すべて");
-    qualificationSearchArea.addEventListener('change', async () => {
-        await execFilterDisplay("01");
-    });
+    initCompanyInputs();
 
-    // 検索用状況コンボボックスを作成する
-    const statusSearchArea = document.getElementById('status-search');
-    statusSearchArea.addEventListener('change', async () => {
-        await execFilterDisplay("01");
-    });
+    // 担当者コード入力時の処理
+    const cfg02 = MODE_CONFIG["02"];
+    const el = document.getElementById(cfg02.codeId);
+    if (el) {
+        el.addEventListener('blur', async () => {
+            await changeCodeToName(cfg02, "/api/employee/get/id");
+            await execFilterDisplay("02");
+        });
+    }
 
     // エンターフォーカス処理をイベントリスナーに登録する
     setEnterFocus("form-01");
-    // 画面更新
-    await execUpdate("01");
+    setEnterFocus("code-area");
 
     // タブメニュー処理
     const tabMenus = document.querySelectorAll('.tab-menu-item');

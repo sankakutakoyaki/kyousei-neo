@@ -32,6 +32,10 @@
     .header-title>.hamburger-item:hover>span {
         border-bottom: 1.2px solid;
     }
+
+    .normal-sidebar>div.hamburger-item:hover {
+        font-weight: bold;
+    }
 }
 
 @media (hover: none) {

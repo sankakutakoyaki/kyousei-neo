@@ -9,8 +9,8 @@ public class QualificationsEntityMapper {
     public static QualificationsEntity map(ResultSet rs) throws SQLException {
         QualificationsEntity entity = new QualificationsEntity();
         entity.setQualificationsId(rs.getInt("qualifications_id"));
-        entity.setOwnerId(rs.getInt("owner_id"));
-        entity.setOwnerCategory(rs.getInt("owner_category"));
+        entity.setEmployeeId(rs.getInt("employee_id"));
+        entity.setCompanyId(rs.getInt("company_id"));
         entity.setOwnerName(rs.getString("owner_name"));
         entity.setOwnerNameKana(rs.getString("owner_name_kana"));
         entity.setQualificationMasterId(rs.getInt("qualification_master_id"));
