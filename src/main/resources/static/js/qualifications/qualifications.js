@@ -41,11 +41,12 @@ function createTableRow(newRow, item, tab) {
 /******************************************************************************************************* 画面更新 */
 
 async function execUpdate(tab) {
-    // const result = await getQualifications(tab);
     const cfg = MODE_CONFIG[tab];
-    const result = await fetch(cfg.getUrl);
 
-    if (result.ok){
+    const resultResponse = await fetch(cfg.getUrl);
+    const result = await resultResponse.json();
+
+    if (resultResponse.ok){
         origin = result.data;
         // 画面更新
         await execFilterDisplay(tab);        
@@ -53,34 +54,35 @@ async function execUpdate(tab) {
 }
 
 // コードでフィルターする
-async function codeFilter(codeId, list, keyName) {
-    const cfg = MODE_CONFIG["02"];
-    const code = document.getElementById(codeId);
-    if (code.value == "") return list;
-    if (isNaN(Number(code.value))) return list;
+function codeFilter(codeValue, keyName, list) {
+    if (!codeValue) return list;
+    
+    const num = Number(codeValue);
+    if (Number.isNaN(num)) return list;
 
-    return list.filter(value => value[keyName] === Number(code.value));
+    return list.filter(v => v[keyName] === num);
 }
 
 // 資格情報フィルター
-function qualificationFilter(filterId, list) {
-    const combo = document.getElementById(filterId);
-    let searchList;
-    if (combo.value === "0") {
-        // 0 の場合は全件表示
-        searchList = list;
-    } else {
-        searchList = list.filter(value => value.qualificationMasterId === Number(combo.value));
-    }
-    return searchList;
+function qualificationsFilter(filterValue, list) {
+    if (filterValue === '0') return list;
+
+    const num = Number(filterValue);
+    return list.filter(v => v.qualificationMasterId === num);
 }
 
 // 一括フィルター
 async function execFilterDisplay(tab) {
     const cfg = MODE_CONFIG[tab];
-    let list = structuredClone(origin);
-    list = codeFilter(cfg.codeId, cfg.keyName, list);
-    list = filterQualificationCombo(cfg.filterId, list);
+
+    const codeValue = document.getElementById(cfg.codeId).value;
+    const filterValue = document.getElementById(cfg.filterId).value;
+
+    const list = qualificationsFilter(
+        filterValue,
+        codeFilter(codeValue, cfg.keyName, origin)
+    );
+
     await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, list, createTableContent);
 }
 
@@ -90,7 +92,6 @@ function refleshCode() {
     const name01 = document.getElementById("name01");
     code01.value = code01.value === name01.value ? code01.value: Number(name01.value) === 0 ? "": name01.value ;
 }
-
 
 /******************************************************************************************************* 保存 */
 
@@ -125,6 +126,8 @@ window.addEventListener("load", async () => {
         se.addEventListener('change', async () => {
             await execFilterDisplay(tab);
         });
+
+        await execUpdate(tab);
     };
 
     initCompanyInputs();

@@ -21,7 +21,7 @@
                     <!-- コンテンツ -->
                     <main th:replace="~{fragments/personnel/working_conditions :: mainFragment('table-01', 'table-01-content')}"></main>
                     <!-- フッター -->
-                    <footer id="footer-01" class="pc-style" th:insert="~{fragments/personnel/working_conditions :: footerFragment()}"></footer>
+                    <footer id="footer-01" class="pc-style" th:insert="~{fragments/common/footer :: tableFooterFragment()}"></footer>
                 </div>
             </div>
             <div class="tab-panel" data-panel="02">
@@ -31,7 +31,7 @@
                     <!-- コンテンツ -->
                     <main th:replace="~{fragments/personnel/working_conditions :: mainFragment('table-02', 'table-02-content')}"></main>
                     <!-- フッター -->
-                    <footer id="footer-02" class="pc-style" th:insert="~{fragments/personnel/working_conditions :: footerFragment()}"></footer>
+                    <footer id="footer-02" class="pc-style" th:insert="~{fragments/common/footer :: tableFooterFragment()}"></footer>
                 </div>
             </div>
         </div>

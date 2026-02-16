@@ -25,7 +25,7 @@
                     <!-- コンテンツ -->
                     <main th:replace="~{fragments/corporation/client :: mainFragment('table-01', 'table-01-content')}"></main>
                     <!-- フッター -->
-                    <footer id="footer-01" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
+                    <footer id="footer-01" class="pc-style" th:insert="~{fragments/common/footer :: tableFooterFragment()}"></footer>
                 </div>
             </div>
             <div class="tab-panel" data-panel="02">
@@ -35,7 +35,7 @@
                     <!-- コンテンツ -->
                     <main th:replace="~{fragments/corporation/client :: mainFragment('table-02', 'table-02-content')}"></main>
                     <!-- フッター -->
-                    <footer id="footer-02" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
+                    <footer id="footer-02" class="pc-style" th:insert="~{fragments/common/footer :: tableFooterFragment()}"></footer>
                 </div>
             </div>
             <div class="tab-panel" data-panel="03">
@@ -45,7 +45,7 @@
                     <!-- コンテンツ -->
                     <main th:replace="~{fragments/corporation/client :: mainFragment('table-03', 'table-03-content')}"></main>
                     <!-- フッター -->
-                    <footer id="footer-03" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
+                    <footer id="footer-03" class="pc-style" th:insert="~{fragments/common/footer :: tableFooterFragment()}"></footer>
                 </div>
             </div>
             <div class="tab-panel" data-panel="04">
@@ -55,7 +55,7 @@
                     <!-- コンテンツ -->
                     <main th:replace="~{fragments/corporation/client :: mainFragment('table-04', 'table-04-content')}"></main>
                     <!-- フッター -->
-                    <footer id="footer-04" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
+                    <footer id="footer-04" class="pc-style" th:insert="~{fragments/common/footer :: tableFooterFragment()}"></footer>
                 </div>
             </div>
             <div class="tab-panel" data-panel="05">
@@ -65,7 +65,7 @@
                     <!-- コンテンツ -->
                     <main th:replace="~{fragments/corporation/client :: mainFragment('table-05', 'table-05-content')}"></main>
                     <!-- フッター -->
-                    <footer id="footer-05" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
+                    <footer id="footer-05" class="pc-style" th:insert="~{fragments/common/footer :: tableFooterFragment()}"></footer>
                 </div>
             </div>
             <div class="tab-panel" data-panel="06">
@@ -75,7 +75,7 @@
                     <!-- コンテンツ -->
                     <main th:replace="~{fragments/corporation/client :: mainStaffFragment('table-06', 'table-06-content')}"></main>
                     <!-- フッター -->
-                    <footer id="footer-06" class="pc-style" th:insert="~{fragments/corporation/client :: footerFragment()}"></footer>
+                    <footer id="footer-06" class="pc-style" th:insert="~{fragments/common/footer :: tableFooterFragment()}"></footer>
                 </div>
             </div>
         </div>
@@ -113,19 +113,11 @@
             const staffEntity = /*[[${staffEntity}]]*/;
 
             const categoryCodes = /*[[${categoryCodes}]]*/;
-            // const categoryShipperCode = /*[[${categoryShipperCode}]]*/;
-            // const categorySupplierCode = /*[[${categorySupplierCode}]]*/;
-            // const categoryFacilityCode = /*[[${categoryFacilityCode}]]*/;
-            // const categoryTransportCode = /*[[${categoryTransportCode}]]*/;
             let companyOrigin = /*[[${companyOrigin}]]*/; // 初期リスト記憶用
             let officeOrigin = [];
             let staffOrigin = [];
             let companyComboList = [];
             let officeComboList = [];
-            // let officeOrigin = /*[[${officeOrigin}]]*/; // 初期リスト記憶用
-            // let staffOrigin = /*[[${staffOrigin}]]*/; // 初期リスト記憶用
-            // let companyComboList = /*[[${companyComboList}]]*/;
-            // let officeComboList = /*[[${officeComboList}]]*/;
             let originEntity = {};
         </script>
         <script th:src="@{/js/corporation/config/client.js}"></script>

@@ -8,7 +8,7 @@ const MODE_CONFIG = {
         codeId: "code01",
         nameId: "name01",
         filterId: "filter01",
-        getUrl: "/api/qualifications/license/get",
+        getUrl: "/api/qualifications/get/license",
         keyName: "companyId"
     },
     "02": {

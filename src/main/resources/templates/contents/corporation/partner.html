@@ -21,7 +21,7 @@
                     <!-- コンテンツ -->
                     <main th:replace="~{fragments/corporation/partner :: mainPartnerFragment('table-01', 'table-01-content')}"></main>
                     <!-- フッター -->
-                    <footer id="footer-01" class="pc-style" th:insert="~{fragments/corporation/partner :: footerFragment()}"></footer>
+                    <footer id="footer-01" class="pc-style" th:insert="~{fragments/common/footer :: tableFooterFragment()}"></footer>
                 </div>
             </div>
             <div class="tab-panel" data-panel="02">
@@ -31,7 +31,7 @@
                     <!-- コンテンツ -->
                     <main th:replace="~{fragments/corporation/partner :: mainStaffFragment('table-02', 'table-02-content')}"></main>
                     <!-- フッター -->
-                    <footer id="footer-02" class="pc-style" th:insert="~{fragments/corporation/partner :: footerFragment()}"></footer>
+                    <footer id="footer-02" class="pc-style" th:insert="~{fragments/common/footer :: tableFooterFragment()}"></footer>
                 </div>
             </div>
         </div>
@@ -69,10 +69,6 @@
             const staffEntity = /*[[${staffEntity}]]*/;
             const formEntity = /*[[${formEntity}]]*/;
             const categoryCodes = /*[[${categoryCodes}]]*/;
-            // const categoryPartnerCode = /*[[${categoryPartnerCode}]]*/;
-            // const categoryConstructCode = /*[[${categoryConstructCode}]]*/;
-            // let companyOrigin = /*[[${companyOrigin}]]*/; // 初期リスト記憶用
-            // let staffOrigin = /*[[${staffOrigin}]]*/; // 初期リスト記憶用
             let origin = [];
             let qualificationsOrigin = /*[[${licnesesOrigin}]]*/; // 初期リスト記憶用
             let companyComboList = /*[[${companyComboList}]]*/;

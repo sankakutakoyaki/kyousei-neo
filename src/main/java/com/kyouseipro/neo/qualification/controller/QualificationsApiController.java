@@ -42,7 +42,7 @@ public class QualificationsApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/license/get/id")
+    @PostMapping("/get/license/id")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getByCompnayId(@RequestBody IdRequest req) {
         return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getByCompanyId(req.getId())));
@@ -76,7 +76,7 @@ public class QualificationsApiController {
      * すべての資格情報を取得する
      * @return
      */
-    @GetMapping("/get/")
+    @GetMapping("/get")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getListForEmployee() {
         return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getListForEmployee()));
