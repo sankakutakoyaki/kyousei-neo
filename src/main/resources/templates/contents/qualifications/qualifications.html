@@ -38,6 +38,16 @@
         </div>
         <div id="form-dialog-area">
             <!-- フォーム画面をここに記入する -->
+            <div id="form-dialog-01" class="form-dialog none">
+                <div class="dialog-main">
+                    <!-- ヘッダー -->
+                    <div th:replace="~{fragments/common/header :: form-headerFragment('form-dialog-01', '')}"></div>
+                    <!-- コンテンツ -->
+                    <form th:replace="~{fragments/qualifications/qualifications :: form01Fragment()}"></form>
+                    <!-- フッター -->
+                    <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-01', 'execSave()', '登録')}"></div>
+                </div>
+            </div>
         </div>
         <div id="msg-dialog-area">
             <div th:replace="~{fragments/common/dialog :: messageFragment}"></div>
@@ -47,7 +57,8 @@
             const user = /*[[${user}]]*/;
             const formEntity = /*[[${formEntity}]]*/;
             const companyComboList = /*[[${companyComboList}]]*/;
-            const comboList = /*[[${comboList}]]*/;
+            const qualificationsComboList = /*[[${qualificationsComboList}]]*/;
+            const licenseComboList = /*[[${licenseComboList}]]*/;
             let origin = [];
             let tempEntity = {};
         </script>

@@ -3,6 +3,7 @@ package com.kyouseipro.neo.qualification.mapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntity;
 
 public class QualificationsEntityMapper {
@@ -16,8 +17,8 @@ public class QualificationsEntityMapper {
         entity.setQualificationMasterId(rs.getInt("qualification_master_id"));
         entity.setQualificationName(rs.getString("qualification_name"));
         entity.setNumber(rs.getString("number"));
-        entity.setAcquisitionDate(rs.getDate("acquisition_date").toLocalDate());
-        entity.setExpiryDate(rs.getDate("expiry_date").toLocalDate());
+        entity.setAcquisitionDate(Utilities.toLocalDate(rs, "acquisition_date"));
+        entity.setExpiryDate(Utilities.toLocalDate(rs, "expiry_date"));
         entity.setVersion(rs.getInt("version"));
         entity.setState(rs.getInt("state"));
         entity.setStatus(rs.getString("status"));

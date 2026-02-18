@@ -206,15 +206,15 @@ public class QualificationsSqlBuilder {
         return
             "SELECT q.qualifications_id, q.employee_id, q.company_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, '取得済み' as status, q.is_enabled" +
             ", q.version, q.state, c.name as owner_name, c.name_kana as owner_name_kana, qm.name as qualification_name FROM qualifications q" +
-            " LEFT OUTER JOIN companies c ON c.company_id = q.employee_id AND NOT (c.state = ?) " +
+            " LEFT OUTER JOIN companies c ON c.company_id = q.company_id AND NOT (c.state = ?) " +
             " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)";
     }
 
     private static String baseEmployeeStatusSelectString() {
         return
             "SELECT e.employee_id as employee_id, q.company_id, e.full_name as owner_name, e.full_name_kana as owner_name_kana, qm.name as qualification_name" +
-            ", q.qualifications_id, qm.qualification_master_id, q.number, q.is_enabled, q.version, q.state" +
-            ", COALESCE(q.acquisition_date, '9999-12-31') as acquisition_date, COALESCE(q.expiry_date, '9999-12-31') as expiry_date" +
+            ", q.qualifications_id, qm.qualification_master_id, q.number, q.is_enabled, q.version, q.state, q.acquisition_date, q.expiry_date" +
+            // ", COALESCE(q.acquisition_date, '9999-12-31') as acquisition_date, COALESCE(q.expiry_date, '9999-12-31') as expiry_date" +
             ", CASE WHEN q.employee_id IS NOT NULL THEN '取得済み' ELSE '未取得' END AS status FROM employees e" +
             " CROSS JOIN qualification_master qm" +
             " LEFT JOIN qualifications q ON q.employee_id = e.employee_id AND q.qualification_master_id = qm.qualification_master_id" +
@@ -224,8 +224,8 @@ public class QualificationsSqlBuilder {
     private static String baseCompanyStatusSelectString() {
         return
             "SELECT c.company_id as employee_id, q.company_id, c.name as owner_name, c.name_kana as owner_name_kana, qm.name as qualification_name" +
-            ", q.qualifications_id, qm.qualification_master_id, q.number, q.is_enabled, q.version, q.state" +
-            ", COALESCE(q.acquisition_date, '9999-12-31') as acquisition_date, COALESCE(q.expiry_date, '9999-12-31') as expiry_date" +
+            ", q.qualifications_id, qm.qualification_master_id, q.number, q.is_enabled, q.version, q.state, q.acquisition_date, q.expiry_date" +
+            // ", COALESCE(q.acquisition_date, '9999-12-31') as acquisition_date, COALESCE(q.expiry_date, '9999-12-31') as expiry_date" +
             ", CASE WHEN q.employee_id IS NOT NULL THEN '取得済み' ELSE '未取得' END AS status FROM companies c" +
             " CROSS JOIN qualification_master qm" +
             " LEFT JOIN qualifications q ON q.employee_id = c.company_id AND q.qualification_master_id = qm.qualification_master_id" +

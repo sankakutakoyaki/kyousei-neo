@@ -103,16 +103,18 @@ async function execEdit(id, self) {
 // 入力フォームの内容をリセットする
 function resetFormInput(tab) {
     const cfg = MODE_CONFIG[tab];
+    
+    resetFormInputValue(cfg.panel);
 
-    cfg.panel.querySelectorAll('[data-reset]').forEach(el => {
-        if ('value' in el) {
-            // input / select / textarea
-            el.value = el.type === 'number' ? 0 : '';
-        } else {
-            // span / div など
-            el.textContent = '';
-        }
-    });
+    // cfg.panel.querySelectorAll('[data-reset]').forEach(el => {
+    //     if ('value' in el) {
+    //         // input / select / textarea
+    //         el.value = el.type === 'number' ? 0 : '';
+    //     } else {
+    //         // span / div など
+    //         el.textContent = '';
+    //     }
+    // });
 
     cfg.number?.focus();
 }

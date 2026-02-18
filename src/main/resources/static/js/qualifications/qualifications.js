@@ -24,8 +24,8 @@ function createTableContent(tableId, list) {
 function createTableRow(newRow, item, tab) {
     // 選択用チェックボックス
     newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
-    // ID
-    newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.ownerId + ', this)">' + String(item.ownerId).padStart(4, '0') + '</td>');
+    // // ID
+    // newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.qualificationsId + ', this)">' + String(item.qualificationsId).padStart(4, '0') + '</td>');
     // 名前
     newRow.insertAdjacentHTML('beforeend', '<td name="name-cell"><span class="kana">' + item.ownerNameKana + '</span><br><span>' + item.ownerName + '</span></td>');
     // 資格名
@@ -93,8 +93,96 @@ function refleshCode() {
     code01.value = code01.value === name01.value ? code01.value: Number(name01.value) === 0 ? "": name01.value ;
 }
 
+/******************************************************************************************************* 入力画面 */
+
+// 登録画面を開く
+async function execEdit() {
+    const panel = document.querySelector('.tab-panel.is-show');
+    if (!panel) return;
+
+    const selectRow = panel.querySelector('select.selected');
+    const tab = panel.dataset.panel
+    const cfg = MODE_CONFIG[tab];
+
+    tempEntity = {};
+
+    const form = document.getElementById(cfg.formId);
+    if (!form) return;
+
+    const number = form.querySelector('[name="number"]');
+    if (!number) return;
+
+    if (selectRow) {
+        const id = selectRow.dataset.id;
+        const result = await searchFetch(cfg.getUrl + "/id", JSON.stringify(id), token);
+        tempEntity = result;
+    } else {
+        tempEntity = structuredClone(formEntity);
+
+        const elm = document.getElementById(cfg.targetId);
+        const fil = document.getElementById("filter" + tab);
+        const text = cfg.getValue(elm);
+        const text2 = fil.options[fil.selectedIndex].text;
+        if (text ==="" || text2 === "すべて") return;
+
+        tempEntity[cfg.ownerKeyName] = elm.value;
+        tempEntity.ownerName = text;
+        tempEntity.qualificationMasterId = fil.value;
+        tempEntity.qualificationsName = text2;
+    }
+
+    // フォーム画面を開く
+    applyFormConfig(form, tempEntity, FORM_CONFIG);
+
+    // 入力フォームダイアログを開く
+    openFormDialog(cfg.dialogId);
+    setEnterFocus(cfg.formId);
+    number.focus();
+}    
+
 /******************************************************************************************************* 保存 */
 
+// 保存処理
+async function execSave() {
+    const panel = document.querySelector('.tab-panel.is-show');
+    const tab = panel?.dataset?.panel;
+    if (!tab) return;
+
+    const cfg = MODE_CONFIG[tab];
+
+    const form = document.getElementById(cfg.formId);
+    if (!form) return;
+
+    const number = form.querySelector('[name="number"]');
+    if (!number) return;
+
+    if (!validateByConfig(cfg.dialogId, ERROR_CONFIG)) {
+        return;
+    }
+
+    const data = buildEntityFromElement(form, tempEntity, SAVE_CONFIG);console.log(data)
+    const result = await updateFetch("/api/qualifications/save", JSON.stringify(data), token);
+
+    if (result.ok && result.data !== null) {
+        closeFormDialog(cfg.dialogId);
+
+        await execUpdate();
+        scrollIntoTableList(cfg.tableId, result.data);
+        
+        openMsgDialog("msg-dialog", result.message, "blue");
+    } else {
+        number.value = null;
+        setFocusElement("msg-dialog", number);
+    }
+
+    resetFormInput(tab);
+}
+
+// 入力フォームの内容をリセットする
+function resetFormInput(tab) {
+    const cfg = MODE_CONFIG[tab];
+    resetFormInputValue(cfg.dialogId);
+}
 
 /******************************************************************************************************* ダウンロード */
 
@@ -122,7 +210,7 @@ window.addEventListener("load", async () => {
 
         const se = document.getElementById(cfg.filterId);
         if (!se) return;
-        createComboBoxWithTop(se, comboList, "すべて");
+        createComboBoxWithTop(se, cfg.comboList, "すべて");
         se.addEventListener('change', async () => {
             await execFilterDisplay(tab);
         });
@@ -140,7 +228,7 @@ window.addEventListener("load", async () => {
             await changeCodeToName(cfg02, "/api/employee/get/id");
             await execFilterDisplay("02");
         });
-    }
+    };
 
     // エンターフォーカス処理をイベントリスナーに登録する
     setEnterFocus("form-01");

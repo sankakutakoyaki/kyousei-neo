@@ -707,3 +707,15 @@ async function changeCodeToName(cfg, url) {
 
     return data;
 }
+
+function resetFormInputValue(area) {
+    area.querySelectorAll('[data-reset]').forEach(el => {
+        if ('value' in el) {
+            // input / select / textarea
+            el.value = el.type === 'number' ? 0 : '';
+        } else {
+            // span / div など
+            el.textContent = '';
+        }
+    });
+}

@@ -13,7 +13,7 @@ import com.kyouseipro.neo.common.ComboBoxService;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
-import com.kyouseipro.neo.qualification.entity.QualificationsEntity;
+import com.kyouseipro.neo.qualification.entity.QualificationsEntityRequest;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -41,12 +41,14 @@ public class QualificationPageController extends BaseController {
         model.addAttribute("insertCss", "/css/qualifications/qualifications.css");
 
         // 初期化されたエンティティ
-        model.addAttribute("formEntity", new QualificationsEntity());
+        model.addAttribute("formEntity", new QualificationsEntityRequest());
         // コンボボックスアイテム取得
         List<SimpleData> companyComboList = comboBoxService.getCompanyListByCategory(Enums.clientCategory.PARTNER.getCode());
         model.addAttribute("companyComboList", companyComboList);
         List<SimpleData> qualificationComboList = comboBoxService.getQualificationMaster();
-        model.addAttribute("comboList", qualificationComboList);
+        model.addAttribute("qualificationsComboList", qualificationComboList);
+        List<SimpleData> licenseComboList = comboBoxService.getLicenseMaster();
+        model.addAttribute("licenseComboList", licenseComboList);
 
         return "contents/qualifications/qualifications";
     }

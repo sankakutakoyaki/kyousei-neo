@@ -54,7 +54,7 @@ public class QualificationsService {
         action = "保存"
     )
     public int save(QualificationsEntityRequest req, String editor) {
-        if (req.getQualificationsId() > 0) {
+        if (req.getQualificationsId() != null) {
             return qualificationsRepository.update(req, editor);
         } else {
             return qualificationsRepository.insert(req, editor);
