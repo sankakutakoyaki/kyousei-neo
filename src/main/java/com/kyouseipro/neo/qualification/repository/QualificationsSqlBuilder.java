@@ -109,12 +109,8 @@ public class QualificationsSqlBuilder {
 
     public static String buildBulkUpdate(QualificationsEntityRequest req) {
 
-        if (req.getQualifications() == null || req.getQualifications().isEmpty()) {
-            throw new IllegalArgumentException("qualifications is required");
-        }
-
         StringBuilder sql = new StringBuilder();
-        sql.append(buildLogTable("@InsertedRows"));
+        sql.append(buildLogTable("@UpdatedRows"));
         sql.append("UPDATE qualifications SET ");
 
         List<String> sets = new ArrayList<>();
@@ -149,7 +145,7 @@ public class QualificationsSqlBuilder {
         sql.append(String.join(", ", sets));
 
         sql.append(buildOutputLog() + "INTO @UpdatedRows ");
-        sql.append(" WHERE qualifications_id = ? AND version = ? AND NOT (state = ?);");
+        sql.append(" WHERE qualifications_id = ? AND version = ? AND state <> ?;");
         sql.append(buildInsertLog("@UpdatedRows", "UPDATE"));
 
         return 
@@ -248,7 +244,19 @@ public class QualificationsSqlBuilder {
             " AND qm.category_name = '許可'" +
             " ORDER BY qm.category_name, qm.name";
     }
-    
+
+    public static String buildFindByQualificationsIdFromEmployee() {
+        return  
+            baseEmployeeSelectString() +
+            " WHERE q.state <> ? AND q.qualifications_id = ?";
+    }
+
+    public static String buildFindByQualificationsIdFromCompany() {
+        return  
+            baseCompanySelectString() +
+            " WHERE q.state <> ? AND q.qualifications_id = ?";
+    }
+
     public static String buildFindAllByEmployeeId() {
         return  
             baseEmployeeSelectString() +

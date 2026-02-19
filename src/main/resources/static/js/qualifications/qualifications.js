@@ -12,7 +12,7 @@ function createTableContent(tableId, list) {
             item,
             idKey: "qualificationsId",
             onDoubleClick: (item) => {
-                execEdit(item.employeeId, this);
+                execEdit(item.qualificationsId);
             }
         });
 
@@ -21,7 +21,7 @@ function createTableContent(tableId, list) {
 }
 
 // テーブル行を作成する
-function createTableRow(newRow, item, tab) {
+function createTableRow(newRow, item) {
     // 選択用チェックボックス
     newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
     // // ID
@@ -80,7 +80,7 @@ async function execFilterDisplay(tab) {
 
     const list = qualificationsFilter(
         filterValue,
-        codeFilter(codeValue, cfg.keyName, origin)
+        codeFilter(codeValue, cfg.ownerKeyName, origin)
     );
 
     await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, list, createTableContent);
@@ -96,11 +96,10 @@ function refleshCode() {
 /******************************************************************************************************* 入力画面 */
 
 // 登録画面を開く
-async function execEdit() {
+async function execEdit(id) {
     const panel = document.querySelector('.tab-panel.is-show');
     if (!panel) return;
 
-    const selectRow = panel.querySelector('select.selected');
     const tab = panel.dataset.panel
     const cfg = MODE_CONFIG[tab];
 
@@ -112,10 +111,9 @@ async function execEdit() {
     const number = form.querySelector('[name="number"]');
     if (!number) return;
 
-    if (selectRow) {
-        const id = selectRow.dataset.id;
-        const result = await searchFetch(cfg.getUrl + "/id", JSON.stringify(id), token);
-        tempEntity = result;
+    if (id > 0) {
+        const result = await searchFetch(cfg.getUrl + "/id", JSON.stringify({id:id}), token);
+        if (result.ok) tempEntity = result.data;
     } else {
         tempEntity = structuredClone(formEntity);
 
@@ -123,12 +121,14 @@ async function execEdit() {
         const fil = document.getElementById("filter" + tab);
         const text = cfg.getValue(elm);
         const text2 = fil.options[fil.selectedIndex].text;
-        if (text ==="" || text2 === "すべて") return;
-
+        if (text ==="" || text2 === "すべて") {
+            openMsgDialog("msg-dialog", cfg.message, "red");
+            return;
+        }
         tempEntity[cfg.ownerKeyName] = elm.value;
         tempEntity.ownerName = text;
         tempEntity.qualificationMasterId = fil.value;
-        tempEntity.qualificationsName = text2;
+        tempEntity.qualificationName = text2;
     }
 
     // フォーム画面を開く
@@ -156,26 +156,26 @@ async function execSave() {
     const number = form.querySelector('[name="number"]');
     if (!number) return;
 
-    if (!validateByConfig(cfg.dialogId, ERROR_CONFIG)) {
+    if (!validateByConfig(form, ERROR_CONFIG)) {
         return;
     }
 
     const data = buildEntityFromElement(form, tempEntity, SAVE_CONFIG);console.log(data)
-    const result = await updateFetch("/api/qualifications/save", JSON.stringify(data), token);
+    // const result = await updateFetch("/api/qualifications/save", JSON.stringify(data), token);
 
-    if (result.ok && result.data !== null) {
-        closeFormDialog(cfg.dialogId);
+    // if (result.ok && result.data !== null) {
+    //     closeFormDialog(cfg.dialogId);
 
-        await execUpdate();
-        scrollIntoTableList(cfg.tableId, result.data);
+    //     await execUpdate(tab);
+    //     scrollIntoTableList(cfg.tableId, result.data);
         
-        openMsgDialog("msg-dialog", result.message, "blue");
-    } else {
-        number.value = null;
-        setFocusElement("msg-dialog", number);
-    }
+    //     openMsgDialog("msg-dialog", result.message, "blue");
+    // } else {
+    //     // number.value = null;
+    //     setFocusElement("msg-dialog", number);
+    // }
 
-    resetFormInput(tab);
+    // resetFormInput(tab);
 }
 
 // 入力フォームの内容をリセットする

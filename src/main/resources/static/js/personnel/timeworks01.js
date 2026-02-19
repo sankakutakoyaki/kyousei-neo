@@ -2,20 +2,20 @@
 
 // 勤怠データを保存。timeCategory(start or end)
 async function setTimeworks(timeCategory) {
-    if (entity.employeeId === 0) return;
+    if (tempEntity.employeeId === 0) return;
 
     const t_cfg = TIMEWORKS_TIME_CONFIG[timeCategory];
     if (!t_cfg) return null;
 
     const position = await getLocation();
 
-    entity[t_cfg.latKey] = position.coords.latitude;
-    entity[t_cfg.lngKey] = position.coords.longitude;
+    tempEntity[t_cfg.latKey] = position.coords.latitude;
+    tempEntity[t_cfg.lngKey] = position.coords.longitude;
 
-    const result = await updateFetch('/api/timeworks/regist/today', JSON.stringify({dto:entity,category:timeCategory}), token);
+    const result = await updateFetch('/api/timeworks/regist/today', JSON.stringify({dto:tempEntity,category:timeCategory}), token);
     if (!result?.ok) return;
 
-    await updateDisplay01();
+    await execUpdate();
 }
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 時計作成
@@ -58,18 +58,18 @@ function clock() {
 
 // -------------------------------------------------------------------------------------------------------------------------------------- 更新処理
 
-async function updateDisplay01() {
-    const config = TIMEWORKS_TAB_CONFIG["01"];
-    const response = await fetch('/api/timeworks/get/today');
-    const list = await response.json();
+// async function updateDisplay01() {
+//     const config = TIMEWORKS_TAB_CONFIG["01"];
+//     const response = await fetch('/api/timeworks/get/today');
+//     const list = await response.json();
 
-    // 画面更新
-    await updateTableDisplay(config.tableId, config.footerId, "", list, createTableContent);
+//     // 画面更新
+//     await updateTableDisplay(config.tableId, config.footerId, "", list, createTableContent);
 
-    const codeConfig = CODE_CONFIG["01"];
-    const codeBox = document.getElementById(codeConfig.codeId);
-    const nameBox = document.getElementById(codeConfig.nameId);
-    codeBox.value = "";
-    nameBox.value = "";
-    codeBox.focus();
-}
+//     const codeConfig = CODE_CONFIG["01"];
+//     const codeBox = document.getElementById(codeConfig.codeId);
+//     const nameBox = document.getElementById(codeConfig.nameId);
+//     codeBox.value = "";
+//     nameBox.value = "";
+//     codeBox.focus();
+// }

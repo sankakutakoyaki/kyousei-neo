@@ -115,73 +115,106 @@ function tabSwitch(e) {
     })
 }
 
-/**
- * ターゲット要素が郵便番号か確認
- * @param {*} sourceElm 
- * @returns 
- */
-function checkPostalCode(sourceElm) {
-    if (sourceElm.value == "") return true;
-    // 文字列から[-]を除去
-    const modified = sourceElm.value.replaceAll('-', '');
-    // 修正した文字列が７桁の数値か確認
-    if (modified.length != 7 || isNaN(modified) == true) return false;
-    return true;
-}
+// /**
+//  * ターゲット要素が郵便番号か確認
+//  * @param {*} sourceElm 
+//  * @returns 
+//  */
+// // function checkPostalCode(sourceElm) {
+// //     if (!sourceElm || sourceElm.value == "") return false;
+// //     // 文字列から[-]を除去
+// //     const modified = sourceElm.value.replaceAll('-', '');
+// //     // 修正した文字列が７桁の数値か確認
+// //     if (modified.length != 7 || isNaN(modified) == true) return false;
+// //     return true;
+// // }
+// function checkPostalCode(value) {
+//     if (!value) return true;
 
-/**
- * ターゲット要素が電話番号か確認
- * @param {*} sourceElm 
- * @returns 
- */
-function checkPhoneNumber(sourceElm) {
-    if (sourceElm.value == "") return true;
-    // 文字列から[-]を除去
-    const modified = sourceElm.value.replaceAll('-', '');
-    // 修正した文字列が数値か確認
-    if (isNaN(modified) == true) return false;
-    // 修正した文字列が11桁か10桁か確認
-    if (modified.length != 11 && modified.length != 10) return false;
-    return true;
-}
+//     const modified = value.replaceAll('-', '');
 
-/**
- * ターゲット要素がインボイス登録番号か確認
- * @param {*} sourceElm 
- * @returns 
- */
-function checkRegistrationNumber(sourceElm) {
-    if (sourceElm.value == "") return true;
-    // 文字列が数値か確認
-    if (isNaN(sourceElm.value) == true) return false;
-    // 文字列が13桁か確認
-    if (sourceElm.value.length != 13) return false;
-    return true;
-}
+//     return /^\d{7}$/.test(modified);
+// }
 
-/**
- * ターゲット要素がメールアドレスか確認
- * @param {*} sourceElm 
- * @returns 
- */
-function checkMailAddress(sourceElm) {
-    if (sourceElm.value == "") return true;
-    // 文字列がメールアドレスの形式か確認
-    if (!sourceElm.value.match(/.+@.+\..+/)) return false;
-    return true;
-}
+// /**
+//  * ターゲット要素が電話番号か確認
+//  * @param {*} sourceElm 
+//  * @returns 
+//  */
+// // function checkPhoneNumber(sourceElm) {console.log(sourceElm.value)
+// //     if (!sourceElm || !sourceElm.value) return false;
+// //     // 文字列から[-]を除去
+// //     const modified = sourceElm.value.replaceAll('-', '');
+// //     // 修正した文字列が数値か確認
+// //     if (isNaN(modified) == true) return false;
+// //     // 修正した文字列が11桁か10桁か確認
+// //     if (modified.length != 11 && modified.length != 10) return false;
+// //     return true;
+// // }
+// function checkPhoneNumber(value) {
+//     if (!value) return true;   // 未入力はOK
 
-/**
- * ターゲット要素がWEBアドレスか確認
- * @param {*} sourceElm 
- * @returns 
- */
-function checkWebAddress(sourceElm) {
-    if (sourceElm.value == "") return true;
-    // 文字列がWEBアドレスの形式か確認
-    if (!URL.canParse(sourceElm.value)) return false;
-    return true;
-}
+//     const modified = value.replaceAll('-', '');
+
+//     return /^\d{10,11}$/.test(modified);
+// }
+// /**
+//  * ターゲット要素がインボイス登録番号か確認
+//  * @param {*} sourceElm 
+//  * @returns 
+//  */
+// // function checkRegistrationNumber(sourceElm) {
+// //     if (!sourceElm || sourceElm.value == "") return false;
+// //     // 文字列が数値か確認
+// //     if (isNaN(sourceElm.value) == true) return false;
+// //     // 文字列が13桁か確認
+// //     if (sourceElm.value.length != 13) return false;
+// //     return true;
+// // }
+// function checkRegistrationNumber(value) {
+//     if (!value) return true;
+
+//     return /^\d{13}$/.test(value);
+// }
+
+// /**
+//  * ターゲット要素がメールアドレスか確認
+//  * @param {*} sourceElm 
+//  * @returns 
+//  */
+// // function checkMailAddress(sourceElm) {
+// //     if (!sourceElm || sourceElm.value == "") return false;
+// //     // 文字列がメールアドレスの形式か確認
+// //     if (!sourceElm.value.match(/.+@.+\..+/)) return false;
+// //     return true;
+// // }
+// function checkMailAddress(value) {
+//     if (!value) return true;
+
+//     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+// }
+
+// /**
+//  * ターゲット要素がWEBアドレスか確認
+//  * @param {*} sourceElm 
+//  * @returns 
+//  */
+// // function checkWebAddress(sourceElm) {
+// //     if (!sourceElm || sourceElm.value == "") return false;
+// //     // 文字列がWEBアドレスの形式か確認
+// //     if (!URL.canParse(sourceElm.value)) return false;
+// //     return true;
+// // }
+// function checkWebAddress(value) {
+//     if (!value) return true;
+
+//     try {
+//         new URL(value);
+//         return true;
+//     } catch {
+//         return false;
+//     }
+// }
 
 /**
  * 期間指定ボックスを変更する
@@ -349,45 +382,45 @@ function getComboTargets(targetIds) {
         .filter(elm => elm !== null);
 }
 
-// 共通Validate関数
-function validateByConfig(area, config) {
-    const messages = [];
-    let focusTarget = null;
+// // 共通Validate関数
+// function validateByConfig(area, config) {
+//     const messages = [];
+//     let focusTarget = null;
 
-    const commonRules = Array.isArray(config.common) ? config.common : [];
-    const modeRules =
-        config.mode && Array.isArray(config[config.mode])
-            ? config[config.mode]
-            : [];
+//     const commonRules = Array.isArray(config.common) ? config.common : [];
+//     const modeRules =
+//         config.mode && Array.isArray(config[config.mode])
+//             ? config[config.mode]
+//             : [];
 
-    const rules = [...commonRules, ...modeRules];
+//     const rules = [...commonRules, ...modeRules];
 
-    for (const rule of rules) {
-        const el = area.querySelector(rule.selector);
-        if (!el) continue;
+//     for (const rule of rules) {
+//         const el = area.querySelector(rule.selector);
+//         if (!el) continue;
 
-        const value = el.value ?? "";
+//         const value = el.value ?? "";
 
-        for (const check of rule.checks) {
-            if (!check.test(value, el)) {
-                messages.push(check.message);
-                if (!focusTarget && rule.focus) {
-                    focusTarget = el;
-                }
-                break;
-            }
-        }
-    }
+//         for (const check of rule.checks) {
+//             if (!check.test(value, el)) {
+//                 messages.push(check.message);
+//                 if (!focusTarget && rule.focus) {
+//                     focusTarget = el;
+//                 }
+//                 break;
+//             }
+//         }
+//     }
 
-    if (messages.length > 0) {
-        openMsgDialog("msg-dialog", messages.join("\n"), "red");
-        if (focusTarget) {
-            setFocusElement("msg-dialog", focusTarget);
-        }
-        return false;
-    }
-    return true;
-}
+//     if (messages.length > 0) {
+//         openMsgDialog("msg-dialog", messages.join("\n"), "red");
+//         if (focusTarget) {
+//             setFocusElement("msg-dialog", focusTarget);
+//         }
+//         return false;
+//     }
+//     return true;
+// }
 
 // select + name セットの共通関数
 function setSelectValue(form, formData, formdata, {

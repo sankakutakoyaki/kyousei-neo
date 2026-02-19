@@ -26,6 +26,28 @@ public class QualificationsService {
      * @param id 資格ID
      * @return QualificationsEntity または null
      */
+    public QualificationsEntity getByQulificationsIdFromEmployee(int id) {
+        return qualificationsRepository.findByQualificationsIdFromEmployee(id);
+    }
+
+    /**
+     * 指定されたIDの許認可情報を取得します。
+     * 論理削除されている場合は null を返します。
+     *
+     * @param id 資格ID
+     * @return QualificationsEntity または null
+     */
+    public QualificationsEntity getByQualificationsIdFromCompany(int id) {
+        return qualificationsRepository.findByQualificationsIdFromCompany(id);
+    }
+
+    /**
+     * 指定されたIDの資格情報を取得します。
+     * 論理削除されている場合は null を返します。
+     *
+     * @param id 資格ID
+     * @return QualificationsEntity または null
+     */
     public List<QualificationsEntity> getByEmployeeId(int id) {
         return qualificationsRepository.findAllByEmployeeId(id);
     }

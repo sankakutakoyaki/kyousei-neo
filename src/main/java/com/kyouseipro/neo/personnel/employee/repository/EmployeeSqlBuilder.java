@@ -129,7 +129,7 @@ public class EmployeeSqlBuilder {
             sets.add("last_name_kana");
         }
         if (req.getFirstNameKana() != null) {
-            sets.add("first_name_kane");
+            sets.add("first_name_kana");
         }
 
         if (req.getGender() != null) {
@@ -214,7 +214,7 @@ public class EmployeeSqlBuilder {
             sets.add("last_name_kana = ?");
         }
         if (req.getFirstNameKana() != null) {
-            sets.add("first_name_kane = ?");
+            sets.add("first_name_kana = ?");
         }
 
         if (req.getGender() != null) {

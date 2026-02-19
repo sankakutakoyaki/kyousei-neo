@@ -43,16 +43,18 @@ async function searchForEmployeeNameByCode(url, codeBox, nameBox) {
         return;
     }
 
-    const entity = await searchFetch(url, JSON.stringify({id:parseInt(codeBox.value)}), token);
-
-    if (entity != null && entity.employeeId > 0) {
-        nameBox.value = entity.fullName;
-        return entity;
-    } else {
-        codeBox.value = "";
-        nameBox.value = "";
-        openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
-        setFocusElement("msg-dialog", codeBox);
-        return null;
+    const result = await searchFetch(url, JSON.stringify({id:parseInt(codeBox.value)}), token);
+    if (result.ok) {
+        const entity = result.data;
+        if (entity != null && entity.employeeId > 0) {
+            nameBox.value = entity.fullName;
+            return entity;
+        } else {
+            codeBox.value = "";
+            nameBox.value = "";
+            openMsgDialog("msg-dialog", "コードが登録されていません", 'red');
+            setFocusElement("msg-dialog", codeBox);
+            return null;
+        }
     }
 }

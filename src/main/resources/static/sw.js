@@ -8,6 +8,7 @@ self.addEventListener('install', event => {
         await cache.addAll([
             '/',
             '/js/common/api.js',
+            '/js/common/check.js',
             '/js/common/default.js',
             '/js/common/dialog.js',
             '/js/common/enterfocus.js',

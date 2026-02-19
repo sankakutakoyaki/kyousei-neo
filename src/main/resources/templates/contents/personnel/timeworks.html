@@ -36,7 +36,8 @@
         </div>
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
-            let entity = {};
+            let tempEntity = {};
+            let origin = [];
 
             const thisYear = new Date().getFullYear();
             const yearList = [];

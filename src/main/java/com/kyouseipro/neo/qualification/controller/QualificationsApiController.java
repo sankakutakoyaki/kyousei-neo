@@ -27,22 +27,44 @@ public class QualificationsApiController {
     private final QualificationsService qualificationsService;
 
     /**
-     * IDから情報を取得する
+     * QualificationsIDから情報を取得する
      * @param ID
      * @return 
      */
     @PostMapping("/get/id")
+	@ResponseBody
+    public ResponseEntity<SimpleResponse<QualificationsEntity>> getByQulificationsIdFromEmployee(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getByQulificationsIdFromEmployee(req.getId())));
+    }
+
+    /**
+     * QualificationsIDから情報を取得する
+     * @param ID
+     * @return 
+     */
+    @PostMapping("/get/license/id")
+	@ResponseBody
+    public ResponseEntity<SimpleResponse<QualificationsEntity>> getByQualificationsIdFromCompany(@RequestBody IdRequest req) {
+        return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getByQualificationsIdFromCompany(req.getId())));
+    }
+    
+    /**
+     * EmployeeIDから情報を取得する
+     * @param ID
+     * @return 
+     */
+    @PostMapping("/get/id/employee")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getByEmployeeId(@RequestBody IdRequest req) {
         return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getByEmployeeId(req.getId())));
     }
 
     /**
-     * IDから情報を取得する
+     * CompanyIDから情報を取得する
      * @param ID
      * @return 
      */
-    @PostMapping("/get/license/id")
+    @PostMapping("/get/license/id/company")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getByCompnayId(@RequestBody IdRequest req) {
         return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getByCompanyId(req.getId())));

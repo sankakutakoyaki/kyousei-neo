@@ -33,8 +33,7 @@ public class TimeworksSqlBuilder {
      */
     public static String buildFindToday() {
         return baseSelectString() + """
-            WHERE t.employee_id = ?
-            AND t.state <> 9
+            WHERE t.employee_id = ? AND t.state <> 9
             AND t.work_base_date = ?
             """;
     }

@@ -15,7 +15,8 @@ const MODE_CONFIG = {
         targetId: "name01",
         ownerKeyName: "companyId",
         getValue: (elm) => elm.options[elm.selectedIndex].text,
-        comboList: licenseComboList
+        comboList: licenseComboList,
+        message: "会社名と許認可を選択して下さい。"
     },
     "02": {
         tableId: "table-02-content",
@@ -35,7 +36,8 @@ const MODE_CONFIG = {
         targetId: "name02",
         ownerKeyName: "employeeId",
         getValue: (elm) => elm.value,
-        comboList: qualificationsComboList
+        comboList: qualificationsComboList,
+        message: "担当者と資格を選択して下さい。"
     }
 }
 
@@ -52,7 +54,7 @@ const COMPANY_UI_CONFIG = [
 
 const FORM_CONFIG = [
     { name: 'owner-name', key: 'ownerName', trim: true, emptyToNull: true, skipIfNull: true },
-    { name: 'qualifications-name', key: 'qualificationsName', trim: true, emptyToNull: true, skipIfNull: true },
+    { name: 'qualification-name', key: 'qualificationName', trim: true, emptyToNull: true, skipIfNull: true },
 
     { name: 'number', key: 'number', trim: true, emptyToNull: true, skipIfNull: true },
 
@@ -65,27 +67,44 @@ const SAVE_CONFIG = FORM_CONFIG.map(c => ({
     skipIfNull: false   // ← ここが重要
 }));
 
-const ERROR_CONFIG = [
-    {
-        selector: 'input[name="number"]',
-        checks: [
-            { test: v => v !== "", message: '番号を入力して下さい。'}
-        ]
-    },
-    {
-        selector: 'input[name="expiry-date"]',
-        checks: [
-            {
-                test: (v, el) => {
-                    const area = el.closest("form");
-                    const acquisition = area.querySelector('input[name="acquisition-date"]').value;
+const ERROR_CONFIG = {
+    common: [
+        rule(
+            'input[name="number"]',
+            required('番号を入力して下さい。', true)
+        ),
+        rule(
+            'input[name="expiry-date"]',
+            dateAfterOrEqual(
+                'input[name="acquisition-date"]',
+                "有効期限は取得日以降の日付を入力してください。"
+            )
+        )
+    ]
+};
+// const ERROR_CONFIG = {
+//     common: [
+//         {
+//             selector: 'input[name="number"]',
+//             checks: [
+//                 { test: v => v !== "", message: '番号を入力して下さい。'}
+//             ]
+//         },
+//         {
+//             selector: 'input[name="expiry-date"]',
+//             checks: [
+//                 {
+//                     test: (v, el) => {
+//                         const area = el.closest("form");
+//                         const acquisition = area.querySelector('input[name="acquisition-date"]').value;
 
-                    if (!acquisition || !v) return true;
+//                         if (!acquisition || !v) return true;
 
-                    return v >= acquisition;
-                },
-                message: "有効期限は取得日以降の日付を入力してください。"
-            }
-        ]
-    }
-]
+//                         return v >= acquisition;
+//                     },
+//                     message: "有効期限は取得日以降の日付を入力してください。"
+//                 }
+//             ]
+//         }
+//     ]
+// }

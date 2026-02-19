@@ -10,8 +10,8 @@ import lombok.Data;
 @Data
 public class QualificationsEntity implements CsvExportable {
     private int qualificationsId;
-    private int employeeId;
-    private int companyId;
+    private Integer employeeId;
+    private Integer companyId;
     private String ownerName;
     private String ownerNameKana;
     private int qualificationMasterId;

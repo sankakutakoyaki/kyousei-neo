@@ -13,17 +13,17 @@ const TIMEWORKS_TIME_CONFIG = {
     }
 };
 
-const TIMEWORKS_TAB_CONFIG = {
-    "01": {
-        tab: "01",
-        containerId: "timeworks-container01",
-        tableId: "table-01-content",
-        footerId: "footer-01",
+// const TIMEWORKS_TAB_CONFIG = {
+//     "01": {
+//         tab: "01",
+//         containerId: "timeworks-container01",
+//         tableId: "table-01-content",
+//         footerId: "footer-01",
 
-        // nameBox: "name",
-        // codeBox: "code",
-        // codeChange: (e) => checkTimeWorksStartSaved(e)
-    },
+//         // nameBox: "name",
+//         // codeBox: "code",
+//         // codeChange: (e) => checkTimeWorksStartSaved(e)
+//     },
 
     // "02": {
     //     tab: "02",
@@ -84,16 +84,15 @@ const TIMEWORKS_TAB_CONFIG = {
     //     selectedId: "#employee-list-05 li.selected",
     //     createList: (tab, id) => createEmployeeTimeworksList(tab, id)
     // }
-};
+// };
 
-const CODE_CONFIG = {
+const MODE_CONFIG = {
     "01": {
+        containerId: "timeworks-container01",
+        tableId: "table-01-content",
+        footerId: "footer-01",
         nameId: "name",
         codeId: "code",
         codeChange: (e) => checkTimeWorksStartSaved(e)
-    },
-    // "02": {
-    //     nameId: "name02",
-    //     codeId: "code02",
-    // }
+    }
 };

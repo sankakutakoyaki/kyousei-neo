@@ -89,37 +89,63 @@ const COMBO_CONFIG = [
     }
 ];
 
+// const ERROR_CONFIG = {
+//     "form-01": [
+//         {
+//             selector: 'input[name="last-name"]',
+//             checks: [
+//                 { test: v => v !== "", message: '名前が入力されていません'}
+//             ]
+//         },
+//         {
+//             selector: 'input[name="phone-number"]',
+//             checks: [
+//                 { test: v => !checkPhoneNumber(v), message: '電話番号に誤りがあります'}
+//             ]
+//         },
+//         {
+//             selector: 'input[name="postal-code"]',
+//             checks: [
+//                 { test: v => !checkPhoneNumber(v), message: '郵便番号に誤りがあります'}
+//             ]
+//         },
+//         {
+//             selector: 'input[name="email"]',
+//             checks: [
+//                 { test: v => !checkMailAddress(v), message: 'メールアドレスに誤りがあります'}
+//             ]
+//         },
+//         {
+//             selector: 'input[name="web-address"]',
+//             checks: [
+//                 { test: v => !checkWebAddress(v), message: 'WEBアドレスに誤りがあります'}
+//             ]
+//         }
+//     ]
+// }
 const ERROR_CONFIG = {
-    "form-01": [
-        {
-            selector: 'input[name="last-name"]',
-            checks: [
-                { test: v => v !== "", message: '名前が入力されていません'}
-            ]
-        },
-        {
-            selector: 'input[name="phone-number"]',
-            checks: [
-                { test: v => !checkPhoneNumber(v), message: '電話番号に誤りがあります'}
-            ]
-        },
-        {
-            selector: 'input[name="postal-code"]',
-            checks: [
-                { test: v => !checkPhoneNumber(v), message: '郵便番号に誤りがあります'}
-            ]
-        },
-        {
-            selector: 'input[name="email"]',
-            checks: [
-                { test: v => !checkMailAddress(v), message: 'メールアドレスに誤りがあります'}
-            ]
-        },
-        {
-            selector: 'input[name="web-address"]',
-            checks: [
-                { test: v => !checkWebAddress(v), message: 'WEBアドレスに誤りがあります'}
-            ]
-        }
-    ]
-}
+    "form-01": {
+        rules: [
+            rule(
+                'input[name="last-name"]',
+                required('名前が入力されていません', true)
+            ),
+            rule(
+                'input[name="phone-number"]',
+                phone('電話番号に誤りがあります')
+            ),
+            rule(
+                'input[name="postal-code"]',
+                postalCode('郵便番号に誤りがあります')
+            ),
+            rule(
+                'input[name="email"]',
+                email('メールアドレスに誤りがあります')
+            ),
+            rule(
+                'input[name="web-address"]',
+                webAddress('WEBアドレスに誤りがあります')
+            )
+        ]
+    }
+};

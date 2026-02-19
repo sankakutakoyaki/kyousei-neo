@@ -16,6 +16,7 @@ import com.kyouseipro.neo.personnel.employee.repository.EmployeeRepository;
 import com.kyouseipro.neo.personnel.timeworks.entity.TimeworksEntity;
 import com.kyouseipro.neo.personnel.timeworks.entity.TimeworksRequestDto;
 import com.kyouseipro.neo.personnel.timeworks.repository.TimeworksRepository;
+import com.kyouseipro.neo.personnel.timeworks.repository.TimeworksSqlBuilder;
 
 import lombok.RequiredArgsConstructor;
 
@@ -67,22 +68,22 @@ public class TimeworksService {
     //     return e;
     // }
 
-    public TimeworksEntity getTodaysEntity(Integer employeeId) {
+    public TimeworksEntity getTodaysEntity(Integer id) {
+        EmployeeEntity emp = employeeRepository.findById(id);
+        if (emp == null) {
+            throw new IllegalArgumentException("従業員が存在しません");
+        }
 
         LocalDate today = calcWorkBaseDate(LocalDateTime.now());
 
-        TimeworksEntity entity = timeworksRepository.findToday(employeeId, today);
+        TimeworksEntity entity = timeworksRepository.findToday(emp.getEmployeeId(), today);
         if (entity != null) {
             return entity;
         }
-        return createDefaultEntity(employeeId, today);
+        return createDefaultEntity(emp, today);
     }
 
-    private TimeworksEntity createDefaultEntity(Integer employeeId, LocalDate today) {
-        EmployeeEntity emp = employeeRepository.findById(employeeId);
-        if (emp == null) {
-            throw new IllegalArgumentException("従業員が存在しません id=" + employeeId);
-        }
+    private TimeworksEntity createDefaultEntity(EmployeeEntity emp, LocalDate today) {
 
         TimeworksEntity e = new TimeworksEntity();
         e.setEmployeeId(emp.getEmployeeId());

@@ -26,6 +26,46 @@ public class QualificationsRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
+    public QualificationsEntity findByQualificationsIdFromEmployee(int id) {
+        String sql = QualificationsSqlBuilder.buildFindByQualificationsIdFromEmployee();
+        return sqlRepository.queryOne(
+            sql,
+            (ps, i) ->{
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+            },
+            QualificationsEntityMapper::map
+        );
+    }
+
+    /**
+     * IDによる許認可情報取得。
+     * @param id
+     * @return IDから取得したEntityを返す。
+     */
+    public QualificationsEntity findByQualificationsIdFromCompany(int id) {
+        String sql = QualificationsSqlBuilder.buildFindByQualificationsIdFromCompany();
+        return sqlRepository.queryOne(
+            sql,
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+            },
+            QualificationsEntityMapper::map
+        );
+    }
+    
+    /**
+     * IDによる取得。
+     * @param id
+     * @return IDから取得したEntityを返す。
+     */
     public List<QualificationsEntity> findAllByEmployeeId(int id) {
         String sql = QualificationsSqlBuilder.buildFindAllByEmployeeId();
         return sqlRepository.queryList(
@@ -59,7 +99,6 @@ public class QualificationsRepository {
             },
             QualificationsEntityMapper::map
         );
-  
     }
 
     /**

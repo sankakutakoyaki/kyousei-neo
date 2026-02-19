@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.personnel.timeworks.entity.TimeworksEntity;
 import com.kyouseipro.neo.personnel.timeworks.mapper.TimeworksEntityMapper;
@@ -20,15 +19,14 @@ import lombok.RequiredArgsConstructor;
 public class TimeworksRepository {
     private final SqlRepository sqlRepository;
 
-    public TimeworksEntity findToday(Integer employeeId, LocalDate workBaseDate) {
-
+    public TimeworksEntity findToday(Integer id, LocalDate workBaseDate) {
         String sql = TimeworksSqlBuilder.buildFindToday();
 
-        return sqlRepository.queryOne(
+        return sqlRepository.queryOneOrNull(
             sql,
             (pstmt, p) -> {
                 int index = 1;
-                pstmt.setInt(index++, employeeId);
+                pstmt.setInt(index++, id);
                 pstmt.setDate(index++, Date.valueOf(workBaseDate));
             },
             TimeworksEntityMapper::map
@@ -50,38 +48,34 @@ public class TimeworksRepository {
                 end_longitude,
                 work_type,
                 state
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) 
+            OUTPUT INSERTED.timeworks_id 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """;
 
-        return sqlRepository.queryOne(
-            sql,
-            (ps, e) -> {
-                int i = 1;
-                ps.setInt(i++, e.getEmployeeId());
-                ps.setTimestamp(i++, toTs(e.getStartDt()));
-                ps.setTimestamp(i++, toTs(e.getEndDt()));
-                ps.setInt(i++, defaultInt(e.getBreakMinutes(), 60));
-                ps.setDate(i++, Date.valueOf(e.getWorkBaseDate()));
-                ps.setBigDecimal(i++, e.getStartLatitude());
-                ps.setBigDecimal(i++, e.getStartLongitude());
-                ps.setBigDecimal(i++, e.getEndLatitude());
-                ps.setBigDecimal(i++, e.getEndLongitude());
-                ps.setInt(i++, e.getWorkType().getCode());
-                ps.setInt(i++, e.getState().getCode());
-            },
-            rs -> {
-                if (!rs.next()) {
-                    throw new BusinessException("登録に失敗しました");
-                }
-                int id = rs.getInt("timeworks_id");
-
-                if (rs.next()) {
-                    throw new IllegalStateException("ID取得結果が複数行です");
-                }
-                return id;
-            },
-            entity
-        );
+        try {
+            return sqlRepository.insert(
+                sql,
+                (ps, e) -> {
+                    int i = 1;
+                    ps.setInt(i++, e.getEmployeeId());
+                    ps.setTimestamp(i++, toTs(e.getStartDt()));
+                    ps.setTimestamp(i++, toTs(e.getEndDt()));
+                    ps.setInt(i++, defaultInt(e.getBreakMinutes(), 60));
+                    ps.setDate(i++, Date.valueOf(e.getWorkBaseDate()));
+                    ps.setBigDecimal(i++, e.getStartLatitude());
+                    ps.setBigDecimal(i++, e.getStartLongitude());
+                    ps.setBigDecimal(i++, e.getEndLatitude());
+                    ps.setBigDecimal(i++, e.getEndLongitude());
+                    ps.setInt(i++, e.getWorkType().getCode());
+                    ps.setInt(i++, e.getState().getCode());
+                },
+                rs -> rs.getInt("timeworks_id"),
+                entity
+            );
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 
     public int update(TimeworksEntity entity) {

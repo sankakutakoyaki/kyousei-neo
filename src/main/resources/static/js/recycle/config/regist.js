@@ -118,69 +118,117 @@ const MODE_CONFIG = {
     },
 };
 
+// const ERROR_CONFIG = {
+//     recycle: {
+//         common: [
+//             {
+//                 selector: 'input[name="number"]',
+//                 focus: true,
+//                 checks: [
+//                     { test: v => v !== "", message: 'お問合せ管理票番号を入力して下さい'}
+//                 ]
+//             }
+//         ],
+//         regist: [
+//             {
+//                 selector: 'select[name="company"]',
+//                 checks: [
+//                     { test: v => v !== "0", message: '小売業者を選択して下さい'}
+//                 ]
+//             },
+//             {
+//                 selector: 'input[name="maker-code"]',
+//                 checks: [
+//                     { test: v => v !== "", message: '製造業者等名を選択して下さい'}
+//                 ]
+//             },
+//             {
+//                 selector: 'input[name="item-code"]',
+//                 checks: [
+//                     { test: v => v !== "", message: '品目・料金区分を選択して下さい'}
+//                 ]
+//             },
+//             {
+//                 selector: 'input[name="use-date"]',
+//                 checks: [
+//                     { test: v => v !== "", message: '使用日を入力して下さい'}
+//                 ]
+//             }
+//         ],
+//         delivery: [
+//             {
+//                 selector: 'input[name="delivery-date"]',
+//                 checks: [
+//                     { test: v => v !== "", message: '引渡日を入力して下さい'}
+//                 ]
+//             }
+//         ],
+//         shipping: [
+//             {
+//                 selector: 'input[name="shipping-date"]',
+//                 checks: [
+//                     { test: v => v !== "", message: '発送日を入力して下さい'}
+//                 ]
+//             }
+//         ],
+//         loss: [
+//             {
+//                 selector: 'input[name="loss-date"]',
+//                 checks: [
+//                     { test: v => v !== "", message: 'ロス処理日を入力して下さい'}
+//                 ]
+//             }
+//         ]
+//     }
+// }
 const ERROR_CONFIG = {
     recycle: {
         common: [
-            {
-                selector: 'input[name="number"]',
-                focus: true,
-                checks: [
-                    { test: v => v !== "", message: 'お問合せ管理票番号を入力して下さい'}
-                ]
-            }
+            rule(
+                'input[name="number"]',
+                required('お問合せ管理票番号を入力して下さい', true)
+            )
         ],
-        regist: [
-            {
-                selector: 'select[name="company"]',
-                checks: [
-                    { test: v => v !== "0", message: '小売業者を選択して下さい'}
-                ]
-            },
-            {
-                selector: 'input[name="maker-code"]',
-                checks: [
-                    { test: v => v !== "", message: '製造業者等名を選択して下さい'}
-                ]
-            },
-            {
-                selector: 'input[name="item-code"]',
-                checks: [
-                    { test: v => v !== "", message: '品目・料金区分を選択して下さい'}
-                ]
-            },
-            {
-                selector: 'input[name="use-date"]',
-                checks: [
-                    { test: v => v !== "", message: '使用日を入力して下さい'}
-                ]
-            }
-        ],
-        delivery: [
-            {
-                selector: 'input[name="delivery-date"]',
-                checks: [
-                    { test: v => v !== "", message: '引渡日を入力して下さい'}
-                ]
-            }
-        ],
-        shipping: [
-            {
-                selector: 'input[name="shipping-date"]',
-                checks: [
-                    { test: v => v !== "", message: '発送日を入力して下さい'}
-                ]
-            }
-        ],
-        loss: [
-            {
-                selector: 'input[name="loss-date"]',
-                checks: [
-                    { test: v => v !== "", message: 'ロス処理日を入力して下さい'}
-                ]
-            }
-        ]
+        modes: {
+            use: [
+                rule(
+                    'select[name="company"]',
+                    notValue("0", '小売業者を選択して下さい')
+                ),
+                rule(
+                    'input[name="maker-code"]',
+                    required('製造業者等名を選択して下さい')
+                ),
+                rule(
+                    'input[name="item-code"]',
+                    required('品目・料金区分を選択して下さい')
+                ),
+                rule(
+                    'input[name="use-date"]',
+                    required('使用日を入力して下さい')
+                )
+            ],
+            delivery: [
+                rule(
+                    'input[name="delivery-date"]',
+                    required('引渡日を入力して下さい')
+                )
+            ],
+            shipping: [
+                rule(
+                    'input[name="shipping-date"]',
+                    required('発送日を入力して下さい')
+                )
+            ],
+            loss: [
+                rule(
+                    'input[name="loss-date"]',
+                    required('ロス処理日を入力して下さい')
+                )
+            ]
+        }
     }
-}
+};
 
 const FIELD_MAP = {
     version: 'version',

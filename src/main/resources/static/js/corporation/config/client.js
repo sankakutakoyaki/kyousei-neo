@@ -167,69 +167,120 @@ const COMPANY_UI_CONFIG = [
     }
 ];
 
+// const ERROR_CONFIG = {
+//     "form-01": [
+//         {
+//             selector: 'input[name="name"]',
+//             checks: [
+//                 { test: v => v !== "", message: '名称が入力されていません'}
+//             ]
+//         },
+//         {
+//             selector: 'input[name="tel-number"]',
+//             checks: [
+//                 { test: v => !checkPhoneNumber(v), message: '電話番号に誤りがあります'}
+//             ]
+//         },
+//         {
+//             selector: 'input[name="fax-number"]',
+//             checks: [
+//                 { test: v => !checkPhoneNumber(v), message: 'FAX番号に誤りがあります'}
+//             ]
+//         },
+//         {
+//             selector: 'input[name="postal-code"]',
+//             checks: [
+//                 { test: v => !checkPhoneNumber(v), message: '郵便番号に誤りがあります'}
+//             ]
+//         },
+//         {
+//             selector: 'input[name="email"]',
+//             checks: [
+//                 { test: v => !checkMailAddress(v), message: 'メールアドレスに誤りがあります'}
+//             ]
+//         },
+//         {
+//             selector: 'input[name="web-address"]',
+//             checks: [
+//                 { test: v => !checkWebAddress(v), message: 'WEBアドレスに誤りがあります'}
+//             ]
+//         }
+//     ],
+//     "form-02": [
+//         {
+//             selector: 'input[name="name"]',
+//             checks: [
+//                 { test: v => v !== "", message: '名前が入力されていません'}
+//             ]
+//         },
+//         {
+//             selector: 'input[name="phone-number"]',
+//             checks: [
+//                 { test: v => !checkPhoneNumber(v), message: '電話番号に誤りがあります'}
+//             ]
+//         },
+//         {
+//             selector: 'input[name="postal-code"]',
+//             checks: [
+//                 { test: v => !checkPhoneNumber(v), message: '郵便番号に誤りがあります'}
+//             ]
+//         },
+//         {
+//             selector: 'input[name="email"]',
+//             checks: [
+//                 { test: v => !checkMailAddress(v), message: 'メールアドレスに誤りがあります'}
+//             ]
+//         }
+//     ]
+// }
 const ERROR_CONFIG = {
-    "form-01": [
-        {
-            selector: 'input[name="name"]',
-            checks: [
-                { test: v => v !== "", message: '名称が入力されていません'}
-            ]
-        },
-        {
-            selector: 'input[name="tel-number"]',
-            checks: [
-                { test: v => !checkPhoneNumber(v), message: '電話番号に誤りがあります'}
-            ]
-        },
-        {
-            selector: 'input[name="fax-number"]',
-            checks: [
-                { test: v => !checkPhoneNumber(v), message: 'FAX番号に誤りがあります'}
-            ]
-        },
-        {
-            selector: 'input[name="postal-code"]',
-            checks: [
-                { test: v => !checkPhoneNumber(v), message: '郵便番号に誤りがあります'}
-            ]
-        },
-        {
-            selector: 'input[name="email"]',
-            checks: [
-                { test: v => !checkMailAddress(v), message: 'メールアドレスに誤りがあります'}
-            ]
-        },
-        {
-            selector: 'input[name="web-address"]',
-            checks: [
-                { test: v => !checkWebAddress(v), message: 'WEBアドレスに誤りがあります'}
-            ]
-        }
-    ],
-    "form-02": [
-        {
-            selector: 'input[name="name"]',
-            checks: [
-                { test: v => v !== "", message: '名前が入力されていません'}
-            ]
-        },
-        {
-            selector: 'input[name="phone-number"]',
-            checks: [
-                { test: v => !checkPhoneNumber(v), message: '電話番号に誤りがあります'}
-            ]
-        },
-        {
-            selector: 'input[name="postal-code"]',
-            checks: [
-                { test: v => !checkPhoneNumber(v), message: '郵便番号に誤りがあります'}
-            ]
-        },
-        {
-            selector: 'input[name="email"]',
-            checks: [
-                { test: v => !checkMailAddress(v), message: 'メールアドレスに誤りがあります'}
-            ]
-        }
-    ]
-}
+    "form-01": {
+        rules: [
+            rule(
+                'input[name="name"]',
+                required('名称が入力されていません', true)
+            ),
+            rule(
+                'input[name="tel-number"]',
+                phone('電話番号に誤りがあります')
+            ),
+            rule(
+                'input[name="fax-number"]',
+                phone('FAX番号に誤りがあります')
+            ),
+            rule(
+                'input[name="postal-code"]',
+                postalCode('郵便番号に誤りがあります')
+            ),
+            rule(
+                'input[name="email"]',
+                email('メールアドレスに誤りがあります')
+            ),
+            rule(
+                'input[name="web-address"]',
+                webAddress('WEBアドレスに誤りがあります')
+            )
+        ]
+    },
+
+    "form-02": {
+        rules: [
+            rule(
+                'input[name="name"]',
+                required('名前が入力されていません', true)
+            ),
+            rule(
+                'input[name="phone-number"]',
+                phone('電話番号に誤りがあります')
+            ),
+            rule(
+                'input[name="postal-code"]',
+                postalCode('郵便番号に誤りがあります')
+            ),
+            rule(
+                'input[name="email"]',
+                email('メールアドレスに誤りがあります')
+            )
+        ]
+    }
+};

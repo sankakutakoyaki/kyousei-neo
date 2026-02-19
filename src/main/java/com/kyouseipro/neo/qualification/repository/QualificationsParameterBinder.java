@@ -45,6 +45,7 @@ public class QualificationsParameterBinder {
     //     return index;
     // }
     private static int bindSaveParameter (PreparedStatement ps, QualificationsEntityRequest req, String editor, int idx) throws SQLException {
+        
         if (req.getEmployeeId() != null) {
             ps.setInt(idx++, req.getEmployeeId());
         }
@@ -82,7 +83,7 @@ public class QualificationsParameterBinder {
         int idx = bindSaveParameter(ps, req, editor, 1);
 
         // WHERE
-        ps.setInt(idx++, req.getCompanyId());
+        ps.setInt(idx++, req.getQualificationsId());
         ps.setInt(idx++, req.getVersion());
         ps.setInt(idx++, Enums.state.DELETE.getCode());
 

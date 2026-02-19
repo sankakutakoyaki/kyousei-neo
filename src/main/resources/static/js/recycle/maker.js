@@ -54,30 +54,27 @@ async function execEdit01(self) {
 /******************************************************************************************************* 保存 */
 
 async function execCreate01(self) {
+    
     const config = MODE_CONFIG["01"];
     const form = document.getElementById(config.formId); 
 
     if (!validateByConfig(form, { ...ERROR_CONFIG.recycleMaker, mode: "01" })) {
         return;
-    } else {
-    // // エラーチェック
-    // if (form01DataCheck(form) == false) {
-    //     return;
-    // } else {
-        const formData = new FormData(form);
-        const formdata = structuredClone(formEntity);
-        formdata.code = Number(formData.get('maker-code'));
-        formdata.group = Number(formData.get('maker-group'));
-        formdata.name = formData.get('maker-name').trim();
-        formdata.abbrName = formData.get('maker-abbr').trim();
+    }
 
-        const result = execSave(config.tableId, config.footerId, config.searchId, formdata, createTable01Content);
-        if (result) {
-            closeFormDialog('form-dialog-01');
+    const formData = new FormData(form);
+    const formdata = structuredClone(formEntity);
+    formdata.code = Number(formData.get('maker-code'));
+    formdata.group = Number(formData.get('maker-group'));
+    formdata.name = formData.get('maker-name').trim();
+    formdata.abbrName = formData.get('maker-abbr').trim();
 
-            await refleshDisplay();
-            openMsgDialog("msg-dialog", "保存しました", "blue");
-        }
+    const result = execSave(config.tableId, config.footerId, config.searchId, formdata, createTable01Content);
+    if (result) {
+        closeFormDialog('form-dialog-01');
+
+        await refleshDisplay();
+        openMsgDialog("msg-dialog", "保存しました", "blue");
     }
 }
 

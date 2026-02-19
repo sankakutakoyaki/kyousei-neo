@@ -3,7 +3,6 @@ package com.kyouseipro.neo.personnel.timeworks.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,19 +52,19 @@ public class TimeworksController {
      */
     @PostMapping("/regist/today")
     public ResponseEntity<?> registToday(@RequestBody TimeworksRegistRequest req) {
-        timeworksService.registToday(req.getDto(), req.getCategory());
-        return ResponseEntity.ok().build();
+        int id = timeworksService.registToday(req.getDto(), req.getCategory());
+        return ResponseEntity.ok(SimpleResponse.ok(id));
     }
 
-    /**
-     * エラー時の処理
-     * @param ex
-     * @return
-     */
-    @ExceptionHandler({IllegalStateException.class, IllegalArgumentException.class})
-    public ResponseEntity<?> handle(RuntimeException ex) {
-        return ResponseEntity
-            .badRequest()
-            .body(ex.getMessage());
-    }
+    // /**
+    //  * エラー時の処理
+    //  * @param ex
+    //  * @return
+    //  */
+    // @ExceptionHandler({IllegalStateException.class, IllegalArgumentException.class})
+    // public ResponseEntity<?> handle(RuntimeException ex) {
+    //     return ResponseEntity
+    //         .badRequest()
+    //         .body(ex.getMessage());
+    // }
 }

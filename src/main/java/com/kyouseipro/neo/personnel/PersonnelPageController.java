@@ -19,6 +19,8 @@ import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeListEntity;
 import com.kyouseipro.neo.personnel.employee.service.EmployeeListService;
+import com.kyouseipro.neo.personnel.timeworks.entity.TimeworksEntity;
+import com.kyouseipro.neo.personnel.timeworks.service.TimeworksService;
 import com.kyouseipro.neo.personnel.workingconditions.entity.WorkingConditionsEntity;
 import com.kyouseipro.neo.personnel.workingconditions.entity.WorkingConditionsListEntity;
 import com.kyouseipro.neo.personnel.workingconditions.service.WorkingConditionsListService;
@@ -31,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PersonnelPageController extends BaseController {
     private final EmployeeListService employeeListService;
+    private final TimeworksService timeworksService;
     private final WorkingConditionsListService workingConditionsListService;
     private final ComboBoxService comboBoxService;
 
@@ -95,7 +98,7 @@ public class PersonnelPageController extends BaseController {
 		model.addAttribute("activeMenu", "personnel");
         model.addAttribute("activeSidebar", "timeworks");
         model.addAttribute("insertCss", "/css/personnel/timeworks.css");
-        
+
         return "contents/personnel/timeworks";
     }
 
