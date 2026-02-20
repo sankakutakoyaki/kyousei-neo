@@ -39,8 +39,8 @@
 
     <div th:fragment="managementFragment" th:remove="tag">
         <div class="hamburger-item sp-style" onclick="moveLinkPage('/');hamburgerClose()"><img th:src="@{/icons/home.png}"><span>ホーム</span></div>
+        <div th:classappend="${activeSidebar == 'construction'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/construction');hamburgerClose()"><img th:src="@{/icons/contractor.png}"><span>施工</span></div>
         <div th:classappend="${activeSidebar == 'qualifications'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/qualifications');hamburgerClose()"><img th:src="@{/icons/license.png}"><span>許認可・資格</span></div>
-        <!-- <div th:classappend="${activeSidebar == 'license'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/license');hamburgerClose()"><img th:src="@{/icons/approved.png}"><span>許認可</span></div> -->
     </div>
 
     <div th:fragment="recycleFragment" th:remove="tag">

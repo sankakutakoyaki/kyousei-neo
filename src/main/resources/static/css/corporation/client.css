@@ -64,7 +64,7 @@
         }
         & >.flex-area:nth-of-type(5) {
             display: grid;
-            grid-template-columns: 10rem;
+            grid-template-columns: 9rem;
         }
         & >.flex-area:nth-of-type(6) {
             display: grid;

@@ -16,9 +16,9 @@ public class AddressRepository {
 
     // PostalCodeによる取得
     public AddressEntity findByPostalCode(String code) {
-        String sql = "SELECT * FROM address WHERE NOT (state = ?) AND postal_code = ?";
-        return sqlRepository.queryOne(
-            sql,
+        
+        return sqlRepository.queryOneOrNull(
+            "SELECT * FROM address WHERE state <> ? AND postal_code = ?",
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());

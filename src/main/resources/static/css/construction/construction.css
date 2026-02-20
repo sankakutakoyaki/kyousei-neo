@@ -1,0 +1,11 @@
+@charset "UTF-8";
+
+/*******************************************************************************************************  */
+
+.qualification-area {
+    max-width: 40rem;
+}
+
+.qualification-area>header {
+    margin-bottom: 1rem;
+}

@@ -51,7 +51,7 @@
         }
         & >.flex-area:nth-of-type(5) {
             display: grid;
-            grid-template-columns: 8rem 1fr;
+            grid-template-columns: 9rem 1fr;
             width: 100%;
         }
         & >.flex-area:nth-of-type(6) {

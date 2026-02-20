@@ -260,11 +260,11 @@ window.addEventListener("load", async () => {
         el.addEventListener('search', async e => {
             await refleshCompanyDisplay();
         });
-    });
 
-    // 郵便番号
-    document.getElementById('postal-code')
-        .addEventListener('keydown', async e => await getAddress(e,'postal-code','full-address'));
+        // 郵便番号
+        document.getElementById(cfg.postalCode)
+            .addEventListener('keydown', async e => await getAddress(e, cfg.postalCode, cfg.address));
+    });
 
     initCompanyInputs();
     refleshCompanyDisplay();

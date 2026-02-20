@@ -11,7 +11,9 @@ const MODE_CONFIG = {
         dialogId: "form-dialog-01",
         formId: "form-01",
         entity: companyEntity,
-        url: "/api/company/save"
+        url: "/api/company/save",
+        postalCode: "company-postal-code",
+        address: "company-full-address"
     },
     "02": {
         tableId: "table-02-content",
@@ -22,7 +24,9 @@ const MODE_CONFIG = {
         dialogId: "form-dialog-02",
         formId: "form-02",
         entity: staffEntity,
-        url: "/api/employee/save"
+        url: "/api/employee/save",
+        postalCode: "employee-postal-code",
+        address: "employee-full-address"
     }
 };
 

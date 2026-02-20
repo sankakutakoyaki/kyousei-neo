@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/with-sidebar}">
+<body>
+    <!-- サイドバー -->
+    <div layout:fragment="sidebar-content">
+        <div th:replace="~{fragments/common/menu :: managementFragment}"></div>
+    </div>
+
+    <!-- 本体 -->
+    <main layout:fragment="content">
+        <div class="tab-area">
+            <ul class="tab-menu">
+                <li class="tab-menu-item is-active" data-tab="01">テスト</li>
+            </ul>
+            <div class="tab-panel is-show" data-panel="01">
+                <div class="qualification-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/construction/construction :: headerFragment()}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/construction/construction :: mainFragment()}"></main>
+                </div>
+            </div>
+        </div>
+        <div id="form-dialog-area">
+            <!-- フォーム画面をここに記入する -->
+            <div id="form-dialog-01" class="form-dialog none">
+
+            </div>
+        </div>
+        <div id="msg-dialog-area">
+            <div th:replace="~{fragments/common/dialog :: messageFragment}"></div>
+        </div>
+        <script type="text/JavaScript" th:inline="JavaScript">
+            const token = /*[[${_csrf.token}]]*/;
+            const user = /*[[${user}]]*/;
+            const fileInput = document.getElementById('file-input');
+            const fileList = document.getElementById('file-list'); 
+            // const companyEntity = /*[[${companyEntity}]]*/;
+            // const officeEntity = /*[[${officeEntity}]]*/;
+            // const staffEntity = /*[[${staffEntity}]]*/;
+
+            // const categoryCodes = /*[[${categoryCodes}]]*/;
+            // let companyOrigin = /*[[${companyOrigin}]]*/; // 初期リスト記憶用
+            // let officeOrigin = [];
+            // let staffOrigin = [];
+            // let companyComboList = [];
+            // let officeComboList = [];
+            // let originEntity = {};
+        </script>
+        <!-- <script type="module">
+            import PhotoSwipeLightbox
+                from '/photoswipe/photoswipe-lightbox.esm.js';
+
+            const lightbox = new PhotoSwipeLightbox({
+                gallery: '.gallery',
+                children: 'a',
+                pswpModule: () =>
+                import('/photoswipe/photoswipe.esm.js')
+            });
+
+            lightbox.init();
+        </script> -->
+        <script th:src="@{/js/construction/construction.js}"></script>
+    </main>
+
+</body>

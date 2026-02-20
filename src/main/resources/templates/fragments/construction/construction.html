@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <header th:fragment="headerFragment()">
+
+    </header>
+
+    <main th:fragment="mainFragment()">
+        <input id="qualifications-id-02" type="hidden">
+        
+        <ul id="qualification-list-02" class="normal-list qualification"></ul>
+
+        <label for="file-input" class="upload-button">追加するファイルを選択</label>
+        <input type="file" id="file-input" multiple accept="image/*,application/pdf" />
+
+        <ul id="file-list" class="placeholder" data-placeholder="ここにファイルをドロップできます"></ul>
+
+    </main>
+</body>
+
+</html>

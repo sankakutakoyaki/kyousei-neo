@@ -21,11 +21,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.common.address.entity.AddressEntity;
+import com.kyouseipro.neo.common.file.entity.ConstructionFileEntity;
 import com.kyouseipro.neo.common.file.service.FileService;
 import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.config.UploadConfig;
@@ -37,21 +39,21 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/api/files")
 public class FileController {
     private final FileService fileService;
-    private final QualificationFilesService qualificationFilesService;
 
-    /**
-     * 郵便番号から住所を取得する
-     * @param postal_code
-     * @return AddressEntity
-     */
-    @PostMapping("/address/get/postalcode")
-	@ResponseBody
-    public ResponseEntity getAddressFromPostalCode(@RequestParam String postal_code) {
-        AddressEntity entity = fileService.getAddressByPostalCode(postal_code);
-        return ResponseEntity.ok(entity);
-    }
+    // /**
+    //  * 郵便番号から住所を取得する
+    //  * @param postal_code
+    //  * @return AddressEntity
+    //  */
+    // @PostMapping("/address/get/postalcode")
+	// @ResponseBody
+    // public ResponseEntity getAddressFromPostalCode(@RequestParam String postal_code) {
+    //     AddressEntity entity = fileService.getAddressByPostalCode(postal_code);
+    //     return ResponseEntity.ok(entity);
+    // }
 
     /**
      * ファイルを別タブで開く
@@ -61,7 +63,7 @@ public class FileController {
      * @return
      * @throws IOException
      */
-    @GetMapping("/files/{category}/{folder}/{filename}")
+    @GetMapping("/{category}/{folder}/{filename}")
     public ResponseEntity<Resource> getFile(@PathVariable String category, @PathVariable String folder, @PathVariable String filename) throws IOException {
         // 実際の保存ディレクトリ（必要に応じて調整）
         Path filePath = Paths.get(UploadConfig.getUploadDir(), category, folder, filename);
@@ -83,54 +85,54 @@ public class FileController {
             .body(resource);
     }
 
-    /**
-     * IDから資格のファイルを取得する
-     * @param ID
-     * @return 
-     */
-    @PostMapping("/files/get/qualifications")
-	@ResponseBody
-    public List<QualificationFilesEntity> getQualificationsFilesById(@RequestParam Integer id, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        return qualificationFilesService.getQualificationFilesById(id, userName);
-    }
+    // /**
+    //  * IDから資格のファイルを取得する
+    //  * @param ID
+    //  * @return 
+    //  */
+    // @PostMapping("/get/qualifications")
+	// @ResponseBody
+    // public List<QualificationFilesEntity> getQualificationsFilesById(@RequestParam Integer id, @AuthenticationPrincipal OidcUser principal) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     return qualificationFilesService.getQualificationFilesById(id, userName);
+    // }
 
-    /**
-     * URLから資格のファイルを削除する
-     * @param ID
-     * @return 
-     */
-    @PostMapping("/files/delete/qualifications")
-	@ResponseBody
-    public ResponseEntity<SimpleResponse<Integer>> deleteQualificationsFilesByUrl(@RequestParam String url, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        String uploadStr = UploadConfig.getUploadDir() + "qualification/" + url;
-        boolean result = fileService.deleteFile(uploadStr);
-        if (result) {
-            Integer resultInt = qualificationFilesService.deleteQualificationsFilesByUrl(uploadStr, userName);
-            if (resultInt != null && resultInt > 0) {
-                return ResponseEntity.ok(SimpleResponse.ok("削除しました。", resultInt));
-            }
-        }
-        return ResponseEntity.badRequest().body(SimpleResponse.error("削除に失敗しました"));
-    }
+    // /**
+    //  * URLから資格のファイルを削除する
+    //  * @param ID
+    //  * @return 
+    //  */
+    // @PostMapping("/delete/qualifications")
+	// @ResponseBody
+    // public ResponseEntity<SimpleResponse<Integer>> deleteQualificationsFilesByUrl(@RequestParam String url, @AuthenticationPrincipal OidcUser principal) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     String uploadStr = UploadConfig.getUploadDir() + "qualification/" + url;
+    //     boolean result = fileService.deleteFile(uploadStr);
+    //     if (result) {
+    //         Integer resultInt = qualificationFilesService.deleteQualificationsFilesByUrl(uploadStr, userName);
+    //         if (resultInt != null && resultInt > 0) {
+    //             return ResponseEntity.ok(SimpleResponse.ok("削除しました。", resultInt));
+    //         }
+    //     }
+    //     return ResponseEntity.badRequest().body(SimpleResponse.error("削除に失敗しました"));
+    // }
 
-    /**
-     * 資格情報のPDFファイルをアップロードする
-     * @param files
-     * @param folderName
-     * @param id
-     * @return
-     */
-    @PostMapping("/files/upload/qualifications")
-    @ResponseBody
-    public List<QualificationFilesEntity> fileUpload(@RequestParam("files") MultipartFile[] files, @RequestParam("folder_name") String folderName, @RequestParam("id") int id, @AuthenticationPrincipal OidcUser principal) {
-        String userName = principal.getAttribute("preferred_username");
-        QualificationFilesEntity entity = new QualificationFilesEntity();
-        entity.setQualificationsId(id);
+    // /**
+    //  * 資格情報のPDFファイルをアップロードする
+    //  * @param files
+    //  * @param folderName
+    //  * @param id
+    //  * @return
+    //  */
+    // @PostMapping("/upload/")
+    // @ResponseBody
+    // public List<QualificationFilesEntity> fileUpload(@RequestParam("files") MultipartFile[] files, @RequestParam("folder_name") String folderName, @RequestParam("id") int id, @AuthenticationPrincipal OidcUser principal) {
+    //     String userName = principal.getAttribute("preferred_username");
+    //     QualificationFilesEntity entity = new QualificationFilesEntity();
+    //     entity.setQualificationsId(id);
 
-        List<FileUpload> entities = fileService.fileUpload(files, folderName, entity);
-        qualificationFilesService.saveQualificationsFiles(entities, userName, id);
-        return qualificationFilesService.getQualificationFilesById(id, userName);
-    }
+    //     List<FileUpload> entities = fileService.fileUpload(files, folderName, entity);
+    //     qualificationFilesService.saveQualificationsFiles(entities, userName, id);
+    //     return qualificationFilesService.getQualificationFilesById(id, userName);
+    // }
 }

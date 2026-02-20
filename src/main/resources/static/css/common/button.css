@@ -19,8 +19,9 @@ button:disabled:hover {
     cursor: var(--cursor);
     white-space: nowrap;
     text-overflow: ellipsis;
-    border: 1px solid var(--btn-br);
-    background-color: var(--btn-bg);
+    border: 1px solid var(--btn-br, darkgrey);
+    background-color: var(--btn-bg, white);
+    color: black;
     padding: .5rem 1rem;
 }
 

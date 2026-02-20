@@ -73,13 +73,13 @@ async function execCodeBlur(e, tab) {
     if (tempEntity != null && config.codeChange) config.codeChange(tempEntity);
 }
 
-// フォーカス移動後にエンターかスペースで確定させる
-function handleButtonKey(e, action) {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    action();
-  }
-}
+// // フォーカス移動後にエンターかスペースで確定させる
+// function handleButtonKey(e, action) {
+//   if (e.key === 'Enter' || e.key === ' ') {
+//     e.preventDefault();
+//     action();
+//   }
+// }
 
 // tab01で、開始時刻を打刻済みか確認してボタンのフォーカス先を決める
 function checkTimeWorksStartSaved(entity) {
@@ -132,6 +132,12 @@ window.addEventListener("load", async () => {
             document.getElementById(config.codeId).addEventListener('blur', async function (e) { await execCodeBlur(e, tab); });
         }
     }
+
+    document.querySelector('[name="start-btn"]')
+    .addEventListener("click", () => setTimeworks("start"));
+
+    document.querySelector('[name="end-btn"]')
+    .addEventListener("click", () => setTimeworks("end"));
 
     await execUpdate();
 

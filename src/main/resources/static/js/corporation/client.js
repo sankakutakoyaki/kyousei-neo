@@ -422,8 +422,6 @@ window.addEventListener("load", async () => {
 
         const list = companyOrigin.filter(v => v.category === cfg.category);
         await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, list, createTableContent);
-        // makeSortable(cfg.tableId);
-        // setPageTopButton(cfg.tableId);
     }
 
     companyComboList = companyOrigin.map(item => ({number:item.companyId, text:item.name}));
