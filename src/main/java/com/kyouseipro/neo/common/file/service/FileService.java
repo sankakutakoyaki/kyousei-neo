@@ -8,9 +8,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
@@ -20,8 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.common.address.entity.AddressEntity;
 import com.kyouseipro.neo.common.address.repository.AddressRepository;
+import com.kyouseipro.neo.common.file.entity.FileMeta;
 import com.kyouseipro.neo.config.UploadConfig;
-import com.kyouseipro.neo.interfaces.FileUpload;
 
 import lombok.RequiredArgsConstructor;
 
@@ -70,7 +70,7 @@ public class FileService {
     public String getUniqueFilename(String directory, String originalFilename) {
         ensureDirectoryExists(directory);
 
-        File file = new File(directory + originalFilename);
+        File file = new File(directory, originalFilename);
         if (!file.exists()) {
             return originalFilename;
         }
@@ -200,9 +200,59 @@ public class FileService {
      * @param entity
      * @return
      */
-    public List<FileUpload> fileUpload(MultipartFile[] files, String folderName, FileUpload fileUploadEntity) {
-        if (files.length == 0) {
-            return null;
+    // public List<FileUpload> fileUpload(MultipartFile[] files, String folderName, FileUpload fileUploadEntity) {
+    //     if (files.length == 0) {
+    //         return null;
+    //     }
+
+    //     File uploadDir = new File(UploadConfig.getUploadDir() + folderName);
+    //     if (!uploadDir.exists()) {
+    //         uploadDir.mkdirs();
+    //     }
+
+    //     List<FileUpload> list = new ArrayList<>();
+    //     Pattern invalidChars = Pattern.compile("[/\\\\:*?\"<>`]");
+
+    //     for (MultipartFile file : files) {
+    //         if (!file.isEmpty()) {
+    //             try {
+    //                 String originalFilename = file.getOriginalFilename();
+    //                 if (originalFilename == null || invalidChars.matcher(originalFilename).find()) {
+    //                     continue;
+    //                 }
+
+    //                 originalFilename = originalFilename.replaceAll(" ", "_");
+
+    //                 String extension = "";
+    //                 int dotIndex = originalFilename.lastIndexOf(".");
+    //                 if (dotIndex != -1) {
+    //                     extension = originalFilename.substring(dotIndex);
+    //                 }
+
+    //                 String safeFilename = UUID.randomUUID().toString() + extension;
+    //                 File dest = new File(uploadDir, safeFilename);
+    //                 file.transferTo(dest);
+
+    //                 FileUpload entity = fileUploadEntity.create();
+    //                 // エンティティに設定
+    //                 entity.setFileName(originalFilename);
+    //                 entity.setInternalName(safeFilename);
+    //                 entity.setFolderName(dest.getAbsolutePath());
+    //                 list.add(entity);
+    //             } catch (IOException e) {
+    //                 continue;
+    //             }
+    //         }
+    //     }
+
+    //     return list;
+    // }
+    public List<FileMeta> saveFiles(
+            MultipartFile[] files,
+            String folderName) {
+
+        if (files == null || files.length == 0) {
+            return Collections.emptyList();
         }
 
         File uploadDir = new File(UploadConfig.getUploadDir() + folderName);
@@ -210,39 +260,46 @@ public class FileService {
             uploadDir.mkdirs();
         }
 
-        List<FileUpload> list = new ArrayList<>();
-        Pattern invalidChars = Pattern.compile("[/\\\\:*?\"<>`]");
+        List<FileMeta> list = new ArrayList<>();
 
         for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                try {
-                    String originalFilename = file.getOriginalFilename();
-                    if (originalFilename == null || invalidChars.matcher(originalFilename).find()) {
-                        continue;
+
+            if (file.isEmpty()) continue;
+
+            try {
+                String original = file.getOriginalFilename();
+                if (original == null) continue;
+
+                original = original.replaceAll(" ", "_");
+
+                String ext = "";
+                int dot = original.lastIndexOf(".");
+                if (dot != -1) ext = original.substring(dot);
+
+                String stored = UUID.randomUUID() + ext;
+
+                File dest = new File(uploadDir, stored);
+                file.transferTo(dest);
+
+                FileMeta meta = new FileMeta();
+                meta.setStoredName(stored);
+                meta.setOriginalName(original);
+                meta.setMimeType(file.getContentType());
+                meta.setFileSize(file.getSize());
+
+                if (meta.getMimeType() != null &&
+                    meta.getMimeType().startsWith("image/")) {
+
+                    BufferedImage img = ImageIO.read(dest);
+                    if (img != null) {
+                        meta.setWidth(img.getWidth());
+                        meta.setHeight(img.getHeight());
                     }
-
-                    originalFilename = originalFilename.replaceAll(" ", "_");
-
-                    String extension = "";
-                    int dotIndex = originalFilename.lastIndexOf(".");
-                    if (dotIndex != -1) {
-                        extension = originalFilename.substring(dotIndex);
-                    }
-
-                    String safeFilename = UUID.randomUUID().toString() + extension;
-                    File dest = new File(uploadDir, safeFilename);
-                    file.transferTo(dest);
-
-                    FileUpload entity = fileUploadEntity.create();
-                    // エンティティに設定
-                    entity.setFileName(originalFilename);
-                    entity.setInternalName(safeFilename);
-                    entity.setFolderName(dest.getAbsolutePath());
-                    list.add(entity);
-                } catch (IOException e) {
-                    continue;
                 }
-            }
+
+                list.add(meta);
+
+            } catch (IOException ignored) {}
         }
 
         return list;

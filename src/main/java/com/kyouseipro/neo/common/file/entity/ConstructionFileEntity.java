@@ -28,4 +28,6 @@ public class ConstructionFileEntity {
 
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
+
+    private int state;
 }

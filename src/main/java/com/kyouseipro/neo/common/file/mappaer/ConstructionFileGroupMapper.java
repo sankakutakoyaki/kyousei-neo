@@ -33,6 +33,8 @@ public class ConstructionFileGroupMapper {
             group.setUpdateDate(updateTs.toLocalDateTime());
         }
 
+        group.setState(rs.getInt("state"));
+
         return group;
     }
 }

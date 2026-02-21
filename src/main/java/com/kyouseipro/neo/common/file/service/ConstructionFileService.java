@@ -2,187 +2,174 @@ package com.kyouseipro.neo.common.file.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.common.file.entity.ConstructionFileEntity;
-import com.kyouseipro.neo.common.file.entity.ConstructionFileGroupEntity;
 import com.kyouseipro.neo.common.file.repository.ConstructionFileGroupRepository;
 import com.kyouseipro.neo.common.file.repository.ConstructionFileRepository;
-import com.kyouseipro.neo.config.UploadConfig;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import javax.imageio.ImageIO;
 
 @Service
 @RequiredArgsConstructor
 public class ConstructionFileService {
-
+    
     private final ConstructionFileRepository fileRepository;
     private final ConstructionFileGroupRepository groupRepository;
+    private final ConstructionFileGroupService constructionFileGroupService;
 
-    // 実際はapplication.ymlから取得推奨
-    private static final String BASE_PATH = "D:/files/";
-
-    /**
-     * ファイルアップロード（複数対応）
-     */
-    public void uploadFiles(
+    @Transactional
+    public List<Long> uploadFiles(
             Long constructionId,
             Long groupId,
-            List<MultipartFile> files
+            MultipartFile[] files
     ) throws IOException {
 
-        Path dir = Paths.get(BASE_PATH, String.valueOf(constructionId));
-        Files.createDirectories(dir);
-
-        for (MultipartFile multipart : files) {
-
-            if (multipart.isEmpty()) continue;
-
-            String mime = multipart.getContentType();
-            String originalName = multipart.getOriginalFilename();
-            String extension = getExtension(originalName);
-
-            // UUID生成
-            String uuid = UUID.randomUUID().toString();
-            String storedName = uuid + extension;
-
-            Path savePath = dir.resolve(storedName);
-
-            // 物理保存
-            Files.copy(multipart.getInputStream(), savePath,
-                    StandardCopyOption.REPLACE_EXISTING);
-
-            // DB登録用Entity作成
-            ConstructionFileEntity file = new ConstructionFileEntity();
-            file.setConstructionId(constructionId);
-            file.setGroupId(groupId);
-            file.setStoredName(storedName);
-            file.setOriginalName(originalName);
-            file.setDisplayName(originalName);
-            file.setMimeType(mime);
-            file.setFileSize(multipart.getSize());
-            file.setDisplayOrder(0);
-
-            // MIME判定
-            if (mime != null && mime.startsWith("image/")) {
-                file.setFileType("IMAGE");
-                setImageSize(file, savePath);
-            } else if ("application/pdf".equals(mime)) {
-                file.setFileType("PDF");
-            } else {
-                file.setFileType("OTHER");
-            }
-
-            fileRepository.insert(file);
-        }
-    }
-
-    /**
-     * 画像サイズ取得
-     */
-    private void setImageSize(ConstructionFileEntity file, Path path) {
-
-        try {
-            BufferedImage img = ImageIO.read(path.toFile());
-            if (img != null) {
-                file.setWidth(img.getWidth());
-                file.setHeight(img.getHeight());
-            }
-        } catch (IOException e) {
-            // ログ出力推奨
-        }
-    }
-
-    /**
-     * 拡張子取得
-     */
-    private String getExtension(String filename) {
-
-        if (filename == null) return "";
-
-        int index = filename.lastIndexOf(".");
-        if (index < 0) return "";
-
-        return filename.substring(index);
-    }
-
-    /**
-     * ファイル削除（物理＋DB）
-     */
-    public void deleteFile(Long constructionId, ConstructionFileEntity file) throws IOException {
-
-        Path path = Paths.get(BASE_PATH,
-                String.valueOf(constructionId),
-                file.getStoredName());
-
-        Files.deleteIfExists(path);
-
-        fileRepository.delete(file.getFileId());
-    }
-
-    /**
-     * 画面表示用に「グループ＋配下ファイル」をまとめる
-     */
-    public List<ConstructionFileGroupEntity> getGroupsWithFiles(Long constructionId) {
-
-        List<ConstructionFileGroupEntity> groups =
-                groupRepository.findByConstructionId(constructionId);
-
-        for (ConstructionFileGroupEntity group : groups) {
-            group.setFiles(
-                fileRepository.findByGroupId(group.getGroupId())
-            );
+        // ① groupが無い場合は作成
+        if (groupId == null || !groupRepository.exists(groupId)) {
+            // groupId = groupRepository.insert(constructionId);
+            constructionFileGroupService.createGroup(constructionId, "自動作成グループ");
         }
 
-        return groups;
-    }
-
-    // private final ConstructionFileRepository repository;
-
-    // private final String basePath = "C:/files/";
-
-    public List<ConstructionFileEntity> saveFiles(Long groupId, MultipartFile[] files) throws IOException {
-
-        List<ConstructionFileEntity> savedFiles = new ArrayList<>();
-
-        Path groupPath = Paths.get(UploadConfig.getUploadDir() + groupId);
-        // Path groupPath = Paths.get(basePath + groupId);
-        
-        Files.createDirectories(groupPath);
+        List<Long> fileIds = new ArrayList<>();
 
         for (MultipartFile file : files) {
 
-            String uuid = UUID.randomUUID().toString();
-            String ext = getExtension(file.getOriginalFilename());
-            String storedName = uuid + "." + ext;
-
-            Path savePath = groupPath.resolve(storedName);
-            file.transferTo(savePath);
+            String originalName = file.getOriginalFilename();
+            // ★ ここで重複回避
+            String displayName = createUniqueDisplayName(groupId, null, originalName);
 
             ConstructionFileEntity entity = new ConstructionFileEntity();
+            entity.setConstructionId(constructionId);
             entity.setGroupId(groupId);
-            entity.setOriginalName(file.getOriginalFilename());
-            entity.setStoredName(storedName);
-            entity.setFileType(file.getContentType());
+            entity.setOriginalName(originalName);
+            entity.setStoredName(UUID.randomUUID().toString());
+            entity.setDisplayName(displayName);
+            entity.setMimeType(file.getContentType());
             entity.setFileSize(file.getSize());
-            entity.setCreateDate(LocalDateTime.now());
+            entity.setFileType(detectFileType(file.getContentType()));
+            entity.setDisplayOrder(
+                fileRepository.getNextDisplayOrder(groupId)
+            );
 
-            fileRepository.save(entity);
-
-            savedFiles.add(entity);
+            Long fileId = fileRepository.insert(entity);
+            fileIds.add(fileId);
         }
 
-        return savedFiles;
+        return fileIds;
     }
 
-    // private String getExtension(String filename) {
-    //     return filename.substring(filename.lastIndexOf(".") + 1);
+    private String detectFileType(String mimeType) {
+        if (mimeType == null) return "OTHER";
+        if (mimeType.startsWith("image")) return "IMAGE";
+        if (mimeType.equals("application/pdf")) return "PDF";
+        return "OTHER";
+    }
+
+    @Transactional
+    public void deleteFile(Long fileId) {
+
+        ConstructionFileEntity file = fileRepository.findById(fileId);
+
+        if (file == null) {
+            throw new RuntimeException("ファイルが存在しません");
+        }
+
+        Long groupId = file.getGroupId();
+        int deletedOrder = file.getDisplayOrder();
+
+        // ① 削除
+        fileRepository.delete(fileId);
+
+        // ② display_order 詰める
+        fileRepository.decrementDisplayOrderAfter(
+                groupId, deletedOrder
+        );
+    }
+
+    /**
+     * display_name 重複チェック（DB）
+     * @param groupId
+     * @param originalName
+     * @return
+     */
+    public String createUniqueDisplayName(
+            Long groupId,
+            Long fileId,
+            String originalName) {
+
+        String baseName = originalName;
+        String extension = "";
+
+        int dotIndex = originalName.lastIndexOf(".");
+        if (dotIndex > 0) {
+            baseName = originalName.substring(0, dotIndex);
+            extension = originalName.substring(dotIndex);
+        }
+
+        int counter = 0;
+        String candidate;
+
+        do {
+            if (counter == 0) {
+                candidate = baseName + extension;
+            } else {
+                candidate = baseName + "(" + counter + ")" + extension;
+            }
+            counter++;
+        } while (fileRepository.existsDisplayName(groupId, fileId, candidate));
+
+        return candidate;
+    }
+
+    // @Transactional
+    // public void rename(Long fileId, String newName) {
+
+    //     ConstructionFileEntity file =
+    //             fileRepository.findById(fileId);
+
+    //     Long groupId = file.getGroupId();
+
+    //     String uniqueName =
+    //             createUniqueDisplayName(groupId, fileId, newName);
+
+    //     fileRepository.updateDisplayName(fileId, uniqueName);
     // }
+    @Transactional
+    public void renameFile(Long fileId, String newName) {
+        if (newName == null || newName.isEmpty()) return;
+
+        // 重複回避
+        ConstructionFileEntity entity = fileRepository.findById(fileId);
+        String uniqueName = createUniqueDisplayName(entity.getGroupId(), newName);
+
+        entity.setDisplayName(uniqueName);
+        fileRepository.updateDisplayName(fileId, uniqueName);
+    }
+
+    /** groupId内でのユニーク表示名を作成 */
+    public String createUniqueDisplayName(Long groupId, String originalName) {
+        String baseName = originalName;
+        String extension = "";
+
+        int dotIndex = originalName.lastIndexOf(".");
+        if (dotIndex > 0) {
+            baseName = originalName.substring(0, dotIndex);
+            extension = originalName.substring(dotIndex);
+        }
+
+        int counter = 0;
+        String candidate;
+
+        do {
+            candidate = counter == 0 ? baseName + extension : baseName + "(" + counter + ")" + extension;
+            counter++;
+        } while (fileRepository.existsDisplayName(groupId, candidate));
+
+        return candidate;
+    }
 }

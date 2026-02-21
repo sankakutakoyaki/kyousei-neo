@@ -56,7 +56,10 @@
     position: relative;
 }
 
-li:hover .remove-btn {
+/* #file-list li:hover .remove-btn {
+    display: inline;
+} */
+#file-list li.file-item:hover .remove-btn {
     display: inline; /* ホバー時のみ表示 */
 }
 
@@ -76,7 +79,7 @@ li:hover .remove-btn {
 
 /******************************************************************************************************* リストが空の時 */
 
-.placeholder-div:empty::before {
+#file-list.placeholder-div:empty::before {
     content: attr(data-placeholder);
     color: #aaa;
 }

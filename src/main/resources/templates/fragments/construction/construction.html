@@ -7,14 +7,37 @@
     </header>
 
     <main th:fragment="mainFragment()">
-        <input id="qualifications-id-02" type="hidden">
+        <div class="flex-area">
+            <div class="form-parts">
+                <lavel>管理ID</lavel>
+                <input id="construction-id" type="number" class="normal-input" value="101">
+            </div>
+            <button id="load-btn" class="normal-btn" type="button" onclick="loadFiles()"><span>表示</span></button>
+        </div>
+
+        <div class="flex-area">
+            <div class="form-parts">
+                <lavbel>グループID</lavbel>
+                <input id="group-id" type="text" class="normal-input" value="">
+            </div>
+        </div>
+
+        <div class="flex-area">
+            <div class="form-parts">
+                <lavbel>グループ名</lavbel>
+                <input id="group-name" type="text" class="normal-input" value="">
+            </div>
+            <button class="normal-btn" type="button" onclick="createGroup()"><span>作成</span></button>
+        </div>
         
-        <ul id="qualification-list-02" class="normal-list qualification"></ul>
+        <!-- <ul id="qualification-list" class="normal-list"></ul> -->
 
         <label for="file-input" class="upload-button">追加するファイルを選択</label>
-        <input type="file" id="file-input" multiple accept="image/*,application/pdf" />
+        <input type="file" id="file-input" name="files" accept="image/*,application/pdf" />
 
         <ul id="file-list" class="placeholder" data-placeholder="ここにファイルをドロップできます"></ul>
+
+        <!-- <ul id="file-list" class="placeholder" data-placeholder="ここにファイルをドロップできます"></ul> -->
 
     </main>
 </body>

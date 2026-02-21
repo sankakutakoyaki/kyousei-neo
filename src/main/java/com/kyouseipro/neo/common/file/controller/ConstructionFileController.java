@@ -5,39 +5,76 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kyouseipro.neo.common.file.entity.ConstructionFileEntity;
+import com.kyouseipro.neo.common.file.entity.ConstructionFileDto;
+import com.kyouseipro.neo.common.file.entity.GroupRequest;
+import com.kyouseipro.neo.common.file.repository.ConstructionFileRepository;
+import com.kyouseipro.neo.common.file.service.ConstructionFileGroupService;
 import com.kyouseipro.neo.common.file.service.ConstructionFileService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
-// @RequestMapping("/api/construction")
+@RequestMapping("/api/construction")
 public class ConstructionFileController {
 
-    // private final ConstructionFileGroupRepository groupRepository;
-    // private final ConstructionFileRepository fileRepository;
-    private final ConstructionFileService fileService;
+    private final ConstructionFileService constructionFileService;
+    private final ConstructionFileGroupService constructionFileGroupService;
+    private final ConstructionFileRepository constructionFileRepository;
 
-
-    /**
-     * 
-     */
-    // @PostMapping("/upload/{groupId}")
-    // public List<ConstructionFileEntity> upload(
-    //         @PathVariable Long groupId,
-    //         @RequestParam("files") MultipartFile[] files) throws IOException {
-    //     System.out.println("test");
-    //     return service.saveFiles(groupId, files);
-    // }
-    @PostMapping("/api/construction/upload")
+    @PostMapping("/upload")
     @ResponseBody
-    public List<ConstructionFileEntity> upload(@RequestParam("files") MultipartFile[] files) throws IOException {
-        System.out.println("test");
-        return fileService.saveFiles(null, files);
+    public List<Long> upload(
+            @RequestParam("files") MultipartFile[] files,
+            @RequestParam("constructionId") Long constructionId,
+            @RequestParam(value = "groupId", required = false) Long groupId
+    ) throws IOException {
+
+        return constructionFileService.uploadFiles(constructionId, groupId, files);
     }
-   
+
+    @GetMapping("/{constructionId}/files")
+    @ResponseBody
+    public List<ConstructionFileDto> list(@PathVariable Long constructionId) {
+        return constructionFileRepository.findFiles(constructionId);
+    }
+
+    @PostMapping("/file/{fileId}")
+    @ResponseBody
+    public void deleteFile(@PathVariable Long fileId) {
+        constructionFileService.deleteFile(fileId);
+    }
+
+    /** ファイル名変更 */
+    @PostMapping("/file/{fileId}/rename")
+    public void renameFile(
+            @PathVariable Long fileId,
+            @RequestBody Map<String, String> body
+    ) {
+        String newName = body.get("displayName");
+        constructionFileService.renameFile(fileId, newName);
+    }
+
+    /** グループ名変更 */
+    @PostMapping("/group/{groupId}/rename")
+    public void renameGroup(
+            @PathVariable Long groupId,
+            @RequestBody Map<String, String> body
+    ) {
+        String newName = body.get("groupName");
+        constructionFileGroupService.renameGroup(groupId, newName);
+    }
+
+    @PostMapping("/{constructionId}/group")
+    @ResponseBody
+    public Long createGroup(
+            @PathVariable Long constructionId,
+            @RequestBody GroupRequest request) {
+
+        return constructionFileGroupService.createGroup(constructionId, request.getGroupName());
+    }
     // /**
     //  * 施工写真一覧表示
     //  */

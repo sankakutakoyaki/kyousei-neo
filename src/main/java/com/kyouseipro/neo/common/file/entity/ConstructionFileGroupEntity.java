@@ -22,4 +22,6 @@ public class ConstructionFileGroupEntity {
     private LocalDateTime updateDate;
 
     private List<ConstructionFileEntity> files;
+
+    private int state;
 }

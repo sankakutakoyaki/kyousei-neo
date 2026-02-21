@@ -3,7 +3,6 @@ package com.kyouseipro.neo.common.file.mappaer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.List;
 
 import com.kyouseipro.neo.common.file.entity.ConstructionFileEntity;
 
@@ -43,6 +42,8 @@ public class ConstructionFileMapper {
         if (updateTs != null) {
             file.setUpdateDate(updateTs.toLocalDateTime());
         }
+
+        file.setState(rs.getInt("state"));
 
         return file;
     }
