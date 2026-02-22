@@ -41,15 +41,6 @@
     border-color: #007BFF;
 }
 
-#file-list.placeholder::before {
-    content: attr(data-placeholder);
-    color: #aaa;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    pointer-events: none;
-}
-
 #file-list li {
     min-height: 2.5rem;
     align-content: center;
@@ -77,9 +68,9 @@
     display: none; /* デフォルトは非表示 */
 }
 
-/******************************************************************************************************* リストが空の時 */
+/* ****************************************************************************************************** リストが空の時 */
 
-#file-list.placeholder-div:empty::before {
+#file-list.placeholder:empty::before {
     content: attr(data-placeholder);
     color: #aaa;
 }

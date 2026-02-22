@@ -7,12 +7,18 @@
     </header>
 
     <main th:fragment="mainFragment()">
+        <!-- <div id="file-viewer" class="modal">
+            <button id="viewer-prev">←</button>
+            <iframe id="viewer-frame"></iframe>
+            <button id="viewer-next">→</button>
+        </div> -->
+
         <div class="flex-area">
             <div class="form-parts">
                 <lavel>管理ID</lavel>
                 <input id="construction-id" type="number" class="normal-input" value="101">
             </div>
-            <button id="load-btn" class="normal-btn" type="button" onclick="loadFiles()"><span>表示</span></button>
+            <button id="load-btn" class="normal-btn" type="button"><span>表示</span></button>
         </div>
 
         <div class="flex-area">
@@ -27,18 +33,14 @@
                 <lavbel>グループ名</lavbel>
                 <input id="group-name" type="text" class="normal-input" value="">
             </div>
-            <button class="normal-btn" type="button" onclick="createGroup()"><span>作成</span></button>
+            <button id="create-group-btn" class="normal-btn" type="button"><span>作成</span></button>
         </div>
-        
-        <!-- <ul id="qualification-list" class="normal-list"></ul> -->
+        <div>
+            <label for="file-input" class="upload-button">追加するファイルを選択</label>
+            <input type="file" id="file-input" name="files" accept="image/*,application/pdf" />
 
-        <label for="file-input" class="upload-button">追加するファイルを選択</label>
-        <input type="file" id="file-input" name="files" accept="image/*,application/pdf" />
-
-        <ul id="file-list" class="placeholder" data-placeholder="ここにファイルをドロップできます"></ul>
-
-        <!-- <ul id="file-list" class="placeholder" data-placeholder="ここにファイルをドロップできます"></ul> -->
-
+            <ul id="file-list" class="placeholder" data-placeholder="ここにファイルをドロップできます"></ul>
+        </div>
     </main>
 </body>
 

@@ -34,33 +34,18 @@
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
             const user = /*[[${user}]]*/;
-            const fileInput = document.getElementById('file-input');
-            const fileList = document.getElementById('file-list'); 
-            // const companyEntity = /*[[${companyEntity}]]*/;
-            // const officeEntity = /*[[${officeEntity}]]*/;
-            // const staffEntity = /*[[${staffEntity}]]*/;
-
-            // const categoryCodes = /*[[${categoryCodes}]]*/;
-            // let companyOrigin = /*[[${companyOrigin}]]*/; // 初期リスト記憶用
-            // let officeOrigin = [];
-            // let staffOrigin = [];
-            // let companyComboList = [];
-            // let officeComboList = [];
-            // let originEntity = {};
+            const FILE_CONFIG = {
+                listId: "file-list",
+                selectUrl: "/api/files/construction",
+                uploadUrl: "/api/files/file/upload/construction",
+                renameUrl: "/api/files/group/rename",
+                parentType: "CONSTRUCTION",
+                parentId: "construction-id",
+                groupId: "group-id",
+                groupName: "group-name",
+                csrfToken: token,
+            }
         </script>
-        <!-- <script type="module">
-            import PhotoSwipeLightbox
-                from '/photoswipe/photoswipe-lightbox.esm.js';
-
-            const lightbox = new PhotoSwipeLightbox({
-                gallery: '.gallery',
-                children: 'a',
-                pswpModule: () =>
-                import('/photoswipe/photoswipe.esm.js')
-            });
-
-            lightbox.init();
-        </script> -->
         <script th:src="@{/js/construction/construction.js}"></script>
     </main>
 

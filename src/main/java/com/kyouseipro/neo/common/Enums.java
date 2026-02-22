@@ -552,4 +552,10 @@ public class Enums {
             throw new IllegalArgumentException("Unknown TimeworksState: " + code);
         }
     }
+
+    public enum ParentType {
+        CONSTRUCTION,
+        LICENSE,
+        CUSTOMER
+    }
 }
