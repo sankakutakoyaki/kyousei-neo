@@ -13,7 +13,6 @@ import java.util.Map;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.common.file.entity.FileDto;
+import com.kyouseipro.neo.common.file.entity.FileEntity;
 import com.kyouseipro.neo.common.file.entity.GroupRequest;
 import com.kyouseipro.neo.common.file.repository.FileRepository;
 import com.kyouseipro.neo.common.file.service.FileGroupService;
@@ -134,9 +134,26 @@ public class FileController {
             .body(resource);
     }
 
+    @GetMapping("/api/files")
+    public List<FileEntity> getFiles(
+            @RequestParam String parentType,
+            @RequestParam Long parentId) {
 
+        return fileRepository.findByParent(parentType, parentId);
+    }
 
+    @GetMapping("/{internalName}")
+    public ResponseEntity<Resource> getFile(@PathVariable String internalName) throws Exception {
 
+        Path path = Paths.get("upload-dir").resolve(internalName);
+        Resource resource = new UrlResource(path.toUri());
+
+        String contentType = Files.probeContentType(path);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(resource);
+    }
 
 
 

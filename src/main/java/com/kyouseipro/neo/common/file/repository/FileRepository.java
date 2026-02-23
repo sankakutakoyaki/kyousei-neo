@@ -227,4 +227,32 @@ public class FileRepository {
                 ps.setLong(2, fileId);
             });
     }
+
+    public List<FileEntity> findByParent(String parentType, Long parentId) {
+
+        String sql = """
+            SELECT file_id,
+                parent_type,
+                parent_id,
+                file_name,
+                internal_name,
+                content_type,
+                folder_name,
+                version
+            FROM files
+            WHERE parent_type = ?
+            AND parent_id = ?
+            AND state <> 0
+            ORDER BY version, file_id
+        """;
+
+        return sqlRepository.queryList(sql,
+            (ps, v) -> {
+                ps.setString(1, parentType);
+                ps.setLong(2, parentId);
+                ps.setInt(3, Enums.state.DELETE.getCode());
+            },
+            FileEntityMapper::map
+        );
+    }
 }

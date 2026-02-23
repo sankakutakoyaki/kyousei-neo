@@ -10,6 +10,7 @@
 @import url("/css/common/dialog.css");
 @import url("/css/common/table.css");
 @import url("/css/common/list.css");
+@import url("/css/common/file.css");
 
 :root {
     font-size: 12px;

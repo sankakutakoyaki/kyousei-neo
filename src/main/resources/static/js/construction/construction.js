@@ -10,4 +10,8 @@ window.addEventListener("load", async () => {
     const fileInput = document.getElementById('file-input');
     const fileList =  document.getElementById('file-list');
     setDragAndDrop(fileList, fileInput, FILE_CONFIG);
+
+    document.getElementById("viewer-next").onclick = FileViewer.next;
+    document.getElementById("viewer-prev").onclick = FileViewer.prev;
+    document.getElementById("viewer-close").onclick = FileViewer.close;
 });

@@ -1,0 +1,27 @@
+@charset "UTF-8";
+
+.viewer {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hidden {
+    display: none;
+}
+
+.nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 30px;
+    background: none;
+    color: white;
+    border: none;
+}
+
+#viewer-prev { left: 20px; }
+#viewer-next { right: 20px; }

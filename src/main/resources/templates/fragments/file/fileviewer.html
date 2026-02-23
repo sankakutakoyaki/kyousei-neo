@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body th:fragment="mainFragment()">
+    <div id="file-viewer" class="viewer hidden">
+        <div class="viewer-header">
+            <button id="viewer-close">×</button>
+        </div>
+
+        <button id="viewer-prev" class="nav-btn">◀</button>
+
+        <div id="viewer-body"></div>
+
+        <button id="viewer-next" class="nav-btn">▶</button>
+    </div>
+</body>

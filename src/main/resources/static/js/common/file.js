@@ -1,5 +1,81 @@
 "use strict"
 
+const FileViewer = (() => {
+
+    let files = [];
+    let index = 0;
+
+    async function open(parentType, parentId, clickedIndex) {
+
+        const res = await fetch(
+            `/api/files?parentType=${parentType}&parentId=${parentId}`
+        );
+
+        files = await res.json();
+        index = clickedIndex;
+
+        // document.getElementById("file-viewer")
+        //         .classList.remove("hidden");
+        openFormDialog("form-fileviewer");
+
+        render();
+    }
+
+    function render() {
+
+        const file = files[index];
+        const body = document.getElementById("viewer-body");
+        body.innerHTML = "";
+
+        const url = `/files/${file.internalName}`;
+
+        if (file.contentType?.startsWith("image/")) {
+
+            const img = document.createElement("img");
+            img.src = url;
+            img.style.maxWidth = "90vw";
+            img.style.maxHeight = "90vh";
+            body.appendChild(img);
+
+        } else if (file.contentType === "application/pdf") {
+
+            const iframe = document.createElement("iframe");
+            iframe.src = url;
+            iframe.style.width = "90vw";
+            iframe.style.height = "90vh";
+            body.appendChild(iframe);
+
+        } else {
+
+            body.innerHTML = `
+                <p>この形式はプレビュー非対応です</p>
+                <a href="${url}" download>ダウンロード</a>
+            `;
+        }
+    }
+
+    function next() {
+        if (index < files.length - 1) {
+            index++;
+            render();
+        }
+    }
+
+    function prev() {
+        if (index > 0) {
+            index--;
+            render();
+        }
+    }
+
+    function close() {
+        document.getElementById("file-viewer")
+                .classList.add("hidden");
+    }
+
+    return { open, next, prev, close };
+})();
+
 async function loadFiles(config) {
 
     const ul = document.getElementById(config.listId);
@@ -105,12 +181,15 @@ async function loadFiles(config) {
         };
 
         // ===== ファイル描画 =====
-        group.files.forEach(file => {
+        group.files.forEach((file, i) => {
 
             const li = document.createElement("li");
             li.classList.add('file-item');
-
-            const nameSpan =
+console.log(file)
+            li.onclick = () => {
+                FileViewer.open(file.parentType, file.parentId, i);
+            };
+                    const nameSpan =
                 createNameSpan(file, config);
 
             const deleteBtn =
