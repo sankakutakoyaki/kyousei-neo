@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.common.file.entity.FileDto;
-import com.kyouseipro.neo.common.file.entity.FileEntity;
 import com.kyouseipro.neo.common.file.entity.GroupRequest;
 import com.kyouseipro.neo.common.file.repository.FileRepository;
 import com.kyouseipro.neo.common.file.service.FileGroupService;
@@ -134,18 +133,20 @@ public class FileController {
             .body(resource);
     }
 
-    @GetMapping("/api/files")
-    public List<FileEntity> getFiles(
-            @RequestParam String parentType,
-            @RequestParam Long parentId) {
+    // @GetMapping("/api/files")
+    // public List<FileEntity> getFiles(
+    //         @RequestParam String parentType,
+    //         @RequestParam Long parentId) {
 
-        return fileRepository.findByParent(parentType, parentId);
-    }
+    //     return fileRepository.findByParent(parentType, parentId);
+    // }
 
-    @GetMapping("/{internalName}")
-    public ResponseEntity<Resource> getFile(@PathVariable String internalName) throws Exception {
+    @GetMapping("/group/{parentType}/group/{groupId}")
+    public ResponseEntity<Resource> getFile(
+        @PathVariable String parentType,
+        @PathVariable Long groupId) throws Exception {
 
-        Path path = Paths.get("upload-dir").resolve(internalName);
+        Path path = Paths.get("upload-dir").resolve(parentType);
         Resource resource = new UrlResource(path.toUri());
 
         String contentType = Files.probeContentType(path);

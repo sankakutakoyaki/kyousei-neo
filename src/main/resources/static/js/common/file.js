@@ -2,32 +2,29 @@
 
 const FileViewer = (() => {
 
+    const config = FILE_CONFIG;
     let files = [];
     let index = 0;
 
-    async function open(parentType, parentId, clickedIndex) {
+    async function open(url, clickedIndex) {
 
-        const res = await fetch(
-            `/api/files?parentType=${parentType}&parentId=${parentId}`
-        );
+        const res = await fetch(url);
 
         files = await res.json();
         index = clickedIndex;
 
-        // document.getElementById("file-viewer")
-        //         .classList.remove("hidden");
         openFormDialog("form-fileviewer");
 
         render();
     }
 
     function render() {
-
+        
         const file = files[index];
         const body = document.getElementById("viewer-body");
         body.innerHTML = "";
 
-        const url = `/files/${file.internalName}`;
+        const url = `${config.selectUrl}/gorup/${file.groupId}`;
 
         if (file.contentType?.startsWith("image/")) {
 
@@ -69,8 +66,9 @@ const FileViewer = (() => {
     }
 
     function close() {
-        document.getElementById("file-viewer")
-                .classList.add("hidden");
+        // document.getElementById("file-viewer")
+        //         .classList.add("hidden");
+        closeFormDialog("form-fileviewer");
     }
 
     return { open, next, prev, close };
@@ -80,14 +78,14 @@ async function loadFiles(config) {
 
     const ul = document.getElementById(config.listId);
 
-    const entityId = document.getElementById(config.parentId).value;
+    const parentId = document.getElementById(config.parentId).value;
 
-    if (!entityId) {
+    if (!parentId) {
         alert("IDを入力してください");
         return;
     }
 
-    const response = await fetch(`${config.selectUrl}/${entityId}`);
+    const response = await fetch(`${config.selectUrl}/${parentId}`);
     const files = await response.json();
 
     if (!files || files.length === 0) {
@@ -185,9 +183,9 @@ async function loadFiles(config) {
 
             const li = document.createElement("li");
             li.classList.add('file-item');
-console.log(file)
+
             li.onclick = () => {
-                FileViewer.open(file.parentType, file.parentId, i);
+                FileViewer.open(`${config.selectUrl}/${parentId}`, i);
             };
                     const nameSpan =
                 createNameSpan(file, config);
