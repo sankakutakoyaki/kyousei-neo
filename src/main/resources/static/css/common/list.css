@@ -47,13 +47,21 @@
     position: relative;
 }
 
-/* #file-list li:hover .remove-btn {
-    display: inline;
-} */
+#file-list li.selected {
+    background-color: var(--row-selected);
+}
+
 #file-list li.file-item:hover .remove-btn {
     display: inline; /* ホバー時のみ表示 */
 }
 
+.viewer-btn {
+    /* position: absolute; */
+    top: 50%;
+    right: 3rem;
+    cursor: pointer;
+    display: none;
+}
 .remove-btn {
     position: absolute;
     /* margin-left: .2rem; */

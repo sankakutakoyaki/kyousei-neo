@@ -181,13 +181,26 @@ async function loadFiles(config) {
         // ===== ファイル描画 =====
         group.files.forEach((file, i) => {
 
-            const li = document.createElement("li");
+            // const li = document.createElement("li");
+
+            const li = createListItemWithSelection(
+                file.fileId,
+                {
+                    area: fileUl,
+
+                    onSecondClick: () => {
+                        startInlineEdit(file, config);
+                    },
+
+                    onDoubleClick: () => {
+                        FileViewer.open(`${config.selectUrl}/${parentId}`, i);
+                    }
+                }
+            );
+
             li.classList.add('file-item');
 
-            li.onclick = () => {
-                FileViewer.open(`${config.selectUrl}/${parentId}`, i);
-            };
-                    const nameSpan =
+            const nameSpan =
                 createNameSpan(file, config);
 
             const deleteBtn =
@@ -234,24 +247,30 @@ function createNameSpan(file, config) {
     nameSpan.textContent = file.displayName;
     nameSpan.style.cursor = "pointer";
 
-    nameSpan.onclick = () => {
+    nameSpan.onclick = (e) => {
+
+        e.stopPropagation(); // liのclickを止める
+
+        const li = nameSpan.closest("li");
 
         const input = document.createElement("input");
         input.type = "text";
         input.value = file.displayName;
         input.classList.add("file-name-input");
 
-        let committed = false; // 二重実行防止
+        let committed = false;
 
         async function commit() {
 
             if (committed) return;
             committed = true;
 
+            li.removeEventListener("click", outsideClickHandler);
+
             const newName = input.value.trim();
 
             if (!newName || newName === file.displayName) {
-                updateFileDisplay(config);
+                loadFiles(config);
                 return;
             }
 
@@ -266,21 +285,32 @@ function createNameSpan(file, config) {
                 })
             });
 
-            updateFileDisplay(config);
+            loadFiles(config);
         }
 
-        // Enterで確定
-        input.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") {
+        function cancel() {
+            if (committed) return;
+            committed = true;
+            li.removeEventListener("click", outsideClickHandler);
+            loadFiles(config);
+        }
+
+        // liのinput以外クリック検知
+        function outsideClickHandler(event) {
+            if (event.target !== input) {
                 commit();
             }
-            if (e.key === "Escape") {
-                committed = true;
-                updateFileDisplay(config);
-            }
+        }
+
+        li.addEventListener("click", outsideClickHandler);
+
+        // Enter確定
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") commit();
+            if (e.key === "Escape") cancel();
         });
 
-        // フォーカスアウトで確定
+        // フォーカスアウトでも確定
         input.addEventListener("blur", commit);
 
         nameSpan.replaceWith(input);
