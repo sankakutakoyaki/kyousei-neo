@@ -2,6 +2,7 @@ package com.kyouseipro.neo.common.file.controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.common.file.entity.FileDto;
+import com.kyouseipro.neo.common.file.entity.FileEntity;
 import com.kyouseipro.neo.common.file.entity.GroupRequest;
 import com.kyouseipro.neo.common.file.repository.FileRepository;
 import com.kyouseipro.neo.common.file.service.FileGroupService;
@@ -61,6 +63,42 @@ public class FileController {
     public List<FileDto> list(@PathVariable String parentType, @PathVariable Long parentId) {
         
         return fileRepository.findFiles(parentType.toUpperCase(), parentId);
+    }
+
+    @GetMapping("/file/get/{parentType}/{parentId}/{fileId}")
+    public ResponseEntity<Resource> view(
+            @PathVariable String parentType,
+            @PathVariable Long parentId,
+            @PathVariable Long fileId) throws MalformedURLException {
+
+        FileEntity file = fileRepository.findById(fileId);
+
+        if (file == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // URLとDBの整合性チェック
+        if (!file.getParentType().equalsIgnoreCase(parentType)
+                || !file.getParentId().equals(parentId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Path path = Paths.get(
+                UploadConfig.getUploadDir(),
+                file.getParentType(),
+                file.getParentId().toString(),
+                file.getStoredName()
+        );
+
+        Resource resource = new UrlResource(path.toUri());
+
+        if (!resource.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(file.getMimeType()))
+                .body(resource);
     }
 
     /** 削除 */

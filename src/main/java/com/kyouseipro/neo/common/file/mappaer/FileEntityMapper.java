@@ -12,6 +12,8 @@ public class FileEntityMapper {
         FileEntity file = new FileEntity();
         file.setFileId(rs.getLong("file_id"));
         file.setGroupId(rs.getLong("group_id"));
+        file.setParentId(rs.getLong("parent_id"));
+        file.setParentType(rs.getString("parent_type"));
         file.setStoredName(rs.getString("stored_name"));
         file.setOriginalName(rs.getString("original_name"));
         file.setDisplayName(rs.getString("display_name"));

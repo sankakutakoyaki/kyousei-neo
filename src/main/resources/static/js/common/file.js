@@ -2,34 +2,64 @@
 
 const FileViewer = (() => {
 
-    if (typeof FILE_CONFIG === "undefined") {
-        // console.warn("FILE_CONFIG not found. FileViewer disabled.");
-        return {};
-    }
+    if (typeof FILE_CONFIG === "undefined") return {};
 
     const config = FILE_CONFIG;
     let files = [];
     let index = 0;
 
-    async function open(url, clickedIndex) {
+    // async function open(url, clickedIndex) {
 
-        const res = await fetch(url);
-        files = await res.json();
-        index = clickedIndex;
+    //     const res = await fetch(url);
+    //     files = await res.json();
+    //     index = clickedIndex;
 
-        openFormDialog("form-fileviewer");
-        render();
+    //     openFormDialog("form-fileviewer");
+    //     render();
+    // }
+async function open(url, clickedIndex) {
+
+    console.log("fetch url:", url);
+
+    const res = await fetch(url);
+
+    console.log("status:", res.status);
+    console.log("content-type:", res.headers.get("content-type"));
+
+    const text = await res.text();
+    console.log("raw response:", text);
+
+    try {
+        files = JSON.parse(text);
+    } catch (e) {
+        console.error("JSON parse error");
+        files = [];
     }
 
-    function render() {
+    console.log("files:", files);
+
+    index = clickedIndex;
+
+    if (!files || files.length === 0) {
+        console.warn("files is empty");
+        return;
+    }
+
+    openFormDialog("form-fileviewer");
+    render();
+}
+    async function render() {
 
         const file = files[index];
         const body = document.getElementById("viewer-body");
         body.innerHTML = "";
 
-        const url = `${config.selectUrl}/group/${file.groupId}`;
+        console.log(file); // ← デバッグ
 
-        if (file.contentType?.startsWith("image/")) {
+        const url =
+            `${config.fileViewUrl}/${file.parentId}/${file.fileId}`;
+
+        if (file.mimeType?.startsWith("image/")) {
 
             const img = document.createElement("img");
             img.src = url;
@@ -37,20 +67,22 @@ const FileViewer = (() => {
             img.style.maxHeight = "90vh";
             body.appendChild(img);
 
-        } else if (file.contentType === "application/pdf") {
+        } else if (file.mimeType === "application/pdf") {
 
             const iframe = document.createElement("iframe");
             iframe.src = url;
             iframe.style.width = "90vw";
             iframe.style.height = "90vh";
+            iframe.style.border = "none";
             body.appendChild(iframe);
 
         } else {
 
-            body.innerHTML = `
-                <p>この形式はプレビュー非対応です</p>
-                <a href="${url}" download>ダウンロード</a>
-            `;
+            const link = document.createElement("a");
+            link.href = url;
+            link.textContent = "ダウンロード";
+            link.download = file.displayName;
+            body.appendChild(link);
         }
     }
 
@@ -140,6 +172,7 @@ async function loadFiles(config) {
                     onSecondClick: () => startInlineEdit(file, config),
                     onDoubleClick: () =>
                         FileViewer.open(`${config.selectUrl}/${parentId}`, i)
+                        // FileViewer.open(`${config.fileViewUrl}/${file.parentId}/${file.fileId}`, i)
                 }
             );
 
@@ -277,326 +310,3 @@ async function uploadFiles(files, config) {
     const result = await response.json();
     return result;
 }
-
-
-
-// const FileViewer = (() => {
-
-//     const config = FILE_CONFIG;
-//     let files = [];
-//     let index = 0;
-
-//     async function open(url, clickedIndex) {
-
-//         const res = await fetch(url);
-
-//         files = await res.json();
-//         index = clickedIndex;
-
-//         openFormDialog("form-fileviewer");
-
-//         render();
-//     }
-
-//     function render() {
-        
-//         const file = files[index];
-//         const body = document.getElementById("viewer-body");
-//         body.innerHTML = "";
-
-//         const url = `${config.selectUrl}/gorup/${file.groupId}`;
-
-//         if (file.contentType?.startsWith("image/")) {
-
-//             const img = document.createElement("img");
-//             img.src = url;
-//             img.style.maxWidth = "90vw";
-//             img.style.maxHeight = "90vh";
-//             body.appendChild(img);
-
-//         } else if (file.contentType === "application/pdf") {
-
-//             const iframe = document.createElement("iframe");
-//             iframe.src = url;
-//             iframe.style.width = "90vw";
-//             iframe.style.height = "90vh";
-//             body.appendChild(iframe);
-
-//         } else {
-
-//             body.innerHTML = `
-//                 <p>この形式はプレビュー非対応です</p>
-//                 <a href="${url}" download>ダウンロード</a>
-//             `;
-//         }
-//     }
-
-//     function next() {
-//         if (index < files.length - 1) {
-//             index++;
-//             render();
-//         }
-//     }
-
-//     function prev() {
-//         if (index > 0) {
-//             index--;
-//             render();
-//         }
-//     }
-
-//     function close() {
-//         // document.getElementById("file-viewer")
-//         //         .classList.add("hidden");
-//         closeFormDialog("form-fileviewer");
-//     }
-
-//     return { open, next, prev, close };
-// })();
-
-// async function loadFiles(config) {
-
-//     const ul = document.getElementById(config.listId);
-
-//     const parentId = document.getElementById(config.parentId).value;
-
-//     if (!parentId) {
-//         alert("IDを入力してください");
-//         return;
-//     }
-
-//     const response = await fetch(`${config.selectUrl}/${parentId}`);
-//     const files = await response.json();
-
-//     if (!files || files.length === 0) {
-//         ul.innerHTML = "";
-//         return;
-//     }
-
-//     ul.innerHTML = "";
-
-//     const grouped = {};
-
-//     files.forEach(file => {
-//         if (!grouped[file.groupId]) {
-//             grouped[file.groupId] = {
-//                 groupName: file.groupName,
-//                 files: []
-//             };
-//         }
-//         grouped[file.groupId].files.push(file);
-//     });
-
-//     Object.values(grouped).forEach(group => {
-
-//         const groupContainer = document.createElement("li");
-//         groupContainer.classList.add("group-container");
-
-//         const groupId = group.files[0]?.groupId;
-//         groupContainer.dataset.groupId = groupId;
-
-//         const groupTitle = document.createElement("div");
-//         groupTitle.classList.add("group-title");
-
-//         const toggleBtn = document.createElement("span");
-//         toggleBtn.textContent = "▼";
-//         toggleBtn.style.cursor = "pointer";
-//         toggleBtn.style.marginRight = "5px";
-
-//         const groupNameSpan = document.createElement("span");
-//         groupNameSpan.textContent = group.groupName;
-
-//         const fileUl = document.createElement("ul");
-//         fileUl.style.display = "block";
-
-//         toggleBtn.onclick = () => {
-//             const isOpen = fileUl.style.display === "block";
-//             fileUl.style.display = isOpen ? "none" : "block";
-//             toggleBtn.textContent = isOpen ? "▶" : "▼";
-//         };
-
-//         // ===== グループ名編集 =====
-//         groupNameSpan.onclick = () => {
-//             const input = document.createElement("input");
-//             input.type = "text";
-//             input.value = group.groupName;
-
-//             groupTitle.replaceChild(input, groupNameSpan);
-//             input.focus();
-
-//             async function save(newName) {
-
-//                 if (!newName || newName === group.groupName) {
-//                     groupTitle.replaceChild(groupNameSpan, input);
-//                     return;
-//                 }
-
-//                 await fetch(
-//                     `${config.renameUrl}/${groupId}`,
-//                     {
-//                         method: "POST",
-//                         headers: {
-//                             "Content-Type": "application/json",
-//                             "X-CSRF-TOKEN": config.csrfToken
-//                         },
-//                         body: JSON.stringify({
-//                             groupName: newName
-//                         })
-//                     }
-//                 );
-
-//                 groupNameSpan.textContent = newName;
-//                 groupTitle.replaceChild(groupNameSpan, input);
-//             }
-
-//             input.addEventListener("keydown", e => {
-//                 if (e.key === "Enter") save(input.value);
-//             });
-
-//             input.addEventListener("blur", () => {
-//                 save(input.value);
-//             });
-//         };
-
-//         // ===== ファイル描画 =====
-//         group.files.forEach((file, i) => {
-
-//             // const li = document.createElement("li");
-
-//             const li = createListItemWithSelection(
-//                 file.fileId,
-//                 {
-//                     area: fileUl,
-
-//                     onSecondClick: () => {
-//                         startInlineEdit(file, config);
-//                     },
-
-//                     onDoubleClick: () => {
-//                         FileViewer.open(`${config.selectUrl}/${parentId}`, i);
-//                     }
-//                 }
-//             );
-
-//             li.classList.add('file-item');
-
-//             const nameSpan =
-//                 createNameSpan(file, config);
-
-//             const deleteBtn =
-//                 createDeleteButton(file, config);
-
-//             li.appendChild(nameSpan);
-//             li.appendChild(deleteBtn);
-
-//             fileUl.appendChild(li);
-//         });
-
-//         groupTitle.appendChild(toggleBtn);
-//         groupTitle.appendChild(groupNameSpan);
-
-//         groupContainer.appendChild(groupTitle);
-//         groupContainer.appendChild(fileUl);
-
-//         ul.appendChild(groupContainer);
-//     });
-// }
-
-// function createDeleteButton(file, config) {
-//     const deleteBtn = document.createElement("button");
-//     deleteBtn.innerHTML = '✖️';
-//     deleteBtn.className = 'remove-btn';
-//     deleteBtn.onclick = async () => {
-
-//         await fetch(`/api/files/file/delete/${file.fileId}`, {
-//             headers: {
-//                 'X-CSRF-TOKEN': config.csrfToken,
-//             },
-//             method: "POST"
-//         });
-
-//         loadFiles(config);
-//     };
-
-//     return deleteBtn;
-// }
-
-// function createNameSpan(file, config) {
-
-//     const nameSpan = document.createElement("span");
-//     nameSpan.textContent = file.displayName;
-//     nameSpan.style.cursor = "pointer";
-
-//     nameSpan.onclick = (e) => {
-
-//         e.stopPropagation(); // liのclickを止める
-
-//         const li = nameSpan.closest("li");
-
-//         const input = document.createElement("input");
-//         input.type = "text";
-//         input.value = file.displayName;
-//         input.classList.add("file-name-input");
-
-//         let committed = false;
-
-//         async function commit() {
-
-//             if (committed) return;
-//             committed = true;
-
-//             li.removeEventListener("click", outsideClickHandler);
-
-//             const newName = input.value.trim();
-
-//             if (!newName || newName === file.displayName) {
-//                 loadFiles(config);
-//                 return;
-//             }
-
-//             await fetch(`/api/files/file/rename/${file.fileId}`, {
-//                 method: "POST",
-//                 headers: {
-//                     "Content-Type": "application/json",
-//                     "X-CSRF-TOKEN": config.csrfToken
-//                 },
-//                 body: JSON.stringify({
-//                     displayName: newName
-//                 })
-//             });
-
-//             loadFiles(config);
-//         }
-
-//         function cancel() {
-//             if (committed) return;
-//             committed = true;
-//             li.removeEventListener("click", outsideClickHandler);
-//             loadFiles(config);
-//         }
-
-//         // liのinput以外クリック検知
-//         function outsideClickHandler(event) {
-//             if (event.target !== input) {
-//                 commit();
-//             }
-//         }
-
-//         li.addEventListener("click", outsideClickHandler);
-
-//         // Enter確定
-//         input.addEventListener("keydown", (e) => {
-//             if (e.key === "Enter") commit();
-//             if (e.key === "Escape") cancel();
-//         });
-
-//         // フォーカスアウトでも確定
-//         input.addEventListener("blur", commit);
-
-//         nameSpan.replaceWith(input);
-//         input.focus();
-//         input.select();
-//     };
-
-//     return nameSpan;
-// }

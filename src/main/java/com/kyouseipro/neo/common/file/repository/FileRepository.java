@@ -107,8 +107,11 @@ public class FileRepository {
         String sql = """
             SELECT
                 f.file_id,
+                g.parent_id,
+                g.parent_type,
                 f.original_name,
                 f.display_name,
+                f.mime_type,
                 f.group_id,
                 g.group_name
             FROM construction_file f
@@ -194,12 +197,39 @@ public class FileRepository {
     }
 
     public FileEntity findById(Long fileId) {
-        String sql = "SELECT * FROM construction_file WHERE file_id = ? AND state <> ?";
+        String sql = """
+            SELECT
+                f.file_id,
+                g.parent_id,
+                g.parent_type,
+                f.stored_name,
+                f.original_name,
+                f.display_name,
+                f.mime_type,
+                f.file_type,
+                f.file_size,
+                f.width,
+                f.height,
+                f.display_order,
+                f.group_id,
+                g.group_name,
+                f.create_date,
+                f.update_date,
+                f.state
+            FROM construction_file f
+            JOIN construction_file_group g
+            ON f.group_id = g.group_id
+            WHERE f.file_id = ?   
+            AND f.state <> ?
+            ORDER BY g.display_order, f.display_order
+        """;
+        // String sql = "SELECT * FROM construction_file WHERE file_id = ? AND state <> ?";
         return sqlRepository.queryOneOrNull(
             sql, 
             (ps, v) -> {
-                ps.setLong(1, fileId);
-                ps.setInt(2, Enums.state.DELETE.getCode());
+                int idx = 1;
+                ps.setLong(idx++, fileId);
+                ps.setInt(idx++, Enums.state.DELETE.getCode());
             },
             FileEntityMapper::map
         );
@@ -237,6 +267,7 @@ public class FileRepository {
                 file_name,
                 internal_name,
                 content_type,
+                mime_type,
                 folder_name,
                 version
             FROM files

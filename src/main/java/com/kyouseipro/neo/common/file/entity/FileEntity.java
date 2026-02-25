@@ -8,6 +8,8 @@ import lombok.Data;
 public class FileEntity {
     private Long fileId;
     private Long groupId;
+    private Long parentId;
+    private String parentType;
     private String storedName;
     private String originalName;
     private String displayName;

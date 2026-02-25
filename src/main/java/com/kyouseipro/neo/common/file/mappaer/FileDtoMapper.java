@@ -10,6 +10,9 @@ public class FileDtoMapper {
         FileDto file = new FileDto();
 
         file.setFileId(rs.getLong("file_id"));
+        file.setParentId(rs.getLong("parent_id"));
+        file.setParentType(rs.getString("parent_type"));
+        file.setMimeType(rs.getString("mime_type"));
         file.setGroupId(rs.getLong("group_id"));
 
         file.setDisplayName(rs.getString("display_name"));
