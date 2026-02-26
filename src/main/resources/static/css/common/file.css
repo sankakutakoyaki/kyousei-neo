@@ -7,21 +7,66 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1000;
 }
 
 .hidden {
     display: none;
 }
 
-.nav-btn {
+.viewer-header {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 30px;
-    background: none;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     color: white;
-    border: none;
+    font-size: 1rem;
+    background: rgba(0,0,0,0.5);
 }
 
-#viewer-prev { left: 20px; }
-#viewer-next { right: 20px; }
+.viewer-info {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.nav-btn {
+    position: absolute;
+    /* top: 50%; */
+    /* transform: translateY(-50%); */
+    /* font-size: 2rem; */
+    background: none;
+    /* color: white; */
+    border: none;
+    cursor: pointer;
+}
+
+.nav-btn>img {
+    width: 5rem;
+}
+
+#viewer-prev { left: 1rem; }
+#viewer-next { right: 1rem; }
+#viewer-close {
+    font-size: 3rem;
+    background: none;
+    color: darkgrey;
+    border: none;
+    cursor: pointer;
+}
+
+#viewer-body img {
+    max-width: 90vw;
+    max-height: 80vh;
+    object-fit: contain;
+}
+
+.nav-hidden {
+    visibility: hidden;   /* 消えるけど位置は保持 */
+    pointer-events: none; /* クリック無効 */
+}

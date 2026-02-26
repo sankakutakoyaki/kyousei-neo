@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.file.entity.FileEntity;
 import com.kyouseipro.neo.common.file.entity.FileMeta;
 import com.kyouseipro.neo.common.file.repository.FileGroupRepository;
@@ -252,76 +253,122 @@ public class FileService {
 
     //     return list;
     // }
-    public List<FileMeta> saveFiles(
-            MultipartFile[] files,
-            String folderName) {
+    // public List<FileMeta> saveFiles(
+    //         MultipartFile[] files,
+    //         String folderName) {
 
-        if (files == null || files.length == 0) {
-            return Collections.emptyList();
-        }
+    //     if (files == null || files.length == 0) {
+    //         return Collections.emptyList();
+    //     }
 
-        File uploadDir = new File(UploadConfig.getUploadDir() + folderName);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-        }
+    //     File uploadDir = new File(UploadConfig.getUploadDir() + folderName);
+    //     if (!uploadDir.exists()) {
+    //         uploadDir.mkdirs();
+    //     }
 
-        List<FileMeta> list = new ArrayList<>();
+    //     List<FileMeta> list = new ArrayList<>();
 
-        for (MultipartFile file : files) {
+    //     for (MultipartFile file : files) {
 
-            if (file.isEmpty()) continue;
+    //         if (file.isEmpty()) continue;
 
-            try {
-                String original = file.getOriginalFilename();
-                if (original == null) continue;
+    //         try {
+    //             String original = file.getOriginalFilename();
+    //             if (original == null) continue;
 
-                original = original.replaceAll(" ", "_");
+    //             original = original.replaceAll(" ", "_");
 
-                String ext = "";
-                int dot = original.lastIndexOf(".");
-                if (dot != -1) ext = original.substring(dot);
+    //             String ext = "";
+    //             int dot = original.lastIndexOf(".");
+    //             if (dot != -1) ext = original.substring(dot);
 
-                String stored = UUID.randomUUID() + ext;
+    //             String stored = UUID.randomUUID() + ext;
 
-                File dest = new File(uploadDir, stored);
-                file.transferTo(dest);
+    //             File dest = new File(uploadDir, stored);
+    //             file.transferTo(dest);
 
-                FileMeta meta = new FileMeta();
-                meta.setStoredName(stored);
-                meta.setOriginalName(original);
-                meta.setMimeType(file.getContentType());
-                meta.setFileSize(file.getSize());
+    //             FileMeta meta = new FileMeta();
+    //             meta.setStoredName(stored);
+    //             meta.setOriginalName(original);
+    //             meta.setMimeType(file.getContentType());
+    //             meta.setFileSize(file.getSize());
 
-                if (meta.getMimeType() != null &&
-                    meta.getMimeType().startsWith("image/")) {
+    //             if (meta.getMimeType() != null &&
+    //                 meta.getMimeType().startsWith("image/")) {
 
-                    BufferedImage img = ImageIO.read(dest);
-                    if (img != null) {
-                        meta.setWidth(img.getWidth());
-                        meta.setHeight(img.getHeight());
-                    }
-                }
+    //                 BufferedImage img = ImageIO.read(dest);
+    //                 if (img != null) {
+    //                     meta.setWidth(img.getWidth());
+    //                     meta.setHeight(img.getHeight());
+    //                 }
+    //             }
 
-                list.add(meta);
+    //             list.add(meta);
 
-            } catch (IOException ignored) {}
-        }
+    //         } catch (IOException ignored) {}
+    //     }
 
-        return list;
-    }
+    //     return list;
+    // }
 
     /**
      * ファイル削除用エンドポイント
      * @param url 削除するファイルのパス
      * @return
      */
-    public boolean deleteFile(String url) {
-        try {
-            Path filePath = Paths.get(url);
-            return Files.deleteIfExists(filePath);
-        } catch (IOException e) {
-            return false;
+    // public boolean deleteFile(String url) {
+    //     try {
+    //         Path filePath = Paths.get(url);
+    //         return Files.deleteIfExists(filePath);
+    //     } catch (IOException e) {
+    //         return false;
+    //     }
+    // }
+    @Transactional
+    public boolean deleteFile(Long fileId) {
+
+        // ① 取得（ACTIVEのみ）
+        FileEntity file = fileRepository.findActiveById(fileId);
+        if (file == null) {
+            throw new RuntimeException("File not found");
         }
+
+        Long groupId = file.getGroupId();
+
+        // ② 物理削除
+        Path path = Paths.get(
+                UploadConfig.getUploadDir(),
+                file.getParentType(),
+                file.getParentId().toString(),
+                file.getStoredName()
+        );
+
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException e) {
+            throw new RuntimeException("Physical delete failed", e);
+        }
+
+        // ③ file 論理削除
+        fileRepository.updateState(fileId, Enums.state.DELETE.getCode());
+
+        // ④ group内ACTIVE件数確認
+        int activeCount =
+                fileRepository.countByGroupIdAndState(
+                        groupId,
+                        Enums.state.INITIAL.getCode()
+                );
+
+        // ⑤ 0ならgroupも論理削除
+        if (activeCount == 0) {
+            fileGroupRepository.updateState(
+                    groupId,
+                    Enums.state.DELETE.getCode()
+            );
+            return true; // group deleted
+        }
+
+        return false;
     }
 
     public String toCsvField(Object value) {
@@ -351,9 +398,9 @@ public class FileService {
             MultipartFile[] files
     ) throws IOException {
 
-        // ① groupが無い場合は作成
+        parentType = parentType.toLowerCase();
+
         if (groupId == null || !fileGroupRepository.exists(groupId)) {
-            // groupId = groupRepository.insert(constructionId);
             groupId = fileGroupService.createGroup(parentType, parentId, "自動作成グループ");
         }
 
@@ -361,20 +408,50 @@ public class FileService {
 
         for (MultipartFile file : files) {
 
-            String originalName = file.getOriginalFilename();
-            // ★ ここで重複回避
-            String displayName = createUniqueDisplayName(groupId, null, originalName);
+            if (file.isEmpty()) continue;
 
+            String originalName = file.getOriginalFilename();
+            if (originalName == null) continue;
+
+            originalName = originalName.replaceAll(" ", "_");
+
+            // 拡張子取得
+            String ext = "";
+            int dot = originalName.lastIndexOf(".");
+            if (dot != -1) {
+                ext = originalName.substring(dot);
+            }
+
+            // 保存用ファイル名
+            String storedName = UUID.randomUUID() + ext;
+
+            // 保存先パス
+            Path savePath = Paths.get(
+                    UploadConfig.getUploadDir(),
+                    parentType,
+                    parentId.toString(),
+                    storedName
+            );
+
+            // ディレクトリ作成
+            Files.createDirectories(savePath.getParent());
+
+            // 物理保存
+            file.transferTo(savePath.toFile());
+
+            // DB保存
             FileEntity entity = new FileEntity();
+            entity.setParentType(parentType);
+            entity.setParentId(parentId);
             entity.setGroupId(groupId);
             entity.setOriginalName(originalName);
-            entity.setStoredName(UUID.randomUUID().toString());
-            entity.setDisplayName(displayName);
+            entity.setStoredName(storedName);
+            entity.setDisplayName(originalName);
             entity.setMimeType(file.getContentType());
             entity.setFileSize(file.getSize());
             entity.setFileType(detectFileType(file.getContentType()));
             entity.setDisplayOrder(
-                fileRepository.getNextDisplayOrder(groupId)
+                    fileRepository.getNextDisplayOrder(groupId)
             );
 
             Long fileId = fileRepository.insert(entity);
@@ -391,26 +468,26 @@ public class FileService {
         return "OTHER";
     }
 
-    @Transactional
-    public void deleteFile(Long fileId) {
+    // @Transactional
+    // public void deleteFile(Long fileId) {
 
-        FileEntity file = fileRepository.findById(fileId);
+    //     FileEntity file = fileRepository.findById(fileId);
 
-        if (file == null) {
-            throw new RuntimeException("ファイルが存在しません");
-        }
+    //     if (file == null) {
+    //         throw new RuntimeException("ファイルが存在しません");
+    //     }
 
-        Long groupId = file.getGroupId();
-        int deletedOrder = file.getDisplayOrder();
+    //     Long groupId = file.getGroupId();
+    //     int deletedOrder = file.getDisplayOrder();
 
-        // ① 削除
-        fileRepository.delete(fileId);
+    //     // ① 削除
+    //     fileRepository.delete(fileId);
 
-        // ② display_order 詰める
-        fileRepository.decrementDisplayOrderAfter(
-                groupId, deletedOrder
-        );
-    }
+    //     // ② display_order 詰める
+    //     fileRepository.decrementDisplayOrderAfter(
+    //             groupId, deletedOrder
+    //     );
+    // }
 
     /**
      * display_name 重複チェック（DB）

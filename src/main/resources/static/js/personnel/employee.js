@@ -223,6 +223,7 @@ window.addEventListener("load", async () => {
             document.getElementById(config.searchId).addEventListener('search', async function(e) {
                 await execFilterDisplay(e.currentTarget);
             }, false);
+            makeSortable(config.tableId);
         }
         let list = origin.filter(value => { return value.category === config.category });
         await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);

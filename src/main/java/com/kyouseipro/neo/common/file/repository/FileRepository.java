@@ -2,6 +2,7 @@ package com.kyouseipro.neo.common.file.repository;
 
 import java.util.List;
 
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
@@ -21,7 +22,7 @@ public class FileRepository {
     public Long insert(FileEntity entity) {
 
         String sql = """
-            INSERT INTO construction_file (
+            INSERT INTO files (
                 group_id,
                 stored_name,
                 original_name,
@@ -61,7 +62,7 @@ public class FileRepository {
 
         String sql = """
             SELECT ISNULL(MAX(display_order), 0)
-            FROM construction_file
+            FROM files
             WHERE group_id = ?
             AND state <> ?
         """;
@@ -85,7 +86,7 @@ public class FileRepository {
     ) {
 
         String sql = """
-            UPDATE construction_file
+            UPDATE files
             SET display_order = display_order - 1
             WHERE group_id = ?
             AND display_order > ?
@@ -114,8 +115,8 @@ public class FileRepository {
                 f.mime_type,
                 f.group_id,
                 g.group_name
-            FROM construction_file f
-            JOIN construction_file_group g
+            FROM files f
+            JOIN files_group g
             ON f.group_id = g.group_id
             WHERE g.parent_type = ? 
             AND g.parent_id = ?            
@@ -135,10 +136,41 @@ public class FileRepository {
         );
     }
 
+    public List<FileDto> findFilesGroup(Long groupId) {
+
+        String sql = """
+            SELECT
+                f.file_id,
+                g.parent_id,
+                g.parent_type,
+                f.original_name,
+                f.display_name,
+                f.mime_type,
+                f.group_id,
+                g.group_name
+            FROM files f
+            JOIN files_group g
+            ON f.group_id = g.group_id
+            WHERE f.group_id = ? 
+            AND f.state <> ?
+            ORDER BY g.display_order, f.display_order
+        """;
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, v) -> {
+                int idx = 1;
+                ps.setLong(idx++, groupId);
+                ps.setInt(idx++, Enums.state.DELETE.getCode());
+            },
+            FileDtoMapper::map
+        );
+    }
+
     public void delete(Long fileId) {
 
         String sql = """
-            UPDATE construction_file
+            UPDATE files
             SET
                 state = ?,
                 update_date = sysdatetime()
@@ -153,8 +185,7 @@ public class FileRepository {
                 ps.setLong(1, Enums.state.DELETE.getCode());
                 ps.setLong(2, fileId);
                 ps.setInt(3, Enums.state.DELETE.getCode());
-            },
-            null
+            }
         );
     }
 
@@ -168,7 +199,7 @@ public class FileRepository {
 
         String sql = """
             SELECT 1
-            FROM construction_file
+            FROM files
             WHERE group_id = ?
             AND display_name = ?
             AND state <> ?
@@ -196,9 +227,9 @@ public class FileRepository {
         return count != null && count > 0;
     }
 
-    public FileEntity findById(Long fileId) {
-        String sql = """
-            SELECT
+    private static String baseSqlString() {
+        return """
+                SELECT
                 f.file_id,
                 g.parent_id,
                 g.parent_type,
@@ -216,14 +247,20 @@ public class FileRepository {
                 f.create_date,
                 f.update_date,
                 f.state
-            FROM construction_file f
-            JOIN construction_file_group g
-            ON f.group_id = g.group_id
-            WHERE f.file_id = ?   
-            AND f.state <> ?
-            ORDER BY g.display_order, f.display_order
-        """;
-        // String sql = "SELECT * FROM construction_file WHERE file_id = ? AND state <> ?";
+                FROM files f
+                JOIN files_group g
+                ON f.group_id = g.group_id
+                """;
+
+    }
+    public FileEntity findById(Long fileId) {
+        String sql = 
+            baseSqlString() + """
+                WHERE f.file_id = ?   
+                AND f.state <> ?
+                ORDER BY g.display_order, f.display_order
+            """;
+        // String sql = "SELECT * FROM files WHERE file_id = ? AND state <> ?";
         return sqlRepository.queryOneOrNull(
             sql, 
             (ps, v) -> {
@@ -236,7 +273,7 @@ public class FileRepository {
     }
 
     public boolean existsDisplayName(Long groupId, String displayName) {
-        String sql = "SELECT COUNT(*) FROM construction_file WHERE group_id = ? AND display_name = ? AND state <> ?";
+        String sql = "SELECT COUNT(*) FROM files WHERE group_id = ? AND display_name = ? AND state <> ?";
         Integer count = sqlRepository.queryOneOrNull(
             sql, 
             (ps, v) -> {
@@ -249,7 +286,7 @@ public class FileRepository {
     }
 
     public void updateDisplayName(Long fileId, String displayName) {
-        String sql = "UPDATE construction_file SET display_name = ?, update_date = sysdatetime() WHERE file_id = ?";
+        String sql = "UPDATE files SET display_name = ?, update_date = sysdatetime() WHERE file_id = ?";
         sqlRepository.update(
             sql, 
             (ps, v) -> {
@@ -260,22 +297,13 @@ public class FileRepository {
 
     public List<FileEntity> findByParent(String parentType, Long parentId) {
 
-        String sql = """
-            SELECT file_id,
-                parent_type,
-                parent_id,
-                file_name,
-                internal_name,
-                content_type,
-                mime_type,
-                folder_name,
-                version
-            FROM files
-            WHERE parent_type = ?
-            AND parent_id = ?
-            AND state <> 0
-            ORDER BY version, file_id
-        """;
+        String sql = 
+            baseSqlString() + """
+                WHERE g.parent_type = ?
+                AND g.parent_id = ?
+                AND f.state <> 0
+                ORDER BY f.version, f.file_id
+            """;
 
         return sqlRepository.queryList(sql,
             (ps, v) -> {
@@ -285,5 +313,59 @@ public class FileRepository {
             },
             FileEntityMapper::map
         );
+    }
+
+
+    public FileEntity findActiveById(Long fileId) {
+        String sql = 
+            baseSqlString() + """
+                WHERE f.file_id = ?
+                AND f.state = ?
+            """;
+        return sqlRepository.queryOneOrNull(
+            sql,
+            (ps, v) -> {
+                int idx = 1;
+                ps.setLong(idx++, fileId);
+                ps.setInt(idx++, Enums.state.INITIAL.getCode());
+            },
+            FileEntityMapper::map
+        );
+    }
+
+    public void updateState(Long fileId, int state) {
+        String sql = """
+            UPDATE files
+            SET state = ?
+            WHERE file_id = ?
+        """;
+
+        sqlRepository.update(
+            sql,
+            (ps, p) -> {
+                ps.setInt(1, state);
+                ps.setLong(2, fileId);
+            }
+        );
+    }
+
+    public int countByGroupIdAndState(Long groupId, int state) {
+        String sql = """
+            SELECT COUNT(*)
+            FROM files
+            WHERE group_id = ?
+            AND state = ?
+        """;
+        Integer count = sqlRepository.queryOneOrNull(
+            sql,
+            (ps, p) -> {
+                int idx = 1;
+                ps.setLong(idx++, groupId);
+                ps.setInt(idx++, state);                
+            },
+            rs -> rs.getInt(1)
+        );
+
+        return count == null ? 0: count;
     }
 }

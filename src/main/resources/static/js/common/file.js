@@ -8,103 +8,21 @@ const FileViewer = (() => {
     let files = [];
     let index = 0;
 
-    // async function open(url, clickedIndex) {
+    async function open(url, clickedIndex) {
 
-    //     const res = await fetch(url);
-    //     files = await res.json();
-    //     index = clickedIndex;
+        const res = await fetch(url);
+        files = await res.json();
 
-    //     openFormDialog("form-fileviewer");
-    //     render();
-    // }
-async function open(url, clickedIndex) {
+        if (!files || files.length === 0) return;
+        index = clickedIndex ?? 0;
 
-    console.log("fetch url:", url);
+        // index が範囲外の可能性もある
+        if (index >= files.length)index = files.length - 1;
 
-    const res = await fetch(url);
-
-    console.log("status:", res.status);
-    console.log("content-type:", res.headers.get("content-type"));
-
-    const text = await res.text();
-    console.log("raw response:", text);
-
-    try {
-        files = JSON.parse(text);
-    } catch (e) {
-        console.error("JSON parse error");
-        files = [];
+        openFileViewer(files, index); // 0番目から表示
     }
 
-    console.log("files:", files);
-
-    index = clickedIndex;
-
-    if (!files || files.length === 0) {
-        console.warn("files is empty");
-        return;
-    }
-
-    openFormDialog("form-fileviewer");
-    render();
-}
-    async function render() {
-
-        const file = files[index];
-        const body = document.getElementById("viewer-body");
-        body.innerHTML = "";
-
-        console.log(file); // ← デバッグ
-
-        const url =
-            `${config.fileViewUrl}/${file.parentId}/${file.fileId}`;
-
-        if (file.mimeType?.startsWith("image/")) {
-
-            const img = document.createElement("img");
-            img.src = url;
-            img.style.maxWidth = "90vw";
-            img.style.maxHeight = "90vh";
-            body.appendChild(img);
-
-        } else if (file.mimeType === "application/pdf") {
-
-            const iframe = document.createElement("iframe");
-            iframe.src = url;
-            iframe.style.width = "90vw";
-            iframe.style.height = "90vh";
-            iframe.style.border = "none";
-            body.appendChild(iframe);
-
-        } else {
-
-            const link = document.createElement("a");
-            link.href = url;
-            link.textContent = "ダウンロード";
-            link.download = file.displayName;
-            body.appendChild(link);
-        }
-    }
-
-    function next() {
-        if (index < files.length - 1) {
-            index++;
-            render();
-        }
-    }
-
-    function prev() {
-        if (index > 0) {
-            index--;
-            render();
-        }
-    }
-
-    function close() {
-        closeFormDialog("form-fileviewer");
-    }
-
-    return { open, next, prev, close };
+    return { open };
 })();
 
 async function loadFiles(config) {
@@ -124,6 +42,7 @@ async function loadFiles(config) {
     if (!files || files.length === 0) return;
 
     const grouped = {};
+    const groupCombo = [];
 
     files.forEach(file => {
         if (!grouped[file.groupId]) {
@@ -137,7 +56,7 @@ async function loadFiles(config) {
 
     Object.values(grouped).forEach(group => {
 
-        const groupContainer = document.createElement("li");
+        const groupContainer = document.createElement("div");
         groupContainer.classList.add("group-container");
 
         const groupId = group.files[0]?.groupId;
@@ -163,16 +82,17 @@ async function loadFiles(config) {
             toggleBtn.textContent = isOpen ? "▶" : "▼";
         };
 
+        groupCombo.push({number:groupId, text:group.groupName});
+
         group.files.forEach((file, i) => {
 
             const li = createListItemWithSelection(
                 file.fileId,
                 {
-                    area: fileUl,
+                    area: document.getElementById("file-list"),
                     onSecondClick: () => startInlineEdit(file, config),
                     onDoubleClick: () =>
-                        FileViewer.open(`${config.selectUrl}/${parentId}`, i)
-                        // FileViewer.open(`${config.fileViewUrl}/${file.parentId}/${file.fileId}`, i)
+                        FileViewer.open(`${config.groupUrl}/${file.groupId}`, i)
                 }
             );
 
@@ -194,6 +114,9 @@ async function loadFiles(config) {
 
         ul.appendChild(groupContainer);
     });
+
+    const groupComboBox = document.getElementById(config.groupId);
+    if (groupComboBox) createComboBox(groupComboBox, groupCombo);
 }
 
 function createNameSpan(file) {
@@ -213,43 +136,26 @@ function createDeleteButton(file, config) {
     btn.onclick = async (e) => {
         e.stopPropagation();
 
-        await fetch(`/api/files/file/delete/${file.fileId}`, {
+        const response = await fetch(`/api/files/file/delete/${file.fileId}`, {
             method: "POST",
             headers: {
                 "X-CSRF-TOKEN": config.csrfToken
             }
         });
 
+        const result = await response.json();
+
         const li = btn.closest("li");
-        li.remove();
+
+        if (result.data.groupDeleted) {
+            const groupContainer = li.closest(".group-container");
+            groupContainer?.remove();
+        } else {
+            li.remove();
+        }
     };
 
     return btn;
-}
-
-async function createGroup(config) {
-    const parentType = document.getElementById(config.parentType)?.value;
-    if (!parentType || parentType ==="") return;
-    const parentId = document.getElementById(config.parentId)?.value;
-    if (!parentId || parentId ==="") return;
-    const groupName = document.getElementById(config.groupName)?.value;
-    if (!groupName || groupName ==="") return;
-
-    const response = await fetch(
-        `/api/files/${parentType}/${parentId}/create/group`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": config.csrfToken
-            },
-            body: JSON.stringify({ groupName })
-        }
-    );
-
-    await response.json();
-
-    loadFiles(config); // 再描画
 }
 
 // 追加画面と追加ボタンの処理
@@ -309,4 +215,93 @@ async function uploadFiles(files, config) {
 
     const result = await response.json();
     return result;
+}
+
+let viewerFiles = [];
+let currentIndex = 0;
+
+function openFileViewer(files, startIndex = 0) {
+    if (!files || files.length === 0) return;
+
+    viewerFiles = files;
+    currentIndex = startIndex;
+    showFile(currentIndex);
+
+    openFormDialog("form-fileviewer");
+}
+
+function showFile(index) {
+    if (!viewerFiles[index]) return;
+
+    const file = viewerFiles[index];console.log(file)
+    document.getElementById("viewer-group-name").textContent = file.groupName;
+    document.getElementById("viewer-file-name").textContent = file.displayName;
+    const config = FILE_CONFIG;
+
+    const viewerBody = document.getElementById("viewer-body");
+    viewerBody.innerHTML = `<img src="${config.fileViewUrl}/${file.parentId}/${file.fileId}" alt="${file.fileName}">`;
+
+    currentIndex = index;
+
+    updateNavButtons();
+}
+
+function setFileViewerBtns() {
+    // ナビゲーション
+    document.getElementById("viewer-prev").onclick = () => {
+        if (currentIndex > 0) {
+            showFile(currentIndex - 1);
+        }
+    };
+
+    document.getElementById("viewer-next").onclick = () => {
+        if (currentIndex < viewerFiles.length - 1) {
+            showFile(currentIndex + 1);
+        }
+    };
+
+    document.getElementById("viewer-close").onclick = () => {
+        closeFormDialog("form-fileviewer");
+    };
+}
+
+/*　矢印を制御 */
+function updateNavButtons() {
+    const prevBtn = document.getElementById("viewer-prev");
+    const nextBtn = document.getElementById("viewer-next");
+
+    const isSingle = viewerFiles.length <= 1;
+
+    prevBtn.classList.toggle(
+        "nav-hidden",
+        isSingle || currentIndex === 0
+    );
+
+    nextBtn.classList.toggle(
+        "nav-hidden",
+        isSingle || currentIndex === viewerFiles.length - 1
+    );
+}
+
+function setViewerKeyboardEvents() {
+
+    document.addEventListener("keydown", (e) => {
+
+        const viewer = document.getElementById("file-viewer");
+
+        // viewer が閉じていたら何もしない
+        if (viewer.closest(".form-dialog").classList.contains("none")) return;
+
+        if (e.key === "ArrowLeft" && currentIndex > 0) {
+            showFile(currentIndex - 1);
+        }
+
+        if (e.key === "ArrowRight" && currentIndex < viewerFiles.length - 1) {
+            showFile(currentIndex + 1);
+        }
+
+        if (e.key === "Escape") {
+            closeFormDialog("form-fileviewer");
+        }
+    });
 }

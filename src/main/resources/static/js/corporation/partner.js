@@ -254,6 +254,7 @@ window.addEventListener("load", async () => {
 
     Object.values(MODE_CONFIG).forEach(cfg => {
         setEnterFocus(cfg.formId);
+        makeSortable(cfg.tableId);
         const el = document.getElementById(cfg.searchId);
         if (!el) return;
 

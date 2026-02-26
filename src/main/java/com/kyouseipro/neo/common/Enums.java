@@ -9,10 +9,10 @@ public class Enums {
      * @return 0.新規(CREATE) 1.更新(UPDATE) 2.削除(DELETE) 3.完了(COMPLETE)
      */
     public enum state implements CodeEnum {
-        CREATE(0, "新規"),
+        INITIAL(0, "標準"),
         UPDATE(1, "更新"),
-        DELETE(2, "削除"),
-        COMPLETE(3, "完了");
+        COMPLETE(2, "完了"),
+        DELETE(9, "削除");
 
         private int num;
         private String str;

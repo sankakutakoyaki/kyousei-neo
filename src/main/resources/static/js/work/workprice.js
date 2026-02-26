@@ -135,6 +135,8 @@ window.addEventListener("load", async () => {
         await refleshDisplay();
     }, false);
 
+    makeSortable('table-01-content');
+    
     // 画面更新
     await refleshDisplay();
     // const list = getCategoryFilterList(origin);

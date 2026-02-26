@@ -277,8 +277,18 @@ async function clearDisplay(tab) {
 // 画面をフィルターにとおす
 async function execFilterDisplay(tab) {
     const config = MODE_CONFIG[tab];
+    let list = [];
 
-    const list = companyOrigin.filter(function(value) { return value.category == config.category });
+    switch(tab) {
+        case "05":
+            const name = document.getElementById(config.nameBox);
+            if (!name) break;
+            list = officeOrigin.filter(function(value) { return value.companyId == name.value });
+            break;
+        default:
+            list = companyOrigin.filter(function(value) { return value.category == config.category });
+    }
+    
     await updateTableDisplay(config.tableId, config.footerId, config.searchId, list, createTableContent);
 }
 
@@ -397,10 +407,9 @@ async function updateOfficeCombo(companySelect, officeSelect) {
 
 window.addEventListener("load", async () => {
 
-    startProcessing();
-
     Object.values(MODE_CONFIG).forEach(cfg => {
         setEnterFocus(cfg.formId);
+        makeSortable(cfg.tableId);
         const el = document.getElementById(cfg.searchId);
         if (!el) return;
 
@@ -432,5 +441,4 @@ window.addEventListener("load", async () => {
     document.querySelectorAll('.tab-menu-item')
         .forEach(tab => tab.addEventListener('click', e => { tabSwitch(e); execUpdate; }));
 
-    processingEnd();
 });

@@ -410,6 +410,7 @@ window.addEventListener("load", async () => {
 
             let panel = document.querySelector('[data-panel="' + tab + '"]');
             setEnterFocus(panel);
+            makeSortable(config.tableId);
 
             if (tab === "02" || tab === "06") {
                 // メーカーコード入力ボックスのフォーカスが外れた時の処理を登録

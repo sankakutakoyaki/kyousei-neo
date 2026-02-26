@@ -48,7 +48,7 @@ function email(message) {
 
 function postalCode(message) {
     return {
-        test: v => !v || /^\d{7}$/.test(v),
+        test: v => !v || /^\d{3}-?\d{4}$/.test(v),
         message
     };
 }

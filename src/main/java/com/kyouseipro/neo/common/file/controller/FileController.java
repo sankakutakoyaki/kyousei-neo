@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.function.EntityResponse;
 
 import com.kyouseipro.neo.common.file.entity.FileDto;
 import com.kyouseipro.neo.common.file.entity.FileEntity;
@@ -33,6 +36,7 @@ import com.kyouseipro.neo.common.file.entity.GroupRequest;
 import com.kyouseipro.neo.common.file.repository.FileRepository;
 import com.kyouseipro.neo.common.file.service.FileGroupService;
 import com.kyouseipro.neo.common.file.service.FileService;
+import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.config.UploadConfig;
 
 import lombok.RequiredArgsConstructor;
@@ -47,22 +51,29 @@ public class FileController {
     private final FileRepository fileRepository;
 
     @PostMapping("/file/upload/{parentType}/{parentId}")
-    // @ResponseBody
+    @ResponseBody
     public List<Long> upload(
             @PathVariable String parentType,
             @PathVariable Long parentId,
             @RequestParam("files") MultipartFile[] files,
             @RequestParam(value = "groupId", required = false) Long groupId
     ) throws IOException {
-
-        return fileService.uploadFiles(parentType.toUpperCase(), parentId, groupId, files);
+        parentType = parentType.toLowerCase();  
+        return fileService.uploadFiles(parentType, parentId, groupId, files);
     }
 
     @GetMapping("/{parentType}/{parentId}")
     @ResponseBody
     public List<FileDto> list(@PathVariable String parentType, @PathVariable Long parentId) {
         
-        return fileRepository.findFiles(parentType.toUpperCase(), parentId);
+        return fileRepository.findFiles(parentType, parentId);
+    }
+
+    @GetMapping("/group/list/{groupId}")
+    @ResponseBody
+    public List<FileDto> list(@PathVariable Long groupId) {
+        
+        return fileRepository.findFilesGroup(groupId);
     }
 
     @GetMapping("/file/get/{parentType}/{parentId}/{fileId}")
@@ -89,7 +100,6 @@ public class FileController {
                 file.getParentId().toString(),
                 file.getStoredName()
         );
-
         Resource resource = new UrlResource(path.toUri());
 
         if (!resource.exists()) {
@@ -102,10 +112,31 @@ public class FileController {
     }
 
     /** 削除 */
+    // @PostMapping("/file/delete/{fileId}")
+    // @ResponseBody
+    // public void deleteFile(@PathVariable Long fileId) {
+    //     fileService.deleteFile(fileId);
+    // }
+    // @PostMapping("/file/delete/{fileId}")
+    // public ResponseEntity<Map<String, Object>> delete(@PathVariable Long fileId) {
+    //     boolean groupDeleted = fileService.deleteFile(fileId);
+
+    //     Map<String, Object> result = new HashMap<>();
+    //     result.put("success", true);
+    //     result.put("groupDeleted", groupDeleted);
+
+    //     return ResponseEntity.ok(result);
+    // }
     @PostMapping("/file/delete/{fileId}")
-    @ResponseBody
-    public void deleteFile(@PathVariable Long fileId) {
-        fileService.deleteFile(fileId);
+    public ResponseEntity<SimpleResponse<Map<String, Object>>> delete(
+            @PathVariable Long fileId) {
+
+        boolean groupDeleted = fileService.deleteFile(fileId);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("groupDeleted", groupDeleted);
+
+        return ResponseEntity.ok(SimpleResponse.ok(result));
     }
 
     /** ファイル名変更 */
@@ -130,7 +161,7 @@ public class FileController {
         fileGroupService.renameGroup(groupId, newName);
     }
 
-    @PostMapping("/{parentType}/{parentId}/group")
+    @PostMapping("/group/create/{parentType}/{parentId}")
     @ResponseBody
     public Long createGroup(
             @PathVariable String parentType,
@@ -179,20 +210,20 @@ public class FileController {
     //     return fileRepository.findByParent(parentType, parentId);
     // }
 
-    @GetMapping("/group/{parentType}/group/{groupId}")
-    public ResponseEntity<Resource> getFile(
-        @PathVariable String parentType,
-        @PathVariable Long groupId) throws Exception {
+    // @GetMapping("/group/{parentType}/group/{groupId}")
+    // public ResponseEntity<Resource> getFile(
+    //     @PathVariable String parentType,
+    //     @PathVariable Long groupId) throws Exception {
 
-        Path path = Paths.get("upload-dir").resolve(parentType);
-        Resource resource = new UrlResource(path.toUri());
+    //     Path path = Paths.get("upload-dir").resolve(parentType);
+    //     Resource resource = new UrlResource(path.toUri());
 
-        String contentType = Files.probeContentType(path);
+    //     String contentType = Files.probeContentType(path);
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .body(resource);
-    }
+    //     return ResponseEntity.ok()
+    //             .contentType(MediaType.parseMediaType(contentType))
+    //             .body(resource);
+    // }
 
 
 

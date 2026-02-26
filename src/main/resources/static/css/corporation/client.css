@@ -11,6 +11,20 @@
     column-gap: 2rem;
 }
 
+.tab-panel[data-panel='05'] header {
+    grid-template-columns: 1fr;
+    & >.flex-area:nth-of-type(1) {
+        display: grid;
+        grid-template-columns: 1fr auto;
+    }
+    & >.flex-area:nth-of-type(2) {
+        display: grid;
+        grid-template-columns: auto;
+        margin-top: .5rem;
+        margin-left: 1rem;
+    }
+}
+
 :is(#table-01, #table-02, #table-03, #table-04, #table-05, #table-07) tr {
     grid-template-columns: 3rem 5rem 40% 9rem 1fr 2rem;
     /* text-align: center; */
@@ -30,12 +44,14 @@
 
 .tab-panel[data-panel='05'] #code-area {
     display: grid;
-    grid-template-columns: 6rem 1fr 15rem;
+    grid-template-columns: 6rem 15rem;
+    margin-right: 5rem;
 }
 
 .tab-panel[data-panel='06'] #code-area {
     display: grid;
-    grid-template-columns: 6rem 1fr 1fr 5rem;
+    grid-template-columns: 6rem 1fr 1fr;
+    margin-right: 5rem;
 }
 
 #form-dialog-01 {

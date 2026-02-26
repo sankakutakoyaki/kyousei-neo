@@ -158,7 +158,36 @@
         <button type="button" class="page-top"></button>
     </main>
 
-    <header class="flex-area pc-style" th:fragment="headerOfficeFragment(code, name)">
+    <header class="flex-area pc-style" th:fragment="headerOfficeFragment(box, code, name)">
+        <div class="flex-area">
+            <!-- 検索ボックス -->
+            <div class="search-box">
+                <input th:id="${box}" type="search" placeholder="検索">
+                <img title="検索" src="/icons/search.png" onclick="execFilterDisplay(this)">
+            </div>
+            <div class="kebab-btns">
+                <!-- 新規作成ボタン -->
+                <div class="img-btn" onclick="execEdit(0, this)">
+                    <img title="作成・登録" src="/icons/add.png">
+                    <span>新規</span>
+                </div>
+                <!-- 削除ボタン -->
+                <div class="img-btn" onclick="execDelete(this)">
+                    <img title="削除" src="/icons/dust.png">
+                    <span>削除</span>
+                </div>
+                <!-- ダウンロードボタン -->
+                <div class="img-btn" onclick="execDownloadCsv(this)">
+                    <img title="ダウンロード" src="/icons/download.png">
+                    <span>取得</span>
+                </div>
+                <!-- 更新ボタン -->
+                <div class="img-btn" onclick="execUpdate(this)">
+                    <img title="更新" src="/icons/update.png">
+                    <span>更新</span>
+                </div>
+            </div>
+        </div>
         <div id="code-area" class="flex-area">
             <div class="form-parts">
                 <label>ID</label>
@@ -167,28 +196,6 @@
             <div class="form-parts">
                 <label>会社名</label>
                 <select th:id="${name}" name="company" class="normal-select"></select>
-            </div>
-        </div>
-        <div class="kebab-btns">
-            <!-- 新規作成ボタン -->
-            <div class="img-btn" onclick="execEdit(0, this)">
-                <img title="作成・登録" src="/icons/add.png">
-                <span>新規</span>
-            </div>
-            <!-- 削除ボタン -->
-            <div class="img-btn" onclick="execDelete(this)">
-                <img title="削除" src="/icons/dust.png">
-                <span>削除</span>
-            </div>
-            <!-- ダウンロードボタン -->
-            <div class="img-btn" onclick="execDownloadCsv(this)">
-                <img title="ダウンロード" src="/icons/download.png">
-                <span>取得</span>
-            </div>
-            <!-- 更新ボタン -->
-            <div class="img-btn" onclick="execUpdate(this)">
-                <img title="更新" src="/icons/update.png">
-                <span>更新</span>
             </div>
         </div>
     </header>

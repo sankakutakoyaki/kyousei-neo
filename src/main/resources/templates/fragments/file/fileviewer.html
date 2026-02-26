@@ -4,13 +4,15 @@
 <body th:fragment="mainFragment()">
     <div id="file-viewer" class="viewer">
         <div class="viewer-header">
+            <div class="viewer-info">
+                <span id="viewer-group-name"></span> /
+                <span id="viewer-file-name"></span>
+            </div>
             <button id="viewer-close">×</button>
         </div>
 
-        <button id="viewer-prev" class="nav-btn">◀</button>
-
+        <button id="viewer-prev" class="nav-btn"><img title="前" src="/icons/prev.png"></button>
         <div id="viewer-body"></div>
-
-        <button id="viewer-next" class="nav-btn">▶</button>
+        <button id="viewer-next" class="nav-btn"><img title="次" src="/icons/next.png"></button>
     </div>
 </body>

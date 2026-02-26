@@ -185,6 +185,8 @@ window.addEventListener("load", async () => {
         refleshDisplay();
     }, false);
 
+    makeSortable('table-01-content');
+
     // 画面更新
     const list = getCategoryFilterList();
     await updateTableDisplay("table-01-content", "footer-01", "search-box-01", list, createTableContent);

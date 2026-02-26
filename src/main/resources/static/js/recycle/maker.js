@@ -292,6 +292,7 @@ window.addEventListener("load", async () => {
     createComboBoxWithTop(groupArea, groupComboList, "");
 
     setEnterFocus(config.formId);
+    makeSortable(config.tableId);
 
     // 画面更新
     await updateTableDisplay(config.tableId, config.footerId, config.searchId, origin, createTable01Content);

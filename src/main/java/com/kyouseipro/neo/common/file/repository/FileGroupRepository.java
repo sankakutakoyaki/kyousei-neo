@@ -15,7 +15,7 @@ public class FileGroupRepository {
     public Long insert(FileGroupEntity gruoup) {
 
         String sql = """
-            INSERT INTO construction_file_group (
+            INSERT INTO files_group (
                 parent_type,
                 parent_id,
                 group_name,
@@ -42,7 +42,7 @@ public class FileGroupRepository {
 
         String sql = """
             SELECT COUNT(*)
-            FROM construction_file_group
+            FROM files_group
             WHERE group_id = ?
         """;
 
@@ -57,11 +57,26 @@ public class FileGroupRepository {
     }
 
     public void updateGroupName(Long groupId, String groupName) {
-        String sql = "UPDATE construction_file_group SET group_name = ?, update_date = sysdatetime() WHERE group_id = ?";
+        String sql = "UPDATE files_group SET group_name = ?, update_date = sysdatetime() WHERE group_id = ?";
         sqlRepository.update(
             sql, 
             (ps, v) -> {
                 ps.setString(1, groupName);
+                ps.setLong(2, groupId);
+            });
+    }
+
+    public void updateState(Long groupId, int state) {
+        String sql = """
+            UPDATE files_group
+            SET state = ?
+            WHERE group_id = ?
+        """;
+
+        sqlRepository.update(
+            sql, 
+            (ps, v) -> {
+                ps.setInt(1, state);
                 ps.setLong(2, groupId);
             });
     }
