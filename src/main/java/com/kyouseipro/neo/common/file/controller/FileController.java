@@ -50,7 +50,7 @@ public class FileController {
     private final FileGroupService fileGroupService;
     private final FileRepository fileRepository;
 
-    @PostMapping("/file/upload/{parentType}/{parentId}")
+    @PostMapping("/upload/{parentType}/{parentId}")
     @ResponseBody
     public List<Long> upload(
             @PathVariable String parentType,
@@ -62,14 +62,14 @@ public class FileController {
         return fileService.uploadFiles(parentType, parentId, groupId, files);
     }
 
-    @GetMapping("/{parentType}/{parentId}")
+    @GetMapping("/select/{parentType}/{parentId}")
     @ResponseBody
     public List<FileDto> list(@PathVariable String parentType, @PathVariable Long parentId) {
         
         return fileRepository.findFiles(parentType, parentId);
     }
 
-    @GetMapping("/group/list/{groupId}")
+    @GetMapping("/select/group/{groupId}")
     @ResponseBody
     public List<FileDto> list(@PathVariable Long groupId) {
         
@@ -112,21 +112,6 @@ public class FileController {
     }
 
     /** 削除 */
-    // @PostMapping("/file/delete/{fileId}")
-    // @ResponseBody
-    // public void deleteFile(@PathVariable Long fileId) {
-    //     fileService.deleteFile(fileId);
-    // }
-    // @PostMapping("/file/delete/{fileId}")
-    // public ResponseEntity<Map<String, Object>> delete(@PathVariable Long fileId) {
-    //     boolean groupDeleted = fileService.deleteFile(fileId);
-
-    //     Map<String, Object> result = new HashMap<>();
-    //     result.put("success", true);
-    //     result.put("groupDeleted", groupDeleted);
-
-    //     return ResponseEntity.ok(result);
-    // }
     @PostMapping("/file/delete/{fileId}")
     public ResponseEntity<SimpleResponse<Map<String, Object>>> delete(
             @PathVariable Long fileId) {
@@ -142,23 +127,25 @@ public class FileController {
     /** ファイル名変更 */
     @PostMapping("/file/rename/{fileId}")
     @ResponseBody
-    public void renameFile(
+    public ResponseEntity<SimpleResponse<Map<String, Object>>> renameFile(
             @PathVariable Long fileId,
             @RequestBody Map<String, String> body
     ) {
-        String newName = body.get("displayName");
-        fileService.renameFile(fileId, newName);
+        String displayName = body.get("name");
+        fileService.renameFile(fileId, displayName);
+        return ResponseEntity.ok(SimpleResponse.ok(null));
     }
 
     /** グループ名変更 */
     @PostMapping("/group/rename/{groupId}")
     @ResponseBody
-    public void renameGroup(
+    public ResponseEntity<SimpleResponse<Map<String, Object>>> renameGroup(
             @PathVariable Long groupId,
             @RequestBody Map<String, String> body
     ) {
-        String newName = body.get("groupName");
-        fileGroupService.renameGroup(groupId, newName);
+        String groupName = body.get("name");
+        fileGroupService.renameGroup(groupId, groupName);
+        return ResponseEntity.ok(SimpleResponse.ok(null));
     }
 
     @PostMapping("/group/create/{parentType}/{parentId}")
@@ -171,36 +158,36 @@ public class FileController {
         return fileGroupService.createGroup(parentType, parentId, request.getGroupName());
     }
 
-    /**
-     * ファイルを別タブで開く
-     * @param category
-     * @param folder
-     * @param filename
-     * @return
-     * @throws IOException
-     */
-    @GetMapping("/{category}/{folder}/{filename}")
-    @ResponseBody
-    public ResponseEntity<Resource> getFile(@PathVariable String category, @PathVariable String folder, @PathVariable String filename) throws IOException {
-        // 実際の保存ディレクトリ（必要に応じて調整）
-        Path filePath = Paths.get(UploadConfig.getUploadDir(), category, folder, filename);
-        if (!Files.exists(filePath)) {
-            throw new FileNotFoundException("ファイルが見つかりません: " + filePath);
-        }
+    // /**
+    //  * ファイルを別タブで開く
+    //  * @param category
+    //  * @param folder
+    //  * @param filename
+    //  * @return
+    //  * @throws IOException
+    //  */
+    // @GetMapping("/{category}/{folder}/{filename}")
+    // @ResponseBody
+    // public ResponseEntity<Resource> getFile(@PathVariable String category, @PathVariable String folder, @PathVariable String filename) throws IOException {
+    //     // 実際の保存ディレクトリ（必要に応じて調整）
+    //     Path filePath = Paths.get(UploadConfig.getUploadDir(), category, folder, filename);
+    //     if (!Files.exists(filePath)) {
+    //         throw new FileNotFoundException("ファイルが見つかりません: " + filePath);
+    //     }
 
-        UrlResource resource = new UrlResource(filePath.toUri());
+    //     UrlResource resource = new UrlResource(filePath.toUri());
 
-        // MIMEタイプの判定（PDFなど）
-        MediaType mediaType = MediaTypeFactory.getMediaType(resource)
-            .orElse(MediaType.APPLICATION_OCTET_STREAM);
+    //     // MIMEタイプの判定（PDFなど）
+    //     MediaType mediaType = MediaTypeFactory.getMediaType(resource)
+    //         .orElse(MediaType.APPLICATION_OCTET_STREAM);
 
-        // Content-Disposition ヘッダー（inline 表示用）
-        return ResponseEntity.ok()
-            .contentType(mediaType)
-            .header(HttpHeaders.CONTENT_DISPOSITION,
-                "inline; filename=\"" + URLEncoder.encode(resource.getFilename(), StandardCharsets.UTF_8).replace("+", "%20") + "\"")
-            .body(resource);
-    }
+    //     // Content-Disposition ヘッダー（inline 表示用）
+    //     return ResponseEntity.ok()
+    //         .contentType(mediaType)
+    //         .header(HttpHeaders.CONTENT_DISPOSITION,
+    //             "inline; filename=\"" + URLEncoder.encode(resource.getFilename(), StandardCharsets.UTF_8).replace("+", "%20") + "\"")
+    //         .body(resource);
+    // }
 
     // @GetMapping("/api/files")
     // public List<FileEntity> getFiles(

@@ -187,7 +187,7 @@ public class QualificationsRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllByQualificationMasterCombo() {
-        String sql = "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE state <> ? AND category_name <> '許可' ORDER BY category_name, name;";
+        String sql = "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE state <> ? ORDER BY category_name, name;";
 
         return sqlRepository.queryList(
             sql,

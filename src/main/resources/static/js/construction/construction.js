@@ -4,12 +4,13 @@
 
 window.addEventListener("load", async () => {
 
-    document.getElementById("load-btn").addEventListener("click", () => loadFiles(FILE_CONFIG));
+    FileUI.init(FILE_CONFIG);
+    // document.getElementById("load-btn").addEventListener("click", () => loadFiles(FILE_CONFIG));
         
-    const fileInput = document.getElementById('file-input');
-    const fileList =  document.getElementById('file-list');
-    setDragAndDrop(fileList, fileInput, FILE_CONFIG);
+    // const fileInput = document.getElementById('file-input');
+    // const fileList =  document.getElementById('file-list');
+    // setDragAndDrop(fileList, fileInput, FILE_CONFIG);
 
-    setFileViewerBtns();
-    setViewerKeyboardEvents();
+    // setFileViewerBtns();
+    // setViewerKeyboardEvents();
 });

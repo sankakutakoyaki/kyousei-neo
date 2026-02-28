@@ -37,21 +37,61 @@
         <script type="text/JavaScript" th:inline="JavaScript">
             const token = /*[[${_csrf.token}]]*/;
             const user = /*[[${user}]]*/;
+            // const FILE_CONFIG = {
+            //     listId: "file-list",
+            //     selectUrl: "/api/files/construction",
+            //     uploadUrl: "/api/files/file/upload/construction",
+            //     renameUrl: "/api/files/group/rename",
+            //     fileViewUrl: "/api/files/file/get/construction",
+            //     groupUrl: "/api/files/group/list",
+            //     parentType: "construction",
+            //     parentId: "construction-id",
+            //     groupId: "group-id",
+            //     groupName: "group-name",
+            //     csrfToken: token,
+            // }
             const FILE_CONFIG = {
-                listId: "file-list",
-                selectUrl: "/api/files/construction",
-                uploadUrl: "/api/files/file/upload/construction",
-                renameUrl: "/api/files/group/rename",
+
+                /* API */
+                selectUrl: "/api/files/select/construction",
+                uploadUrl: "/api/files/upload/construction",
                 fileViewUrl: "/api/files/file/get/construction",
-                groupUrl: "/api/files/group/list",
-                parentType: "construction",
-                parentId: "construction-id",
-                groupId: "group-id",
-                groupName: "group-name",
-                csrfToken: token,
-            }
+                deleteUrl: "/api/files/file/delete",
+                renameFileUrl: "/api/files/file/rename",
+                renameGroupUrl: "/api/files/group/rename",
+
+                /* 親ID */
+                parentValue: () =>
+                    document.getElementById("construction-id")?.value,
+
+                /* グループID */
+                groupValue: () =>
+                    document.getElementById("group-id")?.value,
+
+                /* 表示 */
+                viewType: "list",
+                grouping: true,
+                isAdmin: true,
+
+                /* DOM */
+                loadBtnId: "load-btn",
+                fileInputId: "file-input",
+                dropAreaId: "file-list",
+                viewerFileNameId: "viewer-file-name",
+
+                listId: "file-list",
+                groupArea: "group-id",
+
+                viewerId: "form-fileviewer",
+                viewerBodyId: "viewer-body",
+                prevBtnId: "viewer-prev",
+                nextBtnId: "viewer-next",
+                closeBtnId: "viewer-close"
+            };
         </script>
         <script th:src="@{/js/construction/construction.js}"></script>
+        <script th:src="@{/js/file/fileService.js}"></script>
+        <script th:src="@{/js/file/fileList.js}"></script>
     </main>
 
 </body>

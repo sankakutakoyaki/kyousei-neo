@@ -1,307 +1,321 @@
-"use strict"
+// "use strict"
 
-const FileViewer = (() => {
+// const FileViewer = (() => {
 
-    if (typeof FILE_CONFIG === "undefined") return {};
+//     if (typeof FILE_CONFIG === "undefined") return {};
 
-    const config = FILE_CONFIG;
-    let files = [];
-    let index = 0;
+//     const config = FILE_CONFIG;
+//     let files = [];
+//     let index = 0;
 
-    async function open(url, clickedIndex) {
+//     async function open(url, clickedIndex) {
 
-        const res = await fetch(url);
-        files = await res.json();
+//         const res = await fetch(url);
+//         files = await res.json();
 
-        if (!files || files.length === 0) return;
-        index = clickedIndex ?? 0;
+//         if (!files || files.length === 0) return;
+//         index = clickedIndex ?? 0;
 
-        // index が範囲外の可能性もある
-        if (index >= files.length)index = files.length - 1;
+//         // index が範囲外の可能性もある
+//         if (index >= files.length)index = files.length - 1;
 
-        openFileViewer(files, index); // 0番目から表示
-    }
+//         openFileViewer(files, index); // 0番目から表示
+//     }
 
-    return { open };
-})();
+//     return { open };
+// })();
 
-async function loadFiles(config) {
+// async function loadFiles(config) {
 
-    const ul = document.getElementById(config.listId);
-    const parentId = document.getElementById(config.parentId).value;
+//     const ul = document.getElementById(config.listId);
+//     const parentId = document.getElementById(config.parentId).value;
 
-    if (!parentId) {
-        alert("IDを入力してください");
-        return;
-    }
+//     if (!parentId) {
+//         alert("IDを入力してください");
+//         return;
+//     }
 
-    const response = await fetch(`${config.selectUrl}/${parentId}`);
-    const files = await response.json();
+//     const response = await fetch(`${config.selectUrl}/${parentId}`);
+//     const files = await response.json();
 
-    ul.innerHTML = "";
-    if (!files || files.length === 0) return;
+//     ul.innerHTML = "";
+//     if (!files || files.length === 0) return;
 
-    const grouped = {};
-    const groupCombo = [];
+//     const grouped = {};
+//     const groupCombo = [];
 
-    files.forEach(file => {
-        if (!grouped[file.groupId]) {
-            grouped[file.groupId] = {
-                groupName: file.groupName,
-                files: []
-            };
-        }
-        grouped[file.groupId].files.push(file);
-    });
+//     files.forEach(file => {
+//         if (!grouped[file.groupId]) {
+//             grouped[file.groupId] = {
+//                 groupName: file.groupName,
+//                 files: []
+//             };
+//         }
+//         grouped[file.groupId].files.push(file);
+//     });
 
-    Object.values(grouped).forEach(group => {
+//     Object.values(grouped).forEach(group => {
 
-        const groupContainer = document.createElement("div");
-        groupContainer.classList.add("group-container");
+//         const groupContainer = document.createElement("div");
+//         groupContainer.classList.add("group-container");
 
-        const groupId = group.files[0]?.groupId;
-        groupContainer.dataset.groupId = groupId;
+//         const groupId = group.files[0]?.groupId;
+//         groupContainer.dataset.groupId = groupId;
 
-        const groupTitle = document.createElement("div");
-        groupTitle.classList.add("group-title");
+//         const groupTitle = document.createElement("div");
+//         groupTitle.classList.add("group-title");
 
-        const toggleBtn = document.createElement("span");
-        toggleBtn.textContent = "▼";
-        toggleBtn.style.cursor = "pointer";
-        toggleBtn.style.marginRight = "5px";
+//         const toggleBtn = document.createElement("span");
+//         toggleBtn.textContent = "▼";
+//         toggleBtn.style.cursor = "pointer";
+//         toggleBtn.style.marginRight = "5px";
 
-        const groupNameSpan = document.createElement("span");
-        groupNameSpan.textContent = group.groupName;
+//         const groupNameSpan = document.createElement("span");
+//         groupNameSpan.textContent = group.groupName;
 
-        const fileUl = document.createElement("ul");
-        fileUl.style.display = "block";
+//         const fileUl = document.createElement("ul");
+//         fileUl.style.display = "block";
 
-        toggleBtn.onclick = () => {
-            const isOpen = fileUl.style.display === "block";
-            fileUl.style.display = isOpen ? "none" : "block";
-            toggleBtn.textContent = isOpen ? "▶" : "▼";
-        };
+//         toggleBtn.onclick = () => {
+//             const isOpen = fileUl.style.display === "block";
+//             fileUl.style.display = isOpen ? "none" : "block";
+//             toggleBtn.textContent = isOpen ? "▶" : "▼";
+//         };
 
-        groupCombo.push({number:groupId, text:group.groupName});
+//         groupCombo.push({number:groupId, text:group.groupName});
 
-        group.files.forEach((file, i) => {
+//         group.files.forEach((file, i) => {
 
-            const li = createListItemWithSelection(
-                file.fileId,
-                {
-                    area: document.getElementById("file-list"),
-                    onSecondClick: () => startInlineEdit(file, config),
-                    onDoubleClick: () =>
-                        FileViewer.open(`${config.groupUrl}/${file.groupId}`, i)
-                }
-            );
+//             const li = createListItemWithSelection(
+//                 file.fileId,
+//                 {
+//                     area: document.getElementById("file-list"),
+//                     onSecondClick: () => startInlineEdit(file, config),
+//                     onDoubleClick: () =>
+//                         FileViewer.open(`${config.groupUrl}/${file.groupId}`, i)
+//                 }
+//             );
 
-            li.classList.add("file-item");
+//             li.classList.add("file-item");
 
-            const nameSpan = createNameSpan(file);
-            const deleteBtn = createDeleteButton(file, config);
+//             const nameSpan = createNameSpan(file);
+//             const deleteBtn = createDeleteButton(file, config);
 
-            li.appendChild(nameSpan);
-            li.appendChild(deleteBtn);
-            fileUl.appendChild(li);
-        });
+//             li.appendChild(nameSpan);
+//             li.appendChild(deleteBtn);
+//             fileUl.appendChild(li);
+//         });
 
-        groupTitle.appendChild(toggleBtn);
-        groupTitle.appendChild(groupNameSpan);
+//         groupTitle.appendChild(toggleBtn);
+//         groupTitle.appendChild(groupNameSpan);
 
-        groupContainer.appendChild(groupTitle);
-        groupContainer.appendChild(fileUl);
+//         groupContainer.appendChild(groupTitle);
+//         groupContainer.appendChild(fileUl);
 
-        ul.appendChild(groupContainer);
-    });
+//         ul.appendChild(groupContainer);
+//     });
 
-    const groupComboBox = document.getElementById(config.groupId);
-    if (groupComboBox) createComboBox(groupComboBox, groupCombo);
-}
+//     const groupComboBox = document.getElementById(config.groupId);
+//     if (groupComboBox) createComboBox(groupComboBox, groupCombo);
+// }
 
-function createNameSpan(file) {
-    const span = document.createElement("span");
-    span.className = "file-name";
-    span.textContent = file.displayName;
-    span.style.cursor = "default";
-    return span;
-}
+// function createNameSpan(file) {
+//     const span = document.createElement("span");
+//     span.className = "file-name";
+//     span.textContent = file.displayName;
+//     span.style.cursor = "default";
+//     return span;
+// }
 
-function createDeleteButton(file, config) {
+// function createDeleteButton(file, config) {
 
-    const btn = document.createElement("button");
-    btn.innerHTML = "✖️";
-    btn.className = "remove-btn";
+//     const btn = document.createElement("button");
+//     btn.innerHTML = "✖️";
+//     btn.className = "remove-btn";
 
-    btn.onclick = async (e) => {
-        e.stopPropagation();
+//     btn.onclick = async (e) => {
+//         e.stopPropagation();
 
-        const response = await fetch(`/api/files/file/delete/${file.fileId}`, {
-            method: "POST",
-            headers: {
-                "X-CSRF-TOKEN": config.csrfToken
-            }
-        });
+//         const response = await fetch(`/api/files/file/delete/${file.fileId}`, {
+//             method: "POST",
+//             headers: {
+//                 "X-CSRF-TOKEN": config.csrfToken
+//             }
+//         });
 
-        const result = await response.json();
+//         const result = await response.json();
 
-        const li = btn.closest("li");
+//         const li = btn.closest("li");
 
-        if (result.data.groupDeleted) {
-            const groupContainer = li.closest(".group-container");
-            groupContainer?.remove();
-        } else {
-            li.remove();
-        }
-    };
+//         if (result.data.groupDeleted) {
+//             const groupContainer = li.closest(".group-container");
+//             groupContainer?.remove();
+//         } else {
+//             li.remove();
+//         }
+//     };
 
-    return btn;
-}
+//     return btn;
+// }
 
-// 追加画面と追加ボタンの処理
-function setDragAndDrop(fileList, fileInput, config) {
-    fileInput.addEventListener('change', () => {
-        handleFiles(fileInput.files, config);
-    });
+// // 追加画面と追加ボタンの処理
+// function setDragAndDrop(fileList, fileInput, config) {
+//     if (fileInput) {
+//         fileInput.addEventListener('change', () => {
+//             handleFiles(fileInput.files, config);
+//         });
+//     }
 
-    fileList.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        fileList.classList.add('dragover');
-    });
+//     if (fileList) {
+//         fileList.addEventListener('dragover', (e) => {
+//             e.preventDefault();
+//             fileList.classList.add('dragover');
+//         });
 
-    fileList.addEventListener('dragleave', () => {
-        fileList.classList.remove('dragover');
-    });
+//         fileList.addEventListener('dragleave', () => {
+//             fileList.classList.remove('dragover');
+//         });
 
-    fileList.addEventListener('drop', (e) => {
-        e.preventDefault();
-        fileList.classList.remove('dragover');
-        handleFiles(e.dataTransfer.files, config);
-    });
-}
+//         fileList.addEventListener('drop', (e) => {
+//             e.preventDefault();
+//             fileList.classList.remove('dragover');
+//             handleFiles(e.dataTransfer.files, config);
+//         });
+//     }
+// }
 
-async function handleFiles(files, config) {
+// async function handleFiles(files, config) {
 
-    const result = await uploadFiles(files, config);
-    loadFiles(config);
-}
+//     const result = await uploadFiles(files, config);
+//     loadFiles(config);
+// }
 
-async function uploadFiles(files, config) {
-    const id = document.getElementById(config.parentId);
-    if (!id || id.value === "") return;
+// async function uploadFiles(files, config) {
+//     const id = document.getElementById(config.parentId);
+//     if (!id || id.value === "") return;
 
-    const groupId = document.getElementById(config.groupId);
+//     const groupId = document.getElementById(config.groupId);
     
-    const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-        formData.append('files', files[i]); // name="files" がサーバと一致する必要あり
-    }
+//     const formData = new FormData();
+//     for (let i = 0; i < files.length; i++) {
+//         formData.append('files', files[i]); // name="files" がサーバと一致する必要あり
+//     }
 
-    const gid = groupId?.value;
+//     const gid = groupId?.value;
 
-    if (gid && !isNaN(gid)) {
-        formData.append("groupId", gid);
-    }
+//     if (gid && !isNaN(gid)) {
+//         formData.append("groupId", gid);
+//     }
 
-    const response = await fetch(
-        `${config.uploadUrl}/${Number(id.value)}`, {
-            headers: {  // リクエストヘッダを追加
-                "X-CSRF-TOKEN": config.csrfToken
-            },
-            method: "POST",
-            body: formData,
-        }
-    );
+//     const response = await fetch(
+//         `${config.uploadUrl}/${Number(id.value)}`, {
+//             headers: {  // リクエストヘッダを追加
+//                 "X-CSRF-TOKEN": config.csrfToken
+//             },
+//             method: "POST",
+//             body: formData,
+//         }
+//     );
 
-    const result = await response.json();
-    return result;
-}
+//     const result = await response.json();
+//     return result;
+// }
 
-let viewerFiles = [];
-let currentIndex = 0;
+// let viewerFiles = [];
+// let currentIndex = 0;
 
-function openFileViewer(files, startIndex = 0) {
-    if (!files || files.length === 0) return;
+// function openFileViewer(files, startIndex = 0) {
+//     if (!files || files.length === 0) return;
 
-    viewerFiles = files;
-    currentIndex = startIndex;
-    showFile(currentIndex);
+//     viewerFiles = files;
+//     currentIndex = startIndex;
+//     showFile(currentIndex);
 
-    openFormDialog("form-fileviewer");
-}
+//     openFormDialog("form-fileviewer");
+// }
 
-function showFile(index) {
-    if (!viewerFiles[index]) return;
+// function showFile(index) {
+//     const config = FILE_CONFIG;
 
-    const file = viewerFiles[index];console.log(file)
-    document.getElementById("viewer-group-name").textContent = file.groupName;
-    document.getElementById("viewer-file-name").textContent = file.displayName;
-    const config = FILE_CONFIG;
+//     currentIndex = index;
+//     const file = viewerFiles[index];
+//     const viewerBody = document.getElementById("viewer-body");
+//     file.url = config.fileViewUrl + "/" + file.parentId + "/" + file.fileId;
 
-    const viewerBody = document.getElementById("viewer-body");
-    viewerBody.innerHTML = `<img src="${config.fileViewUrl}/${file.parentId}/${file.fileId}" alt="${file.fileName}">`;
+//     viewerBody.innerHTML = "";
 
-    currentIndex = index;
+//     // 画像
+//     if (file.mimeType.startsWith("image/")) {
+//         const img = document.createElement("img");
+//         img.src = file.url;
+//         img.classList.add("viewer-image");
+//         viewerBody.appendChild(img);
+//     }
+//     // PDF
+//     else if (file.mimeType === "application/pdf") {
+//         const iframe = document.createElement("iframe");
+//         iframe.src = file.url;
+//         iframe.classList.add("viewer-pdf");
+//         viewerBody.appendChild(iframe);
+//     }
+// }
 
-    updateNavButtons();
-}
+// function setFileViewerBtns() {
+//     // ナビゲーション
+//     document.getElementById("viewer-prev").onclick = () => {
+//         if (currentIndex > 0) {
+//             showFile(currentIndex - 1);
+//         }
+//     };
 
-function setFileViewerBtns() {
-    // ナビゲーション
-    document.getElementById("viewer-prev").onclick = () => {
-        if (currentIndex > 0) {
-            showFile(currentIndex - 1);
-        }
-    };
+//     document.getElementById("viewer-next").onclick = () => {
+//         if (currentIndex < viewerFiles.length - 1) {
+//             showFile(currentIndex + 1);
+//         }
+//     };
 
-    document.getElementById("viewer-next").onclick = () => {
-        if (currentIndex < viewerFiles.length - 1) {
-            showFile(currentIndex + 1);
-        }
-    };
+//     document.getElementById("viewer-close").onclick = () => {
+//         closeFormDialog("form-fileviewer");
+//     };
+// }
 
-    document.getElementById("viewer-close").onclick = () => {
-        closeFormDialog("form-fileviewer");
-    };
-}
+// /*　矢印を制御 */
+// function updateNavButtons() {
+//     const prevBtn = document.getElementById("viewer-prev");
+//     const nextBtn = document.getElementById("viewer-next");
 
-/*　矢印を制御 */
-function updateNavButtons() {
-    const prevBtn = document.getElementById("viewer-prev");
-    const nextBtn = document.getElementById("viewer-next");
+//     const isSingle = viewerFiles.length <= 1;
 
-    const isSingle = viewerFiles.length <= 1;
+//     prevBtn.classList.toggle(
+//         "nav-hidden",
+//         isSingle || currentIndex === 0
+//     );
 
-    prevBtn.classList.toggle(
-        "nav-hidden",
-        isSingle || currentIndex === 0
-    );
+//     nextBtn.classList.toggle(
+//         "nav-hidden",
+//         isSingle || currentIndex === viewerFiles.length - 1
+//     );
+// }
 
-    nextBtn.classList.toggle(
-        "nav-hidden",
-        isSingle || currentIndex === viewerFiles.length - 1
-    );
-}
+// function setViewerKeyboardEvents() {
 
-function setViewerKeyboardEvents() {
+//     document.addEventListener("keydown", (e) => {
 
-    document.addEventListener("keydown", (e) => {
+//         const viewer = document.getElementById("file-viewer");
 
-        const viewer = document.getElementById("file-viewer");
+//         // viewer が閉じていたら何もしない
+//         if (viewer.closest(".form-dialog").classList.contains("none")) return;
 
-        // viewer が閉じていたら何もしない
-        if (viewer.closest(".form-dialog").classList.contains("none")) return;
+//         if (e.key === "ArrowLeft" && currentIndex > 0) {
+//             showFile(currentIndex - 1);
+//         }
 
-        if (e.key === "ArrowLeft" && currentIndex > 0) {
-            showFile(currentIndex - 1);
-        }
+//         if (e.key === "ArrowRight" && currentIndex < viewerFiles.length - 1) {
+//             showFile(currentIndex + 1);
+//         }
 
-        if (e.key === "ArrowRight" && currentIndex < viewerFiles.length - 1) {
-            showFile(currentIndex + 1);
-        }
-
-        if (e.key === "Escape") {
-            closeFormDialog("form-fileviewer");
-        }
-    });
-}
+//         if (e.key === "Escape") {
+//             closeFormDialog("form-fileviewer");
+//         }
+//     });
+// }

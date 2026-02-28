@@ -33,6 +33,20 @@
         column-gap: .5rem;
     }
 }
+.tab-panel[data-panel="03"] header {
+    display: grid;
+    row-gap: .5rem;
+    & >.flex-area:nth-child(1) {
+        display: grid;
+        grid-template-columns: 10rem 6rem auto auto auto 1fr;
+        column-gap: .5rem;
+    }
+    & >.flex-area:nth-child(2) {
+        display: grid;
+        grid-template-columns: 10rem 6rem 12rem auto auto 1fr;
+        column-gap: .5rem;
+    }
+}
 
 #form-dialog-01 {
     & .dialog-content {
@@ -69,16 +83,31 @@
 }
 
 #table-01 tr {
-    grid-template-columns: 3rem 10rem minmax(10rem, 20rem) 5rem 9rem 6rem 1fr;
+    grid-template-columns: 10rem minmax(10rem, 20rem) 9rem 1fr 8rem;
     text-align: center;
 }
+
 #table-02 tr {
-    grid-template-columns: 3rem 10rem minmax(10rem, 20rem) 5rem 9rem 6rem 1fr;
+    grid-template-columns: 10rem minmax(10rem, 20rem) 9rem 1fr 8rem;
     text-align: center;
+}
+
+#table-01 tr>td:nth-of-type(7),
+#table-02 tr>td:nth-of-type(7) {
+    padding-left: 2rem;
 }
 
 td[name="status-cell"][data-status="取得済み"] {
     color: var(--red);
+}
+
+td:has(.img-btn) {
+    display: flex;
+    justify-content: center;
+}
+
+td>.img-btn {
+    padding: .2rem;
 }
 
 .table-area {
@@ -90,7 +119,7 @@ td[name="status-cell"][data-status="取得済み"] {
     max-width: 75rem;
 }
 
-/* .qualification-area {
+.qualification-area {
     max-width: 40rem;
 }
 
@@ -98,58 +127,20 @@ td[name="status-cell"][data-status="取得済み"] {
     margin-bottom: 1rem;
 }
 
-.table-area>header {
-    margin-bottom: 1rem;
+#file-list {
+    min-height: 40rem;
+    border: 2px dashed #ccc;
+    padding: 10px;
 }
 
-.normal-list.qualification {
-    border-radius: .5rem;
-    border: 1px solid var(--br);
-    margin-bottom: 1rem;
-    padding: 1.2rem;
-    min-height: 8rem;
+.check-area {
+    display: flex;
+    align-items: center;
+    min-width: 90px;
 }
 
-#code-area {
-    margin-top: 2rem;
+.flex-area {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
 }
-
-#code-box-01,#code-box-02 {
-    width: 5rem;
-}
-
-#name-box-01,#name-box-02 {
-    width: 10rem;
-}
-
-#form-01 {
-    margin-bottom: 2rem;
-}
-
-#qualification-list-01 li {
-    min-height: 2.5rem;
-    align-content: center;
-    position: relative;
-} */
-
-/* #form-01 {
-    & >.flex-area:nth-of-type(1) {
-        display: grid;
-        grid-template-columns: auto;
-        margin-bottom: .5rem;
-    }
-    & >.flex-area:nth-of-type(2) {
-        display: grid;
-        grid-template-columns: 1fr;
-        margin-bottom: .5rem;
-    }
-    & >.flex-area:nth-of-type(3) {
-        display: grid;
-        grid-template-columns: 11rem 11rem 1fr auto;
-        align-items: end;
-        & button {
-            width: 6rem;
-            justify-self: end;
-        }
-    }
-} */

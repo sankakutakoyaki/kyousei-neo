@@ -13,7 +13,7 @@
             <ul class="tab-menu">
                 <li class="tab-menu-item is-active" data-tab="01">許認可</li>
                 <li class="tab-menu-item" data-tab="02">資格</li>
-                <!-- <li class="tab-menu-item" data-tab="03">PDF登録</li> -->
+                <li class="tab-menu-item" data-tab="03">PDF</li>
             </ul>
             <div class="tab-panel is-show" data-panel="01">
                 <div class="table-area">
@@ -28,11 +28,21 @@
             <div class="tab-panel" data-panel="02">
                 <div class="table-area">
                     <!-- ヘッダー -->
-                    <header th:replace="~{fragments/qualifications/qualifications :: header02Fragment('search-box-01', 'code02', 'name02', 'filter02')}"></header>
+                    <header th:replace="~{fragments/qualifications/qualifications :: header02Fragment('search-box-02', 'code02', 'name02', 'filter02')}"></header>
                     <!-- コンテンツ -->
                     <main th:replace="~{fragments/qualifications/qualifications :: main02Fragment()}"></main>
                     <!-- フッター -->
                     <footer id="footer-02" class="pc-style" th:insert="~{fragments/common/footer :: tableFooterFragment()}"></footer>
+                </div>
+            </div>
+            <div class="tab-panel" data-panel="03">
+                <div class="table-area">
+                    <!-- ヘッダー -->
+                    <header th:replace="~{fragments/qualifications/qualifications :: header03Fragment('code03', 'name03', 'filter03', 'code04', 'name04', 'filter04')}"></header>
+                    <!-- コンテンツ -->
+                    <main th:replace="~{fragments/qualifications/qualifications :: main03Fragment()}"></main>
+                    <!-- フッター -->
+                    <footer id="footer-03" class="pc-style" th:insert="~{fragments/common/footer :: tableFooterFragment()}"></footer>
                 </div>
             </div>
         </div>
@@ -47,6 +57,9 @@
                     <!-- フッター -->
                     <div th:replace="~{fragments/common/footer :: footerFragment('form-dialog-01', 'execSave()', '登録')}"></div>
                 </div>
+            </div>
+            <div id="form-fileviewer" class="form-dialog none">
+                <div th:replace="~{fragments/file/fileviewer :: mainFragment}"></div>
             </div>
         </div>
         <div id="msg-dialog-area">
@@ -64,6 +77,8 @@
         </script>
         <script th:src="@{/js/qualifications/config/qualifications.js}"></script>
         <script th:src="@{/js/qualifications/qualifications.js}"></script>
+        <script th:src="@{/js/file/fileService.js}"></script>
+        <script th:src="@{/js/file/fileList.js}"></script>
     </main>
 
 </body>

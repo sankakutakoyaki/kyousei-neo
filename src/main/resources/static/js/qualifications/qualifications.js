@@ -22,19 +22,20 @@ function createTableContent(tableId, list) {
 
 // テーブル行を作成する
 function createTableRow(newRow, item) {
-    // 選択用チェックボックス
-    newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
+    // // 選択用チェックボックス
+    // newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
     // // ID
     // newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.qualificationsId + ', this)">' + String(item.qualificationsId).padStart(4, '0') + '</td>');
     // 名前
-    newRow.insertAdjacentHTML('beforeend', '<td name="name-cell"><span class="kana">' + item.ownerNameKana + '</span><br><span>' + item.ownerName + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td><span class="kana">' + item.ownerNameKana + '</span><br><span>' + item.ownerName + '</span></td>');
     // 資格名
-    newRow.insertAdjacentHTML('beforeend', '<td name="qualification-name-cell"><span>' + (item.qualificationName ?? "登録なし") + '</span></td>');
-    // 取得状況
-    newRow.insertAdjacentHTML('beforeend', '<td name="status-cell" data-status="' + item.status + '"><span>' + item.status + '</span></td>');
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.qualificationName ?? "登録なし") + '</span></td>');
+    // 番号
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.number ?? "-----") + '</span></td>');
+    // newRow.insertAdjacentHTML('beforeend', '<td data-status="' + item.status + '"><span>' + item.status + '</span></td>');
     // 有効期限
-    newRow.insertAdjacentHTML('beforeend', '<td name="expiry-cell"><span>' + (item.expiryDate ?? "") + '</span></td>');
-    // 有効
+    newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.expiryDate ?? "") + '</span></td>');
+    // ステータス
     newRow.insertAdjacentHTML('beforeend', '<td name="enabled-cell"><span>' + (item.status == "取得済み" && item.is_enabled == 0 ? "期限切れ": "") + '</span></td>');
 }
 
@@ -75,8 +76,10 @@ function qualificationsFilter(filterValue, list) {
 async function execFilterDisplay(tab) {
     const cfg = MODE_CONFIG[tab];
 
-    const codeValue = document.getElementById(cfg.codeId).value;
-    const filterValue = document.getElementById(cfg.filterId).value;
+    const codeValue = document.getElementById(cfg.codeId)?.value;
+    if (!codeValue) return;
+    const filterValue = document.getElementById(cfg.filterId)?.value;
+    if (!filterValue) return;
 
     const list = qualificationsFilter(
         filterValue,
@@ -160,7 +163,7 @@ async function execSave() {
         return;
     }
 
-    const data = buildEntityFromElement(form, tempEntity, SAVE_CONFIG);console.log(data)
+    const data = buildEntityFromElement(form, tempEntity, SAVE_CONFIG);
     // const result = await updateFetch("/api/qualifications/save", JSON.stringify(data), token);
 
     // if (result.ok && result.data !== null) {
@@ -184,11 +187,27 @@ function resetFormInput(tab) {
     resetFormInputValue(cfg.dialogId);
 }
 
-/******************************************************************************************************* ダウンロード */
+/******************************************************************************************************* 表示 */
 
+async function execOpen(tab) {
+    const cfg = FILE_CONFIG;
+    const icfg = ID_CONFIG[tab];
+console.log(icfg)
+    if (!icfg.parentValue) return;
+    // if (!icfg.groupValue) return;
+
+    const response = await fetch(`${cfg.selectUrl}/${icfg.parentValue}`);
+    const files = await response.json();
+
+    if (files.length === 0) return;
+    FileViewer.open(`${cfg.groupUrl}/$${files[0].groupId}`, i)
+}
 
 /******************************************************************************************************* アップロード */
 
+function execUpload() {
+    openFormDialog("form02");
+}
 
 /******************************************************************************************************* 削除 */
 
@@ -200,22 +219,24 @@ function resetFormInput(tab) {
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
-    // 検索ボックス入力時の処理
-    document.getElementById('search-box-01').addEventListener('search', async function(e) {
-        await execFilterDisplay("01");
-    }, false);
 
     for (const tab of Object.keys(MODE_CONFIG)) {
         const cfg = MODE_CONFIG[tab];
 
-        const se = document.getElementById(cfg.filterId);
-        if (!se) return;
-        createComboBoxWithTop(se, cfg.comboList, "すべて");
-        se.addEventListener('change', async () => {
-            await execFilterDisplay(tab);
-        });
+        const fi = document.getElementById(cfg.filterId);
+        if (fi) {
+            createComboBoxWithTop(fi, cfg.comboList, "すべて");
+            fi.addEventListener('change', async () => {
+                await execFilterDisplay(tab);
+            });
+        }
 
-        await execUpdate(tab);
+        const se = document.getElementById(cfg.searchId);
+        if (se)  {
+            se.addEventListener('search', async () => {
+                await execFilterDisplay(tab);
+            }, false);
+        }
     };
 
     initCompanyInputs();
@@ -230,9 +251,7 @@ window.addEventListener("load", async () => {
         });
     };
 
-    // エンターフォーカス処理をイベントリスナーに登録する
-    setEnterFocus("form-01");
-    setEnterFocus("code-area");
+    FileUI.init(FILE_CONFIG);
 
     // タブメニュー処理
     const tabMenus = document.querySelectorAll('.tab-menu-item');
@@ -240,4 +259,91 @@ window.addEventListener("load", async () => {
     tabMenus.forEach((tabMenu) => {
         tabMenu.addEventListener('click', tabSwitch);
     })
+
+    document.querySelectorAll(".row-enable").forEach(cb => {
+
+        cb.addEventListener("change", e => {
+            const allCheckboxes = document.querySelectorAll(".row-enable");
+            if (e.target.checked) {
+                // 他のチェックだけ外す
+                allCheckboxes.forEach(other => {
+                    if (other !== e.target) {
+                        other.checked = false;
+                        const otherArea = other.closest(".flex-area");
+                        setCodeEnabled(otherArea, false);
+                    }
+                });
+                const area = e.target.closest(".flex-area");
+                setCodeEnabled(area, true);
+            } else {
+                // チェック外した場合
+                const area = e.target.closest(".flex-area");
+                setCodeEnabled(area, false);
+            }
+        });
+    });
 });
+
+/**
+ * チェックボックス変更時の処理
+ * @param {*} area 
+ * @param {*} enabled 
+ */
+function setCodeEnabled(area, enabled) {
+
+    const codeInput = area.querySelector("input[name='code']");
+
+    if (codeInput) {
+        codeInput.readOnly = !enabled;
+    }
+
+    const nameInput = area.querySelector("input[name='name']");
+
+    if (nameInput) {
+        nameInput.readOnly = !enabled;
+    }
+
+    const nameSelect = area.querySelector("select[name='name']");
+
+    if (nameSelect) {
+        nameSelect.disabled = !enabled;
+    }
+}
+
+// document.addEventListener("DOMContentLoaded", function () {
+
+//     document.querySelectorAll(".row-enable").forEach(cb => {
+
+//         cb.addEventListener("change", e => {
+
+//             const allCheckboxes = document.querySelectorAll(".row-enable");
+
+//             if (e.target.checked) {
+
+//                 // 他のチェックだけ外す
+//                 allCheckboxes.forEach(other => {
+
+//                     if (other !== e.target) {
+//                         other.checked = false;
+//                         const otherArea = other.closest(".flex-area");
+//                         setCodeEnabled(otherArea, false);
+//                     }
+
+//                 });
+
+//                 console.log("checked");
+
+//                 const area = e.target.closest(".flex-area");
+//                 setCodeEnabled(area, true);
+
+//             } else {
+//                 // チェック外した場合
+//                 const area = e.target.closest(".flex-area");
+//                 setCodeEnabled(area, false);
+//             }
+
+//         });
+
+//     });
+
+// });

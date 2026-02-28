@@ -38,6 +38,43 @@ const MODE_CONFIG = {
         getValue: (elm) => elm.value,
         comboList: qualificationsComboList,
         message: "担当者と資格を選択して下さい。"
+    },
+    "03": {
+    //     // tableId: "table-02-content",
+    //     // footerId: "footer-02",
+    //     // searchId: "search-box-02",
+    //     // dialogId: "form-dialog-01",
+    //     // formId: "form-01",
+    //     // codeId: "code02",
+    //     // nameId: "name02",
+        filterId: "filter03",
+        getUrl: "/api/files/select/license",
+    //     // changeNameId: "fullName",
+    //     // codeChange: async () => {
+    //     //     await execFilterDisplay("02");
+    //     // },
+    //     // keyName: "name02",
+    //     // targetId: "name02",
+    //     // ownerKeyName: "employeeId",
+    //     // getValue: (elm) => elm.value,
+        comboList: licenseComboList,
+    //     // message: "担当者と資格を選択して下さい。"
+    },
+    "04": {
+        codeId: "code04",
+        nameId: "name04",
+        filterId: "filter04",
+        getUrl: "/api/files/select/qualifications",
+    //     // changeNameId: "fullName",
+    //     // codeChange: async () => {
+    //     //     await execFilterDisplay("02");
+    //     // },
+    //     // keyName: "name02",
+    //     // targetId: "name02",
+    //     // ownerKeyName: "employeeId",
+    //     // getValue: (elm) => elm.value,
+        comboList: qualificationsComboList,
+    //     // message: "担当者と資格を選択して下さい。"
     }
 }
 
@@ -48,6 +85,14 @@ const COMPANY_UI_CONFIG = [
         onChange: async () => {
             refleshCode();
             await execUpdate("01");
+        }
+    },
+    {
+        codeId: "code03",
+        nameId: "name03",
+        onChange: async () => {
+            // refleshCode();
+            // await execUpdate("03");
         }
     }
 ];
@@ -82,6 +127,107 @@ const ERROR_CONFIG = {
         )
     ]
 };
+
+// const FILE_CONFIG = {
+//     listId: "file-list",
+//     selectUrl: "/api/files/qualifications",
+//     uploadUrl: "/api/files/file/upload/qualifications",
+//     renameUrl: "/api/files/group/rename",
+//     fileViewUrl: "/api/files/file/get/qualifications",
+//     groupUrl: "/api/files/group/list",
+//     parentType: "qualificaiotns",
+//     parentId: "filter01",
+//     groupId: "group-id",
+//     groupName: "group-name",
+//     csrfToken: token,
+// }
+// const FILE_CONFIG = {
+
+//     /* API */
+//     selectUrl: "/api/files/select/qualification",
+//     uploadUrl: "/api/files/upload/qualification",
+//     fileViewUrl: "/api/files/file/get/qualification",
+//     deleteUrl: "/api/files/file/delete",
+//     renameFileUrl: "/api/files/file/rename",
+//     renameGroupUrl: "/api/files/group/rename",
+
+//     /* 表示 */
+//     viewType: "list",
+//     grouping: true,
+//     isAdmin: true,
+
+//     /* DOM */
+//     loadBtnId: "load-btn",
+//     fileInputId: "file-input",
+//     dropAreaId: "file-list",
+//     viewerFileNameId: "viewer-file-name",
+
+//     listId: "file-list",
+//     groupArea: "group-id",
+
+//     viewerId: "form-fileviewer",
+//     viewerBodyId: "viewer-body",
+//     prevBtnId: "viewer-prev",
+//     nextBtnId: "viewer-next",
+//     closeBtnId: "viewer-close"
+// };
+
+// const ID_CONFIG = {
+//     "01": {
+//         key: "license",
+//         /* 親ID */
+//         parentValue: document.getElementById("code01")?.value,
+
+//         /* グループID */
+//         groupValue: document.getElementById("filter01")?.value,
+//     },
+//     "02": {
+//         key: "qualifications",
+//         /* 親ID */
+//         parentValue: document.getElementById("code02")?.value,
+
+//         /* グループID */
+//         groupValue: document.getElementById("filter02")?.value,
+//     }
+// }
+const FILE_CONFIG = {
+    /* 親ID */
+    parentValue: () =>
+        document.getElementById("code03")?.value,
+
+    /* グループID */
+    groupValue: () =>
+        document.getElementById("code04")?.value,
+
+    /* API */
+    selectUrl: "/api/files/select/qualifications",
+    uploadUrl: "/api/files/upload/qualifications",
+    fileViewUrl: "/api/files/file/get/qualifications",
+    deleteUrl: "/api/files/file/delete",
+    renameFileUrl: "/api/files/file/rename",
+    renameGroupUrl: "/api/files/group/rename",
+
+    /* 表示 */
+    viewType: "list",
+    grouping: true,
+    isAdmin: true,
+
+    /* DOM */
+    loadBtnId: "load-btn",
+    fileInputId: "file-input",
+    dropAreaId: "file-list",
+    viewerFileNameId: "viewer-file-name",
+
+    listId: "file-list",
+    groupArea: "group-id",
+
+    viewerId: "form-fileviewer",
+    viewerBodyId: "viewer-body",
+    prevBtnId: "viewer-prev",
+    nextBtnId: "viewer-next",
+    closeBtnId: "viewer-close"
+}
+
 // const ERROR_CONFIG = {
 //     common: [
 //         {

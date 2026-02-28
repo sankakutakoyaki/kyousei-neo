@@ -51,6 +51,30 @@ function createComboBoxWithTop(selectArea, items, text) {
 }
 
 /**
+ * コールバック付きのコンボボックスを作成する
+ * @param {*} selectArea 
+ * @param {*} items 
+ * @param {*} onChange 
+ * @returns 
+ */
+function createComboBoxWithFunc(selectArea, items, onChange, text = null) {
+
+    if (!selectArea) return;
+    deleteElements(selectArea);
+    if (text) selectArea.insertAdjacentHTML('beforeend', '<option value="0">' + text + '</option>');
+    items.forEach(function (item) {
+        if (item.number != null) {
+            selectArea.insertAdjacentHTML('beforeend', `<option value="${item.number}">${item.text}</option>`);
+        }
+    });
+    selectArea.onchange = function (e) {
+        if (typeof onChange === "function") {
+            onChange(e.target.value);
+        }
+    };
+}
+
+/**
  * 指定した要素を選択する
  * @param {*} selectArea 
  * @param {*} id 

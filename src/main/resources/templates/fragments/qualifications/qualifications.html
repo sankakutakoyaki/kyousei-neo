@@ -16,7 +16,7 @@
                 <!-- 登録ボタン -->
                 <div class="img-btn" onclick="execEdit(0)">
                     <img title="登録" src="/icons/add.png">
-                    <span>取得</span>
+                    <span>登録</span>
                 </div>
                 <!-- ダウンロードボタン -->
                 <div class="img-btn" onclick="execDownloadCsv(this)">
@@ -48,13 +48,16 @@
     <main class="table-wrapper"th:fragment="main01Fragment()">
         <table id="table-01" class="normal-table">
             <tr id="row-0" name="table-header" class="pc-style">
-                <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
+                <!-- <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th> -->
                 <!-- <th><span>ID<span class="sort-arrow"></span></span></th> -->
                 <th><span>所有者<span class="sort-arrow"></span></span></th>
                 <th><span>許認可<span class="sort-arrow"></span></span></th>
-                <th><span>取得<span class="sort-arrow"></span></span></th>
+                <th><span>番号<span class="sort-arrow"></span></span></th>
                 <th><span>有効期限<span class="sort-arrow"></span></span></th>
                 <th><span>ステータス<span class="sort-arrow"></span></span></th>
+                <th></th>
+                <th></th>
+                
             </tr>
             <tbody id="table-01-content" class="scroll-area"></tbody>
         </table>
@@ -67,7 +70,7 @@
 
 <!-- タブ02 ---------------------------------------------------------------------------------------------------------------------->
 
-    <header id="code-area" class="flex-area pc-style" th:fragment="header02Fragment(box, code, name, filter)">
+    <header class="flex-area pc-style" th:fragment="header02Fragment(box, code, name, filter)">
         <div class="flex-area">
             <!-- 検索ボックス -->
             <div class="search-box">
@@ -78,7 +81,7 @@
                 <!-- 登録ボタン -->
                 <div class="img-btn" onclick="execEdit(0)">
                     <img title="登録" src="/icons/add.png">
-                    <span>取得</span>
+                    <span>登録</span>
                 </div>
                 <!-- ダウンロードボタン -->
                 <div class="img-btn" onclick="execDownloadCsv(this)">
@@ -111,17 +114,85 @@
     <main class="table-wrapper"th:fragment="main02Fragment()">
         <table id="table-02" class="normal-table">
             <tr id="row-0" name="table-header" class="pc-style">
-                <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th>
+                <!-- <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox" onclick="clickAllCheckBtn(this)"></th> -->
                 <!-- <th><span>ID<span class="sort-arrow"></span></span></th> -->
                 <th><span>所有者<span class="sort-arrow"></span></span></th>
                 <th><span>資格<span class="sort-arrow"></span></span></th>
-                <th><span>取得<span class="sort-arrow"></span></span></th>
+                <th><span>番号<span class="sort-arrow"></span></span></th>
                 <th><span>有効期限<span class="sort-arrow"></span></span></th>
                 <th><span>ステータス<span class="sort-arrow"></span></span></th>
+                <th></th>
+                <th></th>
+                
             </tr>
             <tbody id="table-01-content" class="scroll-area"></tbody>
         </table>
         <button type="button" class="page-top"></button>
+    </main>
+
+<!-- タブ03 ---------------------------------------------------------------------------------------------------------------------->
+
+    <header class="flex-area pc-style" th:fragment="header03Fragment(code1, name1, filter1, code2, name2, filter2)">
+        <div class="flex-area">
+            <div class="form-parts check-area">
+                <label>
+                    <input type="checkbox" class="row-enable">
+                    許認可
+                </label>
+            </div>
+            <div class="form-parts">
+                <label>ID</label>
+                <input tabindex="1" th:id="${code1}" name="code" class="normal-input" type="text" value="" readonly>
+            </div>
+            <div class="form-parts">
+                <label>会社名</label>
+                <select th:id="${name1}" name="name" class="normal-select" disabled></select>
+            </div>
+            <div class="form-parts">
+                <label>資格</label>
+                <select tabindex="2" th:id="${filter1}" class="normal-select"></select>
+            </div>
+            <div class="kebab-btns">
+                <!-- アップロードボタン -->
+                <div class="img-btn" onclick="execUpload('01')">
+                    <img title="アップロード" src="/icons/folder.png">
+                    <span>保存</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex-area">
+            <div class="form-parts check-area">
+                <label>
+                    <input type="checkbox" class="row-enable">
+                    資格
+                </label>
+            </div>
+            <div class="form-parts">
+                <label>ID</label>
+                <input tabindex="3" th:id="${code2}" name="code" class="normal-input" type="text" value="" readonly>
+            </div>
+            <div class="form-parts">
+                <label>担当者名</label>
+                <input th:id="${name2}" name="name" class="normal-input" type="text" value="" readonly>
+            </div>
+            <div class="form-parts">
+                <label>資格</label>
+                <select tabindex="4" th:id="${filter2}" class="normal-select"></select>
+            </div>
+            <div class="kebab-btns">
+                <!-- アップロードボタン -->
+                <div class="img-btn" onclick="execUpload('02')">
+                    <img title="アップロード" src="/icons/folder.png">
+                    <span>保存</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main th:fragment="main03Fragment()">
+        <div class="flex-area">
+            <div id="file-list" class="placeholder" data-placeholder="ここにファイルをドロップできます"></div>
+        </div>
     </main>
 
 <!-- フォーム01 ---------------------------------------------------------------------------------------------------------------------->
@@ -148,6 +219,34 @@
                 <label>有効期限</label>
                 <input tabindex="3" name="expiry-date" class="normal-input" type="date" value="" onfocus="this.select();" data-reset>
             </div>
+        </div>
+    </form>
+
+    <form id="form-02" class="dialog-content" th:fragment="form02Fragment()">
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>管理ID</label>
+                <input id="construction-id" type="number" class="normal-input" value="101">
+            </div>
+            <div class="form-parts">
+                <label></label>
+                <button id="load-btn" class="normal-btn" type="button"><span>表示</span></button>
+            </div>
+        </div>
+
+        <div class="flex-area">
+            <div class="form-parts">
+                <label>グループID</label>
+                <select id="group-id" class="normal-select" value=""></select>
+            </div>
+            <div>
+                <label for="file-input" class="upload-button">追加するファイルを選択</label>
+                <input type="file" id="file-input" name="files" accept="image/*,application/pdf" />
+            </div>
+        </div>
+
+        <div class="flex-area">
+            <div id="file-list" class="placeholder" data-placeholder="ここにファイルをドロップできます"></div>
         </div>
     </form>
 </body>
