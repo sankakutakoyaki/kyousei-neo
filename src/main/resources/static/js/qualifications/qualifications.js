@@ -192,7 +192,7 @@ function resetFormInput(tab) {
 async function execOpen(tab) {
     const cfg = FILE_CONFIG;
     const icfg = ID_CONFIG[tab];
-console.log(icfg)
+
     if (!icfg.parentValue) return;
     // if (!icfg.groupValue) return;
 
@@ -237,19 +237,34 @@ window.addEventListener("load", async () => {
                 await execFilterDisplay(tab);
             }, false);
         }
+
+        makeSortable(cfg.tableId);
     };
 
+    setEnterFocus("form-01");
     initCompanyInputs();
 
     // 担当者コード入力時の処理
-    const cfg02 = MODE_CONFIG["02"];
-    const el = document.getElementById(cfg02.codeId);
-    if (el) {
-        el.addEventListener('blur', async () => {
-            await changeCodeToName(cfg02, "/api/employee/get/id");
-            await execFilterDisplay("02");
-        });
-    };
+    for (const tab of Object.keys(ID_CONFIG)) {
+        const cfg = ID_CONFIG[tab];
+
+        const elm = document.getElementById(cfg.codeId);
+        if (elm)  {
+            elm.addEventListener('blur', async () => {
+                cfg.codeChange();
+            });
+        }
+        setEnterFocus(cfg.area);
+    }
+    // // 担当者コード入力時の処理
+    // const cfg02 = MODE_CONFIG["02"];
+    // const el = document.getElementById(cfg02.codeId);
+    // if (el) {
+    //     el.addEventListener('blur', async () => {
+    //         await changeCodeToName(cfg02, "/api/employee/get/id");
+    //         await execFilterDisplay("02");
+    //     });
+    // };
 
     FileUI.init(FILE_CONFIG);
 
@@ -261,28 +276,30 @@ window.addEventListener("load", async () => {
     })
 
     document.querySelectorAll(".row-enable").forEach(cb => {
-
-        cb.addEventListener("change", e => {
-            const allCheckboxes = document.querySelectorAll(".row-enable");
-            if (e.target.checked) {
-                // 他のチェックだけ外す
-                allCheckboxes.forEach(other => {
-                    if (other !== e.target) {
-                        other.checked = false;
-                        const otherArea = other.closest(".flex-area");
-                        setCodeEnabled(otherArea, false);
-                    }
-                });
-                const area = e.target.closest(".flex-area");
-                setCodeEnabled(area, true);
-            } else {
-                // チェック外した場合
-                const area = e.target.closest(".flex-area");
-                setCodeEnabled(area, false);
-            }
-        });
+        cb.addEventListener("change", handleRowSelection);
     });
 });
+
+/**
+ * 行の選択を処理する
+ * @param {*} e 
+ */
+function handleRowSelection(e) {
+
+    const allCheckboxes = document.querySelectorAll(".row-enable");
+
+    if (e.target.checked) {
+        allCheckboxes.forEach(other => {
+            if (other !== e.target) {
+                other.checked = false;
+                setCodeEnabled(other.closest(".flex-area"), false);
+            }
+        });
+        setCodeEnabled(e.target.closest(".flex-area"), true);
+    } else {
+        setCodeEnabled(e.target.closest(".flex-area"), false);
+    }
+}
 
 /**
  * チェックボックス変更時の処理
@@ -292,58 +309,26 @@ window.addEventListener("load", async () => {
 function setCodeEnabled(area, enabled) {
 
     const codeInput = area.querySelector("input[name='code']");
-
     if (codeInput) {
         codeInput.readOnly = !enabled;
+        codeInput.value = null;
     }
 
     const nameInput = area.querySelector("input[name='name']");
-
     if (nameInput) {
         nameInput.readOnly = !enabled;
+        nameInput.value = null;
     }
 
     const nameSelect = area.querySelector("select[name='name']");
-
     if (nameSelect) {
         nameSelect.disabled = !enabled;
+        nameSelect.value = null;
+    }
+
+    if (enabled) {
+        area.classList.add("select");
+    } else {
+        if (area.classList.contains("select")) area.classList.remove("select")
     }
 }
-
-// document.addEventListener("DOMContentLoaded", function () {
-
-//     document.querySelectorAll(".row-enable").forEach(cb => {
-
-//         cb.addEventListener("change", e => {
-
-//             const allCheckboxes = document.querySelectorAll(".row-enable");
-
-//             if (e.target.checked) {
-
-//                 // 他のチェックだけ外す
-//                 allCheckboxes.forEach(other => {
-
-//                     if (other !== e.target) {
-//                         other.checked = false;
-//                         const otherArea = other.closest(".flex-area");
-//                         setCodeEnabled(otherArea, false);
-//                     }
-
-//                 });
-
-//                 console.log("checked");
-
-//                 const area = e.target.closest(".flex-area");
-//                 setCodeEnabled(area, true);
-
-//             } else {
-//                 // チェック外した場合
-//                 const area = e.target.closest(".flex-area");
-//                 setCodeEnabled(area, false);
-//             }
-
-//         });
-
-//     });
-
-// });

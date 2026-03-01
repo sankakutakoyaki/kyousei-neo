@@ -16,7 +16,8 @@ const MODE_CONFIG = {
         ownerKeyName: "companyId",
         getValue: (elm) => elm.options[elm.selectedIndex].text,
         comboList: licenseComboList,
-        message: "会社名と許認可を選択して下さい。"
+        message: "会社名と許認可を選択して下さい。",
+        area: "id-area01"
     },
     "02": {
         tableId: "table-02-content",
@@ -37,44 +38,37 @@ const MODE_CONFIG = {
         ownerKeyName: "employeeId",
         getValue: (elm) => elm.value,
         comboList: qualificationsComboList,
-        message: "担当者と資格を選択して下さい。"
-    },
-    "03": {
-    //     // tableId: "table-02-content",
-    //     // footerId: "footer-02",
-    //     // searchId: "search-box-02",
-    //     // dialogId: "form-dialog-01",
-    //     // formId: "form-01",
-    //     // codeId: "code02",
-    //     // nameId: "name02",
-        filterId: "filter03",
+        message: "担当者と資格を選択して下さい。",
+        area: "id-area02"
+    }
+}
+
+const ID_CONFIG = {
+    employee: {
+        codeId: "code02",
+        nameId: "name02",
         getUrl: "/api/files/select/license",
-    //     // changeNameId: "fullName",
-    //     // codeChange: async () => {
-    //     //     await execFilterDisplay("02");
-    //     // },
-    //     // keyName: "name02",
-    //     // targetId: "name02",
-    //     // ownerKeyName: "employeeId",
-    //     // getValue: (elm) => elm.value,
-        comboList: licenseComboList,
-    //     // message: "担当者と資格を選択して下さい。"
+        codeChange: async () => {
+            const cfg02 = MODE_CONFIG["02"];
+            await changeCodeToName(cfg02, "/api/employee/get/id");
+            await execFilterDisplay("02");
+        }
     },
-    "04": {
+    license: {
+        codeId: "code03",
+        nameId: "name03",
+        getUrl: "/api/files/select/license",
+        codeChange: async () => {
+            await execListDisplay("license");
+        }
+    },
+    qualifications: {
         codeId: "code04",
         nameId: "name04",
-        filterId: "filter04",
         getUrl: "/api/files/select/qualifications",
-    //     // changeNameId: "fullName",
-    //     // codeChange: async () => {
-    //     //     await execFilterDisplay("02");
-    //     // },
-    //     // keyName: "name02",
-    //     // targetId: "name02",
-    //     // ownerKeyName: "employeeId",
-    //     // getValue: (elm) => elm.value,
-        comboList: qualificationsComboList,
-    //     // message: "担当者と資格を選択して下さい。"
+        codeChange: async () => {
+            await execListDisplay("qualifications");
+        }
     }
 }
 

@@ -38,14 +38,36 @@
     row-gap: .5rem;
     & >.flex-area:nth-child(1) {
         display: grid;
-        grid-template-columns: 10rem 6rem auto auto auto 1fr;
+        grid-template-columns: 6rem 6rem auto 1fr;
         column-gap: .5rem;
     }
     & >.flex-area:nth-child(2) {
         display: grid;
-        grid-template-columns: 10rem 6rem 12rem auto auto 1fr;
+        grid-template-columns: 6rem 6rem 12rem;
         column-gap: .5rem;
     }
+    & >.flex-area:nth-child(3) {
+        display: grid;
+        margin: 0 0 1rem 1rem;
+        grid-template-columns: auto 3rem 1fr;
+        column-gap: .5rem;
+    }
+}
+
+.tab-panel[data-panel="03"] main {
+    display: grid;
+    grid-template-rows: 1fr;
+    height: 100%;
+    padding: 1rem;
+}
+
+.tab-panel[data-panel="03"] input.normal-chk[type="checkbox"] {
+    vertical-align: middle;
+}
+
+.tab-panel[data-panel="03"] label:has(.normal-chk) {
+    font-size: 1rem;
+    padding-top: .1rem;
 }
 
 #form-dialog-01 {
@@ -127,20 +149,30 @@ td>.img-btn {
     margin-bottom: 1rem;
 }
 
-#file-list {
-    min-height: 40rem;
-    border: 2px dashed #ccc;
-    padding: 10px;
-}
-
 .check-area {
     display: flex;
     align-items: center;
     min-width: 90px;
 }
 
-.flex-area {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 10px;
+.select-area {
+    border-radius: .5rem;
+    padding: .5rem 1rem 1rem .5rem;
+}
+
+.select-area.select {
+    background-color: rgb(227, 227, 227);
+}
+
+#file-list {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+}
+
+.list-area {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    padding: 1rem 1rem 2rem 1rem;
+    max-width: 50rem;
 }

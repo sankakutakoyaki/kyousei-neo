@@ -30,10 +30,10 @@
     border: 2px dashed #ccc;
     border-radius: .5rem;
     padding: 1.2rem;
-    min-height: 8rem;
+    /* min-height: 8rem; */
     color: #999;
     list-style: none;
-    transition: background-color 0.3s, border-color 0.3s;
+    /* transition: background-color 0.3s, border-color 0.3s; */
 }
 
 #file-list.dragover {
@@ -92,17 +92,6 @@
 .file-name {
     flex: 1;
 }
-
-#file-list {
-    min-height: 8rem;
-    border: 2px dashed #ccc;
-    padding: .7rem;
-}
-
-/* .file-item {
-    padding: 6px;
-    border-bottom: 1px solid #eee;
-} */
 
 .delete-btn {
     opacity: 0;

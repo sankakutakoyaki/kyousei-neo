@@ -133,66 +133,49 @@
 <!-- タブ03 ---------------------------------------------------------------------------------------------------------------------->
 
     <header class="flex-area pc-style" th:fragment="header03Fragment(code1, name1, filter1, code2, name2, filter2)">
-        <div class="flex-area">
+        <div id="id-area01" class="flex-area select-area select">
             <div class="form-parts check-area">
                 <label>
-                    <input type="checkbox" class="row-enable">
-                    許認可
+                    <input tabindex="1" type="checkbox" class="row-enable normal-chk" checked>
+                     許認可
                 </label>
             </div>
             <div class="form-parts">
                 <label>ID</label>
-                <input tabindex="1" th:id="${code1}" name="code" class="normal-input" type="text" value="" readonly>
+                <input tabindex="2" th:id="${code1}" name="code" class="normal-input" type="text" value="">
             </div>
             <div class="form-parts">
                 <label>会社名</label>
-                <select th:id="${name1}" name="name" class="normal-select" disabled></select>
-            </div>
-            <div class="form-parts">
-                <label>資格</label>
-                <select tabindex="2" th:id="${filter1}" class="normal-select"></select>
-            </div>
-            <div class="kebab-btns">
-                <!-- アップロードボタン -->
-                <div class="img-btn" onclick="execUpload('01')">
-                    <img title="アップロード" src="/icons/folder.png">
-                    <span>保存</span>
-                </div>
+                <select th:id="${name1}" name="name" class="normal-select"></select>
             </div>
         </div>
-        <div class="flex-area">
+        <div id="id-area02" class="flex-area select-area">
             <div class="form-parts check-area">
                 <label>
-                    <input type="checkbox" class="row-enable">
-                    資格
+                    <input tabindex="3" type="checkbox" class="row-enable normal-chk">
+                     資格
                 </label>
             </div>
             <div class="form-parts">
                 <label>ID</label>
-                <input tabindex="3" th:id="${code2}" name="code" class="normal-input" type="text" value="" readonly>
+                <input tabindex="4" th:id="${code2}" name="code" class="normal-input" type="text" value="" readonly>
             </div>
             <div class="form-parts">
                 <label>担当者名</label>
                 <input th:id="${name2}" name="name" class="normal-input" type="text" value="" readonly>
             </div>
-            <div class="form-parts">
-                <label>資格</label>
-                <select tabindex="4" th:id="${filter2}" class="normal-select"></select>
-            </div>
-            <div class="kebab-btns">
-                <!-- アップロードボタン -->
-                <div class="img-btn" onclick="execUpload('02')">
-                    <img title="アップロード" src="/icons/folder.png">
-                    <span>保存</span>
-                </div>
+        </div>
+        <div class="flex-area">
+            <select tabindex="5" th:id="${filter2}" class="normal-select"></select>
+            <!-- アップロードボタン -->
+            <div class="img-btn" onclick="execUpload()">
+                <img title="アップロード" src="/icons/folder.png">
             </div>
         </div>
     </header>
 
-    <main th:fragment="main03Fragment()">
-        <div class="flex-area">
-            <div id="file-list" class="placeholder" data-placeholder="ここにファイルをドロップできます"></div>
-        </div>
+    <main class="flex-area" th:fragment="main03Fragment()">
+        <div id="file-list" class="placeholder" data-placeholder="ここにファイルをドロップできます"></div>
     </main>
 
 <!-- フォーム01 ---------------------------------------------------------------------------------------------------------------------->
