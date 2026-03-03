@@ -95,7 +95,7 @@
                 </div>
             </div>
         </div>
-        <div class="flex-area">
+        <div id="id-area01" class="flex-area">
             <div class="form-parts">
                 <label>ID</label>
                 <input tabindex="1" th:id="${code}" name="code" class="normal-input" type="text" value="">
@@ -132,41 +132,41 @@
 
 <!-- タブ03 ---------------------------------------------------------------------------------------------------------------------->
 
-    <header class="flex-area pc-style" th:fragment="header03Fragment(code1, name1, filter1, code2, name2, filter2)">
-        <div id="id-area01" class="flex-area select-area select">
+    <header class="flex-area pc-style" th:fragment="header03Fragment(code1, name1, code2, name2, filter)">
+        <div id="id-area02" class="flex-area select-area select">
             <div class="form-parts check-area">
                 <label>
-                    <input tabindex="1" type="checkbox" class="row-enable normal-chk" checked>
+                    <input type="checkbox" class="row-enable normal-chk" checked data-cate="license">
                      許認可
                 </label>
             </div>
             <div class="form-parts">
                 <label>ID</label>
-                <input tabindex="2" th:id="${code1}" name="code" class="normal-input" type="text" value="">
+                <input tabindex="1" th:id="${code1}" name="code" class="normal-input" type="text" value="">
             </div>
             <div class="form-parts">
                 <label>会社名</label>
                 <select th:id="${name1}" name="name" class="normal-select"></select>
             </div>
         </div>
-        <div id="id-area02" class="flex-area select-area">
+        <div id="id-area03" class="flex-area select-area">
             <div class="form-parts check-area">
                 <label>
-                    <input tabindex="3" type="checkbox" class="row-enable normal-chk">
+                    <input type="checkbox" class="row-enable normal-chk" data-cate="qualifications">
                      資格
                 </label>
             </div>
             <div class="form-parts">
                 <label>ID</label>
-                <input tabindex="4" th:id="${code2}" name="code" class="normal-input" type="text" value="" readonly>
+                <input tabindex="2" th:id="${code2}" name="code" class="normal-input" type="text" value="" disabled>
             </div>
             <div class="form-parts">
                 <label>担当者名</label>
-                <input th:id="${name2}" name="name" class="normal-input" type="text" value="" readonly>
+                <input th:id="${name2}" name="name" class="normal-input" type="text" value="" disabled>
             </div>
         </div>
         <div class="flex-area">
-            <select tabindex="5" th:id="${filter2}" class="normal-select"></select>
+            <select tabindex="3" th:id="${filter}" class="normal-select"></select>
             <!-- アップロードボタン -->
             <div class="img-btn" onclick="execUpload()">
                 <img title="アップロード" src="/icons/folder.png">

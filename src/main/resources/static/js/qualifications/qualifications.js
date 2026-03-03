@@ -251,20 +251,12 @@ window.addEventListener("load", async () => {
         const elm = document.getElementById(cfg.codeId);
         if (elm)  {
             elm.addEventListener('blur', async () => {
-                cfg.codeChange();
+                await changeCodeToName(cfg, "/api/employee/get/id");
+                // cfg.codeChange();
             });
         }
         setEnterFocus(cfg.area);
     }
-    // // 担当者コード入力時の処理
-    // const cfg02 = MODE_CONFIG["02"];
-    // const el = document.getElementById(cfg02.codeId);
-    // if (el) {
-    //     el.addEventListener('blur', async () => {
-    //         await changeCodeToName(cfg02, "/api/employee/get/id");
-    //         await execFilterDisplay("02");
-    //     });
-    // };
 
     FileUI.init(FILE_CONFIG);
 
@@ -286,8 +278,13 @@ window.addEventListener("load", async () => {
  */
 function handleRowSelection(e) {
 
-    const allCheckboxes = document.querySelectorAll(".row-enable");
+    const cate = e.target.dataset.cate;
+    const cfg = CHK_CONFIG[cate];
+    const filter = document.getElementById(cfg.filterId);
+    if (!filter) return;
+    createComboBoxWithTop(filter, cfg.comboList, "すべて");
 
+    const allCheckboxes = document.querySelectorAll(".row-enable");
     if (e.target.checked) {
         allCheckboxes.forEach(other => {
             if (other !== e.target) {
@@ -296,6 +293,7 @@ function handleRowSelection(e) {
             }
         });
         setCodeEnabled(e.target.closest(".flex-area"), true);
+        createComboBoxWithTop()
     } else {
         setCodeEnabled(e.target.closest(".flex-area"), false);
     }
@@ -310,13 +308,13 @@ function setCodeEnabled(area, enabled) {
 
     const codeInput = area.querySelector("input[name='code']");
     if (codeInput) {
-        codeInput.readOnly = !enabled;
+        codeInput.disabled = !enabled;
         codeInput.value = null;
     }
 
     const nameInput = area.querySelector("input[name='name']");
     if (nameInput) {
-        nameInput.readOnly = !enabled;
+        nameInput.disabled = !enabled;
         nameInput.value = null;
     }
 

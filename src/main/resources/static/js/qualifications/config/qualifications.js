@@ -16,8 +16,7 @@ const MODE_CONFIG = {
         ownerKeyName: "companyId",
         getValue: (elm) => elm.options[elm.selectedIndex].text,
         comboList: licenseComboList,
-        message: "会社名と許認可を選択して下さい。",
-        area: "id-area01"
+        message: "会社名と許認可を選択して下さい。"
     },
     "02": {
         tableId: "table-02-content",
@@ -38,35 +37,36 @@ const MODE_CONFIG = {
         ownerKeyName: "employeeId",
         getValue: (elm) => elm.value,
         comboList: qualificationsComboList,
-        message: "担当者と資格を選択して下さい。",
-        area: "id-area02"
+        message: "担当者と資格を選択して下さい。"
+    },
+    "03": {
+        filterId: "filter03",
+        comboList: licenseComboList,
     }
 }
 
 const ID_CONFIG = {
     employee: {
+        area: "id-area01",
         codeId: "code02",
         nameId: "name02",
+        changeNameId: "fullName",
         getUrl: "/api/files/select/license",
         codeChange: async () => {
-            const cfg02 = MODE_CONFIG["02"];
-            await changeCodeToName(cfg02, "/api/employee/get/id");
+            // const cfg= ID_CONFIG["employee"];
+            // await changeCodeToName(cfg, "/api/employee/get/id");
             await execFilterDisplay("02");
         }
     },
-    license: {
-        codeId: "code03",
-        nameId: "name03",
-        getUrl: "/api/files/select/license",
-        codeChange: async () => {
-            await execListDisplay("license");
-        }
-    },
     qualifications: {
+        area: "id-area03",
         codeId: "code04",
         nameId: "name04",
+        changeNameId: "fullName",
         getUrl: "/api/files/select/qualifications",
         codeChange: async () => {
+            // const cfg = ID_CONFIG["qualifications"];
+            // await changeCodeToName(cfg, "/api/employee/get/id");
             await execListDisplay("qualifications");
         }
     }
@@ -90,6 +90,17 @@ const COMPANY_UI_CONFIG = [
         }
     }
 ];
+
+const CHK_CONFIG = {
+    license: {
+        filterId: "filter03",
+        comboList: licenseComboList,
+    },
+    qualifications: {
+        filterId: "filter03",
+        comboList: qualificationsComboList,
+    }
+}
 
 const FORM_CONFIG = [
     { name: 'owner-name', key: 'ownerName', trim: true, emptyToNull: true, skipIfNull: true },
