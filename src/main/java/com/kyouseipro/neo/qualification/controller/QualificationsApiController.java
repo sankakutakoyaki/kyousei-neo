@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,6 +69,20 @@ public class QualificationsApiController {
 	@ResponseBody
     public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getByCompnayId(@RequestBody IdRequest req) {
         return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getByCompanyId(req.getId())));
+    }
+
+    /**
+     * QualificationIDから情報を取得する
+     * @param ID
+     * @return 
+     */
+    @PostMapping("/get/{parentType}/master/{masterId}/id/{id}")
+	@ResponseBody
+    public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getByMasterId(
+                @PathVariable String parentType,
+                @PathVariable Long masterId,
+                @PathVariable int id) {
+        return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getByMasterId(parentType, masterId, id)));
     }
 
     /**

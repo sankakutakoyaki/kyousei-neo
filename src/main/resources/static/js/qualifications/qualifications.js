@@ -85,15 +85,19 @@ async function execFilterDisplay(tab) {
         filterValue,
         codeFilter(codeValue, cfg.ownerKeyName, origin)
     );
-
     await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, list, createTableContent);
 }
 
+async function getQualificationFromMasterId() {
+    execOpen();
+}
+
 // companyCombo変更時の処理
-function refleshCode() {
-    const code01 = document.getElementById("code01");
-    const name01 = document.getElementById("name01");
-    code01.value = code01.value === name01.value ? code01.value: Number(name01.value) === 0 ? "": name01.value ;
+function refleshCode(codeId, nameId) {
+    const code = document.getElementById(codeId);
+    const name = document.getElementById(nameId);
+    code.value = code.value === name.value ? code.value: Number(name.value) === 0 ? "": name.value ;
+    updateFilter03State();
 }
 
 /******************************************************************************************************* 入力画面 */
@@ -189,25 +193,39 @@ function resetFormInput(tab) {
 
 /******************************************************************************************************* 表示 */
 
-async function execOpen(tab) {
-    const cfg = FILE_CONFIG;
-    const icfg = ID_CONFIG[tab];
+async function execOpen() {
+    const panel = document.querySelector(".tab-panel.is-show");
+    const chk = panel.querySelector('input[type="checkbox"]:checked');
+    const cate = chk.dataset.cate;
+    const cfg = FILE_CONFIG[cate];
 
-    if (!icfg.parentValue) return;
-    // if (!icfg.groupValue) return;
+    const parentValue = cfg.parentValue();
+    if (!parentValue || parentValue === "") return;
 
-    const response = await fetch(`${cfg.selectUrl}/${icfg.parentValue}`);
-    const files = await response.json();
+    const groupValue = cfg.groupValue();
+    if (!groupValue || groupValue === "") return;
 
-    if (files.length === 0) return;
-    FileViewer.open(`${cfg.groupUrl}/$${files[0].groupId}`, i)
+    const response = await fetch(
+        `${cfg.getParentUrl}/${groupValue}/id/${parentValue}`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": token
+            }
+        }
+    );
+
+    const list = await response.json();
+console.log(list.data)
+    // renderFileList(FILE_CONFIG[cate]);
+    
+    // // if (files.length === 0) return;
+    // // FileViewer.open(`${cfg.groupUrl}/$${files[0].groupId}`, i)
 }
 
 /******************************************************************************************************* アップロード */
 
-function execUpload() {
-    openFormDialog("form02");
-}
 
 /******************************************************************************************************* 削除 */
 
@@ -225,9 +243,9 @@ window.addEventListener("load", async () => {
 
         const fi = document.getElementById(cfg.filterId);
         if (fi) {
-            createComboBoxWithTop(fi, cfg.comboList, "すべて");
+            createComboBoxWithTop(fi, cfg.comboList, cfg.comboListTop);
             fi.addEventListener('change', async () => {
-                await execFilterDisplay(tab);
+                cfg.codeChange();
             });
         }
 
@@ -252,13 +270,14 @@ window.addEventListener("load", async () => {
         if (elm)  {
             elm.addEventListener('blur', async () => {
                 await changeCodeToName(cfg, "/api/employee/get/id");
-                // cfg.codeChange();
+                updateFilter03State();
             });
         }
+
         setEnterFocus(cfg.area);
     }
 
-    FileUI.init(FILE_CONFIG);
+    FileUI.init(FILE_CONFIG['license']);
 
     // タブメニュー処理
     const tabMenus = document.querySelectorAll('.tab-menu-item');
@@ -270,6 +289,18 @@ window.addEventListener("load", async () => {
     document.querySelectorAll(".row-enable").forEach(cb => {
         cb.addEventListener("change", handleRowSelection);
     });
+
+    ["code03", "code04"].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        ["input", "blur"].forEach(evt => {
+            el.addEventListener(evt, updateFilter03State);
+        });
+    });
+
+    // 初期状態も反映
+    updateFilter03State();
 });
 
 /**
@@ -282,7 +313,10 @@ function handleRowSelection(e) {
     const cfg = CHK_CONFIG[cate];
     const filter = document.getElementById(cfg.filterId);
     if (!filter) return;
-    createComboBoxWithTop(filter, cfg.comboList, "すべて");
+
+    createComboBoxWithTop(filter, cfg.comboList, "");
+
+    FileUI.init(FILE_CONFIG[cate]);
 
     const allCheckboxes = document.querySelectorAll(".row-enable");
     if (e.target.checked) {
@@ -293,10 +327,12 @@ function handleRowSelection(e) {
             }
         });
         setCodeEnabled(e.target.closest(".flex-area"), true);
-        createComboBoxWithTop()
     } else {
         setCodeEnabled(e.target.closest(".flex-area"), false);
     }
+
+    resetEnterFocus();
+    updateFilter03State();
 }
 
 /**
@@ -314,7 +350,7 @@ function setCodeEnabled(area, enabled) {
 
     const nameInput = area.querySelector("input[name='name']");
     if (nameInput) {
-        nameInput.disabled = !enabled;
+        // nameInput.disabled = !enabled;
         nameInput.value = null;
     }
 
@@ -328,5 +364,27 @@ function setCodeEnabled(area, enabled) {
         area.classList.add("select");
     } else {
         if (area.classList.contains("select")) area.classList.remove("select")
+    }
+}
+
+/**
+ * #code03 または #code04 のどちらかが未入力なら、#filter03 を操作不可（disabled）にする
+ * @returns 
+ */
+function updateFilter03State() {
+
+    const code03 = document.getElementById("code03")?.value.trim();
+    const name03 = document.getElementById("name03")?.value;
+    const code04 = document.getElementById("code04")?.value.trim();
+    const name04 = document.getElementById("name04")?.value.trim();
+    const filter03 = document.getElementById("filter03");
+
+    if (!filter03) return;
+
+    // どちらか未入力なら無効化
+    filter03.disabled = !((code03 && name03 > 0) || (code04 && name04));
+
+    if (filter03.disabled) {
+        filter03.selectedIndex = 0;
     }
 }

@@ -365,20 +365,27 @@ function initCompanyInputs() {
 // コードBOX変更時の処理
 function bindCodeInput(codeInput, nameSelect, onBlurCallback) {
 
+    function syncCodeToSelect() {
+        const found = setComboboxSelected(nameSelect, codeInput.value);
+
+        if (!found) {
+            codeInput.value = "";
+        }
+    }
+
     // Enterキー処理
     codeInput.addEventListener('keydown', function (e) {
         if (e.key === "Enter") {
-            const found = setComboboxSelected(nameSelect, this.value);
-
-            if (!found) {
-                this.value = "";
-            }
+            syncCodeToSelect();
             nameSelect.focus();
         }
     });
 
     // フォーカスアウト時の処理
     codeInput.addEventListener('blur', function () {
+
+        syncCodeToSelect();   // ← 追加
+
         if (typeof onBlurCallback === "function") {
             onBlurCallback();
         }

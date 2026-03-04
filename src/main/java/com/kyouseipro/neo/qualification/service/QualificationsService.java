@@ -64,6 +64,17 @@ public class QualificationsService {
     }
 
     /**
+     * 指定されたIDの許認可情報を取得します。
+     * 論理削除されている場合は null を返します。
+     *
+     * @param id 資格ID
+     * @return QualificationsEntity または null
+     */
+    public List<QualificationsEntity> getByMasterId(String parentType, Long masterId, int id) {
+        return qualificationsRepository.findAllByMasterId(parentType, masterId, id);
+    }
+
+    /**
      * 資格情報を登録・更新します。
      * IDが０の時は登録・０以上の時は更新します。
      * 

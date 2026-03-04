@@ -162,15 +162,23 @@
             </div>
             <div class="form-parts">
                 <label>担当者名</label>
-                <input th:id="${name2}" name="name" class="normal-input" type="text" value="" disabled>
+                <input th:id="${name2}" name="name" class="normal-input" type="text" value="" readonly>
             </div>
         </div>
         <div class="flex-area">
+            <input id="group-id" type="hidden">
             <select tabindex="3" th:id="${filter}" class="normal-select"></select>
-            <!-- アップロードボタン -->
-            <div class="img-btn" onclick="execUpload()">
-                <img title="アップロード" src="/icons/folder.png">
+            <!-- <button id="load-btn" class="normal-btn" type="button"><span>表示</span></button> -->
+            <!-- <button class="normal-btn" type="button" onclick="execOpen(this);"><span>表示</span></button> -->
+            <div>
+                <!-- <label for="file-input" class="upload-button">ファイルを選択</label> -->
+                <label tabindex="4" for="file-input" class="normal-btn ok">ファイルを選択</label>
+                <input type="file" id="file-input" name="files" accept="image/*,application/pdf" />
             </div>
+            <!-- アップロードボタン -->
+            <!-- <div class="img-btn" onclick="execUpload()">
+                <img title="アップロード" src="/icons/folder.png">
+            </div> -->
         </div>
     </header>
 

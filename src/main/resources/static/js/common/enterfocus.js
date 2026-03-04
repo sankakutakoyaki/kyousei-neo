@@ -19,17 +19,34 @@ function createTabFocusElements() {
 }
 
 // フォーカス遷移対象要素フィルタリング
+// function filterTabFocusElements(nodeList) {
+//     return Array.from(nodeList).filter(target => {
+//         // エレメントノード以外を除外
+//         if (target.nodeType !== Node.ELEMENT_NODE) {
+//             return false;
+//         }
+
+//         // <a><input><select><textarea><button>または正のtabindex属性を持つ場合は対象
+//         const targetTags = ["a", "input", "select", "textarea", "button"];
+//         // const targetTags = ["a", "input", "select", "textarea"];
+//         return targetTags.includes(target.tagName.toLowerCase()) || (target.hasAttribute("tabindex") && target.tabIndex >= 0)
+//     });
+// }
 function filterTabFocusElements(nodeList) {
     return Array.from(nodeList).filter(target => {
-        // エレメントノード以外を除外
-        if (target.nodeType !== Node.ELEMENT_NODE) {
-            return false;
-        }
+
+        if (target.nodeType !== Node.ELEMENT_NODE) return false;
 
         // <a><input><select><textarea><button>または正のtabindex属性を持つ場合は対象
         const targetTags = ["a", "input", "select", "textarea", "button"];
-        // const targetTags = ["a", "input", "select", "textarea"];
-        return targetTags.includes(target.tagName.toLowerCase()) || (target.hasAttribute("tabindex") && target.tabIndex >= 0)
+
+        const isFocusable =
+            targetTags.includes(target.tagName.toLowerCase()) ||
+            (target.hasAttribute("tabindex") && target.tabIndex >= 0);
+
+        return isFocusable
+            && !target.disabled   // ← これ追加
+            && target.offsetParent !== null; // 非表示除外（安全）
     });
 }
 
@@ -161,9 +178,15 @@ function setEnterFocus(areaId) {
 const observer = new MutationObserver(mutations => {
     MUTATIONS: for (let mutation of mutations) {
         // 追加/削除された要素の判定
-        if (filterTabFocusElements(mutation.addedNodes).length > 0 || filterTabFocusElements(mutation.removedNodes).length > 0 ) {
-            // 追加/削除された要素がフォーカス遷移対象の場合は再作成
-            createTabFocusElements();
+        // if (filterTabFocusElements(mutation.addedNodes).length > 0 || filterTabFocusElements(mutation.removedNodes).length > 0 ) {
+        //     // 追加/削除された要素がフォーカス遷移対象の場合は再作成
+        //     createTabFocusElements();
+        //     break MUTATIONS;
+        // }
+        if (filterTabFocusElements(mutation.addedNodes).length > 0 ||
+            filterTabFocusElements(mutation.removedNodes).length > 0) {
+
+            tabFocusElements = createTabFocusElements(); // ← 代入！
             break MUTATIONS;
         }
 
@@ -173,7 +196,7 @@ const observer = new MutationObserver(mutations => {
             if (addedNode.nodeType === Node.ELEMENT_NODE) {
                 if (filterTabFocusElements(addedNode.querySelectorAll("*")).length > 0) {
                     // 追加された要素がフォーカス遷移対象の場合は再作成
-                    createTabFocusElements();
+                    tabFocusElements = createTabFocusElements();
                     break MUTATIONS;
                 }
             }
@@ -185,7 +208,7 @@ const observer = new MutationObserver(mutations => {
             if (removeNode.nodeType === Node.ELEMENT_NODE) {
                 if (filterTabFocusElements(removeNode.querySelectorAll("*")).length > 0) {
                     // 削除された要素がフォーカス遷移対象の場合は再作成
-                    createTabFocusElements();
+                    tabFocusElements = createTabFocusElements();
                     break MUTATIONS;
                 }
             }

@@ -101,6 +101,33 @@ public class QualificationsRepository {
         );
     }
 
+    public List<QualificationsEntity> findAllByMasterId(String parentType, Long masterId, int id) {
+        String sql = "";
+        switch (parentType) {
+            case "license":
+                sql = QualificationsSqlBuilder.buildFindAllByMasterIdFromLicense();
+                break;
+            case "qualifications":
+                sql = QualificationsSqlBuilder.buildFindAllByMasterIdFromQualification();
+                break;
+            default:
+                return null;
+        }
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setLong(index++, masterId);
+                ps.setInt(index++, id);
+            },
+            QualificationsEntityMapper::map
+        );
+    }
+
     /**
      * 取得済み全件取得。
      * 0件の場合は空リストを返す。

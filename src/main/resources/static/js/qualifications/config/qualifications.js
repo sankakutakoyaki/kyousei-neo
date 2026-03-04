@@ -16,7 +16,11 @@ const MODE_CONFIG = {
         ownerKeyName: "companyId",
         getValue: (elm) => elm.options[elm.selectedIndex].text,
         comboList: licenseComboList,
-        message: "会社名と許認可を選択して下さい。"
+        comboListTop: "すべt",
+        message: "会社名と許認可を選択して下さい。",
+        codeChange: async () => {
+            await execFilterDisplay("01");
+        },
     },
     "02": {
         tableId: "table-02-content",
@@ -37,11 +41,16 @@ const MODE_CONFIG = {
         ownerKeyName: "employeeId",
         getValue: (elm) => elm.value,
         comboList: qualificationsComboList,
+        comboListTop: "すべt",
         message: "担当者と資格を選択して下さい。"
     },
     "03": {
         filterId: "filter03",
         comboList: licenseComboList,
+        comboListTop: "",
+        codeChange: async () => {
+            getQualificationFromMasterId();
+        },
     }
 }
 
@@ -63,12 +72,12 @@ const ID_CONFIG = {
         codeId: "code04",
         nameId: "name04",
         changeNameId: "fullName",
-        getUrl: "/api/files/select/qualifications",
-        codeChange: async () => {
-            // const cfg = ID_CONFIG["qualifications"];
-            // await changeCodeToName(cfg, "/api/employee/get/id");
-            await execListDisplay("qualifications");
-        }
+        // getUrl: "/api/files/select/qualifications",
+        // codeChange: async () => {
+        //     // const cfg = ID_CONFIG["qualifications"];
+        //     // await changeCodeToName(cfg, "/api/employee/get/id");
+        //     // await execListDisplay("qualifications");
+        // }
     }
 }
 
@@ -77,7 +86,7 @@ const COMPANY_UI_CONFIG = [
         codeId: "code01",
         nameId: "name01",
         onChange: async () => {
-            refleshCode();
+            refleshCode("code01", "name01");
             await execUpdate("01");
         }
     },
@@ -85,8 +94,7 @@ const COMPANY_UI_CONFIG = [
         codeId: "code03",
         nameId: "name03",
         onChange: async () => {
-            // refleshCode();
-            // await execUpdate("03");
+            refleshCode("code03", "name03");
         }
     }
 ];
@@ -141,7 +149,7 @@ const ERROR_CONFIG = {
 //     fileViewUrl: "/api/files/file/get/qualifications",
 //     groupUrl: "/api/files/group/list",
 //     parentType: "qualificaiotns",
-//     parentId: "filter01",
+//     parentValue: "filter01",
 //     groupId: "group-id",
 //     groupName: "group-name",
 //     csrfToken: token,
@@ -196,41 +204,73 @@ const ERROR_CONFIG = {
 //     }
 // }
 const FILE_CONFIG = {
-    /* 親ID */
-    parentValue: () =>
-        document.getElementById("code03")?.value,
+    license: {
+        /* API */
+        selectUrl: "/api/files/select/license",
+        uploadUrl: "/api/files/upload/license",
+        fileViewUrl: "/api/files/file/get/license",
+        deleteUrl: "/api/files/file/delete",
+        renameFileUrl: "/api/files/file/rename",
+        renameGroupUrl: "/api/files/group/rename",
+        getParentUrl: "api/qualifications/get/license/master",
 
-    /* グループID */
-    groupValue: () =>
-        document.getElementById("code04")?.value,
+        /* 表示 */
+        viewType: "list",
+        grouping: false,
+        isAdmin: true,
 
-    /* API */
-    selectUrl: "/api/files/select/qualifications",
-    uploadUrl: "/api/files/upload/qualifications",
-    fileViewUrl: "/api/files/file/get/qualifications",
-    deleteUrl: "/api/files/file/delete",
-    renameFileUrl: "/api/files/file/rename",
-    renameGroupUrl: "/api/files/group/rename",
+        /* DOM */
+        loadBtnId: "load-btn",
+        fileInputId: "file-input",
+        dropAreaId: "file-list",
+        viewerFileNameId: "viewer-file-name",
 
-    /* 表示 */
-    viewType: "list",
-    grouping: true,
-    isAdmin: true,
+        listId: "file-list",
+        groupArea: "group-id",
+        groupTitle: "filter03",
+        parentValue: () => document.getElementById("code03")?.value,
+        groupValue: () => document.getElementById("filter03")?.value,
 
-    /* DOM */
-    loadBtnId: "load-btn",
-    fileInputId: "file-input",
-    dropAreaId: "file-list",
-    viewerFileNameId: "viewer-file-name",
+        viewerId: "form-fileviewer",
+        viewerBodyId: "viewer-body",
+        prevBtnId: "viewer-prev",
+        nextBtnId: "viewer-next",
+        closeBtnId: "viewer-close"
+    },
+    qualifications: {
+        /* API */
+        selectUrl: "/api/files/select/qualifications",
+        uploadUrl: "/api/files/upload/qualifications",
+        fileViewUrl: "/api/files/file/get/qualifications",
+        deleteUrl: "/api/files/file/delete",
+        renameFileUrl: "/api/files/file/rename",
+        renameGroupUrl: "/api/files/group/rename",
+        getParentUrl: "api/qualifications/get/qualifications/master",
 
-    listId: "file-list",
-    groupArea: "group-id",
+        /* 表示 */
+        viewType: "list",
+        grouping: false,
+        isAdmin: true,
 
-    viewerId: "form-fileviewer",
-    viewerBodyId: "viewer-body",
-    prevBtnId: "viewer-prev",
-    nextBtnId: "viewer-next",
-    closeBtnId: "viewer-close"
+        /* DOM */
+        loadBtnId: "load-btn",
+        fileInputId: "file-input",
+        dropAreaId: "group-id",
+        viewerFileNameId: "viewer-file-name",
+
+        listId: "file-list",
+        groupArea: "group-id",
+        groupTitle: "filter03",
+        parentValue: () => document.getElementById("code04")?.value,
+        groupValue: () => document.getElementById("filter03")?.value,
+
+        viewerId: "form-fileviewer",
+        viewerBodyId: "viewer-body",
+        prevBtnId: "viewer-prev",
+        nextBtnId: "viewer-next",
+        closeBtnId: "viewer-close"
+    }
+
 }
 
 // const ERROR_CONFIG = {

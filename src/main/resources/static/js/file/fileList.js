@@ -41,7 +41,7 @@ async function renderFileList(config) {
                     selectedGroupId = value;
                     highlightSelectedGroup();
                 },
-                "新規グループ"
+                "新しいグループ"
             );
 
             // 再描画後に選択値を復元

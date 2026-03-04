@@ -285,6 +285,19 @@ public class FileRepository {
         return count != null && count > 0;
     }
 
+    public boolean existsGroupName(Long parentId, String groupTitle) {
+        String sql = "SELECT COUNT(*) FROM files_group WHERE parent_id = ? AND group_name = ? AND state <> ?";
+        Integer count = sqlRepository.queryOneOrNull(
+            sql, 
+            (ps, v) -> {
+                ps.setLong(1, parentId);
+                ps.setString(2, groupTitle);
+                ps.setInt(3, Enums.state.DELETE.getCode());
+            }, 
+            rs -> rs.getInt(1));
+        return count != null && count > 0;
+    }
+
     public void updateDisplayName(Long fileId, String displayName) {
         String sql = "UPDATE files SET display_name = ?, update_date = sysdatetime() WHERE file_id = ?";
         sqlRepository.update(

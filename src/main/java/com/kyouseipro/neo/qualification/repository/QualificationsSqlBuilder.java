@@ -194,16 +194,16 @@ public class QualificationsSqlBuilder {
         return
             "SELECT q.qualifications_id, q.employee_id, q.company_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, '取得済み' as status, q.is_enabled" +
             ", q.version, q.state, e.full_name as owner_name, e.full_name_kana as owner_name_kana, qm.name as qualification_name FROM qualifications q" +
-            " LEFT OUTER JOIN employees e ON e.employee_id = q.employee_id AND NOT (e.state = ?) " +
-            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)";
+            " LEFT OUTER JOIN employees e ON e.employee_id = q.employee_id AND e.state <> ? " +
+            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND qm.state <> ?";
     }
 
     private static String baseCompanySelectString() {
         return
             "SELECT q.qualifications_id, q.employee_id, q.company_id, q.qualification_master_id, q.number, q.acquisition_date, q.expiry_date, '取得済み' as status, q.is_enabled" +
             ", q.version, q.state, c.name as owner_name, c.name_kana as owner_name_kana, qm.name as qualification_name FROM qualifications q" +
-            " LEFT OUTER JOIN companies c ON c.company_id = q.company_id AND NOT (c.state = ?) " +
-            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND NOT (qm.state = ?)";
+            " LEFT OUTER JOIN companies c ON c.company_id = q.company_id AND c.state <> ? " +
+            " LEFT OUTER JOIN qualification_master qm ON qm.qualification_master_id = q.qualification_master_id AND qm.state <> ?";
     }
 
     private static String baseEmployeeStatusSelectString() {
@@ -273,6 +273,18 @@ public class QualificationsSqlBuilder {
             " ORDER BY qm.category_name, qm.name";
     }
 
+    public static String buildFindAllByMasterIdFromQualification() {
+        return  
+            baseEmployeeSelectString() +
+            " WHERE qm.state <> ? AND qm.qualification_master_id = ? AND q.employee_id = ?";
+    }
+
+    public static String buildFindAllByMasterIdFromLicense() {
+        return  
+            baseCompanySelectString() +
+            " WHERE qm.state <> ? AND qm.qualification_master_id = ? AND q.company_id = ?";
+    }
+
     public static String buildFindAllByEmployeeStatus() {
         return  
             baseEmployeeStatusSelectString() +
@@ -287,7 +299,6 @@ public class QualificationsSqlBuilder {
             " AND qm.category_name = '許可'" +
             " ORDER BY qm.category_name, qm.name, c.company_id";
     }
-
 
     public static String buildDownloadCsvByIds(int count) {
         String placeholders = Utilities.generatePlaceholders(count); // "?, ?, ?, ..."

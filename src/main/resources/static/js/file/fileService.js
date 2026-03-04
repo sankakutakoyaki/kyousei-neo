@@ -10,7 +10,7 @@ const FileService = (() => {
         return await res.json();
     }
 
-    async function uploadFiles(files, config, groupId = null) {
+    async function uploadFiles(files, config, groupId = null, groupTitle = null) {
 
         const formData = new FormData();
 
@@ -20,6 +20,10 @@ const FileService = (() => {
 
         if (groupId) {
             formData.append("groupId", groupId);
+        }
+
+        if (groupTitle) {
+            formData.append("groupTitle", groupTitle);
         }
 
         const res = await fetch(
@@ -228,7 +232,10 @@ const FileUI = (() => {
 
                 const groupId = document.getElementById(config.groupArea)?.value;
 
-                await FileService.uploadFiles(e.target.files, config, groupId);
+                const el = document.getElementById(config.groupTitle);
+                const groupTitle = getElementDisplayValue(el);
+
+                await FileService.uploadFiles(e.target.files, config, groupId, groupTitle);
                 e.target.value = "";
 
                 renderFileList(config);
@@ -252,11 +259,14 @@ const FileUI = (() => {
                 if (e.target.closest(".group-container")) return;
 
                 const groupId = document.getElementById(config.groupArea)?.value;
+                const el = document.getElementById(config.groupTitle);
+                const groupTitle = getElementDisplayValue(el);
 
                 await FileService.uploadFiles(
                     e.dataTransfer.files,
                     config,
-                    groupId
+                    groupId,
+                    groupTitle
                 );
 
                 renderFileList(config);
@@ -331,4 +341,19 @@ function highlightSelectedGroup() {
 
             div.classList.toggle("selected-group", isSelected);
         });
+}
+
+
+function getElementDisplayValue(el) {
+    if (!el) return "";
+
+    if (el.tagName === "SELECT") {
+        return el.options[el.selectedIndex]?.text ?? "";
+    }
+
+    if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+        return el.value ?? "";
+    }
+
+    return "";
 }

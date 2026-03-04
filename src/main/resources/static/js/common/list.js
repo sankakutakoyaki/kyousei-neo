@@ -20,7 +20,7 @@ function createListItemWithSelection(
 
     li.addEventListener('click', (e) => {
 
-        // 🔥 span/input以外をクリックしたら編集中inputを確定させる
+        // span/input以外をクリックしたら編集中inputを確定させる
         if (!e.target.closest("span") && !e.target.closest("input")) {
             const editingInput = li.querySelector("input.inline-edit-input");
             if (editingInput) {

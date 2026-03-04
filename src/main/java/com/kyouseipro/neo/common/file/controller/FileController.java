@@ -56,10 +56,11 @@ public class FileController {
             @PathVariable String parentType,
             @PathVariable Long parentId,
             @RequestParam("files") MultipartFile[] files,
-            @RequestParam(value = "groupId", required = false) Long groupId
+            @RequestParam(value = "groupId", required = false) Long groupId,
+            @RequestParam(value = "groupTitle", required = false) String groupTitle
     ) throws IOException {
         parentType = parentType.toLowerCase();  
-        return fileService.uploadFiles(parentType, parentId, groupId, files);
+        return fileService.uploadFiles(parentType, parentId, groupId, groupTitle, files);
     }
 
     @GetMapping("/select/{parentType}/{parentId}")

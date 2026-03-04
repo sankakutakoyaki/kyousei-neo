@@ -395,13 +395,15 @@ public class FileService {
             String parentType,
             Long parentId,
             Long groupId,
+            String groupTitle,
             MultipartFile[] files
     ) throws IOException {
 
         parentType = parentType.toLowerCase();
 
         if (groupId == null || !fileGroupRepository.exists(groupId)) {
-            groupId = fileGroupService.createGroup(parentType, parentId, "自動作成グループ");
+            if (groupTitle == null) groupTitle = createUniqueGroupName(parentId, groupTitle);
+            groupId = fileGroupService.createGroup(parentType, parentId, groupTitle);
         }
 
         List<Long> fileIds = new ArrayList<>();
@@ -489,40 +491,40 @@ public class FileService {
     //     );
     // }
 
-    /**
-     * display_name 重複チェック（DB）
-     * @param groupId
-     * @param originalName
-     * @return
-     */
-    public String createUniqueDisplayName(
-            Long groupId,
-            Long fileId,
-            String originalName) {
+    // /**
+    //  * display_name 重複チェック（DB）
+    //  * @param groupId
+    //  * @param originalName
+    //  * @return
+    //  */
+    // public String createUniqueDisplayName(
+    //         Long groupId,
+    //         Long fileId,
+    //         String originalName) {
 
-        String baseName = originalName;
-        String extension = "";
+    //     String baseName = originalName;
+    //     String extension = "";
 
-        int dotIndex = originalName.lastIndexOf(".");
-        if (dotIndex > 0) {
-            baseName = originalName.substring(0, dotIndex);
-            extension = originalName.substring(dotIndex);
-        }
+    //     int dotIndex = originalName.lastIndexOf(".");
+    //     if (dotIndex > 0) {
+    //         baseName = originalName.substring(0, dotIndex);
+    //         extension = originalName.substring(dotIndex);
+    //     }
 
-        int counter = 0;
-        String candidate;
+    //     int counter = 0;
+    //     String candidate;
 
-        do {
-            if (counter == 0) {
-                candidate = baseName + extension;
-            } else {
-                candidate = baseName + "(" + counter + ")" + extension;
-            }
-            counter++;
-        } while (fileRepository.existsDisplayName(groupId, fileId, candidate));
+    //     do {
+    //         if (counter == 0) {
+    //             candidate = baseName + extension;
+    //         } else {
+    //             candidate = baseName + "(" + counter + ")" + extension;
+    //         }
+    //         counter++;
+    //     } while (fileRepository.existsDisplayName(groupId, fileId, candidate));
 
-        return candidate;
-    }
+    //     return candidate;
+    // }
 
     @Transactional
     public void renameFile(Long fileId, String newName) {
@@ -554,6 +556,20 @@ public class FileService {
             candidate = counter == 0 ? baseName + extension : baseName + "(" + counter + ")" + extension;
             counter++;
         } while (fileRepository.existsDisplayName(groupId, candidate));
+
+        return candidate;
+    }
+
+    /** parentId内でのユニークgroup名を作成 */
+    public String createUniqueGroupName(Long parentId, String baseName) {
+
+        int counter = 0;
+        String candidate;
+
+        do {
+            candidate = counter == 0 ? baseName : baseName + "(" + counter + ")";
+            counter++;
+        } while (fileRepository.existsGroupName(parentId, candidate));
 
         return candidate;
     }
