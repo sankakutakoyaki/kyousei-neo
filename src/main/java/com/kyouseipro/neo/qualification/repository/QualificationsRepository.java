@@ -76,6 +76,7 @@ public class QualificationsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, id);
+                ps.setInt(index++, Enums.QualificationMasterCategory.COMPANY.getCode());
             },
             QualificationsEntityMapper::map
         );
@@ -96,6 +97,7 @@ public class QualificationsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, id);
+                ps.setInt(index++, Enums.QualificationMasterCategory.PERSON.getCode());
             },
             QualificationsEntityMapper::map
         );
@@ -143,6 +145,7 @@ public class QualificationsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.QualificationMasterCategory.COMPANY.getCode());
             },
             QualificationsEntityMapper::map
         );
@@ -163,6 +166,7 @@ public class QualificationsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.QualificationMasterCategory.PERSON.getCode());
             },
             QualificationsEntityMapper::map
         );
@@ -183,6 +187,7 @@ public class QualificationsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.QualificationMasterCategory.COMPANY.getCode());
             },
             QualificationsEntityMapper::map
         );
@@ -203,6 +208,7 @@ public class QualificationsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.QualificationMasterCategory.PERSON.getCode());
             },
             QualificationsEntityMapper::map
         );
@@ -214,11 +220,15 @@ public class QualificationsRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllByQualificationMasterCombo() {
-        String sql = "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE state <> ? ORDER BY category_name, name;";
+        String sql = "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE state <> ? AND category <> ? ORDER BY category_name, name;";
 
         return sqlRepository.queryList(
             sql,
-            (ps, v) ->  ps.setInt(1, Enums.state.DELETE.getCode()),
+            (ps, v) ->  {
+                ps.setInt(1, Enums.state.DELETE.getCode());
+                ps.setInt(2, Enums.QualificationMasterCategory.COMPANY.getCode());
+            },
+
             SimpleDataMapper::map
         );
     }
@@ -229,11 +239,14 @@ public class QualificationsRepository {
      * @return 取得したリストを返す
      */
     public List<SimpleData> findAllByLicenseMasterCombo() {
-        String sql = "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE state <> ? AND category_name = '許可' ORDER BY category_name, name;";
+        String sql = "SELECT qualification_master_id as number, name as text FROM qualification_master WHERE state <> ? AND category <> ? ORDER BY category_name, name;";
 
         return sqlRepository.queryList(
             sql,
-            (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
+            (ps, v) -> {
+                ps.setInt(1, Enums.state.DELETE.getCode());
+                ps.setInt(2, Enums.QualificationMasterCategory.PERSON.getCode());
+            },
             SimpleDataMapper::map
         );
     }

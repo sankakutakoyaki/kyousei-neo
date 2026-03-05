@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.kyouseipro.neo.common.Utilities;
-import com.kyouseipro.neo.corporation.company.entity.CompanyEntityRequest;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntityRequest;
-import com.kyouseipro.neo.recycle.regist.entity.RecycleEntityRequest;
 
 public class QualificationsSqlBuilder {
 
@@ -233,7 +231,7 @@ public class QualificationsSqlBuilder {
         return  
             baseEmployeeSelectString() +
             " WHERE q.state <> ? AND q.company_id IS NULL" +
-            " AND qm.category_name <> '許可'" +
+            " AND qm.category <> ?" +
             " ORDER BY qm.category_name, qm.name";
     }
 
@@ -241,7 +239,7 @@ public class QualificationsSqlBuilder {
         return  
             baseCompanySelectString() +
             " WHERE q.state <> ? AND q.employee_id IS NULL" +
-            " AND qm.category_name = '許可'" +
+            " AND qm.category <> ?" +
             " ORDER BY qm.category_name, qm.name";
     }
 
@@ -261,7 +259,7 @@ public class QualificationsSqlBuilder {
         return  
             baseEmployeeSelectString() +
             " WHERE q.state <> ? AND e.employee_id = ? AND q.company_id IS NULL" +
-            " AND qm.category_name <> '許可'" +
+            " AND qm.category <> ?" +
             " ORDER BY qm.category_name, qm.name";
     }
 
@@ -269,7 +267,7 @@ public class QualificationsSqlBuilder {
         return  
             baseCompanySelectString() +
             " WHERE q.state <> ? AND c.company_id = ?  AND q.employee_id IS NULL" +
-            " AND qm.category_name = '許可'" +
+            " AND qm.category <> ?" +
             " ORDER BY qm.category_name, qm.name";
     }
 
@@ -289,6 +287,7 @@ public class QualificationsSqlBuilder {
         return  
             baseEmployeeStatusSelectString() +
             " WHERE qm.state = <> ? AND e.state <> ?" +
+            " AND qm.category <> ?" +
             " ORDER BY qm.category_name, qm.name, e.employee_id";
     }
 
@@ -296,7 +295,7 @@ public class QualificationsSqlBuilder {
         return  
             baseCompanyStatusSelectString() +
             " WHERE c.state <> ? AND qm.state <> ? " +
-            " AND qm.category_name = '許可'" +
+            " AND qm.category <> ?" +
             " ORDER BY qm.category_name, qm.name, c.company_id";
     }
 

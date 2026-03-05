@@ -228,8 +228,8 @@ const FILE_CONFIG = {
         listId: "file-list",
         groupArea: "group-id",
         groupTitle: "filter03",
-        parentValue: () => document.getElementById("code03")?.value,
-        groupValue: () => document.getElementById("filter03")?.value,
+        parentValue: () => document.getElementById("qualifications-id")?.value,
+        // groupValue: () => document.getElementById("filter03")?.value,
 
         viewerId: "form-fileviewer",
         viewerBodyId: "viewer-body",
@@ -261,8 +261,8 @@ const FILE_CONFIG = {
         listId: "file-list",
         groupArea: "group-id",
         groupTitle: "filter03",
-        parentValue: () => document.getElementById("code04")?.value,
-        groupValue: () => document.getElementById("filter03")?.value,
+        parentValue: () => document.getElementById("qualifications-id")?.value,
+        // groupValue: () => document.getElementById("filter03")?.value,
 
         viewerId: "form-fileviewer",
         viewerBodyId: "viewer-body",

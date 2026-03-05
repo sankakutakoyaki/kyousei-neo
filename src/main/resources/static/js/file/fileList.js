@@ -2,17 +2,14 @@
 
 let selectedGroupId = null;
 
-async function renderFileList(config) {
+async function renderFileList(config, files = null) {
 
     const parentId = config.parentValue();
     if (!parentId) return;
 
-    const files =
-        await FileService.fetchFiles(config, parentId);
+    if (!files) files = await FileService.fetchFiles(config, parentId);
 
-    const container =
-        document.getElementById(config.listId);
-
+    const container = document.getElementById(config.listId);
     container.innerHTML = "";
 
     if (!files || files.length === 0) return;
@@ -56,8 +53,7 @@ async function renderFileList(config) {
 
         groups.forEach(group => {
 
-            const groupDiv =
-                document.createElement("div");
+            const groupDiv = document.createElement("div");
 
             groupDiv.className = "group-container";
             groupDiv.dataset.groupId = group.groupId;

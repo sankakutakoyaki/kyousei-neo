@@ -191,6 +191,10 @@ function resetFormInput(tab) {
     resetFormInputValue(cfg.dialogId);
 }
 
+async function execUpload() {
+    
+}
+
 /******************************************************************************************************* 表示 */
 
 async function execOpen() {
@@ -204,7 +208,7 @@ async function execOpen() {
 
     const groupValue = cfg.groupValue();
     if (!groupValue || groupValue === "") return;
-
+ 
     const response = await fetch(
         `${cfg.getParentUrl}/${groupValue}/id/${parentValue}`,
         {
@@ -217,7 +221,9 @@ async function execOpen() {
     );
 
     const list = await response.json();
-console.log(list.data)
+
+    // qualificationsIdを groupIdに対応させる
+
     // renderFileList(FILE_CONFIG[cate]);
     
     // // if (files.length === 0) return;

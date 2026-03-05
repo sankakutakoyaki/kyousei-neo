@@ -8,6 +8,7 @@ public class QualificationMasterEntity {
     private int qualificationMasterId;
     private int code;
     private String name;
+    private int category;
     private String categoryName;
     private String organization;
     private int validityYears;

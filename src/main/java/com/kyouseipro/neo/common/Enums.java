@@ -553,6 +553,52 @@ public class Enums {
         }
     }
 
+    /**
+     * QualificationMasterCategory
+     * 1.会社　2.個人　3.両方
+     */
+    public enum QualificationMasterCategory implements CodeEnum {
+        COMPANY(1, "会社"),
+        PERSON(2, "個人"),
+        BOTH(3, "両方");
+
+        private int num;
+        private String str;
+
+        private QualificationMasterCategory(int num, String str) {
+            this.num = num;
+            this.str = str;
+        }
+
+        @Override
+        public int getCode() {
+            return this.num;
+        }
+
+        @Override
+        public String getDescription() {
+            return this.str;
+        }
+
+        public static String getDescriptionByNum(int num) {
+            for (QualificationMasterCategory s : values()) {
+                if (s.num == num) {
+                    return s.str;
+                }
+            }
+            return null;
+        }
+
+        public static QualificationMasterCategory from(int code) {
+            for (QualificationMasterCategory s : values()) {
+                if (s.num == code) {
+                    return s;
+                }
+            }
+            throw new IllegalArgumentException("Unknown QualificationMasterCategory: " + code);
+        }
+    }
+
     public enum ParentType {
         CONSTRUCTION,
         LICENSE,

@@ -11,6 +11,7 @@ public class QualificationMasterEntityMapper {
         entity.setQualificationMasterId(rs.getInt("qualification_master_id"));
         entity.setCode(rs.getInt("code"));
         entity.setName(rs.getString("name"));
+        entity.setCategory(rs.getInt("category"));
         entity.setCategoryName(rs.getString("category_name"));
         entity.setOrganization(rs.getString("organization"));
         entity.setValidityYears(rs.getInt("validity_years"));
