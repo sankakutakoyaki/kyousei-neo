@@ -22,14 +22,14 @@ async function renderFileList(config, files = null) {
            コンボ生成
         --------------------------- */
 
-        const comboList = groups.map(g => ({
-            number: g.groupId,
-            text: g.groupName
-        }));
-
         const area = document.getElementById(config.groupArea);
 
         if (area) {
+
+            const comboList = groups.map(g => ({
+                number: g.groupId,
+                text: g.groupName
+            }));
 
             createComboBoxWithFunc(
                 area,
@@ -37,8 +37,7 @@ async function renderFileList(config, files = null) {
                 (value) => {
                     selectedGroupId = value;
                     highlightSelectedGroup();
-                },
-                "新しいグループ"
+                }
             );
 
             // 再描画後に選択値を復元

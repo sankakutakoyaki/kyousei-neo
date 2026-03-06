@@ -203,14 +203,44 @@ async function execOpen() {
     const cate = chk.dataset.cate;
     const cfg = FILE_CONFIG[cate];
 
-    const parentValue = cfg.parentValue();
-    if (!parentValue || parentValue === "") return;
+    // const codeValue = cfg.codeValue();
+    // if (!codeValue || codeValue === "") return;
 
-    const groupValue = cfg.groupValue();
-    if (!groupValue || groupValue === "") return;
- 
+    // const parentValue = cfg.parentValue();
+    // if (!parentValue || parentValue <= 0) {
+    //     openMsgDialog('msg-dialog', '情報が選択されていません。', 'red');
+    //     return;
+    // }
+
+
+
+    // const qualifications = getQualificationList(cfg, parentValue, codeValue);
+
+    // const response = await fetch(`${cfg.selectUrl}/${v.qualificationsId}`,);
+    // const list = await response.json();
+
+
+    
+    // qualifications.forEach(async v => {
+    //     const response = await fetch(
+    //         `${cfg.selectUrl}/${v.qualificationsId}`,
+    //     );
+    //     let entity = await response.json();
+    // })
+    
+    
+    
+    
+    
+
+    // renderFileList(FILE_CONFIG[cate], list);
+
+    // createGroupComboBox(cfg, parentValue, codeValue);
+}
+
+async function getQualificationList(cfg, parentValue, codeValue) {
     const response = await fetch(
-        `${cfg.getParentUrl}/${groupValue}/id/${parentValue}`,
+        `${cfg.getParentUrl}/${parentValue}/${codeValue}`,
         {
             method: "POST",
             headers: {
@@ -220,15 +250,38 @@ async function execOpen() {
         }
     );
 
-    const list = await response.json();
-
-    // qualificationsIdを groupIdに対応させる
-
-    // renderFileList(FILE_CONFIG[cate]);
-    
-    // // if (files.length === 0) return;
-    // // FileViewer.open(`${cfg.groupUrl}/$${files[0].groupId}`, i)
+    return await response.json();
 }
+
+// async function createGroupComboBox(cfg, parentValue, codeValue) {
+//     const response = await fetch(
+//         `${cfg.getParentUrl}/${parentValue}/${codeValue}`,
+//         {
+//             method: "POST",
+//             headers: {
+//                 "Content-Type": "application/json",
+//                 "X-CSRF-TOKEN": token
+//             }
+//         }
+//     );
+
+//     const list = await response.json();
+//     const comboList = list.data.map(g => ({
+//         number: g.qualificationsId,
+//         text: g.number
+//     }));
+
+//     const area = document.getElementById(cfg.groupArea);
+
+//     if (area) { 
+//         createComboBoxWithFunc(area, comboList, 
+//             (value) => {
+//                 selectedGroupId = value;
+//                 highlightSelectedGroup();
+//             }
+//         );
+//     }
+// }
 
 /******************************************************************************************************* アップロード */
 

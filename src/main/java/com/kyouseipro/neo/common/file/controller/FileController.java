@@ -1,11 +1,7 @@
 package com.kyouseipro.neo.common.file.controller;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -14,12 +10,9 @@ import java.util.Map;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.function.EntityResponse;
 
 import com.kyouseipro.neo.common.file.entity.FileDto;
 import com.kyouseipro.neo.common.file.entity.FileEntity;
@@ -65,8 +57,7 @@ public class FileController {
 
     @GetMapping("/select/{parentType}/{parentId}")
     @ResponseBody
-    public List<FileDto> list(@PathVariable String parentType, @PathVariable Long parentId) {
-        
+    public List<FileDto> findFiles(@PathVariable String parentType, @PathVariable Long parentId) {
         return fileRepository.findFiles(parentType, parentId);
     }
 

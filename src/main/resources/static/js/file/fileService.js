@@ -260,7 +260,7 @@ const FileUI = (() => {
 
                 const groupId = document.getElementById(config.groupArea)?.value;
                 const el = document.getElementById(config.groupTitle);
-                const groupTitle = getElementDisplayValue(el);
+                const groupTitle = el != null ? getElementDisplayValue(el): "新しいグループ";
 
                 await FileService.uploadFiles(
                     e.dataTransfer.files,

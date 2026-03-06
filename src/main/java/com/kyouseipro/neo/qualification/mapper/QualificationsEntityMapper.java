@@ -9,7 +9,7 @@ import com.kyouseipro.neo.qualification.entity.QualificationsEntity;
 public class QualificationsEntityMapper {
     public static QualificationsEntity map(ResultSet rs) throws SQLException {
         QualificationsEntity entity = new QualificationsEntity();
-        entity.setQualificationsId(rs.getInt("qualifications_id"));
+        entity.setQualificationsId(rs.getLong("qualifications_id"));
         Integer empId = rs.getObject("employee_id", Integer.class);
         entity.setEmployeeId((empId == null || empId == 0) ? null : empId);
         Integer comId = rs.getObject("company_id", Integer.class);

@@ -103,7 +103,7 @@ public class QualificationsRepository {
         );
     }
 
-    public List<QualificationsEntity> findAllByMasterId(String parentType, Long masterId, int id) {
+    public List<QualificationsEntity> findAllByMasterId(String parentType, Long masterId, Long id) {
         String sql = "";
         switch (parentType) {
             case "license":
@@ -124,7 +124,7 @@ public class QualificationsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setLong(index++, masterId);
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
             },
             QualificationsEntityMapper::map
         );

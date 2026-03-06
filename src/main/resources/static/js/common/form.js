@@ -6,12 +6,12 @@
  * @param {*} items SimpleData
  * @returns 
  */
-function createComboBox(selectArea, items) {
+function createComboBox(selectArea, items, data = null) {
     deleteElements(selectArea);
     if (selectArea == null) return;
     items.forEach(function (item) {
         if (item.number > -1) {
-            selectArea.insertAdjacentHTML('beforeend', '<option value="' + item.number + '">' + item.text + '</option>');
+            selectArea.insertAdjacentHTML('beforeend', '<option value="' + item.number + '"' + (data != null ? " " + data: "") + '>' + item.text + '</option>');
         }
     })
 }
@@ -51,6 +51,30 @@ function createComboBoxWithTop(selectArea, items, text) {
 }
 
 /**
+ * コールバック付きの先頭に空白をつけたコンボボックスを作成する
+ * @param {*} selectArea 
+ * @param {*} items 
+ * @param {*} onChange 
+ * @returns 
+ */
+function createComboBoxWithTopAndFunc(selectArea, items, onChange, text = null) {
+
+    if (!selectArea) return;
+    deleteElements(selectArea);
+    if (text) selectArea.insertAdjacentHTML('beforeend', '<option value="0">' + text + '</option>');
+    items.forEach(function (item) {
+        if (item.number != null) {
+            selectArea.insertAdjacentHTML('beforeend', `<option value="${item.number}">${item.text}</option>`);
+        }
+    });
+    selectArea.onchange = function (e) {
+        if (typeof onChange === "function") {
+            onChange(e.target.value);
+        }
+    };
+}
+
+/**
  * コールバック付きのコンボボックスを作成する
  * @param {*} selectArea 
  * @param {*} items 
@@ -61,7 +85,6 @@ function createComboBoxWithFunc(selectArea, items, onChange, text = null) {
 
     if (!selectArea) return;
     deleteElements(selectArea);
-    if (text) selectArea.insertAdjacentHTML('beforeend', '<option value="0">' + text + '</option>');
     items.forEach(function (item) {
         if (item.number != null) {
             selectArea.insertAdjacentHTML('beforeend', `<option value="${item.number}">${item.text}</option>`);

@@ -132,7 +132,7 @@
 
 <!-- タブ03 ---------------------------------------------------------------------------------------------------------------------->
 
-    <header class="flex-area pc-style" th:fragment="header03Fragment(code1, name1, code2, name2, filter)">
+    <header class="flex-area pc-style" th:fragment="header03Fragment(code1, name1, code2, name2, filter1, filter2)">
         <div id="id-area02" class="flex-area select-area select">
             <div class="form-parts check-area">
                 <label>
@@ -167,12 +167,13 @@
         </div>
         <div class="flex-area">
             <input id="group-id" type="hidden">
-            <select tabindex="3" th:id="${filter}" class="normal-select"></select>
+            <select tabindex="3" th:id="${filter1}" class="normal-select"></select>
+            <select tabindex="4" th:id="${filter2}" class="normal-select"></select>
             <!-- <button id="load-btn" class="normal-btn" type="button"><span>表示</span></button> -->
             <!-- <button class="normal-btn" type="button" onclick="execOpen(this);"><span>表示</span></button> -->
             <div>
                 <!-- <label for="file-input" class="upload-button">ファイルを選択</label> -->
-                <label tabindex="4" for="file-input" class="normal-btn ok">ファイルを選択</label>
+                <label tabindex="5" for="file-input" class="normal-btn ok">ファイルを選択</label>
                 <input type="file" id="file-input" name="files" accept="image/*,application/pdf" />
             </div>
             <!-- アップロードボタン -->

@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
@@ -21,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.file.entity.FileEntity;
-import com.kyouseipro.neo.common.file.entity.FileMeta;
 import com.kyouseipro.neo.common.file.repository.FileGroupRepository;
 import com.kyouseipro.neo.common.file.repository.FileRepository;
 import com.kyouseipro.neo.config.UploadConfig;
@@ -469,6 +467,7 @@ public class FileService {
         if (mimeType.equals("application/pdf")) return "PDF";
         return "OTHER";
     }
+
 
     // @Transactional
     // public void deleteFile(Long fileId) {

@@ -76,13 +76,13 @@ public class QualificationsApiController {
      * @param ID
      * @return 
      */
-    @PostMapping("/get/{parentType}/master/{masterId}/id/{id}")
+    @PostMapping("/get/{parentType}/master/{masterId}/{codeId}")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getByMasterId(
                 @PathVariable String parentType,
                 @PathVariable Long masterId,
-                @PathVariable int id) {
-        return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getByMasterId(parentType, masterId, id)));
+                @PathVariable Long codeId) {
+        return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getByMasterId(parentType, masterId, codeId)));
     }
 
     /**

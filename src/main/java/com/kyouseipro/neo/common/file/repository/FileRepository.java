@@ -1,8 +1,9 @@
 package com.kyouseipro.neo.common.file.repository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
@@ -380,5 +381,11 @@ public class FileRepository {
         );
 
         return count == null ? 0: count;
+    }
+
+    public Map<Long, List<FileDto>> mapFilesByParentId(List<FileDto> files) {
+
+        return files.stream()
+            .collect(Collectors.groupingBy(FileDto::getParentId));
     }
 }

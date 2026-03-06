@@ -216,7 +216,7 @@ const FILE_CONFIG = {
 
         /* 表示 */
         viewType: "list",
-        grouping: false,
+        grouping: true,
         isAdmin: true,
 
         /* DOM */
@@ -226,10 +226,11 @@ const FILE_CONFIG = {
         viewerFileNameId: "viewer-file-name",
 
         listId: "file-list",
-        groupArea: "group-id",
-        groupTitle: "filter03",
-        parentValue: () => document.getElementById("qualifications-id")?.value,
-        // groupValue: () => document.getElementById("filter03")?.value,
+        // groupArea: "filter04",
+        groupTitle: "filter04",
+        codeValue: () => document.getElementById("code03")?.value,
+        parentValue: () => document.getElementById("filter04")?.value,
+        groupValue: () => document.getElementById("filter04")?.dataset.group,
 
         viewerId: "form-fileviewer",
         viewerBodyId: "viewer-body",
@@ -249,7 +250,7 @@ const FILE_CONFIG = {
 
         /* 表示 */
         viewType: "list",
-        grouping: false,
+        grouping: true,
         isAdmin: true,
 
         /* DOM */
@@ -259,10 +260,11 @@ const FILE_CONFIG = {
         viewerFileNameId: "viewer-file-name",
 
         listId: "file-list",
-        groupArea: "group-id",
-        groupTitle: "filter03",
-        parentValue: () => document.getElementById("qualifications-id")?.value,
-        // groupValue: () => document.getElementById("filter03")?.value,
+        // groupArea: "filter04",
+        groupTitle: "filter04",
+        codeValue: () => document.getElementById("code03")?.value,
+        parentValue: () => document.getElementById("filter03")?.value,
+        groupValue: () => document.getElementById("filter04")?.value,
 
         viewerId: "form-fileviewer",
         viewerBodyId: "viewer-body",

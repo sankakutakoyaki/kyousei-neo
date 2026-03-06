@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 public class QualificationsEntity implements CsvExportable {
-    private int qualificationsId;
+    private Long qualificationsId;
     private Integer employeeId;
     private Integer companyId;
     private String ownerName;

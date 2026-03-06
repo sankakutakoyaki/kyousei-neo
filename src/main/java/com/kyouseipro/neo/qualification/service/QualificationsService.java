@@ -70,7 +70,7 @@ public class QualificationsService {
      * @param id 資格ID
      * @return QualificationsEntity または null
      */
-    public List<QualificationsEntity> getByMasterId(String parentType, Long masterId, int id) {
+    public List<QualificationsEntity> getByMasterId(String parentType, Long masterId, Long id) {
         return qualificationsRepository.findAllByMasterId(parentType, masterId, id);
     }
 
