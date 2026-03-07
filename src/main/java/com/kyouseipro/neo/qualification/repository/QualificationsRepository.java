@@ -10,7 +10,9 @@ import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.common.simpledata.mapper.SimpleDataMapper;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntityRequest;
+import com.kyouseipro.neo.qualification.entity.QualificationsDto;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntity;
+import com.kyouseipro.neo.qualification.mapper.QualificationsDtoMapper;
 import com.kyouseipro.neo.qualification.mapper.QualificationsEntityMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -103,7 +105,33 @@ public class QualificationsRepository {
         );
     }
 
-    public List<QualificationsEntity> findAllByMasterId(String parentType, Long masterId, Long id) {
+    // public List<QualificationsEntity> findAllByMasterId(String parentType, Long masterId, Long id) {
+    //     String sql = "";
+    //     switch (parentType) {
+    //         case "license":
+    //             sql = QualificationsSqlBuilder.buildFindAllByMasterIdFromLicense();
+    //             break;
+    //         case "qualifications":
+    //             sql = QualificationsSqlBuilder.buildFindAllByMasterIdFromQualification();
+    //             break;
+    //         default:
+    //             return null;
+    //     }
+
+    //     return sqlRepository.queryList(
+    //         sql,
+    //         (ps, v) -> {
+    //             int index = 1;
+    //             ps.setInt(index++, Enums.state.DELETE.getCode());
+    //             ps.setInt(index++, Enums.state.DELETE.getCode());
+    //             ps.setInt(index++, Enums.state.DELETE.getCode());
+    //             ps.setLong(index++, masterId);
+    //             ps.setLong(index++, id);
+    //         },
+    //         QualificationsEntityMapper::map
+    //     );
+    // }
+    public List<QualificationsDto> findAllByMasterId(String parentType, Long masterId, Long id) {
         String sql = "";
         switch (parentType) {
             case "license":
@@ -126,10 +154,9 @@ public class QualificationsRepository {
                 ps.setLong(index++, masterId);
                 ps.setLong(index++, id);
             },
-            QualificationsEntityMapper::map
+            QualificationsDtoMapper::map
         );
     }
-
     /**
      * 取得済み全件取得。
      * 0件の場合は空リストを返す。

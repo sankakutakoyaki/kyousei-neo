@@ -1,6 +1,10 @@
 "use strict"
 
-const MODE_CONFIG = {
+import { refleshCode } from "/js/qualifications/qualifications.js";
+import { execOpen } from "/js/qualifications/qualifications.js";
+import { updateFiles } from "/js/qualifications/qualifications.js";
+
+export const MODE = {
     "01": {
         tableId: "table-01-content",
         footerId: "footer-01",
@@ -49,12 +53,13 @@ const MODE_CONFIG = {
         comboList: licenseComboList,
         comboListTop: "",
         codeChange: async () => {
-            getQualificationFromMasterId();
+            // await updateFiles(cfg);
+            await execOpen();
         },
     }
 }
 
-const ID_CONFIG = {
+export const ID = {
     employee: {
         area: "id-area01",
         codeId: "code02",
@@ -81,7 +86,7 @@ const ID_CONFIG = {
     }
 }
 
-const COMPANY_UI_CONFIG = [
+export const COMPANY = [
     {
         codeId: "code01",
         nameId: "name01",
@@ -99,7 +104,7 @@ const COMPANY_UI_CONFIG = [
     }
 ];
 
-const CHK_CONFIG = {
+export const CHK = {
     license: {
         filterId: "filter03",
         comboList: licenseComboList,
@@ -110,7 +115,7 @@ const CHK_CONFIG = {
     }
 }
 
-const FORM_CONFIG = [
+export const FORM = [
     { name: 'owner-name', key: 'ownerName', trim: true, emptyToNull: true, skipIfNull: true },
     { name: 'qualification-name', key: 'qualificationName', trim: true, emptyToNull: true, skipIfNull: true },
 
@@ -120,12 +125,12 @@ const FORM_CONFIG = [
     { name: 'expiry-date', key: 'expiryDate', emptyToNull: true, skipIfNull: true },
 ];
 
-const SAVE_CONFIG = FORM_CONFIG.map(c => ({
+export const SAVE = FORM.map(c => ({
     ...c,
     skipIfNull: false   // ← ここが重要
 }));
 
-const ERROR_CONFIG = {
+export const ERROR = {
     common: [
         rule(
             'input[name="number"]',
@@ -141,74 +146,12 @@ const ERROR_CONFIG = {
     ]
 };
 
-// const FILE_CONFIG = {
-//     listId: "file-list",
-//     selectUrl: "/api/files/qualifications",
-//     uploadUrl: "/api/files/file/upload/qualifications",
-//     renameUrl: "/api/files/group/rename",
-//     fileViewUrl: "/api/files/file/get/qualifications",
-//     groupUrl: "/api/files/group/list",
-//     parentType: "qualificaiotns",
-//     parentValue: "filter01",
-//     groupId: "group-id",
-//     groupName: "group-name",
-//     csrfToken: token,
-// }
-// const FILE_CONFIG = {
-
-//     /* API */
-//     selectUrl: "/api/files/select/qualification",
-//     uploadUrl: "/api/files/upload/qualification",
-//     fileViewUrl: "/api/files/file/get/qualification",
-//     deleteUrl: "/api/files/file/delete",
-//     renameFileUrl: "/api/files/file/rename",
-//     renameGroupUrl: "/api/files/group/rename",
-
-//     /* 表示 */
-//     viewType: "list",
-//     grouping: true,
-//     isAdmin: true,
-
-//     /* DOM */
-//     loadBtnId: "load-btn",
-//     fileInputId: "file-input",
-//     dropAreaId: "file-list",
-//     viewerFileNameId: "viewer-file-name",
-
-//     listId: "file-list",
-//     groupArea: "group-id",
-
-//     viewerId: "form-fileviewer",
-//     viewerBodyId: "viewer-body",
-//     prevBtnId: "viewer-prev",
-//     nextBtnId: "viewer-next",
-//     closeBtnId: "viewer-close"
-// };
-
-// const ID_CONFIG = {
-//     "01": {
-//         key: "license",
-//         /* 親ID */
-//         parentValue: document.getElementById("code01")?.value,
-
-//         /* グループID */
-//         groupValue: document.getElementById("filter01")?.value,
-//     },
-//     "02": {
-//         key: "qualifications",
-//         /* 親ID */
-//         parentValue: document.getElementById("code02")?.value,
-
-//         /* グループID */
-//         groupValue: document.getElementById("filter02")?.value,
-//     }
-// }
-const FILE_CONFIG = {
+export const FILE = {
     license: {
         /* API */
         selectUrl: "/api/files/select/license",
         uploadUrl: "/api/files/upload/license",
-        fileViewUrl: "/api/files/file/get/license",
+        fileViewUrl: "/api/files/file/view/license",
         deleteUrl: "/api/files/file/delete",
         renameFileUrl: "/api/files/file/rename",
         renameGroupUrl: "/api/files/group/rename",
@@ -226,11 +169,22 @@ const FILE_CONFIG = {
         viewerFileNameId: "viewer-file-name",
 
         listId: "file-list",
-        // groupArea: "filter04",
-        groupTitle: "filter04",
+        groupArea: "filter04",
+        // groupTitle: "filter04",
         codeValue: () => document.getElementById("code03")?.value,
+        masterValue: () => document.getElementById("filter03")?.value,
+        parentType: "license",
         parentValue: () => document.getElementById("filter04")?.value,
-        groupValue: () => document.getElementById("filter04")?.dataset.group,
+        groupValue: () => document.getElementById("filter04")?.dataset.data,
+        afterRender: execOpen,
+        // groupValue: () => {
+        //     const id = document.getElementById("filter04")?.dataset.data;
+        //     if (!id || id == "undefind") {
+        //         return null
+        //     } else {
+        //         return id;
+        //     }
+        // },
 
         viewerId: "form-fileviewer",
         viewerBodyId: "viewer-body",
@@ -242,7 +196,7 @@ const FILE_CONFIG = {
         /* API */
         selectUrl: "/api/files/select/qualifications",
         uploadUrl: "/api/files/upload/qualifications",
-        fileViewUrl: "/api/files/file/get/qualifications",
+        fileViewUrl: "/api/files/file/view/qualifications",
         deleteUrl: "/api/files/file/delete",
         renameFileUrl: "/api/files/file/rename",
         renameGroupUrl: "/api/files/group/rename",
@@ -260,11 +214,14 @@ const FILE_CONFIG = {
         viewerFileNameId: "viewer-file-name",
 
         listId: "file-list",
-        // groupArea: "filter04",
-        groupTitle: "filter04",
+        groupArea: "filter04",
+        // groupTitle: "filter04",
         codeValue: () => document.getElementById("code03")?.value,
-        parentValue: () => document.getElementById("filter03")?.value,
-        groupValue: () => document.getElementById("filter04")?.value,
+        masterValue: () => document.getElementById("filter03")?.value,
+        parentType: "qualification",
+        parentValue: () => document.getElementById("filter04")?.value,
+        groupValue: () => document.getElementById("filter04")?.dataset.data,
+        afterRender: execOpen,
 
         viewerId: "form-fileviewer",
         viewerBodyId: "viewer-body",
@@ -275,29 +232,13 @@ const FILE_CONFIG = {
 
 }
 
-// const ERROR_CONFIG = {
-//     common: [
-//         {
-//             selector: 'input[name="number"]',
-//             checks: [
-//                 { test: v => v !== "", message: '番号を入力して下さい。'}
-//             ]
-//         },
-//         {
-//             selector: 'input[name="expiry-date"]',
-//             checks: [
-//                 {
-//                     test: (v, el) => {
-//                         const area = el.closest("form");
-//                         const acquisition = area.querySelector('input[name="acquisition-date"]').value;
-
-//                         if (!acquisition || !v) return true;
-
-//                         return v >= acquisition;
-//                     },
-//                     message: "有効期限は取得日以降の日付を入力してください。"
-//                 }
-//             ]
-//         }
-//     ]
-// }
+export const CONFIG = {
+    MODE,
+    ID,
+    COMPANY,
+    CHK,
+    FORM,
+    SAVE,
+    ERROR,
+    FILE
+};

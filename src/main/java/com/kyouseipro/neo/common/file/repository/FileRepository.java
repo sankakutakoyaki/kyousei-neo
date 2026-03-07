@@ -1,5 +1,6 @@
 package com.kyouseipro.neo.common.file.repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -387,5 +388,52 @@ public class FileRepository {
 
         return files.stream()
             .collect(Collectors.groupingBy(FileDto::getParentId));
+    }
+
+    public List<FileDto> findFiles(String parentType, List<Long> parentIds) {
+
+        if (parentIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        String placeholders =
+            parentIds.stream().map(i -> "?").collect(Collectors.joining(","));
+
+        String sql = """
+            SELECT
+                f.file_id,
+                g.parent_id,
+                g.parent_type,
+                f.original_name,
+                f.display_name,
+                f.mime_type,
+                f.group_id,
+                g.group_name
+            FROM files f
+            JOIN files_group g
+            ON f.group_id = g.group_id
+            WHERE g.parent_type = ?
+            AND g.parent_id IN (%s)
+            AND f.state <> ?
+            ORDER BY g.display_order, f.display_order
+        """.formatted(placeholders);
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, v) -> {
+
+                int idx = 1;
+
+                ps.setString(idx++, parentType);
+
+                for (Long id : parentIds) {
+                    ps.setLong(idx++, id);
+                }
+
+                ps.setInt(idx++, Enums.state.DELETE.getCode());
+
+            },
+            FileDtoMapper::map
+        );
     }
 }

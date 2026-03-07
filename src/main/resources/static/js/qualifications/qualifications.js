@@ -1,5 +1,14 @@
 "use strict"
 
+import { FileManager } from "/js/file/fileManager.js";
+import { FileStore } from "/js/file/fileStore.js";
+import { FileUploader } from "/js/file/fileUploader.js";
+import { CONFIG } from "/js/qualifications/qualificationsConfig.js";
+
+let origin = [];
+let tempEntity = {};
+const fileManager = {};
+
 /******************************************************************************************************* 入力画面 */
 
 // リスト画面の本体部分を作成する
@@ -22,17 +31,12 @@ function createTableContent(tableId, list) {
 
 // テーブル行を作成する
 function createTableRow(newRow, item) {
-    // // 選択用チェックボックス
-    // newRow.insertAdjacentHTML('beforeend', '<td name="chk-cell" class="pc-style"><input class="normal-chk" name="chk-box" type="checkbox"></td>');
-    // // ID
-    // newRow.insertAdjacentHTML('beforeend', '<td name="id-cell" class="link-cell" onclick="execEdit(' + item.qualificationsId + ', this)">' + String(item.qualificationsId).padStart(4, '0') + '</td>');
     // 名前
     newRow.insertAdjacentHTML('beforeend', '<td><span class="kana">' + item.ownerNameKana + '</span><br><span>' + item.ownerName + '</span></td>');
     // 資格名
     newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.qualificationName ?? "登録なし") + '</span></td>');
     // 番号
     newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.number ?? "-----") + '</span></td>');
-    // newRow.insertAdjacentHTML('beforeend', '<td data-status="' + item.status + '"><span>' + item.status + '</span></td>');
     // 有効期限
     newRow.insertAdjacentHTML('beforeend', '<td><span>' + (item.expiryDate ?? "") + '</span></td>');
     // ステータス
@@ -41,8 +45,8 @@ function createTableRow(newRow, item) {
 
 /******************************************************************************************************* 画面更新 */
 
-async function execUpdate(tab) {
-    const cfg = MODE_CONFIG[tab];
+export async function execUpdate(tab) {
+    const cfg = CONFIG.MODE[tab];
 
     const resultResponse = await fetch(cfg.getUrl);
     const result = await resultResponse.json();
@@ -74,7 +78,7 @@ function qualificationsFilter(filterValue, list) {
 
 // 一括フィルター
 async function execFilterDisplay(tab) {
-    const cfg = MODE_CONFIG[tab];
+    const cfg = CONFIG.MODE[tab];
 
     const codeValue = document.getElementById(cfg.codeId)?.value;
     if (!codeValue) return;
@@ -88,12 +92,8 @@ async function execFilterDisplay(tab) {
     await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, list, createTableContent);
 }
 
-async function getQualificationFromMasterId() {
-    execOpen();
-}
-
 // companyCombo変更時の処理
-function refleshCode(codeId, nameId) {
+export function refleshCode(codeId, nameId) {
     const code = document.getElementById(codeId);
     const name = document.getElementById(nameId);
     code.value = code.value === name.value ? code.value: Number(name.value) === 0 ? "": name.value ;
@@ -108,7 +108,7 @@ async function execEdit(id) {
     if (!panel) return;
 
     const tab = panel.dataset.panel
-    const cfg = MODE_CONFIG[tab];
+    const cfg = CONFIG.MODE[tab];
 
     tempEntity = {};
 
@@ -139,7 +139,7 @@ async function execEdit(id) {
     }
 
     // フォーム画面を開く
-    applyFormConfig(form, tempEntity, FORM_CONFIG);
+    applyFormConfig(form, tempEntity, CONFIG.FORM);
 
     // 入力フォームダイアログを開く
     openFormDialog(cfg.dialogId);
@@ -150,12 +150,12 @@ async function execEdit(id) {
 /******************************************************************************************************* 保存 */
 
 // 保存処理
-async function execSave() {
+export async function execSave() {
     const panel = document.querySelector('.tab-panel.is-show');
     const tab = panel?.dataset?.panel;
     if (!tab) return;
 
-    const cfg = MODE_CONFIG[tab];
+    const cfg = CONFIG.MODE[tab];
 
     const form = document.getElementById(cfg.formId);
     if (!form) return;
@@ -163,95 +163,101 @@ async function execSave() {
     const number = form.querySelector('[name="number"]');
     if (!number) return;
 
-    if (!validateByConfig(form, ERROR_CONFIG)) {
+    if (!validateByConfig(form, CONFIG.ERROR)) {
         return;
     }
 
-    const data = buildEntityFromElement(form, tempEntity, SAVE_CONFIG);
-    // const result = await updateFetch("/api/qualifications/save", JSON.stringify(data), token);
-
-    // if (result.ok && result.data !== null) {
-    //     closeFormDialog(cfg.dialogId);
-
-    //     await execUpdate(tab);
-    //     scrollIntoTableList(cfg.tableId, result.data);
-        
-    //     openMsgDialog("msg-dialog", result.message, "blue");
-    // } else {
-    //     // number.value = null;
-    //     setFocusElement("msg-dialog", number);
-    // }
-
-    // resetFormInput(tab);
+    const data = buildEntityFromElement(form, tempEntity, CONFIG.SAVE);
 }
 
 // 入力フォームの内容をリセットする
-function resetFormInput(tab) {
-    const cfg = MODE_CONFIG[tab];
+export function resetFormInput(tab) {
+    const cfg = CONFIG.MODE[tab];
     resetFormInputValue(cfg.dialogId);
-}
-
-async function execUpload() {
-    
 }
 
 /******************************************************************************************************* 表示 */
 
-async function execOpen() {
-    const panel = document.querySelector(".tab-panel.is-show");
+export async function execOpen() {console.log("execOpen");
+    const panel = document.querySelector("[data-panel='03']");
     const chk = panel.querySelector('input[type="checkbox"]:checked');
     const cate = chk.dataset.cate;
-    const cfg = FILE_CONFIG[cate];
+    const cfg = CONFIG.FILE[cate];
 
-    // const codeValue = cfg.codeValue();
-    // if (!codeValue || codeValue === "") return;
+    const qualifications = await getQualificationList(cfg);
+    const area = document.getElementById(cfg.groupArea);
+    const list = qualifications.data.map(v => ({number: v.qualificationsId, text: v.number, data: v.files[0]?.groupId}));
+    // createComboBox(area, list);
 
-    // const parentValue = cfg.parentValue();
-    // if (!parentValue || parentValue <= 0) {
-    //     openMsgDialog('msg-dialog', '情報が選択されていません。', 'red');
-    //     return;
-    // }
+    const list2 = qualifications.data
+            .filter(v => { return v.qualificationsId === Number(cfg.parentValue()) })    
+            .map(v => ({
+                groupId: v.files[0]?.groupId,
+                groupName: v.qualificationName,
+                files: v.files
+            }));
 
+    const fileManager = new FileManager(cfg);
+    // FileStore.set(list2);
+    // fileManager.render();
 
-
-    // const qualifications = getQualificationList(cfg, parentValue, codeValue);
-
-    // const response = await fetch(`${cfg.selectUrl}/${v.qualificationsId}`,);
-    // const list = await response.json();
-
-
-    
-    // qualifications.forEach(async v => {
-    //     const response = await fetch(
-    //         `${cfg.selectUrl}/${v.qualificationsId}`,
-    //     );
-    //     let entity = await response.json();
-    // })
-    
-    
-    
-    
-    
-
-    // renderFileList(FILE_CONFIG[cate], list);
-
-    // createGroupComboBox(cfg, parentValue, codeValue);
+    fileManager.setFiles(list2);
 }
+// export async function execOpen(){
 
-async function getQualificationList(cfg, parentValue, codeValue) {
-    const response = await fetch(
-        `${cfg.getParentUrl}/${parentValue}/${codeValue}`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": token
-            }
-        }
-    );
+//     const panel = document.querySelector("[data-panel='03']");
+//     const chk = panel.querySelector('input[type="checkbox"]:checked');
+//     const cate = chk.dataset.cate;
+//     const cfg = CONFIG.FILE[cate];
 
-    return await response.json();
-}
+//     const qualifications = await getQualificationList(cfg);
+
+//     initCombo(cfg, qualifications);
+
+//     updateFiles(cfg, qualifications);
+
+// }
+// function initCombo(cfg, qualifications){
+
+//     const area = document.getElementById(cfg.groupArea);
+
+//     if(area.dataset.comboInit) return;
+
+//     const list = qualifications.data.map(v => ({
+//         number: v.qualificationsId,
+//         text: v.number,
+//         data: v.files[0]?.groupId
+//     }));
+
+//     createComboBox(area, list);
+
+//     area.dataset.comboInit = "1";
+
+// }
+// export function updateFiles(cfg, qualifications){
+
+//     const list2 = qualifications.data
+//         .filter(v =>
+//             v.qualificationsId === Number(cfg.parentValue())
+//         )
+//         .map(v => ({
+//             groupId: v.files[0]?.groupId,
+//             groupName: v.qualificationName,
+//             files: v.files
+//         }));
+
+//     const fileManager = new FileManager(cfg);
+
+//     FileStore.set(list2);
+
+//     fileManager.render();
+
+// }
+
+
+
+
+
 
 // async function createGroupComboBox(cfg, parentValue, codeValue) {
 //     const response = await fetch(
@@ -291,20 +297,40 @@ async function getQualificationList(cfg, parentValue, codeValue) {
 
 /******************************************************************************************************* 取得 */
 
+async function getQualificationList(cfg) {
+
+    const codeValue = cfg.codeValue();
+    if (!codeValue || codeValue === "") return;
+
+    const masterValue = cfg.masterValue();
+    if (!masterValue || masterValue === "") return;
+
+    const response = await fetch(`${cfg.getParentUrl}/${masterValue}/${codeValue}`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": token
+            }
+        }
+    );
+
+    return await response.json();
+}
 
 /******************************************************************************************************* 初期化時 */
 
 // ページ読み込み後の処理
 window.addEventListener("load", async () => {
 
-    for (const tab of Object.keys(MODE_CONFIG)) {
-        const cfg = MODE_CONFIG[tab];
+    for (const tab of Object.keys(CONFIG.MODE)) {
+        const cfg = CONFIG.MODE[tab];
 
         const fi = document.getElementById(cfg.filterId);
         if (fi) {
             createComboBoxWithTop(fi, cfg.comboList, cfg.comboListTop);
             fi.addEventListener('change', async () => {
-                cfg.codeChange();
+                await cfg.codeChange(cfg);
             });
         }
 
@@ -319,11 +345,11 @@ window.addEventListener("load", async () => {
     };
 
     setEnterFocus("form-01");
-    initCompanyInputs();
+    initCompanyInputs(CONFIG.COMPANY);
 
     // 担当者コード入力時の処理
-    for (const tab of Object.keys(ID_CONFIG)) {
-        const cfg = ID_CONFIG[tab];
+    for (const tab of Object.keys(CONFIG.ID)) {
+        const cfg = CONFIG.ID[tab];
 
         const elm = document.getElementById(cfg.codeId);
         if (elm)  {
@@ -336,14 +362,19 @@ window.addEventListener("load", async () => {
         setEnterFocus(cfg.area);
     }
 
-    FileUI.init(FILE_CONFIG['license']);
-
     // タブメニュー処理
     const tabMenus = document.querySelectorAll('.tab-menu-item');
     // イベント付加
     tabMenus.forEach((tabMenu) => {
         tabMenu.addEventListener('click', tabSwitch);
     })
+
+    const closeBtn = document.getElementById("viewer-close");
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () =>
+            closeFormDialog("form-fileviewer")
+        );
+    }
 
     document.querySelectorAll(".row-enable").forEach(cb => {
         cb.addEventListener("change", handleRowSelection);
@@ -360,6 +391,8 @@ window.addEventListener("load", async () => {
 
     // 初期状態も反映
     updateFilter03State();
+
+    // setFileConfig('license');
 });
 
 /**
@@ -369,13 +402,11 @@ window.addEventListener("load", async () => {
 function handleRowSelection(e) {
 
     const cate = e.target.dataset.cate;
-    const cfg = CHK_CONFIG[cate];
+    const cfg = CONFIG.CHK[cate];
     const filter = document.getElementById(cfg.filterId);
     if (!filter) return;
 
     createComboBoxWithTop(filter, cfg.comboList, "");
-
-    FileUI.init(FILE_CONFIG[cate]);
 
     const allCheckboxes = document.querySelectorAll(".row-enable");
     if (e.target.checked) {
@@ -390,10 +421,59 @@ function handleRowSelection(e) {
         setCodeEnabled(e.target.closest(".flex-area"), false);
     }
 
+    setFileConfig(cate);
     resetEnterFocus();
     updateFilter03State();
+
 }
 
+// function setFileConfig(cate) {
+
+//     if (!fileManager[cate]) {
+//         fileManager[cate] = new FileManager(CONFIG.FILE[cate]);
+//     }
+
+//     const manager = fileManager[cate];
+
+//     document
+//         .getElementById("file-input")
+//         .addEventListener("change", async (e)=>{
+
+//             const file = e.target.files[0];
+//             await manager.upload(file);
+
+//     });
+// }
+
+function setFileConfig(cate){
+
+    if (!fileManager[cate]) {
+        fileManager[cate] = new FileManager(CONFIG.FILE[cate]);
+    }
+
+    const manager = new FileManager(CONFIG.FILE[cate]);
+
+    // manager.load();
+
+    const dropArea = document.getElementById("drop-area");
+
+    if(dropArea){
+        FileUploader.attachDrop(
+            dropArea,
+            manager
+        );
+    }
+
+    const fileInput = document.getElementById("file-input");
+
+    if(fileInput){
+        FileUploader.attachInput(
+            fileInput,
+            manager
+        );
+    }
+
+}
 /**
  * チェックボックス変更時の処理
  * @param {*} area 

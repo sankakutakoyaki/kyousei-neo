@@ -400,7 +400,9 @@ public class FileService {
         parentType = parentType.toLowerCase();
 
         if (groupId == null || !fileGroupRepository.exists(groupId)) {
-            if (groupTitle == null) groupTitle = createUniqueGroupName(parentId, groupTitle);
+            if (groupTitle == null) {
+                groupTitle = createUniqueGroupName(parentId, "新しいグループ");
+            }
             groupId = fileGroupService.createGroup(parentType, parentId, groupTitle);
         }
 
@@ -564,6 +566,7 @@ public class FileService {
 
         int counter = 0;
         String candidate;
+        
 
         do {
             candidate = counter == 0 ? baseName : baseName + "(" + counter + ")";

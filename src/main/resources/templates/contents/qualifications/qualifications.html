@@ -66,19 +66,19 @@
             <div th:replace="~{fragments/common/dialog :: messageFragment}"></div>
         </div>
         <script type="text/JavaScript" th:inline="JavaScript">
+
             const token = /*[[${_csrf.token}]]*/;
             const user = /*[[${user}]]*/;
             const formEntity = /*[[${formEntity}]]*/;
             const companyComboList = /*[[${companyComboList}]]*/;
             const qualificationsComboList = /*[[${qualificationsComboList}]]*/;
             const licenseComboList = /*[[${licenseComboList}]]*/;
-            let origin = [];
-            let tempEntity = {};
         </script>
-        <script th:src="@{/js/qualifications/config/qualifications.js}"></script>
-        <script th:src="@{/js/qualifications/qualifications.js}"></script>
-        <script th:src="@{/js/file/fileService.js}"></script>
-        <script th:src="@{/js/file/fileList.js}"></script>
+        <!-- <script type="module" th:scr="@{/js/file/fileManager.js}"></script> -->
+        <!-- <script type="module" th:src="@{/js/qualifications/qualificationsConfig.js}"></script> -->
+        <script type="module" th:src="@{/js/qualifications/qualifications.js}"></script>
+        <!-- <script th:src="@{/js/file/fileService.js}"></script> -->
+        <!-- <script th:src="@{/js/file/fileList.js}"></script> -->
     </main>
 
 </body>

@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums.HistoryTables;
+import com.kyouseipro.neo.common.file.service.FileAttachService;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.dto.CsvExporter;
 import com.kyouseipro.neo.interfaces.HistoryTarget;
+import com.kyouseipro.neo.qualification.entity.QualificationsDto;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntity;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntityRequest;
 import com.kyouseipro.neo.qualification.repository.QualificationsRepository;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QualificationsService {
     private final QualificationsRepository qualificationsRepository;
+    private final FileAttachService fileAttachService;
 
     /**
      * 指定されたIDの資格情報を取得します。
@@ -63,16 +66,16 @@ public class QualificationsService {
         return qualificationsRepository.findAllByCompanyId(id);
     }
 
-    /**
-     * 指定されたIDの許認可情報を取得します。
-     * 論理削除されている場合は null を返します。
-     *
-     * @param id 資格ID
-     * @return QualificationsEntity または null
-     */
-    public List<QualificationsEntity> getByMasterId(String parentType, Long masterId, Long id) {
-        return qualificationsRepository.findAllByMasterId(parentType, masterId, id);
-    }
+    // /**
+    //  * 指定されたIDの許認可情報を取得します。
+    //  * 論理削除されている場合は null を返します。
+    //  *
+    //  * @param id 資格ID
+    //  * @return QualificationsEntity または null
+    //  */
+    // public List<QualificationsEntity> getByMasterId(String parentType, Long masterId, Long id) {
+    //     return qualificationsRepository.findAllByMasterId(parentType, masterId, id);
+    // }
 
     /**
      * 資格情報を登録・更新します。
@@ -160,5 +163,26 @@ public class QualificationsService {
      */
     public List<QualificationsEntity> getListForCompanyAllStatus() {
         return qualificationsRepository.findAllByCompanyStatus();
+    }
+
+    public List<QualificationsDto> findQualifications(
+            String parentType,
+            Long qualificationMasterId,
+            Long companyId
+    ) {
+
+        List<QualificationsDto> list =
+            qualificationsRepository.findAllByMasterId(
+                parentType,
+                qualificationMasterId,
+                companyId
+            );
+
+        fileAttachService.attachFiles(
+            parentType,
+            list
+        );
+
+        return list;
     }
 }

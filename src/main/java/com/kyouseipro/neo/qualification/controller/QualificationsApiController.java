@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.dto.IdRequest;
+import com.kyouseipro.neo.qualification.entity.QualificationsDto;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntity;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntityRequest;
 import com.kyouseipro.neo.qualification.service.QualificationsService;
@@ -78,11 +79,17 @@ public class QualificationsApiController {
      */
     @PostMapping("/get/{parentType}/master/{masterId}/{codeId}")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getByMasterId(
+    // public ResponseEntity<SimpleResponse<List<QualificationsEntity>>> getByMasterId(
+    //             @PathVariable String parentType,
+    //             @PathVariable Long masterId,
+    //             @PathVariable Long codeId) {
+    //     return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getByMasterId(parentType, masterId, codeId)));
+    // }
+    public ResponseEntity<SimpleResponse<List<QualificationsDto>>> getByMasterId(
                 @PathVariable String parentType,
                 @PathVariable Long masterId,
                 @PathVariable Long codeId) {
-        return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.getByMasterId(parentType, masterId, codeId)));
+        return ResponseEntity.ok(SimpleResponse.ok(qualificationsService.findQualifications(parentType, masterId, codeId)));
     }
 
     /**

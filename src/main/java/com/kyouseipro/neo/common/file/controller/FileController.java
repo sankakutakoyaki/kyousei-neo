@@ -68,7 +68,7 @@ public class FileController {
         return fileRepository.findFilesGroup(groupId);
     }
 
-    @GetMapping("/file/get/{parentType}/{parentId}/{fileId}")
+    @GetMapping("/file/view/{parentType}/{parentId}/{fileId}")
     public ResponseEntity<Resource> view(
             @PathVariable String parentType,
             @PathVariable Long parentId,

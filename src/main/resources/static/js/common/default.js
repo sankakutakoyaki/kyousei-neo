@@ -1,42 +1,5 @@
 "use strict"
 
-// /**
-//  * Post送信する
-//  * @param {アドレス} url 
-//  * @param {送信するデータ} data 
-//  * @param {トークン} token 
-//  * @param {コンテントタイプ} contentType 
-//  * @returns Promiseデータ
-//  */
-// async function postFetch(url, data, token, contentType) {
-//     const spinner = document.getElementById('loading');
-//     if (spinner != null) {
-//         spinner.classList.remove('loaded');
-//     }
-//     try {
-//         return await fetch(url, {
-//             method: "POST",   // HTTP-Methodを指定する！
-//             headers: {  // リクエストヘッダを追加
-//                 'X-CSRF-TOKEN': token,
-//                 'Content-Type': contentType,
-//             },
-//             body: data,
-//         });
-//     } catch (e) {
-//         if (e = "TypeError: Failed to fetch") {
-//             alert("ネットワーク接続が異常です。");
-//             reloadPage();
-//         } else {
-//             alert(e);  // 例外（エラー）が発生した場合に実行
-//         }
-//     } finally {
-//         // 処理結果の成否に関わらず実行
-//         if (spinner != null) {
-//             spinner.classList.add('loaded');
-//         }
-//     }
-// }
-
 /**
  * リンク先へジャンプさせる
  * @param {リンク先} link 
@@ -77,30 +40,6 @@ function processingEnd() {
  * ページトップボタン処理を登録する
  */
 function setPageTopButton(tableId) {
-    // const tbl = document.getElementById(tableId);
-    // if (tbl != null) {
-    //     const btn = document.querySelector('.page-top');
-    //     if (!btn) return;
-    //     btn.addEventListener('click', function () {
-    //         if (tbl.scrollTop > tbl.clientHeight) {
-    //             const scroll = tbl.querySelector('tr');
-    //             scroll.scrollIntoView({
-    //                 block: "start",
-    //                 behavior: 'smooth'
-    //             });
-    //         }
-    //     });
-    //     btn.style.opacity = "0";
-    
-    //     tbl.onscroll = function () {
-    //         const area = tbl.closest('.table-area');
-    //         if (tbl.scrollTop > tbl.clientHeight) {
-    //             area.querySelector('.page-top').style.opacity = "0.7";
-    //         } else if (tbl.scrollTop < tbl.clientHeight) {
-    //             area.querySelector('.page-top').style.opacity = "0";
-    //         }
-    //     };
-    // }
     const tbl = document.getElementById(tableId);
     if (!tbl) return;
 
@@ -210,10 +149,4 @@ function hamburgerItemAddSelectClass(areaId, self) {
     const area = document.querySelector(areaId);
     area.querySelectorAll('.hamburger-item').forEach(el => el.classList.remove('selected'));
     self.classList.add('selected');
-
-    // const area = document.querySelector(areaId);
-    // const item = area.querySelector('[data-menu="' + selectId + '"]');
-
-    // // アイテムに選択クラスを追加
-    // item.classList.add('selected');
 }
