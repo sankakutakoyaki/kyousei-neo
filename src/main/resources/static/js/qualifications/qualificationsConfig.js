@@ -2,7 +2,7 @@
 
 import { refleshCode } from "/js/qualifications/qualifications.js";
 import { execOpen } from "/js/qualifications/qualifications.js";
-import { updateFiles } from "/js/qualifications/qualifications.js";
+import { refreshFileList } from "/js/qualifications/qualifications.js";
 
 export const MODE = {
     "01": {
@@ -54,6 +54,7 @@ export const MODE = {
         comboListTop: "",
         codeChange: async () => {
             // await updateFiles(cfg);
+            // refreshFileList();
             await execOpen();
         },
     }
@@ -176,7 +177,7 @@ export const FILE = {
         parentType: "license",
         parentValue: () => document.getElementById("filter04")?.value,
         groupValue: () => document.getElementById("filter04")?.dataset.data,
-        afterRender: execOpen,
+        afterRender: refreshFileList,
         // groupValue: () => {
         //     const id = document.getElementById("filter04")?.dataset.data;
         //     if (!id || id == "undefind") {
@@ -221,7 +222,7 @@ export const FILE = {
         parentType: "qualification",
         parentValue: () => document.getElementById("filter04")?.value,
         groupValue: () => document.getElementById("filter04")?.dataset.data,
-        afterRender: execOpen,
+        afterRender: refreshFileList,
 
         viewerId: "form-fileviewer",
         viewerBodyId: "viewer-body",

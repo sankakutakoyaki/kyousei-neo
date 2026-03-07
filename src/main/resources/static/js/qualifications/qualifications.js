@@ -178,7 +178,7 @@ export function resetFormInput(tab) {
 
 /******************************************************************************************************* 表示 */
 
-export async function execOpen() {console.log("execOpen");
+export async function execOpen() {
     const panel = document.querySelector("[data-panel='03']");
     const chk = panel.querySelector('input[type="checkbox"]:checked');
     const cate = chk.dataset.cate;
@@ -198,11 +198,21 @@ export async function execOpen() {console.log("execOpen");
             }));
 
     const fileManager = new FileManager(cfg);
-    // FileStore.set(list2);
-    // fileManager.render();
+    FileStore.set(list2);
+    fileManager.render();
 
-    fileManager.setFiles(list2);
+    createComboBox(area, list);
 }
+
+export function refreshFileList() {
+    const panel = document.querySelector("[data-panel='03']");
+    const chk = panel.querySelector('input[type="checkbox"]:checked');
+    const cate = chk.dataset.cate;
+    const cfg = CONFIG.FILE[cate];
+    const fileManager = new FileManager(cfg);
+    fileManager.render();
+}
+
 // export async function execOpen(){
 
 //     const panel = document.querySelector("[data-panel='03']");
@@ -330,7 +340,7 @@ window.addEventListener("load", async () => {
         if (fi) {
             createComboBoxWithTop(fi, cfg.comboList, cfg.comboListTop);
             fi.addEventListener('change', async () => {
-                await cfg.codeChange(cfg);
+                await cfg.codeChange();
             });
         }
 
