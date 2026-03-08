@@ -3,6 +3,7 @@
 import { refleshCode } from "/js/qualifications/qualificationsTable.js";
 import { execOpen } from "/js/qualifications/qualificationsFile.js";
 import { refreshFileList } from "/js/qualifications/qualificationsFile.js";
+import { execUpdate } from "/js/qualifications/qualificationsTable.js";
 
 export const MODE = {
     "01": {
