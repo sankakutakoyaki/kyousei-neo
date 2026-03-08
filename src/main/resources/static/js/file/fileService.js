@@ -58,7 +58,7 @@ export const FileService = {
         // const response = await searchFetch(`/api/files/upload/${config.parentType}/${config.parentValue()}`, JSON.stringify(formData), token);
 
         await fetch(
-            `/api/files/upload/${config.parentType}/${config.parentValue()}`,
+            `${config.uploadUrl}/${config.parentValue()}`,
             {
                 method:"POST",
                 body:formData,

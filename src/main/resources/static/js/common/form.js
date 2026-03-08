@@ -14,7 +14,7 @@ function createComboBox(selectArea, items) {
             // selectArea.insertAdjacentHTML('beforeend', '<option value="' + item.number + '"' + (data != null ? " " + data: "") + '>' + item.text + '</option>');
             selectArea.insertAdjacentHTML(
                 "beforeend",
-                `<option value="${item.number}" ${item.data ?? ""}>${item.text}</option>`
+                `<option value="${item.number}" data-id="${item.data ?? ""}">${item.text}</option>`
             );
         }
     })
@@ -34,7 +34,7 @@ function createComboBoxValueString(selectArea, items) {
             // selectArea.insertAdjacentHTML('beforeend', '<option value="' + item.number + '">' + item.text + '</option>');
             selectArea.insertAdjacentHTML(
                 "beforeend",
-                `<option value="${item.number}" ${item.data ?? ""}>${item.text}</option>`
+                `<option value="${item.number}" data-id="${item.data ?? ""}">${item.text}</option>`
             );
         }
     })
@@ -56,7 +56,7 @@ function createComboBoxWithTop(selectArea, items, text) {
             // selectArea.insertAdjacentHTML('beforeend', '<option value="' + item.number + '">' + item.text + '</option>');
             selectArea.insertAdjacentHTML(
                 "beforeend",
-                `<option value="${item.number}" ${item.data ?? ""}>${item.text}</option>`
+                `<option value="${item.number}" data-id="${item.data ?? ""}">${item.text}</option>`
             );
         }
     })
@@ -76,7 +76,7 @@ function createComboBoxWithTopAndFunc(selectArea, items, onChange, text = null) 
     if (text) selectArea.insertAdjacentHTML('beforeend', '<option value="0">' + text + '</option>');
     items.forEach(function (item) {
         if (item.number != null) {
-            selectArea.insertAdjacentHTML('beforeend', `<option value="${item.number}" ${item.data ?? ""}>${item.text}</option>`);
+            selectArea.insertAdjacentHTML('beforeend', `<option value="${item.number}" data-id="${item.data ?? ""}">${item.text}</option>`);
         }
     });
     selectArea.onchange = function (e) {
@@ -99,7 +99,7 @@ function createComboBoxWithFunc(selectArea, items, onChange, text = null) {
     deleteElements(selectArea);
     items.forEach(function (item) {
         if (item.number != null) {
-            selectArea.insertAdjacentHTML('beforeend', `<option value="${item.number}" ${item.data ?? ""}>${item.text}</option>`);
+            selectArea.insertAdjacentHTML('beforeend', `<option value="${item.number}" data-id="${item.data ?? ""}">${item.text}</option>`);
         }
     });
     selectArea.onchange = function (e) {

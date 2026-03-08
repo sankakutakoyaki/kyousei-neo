@@ -1,141 +1,128 @@
 "use strict"
 
-// /**
-//  * 更新用
-//  * @param {*} url 
-//  * @param {*} data 
-//  * @param {*} token 
-//  * @param {*} contentType 
-//  * @returns 
-//  */
-// async function updateFetch(url, data, token, contentType = "application/json") {
-//     const spinner = document.getElementById("loading");
-//     if (spinner) spinner.classList.remove("loaded");
-
-//     const response = await fetch(url, {
-//         method: "POST",
-//         headers: {
-//             "X-CSRF-TOKEN": token,
-//             "Content-Type": contentType,
-//         },
-//         body: data,
-//     });
-
-//     if (spinner) spinner.classList.add("loaded");
-
-//     let json = null;
-//     const ct = response.headers.get("content-type");
-//     if (ct && ct.includes("application/json")) {
-//         json = await response.json();
-//     }
-
-//     if (!response.ok) {
-//         await handleHttpError(response.status, json);
-//     }
-
-//     return {
-//         ok: response.ok,
-//         status: response.status,
-//         data: json, 
-//         message: json?.message ?? ""
-//     };
-// }
-
-// /**
-//  * 検索用
-//  * @param {*} url 
-//  * @param {*} data 
-//  * @param {*} token 
-//  * @param {*} contentType 
-//  * @returns 
-//  */
-// async function searchFetch(url, data, token, contentType = "application/json") {
-//     const spinner = document.getElementById("loading");
-//     if (spinner) spinner.classList.remove("loaded");
-
-//     const response = await fetch(url, {
-//         method: "POST",
-//         headers: {
-//             "X-CSRF-TOKEN": token,
-//             "Content-Type": contentType,
-//         },
-//         body: data,
-//     });
-
-//     if (response.status === 404) {
-//         return null; // ← 正常
-//     }
-
-//     if (spinner) spinner.classList.add("loaded");
-    
-//     let json = null;
-//     const ct = response.headers.get("content-type");
-//     if (ct && ct.includes("application/json")) {
-//         json = await response.json();
-//     }
-
-//     if (!response.ok) {
-//         await handleHttpError(response.status, json);
-//     }
-
-//     return {
-//         ok: response.ok,
-//         status: response.status,
-//         data: json ?? null,
-//         message: json?.message ?? ""
-//     };
-// }
-
 /**
- * 共通関数
- * @param {*} url 
- * @param {*} param1 
- * @returns 
+ * 共通fetch
  */
 async function apiFetch(url, {
     method = "POST",
     data = null,
     token,
-    contentType = "application/json",
-    allow404 = false
+    allow404 = false,
+    timeout = 15000,
+    retry = 0
 } = {}) {
 
     const spinner = document.getElementById("loading");
     if (spinner) spinner.classList.remove("loaded");
 
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeout);
+
     try {
+
+        const headers = {};
+
+        if (token) {
+            headers["X-CSRF-TOKEN"] = token;
+        }
+
+        let body = null;
+
+        if (data instanceof FormData) {
+
+            body = data;
+
+        } else if (data && data.constructor === Object) {
+
+            headers["Content-Type"] = "application/json";
+            body = JSON.stringify(data);
+
+        } else {
+
+            body = data;
+
+        }
+
         const response = await fetch(url, {
             method,
-            headers: {
-                "X-CSRF-TOKEN": token,
-                "Content-Type": contentType,
-            },
-            body: data,
+            headers,
+            body,
+            signal: controller.signal
         });
+
+        clearTimeout(timer);
 
         if (allow404 && response.status === 404) {
             return null;
         }
 
-        let json = null;
-        const ct = response.headers.get("content-type");
-        if (ct && ct.includes("application/json")) {
-            json = await response.json();
+        if (!response.ok) {
+
+            let err = null;
+
+            try {
+                err = await response.json();
+            } catch {}
+
+            await handleHttpError(response.status, err);
         }
 
-        if (!response.ok) {
-            await handleHttpError(response.status, json);
+        const ct = response.headers.get("content-type") || "";
+
+        let result;
+
+        if (ct.includes("application/json")) {
+
+            result = await response.json();
+
+        } else if (
+            ct.includes("application/octet-stream") ||
+            ct.includes("application/pdf") ||
+            ct.includes("application/zip")
+        ) {
+
+            result = await response.blob();
+
+        } else {
+
+            result = await response.text();
+
         }
 
         return {
-            ok: response.ok,
+            ok: true,
             status: response.status,
-            data: json.data ?? null,
-            message: json?.message ?? ""
+            data: result?.data ?? result,
+            message: result?.message ?? ""
         };
 
+    } catch (err) {
+
+        if (err.name === "AbortError") {
+            throw new Error("通信がタイムアウトしました");
+        }
+
+        if (retry > 0) {
+
+            return apiFetch(url, {
+                method,
+                data,
+                token,
+                allow404,
+                timeout,
+                retry: retry - 1
+            });
+
+        }
+
+        throw err;
+
     } finally {
+
+        clearTimeout(timer);
+
         if (spinner) spinner.classList.add("loaded");
+
     }
 }
 
@@ -144,16 +131,14 @@ async function apiFetch(url, {
  * @param {*} url 
  * @param {*} data 
  * @param {*} token 
- * @param {*} contentType 
  * @returns 
  */
-async function updateFetch(url, data, token, contentType = "application/json") {
+async function updateFetch(url, data, token) {
     return apiFetch(url, {
         method: "POST",
         data,
         token,
-        contentType,
-        allow404: false
+        retry: 1
     });
 }
 
@@ -162,40 +147,170 @@ async function updateFetch(url, data, token, contentType = "application/json") {
  * @param {*} url 
  * @param {*} data 
  * @param {*} token 
- * @param {*} contentType 
  * @returns 
  */
-async function searchFetch(url, data, token, contentType = "application/json") {
+async function searchFetch(url, data, token) {
     return apiFetch(url, {
         method: "POST",
         data,
         token,
-        contentType,
-        allow404: true
+        allow404: true,
+        retry: 1
     });
 }
 
 /**
- * HTTPエラー共通処理
- * @param {*} status 
+ * アップロード
+ * @param {*} url 
+ * @param {*} formData 
+ * @param {*} token 
+ * @returns 
  */
-async function handleHttpError(status, json) {
-    switch (status) {
-        case 401:
-            openMsgDialog("msg-dialog", json?.message || "ログインが必要です。", "red");
-            location.reload(); // 再ログイン
-            break;
-        case 403:
-            openMsgDialog("msg-dialog", json?.message || "権限がありません。", "red");
-            break;
-        case 400:
-            openMsgDialog("msg-dialog", json?.message || "入力内容に誤りがあります。", "red");
-            break;
-        case 404:
-            openMsgDialog("msg-dialog", json?.message || "処理が見つかりません。", "red");
-            break;
-        case 500:
-            openMsgDialog("msg-dialog", json?.message || "サーバーエラーが発生しました。", "red");
-            break;
-    }
+async function formFetch(url, formData, token) {
+    return apiFetch(url, {
+        method: "POST",
+        data: formData,
+        token,
+        timeout: 60000
+    });
 }
+// /**
+//  * 共通関数
+//  * @param {*} url 
+//  * @param {*} param1 
+//  * @returns 
+//  */
+// async function apiFetch(url, {
+//     method = "POST",
+//     data = null,
+//     token,
+//     contentType = "application/json",
+//     allow404 = false
+// } = {}) {
+
+//     const spinner = document.getElementById("loading");
+//     if (spinner) spinner.classList.remove("loaded");
+
+//     try {
+//         const headers = {
+//             "X-CSRF-TOKEN": token
+//         };
+
+//         if (contentType && !(data instanceof FormData)) {
+//             headers["Content-Type"] = contentType;
+//         }
+
+//         const response = await fetch(url, {
+//             method,
+//             headers,
+//             // headers: {
+//             //     "X-CSRF-TOKEN": token,
+//             //     "Content-Type": contentType,
+//             // },
+//             body: data,
+//         });
+
+//         if (allow404 && response.status === 404) {
+//             return null;
+//         }
+
+//         let json = null;
+//         const ct = response.headers.get("content-type");
+//         if (ct && ct.includes("application/json")) {
+//             json = await response.json();
+//         }
+
+//         if (!response.ok) {
+//             await handleHttpError(response.status, json);
+//         }
+
+//         return {
+//             ok: response.ok,
+//             status: response.status,
+//             data: json.data ?? null,
+//             message: json?.message ?? ""
+//         };
+
+//     } finally {
+//         if (spinner) spinner.classList.add("loaded");
+//     }
+// }
+
+// /**
+//  * 更新
+//  * @param {*} url 
+//  * @param {*} data 
+//  * @param {*} token 
+//  * @param {*} contentType 
+//  * @returns 
+//  */
+// async function updateFetch(url, data, token, contentType = "application/json") {
+//     return apiFetch(url, {
+//         method: "POST",
+//         data,
+//         token,
+//         contentType,
+//         allow404: false
+//     });
+// }
+
+// /**
+//  * 取得
+//  * @param {*} url 
+//  * @param {*} data 
+//  * @param {*} token 
+//  * @param {*} contentType 
+//  * @returns 
+//  */
+// async function searchFetch(url, data, token, contentType = "application/json") {
+//     return apiFetch(url, {
+//         method: "POST",
+//         data,
+//         token,
+//         contentType,
+//         allow404: true
+//     });
+// }
+
+// /**
+//  * formData送信よう
+//  * @param {*} url 
+//  * @param {*} formData 
+//  * @param {*} token 
+//  * @param {*} allow404 
+//  * @returns 
+//  */
+// async function formFetch(url, formData, token, allow404=false) {
+//     return apiFetch(url, {
+//         method: "POST",
+//         data: formData,
+//         token,
+//         contentType: null,
+//         allow404
+//     });
+// }
+
+// /**
+//  * HTTPエラー共通処理
+//  * @param {*} status 
+//  */
+// async function handleHttpError(status, json) {
+//     switch (status) {
+//         case 401:
+//             openMsgDialog("msg-dialog", json?.message || "ログインが必要です。", "red");
+//             location.reload(); // 再ログイン
+//             break;
+//         case 403:
+//             openMsgDialog("msg-dialog", json?.message || "権限がありません。", "red");
+//             break;
+//         case 400:
+//             openMsgDialog("msg-dialog", json?.message || "入力内容に誤りがあります。", "red");
+//             break;
+//         case 404:
+//             openMsgDialog("msg-dialog", json?.message || "処理が見つかりません。", "red");
+//             break;
+//         case 500:
+//             openMsgDialog("msg-dialog", json?.message || "サーバーエラーが発生しました。", "red");
+//             break;
+//     }
+// }

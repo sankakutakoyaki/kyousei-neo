@@ -2,7 +2,7 @@
 
 import {FileService} from "./fileService.js";
 import {FileRenderer} from "./fileRenderer.js";
-import {FileStore} from "./fileStore.js";
+// import {FileStore} from "./fileStore.js";
 
 export class FileManager {
 
@@ -26,9 +26,9 @@ export class FileManager {
                 parentId
             );
 
-        FileStore.set(files);
+        // FileStore.set(files);
 
-        this.render();
+        this.render(files);
 
     }
 
@@ -46,8 +46,8 @@ export class FileManager {
 
     }
 
-    render(){console.log("render");
-        const files = FileStore.get();
+    render(files){
+        // const files = FileStore.get();
 
         this.container.innerHTML = "";
 
@@ -62,18 +62,14 @@ export class FileManager {
             this.config,
             this
         );
-
-        if(this.config.afterRender){
-            this.config.afterRender();
-        }
     }
 
-    setFiles(files){
+    // setFiles(files){
 
-        FileStore.set(files);
-        this.render();
+    //     FileStore.set(files);
+    //     this.render();
 
-    }
+    // }
 
 }
 // export class FileManager{

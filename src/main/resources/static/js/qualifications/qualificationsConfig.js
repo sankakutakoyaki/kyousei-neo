@@ -1,8 +1,8 @@
 "use strict"
 
-import { refleshCode } from "/js/qualifications/qualifications.js";
-import { execOpen } from "/js/qualifications/qualifications.js";
-import { refreshFileList } from "/js/qualifications/qualifications.js";
+import { refleshCode } from "/js/qualifications/qualificationsTable.js";
+import { execOpen } from "/js/qualifications/qualificationsFile.js";
+import { refreshFileList } from "/js/qualifications/qualificationsFile.js";
 
 export const MODE = {
     "01": {
@@ -53,8 +53,6 @@ export const MODE = {
         comboList: licenseComboList,
         comboListTop: "",
         codeChange: async () => {
-            // await updateFiles(cfg);
-            // refreshFileList();
             await execOpen();
         },
     }
@@ -68,8 +66,6 @@ export const ID = {
         changeNameId: "fullName",
         getUrl: "/api/files/select/license",
         codeChange: async () => {
-            // const cfg= ID_CONFIG["employee"];
-            // await changeCodeToName(cfg, "/api/employee/get/id");
             await execFilterDisplay("02");
         }
     },
@@ -78,12 +74,6 @@ export const ID = {
         codeId: "code04",
         nameId: "name04",
         changeNameId: "fullName",
-        // getUrl: "/api/files/select/qualifications",
-        // codeChange: async () => {
-        //     // const cfg = ID_CONFIG["qualifications"];
-        //     // await changeCodeToName(cfg, "/api/employee/get/id");
-        //     // await execListDisplay("qualifications");
-        // }
     }
 }
 
