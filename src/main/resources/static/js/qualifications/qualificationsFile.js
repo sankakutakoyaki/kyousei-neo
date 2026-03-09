@@ -3,22 +3,44 @@
 import { FileManager } from "/js/file/FileManager.js";
 import { FileUploader } from "/js/file/FileUploader.js";
 
-let currentCfg;
-let manager;
-let qualificationsList;
+let currentCfg = null;
+let manager = null;
+let qualificationsList = [];
 
-/******************************************************************************************************* 表示 */
+/**
+ * 初期化
+ */
+export function initFile(CONFIG) {
 
+    currentCfg = CONFIG;
+    manager = new FileManager(CONFIG);
+
+    const dropArea = document.getElementById("drop-area");
+    if(dropArea){
+        FileUploader.attachDrop(dropArea, manager);
+    }
+
+    const fileInput = document.getElementById("file-input");
+    if(fileInput){
+        FileUploader.attachInput(fileInput, manager);
+    }
+}
+
+/**
+ *  表示
+ */
 export async function execOpen() {
 
-    const cfg = currentCfg;
-    await getQualificationsList(cfg);
+    if (!currentCfg) return;
 
-    const area = document.getElementById(cfg.groupArea);
-    const list = qualificationsList.data.map(v => ({number: v.qualificationsId, text: v.number ?? "-----", data: v.files[0]?.groupId}));
+    await loadQualificationsList();
+
+    const area = document.getElementById(currentCfg.groupArea);
+    const list = qualificationsList.data.map(v => (
+        {number: v.qualificationsId, text: v.number ?? "-----", data: v.files[0]?.groupId}));
     createComboBox(area, list);
 
-    refreshFileList(cfg);
+    refreshFileList(currentCfg);
 
     if (!area.dataset.binded) {
         area.addEventListener("change", async () => {
@@ -28,10 +50,17 @@ export async function execOpen() {
     }
 }
 
+/**
+ * ファイル一覧更新
+ */
 export function refreshFileList() {
 
+    if (!currentCfg) return;
+
+    const parentId = Number(currentCfg.parentValue());
+
     const list = qualificationsList.data
-            .filter(v => { return v.qualificationsId === Number(currentCfg.parentValue()) })    
+            .filter(v => { return v.qualificationsId === parentId })    
             .map(v => ({
                 groupId: v.files[0]?.groupId,
                 groupName: v.qualificationName,
@@ -41,17 +70,20 @@ export function refreshFileList() {
     manager.render(list);
 }
 
-/******************************************************************************************************* 取得 */
+/** 
+ * 資格リスト取得
+ */
+export async function loadQualificationsList() {
 
-export async function getQualificationsList(cfg) {
+    if (!currentCfg) return;
 
-    const codeValue = cfg.codeValue();
+    const codeValue = currentCfg.codeValue();
     if (!codeValue || codeValue === "") return;
 
-    const masterValue = cfg.masterValue();
+    const masterValue = currentCfg.masterValue();
     if (!masterValue || masterValue === "") return;
 
-    const response = await fetch(`${cfg.getParentUrl}/${masterValue}/${codeValue}`,
+    const response = await fetch(`${currentCfg.getParentUrl}/${masterValue}/${codeValue}`,
         {
             method: "POST",
             headers: {
@@ -62,30 +94,6 @@ export async function getQualificationsList(cfg) {
     );
 
     qualificationsList = await response.json();
-}
 
-export function setFileConfig(cate, CONFIG){
-
-    const cfg = CONFIG.FILE[cate];
-
-    currentCfg = cfg;
-    manager = new FileManager(cfg);
-
-    const dropArea = document.getElementById("drop-area");
-
-    if(dropArea){
-        FileUploader.attachDrop(
-            dropArea,
-            manager
-        );
-    }
-
-    const fileInput = document.getElementById("file-input");
-
-    if(fileInput){
-        FileUploader.attachInput(
-            fileInput,
-            manager
-        );
-    }
+    refreshFileList();
 }

@@ -1,12 +1,18 @@
 "use strict"
 
-import { setFileConfig } from "./qualificationsFile.js";
+import { initFile, loadQualificationsList } from "./qualificationsFile.js";
 
-let CONFIG_REF;
+let currentCfg = null;
 
+/**
+ * 初期化
+ */
 export function initFilter(CONFIG){
 
-    CONFIG_REF = CONFIG;
+    currentCfg = CONFIG;
+    
+    initFile(CONFIG.FILE.license);
+    loadQualificationsList();
 
     for (const tab of Object.keys(CONFIG.MODE)) {
         const cfg = CONFIG.MODE[tab];
@@ -77,17 +83,18 @@ export function initFilter(CONFIG){
     // 初期状態も反映
     updateFilter03State();
 
-    setFileConfig('license', CONFIG);
+    // setFileConfig('license', CONFIG);
 }
 
 /**
  * 行の選択を処理する
- * @param {*} e 
  */
 export function handleRowSelection(e) {
 
+    if (!currentCfg) return;
+
     const cate = e.target.dataset.cate;
-    const cfg = CONFIG_REF.CHK[cate];
+    const cfg = currentCfg.CHK[cate];
     const filter = document.getElementById(cfg.filterId);
     if (!filter) return;
 
@@ -111,11 +118,8 @@ export function handleRowSelection(e) {
     updateFilter03State();
 }
 
-// }
 /**
  * チェックボックス変更時の処理
- * @param {*} area 
- * @param {*} enabled 
  */
 export function setCodeEnabled(area, enabled) {
 
@@ -145,7 +149,6 @@ export function setCodeEnabled(area, enabled) {
 
 /**
  * #code03 または #code04 のどちらかが未入力なら、#filter03 を操作不可（disabled）にする
- * @returns 
  */
 export function updateFilter03State() {
 

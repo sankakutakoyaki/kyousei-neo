@@ -2,9 +2,19 @@
 
 import { updateFilter03State } from "/js/qualifications/qualificationsFilter.js";
 
-/******************************************************************************************************* 入力画面 */
+let currentCfg = null;
 
-// リスト画面の本体部分を作成する
+/**
+ * 初期化
+ */
+export function initTable(CONFIG) {
+
+    currentCfg = CONFIG;
+}
+
+/**
+ * リスト画面の本体部分を作成する
+ */
 export function createTableContent(tableId, list) {
     const table = document.getElementById(tableId);
 
@@ -22,7 +32,9 @@ export function createTableContent(tableId, list) {
     });
 }
 
-// テーブル行を作成する
+/** 
+ * テーブル行を作成する
+ */ 
 export function createTableRow(newRow, item) {
     // 名前
     newRow.insertAdjacentHTML('beforeend', '<td><span class="kana">' + item.ownerNameKana + '</span><br><span>' + item.ownerName + '</span></td>');
@@ -36,10 +48,11 @@ export function createTableRow(newRow, item) {
     newRow.insertAdjacentHTML('beforeend', '<td name="enabled-cell"><span>' + (item.status == "取得済み" && item.is_enabled == 0 ? "期限切れ": "") + '</span></td>');
 }
 
-/******************************************************************************************************* 画面更新 */
-
+/** 
+ * 画面更新
+ */
 export async function execUpdate(tab) {
-    const cfg = CONFIG.MODE[tab];
+    const cfg = currentCfg.MODE[tab];
 
     const resultResponse = await fetch(cfg.getUrl);
     const result = await resultResponse.json();
@@ -51,7 +64,9 @@ export async function execUpdate(tab) {
     }
 }
 
-// コードでフィルターする
+/**
+ * コードでフィルターする
+ */
 export function codeFilter(codeValue, keyName, list) {
     if (!codeValue) return list;
     
@@ -61,7 +76,9 @@ export function codeFilter(codeValue, keyName, list) {
     return list.filter(v => v[keyName] === num);
 }
 
-// 資格情報フィルター
+/**
+ * 資格情報フィルター
+ */
 export function qualificationsFilter(filterValue, list) {
     if (filterValue === '0') return list;
 
@@ -69,9 +86,11 @@ export function qualificationsFilter(filterValue, list) {
     return list.filter(v => v.qualificationMasterId === num);
 }
 
-// 一括フィルター
+/**
+ * 一括フィルター
+ */
 export async function execFilterDisplay(tab) {
-    const cfg = CONFIG.MODE[tab];
+    const cfg = currentCfg.MODE[tab];
 
     const codeValue = document.getElementById(cfg.codeId)?.value;
     if (!codeValue) return;
@@ -85,7 +104,9 @@ export async function execFilterDisplay(tab) {
     await updateTableDisplay(cfg.tableId, cfg.footerId, cfg.searchId, list, createTableContent);
 }
 
-// companyCombo変更時の処理
+/**
+ * companyCombo変更時の処理
+ */
 export function refleshCode(codeId, nameId) {
     const code = document.getElementById(codeId);
     const name = document.getElementById(nameId);

@@ -4,6 +4,7 @@ import { refleshCode } from "/js/qualifications/qualificationsTable.js";
 import { execOpen } from "/js/qualifications/qualificationsFile.js";
 import { refreshFileList } from "/js/qualifications/qualificationsFile.js";
 import { execUpdate } from "/js/qualifications/qualificationsTable.js";
+import { execFilterDisplay } from "/js/qualifications/qualificationsTable.js";
 
 export const MODE = {
     "01": {
@@ -21,7 +22,7 @@ export const MODE = {
         ownerKeyName: "companyId",
         getValue: (elm) => elm.options[elm.selectedIndex].text,
         comboList: licenseComboList,
-        comboListTop: "すべt",
+        comboListTop: "すべて",
         message: "会社名と許認可を選択して下さい。",
         codeChange: async () => {
             await execFilterDisplay("01");
@@ -46,7 +47,7 @@ export const MODE = {
         ownerKeyName: "employeeId",
         getValue: (elm) => elm.value,
         comboList: qualificationsComboList,
-        comboListTop: "すべt",
+        comboListTop: "すべて",
         message: "担当者と資格を選択して下さい。"
     },
     "03": {
