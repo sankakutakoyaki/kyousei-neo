@@ -1,7 +1,7 @@
 "use strict"
 
-import { FileManager } from "/js/file/FileManager.js";
-import { FileUploader } from "/js/file/FileUploader.js";
+import { FileManager } from "/js/common/file/FileManager.js";
+import { FileUploader } from "/js/common/file/FileUploader.js";
 
 let currentCfg = null;
 let manager = null;

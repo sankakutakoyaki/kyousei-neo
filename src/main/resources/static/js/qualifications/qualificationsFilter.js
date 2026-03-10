@@ -17,6 +17,7 @@ export function initFilter(CONFIG){
     for (const tab of Object.keys(CONFIG.MODE)) {
         const cfg = CONFIG.MODE[tab];
 
+        // 資格コンボボックス作成
         const fi = document.getElementById(cfg.filterId);
         if (fi) {
             createComboBoxWithTop(fi, cfg.comboList, cfg.comboListTop);
@@ -25,6 +26,7 @@ export function initFilter(CONFIG){
             });
         }
 
+        // 検索ボックス作成
         const se = document.getElementById(cfg.searchId);
         if (se)  {
             se.addEventListener('search', async () => {
