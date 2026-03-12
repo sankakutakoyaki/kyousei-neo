@@ -30,14 +30,14 @@
                 </div>
             </div>
         </div>
-        <div class="flex-area" data-lookup="license">
+        <div class="flex-area" data-resolve="license">
             <div class="form-parts">
                 <label>ID</label>
-                <input th:id="${code}" name="code" class="normal-input" type="text" value="" data-lookup-id>
+                <input th:id="${code}" name="code" class="normal-input" type="text" value="" data-resolve-id>
             </div>
             <div class="form-parts">
                 <label>会社名</label>
-                <select th:id="${name}" name="company" class="normal-select" data-lookup-name></select>
+                <select th:id="${name}" name="company" class="normal-select" data-resolve-name></select>
             </div>
             <div class="form-parts">
                 <label>許認可</label>
@@ -95,14 +95,14 @@
                 </div>
             </div>
         </div>
-        <div id="id-area02" class="flex-area" data-lookup="qualifications">
+        <div id="id-area02" class="flex-area" data-resolve="qualifications">
             <div class="form-parts">
                 <label>ID</label>
-                <input tabindex="1" th:id="${code}" name="code" class="normal-input" type="text" value="" data-lookup-id>
+                <input tabindex="1" th:id="${code}" name="code" class="normal-input" type="text" value="" data-resolve-id>
             </div>
             <div class="form-parts">
                 <label>担当者名</label>
-                <input th:id="${name}" name="name" class="normal-input" type="text" value="" readonly data-lookup-name>
+                <input th:id="${name}" name="name" class="normal-input" type="text" value="" readonly data-resolve-name>
             </div>
             <div class="form-parts">
                 <label>資格</label>
@@ -133,7 +133,7 @@
 <!-- タブ03 ---------------------------------------------------------------------------------------------------------------------->
 
     <header class="flex-area pc-style" th:fragment="header03Fragment(code1, name1, code2, name2, filter1, filter2)">
-        <div id="id-area02" class="flex-area select-area select" data-lookup="license">
+        <div id="id-area02" class="flex-area select-area select" data-resolve="license">
             <div class="form-parts check-area">
                 <label>
                     <input type="checkbox" class="row-enable normal-chk" data-cate="license" checked>
@@ -142,14 +142,14 @@
             </div>
             <div class="form-parts">
                 <label>ID</label>
-                <input tabindex="1" th:id="${code1}" name="code" class="normal-input" type="text" value="" data-lookup-id>
+                <input tabindex="1" th:id="${code1}" name="code" class="normal-input" type="text" value="" data-resolve-id>
             </div>
             <div class="form-parts">
                 <label>会社名</label>
-                <select th:id="${name1}" name="name" class="normal-select" data-lookup-name></select>
+                <select th:id="${name1}" name="name" class="normal-select" data-resolve-name></select>
             </div>
         </div>
-        <div id="id-area03" class="flex-area select-area" data-lookup="qualifications">
+        <div id="id-area03" class="flex-area select-area" data-resolve="qualifications">
             <div class="form-parts check-area">
                 <label>
                     <input type="checkbox" class="row-enable normal-chk" data-cate="qualifications">
@@ -158,11 +158,11 @@
             </div>
             <div class="form-parts">
                 <label>ID</label>
-                <input tabindex="2" th:id="${code2}" name="code" class="normal-input" type="text" value="" disabled data-lookup-id>
+                <input tabindex="2" th:id="${code2}" name="code" class="normal-input" type="text" value="" disabled data-resolve-id>
             </div>
             <div class="form-parts">
                 <label>担当者名</label>
-                <input th:id="${name2}" name="name" class="normal-input" type="text" value="" readonly data-lookup-name>
+                <input th:id="${name2}" name="name" class="normal-input" type="text" value="" readonly data-resolve-name>
             </div>
         </div>
         <div class="flex-area">

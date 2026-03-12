@@ -18,7 +18,9 @@ function notValue(disallowed, message) {
 function range(min, max, message) {
     return {
         test: v => {
-            const n = Number(v);
+            const n = Number(v.trim());
+            if (v === "") return true;
+            // const n = Number(v);
             return !Number.isNaN(n) && n >= min && n <= max;
         },
         message

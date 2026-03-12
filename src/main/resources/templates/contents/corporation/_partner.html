@@ -63,24 +63,21 @@
             <div th:replace="~{fragments/common/dialog :: messageFragment}"></div>
         </div>
         <script type="text/JavaScript" th:inline="JavaScript">
-            
-            window.APP = {
-                token: /*[[${_csrf.token}]]*/,
-
-                page: {
-                    user: /*[[${user}]]*/,
-                    companyEntity: /*[[${companyEntity}]]*/,
-                    staffEntity: /*[[${staffEntity}]]*/,
-                    formEntity: /*[[${formEntity}]]*/,
-                    categoryCodes: /*[[${categoryCodes}]]*/,
-                    origin: [],
-                    companyComboList: /*[[${companyComboList}]]*/,
-                    genderComboList: /*[[${genderComboList}]]*/,
-                    bloodTypeComboList: /*[[${bloodTypeComboList}]]*/,
-                    originEntity: {},
-                }
-            };
+            const token = /*[[${_csrf.token}]]*/;
+            const user = /*[[${user}]]*/;
+            const companyEntity = /*[[${companyEntity}]]*/;
+            const staffEntity = /*[[${staffEntity}]]*/;
+            const formEntity = /*[[${formEntity}]]*/;
+            const categoryCodes = /*[[${categoryCodes}]]*/;
+            let origin = [];
+            let qualificationsOrigin = /*[[${licnesesOrigin}]]*/; // 初期リスト記憶用
+            let companyComboList = /*[[${companyComboList}]]*/;
+            const genderComboList = /*[[${genderComboList}]]*/;
+            const bloodTypeComboList = /*[[${bloodTypeComboList}]]*/;
+            let originEntity = {};
         </script>
+        <!-- <script th:src="@{/js/corporation/config/partner.js}"></script> -->
+        <!-- <script th:src="@{/js/corporation/partner.js}"></script> -->
         <script type="module" th:src="@{/js/pages/corporation/partnerPage.js}"></script>
     </main>
 

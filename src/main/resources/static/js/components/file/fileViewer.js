@@ -1,8 +1,5 @@
 "use strict";
 
-// let viewerFiles = [];
-// let currentIndex = 0;
-
 export const FileViewer = {
 
     state:{
@@ -10,7 +7,6 @@ export const FileViewer = {
         index:0
     },
 
-    // async open(parentType,parentId,fileId,config,index){
     async open(files, index, config){
 
         this.state.files = files;
@@ -19,23 +15,6 @@ export const FileViewer = {
         this.showFile(index,config);
 
         openFormDialog(config.viewerId);
-        // const res = await fetch(
-        //     `/api/files/file/view/${parentType}/${parentId}/${fileId}`,
-        //     {
-        //         headers:{
-        //             "X-CSRF-TOKEN":token
-        //         }
-        //     }
-        // );
-
-        // const result = await res.json();
-        // if (!result.ok) return;
-        // this.state.files = list
-        // this.state.index = index;
-
-        // this.showFile(this.state.index,config);
-
-        // openFormDialog(config.viewerId);
     },
 
     showFile(index,config){

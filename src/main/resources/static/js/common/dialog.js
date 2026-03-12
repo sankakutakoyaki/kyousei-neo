@@ -1,5 +1,10 @@
 "use strict"
 
+function getElement(el){
+    if(el instanceof HTMLElement) return el;
+    return document.getElementById(el);
+}
+
 /**
  * フォームダイアログを開く
  * @param {*} dialogId 
@@ -54,13 +59,15 @@ function closeFormDialog(dialogId, e) {
  * @param {ボタンを含んだフッター} elmFooter 
  */
 function openMsgDialog(dialogId, msg, color) {
-    let dialog;
-    if(dialogId instanceof HTMLElement) {
-        dialog = dialogId;
-    } else {
-        dialog = document.getElementById(dialogId);
-    }
-    if (dialog == null) return;
+    // let dialog;
+    // if(dialogId instanceof HTMLElement) {
+    //     dialog = dialogId;
+    // } else {
+    //     dialog = document.getElementById(dialogId);
+    // }
+    // if (dialog == null) return;
+
+    const dialog = getElement(dialogId);
 
     // ボタンを使用不可にする
     setInertState(true);
@@ -129,7 +136,7 @@ function closeMsgDialog(dialogId, e) {
  */
 function setFocusElement(msgId, elm) {
     const dialog = document.getElementById(msgId);
-    const btn =dialog.querySelector('[name="focus-btn');
+    const btn =dialog.querySelector('[name="focus-btn"]');
     btn.onclick = (e) => {
         closeMsgDialog(msgId, e);// 上書きされて消えるため再度設定
         elm.focus();
@@ -143,7 +150,7 @@ function setFocusElement(msgId, elm) {
  */
 function setCancelFunction(msgId, func) {
     const dialog = document.getElementById(msgId);
-    const btns =dialog.querySelectorAll('[name="cancel-btn]');
+    const btns =dialog.querySelectorAll('[name="cancel-btn"]');
     btns.forEach(btn => {
         btn.onclick = (e) => {
             closeMsgDialog(msgId, e);// 上書きされて消えるため再度設定
@@ -165,6 +172,9 @@ function setInertState(state) {
 
     const table = document.querySelector('.table-area');
     if (table != null) table.inert = state;
+
+    // const main = document.querySelector(".normal-body");
+    // main.inert = state;
 }
 
 /**

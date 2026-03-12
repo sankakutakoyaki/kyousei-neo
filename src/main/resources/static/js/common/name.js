@@ -11,10 +11,11 @@ function createUniqueName({
     const filteredList = list.filter(effectiveGroupFn);
 
     const usedNumbers = filteredList
-        .filter(effectiveGroupFn)
         .map(item => {
             const name = nameFn(item);
-            const m = name?.match(/^新しい項目\((\d+)\)$/);
+            const regex = new RegExp(`^${baseName}\$begin:math:text$\(\\\\d\+\)\\$end:math:text$$`);
+            const m = name?.match(regex);
+            // const m = name?.match(/^新しい項目\((\d+)\)$/);
             return m ? Number(m[1]) : null;
         })
         .filter(n => n !== null);

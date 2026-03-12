@@ -4,12 +4,18 @@
  * 年月日等の各要素を取得
  * @returns yyyy-MM-dd
  */
+// function getDate() {
+//     const date = new Date();
+//     const y = date.getFullYear();
+//     const m = date.getMonth() + 1;
+//     const d = date.getDate();
+//     return y + "-" + ('0' + m).slice(-2) + "-" + ('0' + d).slice(-2);
+// }
 function getDate() {
-    const date = new Date();
-    const y = date.getFullYear();
-    const m = date.getMonth() + 1;
-    const d = date.getDate();
-    return y + "-" + ('0' + m).slice(-2) + "-" + ('0' + d).slice(-2);
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 }
 
 /**
@@ -37,15 +43,21 @@ function getNow() {
 * 年月日等の各要素を取得
 * @returns yyyyMMddhhmm000000
 */
+// function getNowNoBreak() {
+//     const date = new Date();
+//     const y = date.getFullYear();
+//     const m = date.getMonth() + 1;
+//     const d = date.getDate();
+//     const h = date.getHours();
+//     const min = date.getMinutes();
+//     const milli = date.getMilliseconds();
+//     return y + ('0' + m).slice(-2) + ('0' + d).slice(-2) + ('0' + h).slice(-2) + ('0' + min).slice(-2) + ('00' + milli).slice(-3);
+// }
 function getNowNoBreak() {
-    const date = new Date();
-    const y = date.getFullYear();
-    const m = date.getMonth() + 1;
-    const d = date.getDate();
-    const h = date.getHours();
-    const min = date.getMinutes();
-    const milli = date.getMilliseconds();
-    return y + ('0' + m).slice(-2) + ('0' + d).slice(-2) + ('0' + h).slice(-2) + ('0' + min).slice(-2) + ('00' + milli).slice(-3);
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+
+    return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}${pad(d.getHours())}${pad(d.getMinutes())}${String(d.getMilliseconds()).padStart(3,'0')}`;
 }
 
 /**
@@ -81,6 +93,8 @@ function formatTime(value) {
     if (!value) return "";
 
     const d = new Date(value);
+    if (isNaN(d.getTime())) return "";
+
     const h = String(d.getHours()).padStart(2, '0');
     const m = String(d.getMinutes()).padStart(2, '0');
 

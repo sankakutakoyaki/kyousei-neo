@@ -35,7 +35,7 @@ function createListItemWithSelection(
                 if (onSecondClick) onSecondClick(li);
             } else {
 
-                area.querySelectorAll('.file-item.selected')
+                area.querySelectorAll('.selected')
                     .forEach(el => el.classList.remove('selected'));
 
                 li.classList.add('selected');
@@ -63,9 +63,15 @@ function createListItemWithSelection(
 /**
  * インライン編集（ファイル名変更）
  */
-async function startInlineEdit(file, config) {
+async function startInlineEdit(
+    id,
+    value,
+    selector,
+    renameApi) {
+    // file, config) {
 
-    const li = document.querySelector(`li[data-id="${file.fileId}"]`);
+    const li = document.querySelector(`li[data-id="${id}"]`);
+    // const li = document.querySelector(`li[data-id="${file.fileId}"]`);
     if (!li) return;
 
     const nameSpan = li.querySelector(".file-name");
@@ -73,7 +79,8 @@ async function startInlineEdit(file, config) {
 
     if (li.querySelector("input")) return;
 
-    const originalName = file.displayName;
+    // const originalName = file.displayName;
+    const originalName = value;
 
     const input = document.createElement("input");
     input.type = "text";
@@ -90,16 +97,18 @@ async function startInlineEdit(file, config) {
         }
 
         try {
-            await fetch(`/api/files/file/rename/${file.fileId}`, {
+            await fetch(renameApi, {
+            // await fetch(`/api/files/file/rename/${file.fileId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": config.csrfToken
+                    "X-CSRF-TOKEN": config.csrfToken//ここ修正必要
                 },
-                body: JSON.stringify({ displayName: newName })
+                body: JSON.stringify({ displayName: newName })//ここ修正必要
             });
 
-            file.displayName = newName;
+            value = newName;
+            // file.displayName = newName;
             nameSpan.textContent = newName;
 
         } catch (e) {

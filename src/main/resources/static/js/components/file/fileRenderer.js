@@ -1,10 +1,8 @@
 "use strict";
 
 import {FileUploader} from "./fileUploader.js";
-// import {FileActions} from "./_fileActions.js";
 import {FileViewer} from "./fileViewer.js";
-import { FileService } from "./fileService.js";
-// import { FileManager } from "./fileManager.js";
+import { FileService } from "../../common/file/fileService.js";
 
 export const FileRenderer = {
 
@@ -94,7 +92,6 @@ export const FileRenderer = {
 
         const deleteBtn = document.createElement("button");
 
-        // deleteBtn.textContent="×";
         deleteBtn.className = "delete-btn";
 
         const img = document.createElement("img");

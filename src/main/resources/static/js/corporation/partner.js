@@ -101,6 +101,8 @@ async function execEdit(id, self) {
 
 // コンテンツ部分作成
 function setFormContent(form, entity, tab) {
+    const config = MODE_CONFIG[tab];
+
     // 表示制御
     document.querySelectorAll('[name="priceArea"]').forEach(el => {
         el.style.display = config.show?.includes("priceArea") ? "" : "none";
@@ -199,17 +201,17 @@ async function execUpdate() {
 
     // entity ごとの元データ更新
     if (config.categoryName === "company") {
-        await refleshCompanyDisplay();
+        await refreshCompanyDisplay();
         return;
     }
 
     if (config.categoryName === "employee") {
-        await refleshStaffDisplay();
+        await refreshStaffDisplay();
         return;
     }
 }
 
-async function refleshCompanyDisplay() {
+async function refreshCompanyDisplay() {
     const config = MODE_CONFIG["01"];
     if (!config) return;
 
@@ -220,7 +222,7 @@ async function refleshCompanyDisplay() {
     await updateTableDisplay(config.tableId, config.footerId, config.searchId, origin, createTableContent);
 }
 
-async function refleshStaffDisplay() {
+async function refreshStaffDisplay() {
     const config = MODE_CONFIG["02"];
     if (!config) return;
 
@@ -242,7 +244,7 @@ async function refleshStaffDisplay() {
     }
 }
 
-function refleshCode() {
+function refreshCode() {
     const code01 = document.getElementById("code01");
     const name01 = document.getElementById("name01");
     code01.value = code01.value === name01.value ? code01.value: Number(name01.value) === 0 ? "": name01.value ;
@@ -259,7 +261,7 @@ window.addEventListener("load", async () => {
         if (!el) return;
 
         el.addEventListener('search', async e => {
-            await refleshCompanyDisplay();
+            await refreshCompanyDisplay();
         });
 
         // 郵便番号
@@ -268,7 +270,7 @@ window.addEventListener("load", async () => {
     });
 
     initCompanyInputs();
-    refleshCompanyDisplay();
+    refreshCompanyDisplay();
 
     // タブ
     document.querySelectorAll('.tab-menu-item')
