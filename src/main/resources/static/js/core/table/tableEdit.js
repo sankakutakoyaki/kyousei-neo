@@ -1,7 +1,7 @@
 "use strict"
 
 // クリックしたTDを編集可能にする
-function tdEnableEdit(newRow) {
+export function tdEnableEdit(newRow) {
     newRow.addEventListener('click', function (e) {
         const td = e.target.closest('td.editable');
         if (!td) return;
@@ -77,7 +77,7 @@ function tdEnableEdit(newRow) {
     });
 }
 
-function restoreCell(td, text, value) {
+export function restoreCell(td, text, value) {
     td.textContent = text || '-----';
     if (value !== undefined) {
         td.dataset.value = value;
@@ -85,7 +85,7 @@ function restoreCell(td, text, value) {
 }
 
 // セル復元用ヘルパー
-function saveEditor(td, editor, currentValue) {
+export function saveEditor(td, editor, currentValue) {
     if (editor instanceof HTMLSelectElement) {
         const opt = editor.selectedOptions[0];
         td.dataset.value = opt.value;

@@ -1,27 +1,12 @@
 "use strict"
 
-export function sortRows(data,field){
-
-    return [...data].sort((a,b)=>{
-
-        if(a[field] > b[field]) return 1;
-        if(a[field] < b[field]) return -1;
-
-        return 0;
-
-    });
-
-}
-
-
-/** ここから以前のもの */
 /**
  * テーブルをソートする関数
  * @param {*} table 
  * @param {*} col 
  * @param {*} reverse 
  */
-function sortTable(table, col, reverse) {
+export function sortTable(table, col, reverse) {
     const tbody = table.tBodies[1]; // 0はヘッダー
     const tr = Array.prototype.slice.call(tbody.rows);
 
@@ -59,7 +44,7 @@ function sortTable(table, col, reverse) {
  * テーブルのヘッダーをクリック可能にする関数
  * @param {*} tableId 
  */
-function makeSortable(tableId) {
+export function makeSortable(tableId) {
     let targetElm;
     if(tableId instanceof HTMLElement) {
         targetElm = tableId;
@@ -97,7 +82,7 @@ function makeSortable(tableId) {
  * すべてのヘッダーのソート状態をリセットする
  * @param {*} tableId 
  */
-function resetSortable(tableId) {
+export function resetSortable(tableId) {
     let targetElm;
     if(tableId instanceof HTMLElement) {
         targetElm = tableId;
@@ -120,7 +105,7 @@ function resetSortable(tableId) {
  * すべてのヘッダーのソート状態をリセットする関数
  * @param {*} headers 
  */
-function resetSortIndicators(headers) {
+export function resetSortIndicators(headers) {
     // 各ヘッダーからソートクラスを削除
     headers.forEach(function(header) {
         header.classList.remove('sorted-asc', 'sorted-desc');

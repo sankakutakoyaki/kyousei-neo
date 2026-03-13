@@ -1,18 +1,5 @@
 "use strict"
 
-export function filterRows(data,keyword){
-
-    if(!keyword) return data;
-
-    return data.filter(row=>
-
-        Object.values(row)
-        .some(v=>String(v).includes(keyword))
-
-    );
-
-}
-
 /** ここから以前のもの */
 /**
  * リスト検索

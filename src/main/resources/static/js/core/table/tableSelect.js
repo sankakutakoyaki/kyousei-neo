@@ -1,28 +1,11 @@
 "use strict"
 
-export function selectRow(table,index){
-
-    table
-        .querySelectorAll("tbody tr")
-        .forEach((tr,i)=>{
-
-            tr.classList.toggle(
-                "selected",
-                i === index
-            );
-
-        });
-
-}
-
-
-/** ここから以前のもの */
 /**
  * 選択されているチェックボックスを全て取得する
  * @param {取得対象の親要素} parent 
  * @returns チェックされている要素のIDリストをJSON形式で返す。
  */
-function getAllSelectedIds(tableId) {
+export function getAllSelectedIds(tableId) {
     let tbl;
     if(tableId instanceof HTMLElement) {
         tbl = tableId;
@@ -49,7 +32,7 @@ function getAllSelectedIds(tableId) {
 /**
  * チェックボタン押下時の処理をイベントリスナーに登録する
  */
-function registCheckButtonClicked(tableId) {
+export function registCheckButtonClicked(tableId) {
     let tbl;
     if(tableId instanceof HTMLElement) {
         tbl = tableId;
@@ -90,7 +73,7 @@ function registCheckButtonClicked(tableId) {
  * @param {*} tableId 
  * @returns 
  */
-function getAllSelectedValues(tableId) {
+export function getAllSelectedValues(tableId) {
     let tbl = tableId instanceof HTMLElement
         ? tableId
         : document.getElementById(tableId);
@@ -122,7 +105,7 @@ function getAllSelectedValues(tableId) {
  * @param {*} tableId 
  * @returns 
  */
-function turnOffAllCheckBtn(tableId) {
+export function turnOffAllCheckBtn(tableId) {
     let tbl;
     if(tableId instanceof HTMLElement) {
         tbl = tableId;
@@ -158,7 +141,7 @@ function clickAllCheckBtn(self) {
  * 選択された要素(areaId)にセレクトクラスを付与する
  * @param {選択された要素} areaId 
  */
-function addSelectClassToRow(areaId) {
+export function addSelectClassToRow(areaId) {
     let item;
     if(areaId instanceof HTMLElement) {
         item = areaId;
@@ -173,7 +156,7 @@ function addSelectClassToRow(areaId) {
  * 選択された要素(areaId)にセレクトクラスを付与もしくは剥奪する
  * @param {選択された要素} areaId 
  */
-function detachmentSelectClassToRow(areaId) {
+export function detachmentSelectClassToRow(areaId) {
     let item;
     if(areaId instanceof HTMLElement) {
         item = areaId;
@@ -194,7 +177,7 @@ function detachmentSelectClassToRow(areaId) {
  * @param {要素を含むテーブル} tableId 
  * @param {状態} state 
  */
-function detachmentSelectClassToAllRow(tableId, state) {
+export function detachmentSelectClassToAllRow(tableId, state) {
     let tbl;
     if(tableId instanceof HTMLElement) {
         tbl = tableId;
@@ -217,7 +200,7 @@ function detachmentSelectClassToAllRow(tableId, state) {
  * @param {要素を含むテーブル} tableId 
  * @param {状態} state 
  */
-function detachmentCheckedToAllRow(tableId, state) {
+export function detachmentCheckedToAllRow(tableId, state) {
     let tbl;
     if(tableId instanceof HTMLElement) {
         tbl = tableId;

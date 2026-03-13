@@ -1,23 +1,5 @@
 "use strict"
 
-export function downloadTable(data){
-
-    const csv =
-        data.map(r=>Object.values(r).join(","))
-        .join("\n");
-
-    const blob = new Blob([csv]);
-
-    const a = document.createElement("a");
-
-    a.href = URL.createObjectURL(blob);
-
-    a.download = "table.csv";
-
-    a.click();
-
-}
-
 /** ここから以前のもの */
 /**
  * 選択された要素のCSVファイルを作成してダウンロードする

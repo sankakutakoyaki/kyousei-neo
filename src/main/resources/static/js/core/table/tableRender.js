@@ -1,63 +1,26 @@
 "use strict"
 
-// export function renderTable(table,config,data,engine){
+import {registCheckButtonClicked, turnOffAllCheckBtn} from "./tableSelect.js";
+import {resetSortable} from "./tableSort.js";
 
-//     table.innerHTML = "";
+export function renderTable(
+    tableEl,
+    config,
+    list,
+    engine
+){
+    tableEl.innerHTML = "";
 
-//     const thead = document.createElement("thead");
-//     const tr = document.createElement("tr");
+    if(config.createRow){
+        list.forEach(item=>{
+            config.createRow(tableEl,item,engine);
+        });
+    }
+    registCheckButtonClicked(tableEl);
+    turnOffAllCheckBtn(tableEl);
+    resetSortable(tableEl);
+}
 
-//     config.columns.forEach(col=>{
-
-//         const th = document.createElement("th");
-
-//         th.textContent = col.label;
-
-//         if(config.sortable){
-
-//             th.addEventListener("click",()=>{
-//                 engine.sort(col.field);
-//             });
-
-//         }
-
-//         tr.appendChild(th);
-
-//     });
-
-//     thead.appendChild(tr);
-//     table.appendChild(thead);
-
-//     const tbody = document.createElement("tbody");
-
-//     data.forEach((row,i)=>{
-
-//         const tr = document.createElement("tr");
-
-//         tr.addEventListener("click",()=>{
-//             engine.select(i);
-//         });
-
-//         config.columns.forEach(col=>{
-
-//             const td = document.createElement("td");
-
-//             td.textContent = row[col.field];
-
-//             tr.appendChild(td);
-
-//         });
-
-//         tbody.appendChild(tr);
-
-//     });
-
-//     table.appendChild(tbody);
-
-// }
-
-
-/** ここから以前のもの */
 export async function updateTableDisplay(
     tableId,
     footerId,
