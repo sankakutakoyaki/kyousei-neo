@@ -20,7 +20,11 @@ import com.kyouseipro.neo.corporation.company.entity.CompanyListEntity;
 import com.kyouseipro.neo.corporation.company.service.CompanyListService;
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
 import com.kyouseipro.neo.corporation.staff.entity.StaffEntity;
+import com.kyouseipro.neo.corporation.staff.entity.StaffListEntity;
+import com.kyouseipro.neo.corporation.staff.service.StaffListService;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
+import com.kyouseipro.neo.personnel.employee.entity.EmployeeListEntity;
+import com.kyouseipro.neo.personnel.employee.service.EmployeeListService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -30,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CorporationPageController extends BaseController {
     private final CompanyListService companyListService;
+    private final EmployeeListService employeeListService;
     private final ComboBoxService comboBoxService;
     /**
 	 * 取引先
@@ -87,6 +92,12 @@ public class CorporationPageController extends BaseController {
         // 初期化されたエンティティ
         model.addAttribute("companyEntity", new CompanyEntity());
         model.addAttribute("staffEntity", new EmployeeEntity());
+
+        // 初期表示用リスト取得
+        List<CompanyListEntity> companyOrigin = companyListService.getPartnerList();
+        model.addAttribute("companyOrigin", companyOrigin);
+        List<EmployeeListEntity> employeeOrigin = employeeListService.getListByCategoryId(Enums.employeeCategory.CONSTRUCT.getCode());
+        model.addAttribute("employeeOrigin", employeeOrigin);
 
         // コンボボックスアイテム取得
         List<SimpleData> companyComboList = comboBoxService.getCompanyListByCategory(Enums.clientCategory.PARTNER.getCode());

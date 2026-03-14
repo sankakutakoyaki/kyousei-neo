@@ -1,15 +1,14 @@
 "use strict"
 
-/** ここから以前のもの */
 /**
  * リスト検索
  * @param {*} boxId 
  * @returns 
  */
-function filterDisplay(boxId, list) {
+export function searchBoxFilter(boxId, list) {
     // 検索ボックスを取得
-    const box = document.getElementById(boxId);
-    if (box == null) return list;
+    const box = boxId instanceof HTMLElement ? boxId: document.getElementById(boxId);
+    if (!box) return list;
 
     // 検索ワードを取得
     const words = box.value;

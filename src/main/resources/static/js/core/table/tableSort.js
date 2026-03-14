@@ -45,13 +45,8 @@ export function sortTable(table, col, reverse) {
  * @param {*} tableId 
  */
 export function makeSortable(tableId) {
-    let targetElm;
-    if(tableId instanceof HTMLElement) {
-        targetElm = tableId;
-    } else {
-        targetElm = document.getElementById(tableId);
-    }
-    if (targetElm == null) return;
+    const targetElm = tableId instanceof HTMLElement ? tableId: document.getElementById(tableId);
+    if (!targetElm) return null;
 
     const tbl = targetElm.closest('table');
     if (tbl == null) return;
@@ -83,13 +78,8 @@ export function makeSortable(tableId) {
  * @param {*} tableId 
  */
 export function resetSortable(tableId) {
-    let targetElm;
-    if(tableId instanceof HTMLElement) {
-        targetElm = tableId;
-    } else {
-        targetElm = document.getElementById(tableId);
-    }
-    if (targetElm == null) return;
+    const targetElm = tableId instanceof HTMLElement ? tableId: document.getElementById(tableId);
+    if (!targetElm) return null;
 
     const tbl = targetElm.closest('table');
     if (tbl == null) return;

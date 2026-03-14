@@ -2,8 +2,9 @@
 
 import {TableStore} from "./TableStore.js";
 import {renderTable} from "./tableRender.js";
+import {searchBoxFilter} from "./tableFilter.js";
 
-export class TableEngine {
+export class DataTable {
     constructor(config){
         this.config = config;
         this.tableEl = document.getElementById(config.tableId);
@@ -26,5 +27,11 @@ export class TableEngine {
 
     refresh(){
         this.render();
+    }
+
+    search(id, origin){
+        if (!id) return;
+        const list = searchBoxFilter(id, origin);
+        this.load(list);
     }
 }

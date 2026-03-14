@@ -3,7 +3,7 @@
 /**
  * 共通fetch
  */
-async function apiFetch(url, {
+export async function apiFetch(url, {
     method = "POST",
     data = null,
     token,
@@ -12,6 +12,9 @@ async function apiFetch(url, {
     retry = 0
 } = {}) {
 
+    // const token = document.querySelector('meta[name="_csrf"]').content;
+    // const header = document.querySelector('meta[name="_csrf_header"]').content;
+
     const spinner = document.getElementById("loading");
     if (spinner) spinner.classList.remove("loaded");
 
@@ -19,28 +22,22 @@ async function apiFetch(url, {
     const timer = setTimeout(() => controller.abort(), timeout);
 
     try {
-
         const headers = {};
 
-        if (token) {
-            headers["X-CSRF-TOKEN"] = token;
+        if (APP.security.csrfToken) {
+            // headers["X-CSRF-TOKEN"] = App.security.csrfToken;
+            headers[APP.security.csrfHeader] = APP.security.csrfToken
         }
 
         let body = null;
 
         if (data instanceof FormData) {
-
             body = data;
-
         } else if (data && data.constructor === Object) {
-
             headers["Content-Type"] = "application/json";
             body = JSON.stringify(data);
-
         } else {
-
             body = data;
-
         }
 
         const response = await fetch(url, {
@@ -55,13 +52,10 @@ async function apiFetch(url, {
         }
 
         if (!response.ok) {
-
             let err = null;
-
             try {
                 err = await response.json();
             } catch {}
-
             await handleHttpError(response.status, err);
         }
 
@@ -70,21 +64,15 @@ async function apiFetch(url, {
         let result;
 
         if (ct.includes("application/json")) {
-
             result = await response.json();
-
         } else if (
             ct.includes("application/octet-stream") ||
             ct.includes("application/pdf") ||
             ct.includes("application/zip")
         ) {
-
             result = await response.blob();
-
         } else {
-
             result = await response.text();
-
         }
 
         return {
@@ -93,15 +81,12 @@ async function apiFetch(url, {
             data: result?.data ?? result,
             message: result?.message ?? ""
         };
-
     } catch (err) {
-
         if (err.name === "AbortError") {
             throw new Error("通信がタイムアウトしました");
         }
 
         if (retry > 0) {
-
             return apiFetch(url, {
                 method,
                 data,
@@ -110,17 +95,11 @@ async function apiFetch(url, {
                 timeout,
                 retry: retry - 1
             });
-
         }
-
         throw err;
-
     } finally {
-
         clearTimeout(timer);
-
         if (spinner) spinner.classList.add("loaded");
-
     }
 }
 
@@ -131,7 +110,7 @@ async function apiFetch(url, {
  * @param {*} token 
  * @returns 
  */
-async function updateFetch(url, data, token) {
+export async function updateFetch(url, data, token) {
     return apiFetch(url, {
         method: "POST",
         data,
@@ -147,7 +126,7 @@ async function updateFetch(url, data, token) {
  * @param {*} token 
  * @returns 
  */
-async function searchFetch(url, data, token) {
+export async function searchFetch(url, data, token) {
     return apiFetch(url, {
         method: "POST",
         data,
@@ -164,7 +143,7 @@ async function searchFetch(url, data, token) {
  * @param {*} token 
  * @returns 
  */
-async function formFetch(url, formData, token) {
+export async function formFetch(url, formData, token) {
     return apiFetch(url, {
         method: "POST",
         data: formData,
@@ -177,16 +156,13 @@ async function formFetch(url, formData, token) {
  * HTTPエラー共通処理
  * @param {*} status 
  */
-async function handleHttpError(status, json) {
-
+export async function handleHttpError(status, json) {
     const message = json?.message;
 
     if (window.ApiErrorHandler) {
         return window.ApiErrorHandler(status, message);
     }
-
     console.error(status, message);
-
 }
 
 // async function handleHttpError(status, json) {

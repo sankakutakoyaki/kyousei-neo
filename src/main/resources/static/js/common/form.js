@@ -363,8 +363,6 @@ function setSelectValue(form, formData, formdata, {
     }
 }
 
-//　フォーム画面にentityの情報を登録する
-// フォーム画面に entity の情報を登録する
 // フォーム画面に entity の情報を登録する（input / span 両対応）
 function applyFormConfig(form, entity, config) {
     config.forEach(c => {

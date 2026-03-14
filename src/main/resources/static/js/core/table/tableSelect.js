@@ -1,45 +1,18 @@
 "use strict"
 
 /**
- * 選択されているチェックボックスを全て取得する
- * @param {取得対象の親要素} parent 
- * @returns チェックされている要素のIDリストをJSON形式で返す。
- */
-export function getAllSelectedIds(tableId) {
-    let tbl;
-    if(tableId instanceof HTMLElement) {
-        tbl = tableId;
-    } else {
-        tbl = document.getElementById(tableId);
-    }
-    if (tbl == null) return;
-
-    const ids = tbl.querySelectorAll('input[name="chk-box"]:checked');
-    const checked_data = [];
-    if (0 < ids.length) {
-        for (let data of ids) {
-            let num = parseInt(data.closest('tr').dataset.id);
-            if (num > 0) checked_data.push(num);
-        }
-        return JSON.stringify({ ids:checked_data });
-    } else {
-        // 選択された要素がなければメッセージを表示して終了
-        openMsgDialog("msg-dialog", "選択されていません", "red");
-        return null;
-    }
-}
-
-/**
  * チェックボタン押下時の処理をイベントリスナーに登録する
  */
 export function registCheckButtonClicked(tableId) {
-    let tbl;
-    if(tableId instanceof HTMLElement) {
-        tbl = tableId;
-    } else {
-        tbl = document.getElementById(tableId);
-    }
-    if (!tbl) return;
+    // let tbl;
+    // if(tableId instanceof HTMLElement) {
+    //     tbl = tableId;
+    // } else {
+    //     tbl = document.getElementById(tableId);
+    // }
+    // if (!tbl) return;
+    const tbl = tableId instanceof HTMLElement ? tableId: document.getElementById(tableId);
+    if (tbl == null) return;
 
     // チェックボタン押下時の処理
     tbl.querySelectorAll('input[name="chk-box"]').forEach(chk => {
@@ -66,6 +39,32 @@ export function registCheckButtonClicked(tableId) {
             detachmentSelectClassToAllRow(tableId, false);
         }
     });
+
+    turnOffAllCheckBtn(tbl);
+}
+
+/**
+ * 選択されているチェックボックスを全て取得する
+ * @param {取得対象の親要素} parent 
+ * @returns チェックされている要素のIDリストをJSON形式で返す。
+ */
+export function getAllSelectedIds(tableId) {
+    const tbl = tableId instanceof HTMLElement ? tableId: document.getElementById(tableId);
+    if (tbl == null) return;
+
+    const ids = tbl.querySelectorAll('input[name="chk-box"]:checked');
+    const checked_data = [];
+    if (0 < ids.length) {
+        for (let data of ids) {
+            let num = parseInt(data.closest('tr').dataset.id);
+            if (num > 0) checked_data.push(num);
+        }
+        return JSON.stringify({ ids:checked_data });
+    } else {
+        // 選択された要素がなければメッセージを表示して終了
+        openMsgDialog("msg-dialog", "選択されていません", "red");
+        return null;
+    }
 }
 
 /**
@@ -74,10 +73,7 @@ export function registCheckButtonClicked(tableId) {
  * @returns 
  */
 export function getAllSelectedValues(tableId) {
-    let tbl = tableId instanceof HTMLElement
-        ? tableId
-        : document.getElementById(tableId);
-
+    const tbl = tableId instanceof HTMLElement ? tableId: document.getElementById(tableId);
     if (!tbl) return null;
 
     const values = tbl.querySelectorAll('input[name="chk-box"]:checked');
@@ -106,13 +102,15 @@ export function getAllSelectedValues(tableId) {
  * @returns 
  */
 export function turnOffAllCheckBtn(tableId) {
-    let tbl;
-    if(tableId instanceof HTMLElement) {
-        tbl = tableId;
-    } else {
-        tbl = document.getElementById(tableId);
-    }
-    if (tbl == null) return;
+    // let tbl;
+    // if(tableId instanceof HTMLElement) {
+    //     tbl = tableId;
+    // } else {
+    //     tbl = document.getElementById(tableId);
+    // }
+    // if (tbl == null) return;
+    const tbl = tableId instanceof HTMLElement ? tableId: document.getElementById(tableId);
+    if (!tbl) return null;
 
     const tableRoot = tbl.closest('.normal-table');
     if (!tableRoot) return;
@@ -128,7 +126,7 @@ export function turnOffAllCheckBtn(tableId) {
  * @param {*} tableId 
  * @param {*} self 
  */
-function clickAllCheckBtn(self) {
+export function clickAllCheckBtn(self) {
     const tbl = self.closest('table');
     const state = self.checked;
     // すべての行の選択状態を解除する
@@ -142,13 +140,17 @@ function clickAllCheckBtn(self) {
  * @param {選択された要素} areaId 
  */
 export function addSelectClassToRow(areaId) {
-    let item;
-    if(areaId instanceof HTMLElement) {
-        item = areaId;
-    } else {
-        item = document.getElementById(areaId);
-    }
-    if (item == null) return;
+    // let item;
+    // if(areaId instanceof HTMLElement) {
+    //     item = areaId;
+    // } else {
+    //     item = document.getElementById(areaId);
+    // }
+    // if (item == null) return;
+    
+    const item = areaId instanceof HTMLElement ? areaId: document.getElementById(areaId);
+    if (!item) return null;
+
     item.classList.add('selected');
 }
 
@@ -157,13 +159,17 @@ export function addSelectClassToRow(areaId) {
  * @param {選択された要素} areaId 
  */
 export function detachmentSelectClassToRow(areaId) {
-    let item;
-    if(areaId instanceof HTMLElement) {
-        item = areaId;
-    } else {
-        item = document.getElementById(areaId);
-    }
-    if (item == null) return;
+    // let item;
+    // if(areaId instanceof HTMLElement) {
+    //     item = areaId;
+    // } else {
+    //     item = document.getElementById(areaId);
+    // }
+    // if (item == null) return;
+
+    const item = areaId instanceof HTMLElement ? areaId: document.getElementById(areaId);
+    if (!item) return null;
+
     if (!item.classList.contains('selected')) {
         item.classList.add('selected');
     } else {
@@ -178,13 +184,17 @@ export function detachmentSelectClassToRow(areaId) {
  * @param {状態} state 
  */
 export function detachmentSelectClassToAllRow(tableId, state) {
-    let tbl;
-    if(tableId instanceof HTMLElement) {
-        tbl = tableId;
-    } else {
-        tbl = document.getElementById(tableId);
-    }
-    if (tbl == null) return;
+    // let tbl;
+    // if(tableId instanceof HTMLElement) {
+    //     tbl = tableId;
+    // } else {
+    //     tbl = document.getElementById(tableId);
+    // }
+    // if (tbl == null) return;
+
+    const tbl = tableId instanceof HTMLElement ? tableId: document.getElementById(tableId);
+    if (!tbl) return null;
+
     const items = tbl.querySelectorAll('[name="data-row"]');
     items.forEach(function(value) {
         if (value.classList.contains('selected') && state == false) {
@@ -201,13 +211,17 @@ export function detachmentSelectClassToAllRow(tableId, state) {
  * @param {状態} state 
  */
 export function detachmentCheckedToAllRow(tableId, state) {
-    let tbl;
-    if(tableId instanceof HTMLElement) {
-        tbl = tableId;
-    } else {
-        tbl = document.getElementById(tableId);
-    }
-    if (tbl == null) return;
+    // let tbl;
+    // if(tableId instanceof HTMLElement) {
+    //     tbl = tableId;
+    // } else {
+    //     tbl = document.getElementById(tableId);
+    // }
+    // if (tbl == null) return;
+
+    const tbl = tableId instanceof HTMLElement ? tableId: document.getElementById(tableId);
+    if (!tbl) return null;
+
     const items = tbl.querySelectorAll('[name="data-row"]>[name="chk-cell"]>input');
     items.forEach(function(value) {
         value.checked = state;
