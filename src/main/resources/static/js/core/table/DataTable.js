@@ -29,9 +29,13 @@ export class DataTable {
         this.render();
     }
 
-    search(id, origin){
-        if (!id) return;
-        const list = searchBoxFilter(id, origin);
+    search(){
+    // search(id, origin){
+        // if (!id) return;
+        // const list = searchBoxFilter(id, origin);
+        if (this.config.searched){
+            const list = searchBoxFilter(id, this.store.getData());
+        }
         this.load(list);
     }
 }
