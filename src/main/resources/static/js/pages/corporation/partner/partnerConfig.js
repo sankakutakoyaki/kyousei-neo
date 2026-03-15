@@ -1,6 +1,7 @@
 "use strict"
 
-import { partnerController } from "./partnerController.js";
+import {partnerCompanyController} from "./partnerController.js";
+import {partnerEmployeeController} from "./partnerController.js";
 
 export const partnerConfig = {
 
@@ -10,12 +11,8 @@ export const partnerConfig = {
             comboList:APP.cache.companyComboList,
             text: "",
             onChange: async (e)=>{
-                // const table = getTable("table-02");
-                // const copy = structuredClone(APP.cache.employeeOrigin);
-                // const list = copy.filter(v => { return v.companyId === Number(e.target.value)});
-                // table.load(list);
-                partnerController.set("companyId", Number(e.target.value));
-                partnerController.reload();
+                partnerEmployeeController.set("companyId", Number(e.target.value));
+                partnerEmployeeController.reload();
             }
         }
     ],
@@ -24,11 +21,8 @@ export const partnerConfig = {
         {
             searchId:"search-box-01",
             searchTo: (e) => {
-                // const table = getTable("table-01");
-                // const copy = structuredClone(APP.cache.companyOrigin);
-                // table.search("search-box-01", copy);
-                partnerController.set("keyword", e.target.value);
-                partnerController.reload();
+                partnerCompanyController.set("keyword", e.target.value);
+                partnerCompanyController.reload();
             }
         }
     ],

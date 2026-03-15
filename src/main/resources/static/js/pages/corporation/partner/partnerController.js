@@ -2,15 +2,21 @@
 
 import {TableController} from "../../../core/table/TableController.js";
 
-export const partnerController = new TableController({
-    tableId:"table-02",
-    origin: APP.cache.employeeOrigin,
+export const partnerCompanyController = new TableController({
+    tableId:"table-01",
+    origin: () => APP.cache.companyOrigin,
     filters:{
-        companyId:(v,value)=> v.companyId === value,
-        keyword:()=> {
-            const table = getTable("table-01");
-            const copy = structuredClone(APP.cache.companyOrigin);
-            table.search("search-box-01", copy);
-        }
+        keyword:true,
+        // companyId:"eq",
+        // name:"includes"
+    }
+});
+
+export const partnerEmployeeController = new TableController({
+    tableId:"table-02",
+    origin: () => APP.cache.employeeOrigin,
+    filters:{
+        companyId:"eq",
+        // companyId:(v,value)=> v.companyId === value,
     }
 });

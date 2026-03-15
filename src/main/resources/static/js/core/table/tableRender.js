@@ -1,7 +1,7 @@
 "use strict"
 
 import {registCheckButtonClicked} from "./tableSelect.js";
-import {makeSortable} from "./tableSort.js";
+// import {makeSortable} from "./tableSort.js";
 import {clearElement} from "../dom/clearElement.js";
 
 export function renderTable(
@@ -24,7 +24,7 @@ export function renderTable(
     });
 
     registCheckButtonClicked(table);
-    makeSortable(table);
+    // makeSortable(table);
 
     const el = table.closest('.normal-table').querySelector('table-header');
     if (el) toggleScrollbar(el);

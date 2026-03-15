@@ -2,26 +2,27 @@
 
 export class TableStore {
 
-    constructor() {
-        this.data = [];
-        this.filtered = [];
+    constructor(){
+        this.origin = [];
+        this.view = [];
     }
 
     setData(list){
-        this.data = list;
-        this.filtered = list;
+        this.origin = list;
+        this.view = list;
+    }
+
+    applyFilters(filters){
+        let list = this.origin;
+
+        for(const fn of filters){
+            list = list.filter(fn);
+        }
+        this.view = list;
     }
 
     getData(){
-        return this.filtered;
-    }
-
-    filter(fn){
-        this.filtered = this.data.filter(fn);
-    }
-
-    reset(){
-        this.filtered = this.data;
+        return this.view;
     }
 
 }

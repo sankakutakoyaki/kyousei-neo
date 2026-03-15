@@ -149,6 +149,16 @@ th.sorted-desc>span {
     position: relative;
 }
 
+
+
+th.sorted-asc::after{
+    content:" ▲";
+}
+
+th.sorted-desc::after{
+    content:" ▼";
+}
+
 /******************************************************************************************************* ページトップ用 */
 
 .table-wrapper {
