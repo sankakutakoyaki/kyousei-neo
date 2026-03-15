@@ -2,9 +2,9 @@
 
 import {partnerCompanyController} from "./partnerController.js";
 import {partnerEmployeeController} from "./partnerController.js";
+import { filterFactory } from "../../../core/filter/filterFactory.js";
 
 export const partnerConfig = {
-
     combo:[
         {
             comboId:"name01",            
@@ -12,7 +12,7 @@ export const partnerConfig = {
             text: "",
             onChange: async (e)=>{
                 partnerEmployeeController.set("companyId", Number(e.target.value));
-                partnerEmployeeController.reload();
+                // partnerEmployeeController.reload();
             }
         }
     ],
@@ -22,7 +22,7 @@ export const partnerConfig = {
             searchId:"search-box-01",
             searchTo: (e) => {
                 partnerCompanyController.set("keyword", e.target.value);
-                partnerCompanyController.reload();
+                // partnerCompanyController.reload();
             }
         }
     ],
@@ -43,6 +43,10 @@ export const partnerConfig = {
                 // url: "/api/client/get/list"
                 type: "origin",
                 data: APP.cache.companyOrigin
+            },
+
+            filters:{
+                keyword: filterFactory.keyword()
             },
 
             columns: [
@@ -73,9 +77,15 @@ export const partnerConfig = {
             checkable: true,
 
             dataSource: {
-                type: "none",
+                type: "origin",
                 data: APP.cache.employeeOrigin
             },
+
+            filters:{
+                companyId: filterFactory.equals("companyId")
+            },
+
+            requiredFilters:["companyId"],
 
             columns: [
                 {

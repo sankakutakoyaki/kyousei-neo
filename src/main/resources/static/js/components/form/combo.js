@@ -20,7 +20,7 @@ export function createComboBox({area, items, text = null, onChange = null}) {
     area.replaceChildren();
 
     if (text !== null) {
-        area.insertAdjacentHTML("beforeend",`<option value="0" data-id="0">${text}</option>`);
+        area.insertAdjacentHTML("beforeend",`<option value="" data-id="0">${text}</option>`);
     }
 
     (items ?? []).forEach(item => {
