@@ -1,22 +1,22 @@
 "use strict"
 
-import {TableModel} from "./TableModel.js";
-import {renderTable} from "./tableRender.js"
+import { TableModel } from "./TableModel.js";
+import { renderTable } from "./tableRender.js";
+import { openConfilmDialog, openMsgDialog } from "../../components/ui/dialog.js";
 
 export class DataTable {
 
     constructor(config){
-
         this.config = config;
         this.tableEl = document.getElementById(config.tableId);
-
         this.model = new TableModel(config);
-
-        this.initHeaderSort();
+        this.initHeaderEvents();
+        this.initRowEvents();
+        this.initHeaderCheckbox();
+        this.initCellEdit();
     }
 
     async initData(){
-
         const ds = this.config.dataSource;
         if(!ds) return;
 
@@ -37,193 +37,289 @@ export class DataTable {
     }
 
     reload(){
-
         this.model.compute();
         this.render();
-
     }
 
     render(){
-
         renderTable(
             this.tableEl,
             this.config,
             this.model.getData(),
             this
         );
-
+        this.updateHeaderCheckbox();
     }
 
     sort(field){
-
         const dir =
             this.model.sortKey === field &&
             this.model.sortDir === "asc"
                 ? "desc"
                 : "asc";
-
         this.model.setSort(field,dir);
-
         this.reload();
-
     }
 
-    initHeaderSort(){
+    // initHeaderSort(){
+    //     const table = this.tableEl.closest("table");
+    //     if(!table) return;
 
-        const table = this.tableEl.closest("table");
-        if(!table) return;
+    //     const headers = table.querySelectorAll("th[data-field]");
+    //     headers.forEach(th=>{
+    //         const field = th.dataset.field;
+    //         th.addEventListener("click",()=>{
+    //             this.sort(field);
+    //         });
+    //     });
+    // }
 
-        const headers = table.querySelectorAll("th[data-field]");
+    initHeaderEvents(){
+        const table = this.tableEl.closest('.normal-table');
+        if (!table) return;
 
-        headers.forEach(th=>{
+        table.addEventListener("click",(e)=>{
+            const th = e.target.closest("th");
+            if(!th) return;
 
             const field = th.dataset.field;
+            if(!field) return;
 
-            th.addEventListener("click",()=>{
-
-                this.sort(field);
-
-            });
-
+            this.sort(field);
         });
-
     }
 
+    initHeaderCheckbox(){
+        const table = this.tableEl.closest('.normal-table');
+        if (!table) return;
+
+        table.addEventListener("click",(e)=>{
+            if(e.target.name !== "all-chk-btn") return;
+            const chkAll = e.target;
+            const data = this.model.getData();
+            if(chkAll.checked){
+                data.forEach(v=>{
+                    this.model.selected.add(v[this.config.idKey]);
+                });
+            }else{
+                this.model.clearSelection();
+            }
+            this.render();
+        });
+    }
+
+    initRowEvents(){
+        // this.tableEl.addEventListener("click",(e)=>{
+        //     if(e.target.name === "chk-box"){
+        //         const id = Number(e.target.dataset.id);
+        //         this.model.toggleSelect(id);
+        //         this.updateHeaderCheckbox();
+        //     }
+        // });
+    
+        // this.tableEl.addEventListener("click",(e)=>{
+        //     const row = e.target.closest("tr[data-id]");
+        //     if(!row) return;
+
+        //     // checkboxは除外
+        //     if(e.target.name === "chk-box") return;
+        //     this.selectRow(row);
+        // });
+        this.tableEl.addEventListener("click",(e)=>{
+            // checkbox
+            if(e.target.name === "chk-box"){
+                const id = Number(e.target.dataset.id);
+                this.model.toggleSelect(id);
+                this.updateHeaderCheckbox();
+                return;
+            }
+            // row
+            const row = e.target.closest("tr[data-id]");
+            if(!row) return;
+
+            this.selectRow(row);
+        });
+
+        this.tableEl.addEventListener("dblclick",(e)=>{
+            const row = e.target.closest("tr[data-id]");
+            if(!row) return;
+
+            this.selectRow(row);
+            if(this.config.onDoubleClick){
+                const id = row.dataset.id;
+                const item = this.findItem(id);
+                this.config.onDoubleClick(item, row, e);
+            }
+        });
+    }
+
+    initCellEdit(){
+        this.tableEl.addEventListener("click",(e)=>{
+            const td = e.target.closest("td.editable");
+            if(!td) return;
+            // checkboxなど除外
+            if(e.target.name === "chk-box") return;
+            // すでに編集中
+            if(td.querySelector("input,select")) return;
+
+            this.startCellEdit(td);
+        });
+    }
+
+
+    startCellEdit(td){
+        const originalText = td.textContent.trim();
+        const originalValue = td.dataset.value;
+        const editType = td.dataset.editType || "text";
+
+        let editor;
+        let canceled = false;
+
+        if(editType === "select"){
+            editor = document.createElement("select");
+            const key = td.dataset.optionsKey;
+            const options = SELECT_OPTIONS[key] || [];
+            options.forEach(opt=>{
+                const option = document.createElement("option");
+                option.value = opt.number;
+                option.textContent = opt.text;
+                if(String(opt.number) === originalValue){
+                    option.selected = true;
+                }
+                editor.appendChild(option);
+            });
+        }else{
+            editor = document.createElement("input");
+            editor.type = "text";
+            editor.value = originalText === "-----" ? "" : originalText;
+        }
+
+        editor.classList.add("normal-input");
+        editor.style.width = "100%";
+        td.textContent = "";
+        td.appendChild(editor);
+        editor.focus();
+        if(editor instanceof HTMLInputElement) editor.select();
+
+        editor.addEventListener("keydown",(e)=>{
+            if(e.isComposing) return;
+
+            if(e.key === "Escape"){
+                canceled = true;
+                this.restoreCell(td, originalText, originalValue);
+                return;
+            }
+            if(e.key === "Enter"){
+                e.preventDefault();
+                editor.blur();
+            }
+        });
+
+        editor.addEventListener("blur",()=>{
+            if(canceled) return;
+            this.saveEditor(td, editor, originalText);
+        });
+    }
+
+    updateHeaderCheckbox(){
+        const table = this.tableEl.closest(".normal-table");
+        if(!table) return;
+
+        const chkAll = table.querySelector("[name='all-chk-btn']");
+        if(!chkAll) return;
+
+        const list = this.model.getData();
+
+        if(list.length === 0){
+            chkAll.checked = false;
+            chkAll.indeterminate = false;
+            return;
+        }
+
+        let checkedCount = 0;
+        list.forEach(v=>{
+            if(this.model.isSelected(v[this.config.idKey])){
+                checkedCount++;
+            }
+        });
+
+        if(checkedCount === 0){
+            chkAll.checked = false;
+            chkAll.indeterminate = false;
+        }
+        else if(checkedCount === list.length){
+            chkAll.checked = true;
+            chkAll.indeterminate = false;
+        }
+        else{
+            chkAll.checked = false;
+            chkAll.indeterminate = true; // ←中間状態
+        }
+    }
+
+    selectRow(row){
+        const rows = this.tableEl.querySelectorAll("tr[data-id]");
+        rows.forEach(r=>{
+            r.classList.remove("selected");
+        });
+        row.classList.add("selected");
+    }
+
+    findItem(id){
+        const list = this.model.origin(); // 状況に応じて originとgetDate()を使い分ける
+        return list.find(v =>
+            String(v[this.config.idKey]) === String(id)
+        );
+    }
+    
+    restoreCell(td, text, value) {
+        td.textContent = text || '-----';
+        if (value !== undefined) {
+            td.dataset.value = value;
+        }
+    }
+
+    saveEditor(td, editor, currentValue){
+
+        const row = td.closest("tr");
+        const id = row.dataset.id;
+        const field = td.dataset.field;
+
+        let value;
+
+        if (editor instanceof HTMLSelectElement) {
+            const opt = editor.selectedOptions[0];
+            value = opt.value;
+            td.dataset.value = value;
+            td.textContent = opt.textContent;
+        } else {
+            value = editor.value?.trim();
+            td.textContent = value || currentValue || '-----';
+        }
+
+        this.updateCell(id, field, value);
+    }
+
+    async deleteSelected(){
+        const ids = this.model.getSelectedIds();
+        if(ids.length === 0){
+            openMsgDialog("選択してください", "red");
+            return;
+        }
+        openConfilmDialog("削除しますか？", "blue", () => this.deleteFunc(ids));
+    }
+
+    async deleteFunc() {
+        try{
+            const result = await api.post(this.config.deleteUrl, ids);
+            openMsgDialog(result.message, "blue");
+
+            // 成功したら画面から消す
+            this.model.removeByIds(ids);
+            this.reload();
+        }catch(e){
+            openMsgDialog("削除できませんでした。", "red");
+            console.error(e);
+        }
+    }
 }
-
-// import { TableModel } from "./TableModel.js";
-// import { renderTable } from "./tableRender.js";
-
-// export class DataTable {
-
-//     constructor(config){
-//         this.config = config;
-//         this.tableEl = document.getElementById(config.tableId);
-//         this.model = new TableModel(config);
-
-//         this.initHeaderSort();
-//     }
-
-//     async initData(){
-//         await this.loadData();
-//         this.reload();
-//     }
-
-//     async loadData(){
-//         const ds = this.config.dataSource;
-//         if(!ds) return;
-
-//         if(ds.type === "api"){
-//             const res = await api.get(ds.url);
-//             this.model.origin = () => res.data;
-//         }
-
-//         if(ds.type === "origin"){
-//             this.model.origin = () => ds.data;
-//         }
-//     }
-
-//     set(key,value){
-//         this.model.set(key,value);
-//     }
-
-//     setData(list){
-//         this.model.origin = () => list;
-//         this.reload();
-//     }
-
-//     async reload(){
-//         if(this.config.dataSource?.type === "api"){
-//             await this.loadData();
-//         }
-//         this.model.compute();
-//         this.render();
-//     }
-
-//     render(){
-//         renderTable(
-//             this.tableEl,
-//             this.config,
-//             this.model.getData(),
-//             this
-//         );
-//     }
-
-//     sort(field){
-//         const dir =
-//             this.model.sortKey === field &&
-//             this.model.sortDir === "asc"
-//                 ? "desc"
-//                 : "asc";
-
-//         this.model.setSort(field,dir);
-
-//         this.reload();
-
-//     }
-
-//     initHeaderSort(){
-//         const table = this.tableEl.closest("table");
-//         if(!table) return;
-
-//         const headers = table.querySelectorAll("th[data-field]");
-//         headers.forEach(th=>{
-//             const field = th.dataset.field;
-//             th.addEventListener("click",()=>{
-//                 const current = th.dataset.sort;
-//                 const dir = current === "asc" ? "desc" : "asc";
-//                 this.model.setSort(field,dir);
-//                 this.updateSortIndicator(table,th,dir);
-//                 this.reload();
-//             });
-//         });
-//     }
-
-//     updateSortIndicator(table,activeTh,dir){
-//         const headers = table.querySelectorAll("th[data-field]");
-
-//         headers.forEach(th=>{
-//             th.dataset.sort = "";
-//             th.classList.remove("sorted-asc","sorted-desc");
-//         });
-
-//         activeTh.dataset.sort = dir;
-
-//         if(dir === "asc"){
-//             activeTh.classList.add("sorted-asc");
-//         }else{
-//             activeTh.classList.add("sorted-desc");
-//         }
-//     }
-// }
-
-
-// // import {TableStore} from "./TableStore.js";
-// // import {renderTable} from "./tableRender.js";
-
-// // export class DataTable {
-// //     constructor(config){
-// //         this.config = config;
-// //         this.tableEl = document.getElementById(config.tableId);
-// //         this.store = new TableStore();
-// //     }
-
-// //     load(list){
-// //         this.store.setData(list);
-// //         this.render();
-// //     }
-
-// //     render(){
-// //         renderTable(
-// //             this.tableEl,
-// //             this.config,
-// //             this.store.getData(),
-// //             this
-// //         );
-// //     }
-
-// //     refresh(filters=[]){
-// //         this.store.applyFilters(filters);
-// //         this.render();
-// //     }
-// // }

@@ -8,14 +8,14 @@
             <div class="dialog-main">
                 <div class="dialog-header">
                     <span>確認</span>
-                    <div class="img-btn" onclick="closeMsgDialog('msg-dialog', event)">
+                    <div name="closeBtn" class="img-btn">
                         <img title="閉じる" src="/icons/close-s.png">
                     </div>
                 </div>
                 <span class="msg-dialog-content"></span>
                 <div class="dialog-footer">
-                    <button name="focus-btn" class="normal-btn ok" type="button"
-                        onclick="closeMsgDialog('msg-dialog', event)">了解</button>
+                    <button id="okBtn" name="okBtn" class="normal-btn ok" type="hidden"></button>
+                    <button id="cancelBtn" name="closeBtn" class="normal-btn" type="button"></button>
                 </div>
             </div>
         </div>

@@ -1,11 +1,12 @@
 "use strict"
 
-import {init as initCombo} from "../components/form/combo.js";
-import {init as initSearch} from "../components/form/search.js";
-import {init as initTab} from "../components/ui/tab.js";
-import {init as initFocus} from "../components/form/enterfocus.js";
-import {init as initTable} from "../components/form/table.js";
-import {DataResolver} from "../core/data/DataResolver.js";
+import { init as initCombo } from "../components/form/combo.js";
+import { init as initSearch } from "../components/form/search.js";
+import { init as initTab } from "../components/ui/tab.js";
+import { init as initFocus } from "../components/form/enterfocus.js";
+import { init as initTable } from "../components/form/table.js";
+import { init as initBtns } from "../components/form/button.js";
+import { DataResolver } from "../core/data/DataResolver.js";
 
 export async function initPage(config, area = document){
 
@@ -22,6 +23,11 @@ export async function initPage(config, area = document){
     // 検索ボックス
     if(config.search){
         initSearch(area, config.search);
+    }
+
+    // ボタン
+    if(config.btns){
+        initBtns(area, config.btns);
     }
 
     // タブ

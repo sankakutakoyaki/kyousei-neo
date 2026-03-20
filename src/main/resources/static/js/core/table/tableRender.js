@@ -1,8 +1,7 @@
 "use strict"
 
-import {registCheckButtonClicked} from "./tableSelect.js";
-// import {makeSortable} from "./tableSort.js";
-import {clearElement} from "../dom/clearElement.js";
+import { clearElement } from "../dom/clearElement.js";
+import { setPageTopButton } from "../dom/pageTopButton.js";
 
 export function renderTable(
     table,
@@ -13,33 +12,42 @@ export function renderTable(
     // テーブル初期化
     clearElement(table);
 
+    const el = table.closest('.normal-table');
+    renderHeader(el, config);
+
     if (!list) return;
     list.forEach(item=>{
-        const row = createSelectableRow({
-            table: table,
-            item: item,
-            idKey: config.idKey
-        });
-        createRow(row, item, config);
+        const row = table.insertRow();
+        row.dataset.id = item[config.idKey];
+        row.setAttribute("name", "data-row");
+
+        createRow(row, item, config, dataTable);
     });
 
-    registCheckButtonClicked(table);
-    // makeSortable(table);
+    createTableFooter(config.footerId, list)
+    setPageTopButton(table);
 
-    const el = table.closest('.normal-table').querySelector('table-header');
-    if (el) toggleScrollbar(el);
+    const header = el?.querySelector('[name="table-header"]');
+    if (header) toggleScrollbar(header);
 }
 
-export function createRow(tr, item, config){
+export function createRow(tr, item, config, dataTable){
     // check
     if(config.checkable){
         const td = document.createElement("td");
         td.className = "pc-style";
         td.setAttribute('name', 'chk-cell');
+
         const chk = document.createElement("input");
         chk.type = "checkbox";
-        chk.setAttribute('name', 'chk-cell');
+        chk.setAttribute('name', 'chk-box');
         chk.className = "normal-chk";
+
+        const id = item[config.idKey];
+        // 状態反映
+        chk.checked = dataTable.model.isSelected(id);
+        chk.dataset.id = id;
+
         td.appendChild(chk);
         tr.appendChild(td);
     }
@@ -48,6 +56,12 @@ export function createRow(tr, item, config){
         const td = document.createElement("td");
         if(col.class){
             td.className = col.class;
+        }
+        if(col.field){
+            td.dataset.field = col.field;
+        }
+        if(col.editable){
+            td.classList.add("editable");
         }
         // render関数
         if(col.render){
@@ -67,76 +81,40 @@ export function createRow(tr, item, config){
         tr.appendChild(td);
     }
 }
-// export async function updateTableDisplay(
-//     tableId,
-//     footerId,
-//     searchId,
-//     list,
-//     createContent   // ★ 画面ごとの処理
-// ) {
 
-//     // フィルター処理
-//     const result = filterDisplay(searchId, list);
+export function renderHeader(tableEl,config){
+    const thead = tableEl.querySelector("thead");
+    if (!thead) return;
 
-//     // テーブル初期化
-//     deleteElements(tableId);
+    const tr = document.createElement("tr");
+    tr.setAttribute("name", "table-header");
 
-//     // ★ 画面ごとのテーブル生成
-//     if (typeof createContent === "function") {
-//         createContent(tableId, result);
-//     }
+    if(config.checkable){
+        const th = document.createElement("th");
+        th.setAttribute('name', 'chk-cell');
+        th.className = "pc-style";
 
-//     // フッター
-//     createTableFooter(footerId, list);
+        const chk = document.createElement("input");
+        chk.type = "checkbox";
+        chk.setAttribute('name', 'all-chk-btn');
+        chk.className = "normal-chk";
 
-//     // 共通後処理
-//     registCheckButtonClicked(tableId);
-//     turnOffAllCheckBtn(tableId);
-//     resetSortable(tableId);
-//     setPageTopButton(tableId);
+        th.appendChild(chk);
+        tr.appendChild(th);
+    }
 
-//     document.querySelectorAll('.scroll-area').forEach(el => {
-//         toggleScrollbar(el);
-//     });
-// }
+    config.columns.forEach(col=>{
+        const th = document.createElement("th");
+        th.textContent = col.label ?? col.field ?? "";
 
-export function createSelectableRow({
-    table,
-    item,
-    idKey,
-    validCheck,
-    onDoubleClick,
-    onSingleClick
-}) {
-    const row = table.insertRow();
-
-    row.setAttribute("name", "data-row");
-    row.dataset.id = item[idKey];
-    row.dataset.valid = validCheck ? validCheck(item) : true;
-    tdEnableEdit(row);
-
-    // シングルクリック
-    row.onclick = function (e) {
-        if (!row.classList.contains("selected")) {
-            detachmentSelectClassToAllRow(table, false);
-            addSelectClassToRow(row);
-            if (onSingleClick) onSingleClick(item, row, e);
+        if(col.sortable && col.field){
+            th.dataset.field = col.field;
         }
-    };
+        tr.appendChild(th);
+    });
 
-    // ダブルクリック
-    row.ondblclick = function (e) {
-        e.preventDefault();
-
-        if (!row.classList.contains("selected")) {
-            detachmentSelectClassToAllRow(table, false);
-            addSelectClassToRow(row);
-        }
-
-        if (onDoubleClick) onDoubleClick(item, row, e);
-    };
-
-    return row;
+    thead.innerHTML="";
+    thead.appendChild(tr);
 }
 
 /**

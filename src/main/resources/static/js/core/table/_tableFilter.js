@@ -1,16 +1,16 @@
-"use strict"
+// "use strict"
 
-export function createKeywordFilter(){
+// export function createKeywordFilter(){
 
-    return (v,value)=>{
-        if(!value) return true;
+//     return (v,value)=>{
+//         if(!value) return true;
 
-        const words = value.trim().split(/\s+/);
-        const text = v.__search ?? (v.__search = Object.values(v).join(" "));
+//         const words = value.trim().split(/\s+/);
+//         const text = v.__search ?? (v.__search = Object.values(v).join(" "));
 
-        return words.every(w => text.includes(w));
-    };
-}
+//         return words.every(w => text.includes(w));
+//     };
+// }
 
 // /**
 //  * リスト検索

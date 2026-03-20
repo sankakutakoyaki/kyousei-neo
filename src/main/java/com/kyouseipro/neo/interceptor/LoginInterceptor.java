@@ -16,17 +16,24 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+
+        String uri = request.getRequestURI();
+
+        // ★ SSL認証用は完全スルー
+        if (uri.startsWith("/.well-known/pki-validation/")) {
+            return true;
+        }
+
         HttpSession session = request.getSession(false);
         EmployeeEntity user = (session != null) ? (EmployeeEntity) session.getAttribute("loginUser") : null;
 
         if (user == null) {
-            String uri = request.getRequestURI();
             if (uri.startsWith("/api/")) {
-                throw new SessionExpiredException(); // API用
+                throw new SessionExpiredException();
             } else {
-                response.sendRedirect("/"); // 画面系用
+                response.sendRedirect("/");
             }
-            return false; // Controller に渡さない
+            return false;
         }
         return true;
     }

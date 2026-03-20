@@ -1,5 +1,5 @@
 <body>
-    <header class="flex-area pc-style" th:fragment="headerFragment(box)">
+    <header class="flex-area pc-style" th:fragment="headerFragment(box, del)">
         <!-- 検索ボックス -->
         <div class="search-box">
             <input th:id="${box}" type="search" placeholder="検索">
@@ -15,7 +15,7 @@
             </div>
             <!-- 削除ボタン -->
              <!-- <div class="img-btn" onclick="execDelete(this)"> -->
-            <div class="img-btn">
+            <div th:id="${del}" class="img-btn">
                 <img title="削除" src="/icons/dust.png">
                 <span>削除</span>
             </div>
@@ -208,19 +208,16 @@
 
     <main class="table-wrapper" th:fragment="mainPartnerFragment(tableId, headerId)">
         <table class="normal-table">
-            <tbody  th:id="${headerId}">
+            <!-- <tbody  th:id="${headerId}">
                 <tr name="table-header" class="pc-style">
                     <th name="chk-cell"><input name="all-chk-btn" class="normal-chk" type="checkbox"></th>
-                    <!-- <th><span>ID<span class="sort-arrow"></span></span></th>
-                    <th><span>名称<span class="sort-arrow"></span></span></th>
-                    <th><span>電話番号<span class="sort-arrow"></span></span></th>
-                    <th><span>メールアドレス<span class="sort-arrow"></span></span></th> -->
                     <th data-field="companyId"><span>ID</span></th>
                     <th data-field="name"><span>名称</span></th>
                     <th data-field="telNumber"><span>電話番号</span></th>
                     <th data-field="email"><span>メールアドレス</span></th>
                 </tr>
-            </tbody>
+            </tbody> -->
+            <thead th:id="${headerId}" class="pc-style"></thead>
             <tbody th:id="${tableId}" class="scroll-area"></tbody>
         </table>
         <button type="button" class="page-top"></button>

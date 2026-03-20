@@ -18,10 +18,12 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor)
-                .excludePathPatterns("/", "/error", "/css/**", "/js/**", "/img/**");
-                // 必要に応じて除外URL追加
+            .excludePathPatterns(
+                "/", "/error",
+                "/css/**", "/js/**", "/img/**",
+                "/.well-known/**"
+            );
     }
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/files/**")
