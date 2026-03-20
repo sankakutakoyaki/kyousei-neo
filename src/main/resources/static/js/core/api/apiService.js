@@ -1,6 +1,6 @@
 "use strict"
 
-import {apiFetch} from "./apiFetch.js";
+import { apiFetch } from "./apiFetch.js";
 
 // export class ApiService {
 
