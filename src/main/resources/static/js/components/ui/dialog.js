@@ -1,60 +1,127 @@
 "use strict"
 
 /**
+ * フォームダイアログを開く
+ * @param {*} dialogId 
+ * @returns 
+ */
+export function openFormDialog(dialogId) {
+    const form = dialogId instanceof HTMLElement ? dialogId: document.getElementById(dialogId);
+    if (form == null) return;
+
+    // フォームエリアにダイアログクラスを付与する
+    const area = document.getElementById('form-dialog-area');
+    if (area == null) return;
+    area.classList.add('dialog');
+
+    // フォーム画面から[none]クラスを取り除く
+    // const form = document.getElementById(dialogId);
+    // if (form == null) return;
+    form.classList.remove('none');
+
+    const el = area.querySelector('[autofocus]');
+    if (el) el.focus();
+    
+    setInertState(true);
+}
+
+/**
+ * フォームダイアログを閉じる
+ * @param {ダイアログのID名} dialogId 
+ * @param {イベント} e 
+ */
+export function closeFormDialog(dialogId, e) {
+    if (e != null) {
+        e.preventDefault();
+    }
+
+    // フォーム画面エリアからダイアログクラスを取り除く
+    const area = document.getElementById('form-dialog-area');
+    if (area == null) return;
+    area.classList.remove('dialog');
+
+    // フォーム画面に[none]クラスを付与して画面を消去する
+    const form = document.getElementById(dialogId);
+    if (form == null) return;
+    form.classList.add('none');
+
+    // 要素のクリック禁止を解除する
+    setInertState(false);
+}
+
+/**
  * メッセージダイアログ表示
  * @param {本文} msg 
  * @param {タイトル} title 
  * @param {ヘッダーの色} headerColor 
  */
-export function openMsgDialog(msg, color, okFunc = null) {
-    openMsg('msg-dialog-area', msg, color, closeMsgDialog("msg-dialog-area"), okFunc, false);
+export function openMsgDialog(msg, color, closeFunc = () => closeMsgDialog("msg-dialog")) {
+    openMsg('msg-dialog', msg, color, closeFunc, null, false);
 }
 
-export function openConfilmDialog(msg, color, okFunc = null, closeFunc = closeMsgDialog("msg-dialog-area")) {
-    openMsg('msg-dialog-area', msg, color, closeMsgDialog("msg-dialog-area"), okFunc, true);
+/**
+ * コンフィルムダイアログ表示
+ * @param {*} msg 
+ * @param {*} color 
+ * @param {*} okFunc 
+ * @param {*} closeFunc 
+ */
+export function openConfilmDialog(msg, color, okFunc, closeFunc = () => closeMsgDialog("msg-dialog")) {
+    if (!okFunc) return;
+
+    openMsg('msg-dialog', msg, color, closeFunc, okFunc, true);
 }
 
-function openMsg(dialogId, msg, color, closeFunc = null, okFunc = null, isConfilm = true) {
+/**
+ * 
+ * @param {*} dialogId 
+ * @param {*} msg 
+ * @param {*} color 
+ * @param {*} closeFunc 
+ * @param {*} okFunc 
+ * @param {*} isConfirm 
+ * @returns 
+ */
+function openMsg(dialogId, msg, color, closeFunc, okFunc, isConfirm = true) {
+
     const dialog = dialogId instanceof HTMLElement ? dialogId: document.getElementById(dialogId);
     if (!dialog) return;
 
-    // ボタンを使用不可にする
     setInertState(true);
 
-    // メッセージエリアにダイアログクラスを付与する
+    // dialog.classList.remove('none');
+
     const parent = document.getElementById('msg-dialog-area');
     parent.classList.add('dialog');
 
-    // メッセージ画面から[none]クラスを取り除く
-    dialog.classList.remove('none');
-
-    // ヘッダーの色を指定する
     const header = parent.querySelector('.dialog-header');
-    header.classList.add(color);
+    header.className = "dialog-header " + color;
 
-    // メッセージを代入する
     const content = parent.querySelector('.msg-dialog-content');
     content.textContent = msg;
 
-    const okBtn = dialog.getElementById('okBtn');
-    if (okBtn && isConfilm) {
-        okBtn.addEventListener('click', okFunc);
-        okBtn.textContent = "了解";
-    }
+    const okBtn = dialog.querySelector('#okBtn');
+    const cancelBtn = dialog.querySelector('#cancelBtn');
 
-    const closeBtns = dialog.querySelectorAll('closeBtn');
-    if (!closeBtns) closeBtns.forEach(closeBtn => closeBtn.addEventListener('click', closeFunc));
+    // イベント上書き（重要）
+    okBtn.onclick = null;
+    cancelBtn.onclick = null;
 
-    const cancelBtn = dialog.getElementById('cancelBtn');
-    if (cancelBtn && isConfilm) {
-        cancelBtn.textContent = "キャンセル";
+    if (isConfirm) {
+        okBtn.onclick = okFunc;
+        cancelBtn.onclick = closeFunc;
+
+        cancelBtn.style.display = "";
+        cancelBtn.textContent = "いいえ";
     } else {
-        cancelBtn.textContent = "了解";
+        okBtn.onclick = closeFunc;
+        cancelBtn.style.display = "none";
     }
 
-    // フォーカス指定のボタンにフォーカスを合わせる
-    const focusBtn = dialog.querySelector('[name="focus-btn"]');
-    if (focusBtn != null) focusBtn.focus();
+    okBtn.textContent = "はい";
+    okBtn.focus();
+
+    dialog.classList.remove('none');
 }
 
 /**
@@ -62,7 +129,7 @@ function openMsg(dialogId, msg, color, closeFunc = null, okFunc = null, isConfil
  * @param {ダイアログのID名} dialogId 
  * @param {イベント} e 
  */
-export function closeMsgDialog(dialogId) {
+export function closeMsgDialog(dialogId = "msg-dialog") {
     // メッセージ画面エリアからダイアログクラスを取り除く
     const mArea = document.getElementById('msg-dialog-area');
     if (mArea == null) return;

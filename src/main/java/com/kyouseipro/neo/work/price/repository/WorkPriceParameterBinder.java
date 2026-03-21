@@ -32,13 +32,13 @@ public class WorkPriceParameterBinder {
         return index;
     }
 
-    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvForIds(PreparedStatement ps, List<Long> ids) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
-        for (Integer id : ids) {
-            ps.setInt(index++, id);
+        for (Long id : ids) {
+            ps.setLong(index++, id);
         }
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;

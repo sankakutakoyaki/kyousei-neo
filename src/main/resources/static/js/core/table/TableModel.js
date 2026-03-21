@@ -3,6 +3,7 @@
 export class TableModel {
 
     constructor(config){
+        this.config = config;
 
         this.origin = null;
 

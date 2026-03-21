@@ -6,9 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.corporation.company.entity.CompanyEntityRequest;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntityRequest;
-import com.kyouseipro.neo.qualification.entity.QualificationsEntity;
 
 public class QualificationsParameterBinder {
 

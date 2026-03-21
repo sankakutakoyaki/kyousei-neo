@@ -3,7 +3,7 @@
 /**
  * 処理開始時の処理　スピナー表示
  */
-function startProcessing() {
+export function startProcessing() {
     const body = document.querySelector('.normal-body');
     if (body == null) return;
     body.inert = true;
@@ -19,7 +19,7 @@ function startProcessing() {
 /**
 * 処理終了時の処理 スピナーを消す
 */
-function processingEnd() {
+export function processingEnd() {
     const spinner = document.querySelector('#loading');
     if (spinner == null) return;
     deleteElementsAll("loading");

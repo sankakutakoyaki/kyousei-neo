@@ -11,6 +11,12 @@
     column-gap: 2rem;
 }
 
+#header-01 {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 2rem;
+}
+
 #code-area {
     display: grid;
     grid-template-columns: 6rem auto 1fr;

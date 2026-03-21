@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class CompanyEntity implements CsvExportable {
-    private int companyId;
+    private Long companyId;
     private int category;
     private String name;
     private String nameKana;

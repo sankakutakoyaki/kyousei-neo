@@ -2,6 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
+    <div class="dialog-header" th:fragment="formHeaderFragment(btnId, title)">
+        <span th:text="${title}"></span>
+        <div class="img-btn" th:id="${btnId}" name="cancel-btn"><img title="閉じる" src="/icons/close-s.png"></div>
+    </div>
+
     <div class="dialog-header" th:fragment="form-headerFragment(formId, title)"><span th:text="${title}"></span>
         <div class="img-btn" name="cancel-btn" th:onclick="closeFormDialog([[${formId}]], event)"><img title="閉じる" src="/icons/close-s.png"></div>
     </div>

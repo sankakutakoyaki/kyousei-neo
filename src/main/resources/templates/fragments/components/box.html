@@ -1,0 +1,30 @@
+<body>
+
+    <th:block th:fragment="inputBoxFragment(text, id, name, index)">
+        <div class="form-parts">
+            <label>${text}</label>
+            <input th:id="${id}" th:name="${name}" class="normal-input" type="text" value="" data-resolve-id tabindex="${index}">
+        </div>
+    </th:block>
+
+    <th:block th:fragment="selectBoxFragment(text, id, name, index)">
+        <div class="form-parts">
+            <label>${text}</label>
+            <select th:id="${id}" th:name="${name}" class="normal-select" data-resolve-name tabindex="${index}"></select>
+        </div>
+    </th:block>
+
+</body>
+
+    <!-- <th:block th:fragment="codeNameFragment(area, code, name)">
+        <div th:id="code-area" class="flex-area" data-resolve="company" data-enterfocus="code-area">
+            <div class="form-parts">
+                <label>ID</label>
+                <input th:id="code01" name="code" class="normal-input" type="text" value="" data-resolve-id tabindex="1">
+            </div>
+            <div class="form-parts">
+                <label>会社名</label>
+                <select th:id="name01" name="company" class="normal-select" data-resolve-name tabindex="2"></select>
+            </div>
+        </div>
+    </th:block> -->

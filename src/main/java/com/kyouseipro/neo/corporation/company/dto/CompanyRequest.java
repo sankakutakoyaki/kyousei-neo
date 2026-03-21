@@ -1,9 +1,9 @@
-package com.kyouseipro.neo.corporation.company.entity;
+package com.kyouseipro.neo.corporation.company.dto;
 
 import lombok.Data;
 
 @Data
-public class CompanyEntityRequest {
+public class CompanyRequest {
     private Integer companyId;
     private Integer category;
     private String name;

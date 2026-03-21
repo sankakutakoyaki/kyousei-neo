@@ -3,7 +3,6 @@
 import { partnerCompanyController } from "./partnerController.js";
 import { partnerEmployeeController } from "./partnerController.js";
 import { filterFactory } from "../../../core/filter/filterFactory.js";
-import { getTable } from "../../../components/form/table.js";
 
 export const partnerConfig = {
     combo:[
@@ -12,7 +11,7 @@ export const partnerConfig = {
             comboList:APP.cache.companyComboList,
             text: "",
             onChange: async (e)=>{
-                partnerEmployeeController.set("companyId", Number(e.target.value));
+                partnerEmployeeController.filter("companyId", Number(e.target.value));
             }
         }
     ],
@@ -21,18 +20,43 @@ export const partnerConfig = {
         {
             searchId:"search-box-01",
             searchTo: (e) => {
-                partnerCompanyController.set("keyword", e.target.value);
+                partnerCompanyController.search(e.target.value);
             }
         }
     ],
 
     btns:[
         {
+            btnId:"create-btn-01",
+            clickTo: () => { partnerCompanyController.create("form-01"); }
+        },
+        {
+            btnId:"create-btn-02",
+            clickTo: () => { partnerEmployeeController.create("form-02"); }
+        },
+        {
             btnId:"delete-btn-01",
-            clickTo: (e) => {
-                const table = getTable("table-01");
-                table.deleteSelected();
-            }
+            clickTo: () => { partnerCompanyController.deleteSelected(); }
+        },
+        {
+            btnId:"delete-btn-02",
+            clickTo: () => { partnerEmployeeController.deleteSelected(); }
+        },
+        {
+            btnId:"download-btn-01",
+            clickTo: () => { partnerCompanyController.downloadSelected(); }
+        },
+        {
+            btnId:"download-btn-02",
+            clickTo: () => { partnerEmployeeController.downloadSelected(); }
+        },
+        {
+            btnId:"reload-btn-01",
+            clickTo: () => { partnerCompanyController.refresh(); }
+        },
+        {
+            btnId:"reload-btn-02",
+            clickTo: () => { partnerEmployeeController.refresh(); }
         }
     ],
 
@@ -47,7 +71,6 @@ export const partnerConfig = {
             footerId: "footer-01",
             checkable: true,
             idKey:"companyId",
-            deleteUrl: "/api/company/delete",
 
             dataSource: {
                 type: "origin",

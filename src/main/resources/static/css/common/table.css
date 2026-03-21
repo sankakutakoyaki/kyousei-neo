@@ -74,6 +74,13 @@
     align-content: center;
 }
 
+.table-footer {
+    height: 3rem;
+    padding-right: 2rem;
+    justify-self: end;
+    align-content: center;
+}
+
 /******************************************************************************************************* 行設定 */
 
 /* 下線 */
@@ -163,6 +170,6 @@ th.sorted-desc::after{
 
 .table-wrapper {
     position: relative;
-    /* max-height: 500px;
-    overflow: auto; */
+    margin-top: 1rem;
+    overflow: auto;
 }

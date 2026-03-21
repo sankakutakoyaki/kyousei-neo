@@ -1,0 +1,13 @@
+<body>
+
+    <th:block th:fragment="normalFragment(headerId, tableId)">
+        <div class="table-wrapper">
+            <table class="normal-table">
+                <thead th:id="${headerId}" class="pc-style"></thead>
+                <tbody th:id="${tableId}" class="scroll-area"></tbody>
+            </table>
+            <button type="button" class="page-top"></button>
+        </div>  
+    </th:block>
+
+</body>

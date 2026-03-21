@@ -6,5 +6,5 @@ import lombok.Data;
 
 @Data
 public class IdListRequest {
-    private List<Integer> ids;
+    private List<Long> ids;
 }

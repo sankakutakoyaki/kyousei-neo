@@ -8,7 +8,7 @@ import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
 public class CompanyEntityMapper {
     public static CompanyEntity map(ResultSet rs) throws SQLException {
         CompanyEntity entity = new CompanyEntity();
-        entity.setCompanyId(rs.getInt("company_id"));
+        entity.setCompanyId(rs.getLong("company_id"));
         entity.setCategory(rs.getInt("category"));
         entity.setName(rs.getString("name"));
         entity.setNameKana(rs.getString("name_kana"));

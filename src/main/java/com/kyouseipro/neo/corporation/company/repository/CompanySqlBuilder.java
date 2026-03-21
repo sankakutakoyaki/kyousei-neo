@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.kyouseipro.neo.common.Utilities;
-import com.kyouseipro.neo.corporation.company.entity.CompanyEntityRequest;
+import com.kyouseipro.neo.corporation.company.dto.CompanyRequest;
 
 public class CompanySqlBuilder {
 
@@ -37,7 +37,7 @@ public class CompanySqlBuilder {
             "FROM " + rowTableName + ";";
     }
 
-    public static String buildBulkInsert(CompanyEntityRequest req) {
+    public static String buildBulkInsert(CompanyRequest req) {
 
         StringBuilder sql = new StringBuilder();
         sql.append(buildLogTable("@InsertedRows"));
@@ -95,7 +95,7 @@ public class CompanySqlBuilder {
         return  sql.toString();
     }
 
-    public static String buildBulkUpdate(CompanyEntityRequest req) {
+    public static String buildBulkUpdate(CompanyRequest req) {
 
         StringBuilder sql = new StringBuilder();
 

@@ -36,6 +36,11 @@ export class DataTable {
         this.model.set(key,value);
     }
 
+    setData(list){
+        this.model.origin = () => list;
+        this.reload();
+    }
+    
     reload(){
         this.model.compute();
         this.render();
@@ -60,19 +65,6 @@ export class DataTable {
         this.model.setSort(field,dir);
         this.reload();
     }
-
-    // initHeaderSort(){
-    //     const table = this.tableEl.closest("table");
-    //     if(!table) return;
-
-    //     const headers = table.querySelectorAll("th[data-field]");
-    //     headers.forEach(th=>{
-    //         const field = th.dataset.field;
-    //         th.addEventListener("click",()=>{
-    //             this.sort(field);
-    //         });
-    //     });
-    // }
 
     initHeaderEvents(){
         const table = this.tableEl.closest('.normal-table');
@@ -109,22 +101,6 @@ export class DataTable {
     }
 
     initRowEvents(){
-        // this.tableEl.addEventListener("click",(e)=>{
-        //     if(e.target.name === "chk-box"){
-        //         const id = Number(e.target.dataset.id);
-        //         this.model.toggleSelect(id);
-        //         this.updateHeaderCheckbox();
-        //     }
-        // });
-    
-        // this.tableEl.addEventListener("click",(e)=>{
-        //     const row = e.target.closest("tr[data-id]");
-        //     if(!row) return;
-
-        //     // checkboxは除外
-        //     if(e.target.name === "chk-box") return;
-        //     this.selectRow(row);
-        // });
         this.tableEl.addEventListener("click",(e)=>{
             // checkbox
             if(e.target.name === "chk-box"){
@@ -298,28 +274,5 @@ export class DataTable {
         }
 
         this.updateCell(id, field, value);
-    }
-
-    async deleteSelected(){
-        const ids = this.model.getSelectedIds();
-        if(ids.length === 0){
-            openMsgDialog("選択してください", "red");
-            return;
-        }
-        openConfilmDialog("削除しますか？", "blue", () => this.deleteFunc(ids));
-    }
-
-    async deleteFunc() {
-        try{
-            const result = await api.post(this.config.deleteUrl, ids);
-            openMsgDialog(result.message, "blue");
-
-            // 成功したら画面から消す
-            this.model.removeByIds(ids);
-            this.reload();
-        }catch(e){
-            openMsgDialog("削除できませんでした。", "red");
-            console.error(e);
-        }
     }
 }

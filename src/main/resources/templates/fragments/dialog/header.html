@@ -1,0 +1,9 @@
+
+<th:block th:fragment="dialogHeader(btnId, title)">
+    <div class="dialog-header">
+        <span th:text="${title}"></span>
+        <button type="button" class="img-btn" th:id="${btnId}" name="cancel-btn">
+            <img src="/icons/close-s.png" alt="閉じる">
+        </button>
+    </div>
+</th:block>

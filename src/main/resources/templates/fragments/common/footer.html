@@ -24,7 +24,13 @@
     </button>
 </div>
 
+<footer class="dialog-footer" th:fragment="form-footerFragment()">
+    <button class="normal-btn frameless" type="button" id="formCancelBtn" name="formCancelBtn">キャンセル</button>
+    <button class="normal-btn ok" type="button" id="formOkBtn" name="formOkBtn"></button>
+</footer>
+
 <footer th:fragment="tableFooterFragment()" th:remove="tag">
     <span>0件 : 0000/00/00 00:00 現在</span>
 </footer>
+
 </html>

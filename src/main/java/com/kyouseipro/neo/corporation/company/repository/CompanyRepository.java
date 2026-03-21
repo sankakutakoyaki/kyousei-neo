@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.corporation.company.dto.CompanyRequest;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
-import com.kyouseipro.neo.corporation.company.entity.CompanyEntityRequest;
 import com.kyouseipro.neo.corporation.company.mapper.CompanyEntityMapper;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
@@ -76,7 +76,7 @@ public class CompanyRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    public int insert(CompanyEntityRequest entity, String editor) {
+    public int insert(CompanyRequest entity, String editor) {
         String sql = CompanySqlBuilder.buildBulkInsert(entity);
 
         return sqlRepository.insert(
@@ -92,7 +92,7 @@ public class CompanyRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    public int update(CompanyEntityRequest entity, String editor) {
+    public int update(CompanyRequest entity, String editor) {
         String sql = CompanySqlBuilder.buildBulkUpdate(entity);
 
         int count = sqlRepository.updateRequired(

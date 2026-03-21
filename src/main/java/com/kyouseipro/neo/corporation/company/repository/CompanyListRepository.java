@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.common.simpledata.mapper.SimpleDataMapper;
-import com.kyouseipro.neo.corporation.company.entity.CompanyListEntity;
-import com.kyouseipro.neo.corporation.company.mapper.CompanyListEntityMapper;
+import com.kyouseipro.neo.corporation.company.dto.CompanyListResponse;
+import com.kyouseipro.neo.corporation.company.mapper.CompanyListResponseMapper;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,13 +23,13 @@ public class CompanyListRepository {
      * 0件の場合は空リストを返す。
      * @return 取得したリストを返す
      */
-    public List<CompanyListEntity> findAll() {
+    public List<CompanyListResponse> findAll() {
         return sqlRepository.queryList(
             """
             SELECT company_id, category, name, name_kana, tel_number, email FROM companies WHERE NOT (state = ?) ORDER BY name_kana
             """,
             (ps, v) ->  ps.setInt(1, Enums.state.DELETE.getCode()),
-            CompanyListEntityMapper::map
+            CompanyListResponseMapper::map
         );
     }
 
@@ -38,7 +38,7 @@ public class CompanyListRepository {
      * 0件の場合は空リストを返す。
      * @return 取得したリストを返す
      */
-    public List<CompanyListEntity> findAllClient() {
+    public List<CompanyListResponse> findAllClient() {
         return sqlRepository.queryList(
             """
             SELECT * FROM companies WHERE NOT (state = ?) AND NOT (category = ? OR category = ?) ORDER BY category, name_kana;
@@ -49,7 +49,7 @@ public class CompanyListRepository {
                 ps.setInt(index++, 0);
                 ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
             },
-            CompanyListEntityMapper::map
+            CompanyListResponseMapper::map
         );
     }
 
@@ -58,7 +58,7 @@ public class CompanyListRepository {
      * 0件の場合は空リストを返す。
      * @return 取得したリストを返す
      */
-    public List<CompanyListEntity> findAllPartner() {
+    public List<CompanyListResponse> findAllPartner() {
         return sqlRepository.queryList(
             """
             SELECT * FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana
@@ -68,7 +68,7 @@ public class CompanyListRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.clientCategory.PARTNER.getCode());
             },
-            CompanyListEntityMapper::map
+            CompanyListResponseMapper::map
         );
     }
 
@@ -77,7 +77,7 @@ public class CompanyListRepository {
      * 0件の場合は空リストを返す。
      * @return 取得したリストを返す
      */
-    public List<CompanyListEntity> findByCategoryId(int id) {
+    public List<CompanyListResponse> findByCategoryId(int id) {
         return sqlRepository.queryList(
             """
             SELECT * FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana
@@ -87,7 +87,7 @@ public class CompanyListRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, id);
             },
-            CompanyListEntityMapper::map
+            CompanyListResponseMapper::map
         );
     }
 

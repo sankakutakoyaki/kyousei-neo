@@ -1,10 +1,10 @@
-package com.kyouseipro.neo.corporation.company.entity;
+package com.kyouseipro.neo.corporation.company.dto;
 
 import lombok.Data;
 
 @Data
-public class CompanyListEntity {
-    private int companyId;
+public class CompanyListResponse {
+    private Long companyId;
     private int category;
     private String name;
     private String nameKana;

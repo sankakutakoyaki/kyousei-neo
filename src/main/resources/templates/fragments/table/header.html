@@ -1,0 +1,53 @@
+<body>
+    <th:block th:fragment="searchBoxFragment(searchId)">
+        <!-- 検索 -->
+        <div class="search-box">
+            <input th:id="${searchId}" type="search" placeholder="検索">
+            <img title="検索" src="/icons/search.png">
+        </div>
+    </th:block>
+
+    <th:block th:fragment="kebabBtnsFragment(
+            showAdd, addId,
+            showDelete, deleteId,
+            showCsv, csvId,
+            showReload, reloadId
+        )">
+
+        <div class="kebab-btns">
+
+            <!-- 新規 -->
+            <div class="img-btn"
+                th:if="${showAdd}"
+                th:id="${addId}">
+                <img src="/icons/add.png">
+                <span>新規</span>
+            </div>
+
+            <!-- 削除 -->
+            <div class="img-btn"
+                th:if="${showDelete}"
+                th:id="${deleteId}">
+                <img src="/icons/dust.png">
+                <span>削除</span>
+            </div>
+
+            <!-- CSV -->
+            <div class="img-btn"
+                th:if="${showCsv}"
+                th:id="${csvId}">
+                <img src="/icons/download.png">
+                <span>取得</span>
+            </div>
+
+            <!-- 更新 -->
+            <div class="img-btn"
+                th:if="${showReload}"
+                th:id="${reloadId}">
+                <img src="/icons/update.png">
+                <span>更新</span>
+            </div>
+
+        </div>
+    </th:block>
+</body>

@@ -6,14 +6,10 @@
 export async function apiFetch(url, {
     method = "POST",
     data = null,
-    token,
     allow404 = false,
     timeout = 15000,
     retry = 0
 } = {}) {
-
-    // const token = document.querySelector('meta[name="_csrf"]').content;
-    // const header = document.querySelector('meta[name="_csrf_header"]').content;
 
     const spinner = document.getElementById("loading");
     if (spinner) spinner.classList.remove("loaded");
@@ -25,7 +21,6 @@ export async function apiFetch(url, {
         const headers = {};
 
         if (APP.security.csrfToken) {
-            // headers["X-CSRF-TOKEN"] = App.security.csrfToken;
             headers[APP.security.csrfHeader] = APP.security.csrfToken
         }
 
@@ -63,17 +58,30 @@ export async function apiFetch(url, {
 
         let result;
 
+        const isFile =
+            ct.includes("application/") ||
+            ct.includes("text/csv");
+
         if (ct.includes("application/json")) {
             result = await response.json();
-        } else if (
-            ct.includes("application/octet-stream") ||
-            ct.includes("application/pdf") ||
-            ct.includes("application/zip")
-        ) {
+        } else if (isFile) {
             result = await response.blob();
         } else {
             result = await response.text();
         }
+
+        // if (ct.includes("application/json")) {
+        //     result = await response.json();
+        // } else if (
+        //     ct.includes("application/octet-stream") ||
+        //     ct.includes("application/pdf") ||
+        //     ct.includes("application/zip") ||
+        //     ct.includes("text/csv")
+        // ) {
+        //     result = await response.blob();
+        // } else {
+        //     result = await response.text();
+        // }
 
         return {
             ok: true,
@@ -90,7 +98,7 @@ export async function apiFetch(url, {
             return apiFetch(url, {
                 method,
                 data,
-                token,
+                // token,
                 allow404,
                 timeout,
                 retry: retry - 1
@@ -103,54 +111,54 @@ export async function apiFetch(url, {
     }
 }
 
-/**
- * 更新
- * @param {*} url 
- * @param {*} data 
- * @param {*} token 
- * @returns 
- */
-export async function updateFetch(url, data, token) {
-    return apiFetch(url, {
-        method: "POST",
-        data,
-        token,
-        retry: 1
-    });
-}
+// /**
+//  * 更新
+//  * @param {*} url 
+//  * @param {*} data 
+//  * @param {*} token 
+//  * @returns 
+//  */
+// export async function updateFetch(url, data, token) {
+//     return apiFetch(url, {
+//         method: "POST",
+//         data,
+//         token,
+//         retry: 1
+//     });
+// }
 
-/**
- * 取得
- * @param {*} url 
- * @param {*} data 
- * @param {*} token 
- * @returns 
- */
-export async function searchFetch(url, data, token) {
-    return apiFetch(url, {
-        method: "POST",
-        data,
-        token,
-        allow404: true,
-        retry: 1
-    });
-}
+// /**
+//  * 取得
+//  * @param {*} url 
+//  * @param {*} data 
+//  * @param {*} token 
+//  * @returns 
+//  */
+// export async function searchFetch(url, data, token) {
+//     return apiFetch(url, {
+//         method: "POST",
+//         data,
+//         token,
+//         allow404: true,
+//         retry: 1
+//     });
+// }
 
-/**
- * アップロード
- * @param {*} url 
- * @param {*} formData 
- * @param {*} token 
- * @returns 
- */
-export async function formFetch(url, formData, token) {
-    return apiFetch(url, {
-        method: "POST",
-        data: formData,
-        token,
-        timeout: 60000
-    });
-}
+// /**
+//  * アップロード
+//  * @param {*} url 
+//  * @param {*} formData 
+//  * @param {*} token 
+//  * @returns 
+//  */
+// export async function formFetch(url, formData, token) {
+//     return apiFetch(url, {
+//         method: "POST",
+//         data: formData,
+//         token,
+//         timeout: 60000
+//     });
+// }
 
 /**
  * HTTPエラー共通処理

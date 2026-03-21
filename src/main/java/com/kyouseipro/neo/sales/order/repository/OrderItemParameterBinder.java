@@ -145,18 +145,18 @@ public class OrderItemParameterBinder {
         return index;
     }
 
-    public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+    public static int bindDeleteByIds(PreparedStatement ps, List<Long> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
-        for (Integer id : ids) {
-            ps.setInt(index++, id);
+        for (Long id : ids) {
+            ps.setLong(index++, id);
         }
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setString(index, editor);
         return index;
     }
 
-    public static int bindDownloadCsvByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvByIds(PreparedStatement ps, List<Long> ids) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -164,8 +164,8 @@ public class OrderItemParameterBinder {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
-        for (Integer id : ids) {
-            ps.setInt(index++, id);
+        for (Long id : ids) {
+            ps.setLong(index++, id);
         }
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;

@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.common.response.SimpleResponse;
+import com.kyouseipro.neo.corporation.company.dto.CompanyRequest;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
-import com.kyouseipro.neo.corporation.company.entity.CompanyEntityRequest;
 import com.kyouseipro.neo.corporation.company.service.CompanyService;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.IdRequest;
@@ -47,7 +47,7 @@ public class CompanyApiController {
      */
     @PostMapping("/save")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody CompanyEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody CompanyRequest entity, @AuthenticationPrincipal OidcUser principal) {
         Integer id = companyService.save(entity, principal.getAttribute("preferred_username"));
         return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }

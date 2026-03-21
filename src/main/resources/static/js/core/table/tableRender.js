@@ -2,6 +2,7 @@
 
 import { clearElement } from "../dom/clearElement.js";
 import { setPageTopButton } from "../dom/pageTopButton.js";
+import { formatDate } from "../../util/time.js";
 
 export function renderTable(
     table,
@@ -126,7 +127,7 @@ export function createTableFooter(footerId, list) {
     const footer = document.getElementById(footerId);
     if (!footer) return;
     const num = list == null ? 0: list.length;
-    footer.insertAdjacentHTML('beforeend', '<span>' + num + '件 : ' + getNow() + ' 現在</span>');
+    footer.insertAdjacentHTML('beforeend', '<span>' + num + '件 : ' + formatDate(new Date(), "yyyy-MM-dd HH:mm") + ' 現在</span>');
 }
 
 /**

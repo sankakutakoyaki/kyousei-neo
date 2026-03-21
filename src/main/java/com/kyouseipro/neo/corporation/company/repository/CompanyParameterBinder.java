@@ -5,11 +5,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.corporation.company.entity.CompanyEntityRequest;
+import com.kyouseipro.neo.corporation.company.dto.CompanyRequest;
 
 public class CompanyParameterBinder {
 
-    private static int bindSaveParameter (PreparedStatement ps, CompanyEntityRequest req, String editor, int idx) throws SQLException {
+    private static int bindSaveParameter (PreparedStatement ps, CompanyRequest req, String editor, int idx) throws SQLException {
         if (req.getCategory() != null) {
             ps.setInt(idx++, req.getCategory());
         }
@@ -44,7 +44,7 @@ public class CompanyParameterBinder {
         return idx;
     }
 
-    public static void bindBulkInsert(PreparedStatement ps, CompanyEntityRequest req, String editor) throws SQLException {
+    public static void bindBulkInsert(PreparedStatement ps, CompanyRequest req, String editor) throws SQLException {
 
         int idx = bindSaveParameter(ps, req, editor, 1);
 
@@ -52,12 +52,12 @@ public class CompanyParameterBinder {
         ps.setString(idx++, editor);          
     }
 
-    public static void bindBulkUpdate(PreparedStatement ps, CompanyEntityRequest req, String editor) throws SQLException {
+    public static void bindBulkUpdate(PreparedStatement ps, CompanyRequest req, String editor) throws SQLException {
 
         int idx = bindSaveParameter(ps, req, editor, 1);
 
         // WHERE
-        ps.setInt(idx++, req.getCompanyId());
+        ps.setLong(idx++, req.getCompanyId());
         ps.setInt(idx++, req.getVersion());
         ps.setInt(idx++, Enums.state.DELETE.getCode());
 
@@ -65,21 +65,21 @@ public class CompanyParameterBinder {
         ps.setString(idx++, editor);          
     }
 
-    public static int bindDeleteByIds(PreparedStatement ps, List<Integer> ids, String editor) throws SQLException {
+    public static int bindDeleteByIds(PreparedStatement ps, List<Long> ids, String editor) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
-        for (Integer id : ids) {
-            ps.setInt(index++, id);
+        for (Long id : ids) {
+            ps.setLong(index++, id);
         }
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setString(index++, editor);
         return index;
     }
 
-    public static int bindDownloadCsvByIds(PreparedStatement ps, List<Integer> ids) throws SQLException {
+    public static int bindDownloadCsvByIds(PreparedStatement ps, List<Long> ids) throws SQLException {
         int index = 1;
-        for (Integer id : ids) {
-            ps.setInt(index++, id);
+        for (Long id : ids) {
+            ps.setLong(index++, id);
         }
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;

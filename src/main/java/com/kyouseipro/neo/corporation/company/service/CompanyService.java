@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums.HistoryTables;
+import com.kyouseipro.neo.corporation.company.dto.CompanyRequest;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
-import com.kyouseipro.neo.corporation.company.entity.CompanyEntityRequest;
 import com.kyouseipro.neo.corporation.company.repository.CompanyRepository;
 import com.kyouseipro.neo.dto.CsvExporter;
 import com.kyouseipro.neo.dto.IdListRequest;
@@ -42,7 +42,7 @@ public class CompanyService {
         table = HistoryTables.COMPANIES,
         action = "保存"
     )
-    public int save(CompanyEntityRequest entity, String editor) {
+    public int save(CompanyRequest entity, String editor) {
         if (entity.getCompanyId() > 0) {
             return companyRepository.update(entity, editor);
         } else {

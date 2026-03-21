@@ -1,7 +1,5 @@
 "use strict"
 
-import { getElement } from "/js/util/utils.js";
-
 // フォーカス遷移対象要素
 let tabFocusElements = createTabFocusElements();
 
@@ -53,7 +51,8 @@ export function resetEnterFocus() {
 
 // keydownイベントリスナに登録
 export function setEnterFocus(areaId) {
-    const area = getElement(areaId);
+    const area = areaId instanceof HTMLElement ? areaId: document.getElementById(areaId);
+    if (!area) return;
 
     let isComposing = false;
 

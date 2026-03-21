@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.kyouseipro.neo.corporation.company.entity.CompanyListEntity;
+import com.kyouseipro.neo.corporation.company.dto.CompanyListResponse;
 import com.kyouseipro.neo.corporation.company.repository.CompanyListRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class CompanyListService {
      * すべてのClientを取得
      * @return
      */
-    public List<CompanyListEntity> getClientList() {
+    public List<CompanyListResponse> getClientList() {
         return companyListRepository.findAllClient();
     }
 
@@ -28,7 +28,7 @@ public class CompanyListService {
      * すべてのPartnerを取得
      * @return
      */
-    public List<CompanyListEntity> getPartnerList() {
+    public List<CompanyListResponse> getPartnerList() {
         return companyListRepository.findAllPartner();
     }
 
@@ -36,7 +36,7 @@ public class CompanyListService {
      * すべてのCompanyを取得
      * @return
      */
-    public List<CompanyListEntity> getList() {
+    public List<CompanyListResponse> getList() {
         return companyListRepository.findAll();
     }
 
@@ -44,7 +44,7 @@ public class CompanyListService {
      * カテゴリー別のCompanyを取得
      * @return
      */
-    public List<CompanyListEntity> getListByCategoryId(int category) {
+    public List<CompanyListResponse> getListByCategoryId(int category) {
         return companyListRepository.findByCategoryId(category);
     }
 }

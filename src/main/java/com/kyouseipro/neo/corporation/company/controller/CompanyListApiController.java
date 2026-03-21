@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.kyouseipro.neo.common.ComboBoxService;
 import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
-import com.kyouseipro.neo.corporation.company.entity.CompanyListEntity;
+import com.kyouseipro.neo.corporation.company.dto.CompanyListResponse;
 import com.kyouseipro.neo.corporation.company.service.CompanyListService;
 import com.kyouseipro.neo.dto.IdRequest;
 
@@ -32,7 +32,7 @@ public class CompanyListApiController {
      */
     @GetMapping("/company/get/list")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<List<CompanyListEntity>>> getList() {
+    public ResponseEntity<SimpleResponse<List<CompanyListResponse>>> getList() {
         return ResponseEntity.ok(SimpleResponse.ok(null, companyListService.getList()));
     }
 
@@ -42,7 +42,7 @@ public class CompanyListApiController {
      */
     @GetMapping("/client/get/list")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<List<CompanyListEntity>>> getClientList() {
+    public ResponseEntity<SimpleResponse<List<CompanyListResponse>>> getClientList() {
         return ResponseEntity.ok(SimpleResponse.ok(companyListService.getClientList()));
     }
 
@@ -52,7 +52,7 @@ public class CompanyListApiController {
      */
     @GetMapping("/partner/get/list")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<List<CompanyListEntity>>> getPartnerList() {
+    public ResponseEntity<SimpleResponse<List<CompanyListResponse>>> getPartnerList() {
         return ResponseEntity.ok(SimpleResponse.ok(companyListService.getPartnerList()));
     }
 
@@ -62,7 +62,7 @@ public class CompanyListApiController {
      */
     @PostMapping("/company/get/list/category")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<List<CompanyListEntity>>> getListByCategoryId(@RequestBody IdRequest req) {
+    public ResponseEntity<SimpleResponse<List<CompanyListResponse>>> getListByCategoryId(@RequestBody IdRequest req) {
         return ResponseEntity.ok(SimpleResponse.ok(companyListService.getListByCategoryId(req.getId())));
     }
 
