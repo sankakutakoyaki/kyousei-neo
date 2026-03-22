@@ -1,5 +1,7 @@
 "use strict"
 
+import { startProcessing } from "../dom/process.js";
+import { processingEnd } from "../dom/process.js";
 /**
  * 共通fetch
  */
@@ -11,8 +13,9 @@ export async function apiFetch(url, {
     retry = 0
 } = {}) {
 
-    const spinner = document.getElementById("loading");
-    if (spinner) spinner.classList.remove("loaded");
+    // const spinner = document.getElementById("loading");
+    // if (spinner) spinner.classList.remove("loaded");
+    startProcessing();
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);
@@ -106,8 +109,9 @@ export async function apiFetch(url, {
         }
         throw err;
     } finally {
-        clearTimeout(timer);
-        if (spinner) spinner.classList.add("loaded");
+        // clearTimeout(timer);
+        // if (spinner) spinner.classList.add("loaded");
+        processingEnd();
     }
 }
 

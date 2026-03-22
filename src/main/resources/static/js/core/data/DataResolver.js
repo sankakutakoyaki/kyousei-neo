@@ -33,7 +33,6 @@ export const DataResolver = {
         });
     },
 
-
     async resolve(group, type) {
         const idInput = group.querySelector("[data-resolve-id]");
         const nameField = group.querySelector("[data-resolve-name]");

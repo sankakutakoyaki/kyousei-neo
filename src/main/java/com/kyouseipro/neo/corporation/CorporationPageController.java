@@ -115,6 +115,6 @@ public class CorporationPageController extends BaseController {
 
         model.addAttribute("categoryCodes", categoryCodes);
 
-        return "contents/corporation/partner";
+        return "fragments/page/corporation/partner/content";
     }
 }

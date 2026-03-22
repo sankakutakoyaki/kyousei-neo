@@ -1,24 +1,27 @@
 <body>
-    <th:block th:fragment="searchBoxFragment(searchId)">
+    <th:block th:fragment="searchBoxFragment(searchId, target)">
         <!-- 検索 -->
         <div class="search-box">
-            <input th:id="${searchId}" type="search" placeholder="検索">
+            <input th:id="${searchId}" type="search" data-action="search" data-target="${target}" placeholder="検索">
             <img title="検索" src="/icons/search.png">
         </div>
     </th:block>
 
     <th:block th:fragment="kebabBtnsFragment(
-            showAdd, addId,
+            target,
+            showAdd, addId, form,
             showDelete, deleteId,
             showCsv, csvId,
             showReload, reloadId
         )">
 
-        <div class="kebab-btns">
+        <div class="kebab-btns" data-area="kebabBtns">
 
             <!-- 新規 -->
             <div class="img-btn"
                 th:if="${showAdd}"
+                data-action="create"
+                th:attr="data-target=${target}, data-form=${form}"
                 th:id="${addId}">
                 <img src="/icons/add.png">
                 <span>新規</span>
@@ -27,6 +30,8 @@
             <!-- 削除 -->
             <div class="img-btn"
                 th:if="${showDelete}"
+                data-action="delete"
+                th:attr="data-target=${target}"
                 th:id="${deleteId}">
                 <img src="/icons/dust.png">
                 <span>削除</span>
@@ -35,6 +40,8 @@
             <!-- CSV -->
             <div class="img-btn"
                 th:if="${showCsv}"
+                data-action="download"
+                th:attr="data-target=${target}"
                 th:id="${csvId}">
                 <img src="/icons/download.png">
                 <span>取得</span>
@@ -43,6 +50,8 @@
             <!-- 更新 -->
             <div class="img-btn"
                 th:if="${showReload}"
+                data-action="reload"
+                th:attr="data-target=${target}"
                 th:id="${reloadId}">
                 <img src="/icons/update.png">
                 <span>更新</span>

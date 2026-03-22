@@ -32,10 +32,6 @@
                     <div th:replace="~{fragments/table/body :: normalFragment('table-header-02', 'table-02', 'partnerEmployee')}"></div>
                     <!-- フッター -->
                     <div th:replace="~{fragments/table/footer :: datetimeFragment('footer-02')}"></div>
-
-                    <!-- <header th:replace="~{fragments/corporation/partner :: headerStaffFragment('create-btn-02', 'delete-btn-02', 'download-btn-02', 'reload-btn-02')}"></header>
-                    <main th:replace="~{fragments/corporation/partner :: mainStaffFragment('table-02', 'table-header-02')}"></main>
-                    <footer id="footer-02" class="pc-style" th:insert="~{fragments/common/footer :: tableFooterFragment()}"></footer> -->
                 </div>
             </div>
         </div>
@@ -45,9 +41,9 @@
             <div id="form-01" class="form-dialog none">
                 <div class="dialog-main">
                     <!-- ヘッダー -->
-                    <div th:replace="~{fragments/common/header :: form-headerFragment('formHeader01', '')}"></div>
+                    <div th:replace="~{fragments/dialog/header :: headerFragment('formHeader01', '')}"></div>
                     <!-- コンテンツ -->
-                    <form th:replace="~{fragments/corporation/partner :: form01Fragment()}"></form>
+                    <form th:replace="~{fragments/page/corporation/partner/form :: form01Fragment()}"></form>
                     <!-- フッター -->
                     <!-- <div th:replace="~{fragments/common/footer :: form-footerFragment('formFooter01')}"></div> -->
                 </div>
@@ -71,21 +67,6 @@
                 security: {
                     csrfToken: /*[[${_csrf.token}]]*/,
                     csrfHeader: /*[[${_csrf.headerName}]]*/
-                },
-                session: {
-                    // user: /*[[${user}]]*/,
-                    // staff: /*[[${staffEntity}]]*/
-                },
-                master: {
-                    // categoryCodes: /*[[${categoryCodes}]]*/,
-                    // genderComboList: /*[[${genderComboList}]]*/,
-                    // bloodTypeComboList: /*[[${bloodTypeComboList}]]*/
-                },
-                page: {
-                    // companyEntity: /*[[${companyEntity}]]*/,
-                    // formEntity: /*[[${formEntity}]]*/,
-                    // origin: [],
-                    // originEntity: {}
                 },
                 cache: {
                     companyOrigin: /*[[${companyOrigin}]]*/,

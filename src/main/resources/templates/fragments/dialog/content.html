@@ -1,0 +1,19 @@
+
+<!-- 標準メッセージ -->
+<th:block th:fragment="messageFragment">
+    <div id="msg-dialog" class="msg-dialog none">
+        <div class="dialog-main">
+            <div class="dialog-header">
+                <span>確認</span>
+                <div name="closeBtn" class="img-btn">
+                    <img title="閉じる" src="/icons/close-s.png">
+                </div>
+            </div>
+            <span class="msg-dialog-content"></span>
+            <div class="dialog-footer">
+                <button id="okBtn" name="okBtn" class="normal-btn ok" type="button"></button>
+                <button id="cancelBtn" name="closeBtn" class="normal-btn" type="button"></button>
+            </div>
+        </div>
+    </div>
+</th:block>
