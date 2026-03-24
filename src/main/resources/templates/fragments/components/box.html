@@ -1,18 +1,43 @@
-<body>
 
-    <th:block th:fragment="inputBoxFragment(text, id, name, index)">
-        <div class="form-parts">
-            <label th:text="${text}"></label>
-            <input th:id="${id}" th:name="${name}" class="normal-input" type="text" value="" data-resolve-id tabindex="${index}" data-action="select-on-focus">
-        </div>
-    </th:block>
+<th:block th:fragment="inputBoxFragment(data)">
+    <div class="form-parts">
 
-    <th:block th:fragment="selectBoxFragment(text, id, name, target, field, index)">
-        <div class="form-parts">
-            <label for="${id}" th:text="${text}"></label>
-            <select th:id="${id}" th:name="${name}" class="normal-select" 
-                    data-action="filter" data-target="${target}" data-field="${field}" data-resolve-name tabindex="${index}"></select>
-        </div>
-    </th:block>
+        <label th:if="${data['text'] != null}"
+               th:for="${data['id']}"
+               th:text="${data['text']}"></label>
 
-</body>
+        <input
+            class="normal-input"
+            type="text"
+            th:attr="
+                id=${data['id']},
+                name=${data['name']},
+                data-action=${data['action'] != null ? data['action'] : 'select-on-focus'},
+                data-resolve-id=${data['resolveId'] != null ? '' : null},
+                data-resolve-name=${data['resolveName'] != null ? '' : null},
+                tabindex=${data['index']}
+            ">
+
+    </div>
+</th:block>
+
+<th:block th:fragment="selectBoxFragment(data)">
+    <div class="form-parts">
+        <label th:if="${data['text'] != null}"
+               th:for="${data['id']}"
+               th:text="${data['text']}"></label>
+        <select 
+            class="normal-select"
+            th:attr="
+                id=${data['id']},
+                name=${data['name']},
+                data-target=${data['target']},
+                data-field=${data['field']},
+                data-action=${data['action']},
+                data-resolve-id=${data['resolveId'] != null ? '' : null},
+                data-resolve-name=${data['resolveName'] != null ? '' : null},
+                tabindex=${data['index']}
+            ">
+        </select>
+    </div>
+</th:block>

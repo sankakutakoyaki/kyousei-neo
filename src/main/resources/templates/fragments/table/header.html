@@ -1,62 +1,54 @@
-<body>
-    <th:block th:fragment="searchBoxFragment(searchId, target)">
-        <!-- 検索 -->
-        <div class="search-box">
-            <input th:id="${searchId}" type="search" data-action="search" data-target="${target}" placeholder="検索">
-            <img title="検索" src="/icons/search.png">
+<th:block th:fragment="searchBoxFragment(searchId, target)">
+    <!-- 検索 -->
+    <div class="search-box">
+        <input th:id="${searchId}" type="search" data-action="search" data-target="${target}" placeholder="検索">
+        <img title="検索" src="/icons/search.png">
+    </div>
+</th:block>
+
+<th:block th:fragment="kebabBtnsFragment(target, btns)">
+
+    <div class="kebab-btns" data-area="kebabBtns">
+
+        <!-- 新規 -->
+        <div class="img-btn"
+            th:if="${btns != null and btns['add'] != null}"
+            data-action="create"
+            th:attr="data-target=${target}, data-form=${btns['form']}"
+            th:id="${btns['add']}">
+            <img src="/icons/add.png">
+            <span>新規</span>
         </div>
-    </th:block>
 
-    <th:block th:fragment="kebabBtnsFragment(
-            target,
-            showAdd, addId, form,
-            showDelete, deleteId,
-            showCsv, csvId,
-            showReload, reloadId
-        )">
-
-        <div class="kebab-btns" data-area="kebabBtns">
-
-            <!-- 新規 -->
-            <div class="img-btn"
-                th:if="${showAdd}"
-                data-action="create"
-                th:attr="data-target=${target}, data-form=${form}"
-                th:id="${addId}">
-                <img src="/icons/add.png">
-                <span>新規</span>
-            </div>
-
-            <!-- 削除 -->
-            <div class="img-btn"
-                th:if="${showDelete}"
-                data-action="delete"
-                th:attr="data-target=${target}"
-                th:id="${deleteId}">
-                <img src="/icons/dust.png">
-                <span>削除</span>
-            </div>
-
-            <!-- CSV -->
-            <div class="img-btn"
-                th:if="${showCsv}"
-                data-action="download"
-                th:attr="data-target=${target}"
-                th:id="${csvId}">
-                <img src="/icons/download.png">
-                <span>取得</span>
-            </div>
-
-            <!-- 更新 -->
-            <div class="img-btn"
-                th:if="${showReload}"
-                data-action="reload"
-                th:attr="data-target=${target}"
-                th:id="${reloadId}">
-                <img src="/icons/update.png">
-                <span>更新</span>
-            </div>
-
+        <!-- 削除 -->
+        <div class="img-btn"
+            th:if="${btns != null and btns['delete'] != null}"
+            data-action="delete"
+            th:attr="data-target=${target}"
+            th:id="${btns['delete']}">
+            <img src="/icons/dust.png">
+            <span>削除</span>
         </div>
-    </th:block>
-</body>
+
+        <!-- CSV -->
+        <div class="img-btn"
+            th:if="${btns != null and btns['download'] != null}"
+            data-action="download"
+            th:attr="data-target=${target}"
+            th:id="${btns['download']}">
+            <img src="/icons/download.png">
+            <span>取得</span>
+        </div>
+
+        <!-- 更新 -->
+        <div class="img-btn"
+            th:if="${btns != null and btns['reload'] != null}"
+            data-action="reload"
+            th:attr="data-target=${target}"
+            th:id="${btns['reload']}">
+            <img src="/icons/update.png">
+            <span>更新</span>
+        </div>
+
+    </div>
+</th:block>

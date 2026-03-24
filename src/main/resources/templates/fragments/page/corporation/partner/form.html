@@ -1,12 +1,23 @@
 <th:block th:fragment="form01Fragment()">
     <form id="form-01" class="dialog-content" data-enterfocus="form-01">
-        <div class="flex-area">
+        <div th:replace="~{fragments/components/box :: inputBoxFragment(
+            ${
+                {
+                    'text': '名称',
+                    'name': 'name', 
+                    'index': 1
+                }
+            }
+        )}"></div>
+
+
+        <!-- <div class="flex-area">
             <div class="form-parts">
                 <label>名称</label>
                 <input tabindex="1" name="name" class="normal-input" type="text" value="" autofocus
                     placeholder="名称" data-action="select-on-focus">
             </div>
-        </div>
+        </div> -->
         <div class="flex-area">
             <div class="form-parts">
                 <label>かな</label>
