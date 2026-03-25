@@ -23,7 +23,8 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/login/**",
                     "/oauth2/**",
-                    "/error"
+                    "/error",
+                    "/.well-known/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
