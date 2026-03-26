@@ -1,16 +1,23 @@
 <th:block th:fragment="form01Fragment()">
     <form id="form-01" class="dialog-content" data-enterfocus="form-01">
-        <div th:replace="~{fragments/components/box :: inputBoxFragment(
-            ${
-                {
-                    'text': '名称',
-                    'name': 'name', 
-                    'index': 1
-                }
-            }
-        )}"></div>
-
-
+        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+            { 'text': '名称', 'name': 'name', 'index': 1 }})}"></th:block>
+        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+            { 'text': 'かな', 'name': 'name-kana', 'index': 2 }})}"></th:block>
+        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+            { 'text': '電話番号', 'name': 'tel-number', 'type': 'phone', 'index': 3 }})}"></th:block>
+        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+            { 'text': 'FAX番号', 'name': 'fax-number', 'type': 'phone', index': 4 }})}"></th:block>
+        <div data-resolve="postal">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 'text': '郵便番号', 'name': 'postal-code', 'resolveId': true, 'type': 'postal', 'index': 5 }})}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 'text': '住所', 'name': 'full-address', 'placeholder': '例）大阪府高槻市柱本5丁目7番10号', 'resolveName': true, 'index': 6 }})}"></th:block>
+        </div>
+        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+            { 'text': 'メールアドレス', 'name': 'email', 'type': 'email', 'index': 7 }})}"></th:block>
+        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+            { 'text': 'WEBアドレス', 'name': 'web-address', 'type': 'url', 'index': 8 }})}"></th:block>
         <!-- <div class="flex-area">
             <div class="form-parts">
                 <label>名称</label>
@@ -18,62 +25,62 @@
                     placeholder="名称" data-action="select-on-focus">
             </div>
         </div> -->
-        <div class="flex-area">
+        <!-- <div class="flex-area">
             <div class="form-parts">
                 <label>かな</label>
                 <input tabindex="2" name="name-kana" class="normal-input" type="text" value=""
                     placeholder="めいしょう" data-action="select-on-focus">
             </div>
-        </div>
-        <div class="flex-area">
+        </div> -->
+        <!-- <div class="flex-area">
             <div class="form-parts">
                 <label>電話番号</label>
                 <input tabindex="3" name="tel-number" class="normal-input" type="text"
                     inputmode="numeric" pattern="\\d{4}-\\d{4}-\\d{4}" value=""
                     placeholder="01-2345-6789" data-action="select-on-focus">
-            </div>
-            <div class="form-parts">
+            </div> -->
+            <!-- <div class="form-parts">
                 <label>FAX番号</label>
                 <input tabindex="4" name="fax-number" class="normal-input" type="text"
                     inputmode="numeric" pattern="\\d{4}-\\d{4}-\\d{4}" value=""
                     placeholder="01-2345-6789" data-action="select-on-focus">
             </div>
-        </div>
-        <div class="flex-area" data-resolve="postal">
+        </div> -->
+        <!-- <div class="flex-area" data-resolve="postal">
             <div class="form-parts">
                 <label>郵便番号</label>
                 <input tabindex="5" id="company-postal-code" name="postal-code" class="normal-input" type="text" data-resolve-id
                     inputmode="numeric" pattern="\\d{3}-?\\d{4}" value="" placeholder="012-3456"
                     data-action="select-on-focus">
                 <img title="検索" src="/icons/search.png">
-            </div>
-            <div class="form-parts">
+            </div> -->
+            <!-- <div class="form-parts">
                 <label>住所</label>
                 <input tabindex="6" id="company-full-address" name="full-address" class="normal-input" data-resolve-name
                     type="text" value="" placeholder="例）大阪府高槻市柱本5丁目7番10号" data-action="select-on-focus">
             </div>
-        </div>
-        <div class="flex-area">
+        </div> -->
+        <!-- <div class="flex-area">
             <div class="form-parts">
                 <label>メールアドレス</label>
                 <input tabindex="7" name="email" class="normal-input" type="email" value=""
                     placeholder="例）example@kyouseibin.com" data-action="select-on-focus">
             </div>
-        </div>
-        <div class="flex-area">
+        </div> -->
+        <!-- <div class="flex-area">
             <div class="form-parts">
                 <label>Webアドレス</label>
                 <input tabindex="8" name="web-address" class="normal-input" type="url" value=""
                     placeholder="例）example@kyouseibin.com" data-action="select-on-focus">
-            </div>
-            <div class="form-parts" name="priceArea">
+            </div> -->
+            <div class="form-parts" name="price-area">
                 <label>料金表</label>
                 <select tabindex="9" name="price" class="normal-select">
                     <option value="0"></option>
                     <option value="1">有</option>
                 </select>
             </div>
-        </div>
+        <!-- </div> -->
     </form>
 </th:block>    
 
