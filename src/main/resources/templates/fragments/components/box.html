@@ -19,34 +19,36 @@
     </div>
 </th:block> -->
 
-<th:block th:fragment="inputFragment(data)"
-    th:with="
-            patternVal=${data.pattern != null ? data.pattern :
-                (data.type == 'phone' ? '\\d{4}-\\d{4}-\\d{4}' :
-                (data.type == 'postal' ? '\\d{3}-?\\d{4}' : null))},
+<th:block th:fragment="inputBoxFragment(data)">
+    <th:block th:with="
+        patternVal=${data['pattern'] != null ? data['pattern'] :
+            (data['type'] == 'phone' ? '[0-9]{4}-[0-9]{4}-[0-9]{4}' :
+            (data['type'] == 'postal' ? '[0-9]{3}-?[0-9]{4}' : null))},
 
-            inputmodeVal=${data.inputmode != null ? data.inputmode :
-                (data.type == 'phone' || data.type == 'postal' ? 'numeric' : null)}
+        inputmodeVal=${data['inputmode'] != null ? data['inputmode'] :
+            (data['type'] == 'phone' || data['type'] == 'postal' ? 'numeric' : null)}
     ">
-    <div class="form-parts">
-        <label th:if="${data.text != null}"
-               th:for="${data.id}"
-               th:text="${data.text}"></label>
-        <input
-            class="normal-input"
-            th:type="${data.type != null ? data.type : 'text'}"
-            th:attr="
-                id=${data.id},
-                name=${data.name},
-                placeholder=${data.placeholder},
-                pattern=${patternVal},
-                inputmode=${inputmodeVal}
-                data-action=${data.action != null ? data.action : 'select-on-focus'},
-                data-resolve-id=${data.resolveId != null ? '' : null},
-                data-resolve-name=${data.resolveName != null ? '' : null},
-                tabindex=${data.index}
-            ">
-    </div>
+        <div class="form-parts">
+            <label th:if="${data['text']}"
+                   th:for="${data['id']}"
+                   th:text="${data['text']}"></label>
+
+            <input
+                class="normal-input"
+                th:type="${data['type'] != null ? data['type'] : 'text'}"
+                th:attr="
+                    id=${data['id']},
+                    name=${data['name']},
+                    placeholder=${data['placeholder']},
+                    pattern=${patternVal},
+                    inputmode=${inputmodeVal},
+                    data-action=${data['action'] != null ? data['action'] : 'select-on-focus'},
+                    data-resolve-id=${data['resolveId']},
+                    data-resolve-name=${data['resolveName']},
+                    tabindex=${data['index']}
+                ">
+        </div>
+    </th:block>
 </th:block>
 
 <th:block th:fragment="selectBoxFragment(data)">

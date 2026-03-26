@@ -13,16 +13,14 @@
         <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-01', 'partnerCompany')}"></th:block>
         <!-- <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment('partnerCompany', ${btns})}"></th:block> -->
         <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(
-            'partnerCompany',
-            ${
+            'partnerCompany', ${
                 {
                     'add' : 'add-btn-01',
                     'form' : 'form-01',
                     'delete' : 'delete-btn-01',
                     'download' : 'download-btn-01',
                     'reload' : 'reload-btn-01'
-                }
-            }
+                }}
         )}"></th:block>
     </div>
 </th:block>
@@ -30,20 +28,16 @@
 <th:block th:fragment="header02Fragment()">
     <div id="header-02" class="flex-area pc-style">
         <div th:id="code-area" class="flex-area" data-resolve="company" data-enterfocus="code-area">
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(
-                ${
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                     {
                         'text':'ID',
                         'id':'code01',
                         'name':'name01',
-                        'action':'select-on-focus',
                         'resolveId':true,
                         'index':1
-                    }
-                }
+                    }}
             )}"></th:block>
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(
-                ${
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                     {
                         'text':'会社名', 
                         'id':'code02', 
@@ -53,21 +47,18 @@
                         'field':'companyId',
                         'resolveName':true,
                         'index':2
-                    }
-                }
+                    }}
             )}"></th:block>
         </div>
         <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(
-            'partnerEmployee',
-            ${
+            'partnerEmployee',${
                 {
                     'add': 'add-btn-02',
                     'form': 'form-02',
                     'delete': 'delete-btn-02',
                     'download': 'download-btn-02',
                     'reload': 'reload-btn-02'
-                }
-            }
+                }}
         )}"></th:block>
     </div>
 </th:block>
