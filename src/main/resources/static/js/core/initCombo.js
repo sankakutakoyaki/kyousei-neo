@@ -1,0 +1,16 @@
+"use strict"
+
+import { createComboBox } from "../components/form/combo.js";
+
+export function init(){
+
+    const selects = document.querySelectorAll("[data-combo]");
+
+    selects.forEach(select => {
+        const listName = select.dataset.combo;
+        const list = APP.cache[listName];
+        if (!list) return;
+
+        createComboBox({area:select, items:list, text:select.dataset.top});
+    });
+}

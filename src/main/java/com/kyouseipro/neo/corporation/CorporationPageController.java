@@ -87,7 +87,7 @@ public class CorporationPageController extends BaseController {
 		model.addAttribute("sidebarFragmentName", "~{fragments/common/menu :: registFragment}");
 		model.addAttribute("activeMenu", "regist");
         model.addAttribute("activeSidebar", "partner");
-        model.addAttribute("insertCss", "/css/corporation/partner.css");
+        model.addAttribute("insertCss", "/css/pages/corporation/partner.css");
 
         // 初期化されたエンティティ
         model.addAttribute("companyEntity", new CompanyEntity());
@@ -115,6 +115,6 @@ public class CorporationPageController extends BaseController {
 
         model.addAttribute("categoryCodes", categoryCodes);
 
-        return "fragments/page/corporation/partner/content";
+        return "fragments/pages/corporation/partner/content";
     }
 }

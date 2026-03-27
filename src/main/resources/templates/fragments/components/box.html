@@ -1,24 +1,4 @@
 
-<!-- <th:block th:fragment="inputBoxFragment(data)">
-    <div class="form-parts">
-        <label th:if="${data['text'] != null}"
-               th:for="${data['id']}"
-               th:text="${data['text']}"></label>
-        <input
-            class="normal-input"
-            type="text"
-            th:attr="
-                id=${data['id']},
-                name=${data['name']},
-                data-placeholder=${data['placeholder']},
-                data-action=${data['action'] != null ? data['action'] : 'select-on-focus'},
-                data-resolve-id=${data['resolveId'] != null ? '' : null},
-                data-resolve-name=${data['resolveName'] != null ? '' : null},
-                tabindex=${data['index']}
-            ">
-    </div>
-</th:block> -->
-
 <th:block th:fragment="inputBoxFragment(data)">
     <th:block th:with="
         patternVal=${data['pattern'] != null ? data['pattern'] :
@@ -64,6 +44,8 @@
                 data-target=${data['target']},
                 data-field=${data['field']},
                 data-action=${data['action']},
+                data-combo=${data['combo']},
+                data-top=${data['top']},
                 data-resolve-id=${data['resolveId'] != null ? '' : null},
                 data-resolve-name=${data['resolveName'] != null ? '' : null},
                 tabindex=${data['index']}
@@ -71,87 +53,3 @@
         </select>
     </div>
 </th:block>
-
-<!-- <th:block th:fragment="phoneBoxFragment(data)">
-    <div class="form-parts">
-        <label th:if="${data['text'] != null}"
-               th:for="${data['id']}"
-               th:text="${data['text']}"></label>
-        <input
-            class="normal-input"
-            type="text"
-            pattern="\\d{4}-\\d{4}-\\d{4}"
-            placeholder="01-2345-6789"
-            inputmode="numeric"
-            th:attr="
-                id=${data['id']},
-                name=${data['name']},
-                data-action=${data['action'] != null ? data['action'] : 'select-on-focus'},
-                data-resolve-id=${data['resolveId'] != null ? '' : null},
-                data-resolve-name=${data['resolveName'] != null ? '' : null},
-                tabindex=${data['index']}
-            ">
-    </div>
-</th:block>
-
-<th:block th:fragment="postalBoxFragment(data)">
-    <div class="form-parts">
-        <label th:if="${data['text'] != null}"
-               th:for="${data['id']}"
-               th:text="${data['text']}"></label>
-        <input
-            class="normal-input"
-            type="text"
-            pattern="\\d{3}-?\\d{4}"
-            placeholder="012-3456"
-            inputmode="numeric"
-            th:attr="
-                id=${data['id']},
-                name=${data['name']},
-                data-action=${data['action'] != null ? data['action'] : 'select-on-focus'},
-                data-resolve-id=${data['resolveId'] != null ? '' : null},
-                data-resolve-name=${data['resolveName'] != null ? '' : null},
-                tabindex=${data['index']}
-            ">
-    </div>
-</th:block>
-
-<th:block th:fragment="emailBoxFragment(data)">
-    <div class="form-parts">
-        <label th:if="${data['text'] != null}"
-               th:for="${data['id']}"
-               th:text="${data['text']}"></label>
-        <input
-            class="normal-input"
-            type="email"
-            placeholder="例）example@kyouseibin.com"
-            th:attr="
-                id=${data['id']},
-                name=${data['name']},
-                data-action=${data['action'] != null ? data['action'] : 'select-on-focus'},
-                data-resolve-id=${data['resolveId'] != null ? '' : null},
-                data-resolve-name=${data['resolveName'] != null ? '' : null},
-                tabindex=${data['index']}
-            ">
-    </div>
-</th:block>
-
-<th:block th:fragment="urlBoxFragment(data)">
-    <div class="form-parts">
-        <label th:if="${data['text'] != null}"
-               th:for="${data['id']}"
-               th:text="${data['text']}"></label>
-        <input
-            class="normal-input"
-            type="url"
-            placeholder="例）example@kyouseibin.com"
-            th:attr="
-                id=${data['id']},
-                name=${data['name']},
-                data-action=${data['action'] != null ? data['action'] : 'select-on-focus'},
-                data-resolve-id=${data['resolveId'] != null ? '' : null},
-                data-resolve-name=${data['resolveName'] != null ? '' : null},
-                tabindex=${data['index']}
-            ">
-    </div>
-</th:block> -->
