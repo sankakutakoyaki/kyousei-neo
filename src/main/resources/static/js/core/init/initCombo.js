@@ -1,8 +1,8 @@
 "use strict"
 
-import { createComboBox } from "../components/form/combo.js";
+import { createComboBox } from "../../components/form/combo.js";
 
-export function init(){
+export function initCombo(){
 
     const selects = document.querySelectorAll("[data-combo]");
 

@@ -18,6 +18,11 @@
     .img-btn:hover>img {
         background-color: var(--btn-hover-bg);
     }
+
+    .dialog-header>.img-btn:hover>img {
+        filter: brightness(.5) invert(.5);
+        background-color: transparent;
+    }
     
     /* テーブル行をホバーしたらチェックセルを表示する */
     .normal-table tr:hover :is(th, td)[name="chk-cell"]>input {

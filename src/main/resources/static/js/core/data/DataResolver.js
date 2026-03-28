@@ -1,5 +1,7 @@
 "use strict"
 
+import { updateField } from "../../util/utils.js";
+
 export const DataResolver = {
     init(area = document) {
         const groups = area.querySelectorAll("[data-resolve]");
@@ -24,7 +26,8 @@ export const DataResolver = {
             /* Name(select) → ID */
             if (nameField.tagName === "SELECT") {
                 nameField.addEventListener("change", () => {
-                    idInput.value = nameField.value;
+                    // idInput.value = nameField.value;
+                    updateField(idInput, nameField.value);
                     if (!nameField.value) {
                         this.clear(nameField);
                     }
@@ -62,11 +65,14 @@ export const DataResolver = {
     resolveSelect(select, id) {
         for (const option of select.options) {
             if (option.value === id) {
-                select.value = id;
+
+                updateField(select, id);
+                // select.value = id;
                 return true;
             }
         }
-        select.value = "";
+        // select.value = "";
+        updateField(select, "");
         return false;
     },
 
@@ -86,11 +92,12 @@ export const DataResolver = {
     },
 
     clear(field) {
-        if (field.tagName === "SELECT") {
-            field.value = "";
-        } else {
-            field.value = "";
-        }
+        updateField(field, "");
+        // if (field.tagName === "SELECT") {
+        //     field.value = "";
+        // } else {
+        //     field.value = "";
+        // }
     }
 };
 

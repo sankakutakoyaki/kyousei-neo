@@ -1,17 +1,7 @@
+
 <th:block th:fragment="header01Fragment()">
-<!-- <th:block th:fragment="header01Fragment()"
-    th:with="btns=${
-        {
-            'add' : 'add-btn-01',
-            'form' : 'form-01',
-            'delete' : 'delete-btn-01',
-            'download' : 'download-btn-01',
-            'reload' : 'reload-btn-01'
-        }
-    }"> -->
     <div id="header-01" class="flex-area pc-style">
         <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-01', 'partnerCompany')}"></th:block>
-        <!-- <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment('partnerCompany', ${btns})}"></th:block> -->
         <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(
             'partnerCompany', ${
                 {
@@ -44,9 +34,10 @@
                         'name':'name02',
                         'action':'filter',
                         'target':'partnerEmployee', 
+                        'combo': 'companyComboList',
+                        'top': '-----',
                         'field':'companyId',
-                        'resolveName':true,
-                        'index':2
+                        'resolveName':true
                     }}
             )}"></th:block>
         </div>

@@ -3,10 +3,7 @@
 import { switchTab } from "../ui/tab.js";
 
 export const actionMap = {
-
-    // =========================
-    // 入力系
-    // =========================
+    // テーブル画面をフィルターする
     filter: (c, el) => {
         if(!c) return;
 
@@ -15,43 +12,19 @@ export const actionMap = {
 
         c.filter(el.dataset.field, value);
     },
-
+    // サーチボックスでフィルターする
     search: (c, el) => {
         if(!c) return;
         c.search(el.value);
     },
-
-    // =========================
-    // UI系
-    // =========================
+    // タブ切り替え
     tab: (_, el) => switchTab(el),
-
-    "select-on-focus": (_, el, e) => {
-        if(e.type !== "focusin") return;
-        el.select();
-    },
-
-    // =========================
-    // CRUD
-    // =========================
-    create: (c, el) => {
-        if(!c) return;
-        c.create(el.dataset.form);
-    },
-
-    delete: (c) => {
-        if(!c) return;
-        c.deleteSelected();
-    },
-
-    download: (c) => {
-        if(!c) return;
-        c.downloadSelected();
-    },
-
-    reload: (c) => {
-        if(!c) return;
-        c.refresh();
-    }
-
+    // ケバブ 新規
+    create: (c, el) => c?.create(el.dataset.form),
+    // ケバブ 削除
+    delete: (c) => c?.deleteSelected(),
+    // ケバブ ダウンロード
+    download: (c) => c?.downloadSelected(),
+    //　ケバブ 更新
+    reload: (c) => c?.refresh()
 };

@@ -40,7 +40,7 @@
 
             <span sec:authentication="name"></span>
             <form class="logout-btn" th:action="@{/user/logout}" th:method="post">
-                <button type="submit"><img th:src="@{/icons/logout.png}"></button>
+                <button type="submit" tabindex="-1"><img th:src="@{/icons/logout.png}" tabindex="-1"></button>
             </form>
         </div>
     </div>

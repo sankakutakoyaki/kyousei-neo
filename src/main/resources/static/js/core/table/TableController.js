@@ -1,7 +1,7 @@
 "use strict"
 
 import { openMsgDialog, closeMsgDialog, openConfilmDialog, openFormDialog } from "../ui/dialog.js";
-import { getTable } from "../ui/table.js";
+import { getTable } from "../init/initTable.js";
 import { api } from "../api/apiService.js";
 import { formatDate } from "../../util/time.js";
 
@@ -13,6 +13,7 @@ export class TableController {
         this.deleteUrl = config.deleteUrl;
         this.downloadUrl = config.downloadUrl;
         this.state = {};
+        this.config = config;
     }
 
     // =========================
@@ -52,7 +53,16 @@ export class TableController {
     // 作成
     // =========================
 
-    create(key){ openFormDialog(key); }
+    // create(key){ openFormDialog(key); }
+    create(key){
+        openFormDialog(key, {
+            onSubmit: async (form) => {
+                if(this.config.onSubmit){
+                    await this.config.onSubmit.call(this, form);
+                }
+            }
+        });
+    }
 
     // =========================
     // 削除（API連携）

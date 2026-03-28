@@ -2,7 +2,7 @@
 
 import { TableModel } from "./TableModel.js";
 import { renderTable } from "./tableRender.js";
-import { openConfilmDialog, openMsgDialog } from "../ui/dialog.js";
+// import { openConfilmDialog, openMsgDialog } from "../ui/dialog.js";
 
 export class DataTable {
 

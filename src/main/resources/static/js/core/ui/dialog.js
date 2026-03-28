@@ -1,30 +1,54 @@
 "use strict"
 
+import { resetEnterFocus } from "./enterfocus.js";
+
 /**
  * フォームダイアログを開く
  * @param {*} dialogId 
  * @returns 
  */
-export function openFormDialog(dialogId) {
-    const form = dialogId instanceof HTMLElement ? dialogId: document.getElementById(dialogId);
-    if (form == null) return;
+// export function openFormDialog(dialogId, callback = null) {
+//     const form = dialogId instanceof HTMLElement ? dialogId: document.getElementById(dialogId);
+//     if (form == null) return;
 
-    // フォームエリアにダイアログクラスを付与する
+//     // フォームエリアにダイアログクラスを付与する
+//     const area = document.getElementById('form-dialog-area');
+//     if (area == null) return;
+//     area.classList.add('dialog');
+
+//     // フォーム画面から[none]クラスを取り除く
+//     form.classList.remove('none');
+
+//     const el = area.querySelector('[autofocus]');
+//     if (el) el.focus();
+    
+//     setFooterButtons(form, true, callback, () => closeFormDialog(dialogId));
+
+//     setInertState(true);
+//     resetEnterFocus();
+// }
+export function openFormDialog(dialogId, options = {}) {
+
+    const form = document.getElementById(dialogId);
+    if (!form) return;
+
     const area = document.getElementById('form-dialog-area');
-    if (area == null) return;
-    area.classList.add('dialog');
+    if (!area) return;
 
-    // フォーム画面から[none]クラスを取り除く
-    // const form = document.getElementById(dialogId);
-    // if (form == null) return;
+    area.classList.add('dialog');
     form.classList.remove('none');
 
     const el = area.querySelector('[autofocus]');
     if (el) el.focus();
-    
-    setInertState(true);
-}
 
+    const onSubmit = options.onSubmit ?? (async () => true);
+    const onClose  = options.onClose  ?? (async () => closeFormDialog(dialogId));
+
+    setFooterButtons(form, true, onSubmit, onClose);
+
+    setInertState(true);
+    resetEnterFocus();
+}
 /**
  * フォームダイアログを閉じる
  * @param {ダイアログのID名} dialogId 
@@ -55,8 +79,8 @@ export function closeFormDialog(dialogId, e) {
  * @param {タイトル} title 
  * @param {ヘッダーの色} headerColor 
  */
-export function openMsgDialog(msg, color, closeFunc = () => closeMsgDialog("msg-dialog")) {
-    openMsg('msg-dialog', msg, color, closeFunc, null, false);
+export function openMsgDialog(msg, color, closeCallback = () => closeMsgDialog("msg-dialog")) {
+    openMsg('msg-dialog', msg, color, null, closeCallback, false);
 }
 
 /**
@@ -66,10 +90,10 @@ export function openMsgDialog(msg, color, closeFunc = () => closeMsgDialog("msg-
  * @param {*} okFunc 
  * @param {*} closeFunc 
  */
-export function openConfilmDialog(msg, color, okFunc, closeFunc = () => closeMsgDialog("msg-dialog")) {
-    if (!okFunc) return;
+export function openConfilmDialog(msg, color, submitCallback, closeCallback = () => closeMsgDialog("msg-dialog")) {
+    if (!submitCallback) return;
 
-    openMsg('msg-dialog', msg, color, closeFunc, okFunc, true);
+    openMsg('msg-dialog', msg, color, submitCallback, closeCallback, true);
 }
 
 /**
@@ -82,7 +106,7 @@ export function openConfilmDialog(msg, color, okFunc, closeFunc = () => closeMsg
  * @param {*} isConfirm 
  * @returns 
  */
-function openMsg(dialogId, msg, color, closeFunc, okFunc, isConfirm = true) {
+function openMsg(dialogId, msg, color, submitCallback, closeCallback, isConfirm = false) {
 
     const dialog = dialogId instanceof HTMLElement ? dialogId: document.getElementById(dialogId);
     if (!dialog) return;
@@ -100,28 +124,32 @@ function openMsg(dialogId, msg, color, closeFunc, okFunc, isConfirm = true) {
     const content = parent.querySelector('.msg-dialog-content');
     content.textContent = msg;
 
-    const okBtn = dialog.querySelector('#okBtn');
-    const cancelBtn = dialog.querySelector('#cancelBtn');
-
-    // イベント上書き（重要）
-    okBtn.onclick = null;
-    cancelBtn.onclick = null;
-
-    if (isConfirm) {
-        okBtn.onclick = okFunc;
-        cancelBtn.onclick = closeFunc;
-
-        cancelBtn.style.display = "";
-        cancelBtn.textContent = "いいえ";
-    } else {
-        okBtn.onclick = closeFunc;
-        cancelBtn.style.display = "none";
-    }
-
-    okBtn.textContent = "はい";
-    okBtn.focus();
-
     dialog.classList.remove('none');
+
+    setFooterButtons(dialog, isConfirm, submitCallback, closeCallback);
+
+    // const submitBtn = dialog.querySelector('[name="submitBtn"]');
+    // const cancelBtn = dialog.querySelector('[name="cancelBtn"]');
+
+    // // イベント上書き（重要）
+    // submitBtn.onclick = null;
+    // cancelBtn.onclick = null;
+
+    // if (isConfirm) {
+    //     submitBtn.onclick = okFunc;
+    //     cancelBtn.onclick = closeFunc;
+
+    //     cancelBtn.style.display = "";
+    //     cancelBtn.textContent = "いいえ";
+    // } else {
+    //     submitBtn.onclick = closeFunc;
+    //     cancelBtn.style.display = "none";
+    // }
+
+    // submitBtn.textContent = "はい";
+    // submitBtn.focus();
+
+    // dialog.classList.remove('none');
 }
 
 /**
@@ -177,3 +205,61 @@ export async function withInertButton(button, asyncFunc) {
         button.inert = false;
     }
 }
+
+function setFooterButtons(dialog, isConfirm, submitCallback, closeCallback) {
+
+    const submitBtn = dialog.querySelector('[name="submitBtn"]');
+    const cancelBtn = dialog.querySelector('[name="cancelBtn"]');
+    const closeBtn = dialog.querySelector('[name="closeBtn"]');
+
+    const onSubmit = async () => {
+        if(submitCallback){
+            await submitCallback(dialog); // ←ここ重要
+        }
+    };
+
+    const onClose = async () => {
+        if(closeCallback){
+            await closeCallback(dialog);
+        }
+    };
+
+    if (isConfirm) {
+        submitBtn.onclick = onSubmit;
+        cancelBtn.onclick = onClose;
+        cancelBtn.style.display = "";
+        cancelBtn.textContent = "いいえ";
+    } else {
+        submitBtn.onclick = onClose;
+        cancelBtn.style.display = "none";
+    }
+
+    closeBtn.onclick = onClose;
+
+    submitBtn.textContent = "はい";
+    submitBtn.focus();
+}
+// function setFooterButtons(form, show, okCallback, cancelCallback){
+
+//     const submitBtn = form.querySelector("[data-role='ok']");
+//     const cancelBtn = form.querySelector("[data-role='cancel']");
+
+//     if(submitBtn){
+//         submitBtn.onclick = async () => {
+
+//             // OK処理
+//             if(okCallback){
+//                 await okCallback(form);
+//             }
+
+//             // 閉じる
+//             if(cancelCallback){
+//                 cancelCallback();
+//             }
+//         };
+//     }
+
+//     if(cancelBtn){
+//         cancelBtn.onclick = cancelCallback;
+//     }
+// }

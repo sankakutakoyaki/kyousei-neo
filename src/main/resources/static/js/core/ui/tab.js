@@ -18,4 +18,6 @@ export function switchTab(el){
     document
         .getElementById(target)
         .classList.add("is-show");
+
+    requestAnimationFrame(resetEnterFocus);
 }

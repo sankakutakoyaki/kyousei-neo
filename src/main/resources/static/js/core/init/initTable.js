@@ -5,7 +5,7 @@ import { DataTable } from "../table/DataTable.js";
 
 const tables = new Map();
 
-export function init(){
+export function initTable(){
     const list = document.querySelectorAll("[data-table]");
 
     list.forEach(async el => {
