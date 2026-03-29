@@ -25,7 +25,11 @@
                     data-action=${data['action'] != null ? data['action'] : 'select-on-focus'},
                     data-resolve-id=${data['resolveId']},
                     data-resolve-name=${data['resolveName']},
-                    tabindex=${data['index']}
+                    tabindex=${data['index']},
+                    data-trim=${data['trim'] != null ? '' : null},
+                    data-number=${data['number'] != null ? '' : null},
+                    data-skip-if-null=${data['skipIfNull'] != null ? '' : null},
+                    data-zero-to-null=${data['zeroToNull'] != null ? '' : null}
                 ">
         </div>
     </th:block>
@@ -48,7 +52,11 @@
                 data-top=${data['top']},
                 data-resolve-id=${data['resolveId']},
                 data-resolve-name=${data['resolveName']},
-                tabindex=${data['index']}
+                tabindex=${data['index']},
+                data-trim=${data['trim'] != null ? '' : null},
+                data-number=${data['number'] != null ? '' : null},
+                data-skip-if-null=${data['skipIfNull'] != null ? '' : null},
+                data-zero-to-null=${data['zeroToNull'] != null ? '' : null}
             ">
         </select>
     </div>

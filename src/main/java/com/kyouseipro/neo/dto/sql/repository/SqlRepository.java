@@ -2,12 +2,17 @@ package com.kyouseipro.neo.dto.sql.repository;
 
 import java.sql.*;
 import java.util.*;
+
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.common.Enums.SqlMode;
 import com.kyouseipro.neo.common.exception.BusinessException;
+import com.kyouseipro.neo.dto.sql.SqlResult;
+import com.kyouseipro.neo.interfaces.LogSqlProvider;
 import com.kyouseipro.neo.interfaces.sql.SQLBiConsumer;
 import com.kyouseipro.neo.interfaces.sql.SqlParameterBinder;
 import com.kyouseipro.neo.interfaces.sql.SqlResultExtractor;
@@ -178,6 +183,24 @@ public class SqlRepository {
 
         return count;
     }
+//　ここからNew
+    public int update(String sql, List<Object> params) {
+        try (Connection conn = dataSource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            setParams(ps, params);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int updateRequired(String sql, List<Object> params, String errorMessage) {
+        int count = update(sql, params);
+        if (count == 0) {
+            throw new BusinessException(errorMessage);
+        }
+        return count;
+    }
 
     /* =========================================================
        バッチ更新・削除
@@ -242,6 +265,37 @@ public class SqlRepository {
             rs -> true,   // 1行でもあればtrue
             param
         );
+    }
+//　ここからNew
+    public <R> R insert(String sql, List<Object> params, SqlResultExtractor<R> extractor) {
+        Connection conn = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            setParams(ps, params);
+
+            boolean hasResult = ps.execute();
+            while (!hasResult && ps.getUpdateCount() != -1) {
+                hasResult = ps.getMoreResults();
+            }
+            if (!hasResult) {
+                throw new RuntimeException("INSERTに失敗しました");
+            }
+            try (ResultSet rs = ps.getResultSet()) {
+                if (!rs.next()) throw new RuntimeException("ID取得に失敗しました");
+                R id = extractor.extract(rs);
+                if (rs.next()) throw new IllegalStateException("ID取得結果が複数行です");
+                return id;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("SQL実行エラー", e);
+        } finally {
+            DataSourceUtils.releaseConnection(conn, dataSource);
+        }
+    }
+
+    private void setParams(PreparedStatement ps, List<Object> params) throws SQLException {
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
+        }
     }
 }
 // import java.sql.Connection;

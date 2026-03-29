@@ -1,9 +1,11 @@
 package com.kyouseipro.neo.corporation.company.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.corporation.company.dto.CompanyRequest;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
@@ -42,11 +44,12 @@ public class CompanyService {
         table = HistoryTables.COMPANIES,
         action = "保存"
     )
-    public int save(CompanyRequest entity, String editor) {
-        if (entity.getCompanyId() > 0) {
-            return companyRepository.update(entity, editor);
+    public int save(Map<String, Object> req, String userName) {
+        Integer id = (Integer) req.get("companyId");
+        if (id != null && id > 0) {
+            return companyRepository.update(req, userName);
         } else {
-            return companyRepository.insert(entity, editor);
+            return companyRepository.insert(req, userName);
         }
     }
 
@@ -62,6 +65,7 @@ public class CompanyService {
     public int deleteByIds(IdListRequest list, String userName) {
         return companyRepository.deleteByIds(list, userName);
     }
+
     /**
      * IDからCsv用文字列を取得
      * @param ids

@@ -604,4 +604,10 @@ public class Enums {
         LICENSE,
         CUSTOMER
     }
+
+    public enum SqlMode {
+        INSERT,
+        UPDATE,
+        DELETE
+    }
 }

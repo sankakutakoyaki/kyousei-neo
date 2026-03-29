@@ -3,6 +3,7 @@ package com.kyouseipro.neo.corporation.company.controller;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -47,8 +48,8 @@ public class CompanyApiController {
      */
     @PostMapping("/save")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody CompanyRequest entity, @AuthenticationPrincipal OidcUser principal) {
-        Integer id = companyService.save(entity, principal.getAttribute("preferred_username"));
+    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody Map<String, Object> req, @AuthenticationPrincipal OidcUser principal) {
+        Integer id = companyService.save(req, principal.getAttribute("preferred_username"));
         return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
 

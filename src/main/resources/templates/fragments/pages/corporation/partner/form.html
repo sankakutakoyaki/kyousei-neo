@@ -6,10 +6,7 @@
                 { 
                     'text': '名称', 
                     'name': 'name', 
-                    'index': 1,
-                    'trim': true,
-                    'emptyToNull': true,
-                    'skipToNull': true
+                    'index': 1
                 }
             })}"></th:block>
         </div>
@@ -19,10 +16,7 @@
                 { 
                     'text': 'かな', 
                     'name': 'name-kana', 
-                    'index': 2,
-                    'trim': true,
-                    'emptyToNull': true,
-                    'skipToNull': true
+                    'index': 2
                 }
             })}"></th:block>            
         </div>
@@ -34,10 +28,7 @@
                     'text': '電話番号', 
                     'name': 'tel-number', 
                     'type': 'phone', 
-                    'index': 3,
-                    'trim': true,
-                    'emptyToNull': true,
-                    'skipToNull': true
+                    'index': 3
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -45,10 +36,7 @@
                     'text': 'FAX番号', 
                     'name': 'fax-number', 
                     'type': 'phone', 
-                    'index': 4,
-                    'trim': true,
-                    'emptyToNull': true,
-                    'skipToNull': true
+                    'index': 4
                 }
             })}"></th:block>            
         </div>
@@ -60,10 +48,7 @@
                     'name': 'postal-code', 
                     'resolveId': true, 
                     'type': 'postal', 
-                    'index': 5,
-                    'trim': true,
-                    'emptyToNull': true,
-                    'skipToNull': true
+                    'index': 5
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -72,10 +57,7 @@
                     'name': 'full-address', 
                     'placeholder': '例）大阪府高槻市柱本5丁目7番10号', 
                     'resolveName': true, 
-                    'index': 6,
-                    'trim': true,
-                    'emptyToNull': true,
-                    'skipToNull': true
+                    'index': 6
                 }
             })}"></th:block>
         </div>
@@ -86,10 +68,7 @@
                     'text': 'メールアドレス', 
                     'name': 'email', 
                     'type': 'email', 
-                    'index': 7,
-                    'trim': true,
-                    'emptyToNull': true,
-                    'skipToNull': true
+                    'index': 7
                 }
             })}"></th:block>            
         </div>
@@ -101,16 +80,13 @@
                     'text': 'WEBアドレス', 
                     'name': 'web-address', 
                     'type': 'url', 
-                    'index': 8,
-                    'trim': true,
-                    'emptyToNull': true,
-                    'skipToNull': true
+                    'index': 8
                 }
             })}"></th:block>
             <div class="form-parts" name="price-area">
                 <label>料金表</label>
                 <select tabindex="9" name="price" class="normal-select"
-                    data-number data-zero-to-null skip-if-null>
+                    data-number data-zero-to-null>
                     <option value="0"></option>
                     <option value="1">有</option>
                 </select>
@@ -143,7 +119,8 @@
                     'pattern': '\d*',
                     'placeholder': '0000',
                     'resolveId':true,
-                    'index': 2 
+                    'index': 2,
+                    'seroToNull': true
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
@@ -153,7 +130,8 @@
                     'top': '-----',
                     'name': 'company', 
                     'resolveName':true,
-                    'index': 3 
+                    'index': 3,
+                    'zeroToNull': true
                 }
             })}"></th:block>
         </div>
@@ -258,14 +236,16 @@
                 { 
                     'text': '性別', 
                     'name': 'gender', 
-                    'index': 13
+                    'index': 13,
+                    'zeroToNull': true
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 { 
                     'text': '血液型', 
                     'name': 'blood-type', 
-                    'index': 14
+                    'index': 14,
+                    'zeroToNull': true
                 }
             })}"></th:block>            
         </div>

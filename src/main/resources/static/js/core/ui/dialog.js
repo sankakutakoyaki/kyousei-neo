@@ -49,6 +49,7 @@ export function openFormDialog(dialogId, options = {}) {
     setInertState(true);
     resetEnterFocus();
 }
+
 /**
  * フォームダイアログを閉じる
  * @param {ダイアログのID名} dialogId 
