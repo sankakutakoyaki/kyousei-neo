@@ -94,14 +94,14 @@ function diffEntity(oldObj = {}, newObj = {}){
     return diff;
 }
 
-function toApiPayload(entity){
-    const result = {};
-    Object.entries(entity).forEach(([key, value]) => {
-        const apiKey = convertKey(key, "camel", "snake");
-        result[apiKey] = value;
-    });
-    return result;
-}
+// function toApiPayload(entity){
+//     const result = {};
+//     Object.entries(entity).forEach(([key, value]) => {
+//         const apiKey = convertKey(key, "camel", "snake");
+//         result[apiKey] = value;
+//     });
+//     return result;
+// }
 
 export async function execSave(form, data){
 

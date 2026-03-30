@@ -1,6 +1,10 @@
-<th:block th:fragment="normalFragment(headerId, tableId, config)">
+<th:block th:fragment="normalFragment(headerId, tableId, configName)">
     <div class="table-wrapper">
-        <table class="normal-table" th:attr="data-table=${config}">
+        <table class="normal-table" 
+            th:attr="
+                data-table=${configName},
+                data-controller=${configName}
+            ">
             <thead th:id="${headerId}" class="pc-style"></thead>
             <tbody th:id="${tableId}" class="scroll-area"></tbody>
         </table>

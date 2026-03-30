@@ -1,9 +1,9 @@
 "use strict"
 
-import { openMsgDialog, closeMsgDialog, openConfilmDialog, openFormDialog } from "../ui/dialog.js";
+import { openMsgDialog, closeMsgDialog, openConfilmDialog, openFormDialog, closeFormDialog } from "../ui/dialog.js";
 import { getTable } from "../init/initTable.js";
 import { api } from "../api/apiService.js";
-import { formatDate } from "../../util/time.js";
+// import { formatDate } from "../../util/time.js";
 
 export class TableController {
 
@@ -13,17 +13,57 @@ export class TableController {
         this.selectUrl = config.selectUrl;
         this.saveParent = config.parent;
         this.key = config.key;
+        this.state = {};
 
         this.tableEl = document.getElementById(this.tableId);
+
+        this.config = config;
 
         this.currentEntity = null; // 編集対象
         this.isEdit = false;
 
-        this.currentEntity = null;
-
         this.initEvents();
         
     }
+
+    // =========================
+    // 基本操作
+    // =========================
+
+    get table(){
+        const table = getTable(this.tableId);
+        if(!table){
+            console.warn("table not ready:", this.tableId);
+        }
+        return table;
+    }
+
+    set(key,value){
+        this.state[key] = value;
+        this.table.set(key,value);
+        this.table.reload();
+    }
+
+    setMany(obj){
+        Object.entries(obj).forEach(([k,v])=>{
+            this.table.set(k,v);
+        });
+        this.table.reload();
+    }
+
+    reload(){ this.table.reload(); }
+
+    // =========================
+    // 検索
+    // =========================
+
+    search(keyword){ this.set("keyword", keyword); }
+
+    // =========================
+    // フィルタ
+    // =========================
+
+    filter(key,value){ this.set(key,value); }
 
     // =========================
     // 初期イベント
@@ -86,18 +126,15 @@ export class TableController {
     // 編集画面を開く
     // =========================
     async openEdit(id){
-
         const res = await api.get(`${this.selectUrl}/${id}`);
         const data = res.data;
-
         this.currentEntity = data;
-
+        const self = this;
         this.fillForm(this.config.formId, data);
-
         openFormDialog(this.config.formId, {
-            onSubmit: async (form) => {
-                if(this.config.onSubmit){
-                    await this.config.onSubmit.call(this, form, this.currentEntity);
+            onSubmit: async function(form){
+                if(self.config.onSubmit){
+                    await self.config.onSubmit.call(self, form, self.currentEntity);
                 }
             }
         });
@@ -173,8 +210,8 @@ export class TableController {
                 const result = await api.post(this.deleteUrl, {ids:ids});
                 openMsgDialog(result.message, "blue");
 
-                this.table.model.removeByIds(ids);
-                this.table.reload();
+                this.tableEl.model.removeByIds(ids);
+                this.tableEl.reload();
             }
         );
     }
@@ -185,8 +222,8 @@ export class TableController {
            const result = await api.post(this.deleteUrl, {
                 ids: [id]
             });
-            this.table.model.removeByIds([id]);
-            this.table.reload();
+            this.tableEl.model.removeByIds([id]);
+            this.tableEl.reload();
         });
     }
 
@@ -251,6 +288,7 @@ export class TableController {
 
         const result = await api.get(this.selectUrl);
         this.table.setData(result.data);
+        // this.table.reload();
 
         if(targetId){
             requestAnimationFrame(() => {

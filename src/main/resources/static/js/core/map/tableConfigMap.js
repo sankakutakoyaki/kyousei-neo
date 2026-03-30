@@ -1,10 +1,10 @@
 "use strict"
 
-import { tableConfig } from "../../pages/corporation/partner/partnerConfig.js";
+import { tableConfig as partnerConfig } from "../../pages/corporation/partner/partnerConfig.js";
 
 const tableConfigMap = {
-    partnerCompany: tableConfig.partnerCompany,
-    partnerEmployee: tableConfig.partnerEmployee
+    partnerCompany: partnerConfig.partnerCompany,
+    partnerEmployee: partnerConfig.partnerEmployee
 };
 
 export function getTableConfig(name){
