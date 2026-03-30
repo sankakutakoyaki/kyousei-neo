@@ -2,37 +2,34 @@
 
 import { TableController } from "../table/TableController.js";
 import { closeFormDialog } from "../ui/dialog.js";
-import { execSave } from "../../components/form/entity.js";
+// import { execSave } from "../../components/form/entity.js";
 
 export const controllerFactory = {
     partnerCompany: () => new TableController({
         tableId:"table-01",
         formId:"form-01",
-        parent:"company",
         key:"companyId",
+        findUrl: "/api/company/get/id",
         selectUrl: "/api/partner/get/list",
         deleteUrl: "/api/company/delete",
         downloadUrl: "/api/company/download/csv",
-        onSubmit: async function(form, entity){
-            closeFormDialog('form-01');
-            await execSave(form, {
-                parent: "company",
-                key: "companyId",
-                entity: entity
-            });
-            await this.refresh();
+        saveUrl: "/api/company/save",
+        onSubmit: async function(form){
+            await this.save(form);
         }
     }),
 
     partnerEmployee: () => new TableController({
         tableId:"table-02",
+        formId:"form-02",
+        key:"employeeId",
+        findUrl: "/api/employee/get/id",
         selectUrl: "/api/employee/get/list/partner",
         deleteUrl: "/api/employee/delete",
         downloadUrl: "/api/employee/download/csv",
+        saveUrl: "/api/employee/save",
         onSubmit: async function(form){
-            closeFormDialog('form-02')
-            await execSave(form, { parent: "employee", key: "employee_id" });
-            await this.refresh();
+            await this.save(form);
         },
     })
 }

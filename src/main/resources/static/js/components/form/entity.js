@@ -1,11 +1,11 @@
 "use strict"
 
-import { api } from "../../core/api/apiService.js";
+// import { api } from "../../core/api/apiService.js";
 import { convertKey } from "../../util/keyCaseConverter.js";
-import { validate } from "./check.js";
-import { openMsgDialog } from "../../core/ui/dialog.js";
+// import { validate } from "./check.js";
+// import { openMsgDialog } from "../../core/ui/dialog.js";
 
-function buildEntity(form, base = {}){
+export function buildEntity(form, base = {}){
 
     const fd = new FormData(form);
     const entity = structuredClone(base);
@@ -84,7 +84,7 @@ function normalize(v){
     return v === "" || v === undefined ? null : v;
 }
 
-function diffEntity(oldObj = {}, newObj = {}){
+export function diffEntity(oldObj = {}, newObj = {}){
     const diff = {};
     Object.keys(newObj).forEach(key => {
         if(normalize(oldObj[key]) !== normalize(newObj[key])){
@@ -103,34 +103,34 @@ function diffEntity(oldObj = {}, newObj = {}){
 //     return result;
 // }
 
-export async function execSave(form, data){
+// export async function execSave(form, data){
 
-    if(!validate(form)) return;
+//     if(!validate(form)) return;
 
-    const edited = buildEntity(form, data.entity);
-    const isUpdate = data.entity && data.entity[data.key];
+//     const edited = buildEntity(form, data.entity);
+//     const isUpdate = data.entity && data.entity[data.key];
 
-    let payload;
+//     let payload;
 
-    if(isUpdate){
-        const diff = diffEntity(data.entity, edited);
+//     if(isUpdate){
+//         const diff = diffEntity(data.entity, edited);
 
-        if(Object.keys(diff).length === 0){
-            openMsgDialog("変更がありません", "red");
-            return;
-        }
-        diff.version = data.entity.version;
-        diff.id = data.entity[data.key];
+//         if(Object.keys(diff).length === 0){
+//             openMsgDialog("変更がありません", "red");
+//             return;
+//         }
+//         diff.version = data.entity.version;
+//         diff.id = data.entity[data.key];
 
-        payload = diff;
-    }else{
-        // 新規
-        payload = edited;
-    }
+//         payload = diff;
+//     }else{
+//         // 新規
+//         payload = edited;
+//     }
 
-    const result = await api.post(`/api/${data.parent}/save`, payload);
-    if(result.ok){
-        openMsgDialog(result.message, "blue");
-    }
-    return result;
-}
+//     const result = await api.post(`/api/${data.parent}/save`, payload);
+//     if(result.ok){
+//         openMsgDialog(result.message, "blue");
+//     }
+//     return result;
+// }

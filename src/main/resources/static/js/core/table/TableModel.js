@@ -133,7 +133,7 @@ export class TableModel {
         return Array.from(this.selected);
     }
 
-    removeByIds(ids){
+    removeByIds(ids){console.log(this.origin)
         const list = this.origin();
         const newList = list.filter(v =>
             !ids.includes(v[this.config.idKey])

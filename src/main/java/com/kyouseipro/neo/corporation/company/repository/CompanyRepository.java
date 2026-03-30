@@ -104,7 +104,6 @@ public class CompanyRepository {
             "version",
             logProvider
         );
-        System.out.println(result.getSql());
         return sqlRepository.insert(
             result.getSql(),
             result.getParams(),

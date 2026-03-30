@@ -41,3 +41,8 @@
     --line: #ddd;
 
 }
+
+.highlight {
+    background-color: yellow;
+    transition: 0.5s;
+}

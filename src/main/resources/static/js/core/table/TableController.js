@@ -3,6 +3,10 @@
 import { openMsgDialog, closeMsgDialog, openConfilmDialog, openFormDialog, closeFormDialog } from "../ui/dialog.js";
 import { getTable } from "../init/initTable.js";
 import { api } from "../api/apiService.js";
+import { buildEntity } from "../../components/form/entity.js";
+import { diffEntity } from "../../components/form/entity.js";
+import { validate } from "../../components/form/check.js";
+// import { TableModel } from "./TableModel.js";
 // import { formatDate } from "../../util/time.js";
 
 export class TableController {
@@ -10,8 +14,11 @@ export class TableController {
     constructor(config){
         this.tableId = config.tableId;
         this.formId = config.formId;
+        this.findUrl = config.findUrl;
         this.selectUrl = config.selectUrl;
-        this.saveParent = config.parent;
+        this.deleteUrl = config.deleteUrl;
+        this.downloadUrl = config.downloadUrl;
+        this.saveUrl = config.saveUrl;
         this.key = config.key;
         this.state = {};
 
@@ -22,6 +29,7 @@ export class TableController {
         this.currentEntity = null; // 編集対象
         this.isEdit = false;
 
+        // this.model = new TableModel(config);
         this.initEvents();
         
     }
@@ -39,10 +47,16 @@ export class TableController {
     }
 
     set(key,value){
-        this.state[key] = value;
+        // this.state[key] = value;
         this.table.set(key,value);
         this.table.reload();
     }
+    // set(key, value){
+    //     this.state[key] = value;
+    //     // データ操作
+    //     this.store.setFilter?.(key, value); // ←フィルタ系なら
+    //     this.render();
+    // }
 
     setMany(obj){
         Object.entries(obj).forEach(([k,v])=>{
@@ -50,8 +64,23 @@ export class TableController {
         });
         this.table.reload();
     }
+    // setMany(obj){
+    //     Object.entries(obj).forEach(([k,v])=>{
+    //         this.state[k] = v;
+    //         this.store.setFilter?.(k, v);
+    //     });
+    //     this.render();
+    // }
 
     reload(){ this.table.reload(); }
+    // reload(){
+    //     this.render();
+    // }
+
+    // render(){
+    //     this.table.setData(this.model.getData());
+    //     this.table.reload();
+    // }
 
     // =========================
     // 検索
@@ -126,16 +155,17 @@ export class TableController {
     // 編集画面を開く
     // =========================
     async openEdit(id){
-        const res = await api.get(`${this.selectUrl}/${id}`);
+
+        const res = await api.post(this.findUrl, { id });
+
         const data = res.data;
         this.currentEntity = data;
-        const self = this;
+
         this.fillForm(this.config.formId, data);
+
         openFormDialog(this.config.formId, {
-            onSubmit: async function(form){
-                if(self.config.onSubmit){
-                    await self.config.onSubmit.call(self, form, self.currentEntity);
-                }
+            onSubmit: async (form) => {
+                await this.save(form); // ←ここ超重要
             }
         });
     }
@@ -180,7 +210,7 @@ export class TableController {
             payload = edited;
         }
 
-        const result = await api.post(`/api/${this.saveParent}/save`, payload);
+        const result = await api.post(this.saveUrl, payload);
 
         if(result.ok){
             openMsgDialog(result.message, "blue");
@@ -210,8 +240,8 @@ export class TableController {
                 const result = await api.post(this.deleteUrl, {ids:ids});
                 openMsgDialog(result.message, "blue");
 
-                this.tableEl.model.removeByIds(ids);
-                this.tableEl.reload();
+                this.table.model.removeByIds(ids);
+                this.table.reload();
             }
         );
     }
@@ -222,8 +252,6 @@ export class TableController {
            const result = await api.post(this.deleteUrl, {
                 ids: [id]
             });
-            this.tableEl.model.removeByIds([id]);
-            this.tableEl.reload();
         });
     }
 
@@ -240,6 +268,29 @@ export class TableController {
             closeFormDialog(this.config.formId);
             await this.refresh(id);
         });
+    }
+
+    // =========================
+    // ダウンロードCSV（API連携）
+    // =========================
+
+    async downloadSelected(){
+        const ids = this.table.model.getSelectedIds();
+        if(ids.length === 0){
+            openMsgDialog("選択してください", "red");
+            return;
+        }
+
+        const res = await api.post(this.downloadUrl, { ids });
+        const blob = res.data;
+        const url = URL.createObjectURL(blob);
+        const fileName = `download_${formatDate(new Date(), "yyyyMMddHHmmss")}.csv`;
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        URL.revokeObjectURL(url);
     }
 
     // =========================
@@ -288,7 +339,9 @@ export class TableController {
 
         const result = await api.get(this.selectUrl);
         this.table.setData(result.data);
-        // this.table.reload();
+        // this.model.set(result.data);
+        // this.model.compute();
+        // this.render();
 
         if(targetId){
             requestAnimationFrame(() => {
@@ -306,7 +359,7 @@ export class TableController {
         if(!row) return;
 
         row.scrollIntoView({
-            behavior: "smooth",
+            // behavior: "smooth",
             block: "center"
         });
 
