@@ -1,9 +1,14 @@
 "use strict"
 
-import { initPage } from "../../../core/init/initPage.js";
+import { initCommon } from "../../../core/init/initPage.js";
+import { initControllers } from "../../../core/init/initControllers.js";
+import { controllerFactory } from "./controllerFactory.js";
 
-window.addEventListener("load", async () => {
+let controllers = {};
 
-    await initPage();
+window.addEventListener("load", () => {
+
+    controllers = initControllers(controllerFactory);
+    initCommon();
 
 });

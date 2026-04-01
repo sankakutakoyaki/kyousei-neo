@@ -1,6 +1,6 @@
 "use strict"
 
-import { tableConfig as partnerConfig } from "../../pages/corporation/partner/partnerConfig.js";
+import { tableConfig as partnerConfig } from "../../pages/corporation/partner/config.js";
 
 const tableConfigMap = {
     partnerCompany: partnerConfig.partnerCompany,

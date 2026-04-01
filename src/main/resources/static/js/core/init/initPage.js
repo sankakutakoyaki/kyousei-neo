@@ -8,11 +8,11 @@ import { initClick } from "./initClick.js";
 import { initChange } from "./initChange.js";
 import { initInput } from "./initInput.js";
 import { initFocus } from "./initFocus.js";
-import { initControllers } from "./initControllers.js";
+// import { initControllers } from "./initControllers.js";
 
-export async function initPage(){
+export function initCommon(){
 
-    initControllers();
+    // initControllers();
     initTable();
 
     initCombo();

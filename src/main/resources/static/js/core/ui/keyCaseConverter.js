@@ -4,7 +4,7 @@
  * camelCase → kebab-case
  * employeeId → employee-id
  */
-export function camelToKebab(str) {
+function camelToKebab(str) {
     return str
         .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
         .toLowerCase();
@@ -14,7 +14,7 @@ export function camelToKebab(str) {
  * camelCase → snake_case
  * employeeId → employee_id
  */
-export function camelToSnake(str) {
+function camelToSnake(str) {
     return str
         .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
         .toLowerCase();
@@ -24,7 +24,7 @@ export function camelToSnake(str) {
  * snake_case → camelCase
  * employee_id → employeeId
  */
-export function snakeToCamel(str) {
+function snakeToCamel(str) {
     return str.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
 }
 
@@ -32,7 +32,7 @@ export function snakeToCamel(str) {
  * kebab-case → camelCase
  * employee-id → employeeId
  */
-export function kebabToCamel(str) {
+function kebabToCamel(str) {
     return str.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
 }
 

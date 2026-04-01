@@ -1,7 +1,7 @@
 "use strict"
 
-import { TableController } from "../table/TableController.js";
-import { closeFormDialog } from "../ui/dialog.js";
+import { TableController } from "../../../core/table/TableController.js";
+import { closeFormDialog } from "../../../core/ui/dialog.js";
 // import { execSave } from "../../components/form/entity.js";
 
 export const controllerFactory = {
@@ -14,9 +14,9 @@ export const controllerFactory = {
         deleteUrl: "/api/company/delete",
         downloadUrl: "/api/company/download/csv",
         saveUrl: "/api/company/save",
-        onSubmit: async function(form){
-            await this.save(form);
-        }
+        // onSubmit: async function(form){
+        //     await this.save(form);
+        // }
     }),
 
     partnerEmployee: () => new TableController({
@@ -28,8 +28,8 @@ export const controllerFactory = {
         deleteUrl: "/api/employee/delete",
         downloadUrl: "/api/employee/download/csv",
         saveUrl: "/api/employee/save",
-        onSubmit: async function(form){
-            await this.save(form);
-        },
+        // onSubmit: async function(form){
+        //     await this.save(form);
+        // },
     })
 }

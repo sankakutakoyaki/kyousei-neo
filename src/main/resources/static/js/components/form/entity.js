@@ -1,98 +1,102 @@
-"use strict"
+// "use strict"
 
-// import { api } from "../../core/api/apiService.js";
-import { convertKey } from "../../util/keyCaseConverter.js";
-// import { validate } from "./check.js";
-// import { openMsgDialog } from "../../core/ui/dialog.js";
+// // import { api } from "../../core/api/apiService.js";
+// import { convertKey } from "../../util/keyCaseConverter.js";
+// // import { validate } from "./check.js";
+// // import { openMsgDialog } from "../../core/ui/dialog.js";
 
-export function buildEntity(form, base = {}){
+// export function buildEntity(form, base = {}){
 
-    const fd = new FormData(form);
-    const entity = structuredClone(base);
+//     const fd = new FormData(form);
+//     const entity = structuredClone(base);
 
-    for(const [name, value] of fd.entries()){
+//     for(const [name, value] of fd.entries()){
 
-        // element取得（複数対応）
-        const elRaw = form.elements[name];
-        const el = elRaw instanceof RadioNodeList ? elRaw[0] : elRaw;
-        if(!el) continue;
+//         // element取得（複数対応）
+//         const elRaw = form.elements[name];
+//         const el = elRaw instanceof RadioNodeList ? elRaw[0] : elRaw;
+//         if(!el) continue;
 
-        let v = value;
+//         let v = value;
 
-        const key =
-            el.dataset.key ||
-            convertKey(name, "kebab", "camel");
+//         const key =
+//             el.dataset.key ||
+//             convertKey(name, "kebab", "camel");
 
-        const oldValue = base[key];
+//         const oldValue = base[key];
 
-        // ------------------------
-        // ① trim（デフォルトON）
-        // ------------------------
-        if(typeof v === "string" && !("noTrim" in el.dataset)){
-            v = v.trim();
-        }
+//         // ------------------------
+//         // ① trim（デフォルトON）
+//         // ------------------------
+//         if(typeof v === "string" && !("noTrim" in el.dataset)){
+//             v = v.trim();
+//         }
 
-        // ------------------------
-        // ② 空文字 → null（削除）
-        // ------------------------
-        if(v === ""){
-            v = null;
-        }
+//         // ------------------------
+//         // ② 空文字 → null（削除）
+//         // ------------------------
+//         if(v === ""){
+//             v = null;
+//         }
 
-        // ------------------------
-        // ③ checkbox
-        // ------------------------
-        if(el.type === "checkbox"){
-            v = el.checked;
-        }
+//         // ------------------------
+//         // ③ checkbox
+//         // ------------------------
+//         if(el.type === "checkbox"){
+//             v = el.checked;
+//         }
 
-        // ------------------------
-        // ④ number
-        // ------------------------
-        if("number" in el.dataset && v !== null){
-            v = Number(v);
-        }
+//         // ------------------------
+//         // ④ number
+//         // ------------------------
+//         if("number" in el.dataset && v !== null){
+//             v = Number(v);
+//         }
 
-        // ------------------------
-        // ⑤ 0 → null
-        // ------------------------
-        if("zeroToNull" in el.dataset && v === 0){
-            v = null;
-        }
+//         // ------------------------
+//         // ⑤ 0 → null
+//         // ------------------------
+//         if("zeroToNull" in el.dataset && v === 0){
+//             v = null;
+//         }
 
-        // ------------------------
-        // ⑥ skip null（未入力のみスキップ）
-        // ------------------------
-        if(v === null && oldValue == null && "skipIfNull" in el.dataset){
-            continue;
-        }
+//         // ------------------------
+//         // ⑥ skip null（未入力のみスキップ）
+//         // ------------------------
+//         if(v === null && oldValue == null && "skipIfNull" in el.dataset){
+//             continue;
+//         }
 
-        // ------------------------
-        // ⑦ 変更なしスキップ（最強安定）
-        // ------------------------
-        if(normalize(v) === normalize(oldValue)){
-            continue;
-        }
+//         // ------------------------
+//         // ⑦ 変更なしスキップ（最強安定）
+//         // ------------------------
+//         if(normalize(v) === normalize(oldValue)){
+//             continue;
+//         }
 
-        entity[key] = v;
-    }
+//         entity[key] = v;
+//     }
 
-    return entity;
-}
+//     return entity;
+// }
 
-function normalize(v){
-    return v === "" || v === undefined ? null : v;
-}
+// function normalize(v){
+//     return v === "" || v === undefined ? null : v;
+// }
 
-export function diffEntity(oldObj = {}, newObj = {}){
-    const diff = {};
-    Object.keys(newObj).forEach(key => {
-        if(normalize(oldObj[key]) !== normalize(newObj[key])){
-            diff[key] = newObj[key];
-        }
-    });
-    return diff;
-}
+// export function diffEntity(oldObj = {}, newObj = {}){
+//     const diff = {};
+//     Object.keys(newObj).forEach(key => {
+//         if(normalize(oldObj[key]) !== normalize(newObj[key])){
+//             diff[key] = newObj[key];
+//         }
+//     });
+//     return diff;
+// }
+
+
+
+
 
 // function toApiPayload(entity){
 //     const result = {};

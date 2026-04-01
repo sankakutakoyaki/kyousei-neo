@@ -4,35 +4,98 @@ import { clearElement } from "../dom/clearElement.js";
 import { setPageTopButton } from "../dom/pageTopButton.js";
 import { formatDate } from "../../util/time.js";
 
-export function renderTable(
-    table,
-    config,
-    list,
-    dataTable
-){
-    // テーブル初期化
-    clearElement(table);
+// export function renderTable(
+//     table,
+//     config,
+//     list,
+//     dataTable
+// ){
+//     // テーブル初期化
+//     clearElement(table);
 
-    const el = table.closest('.normal-table');
-    renderHeader(el, config);
+//     const el = table.closest('.normal-table');
+//     renderHeader(el, config);
 
-    if (!list) return;
+//     if (!list) return;
+//     list.forEach(item=>{
+//         const row = table.insertRow();
+//         row.dataset.id = item[config.idKey];
+//         row.setAttribute("name", "data-row");
+
+//         createRow(row, item, config, dataTable);
+//     });
+
+//     createTableFooter(config.footerId, list)
+//     setPageTopButton(table);
+
+//     const header = el?.querySelector('[name="table-header"]');
+//     if (header) toggleScrollbar(header);
+// }
+
+// export function renderTable(table, config, list){
+//     table.innerHTML = "";
+
+//     list.forEach(item=>{
+//         const tr = document.createElement("tr");
+//         tr.dataset.id = item[config.idKey];
+
+//         for(const col of config.columns){
+//             const td = document.createElement("td");
+
+//             if(col.render){
+//                 td.innerHTML = col.render(item);
+//             }else{
+//                 let value = item[col.field];
+//                 if(value == null) value = col.default ?? "";
+//                 if(col.format) value = col.format(value);
+//                 td.textContent = value;
+//             }
+//             tr.appendChild(td);
+//         }
+//         table.appendChild(tr);
+//     });
+// }
+
+export function renderTable(table, config, list){
+
+    // 初期化
+    table.innerHTML = "";
+
+    const wrapper = table.closest(".normal-table");
+
+    // -------------------------
+    // ヘッダー
+    // -------------------------
+    renderHeader(wrapper, config, list);
+
+    // -------------------------
+    // ボディ
+    // -------------------------
     list.forEach(item=>{
-        const row = table.insertRow();
-        row.dataset.id = item[config.idKey];
-        row.setAttribute("name", "data-row");
+        const tr = document.createElement("tr");
+        tr.dataset.id = item[config.idKey];
+        tr.setAttribute('name', 'data-row');
 
-        createRow(row, item, config, dataTable);
+        createRow(tr, item, config); // ★ここ使う
+
+        table.appendChild(tr);
     });
 
-    createTableFooter(config.footerId, list)
+    // -------------------------
+    // フッター
+    // -------------------------
+    if(config.footerId){
+        createTableFooter(config.footerId, list);
+    }
+
     setPageTopButton(table);
 
-    const header = el?.querySelector('[name="table-header"]');
-    if (header) toggleScrollbar(header);
+    // スクロール
+    const header = wrapper?.querySelector('[name="table-header"]');
+    if(header) toggleScrollbar(header);
 }
 
-export function createRow(tr, item, config, dataTable){
+export function createRow(tr, item, config){
     // check
     if(config.checkable){
         const td = document.createElement("td");
@@ -46,7 +109,10 @@ export function createRow(tr, item, config, dataTable){
 
         const id = item[config.idKey];
         // 状態反映
-        chk.checked = dataTable.model.isSelected(id);
+        // chk.checked = dataTable.model.isSelected(id);
+        // chk.dataset.id = item[config.idKey];
+        // chk.dataset.id = id;
+        chk.checked = item._selected ?? false;
         chk.dataset.id = id;
 
         td.appendChild(chk);
@@ -83,7 +149,7 @@ export function createRow(tr, item, config, dataTable){
     }
 }
 
-export function renderHeader(tableEl,config){
+export function renderHeader(tableEl,config,list){
     const thead = tableEl.querySelector("thead");
     if (!thead) return;
 
@@ -99,6 +165,10 @@ export function renderHeader(tableEl,config){
         chk.type = "checkbox";
         chk.setAttribute('name', 'all-chk-btn');
         chk.className = "normal-chk";
+
+        const total = list.length;
+        const selected = list.filter(v => v._selected).length;
+        chk.checked = total > 0 && selected === total;
 
         th.appendChild(chk);
         tr.appendChild(th);
@@ -151,17 +221,17 @@ export function toggleScrollbar(element, className = 'has-scrollbar') {
     }
 }
 
-/**
- * 指定した要素へスクロールさせる
- * @param {*} tableId 
- * @param {*} id 
- */
-export function scrollIntoTableList(tableId, id) {
-    const parent = document.getElementById(tableId);
-    const row = parent.querySelector('[data-id="' + id + '"]');
-    if (row != null) {
-        row.scrollIntoView({
-            block: "center"
-        });
-    }
-}
+// /**
+//  * 指定した要素へスクロールさせる
+//  * @param {*} tableId 
+//  * @param {*} id 
+//  */
+// export function scrollIntoTableList(tableId, id) {
+//     const parent = document.getElementById(tableId);
+//     const row = parent.querySelector('[data-id="' + id + '"]');
+//     if (row != null) {
+//         row.scrollIntoView({
+//             block: "center"
+//         });
+//     }
+// }

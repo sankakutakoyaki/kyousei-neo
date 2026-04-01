@@ -1,6 +1,6 @@
 "use strict"
 
-import { createComboBox } from "../../components/form/combo.js";
+import { createComboBox } from "../../core/form/components/combo.js";
 
 export function initCombo(){
 
