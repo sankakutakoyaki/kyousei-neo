@@ -20,7 +20,7 @@ export const actionMap = {
     // タブ切り替え
     tab: (_, el) => switchTab(el),
     // ケバブ 新規
-    create: (c, el) => c?.create(el.dataset.form),
+    create: (c) => c?.create(),
     // ケバブ 削除
     delete: (c) => c?.deleteSelected(),
     // ケバブ ダウンロード

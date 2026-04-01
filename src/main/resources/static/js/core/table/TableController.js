@@ -1,16 +1,18 @@
 "use strict"
 
-import { openMsgDialog, closeFormDialog } from "../ui/dialog.js";
+import { openMsgDialog, openFormDialog, openConfilmDialog, closeFormDialog } from "../ui/dialog.js";
 import { getTable } from "../init/initTable.js";
 import { api } from "../api/apiService.js";
 import { FormModel } from "../../core/form/FormModel.js";
 import { validate } from "../../core/form/components/check.js";
+import { DataTable } from "./DataTable.js";
 
 export class TableController {
 
     constructor(config){
         this.tableId = config.tableId;
         this.formId = config.formId;
+        this.findUrl = config.findUrl;
         this.selectUrl = config.selectUrl;
         this.saveUrl = config.saveUrl;
         this.deleteUrl = config.deleteUrl;
@@ -18,6 +20,18 @@ export class TableController {
 
         this.currentEntity = null;
         this.isEdit = false;
+
+        this.config = config;
+
+        this.dataTable = new DataTable({
+            ...config.table,
+            tableId: config.tableId,
+            idKey: config.key,
+
+            onDoubleClick: (item, row, e) => {
+                config.table.onDoubleClick.call(this, item, row, e);
+            }
+        });
     }
 
     get table(){
@@ -76,6 +90,174 @@ export class TableController {
         if(row){
             row.scrollIntoView({ block:"center" });
         }
+    }
+
+    // =========================
+    // 作成
+    // =========================
+    create(){
+
+        this.currentEntity = {};
+        this.isEdit = false;
+
+        const form = document.getElementById(this.formId);
+        FormModel.clear(form);
+
+        openFormDialog(this.formId, {
+            onSubmit: async (form) => {
+                await this.save(form);
+            }
+        });
+    }
+
+    // =========================
+    // 編集画面を開く
+    // =========================
+    async openEdit(id){
+        const res = await api.post(this.findUrl, { id });
+
+        const data = res.data;
+        this.currentEntity = data;
+        this.isEdit = true;
+
+        const form = document.getElementById(this.formId);
+        FormModel.fill(form, data);
+
+        openFormDialog(this.formId, {
+            onSubmit: async (form) => {
+                await this.save(form);
+            }
+        });
+    }
+
+    // // =========================
+    // // 新規
+    // // =========================
+    // openCreate(){
+    //     this.currentEntity = {};
+    //     this.isEdit = false;
+
+    //     const form = document.getElementById(this.formId);
+    //     FormModel.clear(form);
+
+    //     openFormDialog(this.formId, {
+    //         onSubmit: async (form) => {
+    //             await this.save(form);
+    //         }
+    //     });
+    // }
+
+    // =========================
+    // 削除（API連携）
+    // =========================
+
+    async deleteSelected(){
+        const ids = this.table.model.getSelectedIds();
+        if(ids.length === 0){
+            openMsgDialog("選択してください", "red");
+            return;
+        }
+
+        openConfilmDialog("削除しますか？", "blue",
+            async () => {
+                closeMsgDialog();
+
+                const result = await api.post(this.deleteUrl, {ids:ids});
+                openMsgDialog(result.message, "blue");
+
+                this.table.model.removeByIds(ids);
+                // this.table.reload();
+                await this.refresh();
+            }
+        );
+    }
+
+    async deleteById(id){
+        openConfilmDialog("削除しますか？", "red", async () => {
+            closeMsgDialog();
+           const result = await api.post(this.deleteUrl, {
+                ids: [id]
+            });
+        });
+    }
+
+    async deleteCurrent(){
+        if(!this.currentEntity) return;
+
+        // const id = this.currentEntity[this.config.key];
+        const id = this.currentEntity[this.key];
+        openConfilmDialog("削除しますか？", "red", async () => {
+            closeMsgDialog();
+            const result = await api.post(this.deleteUrl, {
+                ids: [id]
+            });
+            openMsgDialog(result.message, "blue");
+            // closeFormDialog(this.config.formId);
+            closeFormDialog(this.formId);
+            await this.refresh(id);
+        });
+    }
+
+    // =========================
+    // ダウンロードCSV（API連携）
+    // =========================
+
+    async downloadSelected(){
+        const ids = this.table.model.getSelectedIds();
+        if(ids.length === 0){
+            openMsgDialog("選択してください", "red");
+            return;
+        }
+
+        const res = await api.post(this.downloadUrl, { ids });
+        const blob = res.data;
+        const url = URL.createObjectURL(blob);
+        const fileName = `download_${formatDate(new Date(), "yyyyMMddHHmmss")}.csv`;
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // =========================
+    // フォームにセット
+    // =========================
+    fillForm(formId, data){
+
+        const form = document.getElementById(formId);
+
+        Object.entries(data).forEach(([key, value]) => {
+
+            const name = convertKey(key, "camel", "kebab");
+            const el = form.elements[name];
+
+            if(!el) return;
+
+            if(el.type === "checkbox"){
+                el.checked = !!value;
+            }else{
+                el.value = value ?? "";
+            }
+        });
+    }
+
+    // =========================
+    // フォームクリア
+    // =========================
+    clearForm(){
+        const form = document.getElementById(this.formId);
+
+        [...form.elements].forEach(el => {
+            if(!el.name) return;
+
+            if(el.type === "checkbox"){
+                el.checked = false;
+            }else{
+                el.value = "";
+            }
+        });
     }
 }
 

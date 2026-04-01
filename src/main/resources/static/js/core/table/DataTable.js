@@ -127,7 +127,7 @@ export class DataTable {
             const row = e.target.closest("[data-id]");
             if(!row) return;
 
-            if(this.config.onDoubleClick){
+            if(this.config.onDoubleClick){console.log("handler exists");
                 const id = row.dataset.id;
                 const item = this.model.findById(id);
                 this.config.onDoubleClick(item, row, e);

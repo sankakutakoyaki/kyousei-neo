@@ -1,24 +1,24 @@
 "use strict"
 
-import { filterFactory } from "../../../core/filter/filterFactory.js";
+// import { filterFactory } from "../../../core/filter/filterFactory.js";
 
 export const tableConfig = {
 
     partnerCompany: {
         
-        tableId: "table-01",
-        footerId: "footer-01",
-        checkable: true,
-        idKey:"companyId",
+        // tableId: "table-01",
+        // footerId: "footer-01",
+        // checkable: true,
+        // idKey:"companyId",
 
-        dataSource: {
-            type: "origin",
-            data: APP.cache.companyOrigin
-        },
+        // dataSource: {
+        //     type: "origin",
+        //     data: APP.cache.companyOrigin
+        // },
 
-        filters:{
-            keyword: filterFactory.keyword()
-        },
+        // filters:{
+        //     keyword: filterFactory.keyword()
+        // },
 
         columns: [
             {
@@ -56,24 +56,24 @@ export const tableConfig = {
 
     partnerEmployee: {
 
-        tableName: "employee",
-        tableId: "table-02",
-        footerId: "footer-02",
-        api: "/api/employee/get/list/partner",
-        checkable: true,
-        idKey:"employeeId",
-        deleteUrl: "/api/employee/delete",
+        // tableName: "employee",
+        // tableId: "table-02",
+        // footerId: "footer-02",
+        // api: "/api/employee/get/list/partner",
+        // checkable: true,
+        // idKey:"employeeId",
+        // deleteUrl: "/api/employee/delete",
 
-        dataSource: {
-            type: "origin",
-            data: APP.cache.employeeOrigin
-        },
+        // dataSource: {
+        //     type: "origin",
+        //     data: APP.cache.employeeOrigin
+        // },
 
-        filters:{
-            companyId: filterFactory.equals("companyId")
-        },
+        // filters:{
+        //     companyId: filterFactory.equals("companyId")
+        // },
 
-        requiredFilters:["companyId"],
+        // requiredFilters:["companyId"],
 
         columns: [
             {

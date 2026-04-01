@@ -130,5 +130,17 @@ export const FormModel = {
         diff.version = base.version;
 
         return diff;
+    },
+
+    clear(form){
+        [...form.elements].forEach(el => {
+            if(!el.name) return;
+
+            if(el.type === "checkbox"){
+                el.checked = false;
+            }else{
+                el.value = "";
+            }
+        });
     }
 };
