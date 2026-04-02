@@ -1,15 +1,14 @@
 "use strict"
 
-
 export class TableModel {
 
     constructor(config){
-        this.config = config;
 
         this.originData = [];
         this.state = {};
-        this.filters = config.filters || {};
+        // this.filters = config.filters || {};
         this.requiredFilters = config.requiredFilters || [];
+        this.idKey = config.idKey;
 
         this.sortKey = null;
         this.sortDir = "asc";
@@ -19,6 +18,7 @@ export class TableModel {
         this.page = 1;
         this.pageSize = config.pageSize || 50;
 
+        this.index = null;
         this.result = [];
     }
 
@@ -27,10 +27,13 @@ export class TableModel {
     // -------------------------
     setOrigin(list){
         this.originData = list || [];
+        this.index = new Map(list.map(v => [String(v[this.idKey]), v]));
+        this.clearSelection();
     }
 
     set(key,value){
         this.state[key] = value;
+        this.page = 1;
     }
 
     toggleSort(field){
@@ -46,7 +49,6 @@ export class TableModel {
     // 計算
     // -------------------------
     compute(){
-
         for(const key of this.requiredFilters){
             if(this.state[key] == null){
                 this.result = [];
@@ -88,6 +90,9 @@ export class TableModel {
             if(av == null) return 1;
             if(bv == null) return -1;
 
+            if(typeof av === "number" && typeof bv === "number"){
+                return (av - bv) * dir;
+            }
             return String(av).localeCompare(String(bv)) * dir;
         });
     }
@@ -105,15 +110,16 @@ export class TableModel {
     }
 
     findById(id){
-        return this.originData.find(v =>
-            String(v[this.config.idKey]) === String(id)
-        );
+        return this.index.get(String(id));
+        // return this.originData.find(v =>
+        //     String(v[this.idKey]) === String(id)
+        // );
     }
 
     getViewData(){
         return this.result.map(v => ({
             ...v,
-            _selected: this.selected.has(v[this.config.idKey])
+            _selected: this.selected.has(v[this.idKey])
         }));
     }
 

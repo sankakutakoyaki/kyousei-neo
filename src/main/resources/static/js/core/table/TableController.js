@@ -130,23 +130,6 @@ export class TableController {
         });
     }
 
-    // // =========================
-    // // 新規
-    // // =========================
-    // openCreate(){
-    //     this.currentEntity = {};
-    //     this.isEdit = false;
-
-    //     const form = document.getElementById(this.formId);
-    //     FormModel.clear(form);
-
-    //     openFormDialog(this.formId, {
-    //         onSubmit: async (form) => {
-    //             await this.save(form);
-    //         }
-    //     });
-    // }
-
     // =========================
     // 削除（API連携）
     // =========================

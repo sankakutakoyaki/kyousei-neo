@@ -1,6 +1,6 @@
 "use strict"
 
-import { initTable } from "./initTable.js";
+// import { initTable } from "./initTable.js";
 import { initCombo } from "./initCombo.js";
 import { DataResolver } from "../data/DataResolver.js"
 import { setEnterFocus } from "../ui/enterfocus.js";
@@ -13,7 +13,7 @@ import { initFocus } from "./initFocus.js";
 export function initCommon(){
 
     // initControllers();
-    initTable();
+    // initTable();
 
     initCombo();
     initClick();

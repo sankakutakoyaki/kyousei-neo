@@ -2,31 +2,28 @@
 
 import { TableModel } from "./TableModel.js";
 import { renderTable } from "./tableRender.js";
+import { api } from "../api/apiService.js";
 
 export class DataTable {
 
     constructor(config){
-        this.config = config;
-        this.tableEl = document.getElementById(config.tableId);
-        this.model = new TableModel(config);
+        this.tableId = config.tableId;
+        this.columns = config.columns;
+        this.idKey = config.idKey;
+
+        this.checkable = config.checkable;
+        this.onRowClick = config.onRowClick;
+        this.onDoubleClick = config.onDoubleClick;
+
+        this.api = config.api || {};
+
+        this.tableEl = document.getElementById(this.tableId);
+        this.model = new TableModel({
+            idKey: this.idKey,
+            ...config.model
+        });
 
         this.initEvents();
-    }
-
-    async initData(){
-        const ds = this.config.dataSource;
-        if(!ds) return;
-
-        if(ds.type === "api"){
-            const res = await api.get(ds.url);
-            this.model.setOrigin(res.data);
-        }
-
-        if(ds.type === "origin"){
-            this.model.setOrigin(ds.data);
-        }
-
-        this.reload();
     }
 
     // -------------------------
@@ -49,7 +46,18 @@ export class DataTable {
         this.reload();
     }
 
-    reload(){
+    // reload(){
+    //     this.model.compute();
+    //     this.render();
+    // }
+    async reload(){
+
+        // APIがあれば取得
+        if(this.api.select){
+            const res = await api.get(this.api.select);
+            this.model.setOrigin(res.data);
+        }
+
         this.model.compute();
         this.render();
     }
@@ -57,7 +65,11 @@ export class DataTable {
     render(){
         renderTable(
             this.tableEl,
-            this.config,
+            {
+                columns: this.columns,
+                idKey: this.idKey,
+                checkable: this.checkable
+            },
             this.model.getViewData()
         );
     }
@@ -65,6 +77,43 @@ export class DataTable {
     sort(field){
         this.model.toggleSort(field);
         this.reload();
+    }
+
+    async deleteSelected(){
+        const ids = this.model.getSelectedIds();
+
+        if(ids.length === 0){
+            openMsgDialog("選択してください", "red");
+            return;
+        }
+        if(!this.api.delete) return;
+
+        openConfilmDialog("削除しますか？", "blue", async () => {
+            closeMsgDialog();
+            const result = await api.post(this.api.delete, { ids });
+            openMsgDialog(result.message, "blue");
+            await this.reload();
+        });
+    }
+
+    async downloadSelected(){
+        const ids = this.model.getSelectedIds();
+
+        if(ids.length === 0){
+            openMsgDialog("選択してください", "red");
+            return;
+        }
+        if(!this.api.download) return;
+
+        const res = await api.post(this.api.download, { ids });
+        const blob = res.data;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "download.csv";
+        a.click();
+
+        URL.revokeObjectURL(url);
     }
 
     // -------------------------
@@ -93,7 +142,7 @@ export class DataTable {
             const data = this.model.getData();
             if(chkAll.checked){
                 data.forEach(v=>{
-                    this.model.selected.add(v[this.config.idKey]);
+                    this.model.selected.add(v[this.idKey]);
                 });
             }else{
                 this.model.clearSelection();
@@ -115,10 +164,10 @@ export class DataTable {
             const row = e.target.closest("[data-id]");
             if(!row) return;
 
-            if(this.config.onRowClick){
+            if(this.onRowClick){
                 const id = row.dataset.id;
                 const item = this.model.findById(id);
-                this.config.onRowClick(item, row, e);
+                this.onRowClick(item, row, e);
             }
         });
 
@@ -127,10 +176,10 @@ export class DataTable {
             const row = e.target.closest("[data-id]");
             if(!row) return;
 
-            if(this.config.onDoubleClick){console.log("handler exists");
+            if(this.onDoubleClick){
                 const id = row.dataset.id;
                 const item = this.model.findById(id);
-                this.config.onDoubleClick(item, row, e);
+                this.onDoubleClick(item, row, e);
             }
         });
     }
