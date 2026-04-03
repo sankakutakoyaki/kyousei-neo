@@ -45,6 +45,10 @@ export class DataTable {
             }
         });
 
+        if(config.data){
+            this.model.setOrigin(config.data);
+        }
+
         this.initEvents();
     }
 

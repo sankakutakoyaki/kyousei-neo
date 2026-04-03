@@ -5,9 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Enums.HistoryTables;
-import com.kyouseipro.neo.corporation.company.dto.CompanyRequest;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
 import com.kyouseipro.neo.corporation.company.repository.CompanyRepository;
 import com.kyouseipro.neo.dto.CsvExporter;

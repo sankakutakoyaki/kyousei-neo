@@ -1,6 +1,8 @@
 "use strict"
 
 import { convertKey } from "../ui/keyCaseConverter.js"
+import { normalizeValue, getOptions } from "../behavior/valueNormalizer.js";
+
 
 export const FormModel = {
 
@@ -18,37 +20,19 @@ export const FormModel = {
             const el = elRaw instanceof RadioNodeList ? elRaw[0] : elRaw;
             if(!el) continue;
 
-            let v = value;
-
             const key =
                 el.dataset.key ||
                 convertKey(name, "kebab", "camel");
 
             const oldValue = base[key];
 
-            // trim
-            if(typeof v === "string" && !("noTrim" in el.dataset)){
-                v = v.trim();
-            }
+            let v;
 
-            // 空 → null
-            if(v === ""){
-                v = null;
-            }
-
-            // checkbox
+            // checkboxだけ別
             if(el.type === "checkbox"){
                 v = el.checked;
-            }
-
-            // number
-            if("number" in el.dataset && v !== null){
-                v = Number(v);
-            }
-
-            // 0 → null
-            if("zeroToNull" in el.dataset && v === 0){
-                v = null;
+            } else {
+                v = normalizeValue(value, getOptions(el));
             }
 
             // skip null（新規未入力）
@@ -97,17 +81,46 @@ export const FormModel = {
             if(el.type === "checkbox"){
                 el.checked = !!value;
             }else{
-                el.value = value ?? "";
+
+                let v = value;
+
+                // ★ 表示用の最小変換だけ
+                if("zeroToNull" in el.dataset && (v === 0 || v === "0")){
+                    v = null;
+                }
+
+                el.value = v ?? "";
             }
         });
     },
 
-    // ------------------------
-    // normalize
-    // ------------------------
-    normalize(v){
-        return v === "" || v === undefined ? null : v;
-    },
+    // // ------------------------
+    // // normalize
+    // // ------------------------
+    // normalizeValue(v, el){
+
+    //     // trim
+    //     if(typeof v === "string" && !("noTrim" in el.dataset)){
+    //         v = v.trim();
+    //     }
+
+    //     // 空 → null
+    //     if(v === ""){
+    //         v = null;
+    //     }
+
+    //     // number
+    //     if("number" in el.dataset && v !== null){
+    //         v = Number(v);
+    //     }
+
+    //     // zeroToNull
+    //     if("zeroToNull" in el.dataset && (v === 0 || v === "0")){
+    //         v = null;
+    //     }
+
+    //     return v;
+    // },
 
     // ------------------------
     // save
@@ -126,7 +139,7 @@ export const FormModel = {
             return null;
         }
 
-        diff.id = base[key];
+        diff[key] = base[key];
         diff.version = base.version;
 
         return diff;

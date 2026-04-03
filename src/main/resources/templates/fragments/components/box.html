@@ -16,7 +16,7 @@
             <input
                 class="normal-input"
                 th:type="${data['type'] != null ? data['type'] : 'text'}"
-                th:attr="
+                th:attr="data-test=${data},
                     id=${data['id']},
                     name=${data['name']},
                     placeholder=${data['placeholder']},
@@ -26,10 +26,10 @@
                     data-resolve-id=${data['resolveId']},
                     data-resolve-name=${data['resolveName']},
                     tabindex=${data['index']},
-                    data-trim=${data['trim'] != null ? '' : null},
-                    data-number=${data['number'] != null ? '' : null},
-                    data-skip-if-null=${data['skipIfNull'] != null ? '' : null},
-                    data-zero-to-null=${data['zeroToNull'] != null ? '' : null}
+                    data-trim=${data['trim'] != null ? 'true' : null},
+                    data-number=${data['number'] != null ? 'true' : null},
+                    data-skip-if-null=${data['skipIfNull'] != null ? 'true' : null},
+                    data-zero-to-null=${data['zeroToNull'] != null ? 'true' : null}
                 ">
         </div>
     </th:block>
@@ -46,7 +46,7 @@
                 id=${data['id']},
                 name=${data['name']},
                 data-target=${data['target']},
-                data-field=${data['field']},
+                data-key=${data['key']},
                 data-action=${data['action']},
                 data-combo=${data['combo']},
                 data-top=${data['top']},

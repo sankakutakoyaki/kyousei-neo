@@ -15,7 +15,8 @@ export class FormController {
             formId,
             key,
             api = {},
-            onSaved = null
+            onSaved = null,
+            controller = {},
         } = config;
 
         if(!formId) throw new Error("formId is required");
@@ -25,6 +26,7 @@ export class FormController {
         this.key = key;
         this.api = api;
         this.onSaved = onSaved;
+        this.controller = controller;
 
         this.currentEntity = null;
     }
@@ -40,6 +42,10 @@ export class FormController {
             data = res.data;
         }
 
+        if(this.controller?.state?.companyId){
+            data.companyId = this.controller.state.companyId;
+        }
+
         this.currentEntity = data;
 
         const form = document.getElementById(this.formId);
@@ -48,6 +54,9 @@ export class FormController {
         openFormDialog(this.formId, {
             onSubmit: async (form) => {
                 await this.save(form);
+            },
+            onReset: () => {
+                this.clear(); 
             }
         });
     }
@@ -57,6 +66,7 @@ export class FormController {
         if(!validate(form)) return;
 
         const payload = FormModel.buildPayload(form, this.currentEntity, this.key);
+
         if(payload === null){
             openMsgDialog("変更がありません", "red");
             return;

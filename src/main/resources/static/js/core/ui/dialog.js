@@ -7,30 +7,12 @@ import { resetEnterFocus } from "./enterfocus.js";
  * @param {*} dialogId 
  * @returns 
  */
-// export function openFormDialog(dialogId, callback = null) {
-//     const form = dialogId instanceof HTMLElement ? dialogId: document.getElementById(dialogId);
-//     if (form == null) return;
-
-//     // フォームエリアにダイアログクラスを付与する
-//     const area = document.getElementById('form-dialog-area');
-//     if (area == null) return;
-//     area.classList.add('dialog');
-
-//     // フォーム画面から[none]クラスを取り除く
-//     form.classList.remove('none');
-
-//     const el = area.querySelector('[autofocus]');
-//     if (el) el.focus();
-    
-//     setFooterButtons(form, true, callback, () => closeFormDialog(dialogId));
-
-//     setInertState(true);
-//     resetEnterFocus();
-// }
 export function openFormDialog(dialogId, options = {}) {
 
     const form = document.getElementById(dialogId);
     if (!form) return;
+
+    form.onReset = options.onReset;
 
     const area = document.getElementById('form-dialog-area');
     if (!area) return;
@@ -72,6 +54,11 @@ export function closeFormDialog(dialogId, e) {
 
     // 要素のクリック禁止を解除する
     setInertState(false);
+
+    // 閉じる時にデータを消去する
+    if(typeof form.onReset === "function"){
+        form.onReset();
+    }
 }
 
 /**

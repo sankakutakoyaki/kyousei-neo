@@ -11,7 +11,7 @@ export function dispatchAction(e){
 // UI操作はコントローラー不要なので処理を分ける
 const uiActions = {
     tab: handleTab,
-    "select-on-focus": (el) => el.select()
+    "select-on-focus": handleSelectOnFocus
 };
 
 export function runAction(el, e){
@@ -82,4 +82,9 @@ function handleTab(el){
     if(target){
         target.classList.add("is-show");
     }
+}
+
+function handleSelectOnFocus(el, e){
+    if(e.type !== "focusin") return;
+    el.select();
 }

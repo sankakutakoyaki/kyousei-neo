@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.common.response.SimpleResponse;
-import com.kyouseipro.neo.corporation.company.dto.CompanyRequest;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
 import com.kyouseipro.neo.corporation.company.service.CompanyService;
 import com.kyouseipro.neo.dto.IdListRequest;
@@ -70,11 +69,6 @@ public class CompanyApiController {
      * @param IDS
      * @return 
      */
-    // @PostMapping("/download/csv")
-	// @ResponseBody
-    // public String downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
-    //     return companyService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
-    // }
     @PostMapping(value = "/download/csv", produces = "text/csv")
     public ResponseEntity<byte[]> downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
         String csv = companyService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));

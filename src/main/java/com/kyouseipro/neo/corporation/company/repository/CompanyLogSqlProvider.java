@@ -3,7 +3,6 @@ package com.kyouseipro.neo.corporation.company.repository;
 import java.util.List;
 import java.util.Map;
 
-import com.kyouseipro.neo.common.Enums.state;
 import com.kyouseipro.neo.interfaces.LogSqlProvider;
 
 public class CompanyLogSqlProvider implements LogSqlProvider {

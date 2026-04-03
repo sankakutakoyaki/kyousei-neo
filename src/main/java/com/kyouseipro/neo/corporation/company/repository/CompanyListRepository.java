@@ -41,7 +41,7 @@ public class CompanyListRepository {
     public List<CompanyListResponse> findAllClient() {
         return sqlRepository.queryList(
             """
-            SELECT * FROM companies WHERE NOT (state = ?) AND NOT (category = ? OR category = ?) ORDER BY category, name_kana;
+            SELECT * FROM companies WHERE NOT (state = ?) AND NOT (category = ? OR category = ?) ORDER BY category;
             """,
             (ps, v) -> {
                 int index = 1;
@@ -61,7 +61,7 @@ public class CompanyListRepository {
     public List<CompanyListResponse> findAllPartner() {
         return sqlRepository.queryList(
             """
-            SELECT * FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana
+            SELECT * FROM companies WHERE NOT (state = ?) AND category = ?;
             """,
             (ps, v) -> {
                 int index = 1;
@@ -80,7 +80,7 @@ public class CompanyListRepository {
     public List<CompanyListResponse> findByCategoryId(int id) {
         return sqlRepository.queryList(
             """
-            SELECT * FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana
+            SELECT * FROM companies WHERE NOT (state = ?) AND category = ?;
             """,
             (ps, v) -> {
                 int index = 1;
@@ -118,7 +118,7 @@ public class CompanyListRepository {
     public List<SimpleData> findAllCombo() {
         return sqlRepository.queryList(
             """
-            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) ORDER BY category, name_kana;
+            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) ORDER BY category;
             """,
             (ps, v) -> {
                 int index = 1;
@@ -136,7 +136,7 @@ public class CompanyListRepository {
     public List<SimpleData> findAllClientCombo() {
         return sqlRepository.queryList(
             """
-            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND NOT (category = ? OR category = ?) ORDER BY name_kana;
+            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND NOT (category = ? OR category = ?);
             """,
             (ps, v) -> {
                 int index = 1;
@@ -156,7 +156,7 @@ public class CompanyListRepository {
     public List<SimpleData> findAllPartnerCombo() {
         return sqlRepository.queryList(
             """
-            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana, category;
+            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ?;
             """,
             (ps, v) -> {
                 int index = 1;
@@ -175,7 +175,7 @@ public class CompanyListRepository {
     public List<SimpleData> findAllPrimeConstractorCombo() {
         return sqlRepository.queryList(
             """
-            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana, category;
+            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ?;
             """,
             (ps, v) -> {
                 int index = 1;
@@ -194,7 +194,7 @@ public class CompanyListRepository {
     public List<SimpleData> findAllPrimeConstractorComboHasOriginalPrice() {
         return sqlRepository.queryList(
             """
-            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? AND is_original_price = ? ORDER BY name_kana, category;
+            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? AND is_original_price = ?;
             """,
             (ps, v) -> {
                 int index = 1;
@@ -214,7 +214,7 @@ public class CompanyListRepository {
     public List<SimpleData> findAllComboByCategory(int category) {
         return sqlRepository.queryList(
             """
-            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ? ORDER BY name_kana;
+            SELECT company_id as number, name as text FROM companies WHERE NOT (state = ?) AND category = ?;
             """,
             (ps, v) -> {
                 int index = 1;

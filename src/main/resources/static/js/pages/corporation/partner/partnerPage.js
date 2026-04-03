@@ -6,6 +6,7 @@ import { DataTable } from "../../../core/table/DataTable.js";
 import { createPartnerCompanyColumns, createPartnerEmployeeColumns } from "./columns.js";
 import { FormController } from "../../../controllers/FormController.js";
 import { registerController } from "../../../controllers/controllers.js";
+import { filterFactory } from "../../../util/filterFactory.js";
 
 window.addEventListener("load", () => {
 
@@ -14,6 +15,7 @@ window.addEventListener("load", () => {
     const company = partnerCompanyPage();    
     company.init({
         columns: createPartnerCompanyColumns(company),
+        data: APP.cache.companyOrigin,
         components: {
             combo: true
         }
@@ -23,6 +25,7 @@ window.addEventListener("load", () => {
     const employee = partnerEmployeePage();    
     employee.init({
         columns: createPartnerEmployeeColumns(employee),
+        data: APP.cache.employeeOrigin,
         components: {
             combo: true
         }
@@ -85,6 +88,11 @@ export const partnerEmployeePage = () => {
                     delete: "/api/employee/delete",
                     download: "/api/employee/download/csv"
                 },
+                model: {
+                    filters: {
+                        companyId: filterFactory.equals("companyId")
+                    }
+                },
                 onDoubleClick: (item) => controller.openEdit(item[controller.key]),
             })
         },
@@ -92,6 +100,7 @@ export const partnerEmployeePage = () => {
             create: (controller) => new FormController({
                 formId: "form-02",
                 key: controller.key,
+                controller: controller, 
                 onSaved: async (id) => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);

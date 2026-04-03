@@ -20,8 +20,6 @@ import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
 import com.kyouseipro.neo.corporation.company.service.CompanyListService;
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
 import com.kyouseipro.neo.corporation.staff.entity.StaffEntity;
-import com.kyouseipro.neo.corporation.staff.entity.StaffListEntity;
-import com.kyouseipro.neo.corporation.staff.service.StaffListService;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeListEntity;
 import com.kyouseipro.neo.personnel.employee.service.EmployeeListService;

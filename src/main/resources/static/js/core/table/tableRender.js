@@ -3,6 +3,7 @@
 import { clearElement } from "../dom/clearElement.js";
 import { setPageTopButton } from "../dom/pageTopButton.js";
 import { formatDate } from "../../util/time.js";
+import { normalizeValue } from "../behavior/valueNormalizer.js";
 
 
 export function renderTable(table, config, list){
@@ -58,9 +59,6 @@ export function createRow(tr, item, config){
 
         const id = item[config.idKey];
         // 状態反映
-        // chk.checked = dataTable.model.isSelected(id);
-        // chk.dataset.id = item[config.idKey];
-        // chk.dataset.id = id;
         chk.checked = item._selected ?? false;
         chk.dataset.id = id;
 
@@ -85,7 +83,8 @@ export function createRow(tr, item, config){
         }
         // field指定
         else if(col.field){
-            let value = item[col.field];
+            
+            let value = normalizeValue(item[col.field], col);
             if(value == null){
                 value = col.default ?? "";
             }

@@ -97,20 +97,23 @@
 
 <th:block th:fragment="form02Fragment()">
     <div class="dialog-content" data-enterfocus="form-02">
-        <!-- アカウント -->
-        <div class="form-row">
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+        <!-- 会社名 -->
+        <div class="form-row" data-resolve="company">
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 { 
-                    'text': 'アカウント', 
-                    'name': 'account', 
-                    'placeholder': 'example@kyouseibin.com',
-                    'index': 1 
+                    'text': '会社名', 
+                    'combo': 'companyComboList',
+                    'top': '-----',
+                    'name': 'company-id', 
+                    'resolveName':true,
+                    'index': 3,
+                    'zeroToNull': true
                 }
-            })}"></th:block>            
+            })}"></th:block>
         </div>
         <!-- コード -->
-        <!-- 会社名 -->
-        <div class="form-row" data-resolve="company">,
+        <!-- アカウント -->
+        <div class="form-row">
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
                     'text': 'コード', 
@@ -120,20 +123,18 @@
                     'placeholder': '0000',
                     'resolveId':true,
                     'index': 2,
-                    'seroToNull': true
-                }
-            })}"></th:block>
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                { 
-                    'text': '会社名', 
-                    'combo': 'companyComboList',
-                    'top': '-----',
-                    'name': 'company', 
-                    'resolveName':true,
-                    'index': 3,
+                    'number': true,
                     'zeroToNull': true
                 }
             })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': 'アカウント', 
+                    'name': 'account', 
+                    'placeholder': 'example@kyouseibin.com',
+                    'index': 1 
+                }
+            })}"></th:block>            
         </div>
         <!-- 氏名 -->
          <!-- かな -->
@@ -235,7 +236,8 @@
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 { 
                     'text': '性別', 
-                    'name': 'gender', 
+                    'name': 'gender',
+                    'combo': 'genderComboList',
                     'index': 13,
                     'zeroToNull': true
                 }
@@ -243,7 +245,8 @@
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 { 
                     'text': '血液型', 
-                    'name': 'blood-type', 
+                    'name': 'blood-type',
+                    'combo': 'bloodTypeComboList',
                     'index': 14,
                     'zeroToNull': true
                 }

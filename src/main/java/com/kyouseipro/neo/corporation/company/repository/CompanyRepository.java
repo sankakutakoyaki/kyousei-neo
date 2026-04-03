@@ -7,13 +7,11 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Enums.SqlMode;
-import com.kyouseipro.neo.corporation.company.dto.CompanyRequest;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
 import com.kyouseipro.neo.corporation.company.mapper.CompanyEntityMapper;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.sql.SqlBuilder;
 import com.kyouseipro.neo.dto.sql.SqlResult;
-import com.kyouseipro.neo.dto.sql.SqlService;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.interfaces.LogSqlProvider;
 
@@ -83,16 +81,6 @@ public class CompanyRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    // public int insert(Map<String, Object> req, String editor) {
-    //     String sql = CompanySqlBuilder.buildBulkInsert(req);
-
-    //     return sqlRepository.insert(
-    //         sql,
-    //         (ps, en) -> CompanyParameterBinder.bindBulkInsert(ps, en, editor),
-    //         rs ->  rs.getInt("company_id"),
-    //         entity
-    //     );
-    // }
     public int insert(Map<String, Object> req, String editor) {
         req.put("editor", editor);
         req.putIfAbsent("category", Enums.clientCategory.PARTNER.getCode());
@@ -116,17 +104,6 @@ public class CompanyRepository {
      * @param entity
      * @return 成功件数を返す。
      */
-    // public int update(Map<String, Object> req, String editor) {
-    //     String sql = CompanySqlBuilder.buildBulkUpdate(req);
-
-    //     int count = sqlRepository.updateRequired(
-    //         sql,
-    //         (ps, e) -> CompanyParameterBinder.bindBulkUpdate(ps, e, editor),
-    //         entity
-    //     );
-
-    //     return count;
-    // }
     public int update(Map<String, Object> req, String editor) {
         req.put("editor", editor);
         SqlResult result = SqlBuilder.buildSqlWithLog(
@@ -173,21 +150,6 @@ public class CompanyRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    // public int deleteByIds(IdListRequest list, String editor) {
-    //     String sql = CompanySqlBuilder.buildDeleteByIds(list.getIds().size());
-
-    //     if (list == null || list.getIds().isEmpty()) {
-    //         throw new IllegalArgumentException("削除対象が指定されていません");
-    //     }
-
-    //     int count = sqlRepository.updateRequired(
-    //         sql,
-    //         (ps, e) -> CompanyParameterBinder.bindDeleteByIds(ps, e.getIds(), editor),
-    //         list
-    //     );
-
-    //     return count;
-    // }
     public int deleteByIds(IdListRequest list, String editor) {
 
         SqlResult result = SqlBuilder.buildDeleteByIds(

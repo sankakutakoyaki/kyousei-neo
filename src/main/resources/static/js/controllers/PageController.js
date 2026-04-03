@@ -1,15 +1,14 @@
 "use strict"
 
-// import { openMsgDialog, closeMsgDialog, openConfilmDialog, closeFormDialog } from "../core/ui/dialog.js";
-// import { api } from "../core/api/apiService.js";
-// import { FormController } from "./FormController.js";
 import { initCombo } from "../core/init/initCombo.js";
+import { smartFilterHandler } from "../core/behavior/filterHandler.js";
 
 export class PageController {
 
     constructor(config){
         this.config = Object.freeze(config);
         this.key = config.key;
+        this.state = {};
 
         this.dataTable = null;
         this.form = null;
@@ -20,10 +19,7 @@ export class PageController {
                 controller.dataTable.set("keyword", el.value);
             },
 
-            filter: (controller, el) => {
-                const key = el.dataset.key;
-                controller.dataTable.set(key, el.value);
-            },
+            filter: smartFilterHandler,
 
             delete: async (controller) => {
                 await controller.deleteSelected();
@@ -35,28 +31,40 @@ export class PageController {
         };
     }
 
-    init(options = {}){
-        this.initComponents(options);
-        this.initUI(options.components);
+    init(config = {}){
+        this.config = {
+            ...this.config,
+            ...config
+        };
+        this.initComponents();
+        this.initUI();
     }
 
-    initComponents({ columns } = {}){
+    initComponents(){
+
+        const { columns, data } = this.config;
+
         if(this.config.table){
             this.dataTable = this.config.table.create(this, columns);
-            this.dataTable.initData();
+            if(data){
+                this.dataTable.model.setOrigin(data);
+                this.dataTable.reload();
+            } else {
+                this.dataTable.initData(); // API
+            }
         }
         if(this.config.form){
             this.form = this.config.form.create(this);
         }
     }
 
-    initUI(components = {}){
+    initUI(){
 
-        if(components.combo) initCombo();
-        // if(components.focus) initFocus();
+        const { components } = this.config;
 
-        // setEnterFocus();
-        // DataResolver.init();
+        if(components?.combo){
+            initCombo();
+        }
     }
 
     // -------------------------

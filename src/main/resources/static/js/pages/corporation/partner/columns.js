@@ -4,14 +4,14 @@ export const createPartnerCompanyColumns = (controller) => [
     {
         field: "companyId",
         label: "ID",
-        sortable:true,
+        sortable: true,
         class: "link-cell",
         format: (v) => String(v).padStart(4, "0")
     },
     {
         field: "nameKana",
         label: "名前",
-        sortable:true,
+        sortable: true,
         render: (item) => `
             <span class="kana">${item.nameKana ?? "-----"}</span><br>
             <span>${item.name}</span>
@@ -20,13 +20,13 @@ export const createPartnerCompanyColumns = (controller) => [
     {
         field: "telNumber",
         label: "電話番号",
-        sortable:true,
+        sortable: true,
         default: "登録なし"
     },
     {
         field: "email",
         label: "メールアドレス",
-        sortable:true,
+        sortable: true,
         default: "登録なし"
     }
 ];
@@ -35,14 +35,15 @@ export const createPartnerEmployeeColumns = (controller) => [
     {
         field: "employeeId",
         label: "ID",
-        sortable:true,
+        sortable: true,
         class: "link-cell",
         format: (v) => String(v).padStart(4, "0")
     },
     {
         field: "code",
         label: "コード",
-        sortable:true,
+        sortable: true,
+        zeroToNull: true,
         default: ""
     },
     {
@@ -57,13 +58,13 @@ export const createPartnerEmployeeColumns = (controller) => [
     {
         field: "phoneNumber",
         label: "携帯番号",
-        sortable:true,
+        sortable: true,
         default: "登録なし"
     },
     {
         field: "companyName",
         label: "会社名",
-        sortable:true,
+        sortable: true,
         default: "登録なし"
     }
 ];

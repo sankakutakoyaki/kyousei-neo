@@ -3,10 +3,8 @@ package com.kyouseipro.neo.corporation.company.repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.kyouseipro.neo.common.Utilities;
-import com.kyouseipro.neo.corporation.company.dto.CompanyRequest;
 import com.kyouseipro.neo.dto.sql.SqlResult;
 import com.kyouseipro.neo.dto.sql.SqlService;
 

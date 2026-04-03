@@ -75,7 +75,7 @@ public class SqlBuilder {
 
                 String key = entry.getKey();
 
-                if (key.equals(idKey) || key.equals(versionKey)) continue;
+                if (key.equals(idKey) || key.equals(versionKey) || key.equals("editor")) continue;
 
                 sets.add(toSnake(key) + " = ?");
                 params.add(entry.getValue());
