@@ -11,25 +11,25 @@
     <main layout:fragment="content">
         <div class="tab-area">
             <ul class="tab-menu">
-                <li class="tab-menu-item is-active" data-action="tab" data-group="partner-tabs" data-target="tab-01">施工店</li>
-                <li class="tab-menu-item" data-action="tab" data-group="partner-tabs" data-target="tab-02">担当者</li>
+                <li class="tab-menu-item is-active" data-action="tab" data-group="partner-tabs" data-tab="tab-01">施工店</li>
+                <li class="tab-menu-item" data-action="tab" data-group="partner-tabs" data-tab="tab-02">担当者</li>
             </ul>
             <div class="tab-panel is-show" id="tab-01" data-tab-content="partner-tabs">
-                <div class="table-area">
+                <div class="table-area" data-controller="partnerCompany">
                     <!-- ヘッダー -->
                     <div th:replace="~{fragments/pages/corporation/partner/header :: header01Fragment()}"></div>
                     <!-- コンテンツ -->
-                    <div th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01', 'partnerCompany')}"></div>
+                    <div th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01')}"></div>
                     <!-- フッター -->
                     <div th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></div>
                 </div>
             </div>
             <div class="tab-panel" id="tab-02" data-tab-content="partner-tabs">
-                <div class="table-area">
+                <div class="table-area" data-controller="partnerEmployee">
                     <!-- ヘッダー -->
                     <div th:replace="~{fragments/pages/corporation/partner/header :: header02Fragment()}"></div>
                     <!-- コンテンツ -->
-                    <div th:replace="~{fragments/table/body :: normalFragment('table-header-02', 'table-02', 'partnerEmployee')}"></div>
+                    <div th:replace="~{fragments/table/body :: normalFragment('table-header-02', 'table-02')}"></div>
                     <!-- フッター -->
                     <div th:replace="~{fragments/table/footer :: datetimeFragment('footer-02')}"></div>
                 </div>
@@ -38,7 +38,7 @@
         <!-- </main> -->
         <div id="form-dialog-area">
             <!-- フォーム画面をここに記入する -->
-            <form id="form-01" class="form-dialog none">
+            <form id="form-01" class="form-dialog none" data-controller="partnerCompany">
                 <div class="dialog-main">
                     <!-- ヘッダー -->
                     <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '施工店登録'} })}"></div>
@@ -48,7 +48,7 @@
                     <div th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></div>
                 </div>
             </form>
-            <form id="form-02" class="form-dialog none">
+            <form id="form-02" class="form-dialog none" data-controller="partnerEmployee">
                 <div class="dialog-main">
                     <!-- ヘッダー -->
                     <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '担当者登録'} })}"></div>

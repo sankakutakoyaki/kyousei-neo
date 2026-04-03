@@ -4,57 +4,6 @@ import { clearElement } from "../dom/clearElement.js";
 import { setPageTopButton } from "../dom/pageTopButton.js";
 import { formatDate } from "../../util/time.js";
 
-// export function renderTable(
-//     table,
-//     config,
-//     list,
-//     dataTable
-// ){
-//     // テーブル初期化
-//     clearElement(table);
-
-//     const el = table.closest('.normal-table');
-//     renderHeader(el, config);
-
-//     if (!list) return;
-//     list.forEach(item=>{
-//         const row = table.insertRow();
-//         row.dataset.id = item[config.idKey];
-//         row.setAttribute("name", "data-row");
-
-//         createRow(row, item, config, dataTable);
-//     });
-
-//     createTableFooter(config.footerId, list)
-//     setPageTopButton(table);
-
-//     const header = el?.querySelector('[name="table-header"]');
-//     if (header) toggleScrollbar(header);
-// }
-
-// export function renderTable(table, config, list){
-//     table.innerHTML = "";
-
-//     list.forEach(item=>{
-//         const tr = document.createElement("tr");
-//         tr.dataset.id = item[config.idKey];
-
-//         for(const col of config.columns){
-//             const td = document.createElement("td");
-
-//             if(col.render){
-//                 td.innerHTML = col.render(item);
-//             }else{
-//                 let value = item[col.field];
-//                 if(value == null) value = col.default ?? "";
-//                 if(col.format) value = col.format(value);
-//                 td.textContent = value;
-//             }
-//             tr.appendChild(td);
-//         }
-//         table.appendChild(tr);
-//     });
-// }
 
 export function renderTable(table, config, list){
 
@@ -76,7 +25,7 @@ export function renderTable(table, config, list){
         tr.dataset.id = item[config.idKey];
         tr.setAttribute('name', 'data-row');
 
-        createRow(tr, item, config); // ★ここ使う
+        createRow(tr, item, config);
 
         table.appendChild(tr);
     });
@@ -190,7 +139,6 @@ export function renderHeader(tableEl,config,list){
 
 /**
  * フッターの件数項目を更新する
- * @param {テーブル自身} tbl 
  */
 export function createTableFooter(footerId, list) {
     clearElement(footerId);
@@ -202,9 +150,6 @@ export function createTableFooter(footerId, list) {
 
 /**
  * テーブルにスクロールバーが表示された時にクラスを付与する
- * @param {*} element 
- * @param {*} className 
- * @returns 
  */
 export function toggleScrollbar(element, className = 'has-scrollbar') {
     if (!element) return;

@@ -3,36 +3,42 @@
 import { initCommon } from "../../../core/init/initPage.js";
 import { PageController } from "../../../controllers/PageController.js";
 import { DataTable } from "../../../core/table/DataTable.js";
-import { createPartnerCompanyColumns } from "./columns.js";
+import { createPartnerCompanyColumns, createPartnerEmployeeColumns } from "./columns.js";
 import { FormController } from "../../../controllers/FormController.js";
+import { registerController } from "../../../controllers/controllers.js";
 
 window.addEventListener("load", () => {
 
-    initCommon();
-    const page = partnerPage();
-    page.init({
-        columns: createPartnerCompanyColumns(page)
-    });
-    page.refresh();
+    initCommon();  
 
+    const company = partnerCompanyPage();    
+    company.init({
+        columns: createPartnerCompanyColumns(company),
+        components: {
+            combo: true
+        }
+    });
+    registerController("partnerCompany", company);
+
+    const employee = partnerEmployeePage();    
+    employee.init({
+        columns: createPartnerEmployeeColumns(employee),
+        components: {
+            combo: true
+        }
+    });
+    registerController("partnerEmployee", employee);
 });
 
-export const partnerPage = () => {
+export const partnerCompanyPage = () => {
 
     const controller = new PageController({
-        // tableId:"table-01",
-        // formId:"form-01",
         key:"companyId",
-
-        // findUrl: "/api/company/get/id",
-        // selectUrl: "/api/partner/get/list",
-        // deleteUrl: "/api/company/delete",
-        // downloadUrl: "/api/company/download/csv",
-        // saveUrl: "/api/company/save",
 
         table: {
             create: (controller, columns) => new DataTable({
                 tableId: "table-01",
+                footerId: "footer-01",
                 columns,
                 idKey: controller.key,
                 checkable: true,
@@ -41,23 +47,59 @@ export const partnerPage = () => {
                     delete: "/api/company/delete",
                     download: "/api/company/download/csv"
                 },
-                model: {
-                    // requiredFilters: ["companyId"],
-                    pageSize: 100
-                },
-                onDoubleClick: (item) => controller.openEdit(item[controller.key])
+                onDoubleClick: (item) => controller.openEdit(item[controller.key]),
             })
         },
         form: {
             create: (controller) => new FormController({
                 formId: "form-01",
                 key: controller.key,
+                onSaved: async (id) => {
+                    await controller.dataTable.refresh();
+                    controller.scrollToRow(id);
+                },
                 api: {
                     find: "/api/company/get/id",
                     save: "/api/company/save"
                 }
-                // findUrl: controller.findUrl,
-                // saveUrl: controller.saveUrl
+            })
+        }
+    });
+    return controller;
+};
+
+export const partnerEmployeePage = () => {
+
+    const controller = new PageController({
+        key:"employeeId",
+
+        table: {
+            create: (controller, columns) => new DataTable({
+                tableId: "table-02",
+                footerId: "footer-02",
+                columns,
+                idKey: controller.key,
+                checkable: true,
+                api: {
+                    select: "/api/employee/get/list",
+                    delete: "/api/employee/delete",
+                    download: "/api/employee/download/csv"
+                },
+                onDoubleClick: (item) => controller.openEdit(item[controller.key]),
+            })
+        },
+        form: {
+            create: (controller) => new FormController({
+                formId: "form-02",
+                key: controller.key,
+                onSaved: async (id) => {
+                    await controller.dataTable.refresh();
+                    controller.scrollToRow(id);
+                },
+                api: {
+                    find: "/api/employee/get/id",
+                    save: "/api/employee/save"
+                }
             })
         }
     });

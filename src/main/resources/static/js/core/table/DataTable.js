@@ -3,6 +3,16 @@
 import { TableModel } from "./TableModel.js";
 import { renderTable } from "./tableRender.js";
 import { api } from "../api/apiService.js";
+import { filterFactory } from "../../util/filterFactory.js";
+import { openMsgDialog, openConfilmDialog, closeMsgDialog } from "../ui/dialog.js";
+import { formatDate } from "../../util/time.js";
+
+const defaultModel = {
+    pageSize: 50,
+    filters: {
+        keyword: filterFactory.keyword()
+    }
+};
 
 export class DataTable {
 
@@ -10,6 +20,7 @@ export class DataTable {
         this.tableId = config.tableId;
         this.columns = config.columns;
         this.idKey = config.idKey;
+        this.footerId = config.footerId;
 
         this.checkable = config.checkable;
         this.onRowClick = config.onRowClick;
@@ -18,9 +29,20 @@ export class DataTable {
         this.api = config.api || {};
 
         this.tableEl = document.getElementById(this.tableId);
+        
+        const userModel = config.model || {};
+
         this.model = new TableModel({
             idKey: this.idKey,
-            ...config.model
+
+            // デフォルト + 上書き
+            ...defaultModel,
+            ...userModel,
+
+            filters: {
+                ...defaultModel.filters,
+                ...(userModel.filters || {})
+            }
         });
 
         this.initEvents();
@@ -46,20 +68,27 @@ export class DataTable {
         this.reload();
     }
 
-    // reload(){
-    //     this.model.compute();
-    //     this.render();
-    // }
-    async reload(){
+    // 初期表示
+    async initData(){
+        await this.fetch();
+        this.reload();
+    }
 
-        // APIがあれば取得
-        if(this.api.select){
-            const res = await api.get(this.api.select);
-            this.model.setOrigin(res.data);
-        }
+    async fetch(){
+        if(!this.api.select) return;
 
+        const res = await api.get(this.api.select);
+        this.model.setOrigin(res.data);
+    }
+
+    reload(){
         this.model.compute();
         this.render();
+    }
+
+    async refresh(){
+        await this.fetch();
+        this.reload();
     }
 
     render(){
@@ -68,6 +97,7 @@ export class DataTable {
             {
                 columns: this.columns,
                 idKey: this.idKey,
+                footerId: this.footerId,
                 checkable: this.checkable
             },
             this.model.getViewData()
@@ -92,7 +122,7 @@ export class DataTable {
             closeMsgDialog();
             const result = await api.post(this.api.delete, { ids });
             openMsgDialog(result.message, "blue");
-            await this.reload();
+            await this.refresh();
         });
     }
 
@@ -110,7 +140,7 @@ export class DataTable {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "download.csv";
+        a.download = `download_${formatDate(new Date(), "yyyyMMddHHmmss")}.csv`;
         a.click();
 
         URL.revokeObjectURL(url);

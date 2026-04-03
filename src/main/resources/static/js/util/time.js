@@ -3,7 +3,7 @@
 export function formatDate(date = new Date(), format = "yyyy-MM-dd"){
 
     const d = (date instanceof Date) ? date : new Date(date);
-    if (isNaN(d)) return "";
+    if (isNaN(d.getTime())) return "";
 
     const pad = (n, len = 2) => String(n).padStart(len, "0");
 

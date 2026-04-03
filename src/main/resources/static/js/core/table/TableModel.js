@@ -6,7 +6,7 @@ export class TableModel {
 
         this.originData = [];
         this.state = {};
-        // this.filters = config.filters || {};
+        this.filters = config.filters || {};
         this.requiredFilters = config.requiredFilters || [];
         this.idKey = config.idKey;
 
@@ -111,9 +111,6 @@ export class TableModel {
 
     findById(id){
         return this.index.get(String(id));
-        // return this.originData.find(v =>
-        //     String(v[this.idKey]) === String(id)
-        // );
     }
 
     getViewData(){

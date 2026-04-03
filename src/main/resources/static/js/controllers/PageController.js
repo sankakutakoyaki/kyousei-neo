@@ -3,6 +3,7 @@
 // import { openMsgDialog, closeMsgDialog, openConfilmDialog, closeFormDialog } from "../core/ui/dialog.js";
 // import { api } from "../core/api/apiService.js";
 // import { FormController } from "./FormController.js";
+import { initCombo } from "../core/init/initCombo.js";
 
 export class PageController {
 
@@ -12,19 +13,50 @@ export class PageController {
 
         this.dataTable = null;
         this.form = null;
+
+        // ★ デフォルトアクション
+        this.defaultActions = {
+            search: (controller, el) => {
+                controller.dataTable.set("keyword", el.value);
+            },
+
+            filter: (controller, el) => {
+                const key = el.dataset.key;
+                controller.dataTable.set(key, el.value);
+            },
+
+            delete: async (controller) => {
+                await controller.deleteSelected();
+            },
+
+            download: async (controller) => {
+                await controller.downloadSelected();
+            }
+        };
     }
 
     init(options = {}){
         this.initComponents(options);
+        this.initUI(options.components);
     }
 
     initComponents({ columns } = {}){
         if(this.config.table){
             this.dataTable = this.config.table.create(this, columns);
+            this.dataTable.initData();
         }
         if(this.config.form){
             this.form = this.config.form.create(this);
         }
+    }
+
+    initUI(components = {}){
+
+        if(components.combo) initCombo();
+        // if(components.focus) initFocus();
+
+        // setEnterFocus();
+        // DataResolver.init();
     }
 
     // -------------------------
@@ -34,26 +66,23 @@ export class PageController {
         this.dataTable.set("keyword", keyword);
     }
 
-    // -------------------------
-    // 保存
-    // -------------------------
-    async save(form){
-        const id = await this.form.save(form);
-        await this.dataTable.reload(); // ←ここ変える
-        this.scrollToRow(id);
-    }
+    // // -------------------------
+    // // 保存
+    // // -------------------------
+    // async save(form){
+    //     const id = await this.form.save(form);
 
-    // -------------------------
-    // 再取得（削除）
-    // -------------------------
-    async refresh(){
-        await this.dataTable.reload(); // ←APIはtableへ
-    }
+    //     await this.dataTable.refresh();
 
-    scrollToRow(id){
-        const row = document.querySelector(`[data-id="${id}"]`);
-        row?.scrollIntoView({ block:"center" });
-    }
+    //     this.scrollToRow(id);
+    // }
+
+    // // -------------------------
+    // // 再取得（削除）
+    // // -------------------------
+    // async refresh(){
+    //     await this.dataTable.reload(); // ←APIはtableへ
+    // }
 
     // -------------------------
     // UI操作
@@ -67,11 +96,16 @@ export class PageController {
     }
 
     async deleteSelected(){
-        await this.dataTable.deleteSelected(); // ←丸投げ
+        await this.dataTable.deleteSelected();
     }
 
     async downloadSelected(){
-        await this.dataTable.downloadSelected(); // ←丸投げ
+        await this.dataTable.downloadSelected();
+    }
+
+    scrollToRow(id){
+        const row = document.querySelector(`[data-id="${id}"]`);
+        row?.scrollIntoView({ block:"center" });
     }
 }
 

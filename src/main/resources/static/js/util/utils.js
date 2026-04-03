@@ -1,21 +1,8 @@
 "use strict"
 
-import { actionMap } from "../core/map/actionMap.js";
-// import { getController } from "../core/map/controllerMap.js";
-import { getController } from "../core/init/initControllers.js";
-
-export function runAction(el, e){
-
-    const action = el.dataset.action;
-
-    const fn = actionMap[action];
-    if(!fn) return;
-
-    const target = el.dataset.target;
-    const controller = target ? getController(target) : null;
-
-    fn(controller, el, e);
-}
+// import { actionMap } from "../core/map/actionMap.js";
+// // import { getController } from "../core/map/controllerMap.js";
+// import { getController } from "../core/init/initControllers.js";
 
 export function updateField(el, value){
 

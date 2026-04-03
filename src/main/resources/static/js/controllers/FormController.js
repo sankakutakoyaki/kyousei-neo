@@ -1,13 +1,30 @@
 "use strict"
 
 import { openFormDialog, closeFormDialog, openMsgDialog } from "../core/ui/dialog.js";
+import { FormModel } from "../core/form/FormModel.js";
+import { validate } from "../core/form/components/check.js";
+import { api } from "../core/api/apiService.js";
 
 export class FormController {
 
-    constructor({ formId, key, api }){
+    constructor(config){
+
+        this.config = Object.freeze(config);
+
+        const {
+            formId,
+            key,
+            api = {},
+            onSaved = null
+        } = config;
+
+        if(!formId) throw new Error("formId is required");
+        if(!key) throw new Error("key is required");
+
         this.formId = formId;
         this.key = key;
-        this.api = api || {};
+        this.api = api;
+        this.onSaved = onSaved;
 
         this.currentEntity = null;
     }
@@ -52,6 +69,12 @@ export class FormController {
         }
 
         closeFormDialog(this.formId);
+
+
+        if(this.onSaved){
+            await this.onSaved(result.data);
+        }
+        
         return result.data;
     }
 
