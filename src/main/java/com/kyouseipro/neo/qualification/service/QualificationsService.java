@@ -29,7 +29,7 @@ public class QualificationsService {
      * @param id 資格ID
      * @return QualificationsEntity または null
      */
-    public QualificationsEntity getByQulificationsIdFromEmployee(int id) {
+    public QualificationsEntity getByQulificationsIdFromEmployee(Long id) {
         return qualificationsRepository.findByQualificationsIdFromEmployee(id);
     }
 
@@ -40,7 +40,7 @@ public class QualificationsService {
      * @param id 資格ID
      * @return QualificationsEntity または null
      */
-    public QualificationsEntity getByQualificationsIdFromCompany(int id) {
+    public QualificationsEntity getByQualificationsIdFromCompany(Long id) {
         return qualificationsRepository.findByQualificationsIdFromCompany(id);
     }
 
@@ -51,7 +51,7 @@ public class QualificationsService {
      * @param id 資格ID
      * @return QualificationsEntity または null
      */
-    public List<QualificationsEntity> getByEmployeeId(int id) {
+    public List<QualificationsEntity> getByEmployeeId(Long id) {
         return qualificationsRepository.findAllByEmployeeId(id);
     }
 
@@ -62,7 +62,7 @@ public class QualificationsService {
      * @param id 資格ID
      * @return QualificationsEntity または null
      */
-    public List<QualificationsEntity> getByCompanyId(int id) {
+    public List<QualificationsEntity> getByCompanyId(Long id) {
         return qualificationsRepository.findAllByCompanyId(id);
     }
 
@@ -106,7 +106,7 @@ public class QualificationsService {
         table = HistoryTables.QUALIFICATIONS,
         action = "削除"
     )
-    public int deleteById(int id, String userName) {
+    public int deleteById(Long id, String userName) {
         return qualificationsRepository.delete(id, userName);
     }
 

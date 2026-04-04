@@ -14,7 +14,7 @@ import com.kyouseipro.neo.common.ComboBoxService;
 import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.corporation.office.entity.OfficeListEntity;
 import com.kyouseipro.neo.corporation.office.service.OfficeListService;
-import com.kyouseipro.neo.dto.IdRequest;
+import com.kyouseipro.neo.dto.NumberRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -51,8 +51,8 @@ public class OfficeListApiController {
      */
     @PostMapping("/get/list/category")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<List<OfficeListEntity>>> getListByCategoryId(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(SimpleResponse.ok(officeListService.getListByCategoryId(req.getId())));
+    public ResponseEntity<SimpleResponse<List<OfficeListEntity>>> getListByCategoryId(@RequestBody NumberRequest req) {
+        return ResponseEntity.ok(SimpleResponse.ok(officeListService.getListByCategoryId(req.getNumber())));
     }
 
     /**

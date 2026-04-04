@@ -25,7 +25,7 @@ public class OrderRepository {
      * @param orderId
      * @return IDから取得したEntityをかえす。
      */
-    public OrderEntity findById(int id) {
+    public OrderEntity findById(Long id) {
         String sql = OrderSqlBuilder.buildFindById();
 
         return sqlRepository.queryOne(
@@ -34,7 +34,7 @@ public class OrderRepository {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
                 ps.setInt(index++, Enums.state.DELETE.getCode());
             },
             OrderEntityMapper::map

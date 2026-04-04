@@ -24,14 +24,14 @@ public class RecycleItemRepository {
      * @param orderId
      * @return IDから取得したEntityをかえす。
      */
-    public RecycleItemEntity findById(int id) {
+    public RecycleItemEntity findById(Long id) {
         String sql = RecycleItemSqlBuilder.buildFindById();
 
         return sqlRepository.queryOne(
             sql,
             (ps, en) -> {
                 int index = 1;
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
                 ps.setInt(index++, Enums.state.DELETE.getCode());
             },
             RecycleItemEntityMapper::map

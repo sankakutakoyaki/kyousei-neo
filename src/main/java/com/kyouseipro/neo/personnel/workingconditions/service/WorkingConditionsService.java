@@ -1,5 +1,6 @@
 package com.kyouseipro.neo.personnel.workingconditions.service;
 
+import java.nio.LongBuffer;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class WorkingConditionsService {
      * @param id 労働条件ID
      * @return WorkingConditionsEntity または null
      */
-    public WorkingConditionsEntity getById(int id) {
+    public WorkingConditionsEntity getById(Long id) {
         return workingConditionsRepository.findById(id);
     }
 
@@ -36,7 +37,7 @@ public class WorkingConditionsService {
      * @param id 従業員ID
      * @return WorkingConditionsEntity または null
      */
-    public WorkingConditionsEntity getByEmployeeId(int id) {
+    public WorkingConditionsEntity getByEmployeeId(Long id) {
         return workingConditionsRepository.findByEmployeeId(id);
     }
 

@@ -30,13 +30,13 @@ public class EmployeeRepository {
      * @param id
      * @return IDから取得したEntityをかえす。
      */
-    public EmployeeEntity findById(int id) {
+    public EmployeeEntity findById(Long id) {
         String sql = EmployeeSqlBuilder.buildFindById();
 
         Long targetId = ((Number) id).longValue();
         // IDが3桁以下の場合はCODEなのでCODEからIDを取得する
         if (String.valueOf(Math.abs(id)).length() < 4) {
-            EmployeeEntity entity = findByCode(id);
+            EmployeeEntity entity = findByCode(((Number) id).intValue());
 
             targetId = entity.getEmployeeId();
         }
@@ -142,7 +142,7 @@ public class EmployeeRepository {
     //         throw e;
     //     }
     // }
-    public int insert(Map<String, Object> req, String editor) {
+    public Long insert(Map<String, Object> req, String editor) {
         req.put("editor", editor);
         // req.putIfAbsent("category", Enums.clientCategory.PARTNER.getCode());
         SqlResult result = SqlBuilder.buildSqlWithLog(
@@ -153,12 +153,11 @@ public class EmployeeRepository {
             "version",
             logProvider
         );
-System.out.println(result.getSql());
-System.out.println(result.getParams());
+
         return sqlRepository.insert(
             result.getSql(),
             result.getParams(),
-            rs -> rs.getInt("employee_id")
+            rs -> rs.getLong("employee_id")
         );
     }
 

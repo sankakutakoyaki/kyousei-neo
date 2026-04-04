@@ -23,7 +23,7 @@ public class WorkItemService {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public WorkItemEntity getById(int id) {
+    public WorkItemEntity getById(Long id) {
         return workItemRepository.findById(id);
     }
 

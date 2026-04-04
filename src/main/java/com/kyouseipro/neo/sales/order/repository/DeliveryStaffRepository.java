@@ -20,7 +20,7 @@ public class DeliveryStaffRepository {
      * 0件の場合は空リストを返す。
      * @return 取得したリストを返す
      */
-    public List<DeliveryStaffEntity> findAllByOrderId(int id, String editor) {
+    public List<DeliveryStaffEntity> findAllByOrderId(Long id, String editor) {
         String sql = DeliveryStaffSqlBuilder.buildFindAllByOrderId();
 
         return sqlRepository.queryList(

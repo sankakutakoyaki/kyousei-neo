@@ -23,7 +23,7 @@ public class RecycleMakerService {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public RecycleMakerEntity getById(int id) {
+    public RecycleMakerEntity getById(Long id) {
         return recycleMakerRepository.findById(id);
     }
 

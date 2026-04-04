@@ -24,7 +24,7 @@ public class StaffRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public StaffEntity findById(int id) {
+    public StaffEntity findById(Long id) {
         String sql = StaffSqlBuilder.buildFindById();
 
         return sqlRepository.queryOne(
@@ -34,7 +34,7 @@ public class StaffRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
             },
             StaffEntityMapper::map
         );

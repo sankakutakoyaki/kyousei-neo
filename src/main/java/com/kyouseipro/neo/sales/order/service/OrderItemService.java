@@ -26,7 +26,7 @@ public class OrderItemService {
      * @param id 受注ID
      * @return OrderEntity または null
      */
-    public OrderItemEntity getById(int id) {
+    public OrderItemEntity getById(Long id) {
         return orderItemRepository.findById(id);
     }
 

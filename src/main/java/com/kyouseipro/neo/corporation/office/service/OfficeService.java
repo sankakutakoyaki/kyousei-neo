@@ -26,7 +26,7 @@ public class OfficeService {
      * @param id 支店ID
      * @return OfficeEntity または null
      */
-    public OfficeEntity getById(int id) {
+    public OfficeEntity getById(Long id) {
         return officeRepository.findById(id);
     }
 

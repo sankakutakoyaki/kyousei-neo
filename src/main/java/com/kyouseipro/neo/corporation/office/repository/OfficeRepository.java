@@ -23,7 +23,7 @@ public class OfficeRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public OfficeEntity findById(int id) {
+    public OfficeEntity findById(Long id) {
         String sql = OfficeSqlBuilder.buildFindById();
 
         return sqlRepository.queryOne(
@@ -32,7 +32,7 @@ public class OfficeRepository {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
             },
             OfficeEntityMapper::map
         );

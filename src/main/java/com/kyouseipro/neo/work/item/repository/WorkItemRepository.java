@@ -26,7 +26,7 @@ public class WorkItemRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public WorkItemEntity findById(int id) {
+    public WorkItemEntity findById(Long id) {
         String sql = WorkItemSqlBuilder.buildFindById();
 
         return sqlRepository.queryOne(
@@ -34,7 +34,7 @@ public class WorkItemRepository {
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
                 ps.setInt(index++, Enums.state.DELETE.getCode());
             },
             WorkItemEntityMapper::map

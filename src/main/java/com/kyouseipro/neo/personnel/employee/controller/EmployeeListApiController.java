@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.response.SimpleResponse;
-import com.kyouseipro.neo.dto.IdRequest;
+import com.kyouseipro.neo.dto.NumberRequest;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeListEntity;
 import com.kyouseipro.neo.personnel.employee.service.EmployeeListService;
 
@@ -41,8 +41,8 @@ public class EmployeeListApiController {
      */
     @PostMapping("/get/list/category")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<List<EmployeeListEntity>>> getListByCategoryId(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(SimpleResponse.ok(employeeListService.getListByCategoryId(req.getId())));
+    public ResponseEntity<SimpleResponse<List<EmployeeListEntity>>> getListByCategoryId(@RequestBody NumberRequest req) {
+        return ResponseEntity.ok(SimpleResponse.ok(employeeListService.getListByCategoryId(req.getNumber())));
     }
 
     /**

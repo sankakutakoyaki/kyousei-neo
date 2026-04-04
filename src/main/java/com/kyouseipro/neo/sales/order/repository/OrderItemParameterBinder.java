@@ -72,7 +72,7 @@ public class OrderItemParameterBinder {
         return index;
     }
 
-    public static int bindFindById(PreparedStatement ps, Integer orderItemId) throws SQLException {
+    public static int bindFindById(PreparedStatement ps, Long orderItemId) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -80,12 +80,12 @@ public class OrderItemParameterBinder {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, orderItemId);
+        ps.setLong(index++, orderItemId);
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }
 
-    public static int bindFindAllByOrderId(PreparedStatement ps, int id) throws SQLException {
+    public static int bindFindAllByOrderId(PreparedStatement ps, Long id) throws SQLException {
         int index = 1;
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
@@ -93,7 +93,7 @@ public class OrderItemParameterBinder {
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
         ps.setInt(index++, Enums.state.DELETE.getCode());
-        ps.setInt(index++, id);
+        ps.setLong(index++, id);
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }

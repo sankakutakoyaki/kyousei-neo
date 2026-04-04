@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.IdRequest;
+import com.kyouseipro.neo.dto.NumberRequest;
 import com.kyouseipro.neo.work.item.entity.WorkItemEntity;
 import com.kyouseipro.neo.work.item.service.WorkItemService;
 
@@ -48,8 +49,8 @@ public class WorkItemApiController {
      */
     @PostMapping("/get/category")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<List<WorkItemEntity>>> getByCategoryId(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(SimpleResponse.ok(workItemService.getByCategoryId(req.getId())));
+    public ResponseEntity<SimpleResponse<List<WorkItemEntity>>> getByCategoryId(@RequestBody NumberRequest req) {
+        return ResponseEntity.ok(SimpleResponse.ok(workItemService.getByCategoryId(req.getNumber())));
     }
 
     /**

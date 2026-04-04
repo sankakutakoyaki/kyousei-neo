@@ -28,7 +28,7 @@ public class EmployeeService {
      * @param id 従業員ID
      * @return EmployeeEntity または null
      */
-    public EmployeeEntity getById(int id) {
+    public EmployeeEntity getById(Long id) {
         return employeeRepository.findById(id);
     }
 
@@ -50,10 +50,11 @@ public class EmployeeService {
     //         return employeeRepository.insert(entity, editor);
     //     }
     // }
-    public int save(Map<String, Object> req, String editor) {
+    public Long save(Map<String, Object> req, String editor) {
         Long id = MapUtil.getLong(req, "employeeId");
         if (id != null && id > 0) {
-            return employeeRepository.update(req, editor);
+            employeeRepository.update(req, editor);
+            return id;
         } else {
             return employeeRepository.insert(req, editor);
         }

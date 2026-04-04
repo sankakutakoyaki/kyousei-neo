@@ -49,8 +49,8 @@ public class EmployeeApiController {
      */
     @PostMapping("/save")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody Map<String, Object> req, @AuthenticationPrincipal OidcUser principal) {
-        int id = employeeService.save(req, principal.getAttribute("preferred_username"));
+    public ResponseEntity<SimpleResponse<Long>> save(@RequestBody Map<String, Object> req, @AuthenticationPrincipal OidcUser principal) {
+        Long id = employeeService.save(req, principal.getAttribute("preferred_username"));
     // public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody EmployeeEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
         // int id = employeeService.save(entity, principal.getAttribute("preferred_username"));
         return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));

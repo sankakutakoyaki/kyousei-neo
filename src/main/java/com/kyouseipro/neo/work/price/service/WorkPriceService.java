@@ -23,7 +23,7 @@ public class WorkPriceService {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public WorkPriceEntity getById(int id) {
+    public WorkPriceEntity getById(Long id) {
         return workPriceRepository.findById(id);
     }
 
@@ -32,7 +32,7 @@ public class WorkPriceService {
      * @param id
      * @return IDから取得したEntityを返す。work_price_idが0の場合は-1からの仮IDを付与する
      */
-    public List<WorkPriceEntity> getListByCompanyId(int id) {
+    public List<WorkPriceEntity> getListByCompanyId(Long id) {
         List<WorkPriceEntity> list = workPriceRepository.findAllByCompanyId(id);
 
         int tempId = -1;

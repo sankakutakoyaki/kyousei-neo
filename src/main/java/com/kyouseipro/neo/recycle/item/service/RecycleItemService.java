@@ -23,7 +23,7 @@ public class RecycleItemService {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public RecycleItemEntity getById(int id) {
+    public RecycleItemEntity getById(Long id) {
         return recycleItemRepository.findById(id);
     }
 

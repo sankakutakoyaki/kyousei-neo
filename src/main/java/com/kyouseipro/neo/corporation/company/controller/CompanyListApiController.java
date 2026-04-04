@@ -15,7 +15,7 @@ import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.corporation.company.dto.CompanyListResponse;
 import com.kyouseipro.neo.corporation.company.service.CompanyListService;
-import com.kyouseipro.neo.dto.IdRequest;
+import com.kyouseipro.neo.dto.NumberRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -62,8 +62,8 @@ public class CompanyListApiController {
      */
     @PostMapping("/company/get/list/category")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<List<CompanyListResponse>>> getListByCategoryId(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(SimpleResponse.ok(companyListService.getListByCategoryId(req.getId())));
+    public ResponseEntity<SimpleResponse<List<CompanyListResponse>>> getListByCategoryId(@RequestBody NumberRequest req) {
+        return ResponseEntity.ok(SimpleResponse.ok(companyListService.getListByCategoryId(req.getNumber())));
     }
 
     /**

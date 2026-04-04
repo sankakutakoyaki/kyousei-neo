@@ -22,7 +22,7 @@ public class WorkPriceRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public WorkPriceEntity findById(int id) {
+    public WorkPriceEntity findById(Long id) {
         String sql = WorkPriceSqlBuilder.buildFindById();
 
         return sqlRepository.queryOne(
@@ -32,7 +32,7 @@ public class WorkPriceRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
                 ps.setInt(index++, Enums.state.DELETE.getCode());
             },
             WorkPriceEntityMapper::map
@@ -44,17 +44,17 @@ public class WorkPriceRepository {
      * 0件の場合は空リストを返す。
      * @return 取得したリストを返す
      */
-    public List<WorkPriceEntity> findAllByCompanyId(int id) {
+    public List<WorkPriceEntity> findAllByCompanyId(Long id) {
         String sql = WorkPriceSqlBuilder.buildFindAllByCompanyId();
 
         return sqlRepository.queryList(
             sql,
             (ps, v) -> {
                 int index = 1;
-                ps.setInt(index++, id);
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
+                ps.setLong(index++, id);
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());

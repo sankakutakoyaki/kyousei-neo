@@ -48,7 +48,7 @@ public class PaidHolidayRepository {
      * @param year
      * @return
      */
-    public List<PaidHolidayEntity> findByEmployeeIdFromYear(int id, String year) {
+    public List<PaidHolidayEntity> findByEmployeeIdFromYear(Long id, String year) {
         String sql = PaidHolidaySqlBuilder.buildFindByEmployeeIdFromYear();
         EmployeeEntity entity = employeeRepository.findById(id);
 
@@ -90,7 +90,7 @@ public class PaidHolidayRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int delete(int id, String editor) {
+    public int delete(Long id, String editor) {
         String sql = PaidHolidaySqlBuilder.buildDelete();
 
         int count = sqlRepository.updateRequired(
@@ -98,7 +98,7 @@ public class PaidHolidayRepository {
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
                 ps.setString(index++, editor);
             }
         );

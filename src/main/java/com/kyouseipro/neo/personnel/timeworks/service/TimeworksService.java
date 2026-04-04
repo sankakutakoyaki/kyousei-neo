@@ -68,7 +68,7 @@ public class TimeworksService {
     //     return e;
     // }
 
-    public TimeworksEntity getTodaysEntity(Integer id) {
+    public TimeworksEntity getTodaysEntity(Long id) {
         EmployeeEntity emp = employeeRepository.findById(id);
         if (emp == null) {
             throw new IllegalArgumentException("従業員が存在しません");

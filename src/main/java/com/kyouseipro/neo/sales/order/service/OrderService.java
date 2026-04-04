@@ -34,7 +34,7 @@ public class OrderService {
      * @param id 受注ID
      * @return OrderEntity または null
      */
-    public OrderEntity getById(int id) {
+    public OrderEntity getById(Long id) {
         OrderEntity opt = orderRepository.findById(id);
         if (opt == null) return null;
 

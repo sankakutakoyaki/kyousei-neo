@@ -47,8 +47,8 @@ public class CompanyApiController {
      */
     @PostMapping("/save")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody Map<String, Object> req, @AuthenticationPrincipal OidcUser principal) {
-        Integer id = companyService.save(req, principal.getAttribute("preferred_username"));
+    public ResponseEntity<SimpleResponse<Long>> save(@RequestBody Map<String, Object> req, @AuthenticationPrincipal OidcUser principal) {
+        Long id = companyService.save(req, principal.getAttribute("preferred_username"));
         return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
 
@@ -60,8 +60,8 @@ public class CompanyApiController {
     @PostMapping("/delete")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
-        int id = companyService.deleteByIds(ids, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(SimpleResponse.ok(id + "件削除しました。", id));
+        int num = companyService.deleteByIds(ids, principal.getAttribute("preferred_username"));
+        return ResponseEntity.ok(SimpleResponse.ok(num + "件削除しました。", num));
     }
 
     /**

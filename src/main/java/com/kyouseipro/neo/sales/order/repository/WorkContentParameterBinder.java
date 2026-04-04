@@ -38,9 +38,9 @@ public class WorkContentParameterBinder {
         return index;
     }
 
-    public static int bindFindAllByOrderId(PreparedStatement ps, int id) throws SQLException {
+    public static int bindFindAllByOrderId(PreparedStatement ps, Long id) throws SQLException {
         int index = 1;
-        ps.setInt(index++, id);
+        ps.setLong(index++, id);
         ps.setInt(index++, Enums.state.DELETE.getCode());
         return index;
     }

@@ -27,7 +27,7 @@ public class CompanyService {
      * @param id 会社ID
      * @return CompanyEntity または null
      */
-    public CompanyEntity getById(int id) {
+    public CompanyEntity getById(Long id) {
         return companyRepository.findById(id);
     }
 
@@ -43,10 +43,11 @@ public class CompanyService {
         table = HistoryTables.COMPANIES,
         action = "保存"
     )
-    public int save(Map<String, Object> req, String userName) {
+    public Long save(Map<String, Object> req, String userName) {
         Long id = MapUtil.getLong(req, "companyId");
         if (id != null && id > 0) {
-            return companyRepository.update(req, userName);
+            companyRepository.update(req, userName);
+            return id;
         } else {
             return companyRepository.insert(req, userName);
         }

@@ -22,7 +22,7 @@ public class WorkingConditionsRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public WorkingConditionsEntity findById(int id) {
+    public WorkingConditionsEntity findById(Long id) {
         String sql = WorkingConditionsSqlBuilder.buildFindById();
 
         return sqlRepository.queryOne(
@@ -32,7 +32,7 @@ public class WorkingConditionsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
             },
             WorkingConditionsEntityMapper::map
         );
@@ -43,7 +43,7 @@ public class WorkingConditionsRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public WorkingConditionsEntity findByEmployeeId(int id) {
+    public WorkingConditionsEntity findByEmployeeId(Long id) {
         String sql = WorkingConditionsSqlBuilder.buildFindByEmployeeId();
 
         return sqlRepository.queryOne(
@@ -53,7 +53,7 @@ public class WorkingConditionsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
             },
             WorkingConditionsEntityMapper::map
         );

@@ -26,7 +26,7 @@ public class StaffService {
      * @param id 会社ID
      * @return OfficeEntity または null
      */
-    public StaffEntity getById(int id) {
+    public StaffEntity getById(Long id) {
         return staffRepository.findById(id);
     }
 

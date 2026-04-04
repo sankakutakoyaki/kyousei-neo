@@ -28,7 +28,7 @@ public class QualificationsRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public QualificationsEntity findByQualificationsIdFromEmployee(int id) {
+    public QualificationsEntity findByQualificationsIdFromEmployee(Long id) {
         String sql = QualificationsSqlBuilder.buildFindByQualificationsIdFromEmployee();
         return sqlRepository.queryOne(
             sql,
@@ -37,7 +37,7 @@ public class QualificationsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
             },
             QualificationsEntityMapper::map
         );
@@ -48,7 +48,7 @@ public class QualificationsRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public QualificationsEntity findByQualificationsIdFromCompany(int id) {
+    public QualificationsEntity findByQualificationsIdFromCompany(Long id) {
         String sql = QualificationsSqlBuilder.buildFindByQualificationsIdFromCompany();
         return sqlRepository.queryOne(
             sql,
@@ -57,7 +57,7 @@ public class QualificationsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
             },
             QualificationsEntityMapper::map
         );
@@ -68,7 +68,7 @@ public class QualificationsRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public List<QualificationsEntity> findAllByEmployeeId(int id) {
+    public List<QualificationsEntity> findAllByEmployeeId(Long id) {
         String sql = QualificationsSqlBuilder.buildFindAllByEmployeeId();
         return sqlRepository.queryList(
             sql,
@@ -77,7 +77,7 @@ public class QualificationsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
                 ps.setInt(index++, Enums.QualificationMasterCategory.COMPANY.getCode());
             },
             QualificationsEntityMapper::map
@@ -89,7 +89,7 @@ public class QualificationsRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public List<QualificationsEntity> findAllByCompanyId(int id) {
+    public List<QualificationsEntity> findAllByCompanyId(Long id) {
         String sql = QualificationsSqlBuilder.buildFindAllByCompanyId();
         return sqlRepository.queryList(
             sql,
@@ -98,7 +98,7 @@ public class QualificationsRepository {
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
                 ps.setInt(index++, Enums.QualificationMasterCategory.PERSON.getCode());
             },
             QualificationsEntityMapper::map
@@ -317,7 +317,7 @@ public class QualificationsRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int delete(int id, String editor) {
+    public int delete(Long id, String editor) {
         String sql = QualificationsSqlBuilder.buildDelete();
 
         int count = sqlRepository.updateRequired(
@@ -325,7 +325,7 @@ public class QualificationsRepository {
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
                 ps.setString(index++, editor);
             }
         );

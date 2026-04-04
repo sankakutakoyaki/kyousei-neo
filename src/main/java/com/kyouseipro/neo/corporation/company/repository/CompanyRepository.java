@@ -28,14 +28,14 @@ public class CompanyRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public CompanyEntity findById(int id) {
+    public CompanyEntity findById(Long id) {
         return sqlRepository.queryOne(
             """
             SELECT * FROM companies WHERE company_id = ? AND NOT (state = ?)
             """,
             (ps, v) -> {
                 int index = 1;
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
                 ps.setInt(index++, Enums.state.DELETE.getCode());
             },
             CompanyEntityMapper::map
@@ -81,7 +81,7 @@ public class CompanyRepository {
      * @param entity
      * @return 新規IDを返す。
      */
-    public int insert(Map<String, Object> req, String editor) {
+    public Long insert(Map<String, Object> req, String editor) {
         req.put("editor", editor);
         req.putIfAbsent("category", Enums.clientCategory.PARTNER.getCode());
         SqlResult result = SqlBuilder.buildSqlWithLog(
@@ -95,7 +95,7 @@ public class CompanyRepository {
         return sqlRepository.insert(
             result.getSql(),
             result.getParams(),
-            rs -> rs.getInt("company_id")
+            rs -> rs.getLong("company_id")
         );
     }
     

@@ -23,7 +23,7 @@ public class OrderItemRepository {
      * @param id
      * @return IDから取得したEntityをかえす。
      */
-    public OrderItemEntity findById(int id) {
+    public OrderItemEntity findById(Long id) {
         String sql = OrderSqlBuilder.buildFindById();
 
         return sqlRepository.queryOne(
@@ -39,7 +39,7 @@ public class OrderItemRepository {
      * @param editor
      * @return
      */
-    public List<OrderItemEntity> findAllByOrderId(int id, String editor) {
+    public List<OrderItemEntity> findAllByOrderId(Long id, String editor) {
         String sql = OrderItemSqlBuilder.buildFindAllByOrderId();
 
         return sqlRepository.queryList(

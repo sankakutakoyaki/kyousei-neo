@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.common.Utilities.MapUtil;
 import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.dto.IdRequest;
@@ -43,7 +44,7 @@ public class PaidHolidayApiController {
     @PostMapping("/paidholiday/get/employeeid")
 	@ResponseBody
     public ResponseEntity<SimpleResponse<List<PaidHolidayEntity>>> getByEmployeeIdFromYear (@RequestBody SimpleData data) {
-        return ResponseEntity.ok(SimpleResponse.ok(paidHolidayService.getByEmployeeIdFromYear(data.getNumber(), data.getText())));
+        return ResponseEntity.ok(SimpleResponse.ok(paidHolidayService.getByEmployeeIdFromYear(data.getId(), data.getText())));
     }
 
     /**

@@ -35,7 +35,7 @@ public class PaidHolidayService {
      * @param id 従業員ID
      * @return PaidHolidayEntity または null
      */
-    public List<PaidHolidayEntity> getByEmployeeIdFromYear(int id, String year) {
+    public List<PaidHolidayEntity> getByEmployeeIdFromYear(Long id, String year) {
         return paidHolidayRepository.findByEmployeeIdFromYear(id, year);
     }
 
@@ -63,7 +63,7 @@ public class PaidHolidayService {
         table = HistoryTables.PAIDHOLIDAY,
         action = "削除"
     )
-    public int deleteById(int id, String editor) {
+    public int deleteById(Long id, String editor) {
         return paidHolidayRepository.delete(id, editor);
     }
 }

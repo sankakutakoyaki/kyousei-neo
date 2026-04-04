@@ -24,7 +24,7 @@ public class RecycleMakerRepository {
      * @param id
      * @return IDから取得したEntityを返す。
      */
-    public RecycleMakerEntity findById(int id) {
+    public RecycleMakerEntity findById(Long id) {
         String sql = RecycleMakerSqlBuilder.buildFindById();
         
         return sqlRepository.queryOne(
@@ -32,7 +32,7 @@ public class RecycleMakerRepository {
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, id);
+                ps.setLong(index++, id);
                 ps.setInt(index++, Enums.state.DELETE.getCode());
             },
             RecycleMakerEntityMapper::map
