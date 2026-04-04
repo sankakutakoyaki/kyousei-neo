@@ -32,3 +32,7 @@ export function getOptions(el){
         zeroToNull: "zeroToNull" in el.dataset
     };
 }
+
+export function normalize(v){
+    return v === "" || v === undefined ? null : v;
+}

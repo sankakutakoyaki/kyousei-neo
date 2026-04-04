@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums.HistoryTables;
+import com.kyouseipro.neo.common.Utilities.MapUtil;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
 import com.kyouseipro.neo.corporation.company.repository.CompanyRepository;
 import com.kyouseipro.neo.dto.CsvExporter;
@@ -43,7 +44,7 @@ public class CompanyService {
         action = "保存"
     )
     public int save(Map<String, Object> req, String userName) {
-        Integer id = (Integer) req.get("companyId");
+        Long id = MapUtil.getLong(req, "companyId");
         if (id != null && id > 0) {
             return companyRepository.update(req, userName);
         } else {

@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -119,6 +120,27 @@ public class Utilities {
             ps.setDate(index, java.sql.Date.valueOf(value));
         } else {
             ps.setNull(index, java.sql.Types.DATE);
+        }
+    }
+
+    /**
+     * フロントから来た数値をLongに変換する
+     */
+    public class MapUtil {
+
+        public static Long getLong(Map<String, Object> map, String key){
+            Object v = map.get(key);
+            return v == null ? null : ((Number)v).longValue();
+        }
+
+        public static Integer getInt(Map<String, Object> map, String key){
+            Object v = map.get(key);
+            return v == null ? null : ((Number)v).intValue();
+        }
+
+        public static String getString(Map<String, Object> map, String key){
+            Object v = map.get(key);
+            return v == null ? null : v.toString();
         }
     }
 }

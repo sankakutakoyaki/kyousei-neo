@@ -86,8 +86,13 @@ function handleTab(el){
     const target = document.getElementById(targetId);
     if(target){
         target.classList.add("is-show");
-        const controller = resolveController(el);
-        controller?.updateButtons();
+        // const controller = resolveController(el);
+        // controller?.updateButtons();
+        const area = target.querySelector("[data-controller]");
+        const name = area?.dataset.controller;
+        const controller = getController(name);
+
+        controller?.updateButtons(); // ★確実に呼ぶ
     }
 }
 
@@ -95,3 +100,10 @@ function handleSelectOnFocus(el, e){
     if(e.type !== "focusin") return;
     el.select();
 }
+
+// function handleClose(el){
+//     const dialog = el.closest(".dialog");
+//     if(dialog){
+//         dialog.classList.remove("is-show");
+//     }
+// }

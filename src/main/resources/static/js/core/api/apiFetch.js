@@ -13,8 +13,6 @@ export async function apiFetch(url, {
     retry = 0
 } = {}) {
 
-    // const spinner = document.getElementById("loading");
-    // if (spinner) spinner.classList.remove("loaded");
     startProcessing();
 
     const controller = new AbortController();
@@ -49,42 +47,30 @@ export async function apiFetch(url, {
             return null;
         }
 
-        if (!response.ok) {
-            let err = null;
-            try {
-                err = await response.json();
-            } catch {}
-            await handleHttpError(response.status, err);
-        }
-
         const ct = response.headers.get("content-type") || "";
 
-        let result;
+        let result = null;
 
-        const isFile =
-            ct.includes("application/") ||
-            ct.includes("text/csv");
-
-        if (ct.includes("application/json")) {
-            result = await response.json();
-        } else if (isFile) {
-            result = await response.blob();
-        } else {
-            result = await response.text();
+        try {
+            if (ct.includes("application/json")) {
+                result = await response.json();   // ★1回だけ
+            } else if (ct.includes("application/") || ct.includes("text/csv")) {
+                result = await response.blob();
+            } else {
+                result = await response.text();
+            }
+        } catch(e){
+            result = null;
         }
 
-        // if (ct.includes("application/json")) {
-        //     result = await response.json();
-        // } else if (
-        //     ct.includes("application/octet-stream") ||
-        //     ct.includes("application/pdf") ||
-        //     ct.includes("application/zip") ||
-        //     ct.includes("text/csv")
-        // ) {
-        //     result = await response.blob();
-        // } else {
-        //     result = await response.text();
-        // }
+        if (!response.ok) {
+            await handleHttpError(response.status, result);
+            return {
+                ok: false,
+                status: response.status,
+                data: result
+            };
+        }
 
         return {
             ok: true,
@@ -109,8 +95,6 @@ export async function apiFetch(url, {
         }
         throw err;
     } finally {
-        // clearTimeout(timer);
-        // if (spinner) spinner.classList.add("loaded");
         processingEnd();
     }
 }

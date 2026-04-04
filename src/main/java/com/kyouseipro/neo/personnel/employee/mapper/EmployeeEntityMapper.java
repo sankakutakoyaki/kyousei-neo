@@ -9,10 +9,10 @@ import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 public class EmployeeEntityMapper {
     public static EmployeeEntity map(ResultSet rs) throws SQLException {
         EmployeeEntity entity = new EmployeeEntity();
-        entity.setEmployeeId(rs.getInt("employee_id"));
-        entity.setCompanyId(rs.getInt("company_id"));
+        entity.setEmployeeId(rs.getLong("employee_id"));
+        entity.setCompanyId(rs.getLong("company_id"));
         entity.setCompanyName(rs.getString("company_name"));
-        entity.setOfficeId(rs.getInt("office_id"));
+        entity.setOfficeId(rs.getLong("office_id"));
         entity.setOfficeName(rs.getString("office_name"));
         entity.setAccount(rs.getString("account"));
         entity.setCode(rs.getInt("code"));

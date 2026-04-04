@@ -1,10 +1,12 @@
 package com.kyouseipro.neo.personnel.employee.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums.HistoryTables;
+import com.kyouseipro.neo.common.Utilities.MapUtil;
 import com.kyouseipro.neo.dto.CsvExporter;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.interfaces.HistoryTarget;
@@ -41,11 +43,19 @@ public class EmployeeService {
         table = HistoryTables.EMPLOYEES,
         action = "保存"
     )
-    public int save(EmployeeEntityRequest entity, String editor) {
-        if (entity.getEmployeeId() > 0) {
-            return employeeRepository.update(entity, editor);
+    // public int save(EmployeeEntityRequest entity, String editor) {
+    //     if (entity.getEmployeeId() > 0) {
+    //         return employeeRepository.update(entity, editor);
+    //     } else {
+    //         return employeeRepository.insert(entity, editor);
+    //     }
+    // }
+    public int save(Map<String, Object> req, String editor) {
+        Long id = MapUtil.getLong(req, "employeeId");
+        if (id != null && id > 0) {
+            return employeeRepository.update(req, editor);
         } else {
-            return employeeRepository.insert(entity, editor);
+            return employeeRepository.insert(req, editor);
         }
     }
 

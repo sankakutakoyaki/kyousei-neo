@@ -117,6 +117,15 @@ export class DataTable {
         this.reload();
     }
 
+    async deleteByIds(ids){
+        if(!this.api.delete) return;
+
+        const result = await api.post(this.api.delete, { ids });
+        await this.refresh();
+
+        return result;
+    }
+
     hasSelection(){
         return this.model.getSelectedIds().length > 0;
     }

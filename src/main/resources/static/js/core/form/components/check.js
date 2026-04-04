@@ -62,7 +62,10 @@ export function validate(form){
     });
 
     if(messages.length){
-        openMsgDialog("msg-dialog", messages.join("\n"), "red");
+        openMsgDialog({
+            messages:messages.join("\n"),
+            color:"red"
+        });
         focusTarget?.focus();
         return false;
     }

@@ -52,14 +52,14 @@ public class PaidHolidayRepository {
         String sql = PaidHolidaySqlBuilder.buildFindByEmployeeIdFromYear();
         EmployeeEntity entity = employeeRepository.findById(id);
 
-        int targetId = entity.getEmployeeId();
+        Long targetId = entity.getEmployeeId();
 
         return sqlRepository.queryList(
             sql,
             (ps, v) -> {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, targetId);
+                ps.setLong(index++, targetId);
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setString(index++, year);
                 ps.setString(index++, year);

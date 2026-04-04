@@ -3,6 +3,7 @@ package com.kyouseipro.neo.personnel.employee.controller;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,6 @@ import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.IdRequest;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
-import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntityRequest;
 import com.kyouseipro.neo.personnel.employee.service.EmployeeService;
 
 import lombok.RequiredArgsConstructor;
@@ -49,8 +49,10 @@ public class EmployeeApiController {
      */
     @PostMapping("/save")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody EmployeeEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
-        int id = employeeService.save(entity, principal.getAttribute("preferred_username"));
+    public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody Map<String, Object> req, @AuthenticationPrincipal OidcUser principal) {
+        int id = employeeService.save(req, principal.getAttribute("preferred_username"));
+    // public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody EmployeeEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
+        // int id = employeeService.save(entity, principal.getAttribute("preferred_username"));
         return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
 

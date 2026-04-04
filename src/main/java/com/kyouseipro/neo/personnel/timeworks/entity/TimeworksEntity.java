@@ -12,8 +12,8 @@ import lombok.Data;
 @Data
 public class TimeworksEntity {
 
-    private Integer timeworksId;
-    private Integer employeeId;
+    private Long timeworksId;
+    private Long employeeId;
     private String fullName;
     private String officeName;
 

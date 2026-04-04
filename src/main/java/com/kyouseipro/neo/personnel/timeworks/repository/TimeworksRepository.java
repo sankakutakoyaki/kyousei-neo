@@ -19,14 +19,14 @@ import lombok.RequiredArgsConstructor;
 public class TimeworksRepository {
     private final SqlRepository sqlRepository;
 
-    public TimeworksEntity findToday(Integer id, LocalDate workBaseDate) {
+    public TimeworksEntity findToday(Long id, LocalDate workBaseDate) {
         String sql = TimeworksSqlBuilder.buildFindToday();
 
         return sqlRepository.queryOneOrNull(
             sql,
             (pstmt, p) -> {
                 int index = 1;
-                pstmt.setInt(index++, id);
+                pstmt.setLong(index++, id);
                 pstmt.setDate(index++, Date.valueOf(workBaseDate));
             },
             TimeworksEntityMapper::map
@@ -58,7 +58,7 @@ public class TimeworksRepository {
                 sql,
                 (ps, e) -> {
                     int i = 1;
-                    ps.setInt(i++, e.getEmployeeId());
+                    ps.setLong(i++, e.getEmployeeId());
                     ps.setTimestamp(i++, toTs(e.getStartDt()));
                     ps.setTimestamp(i++, toTs(e.getEndDt()));
                     ps.setInt(i++, defaultInt(e.getBreakMinutes(), 60));
@@ -109,7 +109,7 @@ public class TimeworksRepository {
                 ps.setBigDecimal(i++, e.getEndLongitude());
                 ps.setInt(i++, e.getWorkType().getCode());
                 ps.setInt(i++, e.getState().getCode());
-                ps.setInt(i++, e.getTimeworksId());
+                ps.setLong(i++, e.getTimeworksId());
             },
             entity
         );

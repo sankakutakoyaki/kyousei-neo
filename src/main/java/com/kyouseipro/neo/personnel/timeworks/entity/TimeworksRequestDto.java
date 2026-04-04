@@ -13,7 +13,7 @@ import net.minidev.json.annotate.JsonIgnore;
 public class TimeworksRequestDto {
 
     @NotNull
-    private Integer employeeId;
+    private Long employeeId;
 
     // @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime startDt;

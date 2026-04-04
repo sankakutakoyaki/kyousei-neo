@@ -3,10 +3,13 @@
 import { initCombo } from "../core/init/initCombo.js";
 import { smartFilterHandler } from "../core/behavior/filterHandler.js";
 import { resolveController } from "../util/actionDispatcher.js";
+import { openMsgDialog, closeMsgDialog, openConfirmDialog } from "../core/ui/dialog.js";
+import { api } from "../core/api/apiService.js";
 
 const defaultConditions = {
     delete: (c) => c.dataTable?.hasSelection(),
-    download: (c) => c.dataTable?.hasSelection()
+    download: (c) => c.dataTable?.hasSelection(),
+    save: (c) => c.form?.canSubmit()
 };
 
 const defaultActions = {
@@ -28,36 +31,6 @@ export class PageController {
 
         this.dataTable = null;
         this.form = null;
-
-        // // デフォルト状態処理
-        // const defaultConditions = {
-        //     delete: (c) => c.dataTable?.hasSelection(),
-        //     download: (c) => c.dataTable?.hasSelection()
-        // };
-
-        // // ★ デフォルトアクション
-        // this.defaultActions = {
-        //     create: (controller) => controller.form.open(),
-
-        //     edit: (controller, el) => {
-        //         const id = el.dataset.id;
-        //         controller.openEdit(id);
-        //     },
-
-        //     search: (controller, el) => {
-        //         controller.dataTable.set("keyword", el.value);
-        //     },
-
-        //     filter: smartFilterHandler,
-
-        //     delete: async (controller) => {
-        //         await controller.deleteSelected();
-        //     },
-
-        //     download: async (controller) => {
-        //         await controller.downloadSelected();
-        //     }
-        // };
     }
 
     init(config = {}){
@@ -79,7 +52,6 @@ export class PageController {
     }
 
     initComponents(){
-
         const { columns, data } = this.config;
 
         if(this.config.table){
@@ -97,7 +69,6 @@ export class PageController {
     }
 
     initUI(){
-
         const { components } = this.config;
 
         if(components?.combo){
@@ -126,32 +97,31 @@ export class PageController {
     async deleteSelected(){
         const ids = this.dataTable.model.getSelectedIds();
         if(!this.ensureSelection(ids)) return;
-        // if(ids.length === 0){
-        //     openMsgDialog("選択してください", "red");
-        //     return;
-        // }
-        openConfilmDialog("削除しますか？", "blue",
-            async () => {
+
+        openConfirmDialog({
+            message:"削除しますか？",
+            color:"blue",
+            controller: this,
+            onSubmit:async () => {
                 await this.executeDelete(ids);
             }
-        );
+        });
     }
 
     async executeDelete(ids){
         closeMsgDialog();
-        const result = await api.post(this.dataTable.api.delete, { ids });
-        openMsgDialog(result.message, "blue");
-        this.dataTable.model.removeByIds(ids);
-        await this.refresh();
+
+        const result = await this.dataTable.deleteByIds(ids); // ★委譲
+
+        openMsgDialog({
+            message: result.message,
+            color:"blue"
+        });
     }
 
     async downloadSelected(){
         const ids = this.dataTable.model.getSelectedIds();
         if(!this.ensureSelection(ids)) return;
-        // if(ids.length === 0){
-        //     openMsgDialog("選択してください", "red");
-        //     return;
-        // }
 
         const res = await api.post(this.dataTable.api.download, { ids });
         const blob = res.data;
@@ -167,7 +137,10 @@ export class PageController {
 
     ensureSelection(ids){
         if(ids.length === 0){
-            openMsgDialog("選択してください", "red");
+            openMsgDialog({
+                message:"選択してください",
+                color:"red"
+            });
             return false;
         }
         return true;
@@ -192,18 +165,56 @@ export class PageController {
      * ボタン制御関数
      */
     updateButtons(){
+        this.updateActionButtons();
+        this.updateFormButtons();
+        // document.querySelectorAll("[data-action]").forEach(el => {
+        //     const controller = resolveController(el);
+        //     if(controller !== this) return;
+
+        //     const action = el.dataset.action;
+        //     const enabled = this.isEnabled(action);
+        //     if("disabled" in el){
+        //         el.disabled = !enabled;
+        //     }
+        //     el.classList.toggle("disabled", !enabled);
+        //     el.style.pointerEvents = enabled ? "auto" : "none";
+        // });
+    }
+
+    updateActionButtons(){
         document.querySelectorAll("[data-action]").forEach(el => {
             const controller = resolveController(el);
             if(controller !== this) return;
 
             const action = el.dataset.action;
             const enabled = this.isEnabled(action);
+
             if("disabled" in el){
                 el.disabled = !enabled;
             }
+
             el.classList.toggle("disabled", !enabled);
             el.style.pointerEvents = enabled ? "auto" : "none";
         });
+    }
+
+    updateFormButtons(){
+        const dialog = document.getElementById("form-dialog-area");
+
+        // dialog開いてないなら何もしない
+        if(!dialog || !dialog.classList.contains("dialog")) return;
+
+        const controller = resolveController(dialog);
+        if(!controller) return;
+        
+        const submitBtn = dialog.querySelector('[name="submitBtn"]');
+        if(!submitBtn) return;
+
+        const enabled = controller.form?.canSubmit();
+
+        // ボタン制御
+        submitBtn.disabled = !enabled;
+        submitBtn.classList.toggle("disabled", !enabled);
     }
 }
 

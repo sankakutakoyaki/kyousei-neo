@@ -1,8 +1,7 @@
 "use strict"
 
 import { convertKey } from "../ui/keyCaseConverter.js"
-import { normalizeValue, getOptions } from "../behavior/valueNormalizer.js";
-
+import { normalizeValue, getOptions, normalize } from "../behavior/valueNormalizer.js";
 
 export const FormModel = {
 
@@ -41,7 +40,7 @@ export const FormModel = {
             }
 
             // 変更なしスキップ
-            if(this.normalize(v) === this.normalize(oldValue)){
+            if(normalize(v) === normalize(oldValue)){
                 continue;
             }
 
@@ -59,7 +58,7 @@ export const FormModel = {
         const diff = {};
 
         Object.keys(newObj).forEach(key => {
-            if(this.normalize(oldObj[key]) !== this.normalize(newObj[key])){
+            if(normalize(oldObj[key]) !== normalize(newObj[key])){
                 diff[key] = newObj[key];
             }
         });
@@ -94,34 +93,6 @@ export const FormModel = {
         });
     },
 
-    // // ------------------------
-    // // normalize
-    // // ------------------------
-    // normalizeValue(v, el){
-
-    //     // trim
-    //     if(typeof v === "string" && !("noTrim" in el.dataset)){
-    //         v = v.trim();
-    //     }
-
-    //     // 空 → null
-    //     if(v === ""){
-    //         v = null;
-    //     }
-
-    //     // number
-    //     if("number" in el.dataset && v !== null){
-    //         v = Number(v);
-    //     }
-
-    //     // zeroToNull
-    //     if("zeroToNull" in el.dataset && (v === 0 || v === "0")){
-    //         v = null;
-    //     }
-
-    //     return v;
-    // },
-
     // ------------------------
     // save
     // ------------------------
@@ -155,5 +126,5 @@ export const FormModel = {
                 el.value = "";
             }
         });
-    }
+    },
 };

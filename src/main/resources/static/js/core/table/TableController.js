@@ -1,6 +1,6 @@
 "use strict"
 
-import { openMsgDialog, closeMsgDialog, openFormDialog, openConfilmDialog, closeFormDialog } from "../ui/dialog.js";
+import { openMsgDialog, openFormDialog, closeFormDialog } from "../ui/dialog.js";
 import { getTable } from "../init/initTable.js";
 import { api } from "../api/apiService.js";
 import { FormModel } from "../../core/form/FormModel.js";
@@ -55,14 +55,21 @@ export class TableController {
         const payload = FormModel.buildPayload(form, this.currentEntity, this.key);
 
         if(payload === null){
-            openMsgDialog("変更がありません", "red");
+            openMsgDialog({
+                message:"変更がありません",
+                color:"red"
+            });
             return;
         }
 
         const result = await api.post(this.saveUrl, payload);
 
         if(result.ok){
-            openMsgDialog(result.message, "blue");
+            openMsgDialog({
+                message:result.message,
+                color:"blue",
+                controller:this
+            });
         }
 
         closeFormDialog(this.formId);
@@ -95,40 +102,92 @@ export class TableController {
     // =========================
     // 作成
     // =========================
+    // create(){
+
+    //     this.currentEntity = {};
+    //     this.isEdit = false;
+
+    //     const form = document.getElementById(this.formId);
+    //     FormModel.clear(form);
+
+    //     openFormDialog({
+    //         dialogId:this.formId,
+    //         controller:this,
+    //         onSubmit: async (form) => {
+    //             await this.save(form);
+    //         }
+    //     });
+    // }
     create(){
-
-        this.currentEntity = {};
-        this.isEdit = false;
-
-        const form = document.getElementById(this.formId);
-        FormModel.clear(form);
-
-        openFormDialog(this.formId, {
-            onSubmit: async (form) => {
-                await this.save(form);
-            }
-        });
+        this.form.open();
     }
 
     // =========================
     // 編集画面を開く
     // =========================
+    // async openEdit(id){
+    //     const res = await api.post(this.findUrl, { id });
+
+    //     const data = res.data;
+    //     this.currentEntity = data;
+    //     this.isEdit = true;
+
+    //     const form = document.getElementById(this.formId);
+    //     FormModel.fill(form, data);
+
+    //     openFormDialog({
+    //         dialogId:this.formId,
+    //         controller:this,
+    //         onSubmit: async (form) => {
+    //             await this.save(form);
+    //         }
+    //     });
+    // }
     async openEdit(id){
-        const res = await api.post(this.findUrl, { id });
+        await this.form.open(id);
+    }
 
-        const data = res.data;
-        this.currentEntity = data;
-        this.isEdit = true;
+    // =========================
+    // フォームにセット
+    // =========================
+    fillForm(formId, data){
 
-        const form = document.getElementById(this.formId);
-        FormModel.fill(form, data);
+        const form = document.getElementById(formId);
 
-        openFormDialog(this.formId, {
-            onSubmit: async (form) => {
-                await this.save(form);
+        Object.entries(data).forEach(([key, value]) => {
+
+            const name = convertKey(key, "camel", "kebab");
+            const el = form.elements[name];
+
+            if(!el) return;
+
+            if(el.type === "checkbox"){
+                el.checked = !!value;
+            }else{
+                el.value = value ?? "";
             }
         });
     }
+
+    // =========================
+    // フォームクリア
+    // =========================
+    clearForm(){
+        const form = document.getElementById(this.formId);
+
+        [...form.elements].forEach(el => {
+            if(!el.name) return;
+
+            if(el.type === "checkbox"){
+                el.checked = false;
+            }else{
+                el.value = "";
+            }
+        });
+    }
+}
+
+
 
     // =========================
     // 削除（API連携）
@@ -201,45 +260,7 @@ export class TableController {
     //     URL.revokeObjectURL(url);
     // }
 
-    // =========================
-    // フォームにセット
-    // =========================
-    fillForm(formId, data){
 
-        const form = document.getElementById(formId);
-
-        Object.entries(data).forEach(([key, value]) => {
-
-            const name = convertKey(key, "camel", "kebab");
-            const el = form.elements[name];
-
-            if(!el) return;
-
-            if(el.type === "checkbox"){
-                el.checked = !!value;
-            }else{
-                el.value = value ?? "";
-            }
-        });
-    }
-
-    // =========================
-    // フォームクリア
-    // =========================
-    clearForm(){
-        const form = document.getElementById(this.formId);
-
-        [...form.elements].forEach(el => {
-            if(!el.name) return;
-
-            if(el.type === "checkbox"){
-                el.checked = false;
-            }else{
-                el.value = "";
-            }
-        });
-    }
-}
 
 // export class TableController {
 

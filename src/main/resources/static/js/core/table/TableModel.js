@@ -138,6 +138,19 @@ export class TableModel {
     clearSelection(){
         this.selected.clear();
     }
+
+    removeByIds(ids){
+        const idSet = new Set(ids.map(String));
+
+        this.originData = this.originData.filter(
+            v => !idSet.has(String(v[this.idKey]))
+        );
+        this.index = new Map(
+            this.originData.map(v => [String(v[this.idKey]), v])
+        );
+
+        this.clearSelection();
+    }
 }
 
 // "use strict"

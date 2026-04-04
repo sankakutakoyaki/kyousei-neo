@@ -14,7 +14,8 @@ window.addEventListener("load", () => {
 
     // tab1
     const company = partnerCompanyPage();
-    registerController("partnerCompany", company);    
+    registerController("partnerCompany", company); 
+    company.name = "partnerCompany";   
     company.init({
         columns: createPartnerCompanyColumns(company),
         data: APP.cache.companyOrigin,
@@ -26,6 +27,7 @@ window.addEventListener("load", () => {
     //　tab2
     const employee = partnerEmployeePage();
     registerController("partnerEmployee", employee);
+    employee.name = "partnerEmployee";
     employee.init({
         columns: createPartnerEmployeeColumns(employee),
         data: APP.cache.employeeOrigin,
@@ -58,6 +60,7 @@ export const partnerCompanyPage = () => {
         },
         form: {
             create: (controller) => new FormController({
+                controller: controller,
                 formId: "form-01",
                 key: controller.key,
                 onSaved: async (id) => {
@@ -88,7 +91,7 @@ export const partnerEmployeePage = () => {
                 idKey: controller.key,
                 checkable: true,
                 api: {
-                    select: "/api/employee/get/list",
+                    select: "/api/employee/get/list/partner",
                     delete: "/api/employee/delete",
                     download: "/api/employee/download/csv"
                 },

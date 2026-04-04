@@ -7,24 +7,33 @@ import { resetEnterFocus } from "./enterfocus.js";
  * @param {*} dialogId 
  * @returns 
  */
-export function openFormDialog(dialogId, options = {}) {
+export function openFormDialog(options = {}) {
+
+    const {
+        dialogId,
+        controller,
+        onSubmit = async () => true,
+        onClose = async () => closeFormDialog(dialogId),
+        onReset
+    } = options;
 
     const form = document.getElementById(dialogId);
     if (!form) return;
 
-    form.onReset = options.onReset;
+    form.onReset = onReset;
 
     const area = document.getElementById('form-dialog-area');
     if (!area) return;
+
+    if(controller){
+        area.dataset.controller = controller.name;
+    }
 
     area.classList.add('dialog');
     form.classList.remove('none');
 
     const el = area.querySelector('[autofocus]');
     if (el) el.focus();
-
-    const onSubmit = options.onSubmit ?? (async () => true);
-    const onClose  = options.onClose  ?? (async () => closeFormDialog(dialogId));
 
     setFooterButtons(form, true, onSubmit, onClose);
 
@@ -46,6 +55,7 @@ export function closeFormDialog(dialogId, e) {
     const area = document.getElementById('form-dialog-area');
     if (area == null) return;
     area.classList.remove('dialog');
+    delete area.dataset.controller;
 
     // フォーム画面に[none]クラスを付与して画面を消去する
     const form = document.getElementById(dialogId);
@@ -67,21 +77,61 @@ export function closeFormDialog(dialogId, e) {
  * @param {タイトル} title 
  * @param {ヘッダーの色} headerColor 
  */
-export function openMsgDialog(msg, color, closeCallback = () => closeMsgDialog("msg-dialog")) {
-    openMsg('msg-dialog', msg, color, null, closeCallback, false);
-}
+// export function openMsgDialog(msg, color, closeCallback = () => closeMsgDialog("msg-dialog"), options = {}) {
+//     openMsg('msg-dialog', msg, color, null, closeCallback, false, options);
+// }
+export function openMsgDialog(options = {}) {
 
+    const {
+        message,
+        color,
+        onClose = () => closeMsgDialog(),
+        controller
+    } = options;
+
+    openMsg({
+        dialogId: "msg-dialog",
+        message,
+        color,
+        submitCallback: null,
+        closeCallback: onClose,
+        isConfirm: false,
+        controller
+    });
+}
 /**
  * コンフィルムダイアログ表示
  * @param {*} msg 
  * @param {*} color 
- * @param {*} okFunc 
+ * @param {*} submitFunc 
  * @param {*} closeFunc 
  */
-export function openConfilmDialog(msg, color, submitCallback, closeCallback = () => closeMsgDialog("msg-dialog")) {
-    if (!submitCallback) return;
+// export function openConfilmDialog(msg, color, submitCallback, closeCallback = () => closeMsgDialog("msg-dialog"), options = {}) {
+//     if (!submitCallback) return;
 
-    openMsg('msg-dialog', msg, color, submitCallback, closeCallback, true);
+//     openMsg('msg-dialog', msg, color, submitCallback, closeCallback, true, options);
+// }
+export function openConfirmDialog(options = {}) {
+
+    const {
+        message,
+        color,
+        onSubmit,
+        onClose = () => closeMsgDialog(),
+        controller
+    } = options;
+
+    if (!onSubmit) return;
+
+    openMsg({
+        dialogId: "msg-dialog",
+        message,
+        color,
+        submitCallback: onSubmit,
+        closeCallback: onClose,
+        isConfirm: true,
+        controller
+    });
 }
 
 /**
@@ -94,50 +144,67 @@ export function openConfilmDialog(msg, color, submitCallback, closeCallback = ()
  * @param {*} isConfirm 
  * @returns 
  */
-function openMsg(dialogId, msg, color, submitCallback, closeCallback, isConfirm = false) {
+// function openMsg(dialogId, msg, color, submitCallback, closeCallback, isConfirm = false, options = {}) {
 
-    const dialog = dialogId instanceof HTMLElement ? dialogId: document.getElementById(dialogId);
+//     const dialog = dialogId instanceof HTMLElement ? dialogId: document.getElementById(dialogId);
+//     if (!dialog) return;
+
+//     setInertState(true);
+
+//     // dialog.classList.remove('none');
+
+//     const parent = document.getElementById('msg-dialog-area');
+//     parent.classList.add('dialog');
+
+//     const header = parent.querySelector('.dialog-header');
+//     header.className = "dialog-header " + color;
+
+//     const content = parent.querySelector('.msg-dialog-content');
+//     content.textContent = msg;
+
+//     if(options.controllerName){
+//         area.dataset.controller = options.controllerName;
+//     }
+
+//     dialog.classList.remove('none');
+
+//     setFooterButtons(dialog, isConfirm, submitCallback, closeCallback);
+// }
+function openMsg(options = {}) {
+
+    const {
+        dialogId,
+        message,
+        color,
+        submitCallback,
+        closeCallback,
+        isConfirm = false,
+        controller
+    } = options;
+
+    const dialog = document.getElementById(dialogId);
     if (!dialog) return;
 
     setInertState(true);
 
-    // dialog.classList.remove('none');
-
     const parent = document.getElementById('msg-dialog-area');
+    if (!parent) return;
+
+    if(controller){
+        parent.dataset.controller = controller.name;
+    }
+
     parent.classList.add('dialog');
 
     const header = parent.querySelector('.dialog-header');
     header.className = "dialog-header " + color;
 
     const content = parent.querySelector('.msg-dialog-content');
-    content.textContent = msg;
+    content.textContent = message;
 
     dialog.classList.remove('none');
 
     setFooterButtons(dialog, isConfirm, submitCallback, closeCallback);
-
-    // const submitBtn = dialog.querySelector('[name="submitBtn"]');
-    // const cancelBtn = dialog.querySelector('[name="cancelBtn"]');
-
-    // // イベント上書き（重要）
-    // submitBtn.onclick = null;
-    // cancelBtn.onclick = null;
-
-    // if (isConfirm) {
-    //     submitBtn.onclick = okFunc;
-    //     cancelBtn.onclick = closeFunc;
-
-    //     cancelBtn.style.display = "";
-    //     cancelBtn.textContent = "いいえ";
-    // } else {
-    //     submitBtn.onclick = closeFunc;
-    //     cancelBtn.style.display = "none";
-    // }
-
-    // submitBtn.textContent = "はい";
-    // submitBtn.focus();
-
-    // dialog.classList.remove('none');
 }
 
 /**
@@ -145,18 +212,34 @@ function openMsg(dialogId, msg, color, submitCallback, closeCallback, isConfirm 
  * @param {ダイアログのID名} dialogId 
  * @param {イベント} e 
  */
+// export function closeMsgDialog(dialogId = "msg-dialog") {
+//     // メッセージ画面エリアからダイアログクラスを取り除く
+//     const mArea = document.getElementById('msg-dialog-area');
+//     if (mArea == null) return;
+//     mArea.classList.remove('dialog');
+//     delete mArea.dataset.controller;
+
+//     // メッセージ画面に[none]クラスを付与して画面を消去する
+//     const dialog = document.getElementById(dialogId);
+//     if (dialog == null) return;
+//     dialog.classList.add('none');
+
+//     // 要素のクリック禁止を解除する
+//     setInertState(false);
+// }
 export function closeMsgDialog(dialogId = "msg-dialog") {
-    // メッセージ画面エリアからダイアログクラスを取り除く
-    const mArea = document.getElementById('msg-dialog-area');
-    if (mArea == null) return;
-    mArea.classList.remove('dialog');
 
-    // メッセージ画面に[none]クラスを付与して画面を消去する
+    const parent = document.getElementById('msg-dialog-area');
+    if (parent){
+        parent.classList.remove('dialog');
+        delete parent.dataset.controller;
+    }
+
     const dialog = document.getElementById(dialogId);
-    if (dialog == null) return;
-    dialog.classList.add('none');
+    if (dialog){
+        dialog.classList.add('none');
+    }
 
-    // 要素のクリック禁止を解除する
     setInertState(false);
 }
 

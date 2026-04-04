@@ -12,8 +12,8 @@ public class TimeworksEntityMapper {
         // try {
             TimeworksEntity e = new TimeworksEntity();
 
-            e.setTimeworksId(rs.getInt("timeworks_id"));
-            e.setEmployeeId(rs.getInt("employee_id"));
+            e.setTimeworksId(rs.getLong("timeworks_id"));
+            e.setEmployeeId(rs.getLong("employee_id"));
             e.setFullName(rs.getString("full_name"));
             e.setOfficeName(rs.getString("office_name"));
 

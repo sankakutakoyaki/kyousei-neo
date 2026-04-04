@@ -43,6 +43,11 @@ button:disabled:hover {
     border: 1px solid var(black);
 }
 
+.normal-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /******************************************************************************************************* アカウント名 */
 
 .user-btn {

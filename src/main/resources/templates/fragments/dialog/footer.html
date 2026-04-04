@@ -1,7 +1,9 @@
 
 <th:block th:fragment="footerFragment(data)">
     <footer th:id="${data.footerId}" class="dialog-footer">
-        <button class="normal-btn frameless" type="button" name="cancelBtn"></button>
-        <button class="normal-btn ok" type="button" name="submitBtn" tabindex="999"></button>
+        <button class="normal-btn frameless" type="button" name="cancelBtn" 
+            th:attr="data-action=${data[cancelAction]}"></button>
+        <button class="normal-btn ok" type="button" name="submitBtn" tabindex="999" 
+            th:attr="data-action=${data[submitAction]}"></button>
     </footer>    
 </th:block>

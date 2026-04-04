@@ -1,16 +1,20 @@
 package com.kyouseipro.neo.personnel.employee.repository;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
+import com.kyouseipro.neo.common.Enums.SqlMode;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.dto.IdListRequest;
+import com.kyouseipro.neo.dto.sql.SqlBuilder;
+import com.kyouseipro.neo.dto.sql.SqlResult;
 import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
+import com.kyouseipro.neo.interfaces.LogSqlProvider;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
-import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntityRequest;
 import com.kyouseipro.neo.personnel.employee.mapper.EmployeeEntityMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EmployeeRepository {
     private final SqlRepository sqlRepository;
+    private final LogSqlProvider logProvider = new EmployeeLogSqlProvider();
    
     /**
      * IDによる取得。
@@ -28,7 +33,7 @@ public class EmployeeRepository {
     public EmployeeEntity findById(int id) {
         String sql = EmployeeSqlBuilder.buildFindById();
 
-        int targetId = id;
+        Long targetId = ((Number) id).longValue();
         // IDが3桁以下の場合はCODEなのでCODEからIDを取得する
         if (String.valueOf(Math.abs(id)).length() < 4) {
             EmployeeEntity entity = findByCode(id);
@@ -42,7 +47,7 @@ public class EmployeeRepository {
                 int index = 1;
                 ps.setInt(index++, Enums.state.DELETE.getCode());
                 ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, i);
+                ps.setLong(index++, i);
                 ps.setInt(index++, Enums.state.DELETE.getCode());
             },
             EmployeeEntityMapper::map,
@@ -120,22 +125,41 @@ public class EmployeeRepository {
      * @param editor
      * @return 新規IDを返す。
      */
-    public int insert(EmployeeEntityRequest entity, String editor) {
-        String sql = EmployeeSqlBuilder.buildBulkInsert(entity);
+    // public int insert(EmployeeEntityRequest entity, String editor) {
+    //     String sql = EmployeeSqlBuilder.buildBulkInsert(entity);
         
-        try {
-            return sqlRepository.insert(
-                sql,
-                (ps, en) -> EmployeeParameterBinder.bindBulkInsert(ps, en, editor),
-                rs -> rs.getInt("employee_id"),
-                entity
-            );
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
-        }
+    //     try {
+    //         return sqlRepository.insert(
+    //             sql,
+    //             (ps, en) -> EmployeeParameterBinder.bindBulkInsert(ps, en, editor),
+    //             rs -> rs.getInt("employee_id"),
+    //             entity
+    //         );
+    //     } catch (RuntimeException e) {
+    //         if (SqlExceptionUtil.isDuplicateKey(e)) {
+    //             throw new BusinessException("このコードはすでに使用されています。");
+    //         }
+    //         throw e;
+    //     }
+    // }
+    public int insert(Map<String, Object> req, String editor) {
+        req.put("editor", editor);
+        // req.putIfAbsent("category", Enums.clientCategory.PARTNER.getCode());
+        SqlResult result = SqlBuilder.buildSqlWithLog(
+            "employees",
+            req,
+            SqlMode.INSERT,
+            "employeeId",
+            "version",
+            logProvider
+        );
+System.out.println(result.getSql());
+System.out.println(result.getParams());
+        return sqlRepository.insert(
+            result.getSql(),
+            result.getParams(),
+            rs -> rs.getInt("employee_id")
+        );
     }
 
     /**
@@ -144,24 +168,43 @@ public class EmployeeRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int update(EmployeeEntityRequest entity, String editor) {
-        String sql = EmployeeSqlBuilder.buildBulkUpdate(entity);
+    // public int update(EmployeeEntityRequest entity, String editor) {
+    //     String sql = EmployeeSqlBuilder.buildBulkUpdate(entity);
 
-        try {
-            int count = sqlRepository.updateRequired(
-                sql,
-                (ps, e) -> EmployeeParameterBinder.bindBulkUpdate(ps, e, editor),
-                entity
-            );
+    //     try {
+    //         int count = sqlRepository.updateRequired(
+    //             sql,
+    //             (ps, e) -> EmployeeParameterBinder.bindBulkUpdate(ps, e, editor),
+    //             entity
+    //         );
 
-            return count;
+    //         return count;
 
-        } catch (RuntimeException e) {
-            if (SqlExceptionUtil.isDuplicateKey(e)) {
-                throw new BusinessException("このコードはすでに使用されています。");
-            }
-            throw e;
+    //     } catch (RuntimeException e) {
+    //         if (SqlExceptionUtil.isDuplicateKey(e)) {
+    //             throw new BusinessException("このコードはすでに使用されています。");
+    //         }
+    //         throw e;
+    //     }
+    // }
+    public int update(Map<String, Object> req, String editor) {
+        req.put("editor", editor);
+        if(req.get("code") == null){
+            req.put("code", "");
         }
+        SqlResult result = SqlBuilder.buildSqlWithLog(
+            "employees",
+            req,
+            SqlMode.UPDATE,
+            "employeeId",
+            "version",
+            logProvider
+        );
+        return sqlRepository.updateRequired(
+            result.getSql(),
+            result.getParams(),
+            "更新に失敗しました"
+        );
     }
 
     /**
