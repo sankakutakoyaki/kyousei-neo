@@ -114,7 +114,7 @@ export const partnerEmployeePage = () => {
                 },
                 api: {
                     find: "/api/employee/get/id",
-                    save: "/api/employee/save"
+                    save: "/api/employee/construct/save"
                 }
             })
         }

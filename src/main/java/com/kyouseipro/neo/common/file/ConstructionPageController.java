@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.kyouseipro.neo.abstracts.controller.BaseController;
+import com.kyouseipro.neo.abstracts.BaseController;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 
 import jakarta.servlet.http.HttpServletResponse;

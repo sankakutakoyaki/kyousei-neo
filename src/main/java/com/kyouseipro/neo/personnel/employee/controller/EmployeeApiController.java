@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.dto.IdListRequest;
@@ -47,12 +48,19 @@ public class EmployeeApiController {
      * @param ENTITY
      * @return 
      */
-    @PostMapping("/save")
+    // @PostMapping("/save")
+	// @ResponseBody
+    // public ResponseEntity<SimpleResponse<Long>> save(@RequestBody Map<String, Object> req, @AuthenticationPrincipal OidcUser principal) {
+    //     Long id = employeeService.save(req, principal.getAttribute("preferred_username"));
+    // // public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody EmployeeEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
+    //     // int id = employeeService.save(entity, principal.getAttribute("preferred_username"));
+    //     return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
+    // }
+    @PostMapping("/{type}/save")
 	@ResponseBody
-    public ResponseEntity<SimpleResponse<Long>> save(@RequestBody Map<String, Object> req, @AuthenticationPrincipal OidcUser principal) {
+    public ResponseEntity<SimpleResponse<Long>> save(@RequestBody Map<String, Object> req, @PathVariable String type, @AuthenticationPrincipal OidcUser principal) {
+        req.put("category", Enums.employeeCategory.from(type).getCode());
         Long id = employeeService.save(req, principal.getAttribute("preferred_username"));
-    // public ResponseEntity<SimpleResponse<Integer>> save(@RequestBody EmployeeEntityRequest entity, @AuthenticationPrincipal OidcUser principal) {
-        // int id = employeeService.save(entity, principal.getAttribute("preferred_username"));
         return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
     }
 

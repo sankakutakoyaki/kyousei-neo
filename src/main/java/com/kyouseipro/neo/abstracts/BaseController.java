@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.abstracts.controller;
+package com.kyouseipro.neo.abstracts;
 
 import com.kyouseipro.neo.common.exception.SessionExpiredException;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;

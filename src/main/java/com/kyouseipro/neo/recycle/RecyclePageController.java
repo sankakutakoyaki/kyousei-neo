@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.kyouseipro.neo.abstracts.controller.BaseController;
+import com.kyouseipro.neo.abstracts.BaseController;
 import com.kyouseipro.neo.common.ComboBoxService;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.combo.entity.ComboData;

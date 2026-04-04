@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.abstracts.BaseRepository;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Enums.SqlMode;
 import com.kyouseipro.neo.common.exception.BusinessException;
@@ -20,11 +21,15 @@ import com.kyouseipro.neo.personnel.employee.mapper.EmployeeEntityMapper;
 import lombok.RequiredArgsConstructor;
 
 @Repository
-@RequiredArgsConstructor
-public class EmployeeRepository {
-    private final SqlRepository sqlRepository;
-    private final LogSqlProvider logProvider = new EmployeeLogSqlProvider();
-   
+// @RequiredArgsConstructor
+public class EmployeeRepository extends BaseRepository {
+    // private final SqlRepository sqlRepository;
+    // private final LogSqlProvider logProvider = new EmployeeLogSqlProvider();
+
+    public EmployeeRepository(SqlRepository sqlRepository){
+        super(sqlRepository, new EmployeeLogSqlProvider());
+    }
+
     /**
      * IDによる取得。
      * @param id
@@ -119,91 +124,102 @@ public class EmployeeRepository {
         );
     }
 
-    /**
-     * 新規作成。
-     * @param entity
-     * @param editor
-     * @return 新規IDを返す。
-     */
-    // public int insert(EmployeeEntityRequest entity, String editor) {
-    //     String sql = EmployeeSqlBuilder.buildBulkInsert(entity);
+    // /**
+    //  * 新規作成。
+    //  * @param entity
+    //  * @param editor
+    //  * @return 新規IDを返す。
+    //  */
+    // // public int insert(EmployeeEntityRequest entity, String editor) {
+    // //     String sql = EmployeeSqlBuilder.buildBulkInsert(entity);
         
-    //     try {
-    //         return sqlRepository.insert(
-    //             sql,
-    //             (ps, en) -> EmployeeParameterBinder.bindBulkInsert(ps, en, editor),
-    //             rs -> rs.getInt("employee_id"),
-    //             entity
-    //         );
-    //     } catch (RuntimeException e) {
-    //         if (SqlExceptionUtil.isDuplicateKey(e)) {
-    //             throw new BusinessException("このコードはすでに使用されています。");
-    //         }
-    //         throw e;
-    //     }
-    // }
-    public Long insert(Map<String, Object> req, String editor) {
-        req.put("editor", editor);
-        // req.putIfAbsent("category", Enums.clientCategory.PARTNER.getCode());
-        SqlResult result = SqlBuilder.buildSqlWithLog(
-            "employees",
-            req,
-            SqlMode.INSERT,
-            "employeeId",
-            "version",
-            logProvider
-        );
+    // //     try {
+    // //         return sqlRepository.insert(
+    // //             sql,
+    // //             (ps, en) -> EmployeeParameterBinder.bindBulkInsert(ps, en, editor),
+    // //             rs -> rs.getInt("employee_id"),
+    // //             entity
+    // //         );
+    // //     } catch (RuntimeException e) {
+    // //         if (SqlExceptionUtil.isDuplicateKey(e)) {
+    // //             throw new BusinessException("このコードはすでに使用されています。");
+    // //         }
+    // //         throw e;
+    // //     }
+    // // }
+    // public Long insert(Map<String, Object> req, String editor) {
+    //     req.put("editor", editor);
+    //     // req.putIfAbsent("category", Enums.clientCategory.PARTNER.getCode());
+    //     SqlResult result = SqlBuilder.buildSqlWithLog(
+    //         "employees",
+    //         req,
+    //         SqlMode.INSERT,
+    //         "employeeId",
+    //         "version",
+    //         logProvider
+    //     );
 
-        return sqlRepository.insert(
-            result.getSql(),
-            result.getParams(),
-            rs -> rs.getLong("employee_id")
-        );
+    //     return sqlRepository.insert(
+    //         result.getSql(),
+    //         result.getParams(),
+    //         rs -> rs.getLong("employee_id")
+    //     );
+    // }
+
+    // /**
+    //  * 更新。
+    //  * @param entity
+    //  * @param editor
+    //  * @return 成功件数を返す。
+    //  */
+    // // public int update(EmployeeEntityRequest entity, String editor) {
+    // //     String sql = EmployeeSqlBuilder.buildBulkUpdate(entity);
+
+    // //     try {
+    // //         int count = sqlRepository.updateRequired(
+    // //             sql,
+    // //             (ps, e) -> EmployeeParameterBinder.bindBulkUpdate(ps, e, editor),
+    // //             entity
+    // //         );
+
+    // //         return count;
+
+    // //     } catch (RuntimeException e) {
+    // //         if (SqlExceptionUtil.isDuplicateKey(e)) {
+    // //             throw new BusinessException("このコードはすでに使用されています。");
+    // //         }
+    // //         throw e;
+    // //     }
+    // // }
+    // public int update(Map<String, Object> req, String editor) {
+    //     req.put("editor", editor);
+    //     if(req.get("code") == null){
+    //         req.put("code", "");
+    //     }
+    //     SqlResult result = SqlBuilder.buildSqlWithLog(
+    //         "employees",
+    //         req,
+    //         SqlMode.UPDATE,
+    //         "employeeId",
+    //         "version",
+    //         logProvider
+    //     );
+    //     return sqlRepository.updateRequired(
+    //         result.getSql(),
+    //         result.getParams(),
+    //         "更新に失敗しました"
+    //     );
+    // }
+
+    public Long insert(Map<String,Object> req, String editor){
+        return super.insert("employees", req, editor, "employeeId");
     }
 
-    /**
-     * 更新。
-     * @param entity
-     * @param editor
-     * @return 成功件数を返す。
-     */
-    // public int update(EmployeeEntityRequest entity, String editor) {
-    //     String sql = EmployeeSqlBuilder.buildBulkUpdate(entity);
-
-    //     try {
-    //         int count = sqlRepository.updateRequired(
-    //             sql,
-    //             (ps, e) -> EmployeeParameterBinder.bindBulkUpdate(ps, e, editor),
-    //             entity
-    //         );
-
-    //         return count;
-
-    //     } catch (RuntimeException e) {
-    //         if (SqlExceptionUtil.isDuplicateKey(e)) {
-    //             throw new BusinessException("このコードはすでに使用されています。");
-    //         }
-    //         throw e;
-    //     }
-    // }
-    public int update(Map<String, Object> req, String editor) {
-        req.put("editor", editor);
+    public int update(Map<String,Object> req, String editor){
         if(req.get("code") == null){
             req.put("code", "");
         }
-        SqlResult result = SqlBuilder.buildSqlWithLog(
-            "employees",
-            req,
-            SqlMode.UPDATE,
-            "employeeId",
-            "version",
-            logProvider
-        );
-        return sqlRepository.updateRequired(
-            result.getSql(),
-            result.getParams(),
-            "更新に失敗しました"
-        );
+        return super.update("employees", req, editor, "employeeId");
     }
 
     /**
@@ -253,19 +269,33 @@ public class EmployeeRepository {
      * @param editor
      * @return 成功件数を返す。
      */
-    public int deleteByIds(IdListRequest list, String editor) {
-        if (list == null || list.getIds().isEmpty()) {
-            throw new IllegalArgumentException("削除対象が指定されていません");
-        }
+    // public int deleteByIds(IdListRequest list, String editor) {
+    //     if (list == null || list.getIds().isEmpty()) {
+    //         throw new IllegalArgumentException("削除対象が指定されていません");
+    //     }
 
-        String sql = EmployeeSqlBuilder.buildDeleteByIds(list.getIds().size());
-        int count = sqlRepository.updateRequired(
-            sql,
-            (ps, e) -> EmployeeParameterBinder.bindDeleteByIds(ps, e.getIds(), editor),
-            list
+    //     String sql = EmployeeSqlBuilder.buildDeleteByIds(list.getIds().size());
+    //     int count = sqlRepository.updateRequired(
+    //         sql,
+    //         (ps, e) -> EmployeeParameterBinder.bindDeleteByIds(ps, e.getIds(), editor),
+    //         list
+    //     );
+
+    //     return count;
+    // }
+    public int deleteByIds(IdListRequest list, String editor) {
+
+        SqlResult result = SqlBuilder.buildDeleteByIds(
+            list.getIds(),
+            editor,
+            logProvider
         );
 
-        return count;
+        return sqlRepository.updateRequired(
+            result.getSql(),
+            result.getParams(),
+            "削除に失敗しました"
+        );
     }
 
     /**

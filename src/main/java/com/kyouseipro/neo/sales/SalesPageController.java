@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.kyouseipro.neo.abstracts.controller.BaseController;
+import com.kyouseipro.neo.abstracts.BaseController;
 import com.kyouseipro.neo.common.ComboBoxService;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.abstracts.BaseRepository;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Enums.SqlMode;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
@@ -18,10 +19,14 @@ import com.kyouseipro.neo.interfaces.LogSqlProvider;
 import lombok.RequiredArgsConstructor;
 
 @Repository
-@RequiredArgsConstructor
-public class CompanyRepository {
-    private final SqlRepository sqlRepository;
-    private final LogSqlProvider logProvider = new CompanyLogSqlProvider();
+// @RequiredArgsConstructor
+public class CompanyRepository extends BaseRepository {
+    // private final SqlRepository sqlRepository;
+    // private final LogSqlProvider logProvider = new CompanyLogSqlProvider();
+
+    public CompanyRepository(SqlRepository sqlRepository){
+        super(sqlRepository, new CompanyLogSqlProvider());
+    }
 
     /**
      * IDによる取得。
@@ -76,72 +81,84 @@ public class CompanyRepository {
         );
     }
 
-    /**
-     * 新規作成。
-     * @param entity
-     * @return 新規IDを返す。
-     */
-    public Long insert(Map<String, Object> req, String editor) {
-        req.put("editor", editor);
-        req.putIfAbsent("category", Enums.clientCategory.PARTNER.getCode());
-        SqlResult result = SqlBuilder.buildSqlWithLog(
-            "companies",
-            req,
-            SqlMode.INSERT,
-            "companyId",
-            "version",
-            logProvider
-        );
-        return sqlRepository.insert(
-            result.getSql(),
-            result.getParams(),
-            rs -> rs.getLong("company_id")
-        );
-    }
+    // /**
+    //  * 新規作成。
+    //  * @param entity
+    //  * @return 新規IDを返す。
+    //  */
+    // public Long insert(Map<String, Object> req, String editor) {
+    //     req.put("editor", editor);
+    //     req.putIfAbsent("category", Enums.clientCategory.PARTNER.getCode());
+    //     SqlResult result = SqlBuilder.buildSqlWithLog(
+    //         "companies",
+    //         req,
+    //         SqlMode.INSERT,
+    //         "companyId",
+    //         "version",
+    //         logProvider
+    //     );
+    //     return sqlRepository.insert(
+    //         result.getSql(),
+    //         result.getParams(),
+    //         rs -> rs.getLong("company_id")
+    //     );
+    // }
     
-    /**
-     * 更新。
-     * @param entity
-     * @return 成功件数を返す。
-     */
-    public int update(Map<String, Object> req, String editor) {
-        req.put("editor", editor);
-        SqlResult result = SqlBuilder.buildSqlWithLog(
-            "companies",
-            req,
-            SqlMode.UPDATE,
-            "companyId",
-            "version",
-            logProvider
-        );
-        return sqlRepository.updateRequired(
-            result.getSql(),
-            result.getParams(),
-            "更新に失敗しました"
-        );
+    // /**
+    //  * 更新。
+    //  * @param entity
+    //  * @return 成功件数を返す。
+    //  */
+    // public int update(Map<String, Object> req, String editor) {
+    //     req.put("editor", editor);
+    //     SqlResult result = SqlBuilder.buildSqlWithLog(
+    //         "companies",
+    //         req,
+    //         SqlMode.UPDATE,
+    //         "companyId",
+    //         "version",
+    //         logProvider
+    //     );
+    //     return sqlRepository.updateRequired(
+    //         result.getSql(),
+    //         result.getParams(),
+    //         "更新に失敗しました"
+    //     );
+    // }
+
+    // /**
+    //  * 単体論理削除
+    //  * @param req
+    //  * @param editor
+    //  * @return
+    //  */
+    // public int delete(Map<String, Object> req, String editor) {
+    //     req.put("editor", editor);
+    //     SqlResult result = SqlBuilder.buildSqlWithLog(
+    //         "companies",
+    //         req,
+    //         SqlMode.DELETE,
+    //         "companyId",
+    //         "version",
+    //         logProvider
+    //     );
+    //     return sqlRepository.updateRequired(
+    //         result.getSql(),
+    //         result.getParams(),
+    //         "削除に失敗しました"
+    //     );
+    // }
+
+    public Long insert(Map<String,Object> req, String editor){
+        return super.insert("companies", req, editor, "companyId");
     }
 
-    /**
-     * 単体論理削除
-     * @param req
-     * @param editor
-     * @return
-     */
-    public int delete(Map<String, Object> req, String editor) {
-        req.put("editor", editor);
-        SqlResult result = SqlBuilder.buildSqlWithLog(
-            "companies",
-            req,
-            SqlMode.DELETE,
-            "companyId",
-            "version",
-            logProvider
-        );
-        return sqlRepository.updateRequired(
-            result.getSql(),
-            result.getParams(),
-            "削除に失敗しました"
-        );
+    public int update(Map<String,Object> req, String editor){
+        return super.update("companies", req, editor, "companyId");
+    }
+
+    public int delete(Map<String,Object> req, String editor){
+        return super.delete("companies", req, editor, "companyId");
     }
 
     /**

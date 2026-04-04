@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.common;
 
 import com.kyouseipro.neo.interfaces.CodeEnum;
+import java.util.Arrays;
 
 public class Enums {
     /**
@@ -70,6 +71,20 @@ public class Enums {
         public static String getDescriptionByNum(int num) {
             return Utilities.enumValueOf(Enums.clientCategory.class, num).getDescription();
         }
+
+        public static clientCategory from(String type) {
+            return Arrays.stream(values())
+                .filter(e -> e.name().equalsIgnoreCase(type))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("不正なtype: " + type));
+        }
+
+        public static clientCategory from(int code) {
+            return Arrays.stream(values())
+                .filter(e -> e.num == code)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("不正なcode: " + code));
+        }
     }
 
     /**
@@ -102,6 +117,20 @@ public class Enums {
 
         public static String getDescriptionByNum(int num) {
             return Utilities.enumValueOf(Enums.employeeCategory.class, num).getDescription();
+        }
+
+        public static employeeCategory from(String type) {
+            return Arrays.stream(values())
+                .filter(e -> e.name().equalsIgnoreCase(type))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("不正なtype: " + type));
+        }
+
+        public static employeeCategory from(int code) {
+            return Arrays.stream(values())
+                .filter(e -> e.num == code)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("不正なcode: " + code));
         }
     }
 

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.kyouseipro.neo.abstracts.controller.BaseController;
+import com.kyouseipro.neo.abstracts.BaseController;
 import com.kyouseipro.neo.common.response.SimpleResponse;
 import com.kyouseipro.neo.common.validation.service.ValidateService;
 import com.kyouseipro.neo.dto.IdListRequest;
