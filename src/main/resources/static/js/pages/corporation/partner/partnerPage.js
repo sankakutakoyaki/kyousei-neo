@@ -12,17 +12,20 @@ window.addEventListener("load", () => {
 
     initCommon();  
 
-    const company = partnerCompanyPage();    
+    // tab1
+    const company = partnerCompanyPage();
+    registerController("partnerCompany", company);    
     company.init({
         columns: createPartnerCompanyColumns(company),
         data: APP.cache.companyOrigin,
         components: {
             combo: true
-        }
+        },
     });
-    registerController("partnerCompany", company);
 
-    const employee = partnerEmployeePage();    
+    //　tab2
+    const employee = partnerEmployeePage();
+    registerController("partnerEmployee", employee);
     employee.init({
         columns: createPartnerEmployeeColumns(employee),
         data: APP.cache.employeeOrigin,
@@ -30,7 +33,6 @@ window.addEventListener("load", () => {
             combo: true
         }
     });
-    registerController("partnerEmployee", employee);
 });
 
 export const partnerCompanyPage = () => {
@@ -40,6 +42,7 @@ export const partnerCompanyPage = () => {
 
         table: {
             create: (controller, columns) => new DataTable({
+                controller: controller,
                 tableId: "table-01",
                 footerId: "footer-01",
                 columns,
@@ -78,6 +81,7 @@ export const partnerEmployeePage = () => {
 
         table: {
             create: (controller, columns) => new DataTable({
+                controller: controller,
                 tableId: "table-02",
                 footerId: "footer-02",
                 columns,

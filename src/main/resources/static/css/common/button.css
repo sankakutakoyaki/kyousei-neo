@@ -119,6 +119,11 @@ button:disabled:hover {
     width: 2.5rem;
 }
 
+.img-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /******************************************************************************************************* ページトップボタン */
 
 .page-top {

@@ -1,6 +1,6 @@
 "use strict"
 
-import { openMsgDialog, openFormDialog, openConfilmDialog, closeFormDialog } from "../ui/dialog.js";
+import { openMsgDialog, closeMsgDialog, openFormDialog, openConfilmDialog, closeFormDialog } from "../ui/dialog.js";
 import { getTable } from "../init/initTable.js";
 import { api } from "../api/apiService.js";
 import { FormModel } from "../../core/form/FormModel.js";
@@ -134,75 +134,72 @@ export class TableController {
     // 削除（API連携）
     // =========================
 
-    async deleteSelected(){
-        const ids = this.table.model.getSelectedIds();
-        if(ids.length === 0){
-            openMsgDialog("選択してください", "red");
-            return;
-        }
+    // async deleteSelected(){
+    //     const ids = this.table.model.getSelectedIds();
+    //     if(ids.length === 0){
+    //         openMsgDialog("選択してください", "red");
+    //         return;
+    //     }
 
-        openConfilmDialog("削除しますか？", "blue",
-            async () => {
-                closeMsgDialog();
+    //     openConfilmDialog("削除しますか？", "blue",
+    //         async () => {
+    //             closeMsgDialog();
 
-                const result = await api.post(this.deleteUrl, {ids:ids});
-                openMsgDialog(result.message, "blue");
+    //             const result = await api.post(this.deleteUrl, {ids:ids});
+    //             openMsgDialog(result.message, "blue");
 
-                this.table.model.removeByIds(ids);
-                // this.table.reload();
-                await this.refresh();
-            }
-        );
-    }
+    //             this.table.model.removeByIds(ids);
+    //             await this.refresh();
+    //         }
+    //     );
+    // }
 
-    async deleteById(id){
-        openConfilmDialog("削除しますか？", "red", async () => {
-            closeMsgDialog();
-           const result = await api.post(this.deleteUrl, {
-                ids: [id]
-            });
-        });
-    }
+    // async deleteById(id){
+    //     openConfilmDialog("削除しますか？", "red", async () => {
+    //         closeMsgDialog();
+    //        const result = await api.post(this.deleteUrl, {
+    //             ids: [id]
+    //         });
+    //     });
+    // }
 
-    async deleteCurrent(){
-        if(!this.currentEntity) return;
+    // async deleteCurrent(){
+    //     if(!this.currentEntity) return;
 
-        // const id = this.currentEntity[this.config.key];
-        const id = this.currentEntity[this.key];
-        openConfilmDialog("削除しますか？", "red", async () => {
-            closeMsgDialog();
-            const result = await api.post(this.deleteUrl, {
-                ids: [id]
-            });
-            openMsgDialog(result.message, "blue");
-            // closeFormDialog(this.config.formId);
-            closeFormDialog(this.formId);
-            await this.refresh(id);
-        });
-    }
+    //     const id = this.currentEntity[this.key];
+    //     openConfilmDialog("削除しますか？", "red", async () => {
+    //         closeMsgDialog();
+    //         const result = await api.post(this.deleteUrl, {
+    //             ids: [id]
+    //         });
+    //         openMsgDialog(result.message, "blue");
+    //         closeFormDialog(this.formId);
+    //         await this.refresh(id);
+    //     });
+    // }
 
     // =========================
     // ダウンロードCSV（API連携）
     // =========================
 
-    async downloadSelected(){
-        const ids = this.table.model.getSelectedIds();
-        if(ids.length === 0){
-            openMsgDialog("選択してください", "red");
-            return;
-        }
+    // async downloadSelected(){
+    //     const ids = this.table.model.getSelectedIds();
+    //     if(ids.length === 0){
+    //         openMsgDialog("選択してください", "red");
+    //         return;
+    //     }
 
-        const res = await api.post(this.downloadUrl, { ids });
-        const blob = res.data;
-        const url = URL.createObjectURL(blob);
-        const fileName = `download_${formatDate(new Date(), "yyyyMMddHHmmss")}.csv`;
+    //     const res = await api.post(this.downloadUrl, { ids });
+    //     const blob = res.data;
+    //     const url = URL.createObjectURL(blob);
+    //     const fileName = `download_${formatDate(new Date(), "yyyyMMddHHmmss")}.csv`;
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        a.click();
-        URL.revokeObjectURL(url);
-    }
+    //     const a = document.createElement("a");
+    //     a.href = url;
+    //     a.download = fileName;
+    //     a.click();
+    //     URL.revokeObjectURL(url);
+    // }
 
     // =========================
     // フォームにセット

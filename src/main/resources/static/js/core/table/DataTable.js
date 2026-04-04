@@ -4,8 +4,6 @@ import { TableModel } from "./TableModel.js";
 import { renderTable } from "./tableRender.js";
 import { api } from "../api/apiService.js";
 import { filterFactory } from "../../util/filterFactory.js";
-import { openMsgDialog, openConfilmDialog, closeMsgDialog } from "../ui/dialog.js";
-import { formatDate } from "../../util/time.js";
 
 const defaultModel = {
     pageSize: 50,
@@ -21,6 +19,8 @@ export class DataTable {
         this.columns = config.columns;
         this.idKey = config.idKey;
         this.footerId = config.footerId;
+
+        this.controller = config.controller;
 
         this.checkable = config.checkable;
         this.onRowClick = config.onRowClick;
@@ -106,6 +106,10 @@ export class DataTable {
             },
             this.model.getViewData()
         );
+
+        if(this.controller){
+            this.controller.updateButtons();
+        }
     }
 
     sort(field){
@@ -113,41 +117,8 @@ export class DataTable {
         this.reload();
     }
 
-    async deleteSelected(){
-        const ids = this.model.getSelectedIds();
-
-        if(ids.length === 0){
-            openMsgDialog("選択してください", "red");
-            return;
-        }
-        if(!this.api.delete) return;
-
-        openConfilmDialog("削除しますか？", "blue", async () => {
-            closeMsgDialog();
-            const result = await api.post(this.api.delete, { ids });
-            openMsgDialog(result.message, "blue");
-            await this.refresh();
-        });
-    }
-
-    async downloadSelected(){
-        const ids = this.model.getSelectedIds();
-
-        if(ids.length === 0){
-            openMsgDialog("選択してください", "red");
-            return;
-        }
-        if(!this.api.download) return;
-
-        const res = await api.post(this.api.download, { ids });
-        const blob = res.data;
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `download_${formatDate(new Date(), "yyyyMMddHHmmss")}.csv`;
-        a.click();
-
-        URL.revokeObjectURL(url);
+    hasSelection(){
+        return this.model.getSelectedIds().length > 0;
     }
 
     // -------------------------
@@ -187,11 +158,13 @@ export class DataTable {
         // 行クリック
         this.tableEl.addEventListener("click",(e)=>{
 
-            // checkbox
-            if(e.target.name === "chk-box"){
-                const id = Number(e.target.dataset.id);
+            // checkbox判定
+            const chk = e.target.closest('input[name="chk-box"]');
+            if(chk){
+                const id = Number(chk.dataset.id);
                 this.model.toggleSelect(id);
-                this.reload();
+                this.controller?.updateButtons();
+
                 return;
             }
 

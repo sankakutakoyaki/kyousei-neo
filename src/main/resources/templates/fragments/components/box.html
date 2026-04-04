@@ -16,7 +16,7 @@
             <input
                 class="normal-input"
                 th:type="${data['type'] != null ? data['type'] : 'text'}"
-                th:attr="data-test=${data},
+                th:attr="
                     id=${data['id']},
                     name=${data['name']},
                     placeholder=${data['placeholder']},
@@ -45,7 +45,6 @@
             th:attr="
                 id=${data['id']},
                 name=${data['name']},
-                data-target=${data['target']},
                 data-key=${data['key']},
                 data-action=${data['action']},
                 data-combo=${data['combo']},

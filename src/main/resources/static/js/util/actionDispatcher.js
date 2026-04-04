@@ -25,20 +25,17 @@ export function runAction(el, e){
         return;
     }
 
-    const controllerName = el.dataset.controller;
-
-    const controller =
-        getController(controllerName) ||
-        getController(el.closest("[data-controller]")?.dataset.controller);
+    const controller = resolveController(el);
 
     if(!controller){
-        console.warn("controller not found:", controllerName);
+        console.warn("controller not found:", {
+            action: el.dataset.action,
+            element: el
+        });
         return;
     }
 
-    const handler =
-        controller.config?.[action] ||
-        controller.defaultActions?.[action];
+    const handler = controller.actions[action];
 
     let value;
     if(el.type === "checkbox"){
@@ -58,6 +55,14 @@ export function runAction(el, e){
     }
 
     console.warn("action not found:", action);
+}
+
+export function resolveController(el){
+    const name =
+        el.dataset.controller ||
+        el.closest("[data-controller]")?.dataset.controller;
+
+    return getController(name);
 }
 
 function handleTab(el){
@@ -81,6 +86,8 @@ function handleTab(el){
     const target = document.getElementById(targetId);
     if(target){
         target.classList.add("is-show");
+        const controller = resolveController(el);
+        controller?.updateButtons();
     }
 }
 

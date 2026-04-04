@@ -1,12 +1,13 @@
-<th:block th:fragment="searchBoxFragment(searchId, target)">
+<th:block th:fragment="searchBoxFragment(searchId)">
     <!-- 検索 -->
     <div class="search-box">
-        <input th:id="${searchId}" type="search" data-action="search" th:data-target="${target}" placeholder="検索">
+        <input th:id="${searchId}" type="search" data-action="search" placeholder="検索">
         <img title="検索" src="/icons/search.png">
+        
     </div>
 </th:block>
 
-<th:block th:fragment="kebabBtnsFragment(target, btns)">
+<th:block th:fragment="kebabBtnsFragment(btns)">
 
     <div class="kebab-btns" data-area="kebabBtns">
 
@@ -14,7 +15,6 @@
         <div class="img-btn"
             th:if="${btns != null and btns['add'] != null}"
             data-action="create"
-            th:attr="data-target=${target}, data-form=${btns['form']}"
             th:id="${btns['add']}">
             <img src="/icons/add.png">
             <span>新規</span>
@@ -24,7 +24,6 @@
         <div class="img-btn"
             th:if="${btns != null and btns['delete'] != null}"
             data-action="delete"
-            th:attr="data-target=${target}"
             th:id="${btns['delete']}">
             <img src="/icons/dust.png">
             <span>削除</span>
@@ -34,7 +33,6 @@
         <div class="img-btn"
             th:if="${btns != null and btns['download'] != null}"
             data-action="download"
-            th:attr="data-target=${target}"
             th:id="${btns['download']}">
             <img src="/icons/download.png">
             <span>取得</span>
@@ -44,7 +42,6 @@
         <div class="img-btn"
             th:if="${btns != null and btns['reload'] != null}"
             data-action="reload"
-            th:attr="data-target=${target}"
             th:id="${btns['reload']}">
             <img src="/icons/update.png">
             <span>更新</span>
