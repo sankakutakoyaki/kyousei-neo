@@ -2,6 +2,8 @@ package com.kyouseipro.neo.common;
 
 import com.kyouseipro.neo.interfaces.CodeEnum;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Enums {
     /**
@@ -35,6 +37,14 @@ public class Enums {
 
         public static String getDescriptionByNum(int num) {
             return Utilities.enumValueOf(Enums.state.class, num).getDescription();
+        }
+
+        public static Map<String, Integer> getMap() {
+            return Arrays.stream(Enums.state.values())
+                .collect(Collectors.toMap(
+                    Enums.state::name,
+                    Enums.state::getCode
+            ));
         }
     }
 
@@ -85,6 +95,14 @@ public class Enums {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("不正なcode: " + code));
         }
+
+        public static Map<String, Integer> getMap() {
+            return Arrays.stream(Enums.clientCategory.values())
+                .collect(Collectors.toMap(
+                    Enums.clientCategory::name,
+                    Enums.clientCategory::getCode
+            ));
+        }
     }
 
     /**
@@ -131,6 +149,14 @@ public class Enums {
                 .filter(e -> e.num == code)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("不正なcode: " + code));
+        }
+
+        public static Map<String, Integer> getMap() {
+            return Arrays.stream(Enums.employeeCategory.values())
+                .collect(Collectors.toMap(
+                    Enums.employeeCategory::name,
+                    Enums.employeeCategory::getCode
+            ));
         }
     }
 
@@ -638,5 +664,10 @@ public class Enums {
         INSERT,
         UPDATE,
         DELETE
+    }
+
+    public enum QueryType {
+        SELECT,
+        MODIFY
     }
 }

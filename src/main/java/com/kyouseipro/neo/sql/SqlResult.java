@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.dto.sql;
+package com.kyouseipro.neo.sql;
 
 import java.util.List;
 

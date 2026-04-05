@@ -9,7 +9,7 @@ import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
 import com.kyouseipro.neo.corporation.office.entity.OfficeEntityRequest;
 import com.kyouseipro.neo.corporation.office.mapper.OfficeEntityMapper;
 import com.kyouseipro.neo.dto.IdListRequest;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 

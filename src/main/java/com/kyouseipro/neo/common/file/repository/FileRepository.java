@@ -12,7 +12,7 @@ import com.kyouseipro.neo.common.file.entity.FileDto;
 import com.kyouseipro.neo.common.file.entity.FileEntity;
 import com.kyouseipro.neo.common.file.mappaer.FileDtoMapper;
 import com.kyouseipro.neo.common.file.mappaer.FileEntityMapper;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 

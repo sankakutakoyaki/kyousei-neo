@@ -11,12 +11,13 @@ import com.kyouseipro.neo.common.Enums.SqlMode;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.dto.IdListRequest;
-import com.kyouseipro.neo.dto.sql.SqlBuilder;
-import com.kyouseipro.neo.dto.sql.SqlResult;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.interfaces.LogSqlProvider;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 import com.kyouseipro.neo.personnel.employee.mapper.EmployeeEntityMapper;
+import com.kyouseipro.neo.sql.SqlBuilder;
+import com.kyouseipro.neo.sql.SqlResult;
+import com.kyouseipro.neo.sql.model.TableMeta;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -222,6 +223,14 @@ public class EmployeeRepository extends BaseRepository {
         return super.update("employees", req, editor, "employeeId");
     }
 
+    public int delete(Map<String,Object> req, String editor){
+        return super.delete("employees", req, editor, "employeeId");
+    }
+
+    public int deleteByIds(IdListRequest list, String editor){
+        return super.deleteByIds("companies", "companyId", list.getIds(), editor);
+    }
+
     /**
      * コードを更新。
      * @param id
@@ -283,20 +292,24 @@ public class EmployeeRepository extends BaseRepository {
 
     //     return count;
     // }
-    public int deleteByIds(IdListRequest list, String editor) {
+    // public int deleteByIds(IdListRequest list, String editor) {
 
-        SqlResult result = SqlBuilder.buildDeleteByIds(
-            list.getIds(),
-            editor,
-            logProvider
-        );
+    //     TableMeta META =
+    //         new TableMeta("employees", "employee_id", "state");
 
-        return sqlRepository.updateRequired(
-            result.getSql(),
-            result.getParams(),
-            "削除に失敗しました"
-        );
-    }
+    //     SqlResult result = SqlBuilder.buildDeleteByIds(
+    //         META,
+    //         list.getIds(),
+    //         editor,
+    //         logProvider
+    //     );
+
+    //     return sqlRepository.updateRequired(
+    //         result.getSql(),
+    //         result.getParams(),
+    //         "削除に失敗しました"
+    //     );
+    // }
 
     /**
      * CSVファイルをダウンロードする。

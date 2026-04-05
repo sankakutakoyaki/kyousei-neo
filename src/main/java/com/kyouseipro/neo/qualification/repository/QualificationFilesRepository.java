@@ -6,10 +6,10 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.interfaces.FileUpload;
 import com.kyouseipro.neo.qualification.entity.QualificationFilesEntity;
 import com.kyouseipro.neo.qualification.mapper.QualificationFilesEntityMapper;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 

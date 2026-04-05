@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.sales.order.entity.DeliveryStaffEntity;
 import com.kyouseipro.neo.sales.order.mapper.DeliveryStaffEntityMapper;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 

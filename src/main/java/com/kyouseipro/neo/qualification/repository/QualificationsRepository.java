@@ -8,12 +8,12 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Utilities;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.common.simpledata.mapper.SimpleDataMapper;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntityRequest;
 import com.kyouseipro.neo.qualification.entity.QualificationsDto;
 import com.kyouseipro.neo.qualification.entity.QualificationsEntity;
 import com.kyouseipro.neo.qualification.mapper.QualificationsDtoMapper;
 import com.kyouseipro.neo.qualification.mapper.QualificationsEntityMapper;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 

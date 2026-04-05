@@ -10,7 +10,7 @@ import com.kyouseipro.neo.corporation.staff.entity.StaffEntity;
 import com.kyouseipro.neo.corporation.staff.entity.StaffEntityRequest;
 import com.kyouseipro.neo.corporation.staff.mapper.StaffEntityMapper;
 import com.kyouseipro.neo.dto.IdListRequest;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 

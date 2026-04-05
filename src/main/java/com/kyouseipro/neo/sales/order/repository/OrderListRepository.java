@@ -6,9 +6,9 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.sales.order.entity.OrderListEntity;
 import com.kyouseipro.neo.sales.order.mapper.OrderListEntityMapper;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 

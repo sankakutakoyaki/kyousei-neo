@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.dto.sql.repository;
+package com.kyouseipro.neo.sql.repository;
 
 import java.sql.*;
 import java.util.*;
@@ -12,6 +12,7 @@ import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.interfaces.sql.SQLBiConsumer;
 import com.kyouseipro.neo.interfaces.sql.SqlParameterBinder;
 import com.kyouseipro.neo.interfaces.sql.SqlResultExtractor;
+import com.kyouseipro.neo.sql.common.SqlUtil;
 
 @Repository
 public class SqlRepository {
@@ -292,6 +293,26 @@ public class SqlRepository {
         for (int i = 0; i < params.size(); i++) {
             ps.setObject(i + 1, params.get(i));
         }
+    }
+
+    public List<Map<String, Object>> selectMap(String sql, List<Object> params) {
+        return queryList(
+            sql,
+            (ps, p) -> setParams(ps, p),
+            rs -> {
+                ResultSetMetaData meta = rs.getMetaData();
+                Map<String, Object> row = new LinkedHashMap<>();
+
+                for (int i = 1; i <= meta.getColumnCount(); i++) {
+                    String column = SqlUtil.toCamel(meta.getColumnLabel(i));
+                    Object value = rs.getObject(i);
+
+                    row.put(column, value);
+                }
+                return row;
+            },
+            params
+        );
     }
 }
 // import java.sql.Connection;

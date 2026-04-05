@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.address.entity.AddressEntity;
 import com.kyouseipro.neo.common.address.mapper.AddressEntityMapper;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 

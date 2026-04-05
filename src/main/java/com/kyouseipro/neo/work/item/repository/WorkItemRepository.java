@@ -10,7 +10,7 @@ import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.common.simpledata.mapper.SimpleDataMapper;
 import com.kyouseipro.neo.dto.IdListRequest;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 import com.kyouseipro.neo.work.item.entity.WorkItemEntity;
 import com.kyouseipro.neo.work.item.mapper.WorkItemEntityMapper;
 

@@ -10,7 +10,7 @@ import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.common.simpledata.mapper.SimpleDataMapper;
 import com.kyouseipro.neo.corporation.office.entity.OfficeListEntity;
 import com.kyouseipro.neo.corporation.office.mapper.OfficeListEntityMapper;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 

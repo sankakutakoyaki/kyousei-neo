@@ -19,6 +19,7 @@ export class FormController {
             api = {},
             onSaved = null,
             controller = {},
+            buildParams = null
         } = config;
 
         if(!formId) throw new Error("formId is required");
@@ -29,23 +30,26 @@ export class FormController {
         this.api = api;
         this.onSaved = onSaved;
         this.controller = controller;
+        this.buildParams = buildParams;
 
         this.currentEntity = null;
-        // this.dirty = false;
     }
 
-    async open(dataOrId = {}){
+    async open(dataOrId = {}) {
         let data = dataOrId;
-        // this.dirty = false;
 
-        if(typeof dataOrId !== "object"){
-            if(!this.api.find) return;
+        if (typeof dataOrId !== "object") {
+            if (!this.api.find) return;
 
-            const res = await api.post(this.api.find, { id: dataOrId });
-            data = res.data;
+            const params = this.buildParams
+                ? this.buildParams(dataOrId)
+                : { id: dataOrId };
+
+            const res = await this.api.find(params)
+            data = res.data?.[0] ?? {};
         }
 
-        if(this.controller?.state?.companyId){
+        if (this.controller?.state?.companyId) {
             data.companyId = this.controller.state.companyId;
         }
 
@@ -54,25 +58,22 @@ export class FormController {
         const form = document.getElementById(this.formId);
         FormModel.fill(form, data);
 
-        // this.initialEntity = FormModel.toEntity(form, {});
-
-        if(!this._eventsInitialized){
+        if (!this._eventsInitialized) {
             this.initEvents();
             this._eventsInitialized = true;
         }
 
         openFormDialog({
-            dialogId:this.formId,
+            dialogId: this.formId,
             controller: this.controller,
             onSubmit: async (form) => {
                 await this.save(form);
             },
             onReset: () => {
-                this.clear(); 
+                this.clear();
             }
         });
-        // this.updateSubmitButton();
-        // this.controller?.updateButtons();
+
         this.setSubmitEnabled(false);
     }
 

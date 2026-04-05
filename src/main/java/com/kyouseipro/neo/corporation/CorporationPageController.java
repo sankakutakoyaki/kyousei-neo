@@ -105,13 +105,16 @@ public class CorporationPageController extends BaseController {
         List<SimpleData> bloodTypeComboList = comboBoxService.getBloodType();
         model.addAttribute("bloodTypeComboList", bloodTypeComboList);
 
-        // 保存用コード
-        Map<String, Integer> categoryCodes = Map.of(
-            "PARTNER", Enums.clientCategory.PARTNER.getCode(),
-            "CONSTRUCT", Enums.employeeCategory.CONSTRUCT.getCode()
-        );
+        model.addAttribute("state", Enums.state.getMap());
+        model.addAttribute("clientCategory", Enums.clientCategory.getMap());
+        model.addAttribute("employeeCategory", Enums.employeeCategory.getMap());
+        // // 保存用コード
+        // Map<String, Integer> categoryCodes = Map.of(
+        //     "PARTNER", Enums.clientCategory.PARTNER.getCode(),
+        //     "CONSTRUCT", Enums.employeeCategory.CONSTRUCT.getCode()
+        // );
 
-        model.addAttribute("categoryCodes", categoryCodes);
+        // model.addAttribute("categoryCodes", categoryCodes);
 
         return "fragments/pages/corporation/partner/content";
     }

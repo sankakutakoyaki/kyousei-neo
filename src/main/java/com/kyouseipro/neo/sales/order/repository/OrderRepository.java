@@ -6,12 +6,12 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.dto.IdListRequest;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.sales.order.entity.DeliveryStaffEntity;
 import com.kyouseipro.neo.sales.order.entity.OrderEntity;
 import com.kyouseipro.neo.sales.order.entity.OrderItemEntity;
 import com.kyouseipro.neo.sales.order.entity.WorkContentEntity;
 import com.kyouseipro.neo.sales.order.mapper.OrderEntityMapper;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 

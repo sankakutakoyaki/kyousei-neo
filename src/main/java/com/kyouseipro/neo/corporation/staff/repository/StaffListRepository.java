@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.corporation.staff.entity.StaffListEntity;
 import com.kyouseipro.neo.corporation.staff.mapper.StaffListEntityMapper;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 

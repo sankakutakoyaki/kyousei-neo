@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.dto.IdListRequest;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 import com.kyouseipro.neo.work.price.entity.WorkPriceEntity;
 import com.kyouseipro.neo.work.price.mapper.WorkPriceEntityMapper;
 

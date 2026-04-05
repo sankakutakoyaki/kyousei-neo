@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.kyouseipro.neo.common.Utilities;
-import com.kyouseipro.neo.dto.sql.SqlResult;
-import com.kyouseipro.neo.dto.sql.SqlService;
+import com.kyouseipro.neo.sql.SqlResult;
+import com.kyouseipro.neo.sql.SqlService;
 
 public class CompanySqlBuilder {
 

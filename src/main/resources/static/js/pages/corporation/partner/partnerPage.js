@@ -7,6 +7,8 @@ import { createPartnerCompanyColumns, createPartnerEmployeeColumns } from "./col
 import { FormController } from "../../../controllers/FormController.js";
 import { registerController } from "../../../controllers/controllers.js";
 import { filterFactory } from "../../../util/filterFactory.js";
+import { select } from "../../../core/api/sqlApi.js";
+import { execute } from "../../../core/api/sqlApi.js";
 
 window.addEventListener("load", () => {
 
@@ -50,12 +52,17 @@ export const partnerCompanyPage = () => {
                 columns,
                 idKey: controller.key,
                 checkable: true,
+                buildParams: () => ({
+                    // companyId: document.getElementById("companyId").value,
+                    state: APP.cache.state.INITIAL,
+                    category: APP.cache.clientCategory.PARTNER                    
+                }),
                 api: {
-                    select: "/api/partner/get/list",
+                    select: (params) => select("partnerCompanyList", params),
                     delete: "/api/company/delete",
                     download: "/api/company/download/csv"
                 },
-                onDoubleClick: (item) => controller.openEdit(item[controller.key]),
+                onDoubleClick: (item) => controller.openEdit(item[controller.key])
             })
         },
         form: {
@@ -67,9 +74,14 @@ export const partnerCompanyPage = () => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);
                 },
+                buildParams: (id) => ({
+                    state: APP.cache.state.INITIAL,
+                    companyId: id
+                }),
                 api: {
-                    find: "/api/company/get/id",
-                    save: "/api/company/save"
+                    // find: "/api/company/get/id",
+                    find: (params) => select("partnerCompanyDetail", params),
+                    save: "/api/company/partner/save"
                 }
             })
         }
@@ -90,8 +102,14 @@ export const partnerEmployeePage = () => {
                 columns,
                 idKey: controller.key,
                 checkable: true,
+                buildParams: () => ({
+                    companyState: APP.cache.state.INITIAL,
+                    officeState: APP.cache.state.INITIAL,
+                    employeeState: APP.cache.state.INITIAL,
+                    category: APP.cache.employeeCategory.CONSTRUCT,
+                }),
                 api: {
-                    select: "/api/employee/get/list/partner",
+                    select: (params) => select("partnerEmployeeList", params),
                     delete: "/api/employee/delete",
                     download: "/api/employee/download/csv"
                 },
@@ -112,8 +130,15 @@ export const partnerEmployeePage = () => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);
                 },
+                buildParams: (id) => ({
+                    companyState: APP.cache.state.INITIAL,
+                    officeState: APP.cache.state.INITIAL,
+                    employeeState: APP.cache.state.INITIAL,
+                    employeeId: id                   
+                }),
                 api: {
-                    find: "/api/employee/get/id",
+                    // find: "/api/employee/get/id",
+                    find: (params) => select("partnerEmployeeDetail", params),
                     save: "/api/employee/construct/save"
                 }
             })

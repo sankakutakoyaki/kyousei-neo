@@ -2,7 +2,7 @@ package com.kyouseipro.neo.common.validation.repository;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 

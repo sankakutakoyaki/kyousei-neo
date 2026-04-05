@@ -1,12 +1,14 @@
 package com.kyouseipro.neo.abstracts;
 
+import java.util.List;
 import java.util.Map;
 
 import com.kyouseipro.neo.common.Enums.SqlMode;
-import com.kyouseipro.neo.dto.sql.SqlBuilder;
-import com.kyouseipro.neo.dto.sql.SqlResult;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.interfaces.LogSqlProvider;
+import com.kyouseipro.neo.sql.SqlBuilder;
+import com.kyouseipro.neo.sql.SqlResult;
+import com.kyouseipro.neo.sql.model.TableMeta;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 public abstract class BaseRepository {
 
@@ -65,6 +67,28 @@ public abstract class BaseRepository {
             SqlMode.DELETE,
             idKey,
             "version",
+            logProvider
+        );
+
+        return sqlRepository.updateRequired(
+            result.getSql(),
+            result.getParams(),
+            "削除に失敗しました"
+        );
+    }
+
+    public int deleteByIds(
+            String table,
+            String idKey,
+            List<?> ids,
+            String editor
+    ){
+        TableMeta meta = new TableMeta(table, idKey, "state", "version");
+
+        SqlResult result = SqlBuilder.buildDeleteByIds(
+            meta,
+            ids,
+            editor,
             logProvider
         );
 

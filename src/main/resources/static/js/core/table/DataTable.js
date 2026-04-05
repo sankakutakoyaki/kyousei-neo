@@ -26,6 +26,7 @@ export class DataTable {
         this.onRowClick = config.onRowClick;
         this.onDoubleClick = config.onDoubleClick;
 
+        this.buildParams = config.buildParams;
         this.api = config.api || {};
 
         this.tableEl = document.getElementById(this.tableId);
@@ -81,8 +82,9 @@ export class DataTable {
     async fetch(){
         if(!this.api.select) return;
 
-        const res = await api.get(this.api.select);
-        this.model.setOrigin(res.data);
+        const params = this.buildParams ? this.buildParams() : {};
+        const res = await this.api.select(params);
+        this.model.setOrigin(res.data ?? res);
     }
 
     reload(){
@@ -120,11 +122,19 @@ export class DataTable {
     async deleteByIds(ids){
         if(!this.api.delete) return;
 
+        // const result = await this.api.delete(ids);
         const result = await api.post(this.api.delete, { ids });
         await this.refresh();
 
         return result;
     }
+    // async deleteByIds(ids){
+    //     if(!this.api.delete) return;
+
+    //     const result = await this.api.delete({ ids });
+    //     await this.refresh();
+    //     return result;
+    // }
 
     hasSelection(){
         return this.model.getSelectedIds().length > 0;

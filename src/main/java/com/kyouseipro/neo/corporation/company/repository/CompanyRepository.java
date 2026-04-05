@@ -11,10 +11,11 @@ import com.kyouseipro.neo.common.Enums.SqlMode;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
 import com.kyouseipro.neo.corporation.company.mapper.CompanyEntityMapper;
 import com.kyouseipro.neo.dto.IdListRequest;
-import com.kyouseipro.neo.dto.sql.SqlBuilder;
-import com.kyouseipro.neo.dto.sql.SqlResult;
-import com.kyouseipro.neo.dto.sql.repository.SqlRepository;
 import com.kyouseipro.neo.interfaces.LogSqlProvider;
+import com.kyouseipro.neo.sql.SqlBuilder;
+import com.kyouseipro.neo.sql.SqlResult;
+import com.kyouseipro.neo.sql.model.TableMeta;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -161,26 +162,33 @@ public class CompanyRepository extends BaseRepository {
         return super.delete("companies", req, editor, "companyId");
     }
 
+    public int deleteByIds(IdListRequest list, String editor){
+        return super.deleteByIds("companies", "companyId", list.getIds(), editor);
+    }
+
     /**
      * IDで指定したENTITYを論理削除。
      * @param ids
      * @param editor
      * @return 成功件数を返す。
      */
-    public int deleteByIds(IdListRequest list, String editor) {
+    // public int deleteByIds(IdListRequest list, String editor) {
+    //     TableMeta META =
+    //         new TableMeta("companies", "company_id", "state");
 
-        SqlResult result = SqlBuilder.buildDeleteByIds(
-            list.getIds(),
-            editor,
-            logProvider
-        );
+    //     SqlResult result = SqlBuilder.buildDeleteByIds(
+    //         META,
+    //         list.getIds(),
+    //         editor,
+    //         logProvider
+    //     );
 
-        return sqlRepository.updateRequired(
-            result.getSql(),
-            result.getParams(),
-            "削除に失敗しました"
-        );
-    }
+    //     return sqlRepository.updateRequired(
+    //         result.getSql(),
+    //         result.getParams(),
+    //         "削除に失敗しました"
+    //     );
+    // }
 
     /**
      * IDで指定したENTITYのCSVファイルをダウンロードする。
