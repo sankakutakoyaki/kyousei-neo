@@ -677,6 +677,7 @@ public class Enums {
         DELETE_BY_IDS,
         INSERT,
         UPDATE,
-        SAVE
+        SAVE,
+        CSV
     }
 }

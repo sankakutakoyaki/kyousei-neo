@@ -18,6 +18,8 @@ public class QueryDefinition {
     private QueryKind kind;
     private TableMeta tableMeta;
 
+    private List<CsvColumn> csvColumns;
+
     private QueryDefinition(String sql, List<String> paramOrder, QueryType type) {
         this.sql = sql;
         this.paramOrder = paramOrder;
@@ -39,13 +41,20 @@ public class QueryDefinition {
         this.kind = kind;
         this.tableMeta = tableMeta;
     }
-    
+
     public static QueryDefinition select(String sql, List<String> params) {
         return new QueryDefinition(sql, params, QueryType.SELECT);
     }
 
     public static QueryDefinition delete(String sql, List<String> params) {
         return new QueryDefinition(sql, params, QueryType.UPDATE);
+    }
+
+    public static QueryDefinition csv(String sql, List<String> params, List<CsvColumn> columns) {
+        QueryDefinition def = new QueryDefinition(QueryType.SELECT, sql, params);
+        def.setKind(QueryKind.CSV);
+        def.setCsvColumns(columns);
+        return def;
     }
 
     public String getSql() { return sql; }

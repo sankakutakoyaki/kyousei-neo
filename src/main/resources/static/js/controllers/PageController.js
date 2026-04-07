@@ -4,7 +4,8 @@ import { initCombo } from "../core/init/initCombo.js";
 import { smartFilterHandler } from "../core/behavior/filterHandler.js";
 import { resolveController } from "../util/actionDispatcher.js";
 import { openMsgDialog, closeMsgDialog, openConfirmDialog } from "../core/ui/dialog.js";
-import { api } from "../core/api/apiService.js";
+// import { api } from "../core/api/apiService.js";
+import { formatDate } from "../util/time.js";
 
 const defaultConditions = {
     delete: (c) => c.dataTable?.hasSelection(),
@@ -133,10 +134,22 @@ export class PageController {
         const ids = this.dataTable.model.getSelectedIds();
         if(!this.ensureSelection(ids)) return;
 
-        const res = await api.post(this.dataTable.api.download, { ids });
+        const res = await this.dataTable.downloadCsvByIds(ids);
+        // const res = await api.post(this.dataTable.api.download, { ids });
         const blob = res.data;
         const url = URL.createObjectURL(blob);
-        const fileName = `download_${formatDate(new Date(), "yyyyMMddHHmmss")}.csv`;
+        // const fileName = `download_${formatDate(new Date(), "yyyyMMddHHmmss")}.csv`;
+        // const disposition = res.headers["content-disposition"];
+        const disposition = res.title;
+
+        let fileName = "download.csv";
+
+        if (disposition) {
+            const match = disposition.match(/filename="(.+)"/);
+            if (match) {
+                fileName = match[1];
+            }
+        }
 
         const a = document.createElement("a");
         a.href = url;
@@ -144,6 +157,37 @@ export class PageController {
         a.click();
         URL.revokeObjectURL(url);
     }
+    // async downloadSelected() {
+
+    //     const ids = this.dataTable.model.getSelectedIds();
+    //     if (!this.ensureSelection(ids)) return;
+
+    //     const req = {
+    //         queryId: this.dataTable.api.csvQueryId,
+    //         params: {
+    //             ...this.dataTable.buildParams(),
+    //             ids
+    //         }
+    //     };
+
+    //     const res = await api.post(
+    //         this.dataTable.api.download,
+    //         req,
+    //         { responseType: "blob" }
+    //     );
+
+    //     const blob = res.data;
+    //     const url = URL.createObjectURL(blob);
+
+    //     const fileName = `download_${formatDate(new Date(), "yyyyMMddHHmmss")}.csv`;
+
+    //     const a = document.createElement("a");
+    //     a.href = url;
+    //     a.download = fileName;
+    //     a.click();
+
+    //     URL.revokeObjectURL(url);
+    // }
 
     ensureSelection(ids){
         if(ids.length === 0){

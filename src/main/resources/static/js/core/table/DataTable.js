@@ -27,6 +27,7 @@ export class DataTable {
         this.onDoubleClick = config.onDoubleClick;
 
         this.buildParams = config.buildParams;
+        this.buildCsvParams = config.buildCsvParams;
         this.api = config.api || {};
 
         this.tableEl = document.getElementById(this.tableId);
@@ -113,6 +114,18 @@ export class DataTable {
         const result = await this.api.request({
             queryId: this.api.delete,
             params: { ids }
+        });
+
+        await this.refresh();
+        return result;
+    }
+
+    async downloadCsvByIds(ids){
+        if(!this.api.download) return;
+
+        const result = await this.api.request({
+            queryId: this.api.download,
+            params: { ...this.buildCsvParams(), ids }
         });
 
         await this.refresh();

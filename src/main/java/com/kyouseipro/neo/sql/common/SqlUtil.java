@@ -3,6 +3,8 @@ package com.kyouseipro.neo.sql.common;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class SqlUtil {
     public static void setDateOrMax(
@@ -34,5 +36,11 @@ public class SqlUtil {
         }
 
         return result.toString();
+    }
+
+    public static String placeholders(int size) {
+        return IntStream.range(0, size)
+                .mapToObj(i -> "?")
+                .collect(Collectors.joining(","));
     }
 }

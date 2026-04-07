@@ -48,6 +48,7 @@ export async function apiFetch(url, {
         }
 
         const ct = response.headers.get("content-type") || "";
+        const cd = response.headers.get("content-disposition") || "";
 
         let result = null;
 
@@ -76,7 +77,8 @@ export async function apiFetch(url, {
             ok: true,
             status: response.status,
             data: result?.data ?? result,
-            message: result?.message ?? ""
+            message: result?.message ?? "",
+            title: cd
         };
     } catch (err) {
         if (err.name === "AbortError") {

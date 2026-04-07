@@ -22,23 +22,14 @@ public class SqlProvider {
         map.put("partnerCompanyList", CompanyQuery.partnerCompanyList());
         map.put("partnerEmployeeList", EmployeeQuery.partnerEmployeeList());
 
-        map.put("partnerCompanyDeleteByIds", new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.PARTNER_COMPANY ));
-        map.put("partnerEmployeeDeleteByIds", new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.PARTNER_EMPLOYEE ));
+        map.put("partnerCompanyCsv", CompanyQuery.partnerCompanyCsv());
+        // map.put("partnerEmployeeCsv", EmployeeQuery.partnerEmployeeCsv());
 
-        map.put("partnerCompanySave",
-            new QueryDefinition(
-                QueryType.UPDATE,
-                QueryKind.SAVE,
-                Tables.PARTNER_COMPANY
-            )
-        );
-        map.put("partnerEmployeeSave",
-            new QueryDefinition(
-                QueryType.UPDATE,
-                QueryKind.SAVE,
-                Tables.PARTNER_EMPLOYEE
-            )
-        );
+        map.put("partnerCompanyDeleteByIds", new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.PARTNER_COMPANY));
+        map.put("partnerEmployeeDeleteByIds", new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.PARTNER_EMPLOYEE));
+
+        map.put("partnerCompanySave", new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.PARTNER_COMPANY));
+        map.put("partnerEmployeeSave", new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.PARTNER_EMPLOYEE));
     }
 
     public QueryDefinition get(String queryId) {

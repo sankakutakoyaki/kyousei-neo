@@ -1,20 +1,25 @@
 package com.kyouseipro.neo.sql.controller;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kyouseipro.neo.common.Enums.QueryType;
+import com.kyouseipro.neo.sql.common.CsvBuilder;
 import com.kyouseipro.neo.sql.common.QueryParamBinder;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.SqlProvider;
 import com.kyouseipro.neo.sql.repository.BaseRepository;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
+import com.kyouseipro.neo.sql.service.CsvService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +31,7 @@ public class QueryController {
     private final QueryParamBinder paramBinder;
     private final SqlRepository sqlRepository;
     private final BaseRepository baseRepository;
+    private final CsvService csvService;
 
     @PostMapping("/query")
     public Object request(@RequestBody SelectRequest req) {
@@ -155,6 +161,13 @@ public class QueryController {
                 return Map.of(
                     "count", count
                 );
+            }
+
+            // ========================
+            // CSV_DOWNLOAD
+            // ========================
+            case CSV -> {
+                return csvService.execute(def, req);
             }
         }
 

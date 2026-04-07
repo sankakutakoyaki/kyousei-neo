@@ -57,11 +57,15 @@ export const partnerCompanyPage = () => {
                     state: APP.cache.state.INITIAL,
                     category: APP.cache.clientCategory.PARTNER                    
                 }),
+                buildCsvParams: () => ({
+                    state: APP.cache.state.INITIAL
+                }),
                 api: {
                     request: api.request, // 取得方法定義
                     select: "partnerCompanyList",
                     delete: "partnerCompanyDeleteByIds",
-                    download: "/api/company/download/csv"
+                    download: "partnerCompanyCsv"
+                    // download: "/api/company/download/csv"
                 },
                 onDoubleClick: (item) => controller.openEdit(item[controller.key])
             })
@@ -115,13 +119,14 @@ export const partnerEmployeePage = () => {
                     employeeState: APP.cache.state.INITIAL,
                     category: APP.cache.employeeCategory.CONSTRUCT,
                 }),
+                buildCsvParams: () => ({
+                    state: APP.cache.state.INITIAL
+                }),
                 api: {
                     request: api.request,
                     select: "partnerEmployeeList",
                     delete: "partnerEmployeeDeleteByIds",
-                    // select: (params) => select("partnerEmployeeList", params),
-                    // delete: (params) => command("partnerEmployeeDelete", params),
-                    download: "/api/employee/download/csv"
+                    download: "partnerEmployeeCsv"
                 },
                 model: {
                     filters: {

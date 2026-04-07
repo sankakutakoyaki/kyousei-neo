@@ -142,9 +142,10 @@ public class SqlBuilder {
 
         sql.append(logProvider.buildLogTable(tableVar));
 
-        String placeholders = ids.stream()
-                .map(i -> "?")
-                .collect(Collectors.joining(","));
+        String placeholders = SqlUtil.placeholders(ids.size());
+        // String placeholders = ids.stream()
+        //         .map(i -> "?")
+        //         .collect(Collectors.joining(","));
 
         // ★ここが汎用化ポイント
         sql.append("UPDATE ").append(meta.tableName()).append(" SET ")
