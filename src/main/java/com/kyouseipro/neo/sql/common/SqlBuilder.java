@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.sql;
+package com.kyouseipro.neo.sql.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Enums.SqlMode;
 import com.kyouseipro.neo.interfaces.LogSqlProvider;
+import com.kyouseipro.neo.sql.model.SqlResult;
 import com.kyouseipro.neo.sql.model.TableMeta;
 
 public class SqlBuilder {
@@ -168,49 +169,4 @@ public class SqlBuilder {
 
         return new SqlResult(sql.toString(), params);
     }
-    // public static <T> SqlResult buildDeleteByIds(
-    //         List<T> ids,
-    //         String editor,
-    //         LogSqlProvider logProvider
-    // ){
-    //     if (ids == null || ids.isEmpty()) {
-    //         throw new IllegalArgumentException("削除対象が指定されていません");
-    //     }
-
-    //     StringBuilder sql = new StringBuilder();
-    //     List<Object> params = new ArrayList<>();
-
-    //     String tableVar = "@Deleted";
-
-    //     sql.append(logProvider.buildLogTable(tableVar));
-
-    //     // placeholders
-    //     String placeholders = ids.stream()
-    //             .map(i -> "?")
-    //             .collect(Collectors.joining(","));
-
-    //     sql.append("UPDATE companies SET state = ? ");
-
-    //     sql.append(logProvider.buildOutput()).append(" INTO ").append(tableVar).append(" ");
-
-    //     sql.append("WHERE company_id IN (").append(placeholders).append(") ");
-    //     sql.append("AND NOT(state = ?); ");
-
-    //     // ★ params順序
-    //     params.add(Enums.state.DELETE.getCode()); // state = ?
-    //     params.addAll(ids);                       // IN (...)
-    //     params.add(Enums.state.DELETE.getCode()); // NOT(state = ?)
-
-    //     // ログ
-    //     String action = "DELETE";
-    //     sql.append(logProvider.buildInsertLog(tableVar, action));
-
-    //     // ★ログparams
-    //     Map<String, Object> ctx = new HashMap<>();
-    //     ctx.put("editor", editor);
-
-    //     params.addAll(logProvider.buildLogParams(ctx, action));
-
-    //     return new SqlResult(sql.toString(), params);
-    // }
 }

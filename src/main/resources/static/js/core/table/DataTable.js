@@ -2,8 +2,8 @@
 
 import { TableModel } from "./TableModel.js";
 import { renderTable } from "./tableRender.js";
-import { api } from "../api/apiService.js";
 import { filterFactory } from "../../util/filterFactory.js";
+import { api } from "../api/apiService.js";
 
 const defaultModel = {
     pageSize: 50,
@@ -79,12 +79,44 @@ export class DataTable {
         this.reload();
     }
 
+    // async fetch(){
+    //     if(!this.api.select) return;
+
+    //     const params = this.buildParams ? this.buildParams() : {};
+    //     const res = await this.api.select(params);
+    //     this.model.setOrigin(res.data ?? res);
+    // }
     async fetch(){
         if(!this.api.select) return;
 
         const params = this.buildParams ? this.buildParams() : {};
-        const res = await this.api.select(params);
-        this.model.setOrigin(res.data ?? res);
+        const res = await this.api.request({
+            queryId: this.api.select,
+            params
+        });
+        this.model.setOrigin(res.data ?? []);
+    }
+
+    // async deleteByIds(ids){
+    //     if(!this.api.delete) return;
+
+    //     const result = await this.api.delete(ids);
+    //     // const result = await api.post(this.api.delete, { ids });
+    //     await this.refresh();
+
+    //     return result;
+    // }
+
+    async deleteByIds(ids){
+        if(!this.api.delete) return;
+
+        const result = await this.api.request({
+            queryId: this.api.delete,
+            params: { ids }
+        });
+
+        await this.refresh();
+        return result;
     }
 
     reload(){
@@ -118,23 +150,6 @@ export class DataTable {
         this.model.toggleSort(field);
         this.reload();
     }
-
-    async deleteByIds(ids){
-        if(!this.api.delete) return;
-
-        // const result = await this.api.delete(ids);
-        const result = await api.post(this.api.delete, { ids });
-        await this.refresh();
-
-        return result;
-    }
-    // async deleteByIds(ids){
-    //     if(!this.api.delete) return;
-
-    //     const result = await this.api.delete({ ids });
-    //     await this.refresh();
-    //     return result;
-    // }
 
     hasSelection(){
         return this.model.getSelectedIds().length > 0;

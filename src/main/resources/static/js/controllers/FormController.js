@@ -3,7 +3,7 @@
 import { openFormDialog, closeFormDialog, openMsgDialog } from "../core/ui/dialog.js";
 import { FormModel } from "../core/form/FormModel.js";
 import { validate } from "../core/form/components/check.js";
-import { api } from "../core/api/apiService.js";
+// import { api } from "../core/api/apiService.js";
 import { convertKey } from "../core/ui/keyCaseConverter.js";
 import { normalize, normalizeValue, getOptions } from "../core/behavior/valueNormalizer.js";
 
@@ -17,6 +17,7 @@ export class FormController {
             formId,
             key,
             api = {},
+            beforeSave = null,
             onSaved = null,
             controller = {},
             buildParams = null
@@ -28,6 +29,7 @@ export class FormController {
         this.formId = formId;
         this.key = key;
         this.api = api;
+        this.beforeSave = beforeSave;
         this.onSaved = onSaved;
         this.controller = controller;
         this.buildParams = buildParams;
@@ -77,6 +79,38 @@ export class FormController {
         this.setSubmitEnabled(false);
     }
 
+    // async save(form){
+
+    //     if(!validate(form)) return;
+
+    //     const payload = FormModel.buildPayload(form, this.currentEntity, this.key);
+
+    //     if(payload === null){
+    //         openMsgDialog({
+    //             message:"変更がありません",
+    //             color:"red"
+    //         });
+    //         return;
+    //     }
+    //     if(!this.api.save) return;
+
+    //     const result = await api.post(this.api.save, payload);
+    //     if(result.ok){
+    //         openMsgDialog({
+    //             message:result.message,
+    //             color:"blue"
+    //         });
+    //     }
+
+    //     closeFormDialog(this.formId);
+
+
+    //     if(this.onSaved){
+    //         await this.onSaved(result.data);
+    //     }
+        
+    //     return result.data;
+    // }
     async save(form){
 
         if(!validate(form)) return;
@@ -90,24 +124,36 @@ export class FormController {
             });
             return;
         }
+
+        if (this.beforeSave) {
+            this.beforeSave(payload);
+        }
+
         if(!this.api.save) return;
 
-        const result = await api.post(this.api.save, payload);
-        if(result.ok){
-            openMsgDialog({
-                message:result.message,
-                color:"blue"
-            });
-        }
+        const res = await this.api.request({
+            queryId: this.api.save,
+            params: payload
+        });
+
+        // INSERTの場合 idが返る
+        const id = res.data;
+
+        // UPDATEの場合 countが返る
+        const count = res.count;
+
+        openMsgDialog({
+            message: "保存しました",
+            color: "blue"
+        });
 
         closeFormDialog(this.formId);
 
-
         if(this.onSaved){
-            await this.onSaved(result.data);
+            await this.onSaved(id ?? this.currentEntity?.[this.key]);
         }
-        
-        return result.data;
+
+        return id ?? count;
     }
 
     clear(){

@@ -1,10 +1,11 @@
-package com.kyouseipro.neo.sql;
+package com.kyouseipro.neo.sql.service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.kyouseipro.neo.interfaces.LogSqlProvider;
+import com.kyouseipro.neo.sql.model.SqlResult;
 
 public class SqlService {
     public static String toSnake(String camel) {

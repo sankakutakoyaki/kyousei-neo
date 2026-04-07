@@ -108,13 +108,23 @@ export class PageController {
         });
     }
 
+    // async executeDelete(ids){
+    //     closeMsgDialog();
+
+    //     const result = await this.dataTable.deleteByIds(ids); // ★委譲
+
+    //     openMsgDialog({
+    //         message: result.message,
+    //         color:"blue"
+    //     });
+    // }
     async executeDelete(ids){
         closeMsgDialog();
 
-        const result = await this.dataTable.deleteByIds(ids); // ★委譲
+        const result = await this.dataTable.deleteByIds(ids);
 
         openMsgDialog({
-            message: result.message,
+            message: `${result.data.count ?? 0}件削除しました`,
             color:"blue"
         });
     }

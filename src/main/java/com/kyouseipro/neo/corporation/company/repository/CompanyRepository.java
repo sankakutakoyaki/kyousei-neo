@@ -5,29 +5,30 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.abstracts.BaseRepository;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Enums.SqlMode;
 import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
 import com.kyouseipro.neo.corporation.company.mapper.CompanyEntityMapper;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.interfaces.LogSqlProvider;
-import com.kyouseipro.neo.sql.SqlBuilder;
-import com.kyouseipro.neo.sql.SqlResult;
+import com.kyouseipro.neo.sql.common.SqlBuilder;
+import com.kyouseipro.neo.sql.model.SqlResult;
 import com.kyouseipro.neo.sql.model.TableMeta;
+import com.kyouseipro.neo.sql.repository.BaseRepository;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Repository
-// @RequiredArgsConstructor
-public class CompanyRepository extends BaseRepository {
-    // private final SqlRepository sqlRepository;
+@RequiredArgsConstructor
+public class CompanyRepository {
+    private final SqlRepository sqlRepository;
+    private final BaseRepository baseRepository;
     // private final LogSqlProvider logProvider = new CompanyLogSqlProvider();
 
-    public CompanyRepository(SqlRepository sqlRepository){
-        super(sqlRepository, new CompanyLogSqlProvider());
-    }
+    // public CompanyRepository(SqlRepository sqlRepository){
+    //     super(sqlRepository, new CompanyLogSqlProvider());
+    // }
 
     /**
      * IDによる取得。
@@ -151,19 +152,23 @@ public class CompanyRepository extends BaseRepository {
     // }
 
     public Long insert(Map<String,Object> req, String editor){
-        return super.insert("companies", req, editor, "companyId");
+        // return baseRepository.insert("companies", req, editor, "companyId");
+        return null;
     }
 
     public int update(Map<String,Object> req, String editor){
-        return super.update("companies", req, editor, "companyId");
+        // return baseRepository.update("companies", req, editor, "companyId");
+        return 0;
     }
 
     public int delete(Map<String,Object> req, String editor){
-        return super.delete("companies", req, editor, "companyId");
+        // return baseRepository.delete("companies", req, editor, "companyId");
+        return 0;
     }
 
     public int deleteByIds(IdListRequest list, String editor){
-        return super.deleteByIds("companies", "companyId", list.getIds(), editor);
+        // return baseRepository.deleteByIds("companies", "companyId", list.getIds(), editor);
+        return 0;
     }
 
     /**

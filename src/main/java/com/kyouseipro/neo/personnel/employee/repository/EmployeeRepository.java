@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.abstracts.BaseRepository;
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Enums.SqlMode;
 import com.kyouseipro.neo.common.exception.BusinessException;
@@ -14,22 +13,24 @@ import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.interfaces.LogSqlProvider;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 import com.kyouseipro.neo.personnel.employee.mapper.EmployeeEntityMapper;
-import com.kyouseipro.neo.sql.SqlBuilder;
-import com.kyouseipro.neo.sql.SqlResult;
+import com.kyouseipro.neo.sql.common.SqlBuilder;
+import com.kyouseipro.neo.sql.model.SqlResult;
 import com.kyouseipro.neo.sql.model.TableMeta;
+import com.kyouseipro.neo.sql.repository.BaseRepository;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Repository
-// @RequiredArgsConstructor
-public class EmployeeRepository extends BaseRepository {
-    // private final SqlRepository sqlRepository;
+@RequiredArgsConstructor
+public class EmployeeRepository {
+    private final SqlRepository sqlRepository;
+    // private final BaseRepository baseRepository;
     // private final LogSqlProvider logProvider = new EmployeeLogSqlProvider();
 
-    public EmployeeRepository(SqlRepository sqlRepository){
-        super(sqlRepository, new EmployeeLogSqlProvider());
-    }
+    // public EmployeeRepository(SqlRepository sqlRepository){
+    //     super(sqlRepository, new EmployeeLogSqlProvider());
+    // }
 
     /**
      * IDによる取得。
@@ -213,22 +214,26 @@ public class EmployeeRepository extends BaseRepository {
     // }
 
     public Long insert(Map<String,Object> req, String editor){
-        return super.insert("employees", req, editor, "employeeId");
+        // return super.insert("employees", req, editor, "employeeId");
+        return null;
     }
 
     public int update(Map<String,Object> req, String editor){
         if(req.get("code") == null){
             req.put("code", "");
         }
-        return super.update("employees", req, editor, "employeeId");
+        // return super.update("employees", req, editor, "employeeId");
+        return 0;
     }
 
     public int delete(Map<String,Object> req, String editor){
-        return super.delete("employees", req, editor, "employeeId");
+        // return super.delete("employees", req, editor, "employeeId");
+        return 0;
     }
 
     public int deleteByIds(IdListRequest list, String editor){
-        return super.deleteByIds("companies", "companyId", list.getIds(), editor);
+        // return super.deleteByIds("companies", "companyId", list.getIds(), editor);
+        return 0;
     }
 
     /**

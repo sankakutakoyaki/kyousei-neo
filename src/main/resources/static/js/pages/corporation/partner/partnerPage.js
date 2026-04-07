@@ -7,8 +7,9 @@ import { createPartnerCompanyColumns, createPartnerEmployeeColumns } from "./col
 import { FormController } from "../../../controllers/FormController.js";
 import { registerController } from "../../../controllers/controllers.js";
 import { filterFactory } from "../../../util/filterFactory.js";
-import { select } from "../../../core/api/sqlApi.js";
-import { execute } from "../../../core/api/sqlApi.js";
+// import { select } from "../../../core/api/sqlApi.js";
+// import { execute } from "../../../core/api/sqlApi.js";
+import { api } from "../../../core/api/apiService.js";
 
 window.addEventListener("load", () => {
 
@@ -53,13 +54,13 @@ export const partnerCompanyPage = () => {
                 idKey: controller.key,
                 checkable: true,
                 buildParams: () => ({
-                    // companyId: document.getElementById("companyId").value,
                     state: APP.cache.state.INITIAL,
                     category: APP.cache.clientCategory.PARTNER                    
                 }),
                 api: {
-                    select: (params) => select("partnerCompanyList", params),
-                    delete: "/api/company/delete",
+                    request: api.request, // 取得方法定義
+                    select: "partnerCompanyList",
+                    delete: "partnerCompanyDeleteByIds",
                     download: "/api/company/download/csv"
                 },
                 onDoubleClick: (item) => controller.openEdit(item[controller.key])
@@ -70,6 +71,12 @@ export const partnerCompanyPage = () => {
                 controller: controller,
                 formId: "form-01",
                 key: controller.key,
+                beforeSave: (payload) => {
+                    const id = payload[controller.key];
+                    if (!id || Number(id) === 0) {
+                        payload.category = APP.cache.clientCategory.PARTNER;
+                    }
+                },
                 onSaved: async (id) => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);
@@ -79,9 +86,9 @@ export const partnerCompanyPage = () => {
                     companyId: id
                 }),
                 api: {
-                    // find: "/api/company/get/id",
-                    find: (params) => select("partnerCompanyDetail", params),
-                    save: "/api/company/partner/save"
+                    request: api.request,
+                    find: "partnerCompanyDetail",
+                    save: "partnerCompanySave"
                 }
             })
         }
@@ -109,8 +116,11 @@ export const partnerEmployeePage = () => {
                     category: APP.cache.employeeCategory.CONSTRUCT,
                 }),
                 api: {
-                    select: (params) => select("partnerEmployeeList", params),
-                    delete: "/api/employee/delete",
+                    request: api.request,
+                    select: "partnerEmployeeList",
+                    delete: "partnerEmployeeDeleteByIds",
+                    // select: (params) => select("partnerEmployeeList", params),
+                    // delete: (params) => command("partnerEmployeeDelete", params),
                     download: "/api/employee/download/csv"
                 },
                 model: {
@@ -126,6 +136,12 @@ export const partnerEmployeePage = () => {
                 formId: "form-02",
                 key: controller.key,
                 controller: controller, 
+                beforeSave: (payload) => {
+                    const id = payload[controller.key];
+                    if (!id || Number(id) === 0) {
+                        payload.category = APP.cache.employeeCategory.CONSTRUCT;
+                    }
+                },
                 onSaved: async (id) => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);
@@ -137,9 +153,12 @@ export const partnerEmployeePage = () => {
                     employeeId: id                   
                 }),
                 api: {
-                    // find: "/api/employee/get/id",
-                    find: (params) => select("partnerEmployeeDetail", params),
-                    save: "/api/employee/construct/save"
+                    // find: (params) => select("partnerEmployeeDetail", params),
+                    // save: "/api/employee/construct/save"
+                    request: api.request,
+                    find: "partnerEmployeeDetail",
+                    // save: "/api/employee/partner/save"
+                    save: "partnerEmployeeSave"
                 }
             })
         }

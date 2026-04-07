@@ -7,7 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SqlParamBuilder {
+public class QueryParamBinder {
 
     public List<Object> build(
             List<String> paramOrder,

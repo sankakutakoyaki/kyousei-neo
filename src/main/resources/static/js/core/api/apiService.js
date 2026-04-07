@@ -21,5 +21,12 @@ export const api = {
             method:"POST",
             data:formData
         });
+    },
+
+    request: ({ queryId, params }) => {
+        return apiFetch("/api/query", {
+            method: "POST",
+            data: { queryId, params }
+        });
     }
 }

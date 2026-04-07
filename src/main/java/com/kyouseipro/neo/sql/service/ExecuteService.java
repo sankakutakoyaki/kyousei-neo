@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.common.Enums.QueryType;
-import com.kyouseipro.neo.sql.common.SqlParamBuilder;
+import com.kyouseipro.neo.sql.common.QueryParamBinder;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.SqlProvider;
@@ -19,7 +19,7 @@ public class ExecuteService {
 
     private final SqlProvider sqlProvider;
     private final SqlRepository sqlRepository;
-    private final SqlParamBuilder paramBuilder;
+    private final QueryParamBinder paramBuilder;
 
     public int execute(SelectRequest req) {
 

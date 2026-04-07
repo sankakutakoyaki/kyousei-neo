@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.sql;
+package com.kyouseipro.neo.sql.model;
 
 import java.util.List;
 

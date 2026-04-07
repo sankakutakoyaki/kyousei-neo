@@ -13,15 +13,20 @@ import com.kyouseipro.neo.interfaces.sql.SQLBiConsumer;
 import com.kyouseipro.neo.interfaces.sql.SqlParameterBinder;
 import com.kyouseipro.neo.interfaces.sql.SqlResultExtractor;
 import com.kyouseipro.neo.sql.common.SqlUtil;
+import com.kyouseipro.neo.sql.model.TableMeta;
+
+import lombok.RequiredArgsConstructor;
 
 @Repository
+@RequiredArgsConstructor
 public class SqlRepository {
 
     private final DataSource dataSource;
+    // private final BaseRepository baseRepository;
 
-    public SqlRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+    // public SqlRepository(DataSource dataSource) {
+    //     this.dataSource = dataSource;
+    // }
 
     /* =========================================================
        必須単一取得（OUTPUT対応）
@@ -314,6 +319,10 @@ public class SqlRepository {
             params
         );
     }
+
+    // public int deleteByIds(TableMeta meta, List<Long> ids, String editor) {
+    //     return baseRepository.deleteByIds(meta, ids, editor);
+    // }
 }
 // import java.sql.Connection;
 // import java.sql.DriverManager;

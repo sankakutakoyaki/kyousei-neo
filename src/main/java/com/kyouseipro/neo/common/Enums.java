@@ -668,6 +668,15 @@ public class Enums {
 
     public enum QueryType {
         SELECT,
-        MODIFY
+        INSERT,
+        UPDATE
+    }
+
+    public enum QueryKind {
+        SQL,
+        DELETE_BY_IDS,
+        INSERT,
+        UPDATE,
+        SAVE
     }
 }

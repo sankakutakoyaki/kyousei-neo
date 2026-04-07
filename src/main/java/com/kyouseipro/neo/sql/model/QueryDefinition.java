@@ -2,36 +2,53 @@ package com.kyouseipro.neo.sql.model;
 
 import java.util.List;
 
+import com.kyouseipro.neo.common.Enums.QueryKind;
 import com.kyouseipro.neo.common.Enums.QueryType;
-import com.kyouseipro.neo.common.Enums.SqlMode;
+// import com.kyouseipro.neo.common.Enums.SqlMode;
 
 import lombok.Data;
 
 @Data
 public class QueryDefinition {
 
-    private final String sql;
-    private final List<String> paramOrder;
-    private final QueryType type;
-    private final SqlMode mode;
+    private String sql;
+    private List<String> paramOrder;
+    private QueryType type;
 
-    private QueryDefinition(String sql, List<String> paramOrder, QueryType type, SqlMode mode) {
+    private QueryKind kind;
+    private TableMeta tableMeta;
+
+    private QueryDefinition(String sql, List<String> paramOrder, QueryType type) {
         this.sql = sql;
         this.paramOrder = paramOrder;
         this.type = type;
-        this.mode = mode;
+        this.kind = QueryKind.SQL;
+    }
+    
+    // ★ SQL用コンストラクタ
+    public QueryDefinition(QueryType type, String sql, List<String> paramOrder) {
+        this.type = type;
+        this.sql = sql;
+        this.paramOrder = paramOrder;
+        this.kind = QueryKind.SQL;
     }
 
+    // ★ DELETE用コンストラクタ（今回必要）
+    public QueryDefinition(QueryType type, QueryKind kind, TableMeta tableMeta) {
+        this.type = type;
+        this.kind = kind;
+        this.tableMeta = tableMeta;
+    }
+    
     public static QueryDefinition select(String sql, List<String> params) {
-        return new QueryDefinition(sql, params, QueryType.SELECT, null);
+        return new QueryDefinition(sql, params, QueryType.SELECT);
     }
 
     public static QueryDefinition delete(String sql, List<String> params) {
-        return new QueryDefinition(sql, params, QueryType.MODIFY, SqlMode.DELETE);
+        return new QueryDefinition(sql, params, QueryType.UPDATE);
     }
 
     public String getSql() { return sql; }
     public List<String> getParamOrder() { return paramOrder; }
     public QueryType getType() { return type; }
-    public SqlMode getMode() { return mode; }
 }
