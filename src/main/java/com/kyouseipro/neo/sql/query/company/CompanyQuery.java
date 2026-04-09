@@ -42,10 +42,10 @@ public class CompanyQuery {
         List<String> params = List.of("state", "ids");
 
         List<CsvColumn> columns = List.of(
-            new CsvColumn("company_id", "会社ID"),
+            new CsvColumn("companyId", "会社ID"),
             new CsvColumn("name", "会社名"),
-            new CsvColumn("name_kana", "カナ"),
-            new CsvColumn("tel_number", "電話番号"),
+            new CsvColumn("nameKana", "カナ"),
+            new CsvColumn("telNumber", "電話番号"),
             new CsvColumn("email", "メール")
         );
 
