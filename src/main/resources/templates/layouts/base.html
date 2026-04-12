@@ -6,8 +6,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,viewport-fit=cover">
-    <!-- <meta name="_csrf" th:content="${_csrf.token}"> -->
-    <!-- <meta name="_csrf_header" th:content="${_csrf.headerName}">  -->
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <title th:text="${title}"></title>
 
     <link th:href="@{/css/common/default.css}" rel="stylesheet">
@@ -27,6 +27,8 @@
     <script src="/js/common/name.js" defer></script>
     <script src="/js/common/enterfocus.js" defer></script>
     <script src="/js/common/keyCaseConverter.js" defer></script>
+    <!-- <script src="/js/core/dom/loadPage.js" defer></script> -->
+    <!-- <script type="module" src="/js/app.js"></script> -->
 </head>
 <body>
 

@@ -24,12 +24,13 @@ export function createComboBox({area, items, text = null, onChange = null}) {
     }
 
     (items ?? []).forEach(item => {
-        const v = item.number;
+        const v = item.value;
+
         if ((typeof v === "number" && v > -1) || (typeof v === "string" && v !== "")) {
             const option = document.createElement("option");
-            option.value = item.number;
+            option.value = item.value;
             option.dataset.id = item.data ?? "";
-            option.textContent = item.text;
+            option.textContent = item.label;
             area.appendChild(option);
         }
     });

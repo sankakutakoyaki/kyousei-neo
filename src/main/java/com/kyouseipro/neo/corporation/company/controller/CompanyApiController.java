@@ -1,85 +1,85 @@
-package com.kyouseipro.neo.corporation.company.controller;
+// package com.kyouseipro.neo.corporation.company.controller;
 
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Map;
+// import java.nio.charset.StandardCharsets;
+// import java.time.LocalDateTime;
+// import java.time.format.DateTimeFormatter;
+// import java.util.Map;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+// import org.springframework.http.HttpHeaders;
+// import org.springframework.http.ResponseEntity;
+// import org.springframework.security.core.annotation.AuthenticationPrincipal;
+// import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+// import org.springframework.stereotype.Controller;
+// import org.springframework.web.bind.annotation.PathVariable;
+// import org.springframework.web.bind.annotation.PostMapping;
+// import org.springframework.web.bind.annotation.RequestBody;
+// import org.springframework.web.bind.annotation.RequestMapping;
+// import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.common.response.SimpleResponse;
-import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
-import com.kyouseipro.neo.corporation.company.service.CompanyService;
-import com.kyouseipro.neo.dto.IdListRequest;
-import com.kyouseipro.neo.dto.IdRequest;
+// import com.kyouseipro.neo.common.Enums;
+// import com.kyouseipro.neo.common.response.SimpleResponse;
+// import com.kyouseipro.neo.corporation.company.entity.CompanyEntity;
+// import com.kyouseipro.neo.corporation.company.service.CompanyService;
+// import com.kyouseipro.neo.dto.IdListRequest;
+// import com.kyouseipro.neo.dto.IdRequest;
 
-import lombok.RequiredArgsConstructor;
+// import lombok.RequiredArgsConstructor;
 
-@Controller
-@RequiredArgsConstructor
-@RequestMapping("/api/company")
-public class CompanyApiController {
-    private final CompanyService companyService;
+// @Controller
+// @RequiredArgsConstructor
+// @RequestMapping("/api/company")
+// public class CompanyApiController {
+//     private final CompanyService companyService;
 
-    /**
-     * IDからEntityを取得する
-     * @param ID
-     * @return 
-     */
-    @PostMapping("/get/id")
-	@ResponseBody
-    public ResponseEntity<SimpleResponse<CompanyEntity>> getById(@RequestBody IdRequest req) {
-        return ResponseEntity.ok(SimpleResponse.ok(companyService.getById(req.getId())));
-    }
+//     /**
+//      * IDからEntityを取得する
+//      * @param ID
+//      * @return 
+//      */
+//     @PostMapping("/get/id")
+// 	@ResponseBody
+//     public ResponseEntity<SimpleResponse<CompanyEntity>> getById(@RequestBody IdRequest req) {
+//         return ResponseEntity.ok(SimpleResponse.ok(companyService.getById(req.getId())));
+//     }
 
-    /**
-     * 情報を保存する
-     * @param ENTITY
-     * @return 
-     */
-    @PostMapping("/{type}/save")
-	@ResponseBody
-    public ResponseEntity<SimpleResponse<Long>> save(@RequestBody Map<String, Object> req, @PathVariable String type, @AuthenticationPrincipal OidcUser principal) {
-        req.put("category", Enums.clientCategory.from(type).getCode());
-        Long id = companyService.save(req, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
-    }
+//     /**
+//      * 情報を保存する
+//      * @param ENTITY
+//      * @return 
+//      */
+//     @PostMapping("/{type}/save")
+// 	@ResponseBody
+//     public ResponseEntity<SimpleResponse<Long>> save(@RequestBody Map<String, Object> req, @PathVariable String type, @AuthenticationPrincipal OidcUser principal) {
+//         req.put("category", Enums.clientCategory.from(type).getCode());
+//         Long id = companyService.save(req, principal.getAttribute("preferred_username"));
+//         return ResponseEntity.ok(SimpleResponse.ok("保存しました。", id));
+//     }
 
-    /**
-     * IDリストのEntityを削除する
-     * @param IDS
-     * @return 
-     */
-    @PostMapping("/delete")
-	@ResponseBody
-    public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
-        int num = companyService.deleteByIds(ids, principal.getAttribute("preferred_username"));
-        return ResponseEntity.ok(SimpleResponse.ok(num + "件削除しました。", num));
-    }
+//     /**
+//      * IDリストのEntityを削除する
+//      * @param IDS
+//      * @return 
+//      */
+//     @PostMapping("/delete")
+// 	@ResponseBody
+//     public ResponseEntity<SimpleResponse<Integer>> deleteByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+//         int num = companyService.deleteByIds(ids, principal.getAttribute("preferred_username"));
+//         return ResponseEntity.ok(SimpleResponse.ok(num + "件削除しました。", num));
+//     }
 
-    /**
-     * IDリストからCSV用データを取得する
-     * @param IDS
-     * @return 
-     */
-    @PostMapping(value = "/download/csv", produces = "text/csv")
-    public ResponseEntity<byte[]> downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
-        String csv = companyService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
-        String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".csv";
+//     /**
+//      * IDリストからCSV用データを取得する
+//      * @param IDS
+//      * @return 
+//      */
+//     @PostMapping(value = "/download/csv", produces = "text/csv")
+//     public ResponseEntity<byte[]> downloadCsvByIds(@RequestBody IdListRequest ids, @AuthenticationPrincipal OidcUser principal) {
+//         String csv = companyService.downloadCsvByIds(ids, principal.getAttribute("preferred_username"));
+//         String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".csv";
 
-        byte[] bytes = csv.getBytes(StandardCharsets.UTF_8);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-                .body(bytes);
-    }
-}
+//         byte[] bytes = csv.getBytes(StandardCharsets.UTF_8);
+//         return ResponseEntity.ok()
+//                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+//                 .body(bytes);
+//     }
+// }

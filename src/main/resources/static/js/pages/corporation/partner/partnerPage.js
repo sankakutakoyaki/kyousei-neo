@@ -10,35 +10,108 @@ import { filterFactory } from "../../../util/filterFactory.js";
 // import { select } from "../../../core/api/sqlApi.js";
 // import { execute } from "../../../core/api/sqlApi.js";
 import { api } from "../../../core/api/apiService.js";
+import { initPageCache } from "../../../core/init/initPageCache.js";
 
-window.addEventListener("load", () => {
+// window.addEventListener("load", () => {
 
-    initCommon();  
+//     initCommon();  
+
+//     // tab1
+//     const company = partnerCompanyPage();
+//     registerController("partnerCompany", company); 
+//     company.name = "partnerCompany";   
+//     company.init({
+//         columns: createPartnerCompanyColumns(company),
+//         // data: APP.cache.companyOrigin,
+//         data: [],
+//         components: {
+//             combo: true
+//         },
+//     });
+//     company.dataTable.refresh();
+
+//     //　tab2
+//     const employee = partnerEmployeePage();
+//     registerController("partnerEmployee", employee);
+//     employee.name = "partnerEmployee";
+//     employee.init({
+//         columns: createPartnerEmployeeColumns(employee),
+//         // data: APP.cache.employeeOrigin,
+//         data: [],
+//         components: {
+//             combo: true
+//         }
+//     });
+//     employee.dataTable.refresh();
+// });
+
+// function initCsrf() {
+//     // return {
+//     //     token: document.querySelector('meta[name="_csrf"]').content,
+//     //     header: document.querySelector('meta[name="_csrf_header"]').content
+//     // };
+//     window.APP = {
+//         security: {
+//             token: document.querySelector('meta[name="_csrf"]').content,
+//             header: document.querySelector('meta[name="_csrf_header"]').content
+//         }
+//     };
+// }
+
+// async function initCache() {
+//     const res = await fetch("/api/partner/init/cache");
+//     const data = await res.json();
+//     // window.APP.cache = data;
+//     window.APP = {
+//         security: {
+//             token: document.querySelector('meta[name="_csrf"]').content,
+//             header: document.querySelector('meta[name="_csrf_header"]').content
+//         },
+//         cache: {                    
+//             companyComboList: data.companyComboList,
+//             genderComboList: data.genderComboList,
+//             bloodTypeComboList: data.bloodTypeComboList,
+//             state: data.state,
+//             clientCategory: data.clientCategory,
+//             employeeCategory: data.employeeCategory        
+//         }
+//     }
+// }
+
+// async function initCache() {
+//     const res = await fetch("/api/partner/init/cache");
+//     const data = await res.json();
+
+//     Object.assign(APP.cache, data);
+// }
+
+export async function init() {
+
+    await initCommon();
+    await initPageCache("/api/partner/init/cache");
 
     // tab1
     const company = partnerCompanyPage();
-    registerController("partnerCompany", company); 
-    company.name = "partnerCompany";   
+    registerController("partnerCompany", company);
+
     company.init({
         columns: createPartnerCompanyColumns(company),
-        data: APP.cache.companyOrigin,
-        components: {
-            combo: true
-        },
+        data: [],
+        components: { combo: true }
     });
+    await company.dataTable.refresh();
 
-    //　tab2
+    // tab2
     const employee = partnerEmployeePage();
     registerController("partnerEmployee", employee);
-    employee.name = "partnerEmployee";
+
     employee.init({
         columns: createPartnerEmployeeColumns(employee),
-        data: APP.cache.employeeOrigin,
-        components: {
-            combo: true
-        }
+        data: [],
+        components: { combo: true }
     });
-});
+    await employee.dataTable.refresh();
+}
 
 export const partnerCompanyPage = () => {
 
@@ -54,11 +127,11 @@ export const partnerCompanyPage = () => {
                 idKey: controller.key,
                 checkable: true,
                 buildParams: () => ({
-                    state: APP.cache.state.INITIAL,
-                    category: APP.cache.clientCategory.PARTNER                    
+                    state: APP.cache.common.state.INITIAL,
+                    category: APP.cache.common.clientCategory.PARTNER
                 }),
                 buildCsvParams: () => ({
-                    state: APP.cache.state.INITIAL
+                    state: APP.cache.common.state.INITIAL
                 }),
                 api: {
                     request: api.request, // 取得方法定義
@@ -78,7 +151,7 @@ export const partnerCompanyPage = () => {
                 beforeSave: (payload) => {
                     const id = payload[controller.key];
                     if (!id || Number(id) === 0) {
-                        payload.category = APP.cache.clientCategory.PARTNER;
+                        payload.category = APP.cache.common.clientCategory.PARTNER;
                     }
                 },
                 onSaved: async (id) => {
@@ -86,7 +159,7 @@ export const partnerCompanyPage = () => {
                     controller.scrollToRow(id);
                 },
                 buildParams: (id) => ({
-                    state: APP.cache.state.INITIAL,
+                    state: APP.cache.common.state.INITIAL,
                     companyId: id
                 }),
                 api: {
@@ -114,13 +187,14 @@ export const partnerEmployeePage = () => {
                 idKey: controller.key,
                 checkable: true,
                 buildParams: () => ({
-                    companyState: APP.cache.state.INITIAL,
-                    officeState: APP.cache.state.INITIAL,
-                    employeeState: APP.cache.state.INITIAL,
-                    category: APP.cache.employeeCategory.CONSTRUCT,
+                    // companyState: APP.cache.state.INITIAL,
+                    // officeState: APP.cache.state.INITIAL,
+                    // employeeState: APP.cache.state.INITIAL,
+                    state: APP.cache.common.state.INITIAL,
+                    category: APP.cache.common.employeeCategory.CONSTRUCT,
                 }),
                 buildCsvParams: () => ({
-                    state: APP.cache.state.INITIAL
+                    state: APP.cache.common.state.INITIAL
                 }),
                 api: {
                     request: api.request,
@@ -144,7 +218,7 @@ export const partnerEmployeePage = () => {
                 beforeSave: (payload) => {
                     const id = payload[controller.key];
                     if (!id || Number(id) === 0) {
-                        payload.category = APP.cache.employeeCategory.CONSTRUCT;
+                        payload.category = APP.cache.common.employeeCategory.CONSTRUCT;
                     }
                 },
                 onSaved: async (id) => {
@@ -152,9 +226,10 @@ export const partnerEmployeePage = () => {
                     controller.scrollToRow(id);
                 },
                 buildParams: (id) => ({
-                    companyState: APP.cache.state.INITIAL,
-                    officeState: APP.cache.state.INITIAL,
-                    employeeState: APP.cache.state.INITIAL,
+                    // companyState: APP.cache.state.INITIAL,
+                    // officeState: APP.cache.state.INITIAL,
+                    // employeeState: APP.cache.state.INITIAL,
+                    state: APP.cache.common.state.INITIAL,
                     employeeId: id                   
                 }),
                 api: {

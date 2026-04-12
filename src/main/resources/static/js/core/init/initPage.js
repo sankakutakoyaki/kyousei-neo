@@ -8,7 +8,7 @@ import { initChange } from "./initChange.js";
 import { initInput } from "./initInput.js";
 import { initFocus } from "./initFocus.js";
 
-export function initCommon(){
+export async function initCommon(){
     
     initClick();
     initChange();

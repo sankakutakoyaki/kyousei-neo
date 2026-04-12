@@ -8,7 +8,7 @@ export function initCombo(){
 
     selects.forEach(select => {
         const listName = select.dataset.combo;
-        const list = APP.cache[listName];
+        const list = APP.cache.page[listName];
         if (!list) return;
 
         createComboBox({area:select, items:list, text:select.dataset.top});

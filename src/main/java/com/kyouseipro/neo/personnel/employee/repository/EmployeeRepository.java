@@ -6,17 +6,11 @@ import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.common.Enums.SqlMode;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
 import com.kyouseipro.neo.dto.IdListRequest;
-import com.kyouseipro.neo.interfaces.LogSqlProvider;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 import com.kyouseipro.neo.personnel.employee.mapper.EmployeeEntityMapper;
-import com.kyouseipro.neo.sql.common.SqlBuilder;
-import com.kyouseipro.neo.sql.model.SqlResult;
-import com.kyouseipro.neo.sql.model.TableMeta;
-import com.kyouseipro.neo.sql.repository.BaseRepository;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;

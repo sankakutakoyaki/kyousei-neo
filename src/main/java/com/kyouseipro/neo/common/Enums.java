@@ -654,30 +654,38 @@ public class Enums {
         }
     }
 
-    public enum ParentType {
-        CONSTRUCTION,
-        LICENSE,
-        CUSTOMER
-    }
+    // public enum CodeType {
+    //     CLIENT_CATEGORY,
+    //     STATE,
+    //     EMPLOYEE_TYPE,
+    //     GENDER,
+    //     BLOOD_TYPE
+    // }
 
-    public enum SqlMode {
-        INSERT,
-        UPDATE,
-        DELETE
-    }
+    // public enum ParentType {
+    //     CONSTRUCTION,
+    //     LICENSE,
+    //     CUSTOMER
+    // }
 
-    public enum QueryType {
-        SELECT,
-        INSERT,
-        UPDATE
-    }
+    // public enum SqlMode {
+    //     INSERT,
+    //     UPDATE,
+    //     DELETE
+    // }
 
-    public enum QueryKind {
-        SQL,
-        DELETE_BY_IDS,
-        INSERT,
-        UPDATE,
-        SAVE,
-        CSV
-    }
+    // public enum QueryType {
+    //     SELECT,
+    //     INSERT,
+    //     UPDATE
+    // }
+
+    // public enum QueryKind {
+    //     SQL,
+    //     DELETE_BY_IDS,
+    //     INSERT,
+    //     UPDATE,
+    //     SAVE,
+    //     CSV
+    // }
 }

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.common.Enums.SqlMode;
+import com.kyouseipro.neo.common.enums.system.SqlMode;
 import com.kyouseipro.neo.interfaces.LogSqlProvider;
 import com.kyouseipro.neo.sql.common.SqlBuilder;
 import com.kyouseipro.neo.sql.model.SqlResult;

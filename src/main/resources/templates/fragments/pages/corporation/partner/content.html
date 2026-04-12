@@ -1,14 +1,18 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/with-sidebar}">
+      layout:decorate="~{layouts/with-sidebar}"> -->
 <body>
     <!-- サイドバー -->
-    <div layout:fragment="sidebar-content">
+    <!-- <div layout:fragment="sidebar-content">
         <div th:replace="~{fragments/common/menu :: registFragment}"></div>
-    </div>
+    </div> -->
 
     <!-- 本体 -->
-    <main layout:fragment="content">
+    <!-- <main layout:fragment="content" data-page="/js/pages/corporation/partner/partnerPage.js"> -->
+    <main th:fragment="content"
+            class="normal-body"
+            data-page="/js/pages/corporation/partner/partnerPage.js"
+            data-css="/css/pages/corporation/partner.css">
         <div class="tab-area">
             <ul class="tab-menu">
                 <li class="tab-menu-item is-active" data-action="tab" data-group="partner-tabs" data-tab="tab-01">施工店</li>
@@ -68,9 +72,7 @@
                     csrfToken: /*[[${_csrf.token}]]*/,
                     csrfHeader: /*[[${_csrf.headerName}]]*/
                 },
-                cache: {
-                    companyOrigin: /*[[${companyOrigin}]]*/,
-                    employeeOrigin: /*[[${employeeOrigin}]]*/,
+                cache: {                    
                     companyComboList: /*[[${companyComboList}]]*/,
                     genderComboList: /*[[${genderComboList}]]*/,
                     bloodTypeComboList: /*[[${bloodTypeComboList}]]*/,
@@ -80,7 +82,7 @@
                 }
             };
         </script>
-        <script type="module" th:src="@{/js/pages/corporation/partner/partnerPage.js}"></script>
+        <!-- <script type="module" th:src="@{/js/pages/corporation/partner/partnerPage.js}"></script> -->
     </main>
 
 </body>

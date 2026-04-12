@@ -319,10 +319,6 @@ public class SqlRepository {
             params
         );
     }
-
-    // public int deleteByIds(TableMeta meta, List<Long> ids, String editor) {
-    //     return baseRepository.deleteByIds(meta, ids, editor);
-    // }
 }
 // import java.sql.Connection;
 // import java.sql.DriverManager;

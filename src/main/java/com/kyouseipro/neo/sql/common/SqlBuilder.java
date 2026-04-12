@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.common.Enums.SqlMode;
+import com.kyouseipro.neo.common.enums.system.SqlMode;
 import com.kyouseipro.neo.interfaces.LogSqlProvider;
 import com.kyouseipro.neo.sql.model.SqlResult;
 import com.kyouseipro.neo.sql.model.TableMeta;

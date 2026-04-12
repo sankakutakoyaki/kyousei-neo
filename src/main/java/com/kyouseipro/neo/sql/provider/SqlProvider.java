@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.kyouseipro.neo.common.Enums.QueryKind;
-import com.kyouseipro.neo.common.Enums.QueryType;
+import com.kyouseipro.neo.common.enums.system.QueryKind;
+import com.kyouseipro.neo.common.enums.system.QueryType;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.query.company.CompanyQuery;
 import com.kyouseipro.neo.sql.query.employee.EmployeeQuery;

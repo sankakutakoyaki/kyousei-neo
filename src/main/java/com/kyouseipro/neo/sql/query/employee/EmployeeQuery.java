@@ -19,7 +19,7 @@ public class EmployeeQuery {
             LEFT OUTER JOIN offices o ON o.office_id = e.office_id AND o.state = ?
             WHERE e.state = ? AND e.category = ?
             """,
-            List.of("companyState", "officeState", "employeeState", "category")
+            List.of("state", "state", "state", "category")
         );
     }
 
@@ -36,7 +36,7 @@ public class EmployeeQuery {
             LEFT OUTER JOIN offices o ON o.office_id = e.office_id AND o.state = ?
             WHERE e.state = ? AND e.employee_id = ?
             """,
-            List.of("companyState", "officeState", "employeeState", "employeeId")
+            List.of("state", "state", "state", "employeeId")
         );
     }
 }
