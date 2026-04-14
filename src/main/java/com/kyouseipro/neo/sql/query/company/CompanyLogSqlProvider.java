@@ -16,7 +16,7 @@ public class CompanyLogSqlProvider implements LogSqlProvider {
             company_id INT, category NVARCHAR(255), name NVARCHAR(255), name_kana NVARCHAR(255),
             tel_number NVARCHAR(255), fax_number NVARCHAR(255), postal_code NVARCHAR(255),
             full_address NVARCHAR(255), email NVARCHAR(255), web_address NVARCHAR(255), is_original_price INT,
-            version INT, state INT );                
+            version INT, state INT );
             """;
     }
 

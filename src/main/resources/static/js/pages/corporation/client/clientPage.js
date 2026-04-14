@@ -3,7 +3,7 @@
 import { initCommon } from "../../../core/init/initPage.js";
 import { PageController } from "../../../controllers/PageController.js";
 import { DataTable } from "../../../core/table/DataTable.js";
-import { createPartnerCompanyColumns, createPartnerEmployeeColumns } from "./columns.js";
+import { createClientCompanyColumns, createOfficeColumns } from "./columns.js";
 import { FormController } from "../../../controllers/FormController.js";
 import { registerController } from "../../../controllers/controllers.js";
 import { filterFactory } from "../../../util/filterFactory.js";
@@ -13,32 +13,32 @@ import { initPageCache } from "../../../core/init/initPageCache.js";
 export async function init() {
 
     await initCommon();
-    await initPageCache("/api/partner/init/cache");
+    await initPageCache("/api/client/init/cache");
 
     // tab1
-    const company = partnerCompanyPage();
-    registerController("partnerCompany", company);
+    const company = clientCompanyPage();
+    registerController("clientCompany", company);
 
     company.init({
-        columns: createPartnerCompanyColumns(company),
+        columns: createClientCompanyColumns(company),
         data: [],
         components: { combo: true }
     });
     await company.dataTable.refresh();
 
     // tab2
-    const employee = partnerEmployeePage();
-    registerController("partnerEmployee", employee);
+    const office = clientOfficePage();
+    registerController("office", office);
 
-    employee.init({
-        columns: createPartnerEmployeeColumns(employee),
+    office.init({
+        columns: createOfficeColumns(office),
         data: [],
         components: { combo: true }
     });
-    await employee.dataTable.refresh();
+    await office.dataTable.refresh();
 }
 
-export const partnerCompanyPage = () => {
+export const clientCompanyPage = () => {
 
     const controller = new PageController({
         key:"companyId",
@@ -60,12 +60,14 @@ export const partnerCompanyPage = () => {
                 }),
                 api: {
                     request: api.request, // 取得方法定義
-                    // select: "partnerCompanyList",
-                    // delete: "partnerCompanyDeleteByIds",
-                    // download: "partnerCompanyCsv"
-                    select: "companyList",
+                    select: "clientList",
                     delete: "companyDeleteByIds",
                     download: "companyCsv"
+                },
+                model: {
+                    filters: {
+                        category: filterFactory.equals("category")
+                    }
                 },
                 onDoubleClick: (item) => controller.openEdit(item[controller.key])
             })
@@ -78,7 +80,7 @@ export const partnerCompanyPage = () => {
                 beforeSave: (payload) => {
                     const id = payload[controller.key];
                     if (!id || Number(id) === 0) {
-                        payload.category = APP.cache.common.companyCategory.PARTNER;
+                        payload.category = document.getElementById('code01');
                     }
                 },
                 onSaved: async (id) => {
@@ -91,8 +93,6 @@ export const partnerCompanyPage = () => {
                 }),
                 api: {
                     request: api.request,
-                    // find: "partnerCompanyDetail",
-                    // save: "partnerCompanySave"
                     find: "companyDetail",
                     save: "companySave"
                 }
@@ -102,10 +102,10 @@ export const partnerCompanyPage = () => {
     return controller;
 };
 
-export const partnerEmployeePage = () => {
+export const clientOfficePage = () => {
 
     const controller = new PageController({
-        key:"employeeId",
+        key:"officeId",
 
         table: {
             create: (controller, columns) => new DataTable({
@@ -117,16 +117,16 @@ export const partnerEmployeePage = () => {
                 checkable: true,
                 buildParams: () => ({
                     state: APP.cache.common.state.INITIAL,
-                    category: APP.cache.common.employeeCategory.CONSTRUCT,
+                    category: APP.cache.common.companyCategory.PARTNER
                 }),
                 buildCsvParams: () => ({
                     state: APP.cache.common.state.INITIAL
                 }),
                 api: {
                     request: api.request,
-                    select: "employeeList",
-                    delete: "employeeDeleteByIds",
-                    download: "employeeCsv"
+                    select: "clientOfficeList",
+                    delete: "officeDeleteByIds",
+                    download: "officeCsv"
                 },
                 model: {
                     filters: {
@@ -141,100 +141,27 @@ export const partnerEmployeePage = () => {
                 formId: "form-02",
                 key: controller.key,
                 controller: controller, 
-                beforeSave: (payload) => {
-                    const id = payload[controller.key];
-                    if (!id || Number(id) === 0) {
-                        payload.category = APP.cache.common.employeeCategory.CONSTRUCT;
-                    }
-                },
+                // beforeSave: (payload) => {
+                //     const id = payload[controller.key];
+                //     if (!id || Number(id) === 0) {
+                //         payload.category = APP.cache.common.employeeCategory.CONSTRUCT;
+                //     }
+                // },
                 onSaved: async (id) => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);
                 },
                 buildParams: (id) => ({
                     state: APP.cache.common.state.INITIAL,
-                    employeeId: id                   
+                    officeId: id                   
                 }),
                 api: {
                     request: api.request,
-                    find: "employeeDetail",
-                    save: "employeeSave"
+                    find: "officeDetail",
+                    save: "officeSave"
                 }
             })
         }
     });
     return controller;
 };
-
-// window.addEventListener("load", () => {
-
-//     initCommon();  
-
-//     // tab1
-//     const company = partnerCompanyPage();
-//     registerController("partnerCompany", company); 
-//     company.name = "partnerCompany";   
-//     company.init({
-//         columns: createPartnerCompanyColumns(company),
-//         // data: APP.cache.companyOrigin,
-//         data: [],
-//         components: {
-//             combo: true
-//         },
-//     });
-//     company.dataTable.refresh();
-
-//     //　tab2
-//     const employee = partnerEmployeePage();
-//     registerController("partnerEmployee", employee);
-//     employee.name = "partnerEmployee";
-//     employee.init({
-//         columns: createPartnerEmployeeColumns(employee),
-//         // data: APP.cache.employeeOrigin,
-//         data: [],
-//         components: {
-//             combo: true
-//         }
-//     });
-//     employee.dataTable.refresh();
-// });
-
-// function initCsrf() {
-//     // return {
-//     //     token: document.querySelector('meta[name="_csrf"]').content,
-//     //     header: document.querySelector('meta[name="_csrf_header"]').content
-//     // };
-//     window.APP = {
-//         security: {
-//             token: document.querySelector('meta[name="_csrf"]').content,
-//             header: document.querySelector('meta[name="_csrf_header"]').content
-//         }
-//     };
-// }
-
-// async function initCache() {
-//     const res = await fetch("/api/partner/init/cache");
-//     const data = await res.json();
-//     // window.APP.cache = data;
-//     window.APP = {
-//         security: {
-//             token: document.querySelector('meta[name="_csrf"]').content,
-//             header: document.querySelector('meta[name="_csrf_header"]').content
-//         },
-//         cache: {                    
-//             companyComboList: data.companyComboList,
-//             genderComboList: data.genderComboList,
-//             bloodTypeComboList: data.bloodTypeComboList,
-//             state: data.state,
-//             clientCategory: data.clientCategory,
-//             employeeCategory: data.employeeCategory        
-//         }
-//     }
-// }
-
-// async function initCache() {
-//     const res = await fetch("/api/partner/init/cache");
-//     const data = await res.json();
-
-//     Object.assign(APP.cache, data);
-// }

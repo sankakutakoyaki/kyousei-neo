@@ -7,7 +7,7 @@ import com.kyouseipro.neo.sql.model.QueryDefinition;
 
 public class CompanyQuery {
 
-    public static QueryDefinition partnerCompanyList() {
+    public static QueryDefinition companyList() {
         return QueryDefinition.select(
             """
             SELECT * FROM companies WHERE state = ? AND category = ?;
@@ -16,7 +16,16 @@ public class CompanyQuery {
         );
     }
 
-    public static QueryDefinition partnerCompanyDetail() {
+    public static QueryDefinition clientList() {
+        return QueryDefinition.select(
+            """
+            SELECT * FROM companies WHERE state = ? AND NOT(category = 0 OR category = ?);
+            """,
+            List.of("state", "category")
+        );
+    }
+
+    public static QueryDefinition companyDetail() {
         return QueryDefinition.select(
             """
             SELECT * FROM companies WHERE state = ? AND company_id = ?;
@@ -25,7 +34,7 @@ public class CompanyQuery {
         );
     }
 
-    public static QueryDefinition partnerCompanyCsv() {
+    public static QueryDefinition companyCsv() {
 
         String sql = """
             SELECT

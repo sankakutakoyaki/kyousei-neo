@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.common.enums.code.ClientCategory;
+import com.kyouseipro.neo.common.enums.code.CompanyCategory;
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.master.combo.ComboDto;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
@@ -42,15 +42,15 @@ public class CompanyRepository {
         String sql = """
             SELECT *
             FROM companies
-            WHERE state = ? AND NOT (category = ? AND category = ?)
+            WHERE state = ? AND NOT (category = ? OR category = ?)
         """;
 
         return sqlRepository.queryList(
             sql,
             (ps, p) -> {
                 ps.setInt(1, State.INITIAL.getCode());
-                ps.setInt(2, ClientCategory.PARTNER.getCode());
-                ps.setInt(2, 0);
+                ps.setInt(2,CompanyCategory.PARTNER.getCode());
+                ps.setInt(3, 0);
             },
             rs -> {
                 ComboDto c = new ComboDto(

@@ -14,11 +14,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.abstracts.BaseController;
+import com.kyouseipro.neo.common.enums.code.BloodType;
 // import com.kyouseipro.neo.common.ComboBoxService;
 // import com.kyouseipro.neo.common.Enums;
 // import com.kyouseipro.neo.common.enums.code.BloodType;
 import com.kyouseipro.neo.common.enums.code.ClientCategory;
+import com.kyouseipro.neo.common.enums.code.CompanyCategory;
 import com.kyouseipro.neo.common.enums.code.EmployeeCategory;
+import com.kyouseipro.neo.common.enums.code.Gender;
 // import com.kyouseipro.neo.common.enums.code.Gender;
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.util.EnumUtil;
@@ -30,7 +33,7 @@ import com.kyouseipro.neo.common.enums.util.EnumUtil;
 // import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
 // import com.kyouseipro.neo.corporation.staff.entity.StaffEntity;
 import com.kyouseipro.neo.domain.corporation.company.CompanyService;
-import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
+// import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 // import com.kyouseipro.neo.personnel.employee.entity.EmployeeListEntity;
 // import com.kyouseipro.neo.personnel.employee.service.EmployeeListService;
 
@@ -58,8 +61,8 @@ public class CorporationPageController extends BaseController {
 	@GetMapping("/client")
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
 	public String getClient(Model model, HttpSession session, HttpServletResponse response) throws IOException {
-        EmployeeEntity user = getLoginUser(session, response);
-		if (user == null) return null; // リダイレクト
+        // EmployeeEntity user = getLoginUser(session, response);
+		// if (user == null) return null; // リダイレクト
 
         // model.addAttribute("title", "取引先");
 		// model.addAttribute("activeMenu", "regist");
@@ -84,7 +87,7 @@ public class CorporationPageController extends BaseController {
         // model.addAttribute("categoryCodes", categoryCodes);
 		
         // return "contents/corporation/client";
-        return "fragments/pages/corporation/partner/content :: content";
+        return "fragments/pages/corporation/client/content :: content";
     }
 
     /**
@@ -95,8 +98,8 @@ public class CorporationPageController extends BaseController {
 	@GetMapping("/partner")
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
 	public String getPartner(Model model, HttpSession session, HttpServletResponse response) throws IOException {
-        EmployeeEntity user = getLoginUser(session, response);
-		if (user == null) return null; // リダイレクト
+        // EmployeeEntity user = getLoginUser(session, response);
+		// if (user == null) return null; // リダイレクト
 
         // model.addAttribute("title", "パートナー");
 		// // model.addAttribute("sidebarFragmentName", "~{fragments/common/menu :: registFragment}");
@@ -151,10 +154,12 @@ public class CorporationPageController extends BaseController {
         return Map.of(
             "common", Map.of(
                 "state", EnumUtil.toMap(State.class),
-                "clientCategory", EnumUtil.toMap(ClientCategory.class)
+                "companyCategory", EnumUtil.toMap(CompanyCategory.class)
+                // "clientCategory", EnumUtil.toMap(ClientCategory.class)
             ),
             "page", Map.of(
-                "companyComboList", companyService.findComboClientAll()
+                "companyComboList", companyService.findComboClientAll(),
+                "clientCategoryComboList", EnumUtil.toCombo(ClientCategory.class)
             )
         );
     }
@@ -165,10 +170,13 @@ public class CorporationPageController extends BaseController {
         return Map.of(
             "common", Map.of(
                 "state", EnumUtil.toMap(State.class),
-                "clientCategory", EnumUtil.toMap(ClientCategory.class)
+                "companyCategory", EnumUtil.toMap(CompanyCategory.class),
+                "employeeCategory", EnumUtil.toMap(EmployeeCategory.class)
             ),
             "page", Map.of(
-                "companyComboList", companyService.findComboByCategory(ClientCategory.PARTNER.getCode())
+                "companyComboList", companyService.findComboByCategory(CompanyCategory.PARTNER.getCode()),
+                "genderComboList", EnumUtil.toCombo(Gender.class),
+                "bloodTypeComboList", EnumUtil.toCombo(BloodType.class)
             )
         );
     }

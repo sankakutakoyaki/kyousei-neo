@@ -25,16 +25,24 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
 
         HttpSession session = request.getSession(false);
-        EmployeeEntity user = (session != null) ? (EmployeeEntity) session.getAttribute("loginUser") : null;
+        // EmployeeEntity user = (session != null) ? (EmployeeEntity) session.getAttribute("loginUser") : null;
+        Object loginUser = (session != null) ? session.getAttribute("loginUser") : null;
 
-        if (user == null) {
+        if (loginUser == null) {
             if (uri.startsWith("/api/")) {
-                throw new SessionExpiredException();
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return false;
+            // }
+            // if (uri.startsWith("/api/")) {
+            //     throw new SessionExpiredException();
             } else {
                 response.sendRedirect("/");
             }
             return false;
         }
+
+        // request.setAttribute("loginUser", user);
+
         return true;
     }
 }

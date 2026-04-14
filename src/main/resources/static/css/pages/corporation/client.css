@@ -1,16 +1,24 @@
 @charset "UTF-8";
 
-#header-01 {
+:is(#header-01, #header-02) {
     display: grid;
-    grid-template-columns: 1fr auto;
-}
-
-#header-02 {
-    display: grid;
-    &>div:first-of-type {
+    &>div {
         display: grid;
+        column-gap: 2rem;
+    }
+    &>div:first-of-type {
         grid-template-columns: 1fr auto;
     }
+}
+
+#header-01>div:nth-of-type(2) {
+    margin-left: 1rem;
+    grid-template-columns: minmax(10rem, auto) 1fr;
+}
+
+#header-02>div:nth-of-type(2) {
+    margin-left: 1rem;
+    grid-template-columns: auto 1fr;
 }
 
 #code-area {
@@ -23,7 +31,7 @@
 }
 
 :is(#table-02, #table-header-02) tr {
-    grid-template-columns: 3rem 5rem 5rem 15rem 9rem 1fr 2rem;
+    grid-template-columns: 3rem 5rem 1fr 1fr 9rem 2rem;
 }
 
 .tab-panel .table-area {
@@ -111,48 +119,3 @@
         }
     }
 }
-/* #form-dialog-02 {
-    & .dialog-content {
-        & >.flex-area:nth-of-type(1) {
-            display: grid;
-            grid-template-columns: 20rem 5rem;
-        }
-        & >.flex-area:nth-of-type(2) {
-            display: grid;
-            grid-template-columns: 15rem 1fr;
-        }
-        & >.flex-area:nth-of-type(3) {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            width: 100%;
-            & .flex-area {
-                display: grid;
-                grid-template-columns: 8rem 8rem;
-            }
-        }
-        & >.flex-area:nth-of-type(4) {
-            display: grid;
-            grid-template-columns: 10rem 1fr;
-            width: 100%;
-        }
-        & >.flex-area:nth-of-type(5) {
-            display: grid;
-            grid-template-columns: 9rem 1fr;
-            width: 100%;
-        }
-        & >.flex-area:nth-of-type(6) {
-            display: grid;
-            grid-template-columns: 11rem 8rem 8rem;
-        }
-        & >.flex-area:nth-of-type(7) {
-            display: grid;
-            grid-template-columns: 1fr 11rem;
-            width: 100%;
-            & .flex-area {
-                display: grid;
-                grid-template-columns: 10rem 1fr;
-                width: 100%;
-            }
-        }
-    }
-} */

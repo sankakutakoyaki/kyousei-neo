@@ -24,6 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
                 "/.well-known/**"
             );
     }
+    
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/files/**")
