@@ -35,6 +35,13 @@ export async function init() {
         data: [],
         components: { combo: true }
     });
+
+    window.addEventListener("company:changed", async () => {
+        const list = await api.get("/api/company/partner/combo");
+        APP.cache.page.companyComboList = list.data;
+        employee.components.combo.reload();
+    });
+
     await employee.dataTable.refresh();
 }
 
@@ -42,6 +49,10 @@ export const partnerCompanyPage = () => {
 
     const controller = new PageController({
         key:"companyId",
+
+        onDeleted: () => {
+            window.dispatchEvent(new Event("company:changed"));
+        },
 
         table: {
             create: (controller, columns) => new DataTable({
@@ -84,6 +95,8 @@ export const partnerCompanyPage = () => {
                 onSaved: async (id) => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);
+
+                    window.dispatchEvent(new Event("company:changed"));
                 },
                 buildParams: (id) => ({
                     state: APP.cache.common.state.INITIAL,

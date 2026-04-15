@@ -5,7 +5,7 @@ import { smartFilterHandler } from "../core/behavior/filterHandler.js";
 import { resolveController } from "../util/actionDispatcher.js";
 import { openMsgDialog, closeMsgDialog, openConfirmDialog } from "../core/ui/dialog.js";
 // import { api } from "../core/api/apiService.js";
-import { formatDate } from "../util/time.js";
+// import { formatDate } from "../util/time.js";
 
 const defaultConditions = {
     delete: (c) => c.dataTable?.hasSelection(),
@@ -19,7 +19,7 @@ const defaultActions = {
     search: (c, el) => c.dataTable.set("keyword", el.value),
     filter: smartFilterHandler,
     delete: async (c) => c.deleteSelected(),
-    download: async (c) => c.downloadSelected()
+    download: async (c) => c.downloadSelected(),
 };
 
 export class PageController {
@@ -32,6 +32,7 @@ export class PageController {
 
         this.dataTable = null;
         this.form = null;
+        this.components = {};
     }
 
     init(config = {}){
@@ -70,10 +71,10 @@ export class PageController {
     }
 
     initUI(){
-        const { components } = this.config;
 
+        const components = this.config.components;
         if(components?.combo){
-            initCombo();
+            this.components.combo = initCombo();
         }
     }
 
@@ -128,6 +129,11 @@ export class PageController {
             message: `${result.data.count ?? 0}件削除しました`,
             color:"blue"
         });
+
+        // ★ 汎用フック
+        if(this.config.onDeleted){
+            this.config.onDeleted(ids, result);
+        }
     }
 
     async downloadSelected(){
