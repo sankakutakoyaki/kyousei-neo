@@ -36,10 +36,29 @@ export async function init() {
         components: { combo: true }
     });
 
-    window.addEventListener("company:changed", async () => {
+    // window.addEventListener("partnerCompany:changed", async () => {
+    //     const list = await api.get("/api/company/partner/combo");
+    //     APP.cache.page.companyComboList = list.data;
+    //     employee.components.combo.reload();
+    //     await employee.dataTable.refresh();
+    // });
+    window.addEventListener("company:changed", async (e) => {
+
+        // ★ ① state & UIリセット
+        employee.reset();
+
+        // ★ ② combo選択クリア
+        employee.components.combo.clear();
+
+        // ★ ③ データ更新
         const list = await api.get("/api/company/partner/combo");
         APP.cache.page.companyComboList = list.data;
+
+        // ★ ④ 再描画
         employee.components.combo.reload();
+
+        // ★ ⑤ 再検索
+        await employee.dataTable.refresh();
     });
 
     await employee.dataTable.refresh();
@@ -51,7 +70,7 @@ export const partnerCompanyPage = () => {
         key:"companyId",
 
         onDeleted: () => {
-            window.dispatchEvent(new Event("company:changed"));
+            window.dispatchEvent(new Event("partnerCompany:changed"));
         },
 
         table: {
@@ -96,7 +115,9 @@ export const partnerCompanyPage = () => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);
 
-                    window.dispatchEvent(new Event("company:changed"));
+                    window.dispatchEvent(new CustomEvent("partnerCompany:changed", {
+                        detail: { id }
+                    }));
                 },
                 buildParams: (id) => ({
                     state: APP.cache.common.state.INITIAL,

@@ -109,7 +109,26 @@ export class PageController {
             }
         });
     }
+    
+    reset() {
+        // ① state初期化
+        this.state = {};
 
+        // ② inputクリア
+        document.querySelectorAll(`[data-controller="${this.key}"] input`)
+            .forEach(el => el.value = "");
+
+        // ③ comboクリア（あれば）
+        if (this.components.combo?.clear) {
+            this.components.combo.clear();
+        }
+
+        // clearがない場合（暫定）
+        else if (this.components.combo) {
+            document.querySelectorAll(`[data-controller="${this.key}"] select`)
+                .forEach(el => el.value = "");
+        }
+    }
     // async executeDelete(ids){
     //     closeMsgDialog();
 

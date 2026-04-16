@@ -32,10 +32,19 @@ export function initCombo(){
         });
     }
 
+    function clear(){
+        const selects = document.querySelectorAll("[data-combo]");
+
+        selects.forEach(select => {
+            select.value = ""; // or null
+        });
+    }
+
     // 初期描画
     render();
 
     return {
-        reload: render
+        reload: render,
+        clear
     };
 }
