@@ -57,17 +57,17 @@ export class DataTable {
     // -------------------------
     // 状態操作
     // -------------------------
-    set(key,value){
-        this.model.set(key,value);
-        this.reload(); // ★ここで自動再描画
-    }
+    // set(key,value){
+    //     this.model.set(key,value);
+    //     this.reload(); // ★ここで自動再描画
+    // }
 
-    setMany(obj){
-        Object.entries(obj).forEach(([k,v])=>{
-            this.model.set(k,v);
-        });
-        this.reload();
-    }
+    // setMany(obj){
+    //     Object.entries(obj).forEach(([k,v])=>{
+    //         this.model.set(k,v);
+    //     });
+    //     this.reload();
+    // }
 
     setData(list){
         this.model.setOrigin(list);
@@ -133,7 +133,7 @@ export class DataTable {
     }
 
     reload(){
-        this.model.compute();
+        this.model.compute(this.controller.state);
         this.render();
     }
 

@@ -8,22 +8,19 @@ export function initInput(){
     document.addEventListener("search", dispatchAction);
 }
 
-// function handleInput(e){
+export function createInputComponent(controller){
 
-//     const el = e.target.closest("[data-action]");
-//     if(!el) return;
+    function getInputs(){
+        return document.querySelectorAll(
+            `[data-controller="${controller.key}"] input`
+        );
+    }
 
-//     const action = el.dataset.action;
+    function clear(){
+        getInputs().forEach(el => el.value = "");
+    }
 
-//     if(!["search","filter"].includes(action)) return;
-//     if(!["filter"].includes(action)) return;
-
-//     runAction(el, e);
-// }
-// function handleInput(e){
-
-//     const el = e.target.closest("[data-action]");
-//     if(!el) return;
-
-//     runAction(el, e);
-// }-
+    return {
+        clear
+    };
+}

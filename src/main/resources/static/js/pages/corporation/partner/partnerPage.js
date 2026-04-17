@@ -33,32 +33,15 @@ export async function init() {
     employee.init({
         columns: createPartnerEmployeeColumns(employee),
         data: [],
-        components: { combo: true }
+        components: { combo: true, input: true }
     });
 
-    // window.addEventListener("partnerCompany:changed", async () => {
-    //     const list = await api.get("/api/company/partner/combo");
-    //     APP.cache.page.companyComboList = list.data;
-    //     employee.components.combo.reload();
-    //     await employee.dataTable.refresh();
-    // });
-    window.addEventListener("company:changed", async (e) => {
-
-        // ★ ① state & UIリセット
-        employee.reset();
-
-        // ★ ② combo選択クリア
-        employee.components.combo.clear();
-
-        // ★ ③ データ更新
+    window.addEventListener("partnerCompany:changed", async () => {
+        // ① コンボデータ更新
         const list = await api.get("/api/company/partner/combo");
         APP.cache.page.companyComboList = list.data;
-
-        // ★ ④ 再描画
-        employee.components.combo.reload();
-
-        // ★ ⑤ 再検索
-        await employee.dataTable.refresh();
+        // ② まとめてリセット
+        await employee.reset();
     });
 
     await employee.dataTable.refresh();
@@ -67,7 +50,7 @@ export async function init() {
 export const partnerCompanyPage = () => {
 
     const controller = new PageController({
-        key:"companyId",
+        key:"partnerCompany",
 
         onDeleted: () => {
             window.dispatchEvent(new Event("partnerCompany:changed"));
@@ -79,7 +62,7 @@ export const partnerCompanyPage = () => {
                 tableId: "table-01",
                 footerId: "footer-01",
                 columns,
-                idKey: controller.key,
+                idKey: "companyId",
                 checkable: true,
                 buildParams: () => ({
                     state: APP.cache.common.state.INITIAL,
@@ -139,7 +122,7 @@ export const partnerCompanyPage = () => {
 export const partnerEmployeePage = () => {
 
     const controller = new PageController({
-        key:"employeeId",
+        key: "partnerEmployee",
 
         table: {
             create: (controller, columns) => new DataTable({
@@ -147,7 +130,7 @@ export const partnerEmployeePage = () => {
                 tableId: "table-02",
                 footerId: "footer-02",
                 columns,
-                idKey: controller.key,
+                idKey: "employeeId",
                 checkable: true,
                 buildParams: () => ({
                     state: APP.cache.common.state.INITIAL,

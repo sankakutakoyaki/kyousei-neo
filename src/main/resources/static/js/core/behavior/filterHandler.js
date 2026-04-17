@@ -16,7 +16,9 @@ export function smartFilterHandler(controller, el){
         return;
     }
 
-    controller.state[key] = value;
+    // controller.state[key] = value;
 
-    controller.dataTable.set(key, value);
+    // controller.dataTable.set(key, value);
+    controller.state[key] = value;
+    controller.dataTable.reload();
 }

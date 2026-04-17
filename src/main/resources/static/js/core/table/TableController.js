@@ -1,6 +1,6 @@
 "use strict"
 
-import { openMsgDialog, openFormDialog, closeFormDialog } from "../ui/dialog.js";
+import { openMsgDialog, closeFormDialog } from "../ui/dialog.js";
 import { getTable } from "../init/initTable.js";
 import { api } from "../api/apiService.js";
 import { FormModel } from "../../core/form/FormModel.js";
@@ -41,8 +41,12 @@ export class TableController {
     // -------------------------
     // 検索
     // -------------------------
+    // search = (keyword) => {
+    //     this.table.set("keyword", keyword);
+    // }
     search = (keyword) => {
-        this.table.set("keyword", keyword);
+        this.state.keyword = keyword;
+        this.table.reload();
     }
 
     // -------------------------

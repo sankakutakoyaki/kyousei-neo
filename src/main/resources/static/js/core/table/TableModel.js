@@ -5,7 +5,7 @@ export class TableModel {
     constructor(config){
 
         this.originData = [];
-        this.state = {};
+        // this.state = {};
         this.filters = config.filters || {};
         this.requiredFilters = config.requiredFilters || [];
         this.idKey = config.idKey;
@@ -31,10 +31,10 @@ export class TableModel {
         this.clearSelection();
     }
 
-    set(key,value){
-        this.state[key] = value;
-        this.page = 1;
-    }
+    // set(key,value){
+    //     this.state[key] = value;
+    //     this.page = 1;
+    // }
 
     toggleSort(field){
         if(this.sortKey === field){
@@ -48,9 +48,9 @@ export class TableModel {
     // -------------------------
     // 計算
     // -------------------------
-    compute(){
+    compute(state){
         for(const key of this.requiredFilters){
-            if(this.state[key] == null){
+            if(state[key] == null){
                 this.result = [];
                 return;
             }
@@ -58,15 +58,15 @@ export class TableModel {
 
         let list = [...this.originData];
 
-        list = this.applyFilter(list);
+        list = this.applyFilter(list, state);
         list = this.applySort(list);
         list = this.applyPage(list);
 
         this.result = list;
     }
 
-    applyFilter(list){
-        for(const [key,value] of Object.entries(this.state)){
+    applyFilter(list, state){
+        for(const [key,value] of Object.entries(state)){
             if(value == null || value === "") continue;
 
             const filter = this.filters[key];

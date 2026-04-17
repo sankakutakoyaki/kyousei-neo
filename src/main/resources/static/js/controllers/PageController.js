@@ -1,6 +1,7 @@
 "use strict"
 
 import { initCombo } from "../core/init/initCombo.js";
+import { createInputComponent } from "../core/init/initInput.js";
 import { smartFilterHandler } from "../core/behavior/filterHandler.js";
 import { resolveController } from "../util/actionDispatcher.js";
 import { openMsgDialog, closeMsgDialog, openConfirmDialog } from "../core/ui/dialog.js";
@@ -16,7 +17,8 @@ const defaultConditions = {
 const defaultActions = {
     create: (c) => c.form.open(),
     edit: (c, el) => c.openEdit(el.dataset.id),
-    search: (c, el) => c.dataTable.set("keyword", el.value),
+    // search: (c, el) => c.dataTable.set("keyword", el.value),
+    search: (c, el) => {c.state.keyword = el.value; c.dataTable.reload();},
     filter: smartFilterHandler,
     delete: async (c) => c.deleteSelected(),
     download: async (c) => c.downloadSelected(),
@@ -71,18 +73,26 @@ export class PageController {
     }
 
     initUI(){
-
         const components = this.config.components;
+
         if(components?.combo){
-            this.components.combo = initCombo();
+            this.components.combo = initCombo(this);
+        }
+
+        if(components?.input){
+            this.components.input = createInputComponent(this);
         }
     }
 
     // -------------------------
     // 検索
     // -------------------------
+    // search(keyword){
+    //     this.dataTable.set("keyword", keyword);
+    // }
     search(keyword){
-        this.dataTable.set("keyword", keyword);
+        this.state.keyword = keyword;
+        this.dataTable.reload();
     }
 
     // -------------------------
@@ -109,26 +119,39 @@ export class PageController {
             }
         });
     }
-    
-    reset() {
-        // ① state初期化
+
+    async reset(){
         this.state = {};
 
-        // ② inputクリア
-        document.querySelectorAll(`[data-controller="${this.key}"] input`)
-            .forEach(el => el.value = "");
+        this.components.input?.clear();
+        this.components.combo?.clear();
 
-        // ③ comboクリア（あれば）
-        if (this.components.combo?.clear) {
-            this.components.combo.clear();
-        }
+        // combo再描画（データ更新後に効く）
+        this.components.combo?.reload();
 
-        // clearがない場合（暫定）
-        else if (this.components.combo) {
-            document.querySelectorAll(`[data-controller="${this.key}"] select`)
-                .forEach(el => el.value = "");
-        }
+        await this.dataTable.refresh();
     }
+
+    // reset() {
+    //     // ① state初期化
+    //     this.state = {};
+
+    //     // ② inputクリア
+    //     document.querySelectorAll(`[data-controller="${this.key}"] input`)
+    //         .forEach(el => el.value = "");
+
+    //     // ③ comboクリア（あれば）
+    //     if (this.components.combo?.clear) {
+    //         this.components.combo.clear();
+    //     }
+
+    //     // clearがない場合（暫定）
+    //     else if (this.components.combo) {
+    //         document.querySelectorAll(`[data-controller="${this.key}"] select`)
+    //             .forEach(el => el.value = "");
+    //     }
+    // }
+
     // async executeDelete(ids){
     //     closeMsgDialog();
 

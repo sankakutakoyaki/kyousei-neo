@@ -14,12 +14,16 @@ import { createComboBox } from "../../core/form/components/combo.js";
 //         createComboBox({area:select, items:list, text:select.dataset.top});
 //     });
 // }
-export function initCombo(){
+export function initCombo(controller){
 
     function render(){
-        const selects = document.querySelectorAll("[data-combo]");
+        const selects = document.querySelectorAll(
+            `[data-controller="${controller.key}"] [data-combo]`
+        );
+        // const selects = document.querySelectorAll('[data-combo]');
 
         selects.forEach(select => {
+
             const listName = select.dataset.combo;
             const list = APP.cache.page[listName];
             if (!list) return;
@@ -33,14 +37,15 @@ export function initCombo(){
     }
 
     function clear(){
-        const selects = document.querySelectorAll("[data-combo]");
+        const selects = document.querySelectorAll(
+            `[data-controller="${controller.key}"] [data-combo]`
+        );
 
         selects.forEach(select => {
-            select.value = ""; // or null
+            select.value = "";
         });
     }
 
-    // 初期描画
     render();
 
     return {
