@@ -33,8 +33,17 @@ export async function init() {
     office.init({
         columns: createOfficeColumns(office),
         data: [],
-        components: { combo: true }
+        components: { combo: true, input: true }
     });
+
+    window.addEventListener("partnerCompany:changed", async () => {
+        // ① コンボデータ更新
+        const list = await api.get("/api/company/partner/combo");
+        APP.cache.page.companyComboList = list.data;
+        // ② まとめてリセット
+        await employee.reset();
+    });
+
     await office.dataTable.refresh();
 }
 
@@ -86,6 +95,10 @@ export const clientCompanyPage = () => {
                 onSaved: async (id) => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);
+
+                    window.dispatchEvent(new CustomEvent("clientCompany:changed", {
+                        detail: { id }
+                    }));
                 },
                 buildParams: (id) => ({
                     state: APP.cache.common.state.INITIAL,

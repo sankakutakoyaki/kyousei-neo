@@ -5,8 +5,6 @@ import { createInputComponent } from "../core/init/initInput.js";
 import { smartFilterHandler } from "../core/behavior/filterHandler.js";
 import { resolveController } from "../util/actionDispatcher.js";
 import { openMsgDialog, closeMsgDialog, openConfirmDialog } from "../core/ui/dialog.js";
-// import { api } from "../core/api/apiService.js";
-// import { formatDate } from "../util/time.js";
 
 const defaultConditions = {
     delete: (c) => c.dataTable?.hasSelection(),
@@ -17,7 +15,6 @@ const defaultConditions = {
 const defaultActions = {
     create: (c) => c.form.open(),
     edit: (c, el) => c.openEdit(el.dataset.id),
-    // search: (c, el) => c.dataTable.set("keyword", el.value),
     search: (c, el) => {c.state.keyword = el.value; c.dataTable.reload();},
     filter: smartFilterHandler,
     delete: async (c) => c.deleteSelected(),
@@ -87,9 +84,6 @@ export class PageController {
     // -------------------------
     // 検索
     // -------------------------
-    // search(keyword){
-    //     this.dataTable.set("keyword", keyword);
-    // }
     search(keyword){
         this.state.keyword = keyword;
         this.dataTable.reload();
@@ -132,36 +126,6 @@ export class PageController {
         await this.dataTable.refresh();
     }
 
-    // reset() {
-    //     // ① state初期化
-    //     this.state = {};
-
-    //     // ② inputクリア
-    //     document.querySelectorAll(`[data-controller="${this.key}"] input`)
-    //         .forEach(el => el.value = "");
-
-    //     // ③ comboクリア（あれば）
-    //     if (this.components.combo?.clear) {
-    //         this.components.combo.clear();
-    //     }
-
-    //     // clearがない場合（暫定）
-    //     else if (this.components.combo) {
-    //         document.querySelectorAll(`[data-controller="${this.key}"] select`)
-    //             .forEach(el => el.value = "");
-    //     }
-    // }
-
-    // async executeDelete(ids){
-    //     closeMsgDialog();
-
-    //     const result = await this.dataTable.deleteByIds(ids); // ★委譲
-
-    //     openMsgDialog({
-    //         message: result.message,
-    //         color:"blue"
-    //     });
-    // }
     async executeDelete(ids){
         closeMsgDialog();
 
@@ -183,11 +147,8 @@ export class PageController {
         if(!this.ensureSelection(ids)) return;
 
         const res = await this.dataTable.downloadCsvByIds(ids);
-        // const res = await api.post(this.dataTable.api.download, { ids });
         const blob = res.data;
         const url = URL.createObjectURL(blob);
-        // const fileName = `download_${formatDate(new Date(), "yyyyMMddHHmmss")}.csv`;
-        // const disposition = res.headers["content-disposition"];
         const disposition = res.title;
 
         let fileName = "download.csv";
@@ -205,37 +166,6 @@ export class PageController {
         a.click();
         URL.revokeObjectURL(url);
     }
-    // async downloadSelected() {
-
-    //     const ids = this.dataTable.model.getSelectedIds();
-    //     if (!this.ensureSelection(ids)) return;
-
-    //     const req = {
-    //         queryId: this.dataTable.api.csvQueryId,
-    //         params: {
-    //             ...this.dataTable.buildParams(),
-    //             ids
-    //         }
-    //     };
-
-    //     const res = await api.post(
-    //         this.dataTable.api.download,
-    //         req,
-    //         { responseType: "blob" }
-    //     );
-
-    //     const blob = res.data;
-    //     const url = URL.createObjectURL(blob);
-
-    //     const fileName = `download_${formatDate(new Date(), "yyyyMMddHHmmss")}.csv`;
-
-    //     const a = document.createElement("a");
-    //     a.href = url;
-    //     a.download = fileName;
-    //     a.click();
-
-    //     URL.revokeObjectURL(url);
-    // }
 
     ensureSelection(ids){
         if(ids.length === 0){
@@ -269,18 +199,6 @@ export class PageController {
     updateButtons(){
         this.updateActionButtons();
         this.updateFormButtons();
-        // document.querySelectorAll("[data-action]").forEach(el => {
-        //     const controller = resolveController(el);
-        //     if(controller !== this) return;
-
-        //     const action = el.dataset.action;
-        //     const enabled = this.isEnabled(action);
-        //     if("disabled" in el){
-        //         el.disabled = !enabled;
-        //     }
-        //     el.classList.toggle("disabled", !enabled);
-        //     el.style.pointerEvents = enabled ? "auto" : "none";
-        // });
     }
 
     updateActionButtons(){
@@ -319,6 +237,74 @@ export class PageController {
         submitBtn.classList.toggle("disabled", !enabled);
     }
 }
+
+
+
+
+
+
+    // reset() {
+    //     // ① state初期化
+    //     this.state = {};
+
+    //     // ② inputクリア
+    //     document.querySelectorAll(`[data-controller="${this.key}"] input`)
+    //         .forEach(el => el.value = "");
+
+    //     // ③ comboクリア（あれば）
+    //     if (this.components.combo?.clear) {
+    //         this.components.combo.clear();
+    //     }
+
+    //     // clearがない場合（暫定）
+    //     else if (this.components.combo) {
+    //         document.querySelectorAll(`[data-controller="${this.key}"] select`)
+    //             .forEach(el => el.value = "");
+    //     }
+    // }
+
+    // async executeDelete(ids){
+    //     closeMsgDialog();
+
+    //     const result = await this.dataTable.deleteByIds(ids); // ★委譲
+
+    //     openMsgDialog({
+    //         message: result.message,
+    //         color:"blue"
+    //     });
+    // }
+    
+    // async downloadSelected() {
+
+    //     const ids = this.dataTable.model.getSelectedIds();
+    //     if (!this.ensureSelection(ids)) return;
+
+    //     const req = {
+    //         queryId: this.dataTable.api.csvQueryId,
+    //         params: {
+    //             ...this.dataTable.buildParams(),
+    //             ids
+    //         }
+    //     };
+
+    //     const res = await api.post(
+    //         this.dataTable.api.download,
+    //         req,
+    //         { responseType: "blob" }
+    //     );
+
+    //     const blob = res.data;
+    //     const url = URL.createObjectURL(blob);
+
+    //     const fileName = `download_${formatDate(new Date(), "yyyyMMddHHmmss")}.csv`;
+
+    //     const a = document.createElement("a");
+    //     a.href = url;
+    //     a.download = fileName;
+    //     a.click();
+
+    //     URL.revokeObjectURL(url);
+    // }
 
 // export class PageController {
 
