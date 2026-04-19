@@ -33,10 +33,9 @@ export const createClientCompanyColumns = (controller) => [
 
 export const createOfficeColumns = (controller) => [
     {
-        field: "officeId",
+        field: "companyId",
         label: "ID",
-        sortable: true,
-        class: "link-cell",
+        sortable: true,        
         format: (v) => String(v).padStart(4, "0")
     },
     {
@@ -44,6 +43,13 @@ export const createOfficeColumns = (controller) => [
         label: "会社名",
         sortable: true,
         default: "登録なし"
+    },
+    {
+        field: "officeId",
+        label: "ID",
+        sortable: true,
+        class: "link-cell",
+        format: (v) => String(v).padStart(4, "0")
     },
     {
         field: "nameKana",
@@ -54,7 +60,6 @@ export const createOfficeColumns = (controller) => [
             <span>${item.name}</span>
         `
     },
-
     {
         field: "telNumber",
         label: "電話番号",
