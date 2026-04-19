@@ -40,6 +40,12 @@ export const createOfficeColumns = (controller) => [
         format: (v) => String(v).padStart(4, "0")
     },
     {
+        field: "companyName",
+        label: "会社名",
+        sortable: true,
+        default: "登録なし"
+    },
+    {
         field: "nameKana",
         label: "名称",
         sortable:true,
@@ -48,12 +54,7 @@ export const createOfficeColumns = (controller) => [
             <span>${item.name}</span>
         `
     },
-    {
-        field: "companyName",
-        label: "会社名",
-        sortable: true,
-        default: "登録なし"
-    },
+
     {
         field: "telNumber",
         label: "電話番号",

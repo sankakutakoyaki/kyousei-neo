@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="tab-panel" id="tab-02" data-tab-content="client-tabs">
-            <div class="table-area" data-controller="office">
+            <div class="table-area" data-controller="clientOffice">
                 <!-- ヘッダー -->
                 <div th:replace="~{fragments/pages/corporation/client/header :: header02Fragment()}"></div>
                 <!-- コンテンツ -->
@@ -41,7 +41,7 @@
                 <div th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></div>
             </div>
         </form>
-        <form id="form-02" class="form-dialog none" data-controller="office">
+        <form id="form-02" class="form-dialog none" data-controller="clientOffice">
             <div class="dialog-main">
                 <!-- ヘッダー -->
                 <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '支店登録'} })}"></div>

@@ -28,20 +28,19 @@ export async function init() {
 
     // tab2
     const office = clientOfficePage();
-    registerController("office", office);
+    registerController("clientOffice", office);
 
     office.init({
         columns: createOfficeColumns(office),
         data: [],
-        components: { combo: true, input: true }
-    });
-
-    window.addEventListener("partnerCompany:changed", async () => {
-        // ① コンボデータ更新
-        const list = await api.get("/api/company/partner/combo");
-        APP.cache.page.companyComboList = list.data;
-        // ② まとめてリセット
-        await employee.reset();
+        components: { combo: true, input: true },
+        actions: {
+            companyChanged: async (c, payload) => {
+                const list = await api.get("/api/company/partner/combo");
+                APP.cache.page.companyComboList = list.data;
+                await c.reset();
+            }
+        }
     });
 
     await office.dataTable.refresh();
@@ -50,7 +49,14 @@ export async function init() {
 export const clientCompanyPage = () => {
 
     const controller = new PageController({
-        key:"companyId",
+        key:"clientCompany",
+
+        onDeleted: () => {
+            dispatchAction({
+                action: "companyChanged",
+                target: "clientOffice"
+            });
+        },
 
         table: {
             create: (controller, columns) => new DataTable({
@@ -58,7 +64,7 @@ export const clientCompanyPage = () => {
                 tableId: "table-01",
                 footerId: "footer-01",
                 columns,
-                idKey: controller.key,
+                idKey: "category",
                 checkable: true,
                 buildParams: () => ({
                     state: APP.cache.common.state.INITIAL,
@@ -96,9 +102,10 @@ export const clientCompanyPage = () => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);
 
-                    window.dispatchEvent(new CustomEvent("clientCompany:changed", {
-                        detail: { id }
-                    }));
+                    dispatchAction({
+                        action: "companyChanged",
+                        target: "clientOffice",
+                    });
                 },
                 buildParams: (id) => ({
                     state: APP.cache.common.state.INITIAL,
@@ -118,7 +125,7 @@ export const clientCompanyPage = () => {
 export const clientOfficePage = () => {
 
     const controller = new PageController({
-        key:"officeId",
+        key:"clientOffice",
 
         table: {
             create: (controller, columns) => new DataTable({
@@ -126,7 +133,7 @@ export const clientOfficePage = () => {
                 tableId: "table-02",
                 footerId: "footer-02",
                 columns,
-                idKey: controller.key,
+                idKey: "officeId",
                 checkable: true,
                 buildParams: () => ({
                     state: APP.cache.common.state.INITIAL,
@@ -154,12 +161,6 @@ export const clientOfficePage = () => {
                 formId: "form-02",
                 key: controller.key,
                 controller: controller, 
-                // beforeSave: (payload) => {
-                //     const id = payload[controller.key];
-                //     if (!id || Number(id) === 0) {
-                //         payload.category = APP.cache.common.employeeCategory.CONSTRUCT;
-                //     }
-                // },
                 onSaved: async (id) => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);

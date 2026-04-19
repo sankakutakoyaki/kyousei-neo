@@ -15,7 +15,11 @@ const defaultConditions = {
 const defaultActions = {
     create: (c) => c.form.open(),
     edit: (c, el) => c.openEdit(el.dataset.id),
-    search: (c, el) => {c.state.keyword = el.value; c.dataTable.reload();},
+    // search: (c, el) => {c.state.keyword = el.value; c.dataTable.reload();},
+    search: (c, el) => {
+        c.state.keyword = el.value;
+        c.dataTable.reload();
+    },
     filter: smartFilterHandler,
     delete: async (c) => c.deleteSelected(),
     download: async (c) => c.downloadSelected(),
@@ -119,7 +123,6 @@ export class PageController {
 
         this.components.input?.clear();
         this.components.combo?.clear();
-
         // combo再描画（データ更新後に効く）
         this.components.combo?.reload();
 

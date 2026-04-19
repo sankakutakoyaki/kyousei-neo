@@ -1,6 +1,7 @@
 "use strict"
 
 import { updateField } from "../../util/utils.js";
+import { api } from "../api/apiService.js";
 
 export const DataResolver = {
     init(area = document) {
@@ -40,6 +41,8 @@ export const DataResolver = {
         const idInput = group.querySelector("[data-resolve-id]");
         const nameField = group.querySelector("[data-resolve-name]");
 
+        // if (idInput?.dataset.resolving) return;
+        
         const id = idInput.value.trim();
 
         /* 空ならクリア */
@@ -58,7 +61,8 @@ export const DataResolver = {
                 idInput.value = "";
             }
         } else {
-            await this.resolveApi(type, id, nameField);
+            await this.resolveApi(type, id, idInput, nameField);
+
         }
     },
 
@@ -76,18 +80,78 @@ export const DataResolver = {
         return false;
     },
 
-    async resolveApi(type, id, input) {
+    // async resolveApi(type, id, input) {
+    //     try {
+    //         const res = await fetch(`/api/${type}/${id}`);
+    //         if (!res.ok) {
+    //             input.value = "";
+    //             return;
+    //         }
+    //         const data = await res.json();
+    //         input.value = data.name ?? "";
+    //     } catch (e) {
+    //         console.error(e);
+    //         input.value = "";
+    //     }
+    // },
+    async resolveApi(type, id, idInput, nameField) {
+
         try {
-            const res = await fetch(`/api/${type}/${id}`);
-            if (!res.ok) {
-                input.value = "";
+
+            // ======================
+            // 郵便番号
+            // ======================
+            if(type === "postal"){
+
+                const res = await api.post(
+                    "/api/address/get/postalcode",
+                    { value: id }
+                );
+
+                const data = res?.data;
+                if (!data) return;
+
+                const area = idInput.closest('[data-resolve="postal"]');
+                if (!area) return;
+
+                const postalInput = idInput;
+                const addressInput = area.querySelector('[name="full-address"]');
+
+                // ★ フラグON（ループ防止）
+                postalInput.dataset.resolving = "true";
+
+                // 郵便番号
+                if (postalInput) {
+                    postalInput.value = data.postalCode ?? "";
+                }
+
+                // 住所
+                if (addressInput) {
+                    addressInput.value = data.fullAddress ?? "";
+                }
+
+                // ★ フラグOFF
+                delete postalInput.dataset.resolving;
+
                 return;
             }
-            const data = await res.json();
-            input.value = data.name ?? "";
+
+            // ======================
+            // 通常（重要）
+            // ======================
+            const res = await api.get(`/api/${type}/${id}`);
+            const data = res?.data;
+
+            if (!data) {
+                nameField.value = "";
+                return;
+            }
+
+            nameField.value = data.name ?? "";
+
         } catch (e) {
             console.error(e);
-            input.value = "";
+            nameField.value = "";
         }
     },
 

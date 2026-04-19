@@ -11,7 +11,7 @@ export function openFormDialog(options = {}) {
 
     const {
         dialogId,
-        controller,
+        // controller,
         onSubmit = async () => true,
         onClose = async () => closeFormDialog(dialogId),
         onReset
@@ -25,9 +25,9 @@ export function openFormDialog(options = {}) {
     const area = document.getElementById('form-dialog-area');
     if (!area) return;
 
-    if(controller){
-        area.dataset.controller = controller.name;
-    }
+    // if(controller){
+    //     area.dataset.controller = controller.name;
+    // }
 
     area.classList.add('dialog');
     form.classList.remove('none');
@@ -55,7 +55,7 @@ export function closeFormDialog(dialogId, e) {
     const area = document.getElementById('form-dialog-area');
     if (area == null) return;
     area.classList.remove('dialog');
-    delete area.dataset.controller;
+    // delete area.dataset.controller;
 
     // フォーム画面に[none]クラスを付与して画面を消去する
     const form = document.getElementById(dialogId);
@@ -86,7 +86,7 @@ export function openMsgDialog(options = {}) {
         message,
         color,
         onClose = () => closeMsgDialog(),
-        controller
+        // controller
     } = options;
 
     openMsg({
@@ -96,7 +96,7 @@ export function openMsgDialog(options = {}) {
         submitCallback: null,
         closeCallback: onClose,
         isConfirm: false,
-        controller
+        // controller
     });
 }
 /**
@@ -117,8 +117,8 @@ export function openConfirmDialog(options = {}) {
         message,
         color,
         onSubmit,
-        onClose = () => closeMsgDialog(),
-        controller
+        onClose = () => closeMsgDialog()
+        // controller
     } = options;
 
     if (!onSubmit) return;
@@ -129,8 +129,8 @@ export function openConfirmDialog(options = {}) {
         color,
         submitCallback: onSubmit,
         closeCallback: onClose,
-        isConfirm: true,
-        controller
+        isConfirm: true
+        // controller
     });
 }
 
@@ -178,8 +178,8 @@ function openMsg(options = {}) {
         color,
         submitCallback,
         closeCallback,
-        isConfirm = false,
-        controller
+        isConfirm = false
+        // controller
     } = options;
 
     const dialog = document.getElementById(dialogId);
@@ -190,9 +190,9 @@ function openMsg(options = {}) {
     const parent = document.getElementById('msg-dialog-area');
     if (!parent) return;
 
-    if(controller){
-        parent.dataset.controller = controller.name;
-    }
+    // if(controller){
+    //     parent.dataset.controller = controller.name;
+    // }
 
     parent.classList.add('dialog');
 
@@ -232,7 +232,7 @@ export function closeMsgDialog(dialogId = "msg-dialog") {
     const parent = document.getElementById('msg-dialog-area');
     if (parent){
         parent.classList.remove('dialog');
-        delete parent.dataset.controller;
+        // delete parent.dataset.controller;
     }
 
     const dialog = document.getElementById(dialogId);

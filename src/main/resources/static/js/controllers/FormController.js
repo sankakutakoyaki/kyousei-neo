@@ -51,9 +51,19 @@ export class FormController {
             data = res.data?.[0] ?? {};
         }
 
-        if (this.controller?.state?.companyId) {
-            data.companyId = this.controller.state.companyId;
-        }
+        // if (this.controller?.state?.companyId) {
+        //     data.companyId = this.controller.state.companyId;
+        // }
+        Object.entries(this.controller.state || {}).forEach(([key, value]) => {
+            if (value == null || value === "") return;
+
+            const el = document.querySelector(`#${this.formId} [name="${key}"]`);
+            if (!el) return; // ★ フォームに存在する項目だけ
+
+            if (!(key in data)) {
+                data[key] = value;
+            }
+        });
 
         this.currentEntity = data;
 

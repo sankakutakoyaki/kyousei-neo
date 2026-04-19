@@ -1,11 +1,11 @@
 <th:block th:fragment="form01Fragment()">
     <div class="dialog-content" data-enterfocus="form-01">
         <!-- 分類 -->
-        <div class="form-row" data-resolve="company">
+        <div class="form-row" data-resolve="category">
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 { 
                     'text': '分類', 
-                    'combo': 'clientCategoryList',
+                    'combo': 'clientCategoryComboList',
                     'top': '-----',
                     'name': 'category', 
                     'resolveName':true,

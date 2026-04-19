@@ -9,6 +9,7 @@ import { registerController } from "../../../controllers/controllers.js";
 import { filterFactory } from "../../../util/filterFactory.js";
 import { api } from "../../../core/api/apiService.js";
 import { initPageCache } from "../../../core/init/initPageCache.js";
+import { dispatchAction } from "../../../util/actionDispatcher.js";
 
 export async function init() {
 
@@ -33,15 +34,16 @@ export async function init() {
     employee.init({
         columns: createPartnerEmployeeColumns(employee),
         data: [],
-        components: { combo: true, input: true }
-    });
-
-    window.addEventListener("partnerCompany:changed", async () => {
-        // ① コンボデータ更新
-        const list = await api.get("/api/company/partner/combo");
-        APP.cache.page.companyComboList = list.data;
-        // ② まとめてリセット
-        await employee.reset();
+        components: { combo: true, input: true },
+        actions: {
+            companyChanged: async (c, payload) => {
+                // combo更新
+                const list = await api.get("/api/company/partner/combo");
+                APP.cache.page.companyComboList = list.data;
+                // UI & データ更新
+                await c.reset();
+            }
+        }
     });
 
     await employee.dataTable.refresh();
@@ -53,7 +55,10 @@ export const partnerCompanyPage = () => {
         key:"partnerCompany",
 
         onDeleted: () => {
-            window.dispatchEvent(new Event("partnerCompany:changed"));
+            dispatchAction({
+                action: "companyChanged",
+                target: "partnerEmployee"
+            });
         },
 
         table: {
@@ -98,9 +103,14 @@ export const partnerCompanyPage = () => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);
 
-                    window.dispatchEvent(new CustomEvent("partnerCompany:changed", {
-                        detail: { id }
-                    }));
+                    // window.dispatchEvent(new CustomEvent("partnerCompany:changed", {
+                    //     detail: { id }
+                    // }));
+                    dispatchAction({
+                        action: "companyChanged",
+                        target: "partnerEmployee",
+                        // data: { companyId: id }
+                    });
                 },
                 buildParams: (id) => ({
                     state: APP.cache.common.state.INITIAL,

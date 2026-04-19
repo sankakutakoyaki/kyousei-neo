@@ -2,10 +2,33 @@
 
 import { getController } from "../controllers/controllers.js";
 
-export function dispatchAction(e){
-    const el = e.target.closest("[data-action]");
-    if(!el) return;
-    runAction(el, e);
+// export function dispatchAction(e){
+//     const el = e.target.closest("[data-action]");
+//     if(!el) return;
+//     runAction(el, e);
+// }
+
+export function dispatchAction(input){
+
+    // DOMイベント
+    if(input instanceof Event){
+        const el = input.target.closest("[data-action]");
+        if(!el) return;
+
+        return runAction(el, input);
+    }
+
+    // 直接呼び出し
+    const { action, target, data } = input;
+
+    const targets = Array.isArray(target) ? target : [target];
+
+    targets.forEach(name => {
+        const controller = getController(name); // ★ここ修正
+        if(!controller) return;
+
+        runActionDirect(controller, action, data);
+    });
 }
 
 // UI操作はコントローラー不要なので処理を分ける
@@ -57,6 +80,23 @@ export function runAction(el, e){
     console.warn("action not found:", action);
 }
 
+export function runActionDirect(controller, action, data){
+
+    const handler = controller.actions[action];
+
+    if(typeof handler === "function"){
+        handler(controller, data);
+        return;
+    }
+
+    if(typeof controller[action] === "function"){
+        controller[action](data);
+        return;
+    }
+
+    console.warn("action not found:", action);
+}
+
 export function resolveController(el){
     const name =
         el.dataset.controller ||
@@ -86,8 +126,6 @@ function handleTab(el){
     const target = document.getElementById(targetId);
     if(target){
         target.classList.add("is-show");
-        // const controller = resolveController(el);
-        // controller?.updateButtons();
         const area = target.querySelector("[data-controller]");
         const name = area?.dataset.controller;
         const controller = getController(name);
@@ -100,10 +138,3 @@ function handleSelectOnFocus(el, e){
     if(e.type !== "focusin") return;
     el.select();
 }
-
-// function handleClose(el){
-//     const dialog = el.closest(".dialog");
-//     if(dialog){
-//         dialog.classList.remove("is-show");
-//     }
-// }
