@@ -20,7 +20,8 @@ export class FormController {
             beforeSave = null,
             onSaved = null,
             controller = {},
-            buildParams = null
+            buildParams = null,
+            businessValidate = null
         } = config;
 
         if(!formId) throw new Error("formId is required");
@@ -33,6 +34,7 @@ export class FormController {
         this.onSaved = onSaved;
         this.controller = controller;
         this.buildParams = buildParams;
+        this.businessValidate = businessValidate;
 
         this.currentEntity = null;
     }
@@ -123,7 +125,14 @@ export class FormController {
     // }
     async save(form){
 
-        if(!validate(form)) return;
+        // if(!validate(form)) return;
+        try {
+            this.clearErrors();
+            validate(form);
+        } catch(e) {
+            this.handleError(e);
+            return;
+        }
 
         const payload = FormModel.buildPayload(form, this.currentEntity, this.key);
 
@@ -135,35 +144,73 @@ export class FormController {
             return;
         }
 
-        if (this.beforeSave) {
-            this.beforeSave(payload);
+        try {
+            if (this.beforeSave) {
+                await this.beforeSave(payload);
+            }
+
+            if (this.businessValidate) {
+                await this.businessValidate(payload);
+            }
+
+            if(!this.api.save) return;
+
+            const res = await this.api.request({
+                queryId: this.api.save,
+                params: payload
+            });
+
+            // INSERTの場合 idが返る
+            const id = res.data;
+
+            // UPDATEの場合 countが返る
+            const count = res.count;
+
+            openMsgDialog({
+                message: "保存しました",
+                color: "blue"
+            });
+
+            closeFormDialog(this.formId);
+
+            if(this.onSaved){
+                await this.onSaved(id ?? this.currentEntity?.[this.key]);
+            }
+
+            return id ?? count;
+        } catch (e) {
+            this.handleError(e);
         }
+    }
 
-        if(!this.api.save) return;
+    handleError(e) {
 
-        const res = await this.api.request({
-            queryId: this.api.save,
-            params: payload
-        });
-
-        // INSERTの場合 idが返る
-        const id = res.data;
-
-        // UPDATEの場合 countが返る
-        const count = res.count;
-
+        // ★ メッセージ表示
         openMsgDialog({
-            message: "保存しました",
-            color: "blue"
+            message: e.message || "エラーが発生しました",
+            color: "red"
         });
 
-        closeFormDialog(this.formId);
+        // ★ フィールド指定があれば強調
+        if (e.field) {
+            const form = document.getElementById(this.formId);
 
-        if(this.onSaved){
-            await this.onSaved(id ?? this.currentEntity?.[this.key]);
+            const el =
+                form?.querySelector(`[name="${e.field}"]`) ||
+                form?.querySelector(`#${e.field}`);
+
+            if (el) {
+                el.classList.add("error");
+                el.focus();
+            }
         }
+    }
 
-        return id ?? count;
+    clearErrors() {
+        const form = document.getElementById(this.formId);
+        form?.querySelectorAll(".error").forEach(el => {
+            el.classList.remove("error");
+        });
     }
 
     clear(){

@@ -92,11 +92,28 @@ export const clientCompanyPage = () => {
                 controller: controller,
                 formId: "form-01",
                 key: controller.key,
-                beforeSave: (payload) => {
-                    const id = payload[controller.key];
-                    if (!id || Number(id) === 0) {
-                        payload.category = document.getElementById('code01');
+                // beforeSave: (payload) => {
+                //     const id = payload[controller.key];
+                //     if (!id || Number(id) === 0) {
+                //         payload.category = document.getElementById('code01');
+                //     }
+                // },
+
+                businessValidate: (payload) => {
+                    if (!payload.category) {
+                        throw { message: "分類を選択してください", field: "category" };
                     }
+                },
+                beforeSave: (payload) => {
+                    // const category = document.getElementById('code01')?.value;
+
+                    // if (!category) {
+                    //     alert("分類を選択してください");
+                    //     throw new Error("category is required"); // 保存処理を止める
+                    // }
+
+                    // payload.category = category;
+                    payload.category = document.getElementById('code01')?.value;
                 },
                 onSaved: async (id) => {
                     await controller.dataTable.refresh();

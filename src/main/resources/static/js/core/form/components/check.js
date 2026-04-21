@@ -41,7 +41,11 @@ export function validate(form){
         if(el.dataset.range && v){
             const [min, max, msg] = el.dataset.range.split(",");
             const n = Number(v);
-            if(isNaN(n) || n < min || n > max){
+            const minNum = Number(min);
+            const maxNum = Number(max);
+
+            if(isNaN(n) || n < minNum || n > maxNum){
+            // if(isNaN(n) || n < min || n > max){
                 messages.push(msg);
                 if(!focusTarget) focusTarget = el;
                 return;
@@ -52,7 +56,11 @@ export function validate(form){
         if(el.dataset.dateAfter){
             const [selector, msg] = el.dataset.dateAfter.split(",");
             const base = form.querySelector(selector)?.value;
-            if(base && v && new Date(v) < new Date(base)){
+
+            const d1 = Date.parse(v);
+            const d2 = Date.parse(base);
+            if(base && v && d1 < d2){
+            // if(base && v && new Date(v) < new Date(base)){
                 messages.push(msg);
                 if(!focusTarget) focusTarget = el;
                 return;
@@ -61,13 +69,21 @@ export function validate(form){
 
     });
 
+    // if(messages.length){
+    //     openMsgDialog({
+    //         messages:messages.join("\n"),
+    //         color:"red"
+    //     });
+    //     focusTarget?.focus();
+    //     return false;
+    // }
+
+    // return true;
     if(messages.length){
-        openMsgDialog({
-            messages:messages.join("\n"),
-            color:"red"
-        });
-        focusTarget?.focus();
-        return false;
+        throw {
+            message: messages.join("\n"),
+            field: focusTarget?.name
+        };
     }
 
     return true;
