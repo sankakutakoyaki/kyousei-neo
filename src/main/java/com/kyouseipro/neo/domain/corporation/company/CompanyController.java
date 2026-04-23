@@ -20,7 +20,13 @@ public class CompanyController {
 
     @GetMapping("/partner/combo")
     @ResponseBody
-    public List<ComboDto> companyCombo() {
+    public List<ComboDto> partnerCombo() {
         return companyService.findComboByCategory(CompanyCategory.PARTNER.getCode());
+    }
+
+    @GetMapping("/client/combo")
+    @ResponseBody
+    public List<ComboDto> clientCombo() {
+        return companyService.findComboClientAll();
     }
 }

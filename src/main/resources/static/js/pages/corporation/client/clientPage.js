@@ -9,6 +9,7 @@ import { registerController } from "../../../controllers/controllers.js";
 import { filterFactory } from "../../../util/filterFactory.js";
 import { api } from "../../../core/api/apiService.js";
 import { initPageCache } from "../../../core/init/initPageCache.js";
+import { dispatchAction } from "../../../util/actionDispatcher.js";
 
 export async function init() {
 
@@ -36,7 +37,7 @@ export async function init() {
         components: { combo: true, input: true },
         actions: {
             companyChanged: async (c, payload) => {
-                const list = await api.get("/api/company/partner/combo");
+                const list = await api.get("/api/company/client/combo");
                 APP.cache.page.companyComboList = list.data;
                 await c.reset();
             }
@@ -64,7 +65,7 @@ export const clientCompanyPage = () => {
                 tableId: "table-01",
                 footerId: "footer-01",
                 columns,
-                idKey: "category",
+                idKey: "companyId",
                 checkable: true,
                 buildParams: () => ({
                     state: APP.cache.common.state.INITIAL,
@@ -92,29 +93,14 @@ export const clientCompanyPage = () => {
                 controller: controller,
                 formId: "form-01",
                 key: controller.key,
-                // beforeSave: (payload) => {
-                //     const id = payload[controller.key];
-                //     if (!id || Number(id) === 0) {
-                //         payload.category = document.getElementById('code01');
-                //     }
-                // },
-
                 businessValidate: (payload) => {
                     if (!payload.category) {
                         throw { message: "分類を選択してください", field: "category" };
                     }
                 },
-                beforeSave: (payload) => {
-                    // const category = document.getElementById('code01')?.value;
-
-                    // if (!category) {
-                    //     alert("分類を選択してください");
-                    //     throw new Error("category is required"); // 保存処理を止める
-                    // }
-
-                    // payload.category = category;
-                    payload.category = document.getElementById('code01')?.value;
-                },
+                // beforeSave: (payload) => {
+                //     payload.category = document.getElementById('code01')?.value;
+                // },
                 onSaved: async (id) => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);
