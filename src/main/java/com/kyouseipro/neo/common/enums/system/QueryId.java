@@ -28,7 +28,14 @@ public enum QueryId {
 
     // ===== Client =====
     CLIENT_LIST("clientList"),
-    CLIENT_OFFICE_LIST("clientOfficeList");
+    CLIENT_OFFICE_LIST("clientOfficeList"),
+
+    // ===== Staff =====
+    STAFF_DETAIL("staffDetail"),
+    STAFF_LIST("staffList"),
+    STAFF_CSV("staffCsv"),
+    STAFF_DELETE_BY_IDS("staffDeleteByIds"),
+    STAFF_SAVE("staffSave");
 
     private final String id;
 

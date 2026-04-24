@@ -48,18 +48,18 @@ public class EmployeeQuery {
                 full_name_kana,
                 phone_number,
                 email
-            FROM companies
+            FROM employees
             WHERE state = ?
-            AND company_id IN (:ids)
+            AND employee_id IN (:ids)
         """;
 
         List<String> params = List.of("state", "ids");
 
         List<CsvColumn> columns = List.of(
-            new CsvColumn("companyId", "会社ID"),
-            new CsvColumn("name", "会社名"),
-            new CsvColumn("nameKana", "カナ"),
-            new CsvColumn("telNumber", "携帯番号"),
+            new CsvColumn("employeeId", "社員ID"),
+            new CsvColumn("fullName", "氏名"),
+            new CsvColumn("fullNameKana", "カナ"),
+            new CsvColumn("phoneNumber", "携帯番号"),
             new CsvColumn("email", "メール")
         );
 

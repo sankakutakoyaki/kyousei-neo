@@ -65,14 +65,24 @@ export class TableModel {
         this.result = list;
     }
 
+    // applyFilter(list, state){
+    //     for(const [key,value] of Object.entries(state)){
+    //         if(value == null || value === "") continue;
+
+    //         const filter = this.filters[key];
+    //         if(!filter) continue;
+
+    //         list = list.filter(v => filter(v,value));
+    //     }
+    //     return list;
+    // }
     applyFilter(list, state){
-        for(const [key,value] of Object.entries(state)){
-            if(value == null || value === "") continue;
-
-            const filter = this.filters[key];
-            if(!filter) continue;
-
-            list = list.filter(v => filter(v,value));
+        for(const [key, filterFn] of Object.entries(this.filters)){
+            const value = state[key] ?? state.filters?.[key];
+            // 空チェック（重要）
+            if(value == null || value === "" || (typeof value === "object" && Object.values(value).every(v => !v))) continue;
+            
+            list = list.filter(v => filterFn(v, value));
         }
         return list;
     }

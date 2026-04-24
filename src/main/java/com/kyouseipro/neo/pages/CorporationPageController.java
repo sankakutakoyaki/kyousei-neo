@@ -56,6 +56,7 @@ public class CorporationPageController extends BaseController {
             ),
             "page", Map.of(
                 "companyComboList", companyService.findComboClientAll(),
+                "officeComboList", officeService.findComboClientAll(),
                 "clientCategoryComboList", EnumUtil.toCombo(ClientCategory.class)
             )
         );

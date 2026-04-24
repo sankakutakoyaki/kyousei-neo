@@ -4,6 +4,7 @@ import { initCommon } from "../../../core/init/initPage.js";
 import { PageController } from "../../../controllers/PageController.js";
 import { DataTable } from "../../../core/table/DataTable.js";
 import { createClientCompanyColumns, createOfficeColumns } from "./columns.js";
+import { createStaffColumns } from "../office/columns.js";
 import { FormController } from "../../../controllers/FormController.js";
 import { registerController } from "../../../controllers/controllers.js";
 import { filterFactory } from "../../../util/filterFactory.js";
@@ -43,8 +44,30 @@ export async function init() {
             }
         }
     });
-
     await office.dataTable.refresh();
+
+    // tab3
+    const staff = clientStaffPage();
+    registerController("clientStaff", staff);
+
+    staff.init({
+        columns: createStaffColumns(staff),
+        data: [],
+        components: { combo: true, input: true },
+        actions: {
+            companyChanged: async (c, payload) => {
+                const list = await api.get("/api/company/client/combo");
+                APP.cache.page.companyComboList = list.data;
+                await c.reset();
+            },
+            officeChanged: async (c, payload) => {
+                const list = await api.get("/api/office/client/combo");
+                APP.cache.page.officeComboList = list.data;
+                await c.reset();
+            }
+        }
+    });
+    await staff.dataTable.refresh();
 }
 
 export const clientCompanyPage = () => {
@@ -130,6 +153,13 @@ export const clientOfficePage = () => {
     const controller = new PageController({
         key:"clientOffice",
 
+        onDeleted: () => {
+            dispatchAction({
+                action: "officeChanged",
+                target: "clientStaff"
+            });
+        },
+
         table: {
             create: (controller, columns) => new DataTable({
                 controller: controller,
@@ -167,6 +197,10 @@ export const clientOfficePage = () => {
                 onSaved: async (id) => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);
+                    dispatchAction({
+                        action: "officeChanged",
+                        target: "clientOffice",
+                    });
                 },
                 buildParams: (id) => ({
                     state: APP.cache.common.state.INITIAL,
@@ -176,6 +210,64 @@ export const clientOfficePage = () => {
                     request: api.request,
                     find: "officeDetail",
                     save: "officeSave"
+                }
+            })
+        }
+    });
+    return controller;
+};
+
+export const clientStaffPage = () => {
+
+    const controller = new PageController({
+        key:"clientStaff",
+
+        table: {
+            create: (controller, columns) => new DataTable({
+                controller: controller,
+                tableId: "table-03",
+                footerId: "footer-03",
+                columns,
+                idKey: "staffId",
+                checkable: true,
+                buildParams: () => ({
+                    state: APP.cache.common.state.INITIAL,
+                    category: APP.cache.common.companyCategory.PARTNER
+                }),
+                buildCsvParams: () => ({
+                    state: APP.cache.common.state.INITIAL
+                }),
+                api: {
+                    request: api.request,
+                    select: "clientStaffList",
+                    delete: "staffDeleteByIds",
+                    download: "staffCsv"
+                },
+                model: {
+                    filters: {
+                        staffId: filterFactory.equals("staffId")
+                    }
+                },
+                onDoubleClick: (item) => controller.openEdit(item[controller.key]),
+            })
+        },
+        form: {
+            create: (controller) => new FormController({
+                formId: "form-03",
+                key: controller.key,
+                controller: controller, 
+                onSaved: async (id) => {
+                    await controller.dataTable.refresh();
+                    controller.scrollToRow(id);
+                },
+                buildParams: (id) => ({
+                    state: APP.cache.common.state.INITIAL,
+                    officeId: id                   
+                }),
+                api: {
+                    request: api.request,
+                    find: "staffDetail",
+                    save: "staffSave"
                 }
             })
         }

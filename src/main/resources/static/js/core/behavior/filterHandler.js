@@ -22,25 +22,54 @@
 //     controller.state[key] = value;
 //     controller.dataTable.reload();
 // }
+
+// export function smartFilterHandler(controller, el){
+
+//     const key = el.dataset.field || el.dataset.key;
+//     const type = el.dataset.type;
+//     const value = el.value;
+
+//     // 複合条件（例：from/to）
+//     if(type){
+//         const current = controller.state[key] || {};
+
+//         controller.state[key] = {
+//             ...current,
+//             [type]: value
+//         };
+//     }
+//     else {
+//         controller.state[key] = value;
+//     }
+
+//     // ★ 再描画
+//     controller.dataTable.reload();
+// }
+
 export function smartFilterHandler(controller, el){
 
     const key = el.dataset.field || el.dataset.key;
     const type = el.dataset.type;
     const value = el.value;
 
-    // 複合条件（例：from/to）
-    if(type){
-        const current = controller.state[key] || {};
+    // ★ filters初期化
+    if(!controller.state.filters){
+        controller.state.filters = {};
+    }
 
-        controller.state[key] = {
+    // 複合条件（from / to）
+    if(type){
+        const current = controller.state.filters[key] || {};
+
+        controller.state.filters[key] = {
             ...current,
             [type]: value
         };
     }
+    // 単一条件
     else {
-        controller.state[key] = value;
+        controller.state.filters[key] = value;
     }
 
-    // ★ 再描画
     controller.dataTable.reload();
 }
