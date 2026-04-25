@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-public class EmployeeRepository {
+public class EmployeeRepository2 {
     private final SqlRepository sqlRepository;
     // private final BaseRepository baseRepository;
     // private final LogSqlProvider logProvider = new EmployeeLogSqlProvider();

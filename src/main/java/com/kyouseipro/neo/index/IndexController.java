@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
-import com.kyouseipro.neo.personnel.employee.service.EmployeeService;
+import com.kyouseipro.neo.personnel.employee.service.EmployeeService2;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class IndexController {
-	private final EmployeeService employeeService;
+	private final EmployeeService2 employeeService;
 
 	/**
 	 * スタートページ

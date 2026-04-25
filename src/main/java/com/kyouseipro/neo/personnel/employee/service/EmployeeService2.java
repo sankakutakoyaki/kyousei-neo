@@ -12,14 +12,14 @@ import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.interfaces.HistoryTarget;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntityRequest;
-import com.kyouseipro.neo.personnel.employee.repository.EmployeeRepository;
+import com.kyouseipro.neo.personnel.employee.repository.EmployeeRepository2;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class EmployeeService {
-    private final EmployeeRepository employeeRepository;
+public class EmployeeService2 {
+    private final EmployeeRepository2 employeeRepository;
 
     /**
      * 指定されたIDの従業員情報を取得します。

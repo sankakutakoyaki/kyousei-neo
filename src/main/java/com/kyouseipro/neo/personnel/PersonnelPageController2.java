@@ -29,9 +29,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
-@Controller
+// @Controller
 @RequiredArgsConstructor
-public class PersonnelPageController extends BaseController {
+public class PersonnelPageController2 extends BaseController {
     private final EmployeeListService employeeListService;
     private final TimeworksService timeworksService;
     private final WorkingConditionsListService workingConditionsListService;
@@ -42,7 +42,7 @@ public class PersonnelPageController extends BaseController {
 	 * @param mv
 	 * @return
 	 */
-	@GetMapping("/employee")
+	@GetMapping("/employee2")
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
     public String getEmployee(Model model, HttpSession session, HttpServletResponse response) throws IOException {
         EmployeeEntity user = getLoginUser(session, response);

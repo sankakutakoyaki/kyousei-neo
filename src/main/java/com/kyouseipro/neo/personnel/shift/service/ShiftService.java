@@ -9,7 +9,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
-import com.kyouseipro.neo.personnel.employee.repository.EmployeeRepository;
+import com.kyouseipro.neo.personnel.employee.repository.EmployeeRepository2;
 import com.kyouseipro.neo.personnel.shift.entity.PlannedShift;
 import com.kyouseipro.neo.personnel.shift.repository.PlannedShiftRepository;
 
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class ShiftService {
 
     private final PlannedShiftRepository repository;
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeRepository2 employeeRepository;
 
     public Map<String, Object> getMonth(int year, int month) {
 

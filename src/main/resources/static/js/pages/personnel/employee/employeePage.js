@@ -1,5 +1,16 @@
 "use strict"
 
+import { initCommon } from "../../../core/init/initPage.js";
+import { PageController } from "../../../controllers/PageController.js";
+import { DataTable } from "../../../core/table/DataTable.js";
+import { createEmployeeColumns } from "./columns.js";
+import { FormController } from "../../../controllers/FormController.js";
+import { registerController } from "../../../controllers/controllers.js";
+import { filterFactory } from "../../../util/filterFactory.js";
+import { api } from "../../../core/api/apiService.js";
+import { initPageCache } from "../../../core/init/initPageCache.js";
+import { dispatchAction } from "../../../util/actionDispatcher.js";
+
 export async function init() {
 
     await initCommon();
@@ -7,7 +18,7 @@ export async function init() {
 
     // tab1
     const fulltime = fulltimeEmployeePage();
-    registerController("fulltimeEmployee", fulltime);
+    registerController("fulltime", fulltime);
 
     fulltime.init({
         columns: createEmployeeColumns(fulltime),
@@ -18,14 +29,14 @@ export async function init() {
 
     // tab2
     const parttime = parttimeEmployeePage();
-    registerController("parttimeEmployee", parttime);
+    registerController("parttime", parttime);
 
     parttime.init({
         columns: createEmployeeColumns(parttime),
         data: [],
         components: { combo: true, input: true }
     });
-    await employee.dataTable.refresh();
+    await parttime.dataTable.refresh();
 }
 
 export const fulltimeEmployeePage = () => {

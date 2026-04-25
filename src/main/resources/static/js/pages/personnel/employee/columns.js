@@ -31,8 +31,8 @@ export const createEmployeeColumns = (controller) => [
         default: "登録なし"
     },
     {
-        field: "companyName",
-        label: "会社名",
+        field: "officeName",
+        label: "営業所",
         sortable: true,
         default: "登録なし"
     }

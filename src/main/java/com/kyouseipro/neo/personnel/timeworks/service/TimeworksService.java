@@ -12,7 +12,7 @@ import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.common.Enums.HistoryTables;
 import com.kyouseipro.neo.interfaces.HistoryTarget;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
-import com.kyouseipro.neo.personnel.employee.repository.EmployeeRepository;
+import com.kyouseipro.neo.personnel.employee.repository.EmployeeRepository2;
 import com.kyouseipro.neo.personnel.timeworks.entity.TimeworksEntity;
 import com.kyouseipro.neo.personnel.timeworks.entity.TimeworksRequestDto;
 import com.kyouseipro.neo.personnel.timeworks.repository.TimeworksRepository;
@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class TimeworksService {
 
     private final TimeworksRepository timeworksRepository;
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeRepository2 employeeRepository;
 
     public List<TimeworksEntity> getTodaysList() {
         LocalDate date = LocalDate.now();

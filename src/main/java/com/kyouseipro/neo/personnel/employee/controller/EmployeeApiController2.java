@@ -22,15 +22,15 @@ import com.kyouseipro.neo.common.simpledata.entity.SimpleData;
 import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.IdRequest;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
-import com.kyouseipro.neo.personnel.employee.service.EmployeeService;
+import com.kyouseipro.neo.personnel.employee.service.EmployeeService2;
 
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/employee")
-public class EmployeeApiController {
-    private final EmployeeService employeeService;
+public class EmployeeApiController2 {
+    private final EmployeeService2 employeeService;
 
     /**
      * IDからEntityを取得する

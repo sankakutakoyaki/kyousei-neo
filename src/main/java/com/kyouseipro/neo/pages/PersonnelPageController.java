@@ -30,13 +30,13 @@ public class PersonnelPageController extends BaseController {
 	 */
 	@GetMapping("/employee")
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public String getPartner() {
+	public String getEmployee() {
         return "fragments/pages/personnel/employee/content :: content";
     }
 
-    @GetMapping("/api/partner/init/cache")
+    @GetMapping("/api/employee/init/cache")
     @ResponseBody
-    public Map<String, Object> initPartner() {
+    public Map<String, Object> initEmployee() {
         return Map.of(
             "common", Map.of(
                 "state", EnumUtil.toMap(State.class),

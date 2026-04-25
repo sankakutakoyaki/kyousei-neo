@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.Enums;
 import com.kyouseipro.neo.personnel.employee.entity.EmployeeEntity;
-import com.kyouseipro.neo.personnel.employee.repository.EmployeeRepository;
+import com.kyouseipro.neo.personnel.employee.repository.EmployeeRepository2;
 import com.kyouseipro.neo.personnel.paidholiday.entity.PaidHolidayEntity;
 import com.kyouseipro.neo.personnel.paidholiday.entity.PaidHolidayListEntity;
 import com.kyouseipro.neo.personnel.paidholiday.mapper.PaidHolidayEntityMapper;
@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PaidHolidayRepository {
     private final SqlRepository sqlRepository;
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeRepository2 employeeRepository;
 
     /**
      * 年指定でIDで指定した営業所の勤怠情報を取得
