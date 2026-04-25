@@ -16,6 +16,7 @@ import com.kyouseipro.neo.common.enums.code.Gender;
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.util.EnumUtil;
 import com.kyouseipro.neo.domain.corporation.company.CompanyService;
+import com.kyouseipro.neo.domain.corporation.office.OfficeService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CorporationPageController extends BaseController {
     private final CompanyService companyService;
+    private final OfficeService officeService;
 
     /**
 	 * 取引先

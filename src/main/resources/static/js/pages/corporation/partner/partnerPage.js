@@ -85,7 +85,7 @@ export const partnerCompanyPage = () => {
                     delete: "companyDeleteByIds",
                     download: "companyCsv"
                 },
-                onDoubleClick: (item) => controller.openEdit(item[controller.key])
+                onDoubleClick: (item) => controller.openEdit(item.companyId)
             })
         },
         form: {
@@ -93,8 +93,10 @@ export const partnerCompanyPage = () => {
                 controller: controller,
                 formId: "form-01",
                 key: controller.key,
-                beforeSave: (payload) => {
-                    const id = payload[controller.key];
+                beforeSave: (payload, form) => {
+                    // const id = payload[controller.key];
+                    const key = form.dataset.key;
+                    const id = payload[key];
                     if (!id || Number(id) === 0) {
                         payload.category = APP.cache.common.companyCategory.PARTNER;
                     }
@@ -160,7 +162,7 @@ export const partnerEmployeePage = () => {
                         companyId: filterFactory.equals("companyId")
                     }
                 },
-                onDoubleClick: (item) => controller.openEdit(item[controller.key]),
+                onDoubleClick: (item) => controller.openEdit(item.employeeId),
             })
         },
         form: {
@@ -168,8 +170,10 @@ export const partnerEmployeePage = () => {
                 formId: "form-02",
                 key: controller.key,
                 controller: controller, 
-                beforeSave: (payload) => {
-                    const id = payload[controller.key];
+                beforeSave: (payload, form) => {
+                    // const id = payload[controller.key];
+                    const key = form.dataset.key;
+                    const id = payload[key];
                     if (!id || Number(id) === 0) {
                         payload.category = APP.cache.common.employeeCategory.CONSTRUCT;
                     }

@@ -1,148 +1,148 @@
-package com.kyouseipro.neo.corporation.office.repository;
+// package com.kyouseipro.neo.corporation.office.repository;
 
-import java.util.List;
+// import java.util.List;
 
-import org.springframework.stereotype.Repository;
+// import org.springframework.stereotype.Repository;
 
-import com.kyouseipro.neo.common.Enums;
-import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
-import com.kyouseipro.neo.corporation.office.entity.OfficeEntityRequest;
-import com.kyouseipro.neo.corporation.office.mapper.OfficeEntityMapper;
-import com.kyouseipro.neo.dto.IdListRequest;
-import com.kyouseipro.neo.sql.repository.SqlRepository;
+// import com.kyouseipro.neo.common.Enums;
+// import com.kyouseipro.neo.corporation.office.entity.OfficeEntity;
+// import com.kyouseipro.neo.corporation.office.entity.OfficeEntityRequest;
+// import com.kyouseipro.neo.corporation.office.mapper.OfficeEntityMapper;
+// import com.kyouseipro.neo.dto.IdListRequest;
+// import com.kyouseipro.neo.sql.repository.SqlRepository;
 
-import lombok.RequiredArgsConstructor;
+// import lombok.RequiredArgsConstructor;
 
-@Repository
-@RequiredArgsConstructor
-public class OfficeRepository {
-    private final SqlRepository sqlRepository;
+// @Repository
+// @RequiredArgsConstructor
+// public class OfficeRepository {
+//     private final SqlRepository sqlRepository;
 
-    /**
-     * IDによる取得。
-     * @param id
-     * @return IDから取得したEntityを返す。
-     */
-    public OfficeEntity findById(Long id) {
-        String sql = OfficeSqlBuilder.buildFindById();
+//     /**
+//      * IDによる取得。
+//      * @param id
+//      * @return IDから取得したEntityを返す。
+//      */
+//     public OfficeEntity findById(Long id) {
+//         String sql = OfficeSqlBuilder.buildFindById();
 
-        return sqlRepository.queryOne(
-            sql,
-            (ps, en) -> {
-                int index = 1;
-                ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setLong(index++, id);
-            },
-            OfficeEntityMapper::map
-        );
-    }
+//         return sqlRepository.queryOne(
+//             sql,
+//             (ps, en) -> {
+//                 int index = 1;
+//                 ps.setInt(index++, Enums.state.DELETE.getCode());
+//                 ps.setInt(index++, Enums.state.DELETE.getCode());
+//                 ps.setLong(index++, id);
+//             },
+//             OfficeEntityMapper::map
+//         );
+//     }
 
-    /**
-     * 全件取得。
-     * 0件の場合は空リストを返す。
-     * @return 取得したリストを返す
-     */
-    public List<OfficeEntity> findAll() {
-        String sql = OfficeSqlBuilder.buildFindAll();
+//     /**
+//      * 全件取得。
+//      * 0件の場合は空リストを返す。
+//      * @return 取得したリストを返す
+//      */
+//     public List<OfficeEntity> findAll() {
+//         String sql = OfficeSqlBuilder.buildFindAll();
 
-        return sqlRepository.queryList(
-            sql,
-            (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
-            OfficeEntityMapper::map
-        );
-    }
+//         return sqlRepository.queryList(
+//             sql,
+//             (ps, v) -> ps.setInt(1, Enums.state.DELETE.getCode()),
+//             OfficeEntityMapper::map
+//         );
+//     }
 
-    /**
-     * 全件取得（荷主）。
-     * 0件の場合は空リストを返す。
-     * @return 取得したリストを返す
-     */
-    public List<OfficeEntity> findAllClient() {
-        String sql = OfficeSqlBuilder.buildFindAllClient();
+//     /**
+//      * 全件取得（荷主）。
+//      * 0件の場合は空リストを返す。
+//      * @return 取得したリストを返す
+//      */
+//     public List<OfficeEntity> findAllClient() {
+//         String sql = OfficeSqlBuilder.buildFindAllClient();
 
-        return sqlRepository.queryList(
-            sql,
-            (ps, v) -> {
-                int index = 1;   
-                ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, Enums.state.DELETE.getCode());
-                ps.setInt(index++, 0);
-            },
-            OfficeEntityMapper::map
-        );
-    }
+//         return sqlRepository.queryList(
+//             sql,
+//             (ps, v) -> {
+//                 int index = 1;   
+//                 ps.setInt(index++, Enums.state.DELETE.getCode());
+//                 ps.setInt(index++, Enums.state.DELETE.getCode());
+//                 ps.setInt(index++, 0);
+//             },
+//             OfficeEntityMapper::map
+//         );
+//     }
 
-    /**
-     * 新規作成。
-     * @param entity
-     * @return 新規IDを返す。
-     */
-    public int insert(OfficeEntityRequest entity, String editor) {
-        String sql = OfficeSqlBuilder.buildBulkInsert(entity);
+//     /**
+//      * 新規作成。
+//      * @param entity
+//      * @return 新規IDを返す。
+//      */
+//     public int insert(OfficeEntityRequest entity, String editor) {
+//         String sql = OfficeSqlBuilder.buildBulkInsert(entity);
 
-        return sqlRepository.insert(
-            sql,
-            (ps, en) -> OfficeParameterBinder.bindBulkInsert(ps, en, editor),
-            rs -> rs.getInt("office_id"),
-            entity
-        );
-    }
+//         return sqlRepository.insert(
+//             sql,
+//             (ps, en) -> OfficeParameterBinder.bindBulkInsert(ps, en, editor),
+//             rs -> rs.getInt("office_id"),
+//             entity
+//         );
+//     }
 
-    /**
-     * 更新。
-     * @param entity
-     * @return 成功件数を返す。
-     */
-    public int update(OfficeEntityRequest entity, String editor) {
-        String sql = OfficeSqlBuilder.buildBulkUpdate(entity);
+//     /**
+//      * 更新。
+//      * @param entity
+//      * @return 成功件数を返す。
+//      */
+//     public int update(OfficeEntityRequest entity, String editor) {
+//         String sql = OfficeSqlBuilder.buildBulkUpdate(entity);
 
-        int count = sqlRepository.updateRequired(
-            sql,
-            (ps, e) -> OfficeParameterBinder.bindBulkUpdate(ps, e, editor),
-            entity
-        );
+//         int count = sqlRepository.updateRequired(
+//             sql,
+//             (ps, e) -> OfficeParameterBinder.bindBulkUpdate(ps, e, editor),
+//             entity
+//         );
 
-        return count;
-    }
+//         return count;
+//     }
 
-    /**
-     * IDで指定したENTITYを論理削除。
-     * @param ids
-     * @param editor
-     * @return 成功件数を返す。
-     */
-    public int deleteByIds(IdListRequest list, String editor) {
-        if (list == null || list.getIds().isEmpty()) {
-            throw new IllegalArgumentException("削除対象が指定されていません");
-        }
+//     /**
+//      * IDで指定したENTITYを論理削除。
+//      * @param ids
+//      * @param editor
+//      * @return 成功件数を返す。
+//      */
+//     public int deleteByIds(IdListRequest list, String editor) {
+//         if (list == null || list.getIds().isEmpty()) {
+//             throw new IllegalArgumentException("削除対象が指定されていません");
+//         }
 
-        String sql = OfficeSqlBuilder.buildDeleteByIds(list.getIds().size());
-        int count = sqlRepository.updateRequired(
-            sql,
-            (ps, v) -> OfficeParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
-        );
+//         String sql = OfficeSqlBuilder.buildDeleteByIds(list.getIds().size());
+//         int count = sqlRepository.updateRequired(
+//             sql,
+//             (ps, v) -> OfficeParameterBinder.bindDeleteByIds(ps, list.getIds(), editor)
+//         );
 
-        return count;
-    }
+//         return count;
+//     }
 
-    /**
-     * IDで指定したENTITYのCSVファイルをダウンロードする。
-     * @param ids
-     * @param editor
-     * @return Idsで選択したEntityリストを返す。
-     */
-    public List<OfficeEntity> downloadCsvByIds(IdListRequest list, String editor) {
-        if (list == null || list.getIds().isEmpty()) {
-            throw new IllegalArgumentException("ダウンロード対象が指定されていません");
-        }
+//     /**
+//      * IDで指定したENTITYのCSVファイルをダウンロードする。
+//      * @param ids
+//      * @param editor
+//      * @return Idsで選択したEntityリストを返す。
+//      */
+//     public List<OfficeEntity> downloadCsvByIds(IdListRequest list, String editor) {
+//         if (list == null || list.getIds().isEmpty()) {
+//             throw new IllegalArgumentException("ダウンロード対象が指定されていません");
+//         }
 
-        String sql = OfficeSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
-        return sqlRepository.queryList(
-            sql,
-            (ps, v) -> OfficeParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
-            OfficeEntityMapper::map
-        );
-    }
-}
+//         String sql = OfficeSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
+//         return sqlRepository.queryList(
+//             sql,
+//             (ps, v) -> OfficeParameterBinder.bindDownloadCsvByIds(ps, list.getIds()),
+//             OfficeEntityMapper::map
+//         );
+//     }
+// }
 

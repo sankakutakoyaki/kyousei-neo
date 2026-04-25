@@ -42,7 +42,7 @@
         <!-- </main> -->
         <div id="form-dialog-area">
             <!-- フォーム画面をここに記入する -->
-            <form id="form-01" class="form-dialog none" data-controller="partnerCompany">
+            <form id="form-01" class="form-dialog none" data-controller="partnerCompany" data-key="company-id">
                 <div class="dialog-main">
                     <!-- ヘッダー -->
                     <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '施工店登録'} })}"></div>
@@ -52,7 +52,7 @@
                     <div th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></div>
                 </div>
             </form>
-            <form id="form-02" class="form-dialog none" data-controller="partnerEmployee">
+            <form id="form-02" class="form-dialog none" data-controller="partnerEmployee" data-key="employee-id">
                 <div class="dialog-main">
                     <!-- ヘッダー -->
                     <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '担当者登録'} })}"></div>

@@ -6,9 +6,10 @@
         <ul class="tab-menu">
             <li class="tab-menu-item is-active" data-action="tab" data-group="client-tabs" data-tab="tab-01">取引先</li>
             <li class="tab-menu-item" data-action="tab" data-group="client-tabs" data-tab="tab-02">支店</li>
+            <li class="tab-menu-item" data-action="tab" data-group="client-tabs" data-tab="tab-03">担当</li>
         </ul>
         <div class="tab-panel is-show" id="tab-01" data-tab-content="client-tabs">
-            <div class="table-area" data-controller="clientCompany">
+            <div class="table-area" data-controller="clientCompany" data-sync-group="clientCompany">
                 <!-- ヘッダー -->
                 <div th:replace="~{fragments/pages/corporation/client/header :: header01Fragment()}"></div>
                 <!-- コンテンツ -->
@@ -18,7 +19,7 @@
             </div>
         </div>
         <div class="tab-panel" id="tab-02" data-tab-content="client-tabs">
-            <div class="table-area" data-controller="clientOffice">
+            <div class="table-area" data-controller="clientOffice" data-sync-group="clientOffice">
                 <!-- ヘッダー -->
                 <div th:replace="~{fragments/pages/corporation/client/header :: header02Fragment()}"></div>
                 <!-- コンテンツ -->
@@ -27,11 +28,21 @@
                 <div th:replace="~{fragments/table/footer :: datetimeFragment('footer-02')}"></div>
             </div>
         </div>
+        <div class="tab-panel" id="tab-03" data-tab-content="client-tabs">
+            <div class="table-area" data-controller="clientStaff" data-sync-group="clientStaff">
+                <!-- ヘッダー -->
+                <div th:replace="~{fragments/pages/corporation/client/header :: header03Fragment()}"></div>
+                <!-- コンテンツ -->
+                <div th:replace="~{fragments/table/body :: normalFragment('table-header-03', 'table-03')}"></div>
+                <!-- フッター -->
+                <div th:replace="~{fragments/table/footer :: datetimeFragment('footer-03')}"></div>
+            </div>
+        </div>
     </div>
     <!-- </main> -->
     <div id="form-dialog-area">
         <!-- フォーム画面をここに記入する -->
-        <form id="form-01" class="form-dialog none" data-controller="clientCompany">
+        <form id="form-01" class="form-dialog none" data-controller="clientCompany" data-sync-group="clientCompany" data-key="company-id">
             <div class="dialog-main">
                 <!-- ヘッダー -->
                 <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '取引先登録'} })}"></div>
@@ -41,7 +52,7 @@
                 <div th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></div>
             </div>
         </form>
-        <form id="form-02" class="form-dialog none" data-controller="clientOffice">
+        <form id="form-02" class="form-dialog none" data-controller="clientOffice" data-sync-group="clientOffice" data-key="office-id">
             <div class="dialog-main">
                 <!-- ヘッダー -->
                 <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '支店登録'} })}"></div>
@@ -49,6 +60,16 @@
                 <form th:replace="~{fragments/pages/corporation/client/form :: form02Fragment()}"></form>
                 <!-- フッター -->
                 <div th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-02' } })}"></div>
+            </div>
+        </form>
+        <form id="form-03" class="form-dialog none" data-controller="clientStaff" data-sync-group="clientStaff" data-key="staff-id">
+            <div class="dialog-main">
+                <!-- ヘッダー -->
+                <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '営業担当者登録'} })}"></div>
+                <!-- コンテンツ -->
+                <form th:replace="~{fragments/pages/corporation/client/form :: form03Fragment()}"></form>
+                <!-- フッター -->
+                <div th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-03' } })}"></div>
             </div>
         </form>
     </div>

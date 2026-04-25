@@ -77,11 +77,12 @@ export class TableModel {
     //     return list;
     // }
     applyFilter(list, state){
+        const filters = state.filters || {};
+
         for(const [key, filterFn] of Object.entries(this.filters)){
-            const value = state[key] ?? state.filters?.[key];
-            // 空チェック（重要）
-            if(value == null || value === "" || (typeof value === "object" && Object.values(value).every(v => !v))) continue;
-            
+            const value = filters[key];
+
+            if(value == null || value === "") continue;
             list = list.filter(v => filterFn(v, value));
         }
         return list;

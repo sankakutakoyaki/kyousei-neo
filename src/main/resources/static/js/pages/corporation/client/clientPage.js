@@ -11,6 +11,7 @@ import { filterFactory } from "../../../util/filterFactory.js";
 import { api } from "../../../core/api/apiService.js";
 import { initPageCache } from "../../../core/init/initPageCache.js";
 import { dispatchAction } from "../../../util/actionDispatcher.js";
+import { initParentChildLink } from "../../../util/link.js";
 
 export async function init() {
 
@@ -68,6 +69,8 @@ export async function init() {
         }
     });
     await staff.dataTable.refresh();
+
+    initParentChildLink();
 }
 
 export const clientCompanyPage = () => {
@@ -78,7 +81,7 @@ export const clientCompanyPage = () => {
         onDeleted: () => {
             dispatchAction({
                 action: "companyChanged",
-                target: "clientOffice"
+                target: ["clientOffice", "clientStaff"]
             });
         },
 
@@ -108,7 +111,7 @@ export const clientCompanyPage = () => {
                         category: filterFactory.equals("category")
                     }
                 },
-                onDoubleClick: (item) => controller.openEdit(item[controller.key])
+                onDoubleClick: (item) => controller.openEdit(item.companyId)
             })
         },
         form: {
@@ -121,16 +124,13 @@ export const clientCompanyPage = () => {
                         throw { message: "分類を選択してください", field: "category" };
                     }
                 },
-                // beforeSave: (payload) => {
-                //     payload.category = document.getElementById('code01')?.value;
-                // },
                 onSaved: async (id) => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);
 
                     dispatchAction({
                         action: "companyChanged",
-                        target: "clientOffice",
+                        target: ["clientOffice", "clientStaff"]
                     });
                 },
                 buildParams: (id) => ({
@@ -156,7 +156,7 @@ export const clientOfficePage = () => {
         onDeleted: () => {
             dispatchAction({
                 action: "officeChanged",
-                target: "clientStaff"
+                target: ["clientOffice", "clientStaff"]
             });
         },
 
@@ -186,7 +186,7 @@ export const clientOfficePage = () => {
                         companyId: filterFactory.equals("companyId")
                     }
                 },
-                onDoubleClick: (item) => controller.openEdit(item[controller.key]),
+                onDoubleClick: (item) => controller.openEdit(item.officeId),
             })
         },
         form: {
@@ -199,7 +199,7 @@ export const clientOfficePage = () => {
                     controller.scrollToRow(id);
                     dispatchAction({
                         action: "officeChanged",
-                        target: "clientOffice",
+                        target: ["clientOffice", "clientStaff"]
                     });
                 },
                 buildParams: (id) => ({
@@ -239,16 +239,17 @@ export const clientStaffPage = () => {
                 }),
                 api: {
                     request: api.request,
-                    select: "clientStaffList",
+                    select: "staffList",
                     delete: "staffDeleteByIds",
                     download: "staffCsv"
                 },
                 model: {
                     filters: {
-                        staffId: filterFactory.equals("staffId")
+                        companyId: filterFactory.equals("companyId"),
+                        officeId: filterFactory.equals("officeId")
                     }
                 },
-                onDoubleClick: (item) => controller.openEdit(item[controller.key]),
+                onDoubleClick: (item) => controller.openEdit(item.staffId),
             })
         },
         form: {
@@ -262,7 +263,7 @@ export const clientStaffPage = () => {
                 },
                 buildParams: (id) => ({
                     state: APP.cache.common.state.INITIAL,
-                    officeId: id                   
+                    staffId: id
                 }),
                 api: {
                     request: api.request,

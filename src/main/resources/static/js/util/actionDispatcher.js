@@ -79,10 +79,9 @@ export function runAction(el, e){
 
     console.warn("action not found:", action);
 }
-
 export function runActionDirect(controller, action, data){
 
-    const handler = controller.actions[action];
+    const handler = controller.actions?.[action];
 
     if(typeof handler === "function"){
         handler(controller, data);
@@ -93,9 +92,23 @@ export function runActionDirect(controller, action, data){
         controller[action](data);
         return;
     }
-
-    console.warn("action not found:", action);
 }
+// export function runActionDirect(controller, action, data){
+
+//     const handler = controller.actions[action];
+
+//     if(typeof handler === "function"){
+//         handler(controller, data);
+//         return;
+//     }
+
+//     if(typeof controller[action] === "function"){
+//         controller[action](data);
+//         return;
+//     }
+
+//     console.warn("action not found:", action);
+// }
 
 export function resolveController(el){
     const name =

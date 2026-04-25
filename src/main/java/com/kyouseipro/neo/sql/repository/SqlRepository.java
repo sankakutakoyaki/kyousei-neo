@@ -13,7 +13,6 @@ import com.kyouseipro.neo.interfaces.sql.SQLBiConsumer;
 import com.kyouseipro.neo.interfaces.sql.SqlParameterBinder;
 import com.kyouseipro.neo.interfaces.sql.SqlResultExtractor;
 import com.kyouseipro.neo.sql.common.SqlUtil;
-import com.kyouseipro.neo.sql.model.TableMeta;
 
 import lombok.RequiredArgsConstructor;
 

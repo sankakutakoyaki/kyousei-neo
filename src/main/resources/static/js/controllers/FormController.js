@@ -5,7 +5,7 @@ import { FormModel } from "../core/form/FormModel.js";
 import { validate } from "../core/form/components/check.js";
 // import { api } from "../core/api/apiService.js";
 import { convertKey } from "../core/ui/keyCaseConverter.js";
-import { normalize, normalizeValue, getOptions } from "../core/behavior/valueNormalizer.js";
+import { normalize, normalizeValue, getOptions, normalizeParentChild } from "../core/behavior/valueNormalizer.js";
 
 export class FormController {
 
@@ -49,20 +49,43 @@ export class FormController {
                 ? this.buildParams(dataOrId)
                 : { id: dataOrId };
 
-            const res = await this.api.find(params)
+            const res = await this.api.request({
+                queryId: this.api.find,
+                params: params
+            });
             data = res.data?.[0] ?? {};
         }
 
-        // if (this.controller?.state?.companyId) {
-        //     data.companyId = this.controller.state.companyId;
-        // }
-        Object.entries(this.controller.state || {}).forEach(([key, value]) => {
+        const filters = this.controller.state?.filters || {};
+
+        // Object.entries(filters).forEach(([key, value]) => {
+
+        //     if (value == null || value === "") return;
+
+        //     const el = document.querySelector(
+        //         `#${this.formId} [name="${key}"], #${this.formId} [data-key="${key}"]`
+        //     );
+        //     if (!el) return;
+
+        //     if (data[key] == null || data[key] === "") {
+        //         data[key] = value;
+        //     }
+        // });
+        Object.entries(filters).forEach(([key, value]) => {
+
             if (value == null || value === "") return;
 
-            const el = document.querySelector(`#${this.formId} [name="${key}"]`);
-            if (!el) return; // ★ フォームに存在する項目だけ
+            const kebab = convertKey(key, "camel", "kebab");
 
-            if (!(key in data)) {
+            const el = document.querySelector(
+                `#${this.formId} [name="${kebab}"], 
+                #${this.formId} [data-key="${kebab}"], 
+                #${this.formId} [data-key="${key}"]`
+            );
+
+            if (!el) return;
+
+            if (data[key] == null || data[key] === "") {
                 data[key] = value;
             }
         });
@@ -146,7 +169,7 @@ export class FormController {
 
         try {
             if (this.beforeSave) {
-                await this.beforeSave(payload);
+                await this.beforeSave(payload, form);
             }
 
             if (this.businessValidate) {

@@ -78,5 +78,21 @@ export const filterFactory = {
 
     custom(fn){
         return (v, value) => fn(v, value);
+    },
+
+    // parent(field) {
+    //     return (v, value) => {
+    //         // 空なら全部表示（初期状態）
+    //         if (!value) return true;
+    //         return v.dataset.parent === value;
+    //     };
+    // }
+    parent(field) {
+        return (v, value) => {
+            // 未選択なら全部非表示（これが重要）
+            if (!value) return false;
+
+            return v.dataset.parent === value;
+        };
     }
 };

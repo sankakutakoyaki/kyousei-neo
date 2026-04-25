@@ -70,3 +70,60 @@
         </div>
     </div>
 </th:block>
+
+<th:block th:fragment="header03Fragment()">
+    <div id="header-03" class="flex-area pc-style">
+        <div>
+            <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-03')}"></th:block>
+            <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${
+                {
+                    'add': 'add-btn-03',
+                    'form': 'form-03',
+                    'delete': 'delete-btn-03',
+                    'download': 'download-btn-03',
+                    'reload': 'reload-btn-03'
+                }}
+            )}"></th:block>
+        </div>
+        <div>
+            <div th:id="multi-code-area" class="flex-area" data-resolve="staff" data-enterfocus="code-area">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text':'ID',
+                        'id':'code04',
+                        'name':'name04',
+                        'resolveId':true,
+                        'index':1
+                    }}
+                )}"></th:block>
+                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                    {
+                        'text':'会社名', 
+                        'id':'code05', 
+                        'name':'name05',
+                        'action':'filter',
+                        'combo': 'companyComboList',
+                        'top': '-----',
+                        'key':'companyId',
+                        'resolveName':true,
+                        'link': 'code06'
+                    }}
+                )}"></th:block>
+                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                    {
+                        'text':'支店名', 
+                        'id':'code06', 
+                        'name':'name06',
+                        'action':'filter',
+                        'combo': 'officeComboList',
+                        'top': '-----',
+                        'key':'officeId',
+                        'resolveName':true,
+                        'parent': 'code05',
+                        'linkDefault': 'empty'
+                    }}
+                )}"></th:block>
+            </div>
+        </div>
+    </div>
+</th:block>

@@ -29,6 +29,7 @@ export function createComboBox({area, items, text = null, onChange = null}) {
         if ((typeof v === "number" && v > -1) || (typeof v === "string" && v !== "")) {
             const option = document.createElement("option");
             option.value = item.value;
+            option.dataset.parent = item.parent ?? "";
             option.dataset.id = item.data ?? "";
             option.textContent = item.label;
             area.appendChild(option);

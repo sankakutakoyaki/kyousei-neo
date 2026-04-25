@@ -10,7 +10,7 @@ public class StaffQuery {
         return QueryDefinition.select(
             """
             SELECT s.staff_id, s.full_name, s.full_name_kana, s.phone_number, s.email,
-                c.name as company_name, o.name as office_name FROM staffs s
+                c.company_id, c.name as company_name, o.office_id, o.name as office_name FROM staffs s
             INNER JOIN companies c ON c.company_id = s.company_id AND c.state = ? 
             LEFT OUTER JOIN offices o ON o.office_id = s.office_id AND o.state = ?
             WHERE s.state = ?;
