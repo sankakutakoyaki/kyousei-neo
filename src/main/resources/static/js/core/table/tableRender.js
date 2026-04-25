@@ -4,6 +4,7 @@ import { clearElement } from "../dom/clearElement.js";
 import { setPageTopButton } from "../dom/pageTopButton.js";
 import { formatDate } from "../../util/time.js";
 import { normalizeValue } from "../behavior/valueNormalizer.js";
+import { convertKey } from "../ui/keyCaseConverter.js";
 
 
 export function renderTable(table, config, list){
@@ -83,8 +84,9 @@ export function createRow(tr, item, config){
         }
         // field指定
         else if(col.field){
+            const key = convertKey(col.field, "kebab", "camel");
             
-            let value = normalizeValue(item[col.field], col);
+            let value = normalizeValue(item[key], col);
             if(value == null){
                 value = col.default ?? "";
             }

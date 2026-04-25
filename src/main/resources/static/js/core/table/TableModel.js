@@ -1,5 +1,7 @@
 "use strict"
 
+import { convertKey } from "../ui/keyCaseConverter.js";
+
 export class TableModel {
 
     constructor(config){
@@ -37,10 +39,12 @@ export class TableModel {
     // }
 
     toggleSort(field){
-        if(this.sortKey === field){
+        const key = convertKey(field, "kebab", "camel");
+
+        if(this.sortKey === key){
             this.sortDir = this.sortDir === "asc" ? "desc" : "asc";
-        }else{
-            this.sortKey = field;
+        } else {
+            this.sortKey = key;
             this.sortDir = "asc";
         }
     }
@@ -76,11 +80,24 @@ export class TableModel {
     //     }
     //     return list;
     // }
-    applyFilter(list, state){
-        const filters = state.filters || {};
+    // applyFilter(list, state){
+    //     const filters = state.filters || {};
 
+    //     for(const [key, filterFn] of Object.entries(this.filters)){
+    //         const value = filters[key];
+
+    //         if(value == null || value === "") continue;
+    //         list = list.filter(v => filterFn(v, value));
+    //     }
+    //     return list;
+    // }
+    applyFilter(list, state){
         for(const [key, filterFn] of Object.entries(this.filters)){
-            const value = filters[key];
+            const kebab = convertKey(key, "camel", "kebab");
+            const value =
+                state[key] ??
+                state.filters?.[key] ??
+                state.filters?.[kebab];
 
             if(value == null || value === "") continue;
             list = list.filter(v => filterFn(v, value));

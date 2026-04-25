@@ -16,4 +16,8 @@ public class OfficeService {
     public List<ComboDto> findComboClientAll() {
         return officeRepository.findComboClientAll();
     }
+
+    public List<ComboDto> findComboByCategory(int categoryCode) {
+        return officeRepository.findComboByCategory(categoryCode);
+    }
 }

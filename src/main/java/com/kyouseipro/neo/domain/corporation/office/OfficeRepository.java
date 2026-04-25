@@ -41,4 +41,28 @@ public class OfficeRepository {
             }
         );
     }
+
+    public List<ComboDto> findComboByCategory(int categoryCode) {
+
+        String sql = """
+            SELECT *
+            FROM offices
+            WHERE state = ? AND category = ?
+        """;
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, p) -> {
+                ps.setInt(1, State.INITIAL.getCode());
+                ps.setInt(2, p);
+            },
+            rs -> {
+                ComboDto c = new ComboDto(
+                rs.getLong("office_id"),
+                rs.getString("name"));
+                return c;
+            },
+            categoryCode
+        );
+    }
 }

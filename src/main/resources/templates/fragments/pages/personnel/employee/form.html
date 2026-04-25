@@ -1,0 +1,182 @@
+<th:block th:fragment="form01Fragment()">
+    <div class="dialog-content" data-enterfocus="form-01">
+        <!-- 会社名 -->
+        <div class="form-row" data-resolve="employee">
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                { 
+                    'text': '営業所', 
+                    'combo': 'officeComboList',
+                    'top': '-----',
+                    'key': 'office-id',
+                    'name': 'office-id', 
+                    'resolveName':true,
+                    'index': 3,
+                    'zeroToNull': true
+                }
+            })}"></th:block>
+        </div>
+        <!-- コード -->
+        <!-- アカウント -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': 'コード', 
+                    'name': 'code', 
+                    'inputmode': 'numeric',
+                    'pattern': '\d*',
+                    'placeholder': '0000',
+                    'resolveId':true,
+                    'index': 2,
+                    'number': true,
+                    'zeroToNull': true
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': 'アカウント', 
+                    'name': 'account', 
+                    'placeholder': 'example@kyouseibin.com',
+                    'index': 1 
+                }
+            })}"></th:block>            
+        </div>
+        <!-- 氏名 -->
+        <!-- かな -->
+        <div class="flex-area form-row">
+            <div class="form-parts">
+                <label>氏名</label>
+                <div class="flex-area">
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        { 
+                            'placeholder': '姓', 
+                            'name': 'last-name', 
+                            'index': 4 
+                        }
+                    })}"></th:block>
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        { 
+                            'placeholder': '名', 
+                            'name': 'first-name', 
+                            'index': 5 
+                        }
+                    })}"></th:block>
+                </div>
+            </div>
+            <div class="form-parts">
+                <label>かな</label>
+                <div class="flex-area">
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        { 
+                            'placeholder': 'せい', 
+                            'name': 'last-name-kana', 
+                            'index': 6 
+                        }
+                    })}"></th:block>
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        { 
+                            'placeholder': 'めい', 
+                            'name': 'first-name-kana', 
+                            'index': 7
+                        }
+                    })}"></th:block>
+                </div>
+            </div>
+        </div>
+        <!-- 携帯番号 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': '携帯番号', 
+                    'name': 'phone-number', 
+                    'type': 'phone', 
+                    'index': 8
+                }
+            })}"></th:block>
+        </div>
+        <!-- 住所 -->
+        <div data-resolve="postal" class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': '郵便番号', 
+                    'name': 'postal-code', 
+                    'resolveId': true, 
+                    'type': 'postal', 
+                    'index': 9
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': '住所', 
+                    'name': 'full-address', 
+                    'placeholder': '例）大阪府高槻市柱本5丁目7番10号', 
+                    'resolveName': true, 
+                    'index': 10
+                }
+            })}"></th:block>
+        </div>
+        <!-- メールアドレス -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': 'メールアドレス', 
+                    'name': 'email', 
+                    'type': 'email', 
+                    'index': 11
+                }
+            })}"></th:block>
+        </div>
+        <!-- 生年月日 -->
+        <!-- 性別 -->
+        <!-- 血液型 -->
+        <div class="flex-area form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': '生年月日', 
+                    'name': 'birthday', 
+                    'type': 'date', 
+                    'index': 12
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                { 
+                    'text': '性別', 
+                    'name': 'gender',
+                    'combo': 'genderComboList',
+                    'index': 13,
+                    'number': true,
+                    'zeroToNull': true
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                { 
+                    'text': '血液型', 
+                    'name': 'blood-type',
+                    'combo': 'bloodTypeComboList',
+                    'index': 14,
+                    'number': true,
+                    'zeroToNull': true
+                }
+            })}"></th:block>            
+        </div>
+        <!-- 緊急連絡先 -->
+        <div class="form-parts form-row">
+            <label>緊急連絡先</label>
+            <div class="flex-area">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    { 
+                        'name': 'emergency-contact', 
+                        'placeholder': '例）実家・妻',
+                        'index': 15
+                    }
+                })}"></th:block>
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    { 
+                        'name': 'emergency-contact-number', 
+                        'type': 'phone', 
+                        'index': 16
+                    }
+                })}"></th:block>
+            </div>
+        </div>
+    </div>
+</th:block>

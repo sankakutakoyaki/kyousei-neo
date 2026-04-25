@@ -1,0 +1,61 @@
+<!-- <body> -->
+    <main th:fragment="content"
+            class="normal-body"
+            data-page="/js/pages/personnel/employee/employeePage.js"
+            data-css="/css/pages/personnel/employee.css">
+        <div class="tab-area">
+            <ul class="tab-menu">
+                <li class="tab-menu-item is-active" data-action="tab" data-group="employee-tabs" data-tab="tab-01">社員</li>
+                <li class="tab-menu-item" data-action="tab" data-group="employee-tabs" data-tab="tab-02">アルバイト</li>
+            </ul>
+            <div class="tab-panel is-show" id="tab-01" data-tab-content="employee-tabs">
+                <div class="table-area" data-controller="fulltime">
+                    <!-- ヘッダー -->
+                    <div th:replace="~{fragments/pages/personnel/employee/header :: header01Fragment()}"></div>
+                    <!-- コンテンツ -->
+                    <div th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01')}"></div>
+                    <!-- フッター -->
+                    <div th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></div>
+                </div>
+            </div>
+            <div class="tab-panel" id="tab-02" data-tab-content="employee-tabs">
+                <div class="table-area" data-controller="parttime">
+                    <!-- ヘッダー -->
+                    <div th:replace="~{fragments/pages/personnel/employee/header :: header01Fragment()}"></div>
+                    <!-- コンテンツ -->
+                    <div th:replace="~{fragments/table/body :: normalFragment('table-header-02', 'table-02')}"></div>
+                    <!-- フッター -->
+                    <div th:replace="~{fragments/table/footer :: datetimeFragment('footer-02')}"></div>
+                </div>
+            </div>
+        </div>
+        <!-- </main> -->
+        <div id="form-dialog-area">
+            <!-- フォーム画面をここに記入する -->
+            <form id="form-01" class="form-dialog none" data-controller="fulltime" data-key="employee-id">
+                <div class="dialog-main">
+                    <!-- ヘッダー -->
+                    <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '社員登録'} })}"></div>
+                    <!-- コンテンツ -->
+                    <form th:replace="~{fragments/pages/personnel/employee/form :: form01Fragment()}"></form>
+                    <!-- フッター -->
+                    <div th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></div>
+                </div>
+            </form>
+            <form id="form-02" class="form-dialog none" data-controller="partnerEmployee" data-key="employee-id">
+                <div class="dialog-main">
+                    <!-- ヘッダー -->
+                    <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': 'アルバイト登録'} })}"></div>
+                    <!-- コンテンツ -->
+                    <form th:replace="~{fragments/pages/personnel/employee/form :: form01Fragment()}"></form>
+                    <!-- フッター -->
+                    <div th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-02' } })}"></div>
+                </div>
+            </form>
+        </div>
+        <div id="msg-dialog-area">
+            <div th:replace="~{fragments/dialog/content :: messageFragment}"></div>
+        </div>
+    </main>
+
+<!-- </body> -->
