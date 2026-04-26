@@ -78,11 +78,20 @@ export const fulltimeEmployeePage = () => {
                 formId: "form-01",
                 key: controller.key,
                 controller: controller, 
+                businessValidate: (payload) => {
+                    if (!payload.officeId) {
+                        throw { message: "営業所を選択してください", field: "officeId" };
+                    }
+                },
                 beforeSave: (payload, form) => {
                     const key = form.dataset.key;
                     const id = payload[key];
                     if (!id || Number(id) === 0) {
                         payload.category = APP.cache.common.employeeCategory.FULLTIME;
+                    }
+                    const code = payload.code;
+                    if (!code || Number(code) === 0) {
+                        payload.code = 0;
                     }
                 },
                 onSaved: async (id) => {
@@ -142,12 +151,21 @@ export const parttimeEmployeePage = () => {
             create: (controller) => new FormController({
                 formId: "form-01",
                 key: controller.key,
-                controller: controller, 
+                controller: controller,
+                businessValidate: (payload) => {
+                    if (!payload.officeId) {
+                        throw { message: "営業所を選択してください", field: "officeId" };
+                    }
+                },
                 beforeSave: (payload, form) => {
                     const key = form.dataset.key;
                     const id = payload[key];
                     if (!id || Number(id) === 0) {
                         payload.category = APP.cache.common.employeeCategory.PARTTIME;
+                    }
+                    const code = payload.code;
+                    if (!code || Number(code) === 0) {
+                        payload.code = 0;
                     }
                 },
                 onSaved: async (id) => {

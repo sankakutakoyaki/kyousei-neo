@@ -170,12 +170,21 @@ export const partnerEmployeePage = () => {
                 formId: "form-02",
                 key: controller.key,
                 controller: controller, 
+                businessValidate: (payload) => {console.log(payload)
+                    if (!payload.companyId) {
+                        throw { message: "会社を選択してください", field: "companyId" };
+                    }
+                },
                 beforeSave: (payload, form) => {
                     // const id = payload[controller.key];
                     const key = form.dataset.key;
                     const id = payload[key];
                     if (!id || Number(id) === 0) {
                         payload.category = APP.cache.common.employeeCategory.CONSTRUCT;
+                    }
+                    const code = payload.code;
+                    if (!code || Number(code) === 0) {
+                        payload.code = 0;
                     }
                 },
                 onSaved: async (id) => {

@@ -3,8 +3,7 @@
 import { initCommon } from "../../../core/init/initPage.js";
 import { PageController } from "../../../controllers/PageController.js";
 import { DataTable } from "../../../core/table/DataTable.js";
-import { createClientCompanyColumns, createOfficeColumns } from "./columns.js";
-import { createStaffColumns } from "../office/columns.js";
+import { createClientCompanyColumns, createOfficeColumns, createStaffColumns } from "./columns.js";
 import { FormController } from "../../../controllers/FormController.js";
 import { registerController } from "../../../controllers/controllers.js";
 import { filterFactory } from "../../../util/filterFactory.js";
