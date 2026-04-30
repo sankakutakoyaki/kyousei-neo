@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/with-sidebar}">
+
+<body>
+    <div layout:fragment="sidebar-content">
+        <div th:replace="~{fragments/common/menu :: registFragment}"></div>
+    </div>
+    <main layout:fragment="content">
+        <p>regist</p>
+        <div id="form-dialog-area"></div>
+        <div id="dialog-area"></div>
+    </main>
+</body>
+
+</html>

@@ -1,25 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/base}">
+
 <body>
+    <!-- base の layout-content を埋める -->
+    <div layout:fragment="layout-content" class="normal-main">
 
-<!-- base の layout-content を埋める -->
-<div layout:fragment="layout-content" class="normal-main">
-
-    <!-- <aside class="normal-sidebar"> -->
         <aside class="normal-sidebar" layout:fragment="sidebar-content"></aside>
-    <!-- </aside> -->
-
-    <!-- <main class="normal-body"> -->
         <main class="normal-body" layout:fragment="content"></main>
-    <!-- </main> -->
+    </div>
+</body>
+
+</html>
+
+<!-- <div data-layout="main"
+     layout:fragment="layout-content"
+     class="normal-main">
+
+    <aside class="normal-sidebar"
+           layout:fragment="sidebar-content"></aside>
+
+    <main class="normal-body"
+          layout:fragment="content"></main>
 
     <script type="module">
         import { initApp } from "/js/app.js";
         initApp();
     </script>
 
-</div>
-
-</body>
-</ht>
+</div> -->

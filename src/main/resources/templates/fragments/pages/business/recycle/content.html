@@ -1,0 +1,39 @@
+<main th:fragment="content"
+        class="normal-body"
+        data-page="/js/pages/business/recycle/recyclePage.js"
+        data-css="/css/pages/business/recycle.css">
+    <div class="tab-area">
+        <ul class="tab-menu">
+            <li class="tab-menu-item is-active" data-action="tab" data-group="recycle-tabs" data-tab="tab-01">一覧</li>
+            <!-- <li class="tab-menu-item" data-action="tab" data-group="client-tabs" data-tab="tab-02">支店</li> -->
+            <!-- <li class="tab-menu-item" data-action="tab" data-group="client-tabs" data-tab="tab-03">担当</li> -->
+        </ul>
+        <div class="tab-panel is-show" id="tab-01" data-tab-content="recycle-tabs">
+            <div class="table-area" data-controller="recycle" data-sync-group="recycle">
+                <!-- ヘッダー -->
+                <div th:replace="~{fragments/pages/business/recycle/header :: header01Fragment()}"></div>
+                <!-- コンテンツ -->
+                <div th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01')}"></div>
+                <!-- フッター -->
+                <div th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></div>
+            </div>
+        </div>
+    </div>
+    <!-- </main> -->
+    <div id="form-dialog-area">
+        <!-- フォーム画面をここに記入する -->
+        <form id="form-01" class="form-dialog none" data-controller="recycle" data-sync-group="recycle" data-key="recycle-id">
+            <div class="dialog-main">
+                <!-- ヘッダー -->
+                <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '一覧'} })}"></div>
+                <!-- コンテンツ -->
+                <form th:replace="~{fragments/pages/business/recycle/form :: form01Fragment()}"></form>
+                <!-- フッター -->
+                <div th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></div>
+            </div>
+        </form>
+    </div>
+    <div id="msg-dialog-area">
+        <div th:replace="~{fragments/dialog/content :: messageFragment}"></div>
+    </div>
+</main>

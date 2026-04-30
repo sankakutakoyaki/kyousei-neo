@@ -11,19 +11,41 @@ window.APP = {
     cacheLoaded: false
 };
 
+document.addEventListener("DOMContentLoaded", () => {
+    initApp(); // 初回だけ実行
+});
+
+let initialized = false;
+
 export function initApp() {
+    // document.querySelectorAll(".hamburger-item")
+    //     .forEach(item => {
 
-    document.querySelectorAll(".hamburger-item")
-        .forEach(item => {
+    //         item.addEventListener("click", () => {
 
-            item.addEventListener("click", () => {
+    //             if (item.classList.contains("selected")) return;
 
-                if (item.classList.contains("selected")) return;
+    //             const path = item.dataset.path;
+    //             const target = item.dataset.target || "body";
+    //             loadPage(path, target);
+    //             hamburgerClose();
+    //         });
+    //     });
 
-                const path = item.dataset.path;
+    if (initialized) return;
+    initialized = true;
+    
+    document.addEventListener("click", (e) => {
 
-                loadPage(path);
-                hamburgerClose(); // 必要なら
-            });
-        });
+        const item = e.target.closest(".hamburger-item");
+        if (!item) return;
+
+        if (item.classList.contains("selected")) return;
+
+        const path = item.dataset.path;
+        const target = item.dataset.target || "body";
+
+        loadPage(path, target);
+        hamburgerClose();
+    });
 }

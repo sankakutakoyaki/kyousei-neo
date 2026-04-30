@@ -89,39 +89,39 @@ public class HomeController extends BaseController {
 		return "contents/index/management";
 	}
 
-	/**
-	 * 登録
-	 * @param mv
-	 * @return
-	 */
-	@GetMapping("/regist")
-	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public String getRegistration(Model model, HttpSession session, HttpServletResponse response) throws IOException {
-		EmployeeEntity user = getLoginUser(session, response);
-		if (user == null) return null; // リダイレクト済み
+	// /**
+	//  * 登録
+	//  * @param mv
+	//  * @return
+	//  */
+	// @GetMapping("/regist")
+	// @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
+	// public String getRegistration(Model model, HttpSession session, HttpServletResponse response) throws IOException {
+	// 	EmployeeEntity user = getLoginUser(session, response);
+	// 	if (user == null) return null; // リダイレクト済み
 
-		model.addAttribute("title", "登録");
-		model.addAttribute("activeMenu", "regist");
-        model.addAttribute("insertCss", "/css/index/regist.css");
+	// 	model.addAttribute("title", "登録");
+	// 	model.addAttribute("activeMenu", "regist");
+    //     model.addAttribute("insertCss", "/css/index/regist.css");
 
-		return "contents/index/regist";
-	}
+	// 	return "contents/index/regist";
+	// }
 
-	/**
-	 * リサイクル
-	 * @param mv
-	 * @return
-	 */
-	@GetMapping("/recycle")
-	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public String getRecycle(Model model, HttpSession session, HttpServletResponse response) throws IOException {
-		EmployeeEntity user = getLoginUser(session, response);
-		if (user == null) return null; // リダイレクト済み
+	// /**
+	//  * リサイクル
+	//  * @param mv
+	//  * @return
+	//  */
+	// @GetMapping("/recycle")
+	// @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
+	// public String getRecycle(Model model, HttpSession session, HttpServletResponse response) throws IOException {
+	// 	EmployeeEntity user = getLoginUser(session, response);
+	// 	if (user == null) return null; // リダイレクト済み
 
-		model.addAttribute("title", "リサイクル");
-		model.addAttribute("activeMenu", "recycle");
-        model.addAttribute("insertCss", "/css/index/recycle.css");
+	// 	model.addAttribute("title", "リサイクル");
+	// 	model.addAttribute("activeMenu", "recycle");
+    //     model.addAttribute("insertCss", "/css/index/recycle.css");
 
-		return "contents/index/recycle";
-	}
+	// 	return "contents/index/recycle";
+	// }
 }

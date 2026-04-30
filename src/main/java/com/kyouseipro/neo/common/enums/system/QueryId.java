@@ -35,7 +35,14 @@ public enum QueryId {
     STAFF_LIST("staffList"),
     STAFF_CSV("staffCsv"),
     STAFF_DELETE_BY_IDS("staffDeleteByIds"),
-    STAFF_SAVE("staffSave");
+    STAFF_SAVE("staffSave"),
+
+    // ===== Recycle =====
+    RECYCLE_DETAIL("recycleDetail"),
+    RECYCLE_LIST("recycleList"),
+    RECYCLE_CSV("recycleCsv"),
+    RECYCLE_DELETE_BY_IDS("recycleDeleteByIds"),
+    RECYCLE_SAVE("recycleSave");
 
     private final String id;
 

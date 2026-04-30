@@ -7,25 +7,31 @@
         <div th:classappend="${activeMenu == 'sales'} ? 'selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/sales');hamburgerClose()"><img class="sp-style" th:src="@{/icons/sales.png}"><span>営業</span></div>
         <div th:classappend="${activeMenu == 'personnel'} ? 'selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/personnel');hamburgerClose()"><img class="sp-style" th:src="@{/icons/person.png}"><span>人事</span></div>
         <div th:classappend="${activeMenu == 'management'} ? 'selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/management');hamburgerClose()"><img class="sp-style" th:src="@{/icons/pc_desk.png}"><span>管理</span></div>
-        <div th:classappend="${activeMenu == 'regist'} ? 'selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/regist');hamburgerClose()"><img class="sp-style" th:src="@{/icons/regist.png}"><span>登録</span></div>
-        <div th:classappend="${activeMenu == 'recycle'} ? 'selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/recycle');hamburgerClose()"><img class="sp-style" th:src="@{/icons/recycle.png}"><span>リサイクル</span></div>
+        <!-- <div th:classappend="${activeMenu == 'regist'} ? 'selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/regist');hamburgerClose()"><img class="sp-style" th:src="@{/icons/regist.png}"><span>登録</span></div> -->
+        <!-- <div th:classappend="${activeMenu == 'recycle'} ? 'selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/recycle');hamburgerClose()"><img class="sp-style" th:src="@{/icons/recycle.png}"><span>リサイクル</span></div> -->
+        <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/regist" data-target="layout">
+            <img class="sp-style" th:src="@{/icons/regist.png}"><span>登録</span>
+        </div>
+        <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/business" data-target="layout">
+            <img class="sp-style" th:src="@{/icons/person.png}"><span>業務</span>
+        </div>
     </div>
 
     <div th:fragment="listFragment" th:remove="tag">
-        <div class="hamburger-item sp-style" onclick="moveLinkPage('/');hamburgerClose()"><img th:src="@{/icons/home.png}"><span>ホーム</span></div>
-        <div th:classappend="${activeSidebar == 'ks'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/ks/sales');hamburgerClose()"><img th:src="@{/icons/ks.png}"><span>ケーズ</span></div>
+        <!-- <div class="hamburger-item sp-style" onclick="moveLinkPage('/');hamburgerClose()"><img th:src="@{/icons/home.png}"><span>ホーム</span></div> -->
+        <!-- <div th:classappend="${activeSidebar == 'ks'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/ks/sales');hamburgerClose()"><img th:src="@{/icons/ks.png}"><span>ケーズ</span></div> -->
      </div>
 
     <div th:fragment="salesFragment" th:remove="tag">
-        <div class="hamburger-item sp-style" onclick="moveLinkPage('/');hamburgerClose()"><img th:src="@{/icons/home.png}"><span>ホーム</span></div>
-        <div th:classappend="${activeSidebar == 'order'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/order');hamburgerClose()"><img th:src="@{/icons/sales.png}"><span>受注</span></div>
-        <div th:classappend="${activeSidebar == 'goods'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/goods');hamburgerClose()"><img th:src="@{/icons/shopping.png}"><span>入荷</span></div>
+        <!-- <div class="hamburger-item sp-style" onclick="moveLinkPage('/');hamburgerClose()"><img th:src="@{/icons/home.png}"><span>ホーム</span></div> -->
+        <!-- <div th:classappend="${activeSidebar == 'order'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/order');hamburgerClose()"><img th:src="@{/icons/sales.png}"><span>受注</span></div> -->
+        <!-- <div th:classappend="${activeSidebar == 'goods'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/goods');hamburgerClose()"><img th:src="@{/icons/shopping.png}"><span>入荷</span></div> -->
     </div>
 
     <div th:fragment="personnelFragment" th:remove="tag">
-        <div class="hamburger-item sp-style" onclick="moveLinkPage('/');hamburgerClose()"><img th:src="@{/icons/home.png}"><span>ホーム</span></div>
-        <div th:classappend="${activeSidebar == 'timeworks'} ? ' selected'" class="hamburger-item" onclick="moveLinkPage('/timeworks');hamburgerClose()"><img th:src="@{/icons/clock2.png}"><span>勤怠</span></div>
-        <div th:classappend="${activeSidebar == 'working-conditions'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/working_conditions');hamburgerClose()"><img th:src="@{/icons/conditions.png}"><span>勤務条件</span></div>
+        <!-- <div class="hamburger-item sp-style" onclick="moveLinkPage('/');hamburgerClose()"><img th:src="@{/icons/home.png}"><span>ホーム</span></div> -->
+        <!-- <div th:classappend="${activeSidebar == 'timeworks'} ? ' selected'" class="hamburger-item" onclick="moveLinkPage('/timeworks');hamburgerClose()"><img th:src="@{/icons/clock2.png}"><span>勤怠</span></div> -->
+        <!-- <div th:classappend="${activeSidebar == 'working-conditions'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/working_conditions');hamburgerClose()"><img th:src="@{/icons/conditions.png}"><span>勤務条件</span></div> -->
     </div>
 
     <div th:fragment="registFragment" th:remove="tag">
@@ -51,16 +57,24 @@
     </div>
 
     <div th:fragment="managementFragment" th:remove="tag">
-        <div class="hamburger-item sp-style" onclick="moveLinkPage('/');hamburgerClose()"><img th:src="@{/icons/home.png}"><span>ホーム</span></div>
-        <div th:classappend="${activeSidebar == 'construction'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/construction');hamburgerClose()"><img th:src="@{/icons/contractor.png}"><span>施工</span></div>
-        <div th:classappend="${activeSidebar == 'qualifications'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/qualifications');hamburgerClose()"><img th:src="@{/icons/license.png}"><span>許認可・資格</span></div>
+        <!-- <div class="hamburger-item sp-style" onclick="moveLinkPage('/');hamburgerClose()"><img th:src="@{/icons/home.png}"><span>ホーム</span></div> -->
+        <!-- <div th:classappend="${activeSidebar == 'construction'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/construction');hamburgerClose()"><img th:src="@{/icons/contractor.png}"><span>施工</span></div> -->
+        <!-- <div th:classappend="${activeSidebar == 'qualifications'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/qualifications');hamburgerClose()"><img th:src="@{/icons/license.png}"><span>許認可・資格</span></div> -->
     </div>
 
-    <div th:fragment="recycleFragment" th:remove="tag">
+    <div th:fragment="businessFragment" th:remove="tag">
+        <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item sp-style" data-path="/">
+            <img th:src="@{/icons/home.png}"><span>ホーム</span>
+        </div>
+        <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/recycle" data-target="body">
+            <img th:src="@{/icons/person.png}"><span>リサイクル</span>
+        </div>
+    </div>
+    <!-- <div th:fragment="recycleFragment" th:remove="tag">
         <div class="hamburger-item sp-style" onclick="moveLinkPage('/');hamburgerClose()"><img th:src="@{/icons/home.png}"><span>ホーム</span></div>
         <div th:classappend="${activeSidebar == 'regist'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/recycle/regist');hamburgerClose()"><img th:src="@{/icons/recycle_dust.png}"><span>登録</span></div>
         <div th:classappend="${activeSidebar == 'maker'} ? ' selected'" sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" onclick="moveLinkPage('/recycle/maker');hamburgerClose()"><img th:src="@{/icons/factory.png}"><span>製造業者</span></div>
-    </div>
+    </div> -->
 </body>
 
 </html>

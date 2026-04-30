@@ -32,10 +32,11 @@
 </head>
 <body>
 
-<header th:replace="~{fragments/common/header :: headerFragment}"></header>
+    <header th:replace="~{fragments/common/header :: headerFragment}"></header>
 
-<!-- ★ レイアウト差し込み口 -->
-<div layout:fragment="layout-content"></div>
+    <!-- ★ レイアウト差し込み口 -->
+    <div layout:fragment="layout-content"></div>
+    <script type="module" src="/js/app.js"></script>
 
 </body>
 </html>
