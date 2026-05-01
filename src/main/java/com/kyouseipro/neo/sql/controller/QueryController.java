@@ -8,10 +8,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kyouseipro.neo.common.enums.system.QueryId;
 import com.kyouseipro.neo.common.enums.system.QueryType;
+import com.kyouseipro.neo.interfaces.QueryBuilder;
 import com.kyouseipro.neo.sql.common.QueryParamBinder;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;
+import com.kyouseipro.neo.sql.provider.QueryBuilderProvider;
 import com.kyouseipro.neo.sql.provider.SqlProvider;
 import com.kyouseipro.neo.sql.repository.BaseRepository;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
@@ -28,11 +31,20 @@ public class QueryController {
     private final SqlRepository sqlRepository;
     private final BaseRepository baseRepository;
     private final CsvService csvService;
+    private final QueryBuilderProvider queryBuilderProvider;
 
     @PostMapping("/query")
     public Object request(@RequestBody SelectRequest req) {
 
-        QueryDefinition def = sqlProvider.get(req.getQueryId());
+        // QueryDefinition def = sqlProvider.get(req.getQueryId());
+        QueryId queryId = QueryId.from(req.getQueryId());
+        QueryBuilder builder = queryBuilderProvider.get(queryId);
+        QueryDefinition def;
+        if (builder != null) {
+            def = builder.build(req);
+        } else {
+            def = sqlProvider.get(queryId);
+        }
 
         switch (def.getKind()) {
 

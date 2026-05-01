@@ -24,19 +24,19 @@ public class BusinessPageController extends BaseController {
         return "fragments/pages/business/recycle/content :: content";
     }
 
-    // @GetMapping("/api/recycle/init/cache")
-    // @ResponseBody
-    // public Map<String, Object> initRecycle() {
-    //     return Map.of(
-    //         "common", Map.of(
-    //             "state", EnumUtil.toMap(State.class),
-    //             "companyCategory", EnumUtil.toMap(CompanyCategory.class)
-    //         ),
-    //         "page", Map.of(
-    //             "companyComboList", companyService.findComboClientAll(),
-    //             "officeComboList", officeService.findComboClientAll(),
-    //             "clientCategoryComboList", EnumUtil.toCombo(ClientCategory.class)
-    //         )
-    //     );
-    // }
+    @GetMapping("/api/recycle/init/cache")
+    @ResponseBody
+    public Map<String, Object> initRecycle() {
+        return Map.of(
+            "common", Map.of(
+                "state", EnumUtil.toMap(State.class)
+            //     "companyCategory", EnumUtil.toMap(CompanyCategory.class)
+            // ),
+            // "page", Map.of(
+            //     "companyComboList", companyService.findComboClientAll(),
+            //     "officeComboList", officeService.findComboClientAll(),
+            //     "clientCategoryComboList", EnumUtil.toCombo(ClientCategory.class)
+            )
+        );
+    }
 }

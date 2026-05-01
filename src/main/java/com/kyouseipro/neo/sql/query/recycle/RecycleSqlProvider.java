@@ -18,7 +18,6 @@ public class RecycleSqlProvider implements SqlProviderPart {
 
         // ===== Recycle =====
         map.put(QueryId.RECYCLE_DETAIL, RecycleQuery.recycleDetail());
-        map.put(QueryId.RECYCLE_LIST, RecycleQuery.recycleList());
         map.put(QueryId.RECYCLE_CSV, RecycleQuery.recycleCsv());
         map.put(QueryId.RECYCLE_DELETE_BY_IDS,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.RECYCLE_BY_IDS));

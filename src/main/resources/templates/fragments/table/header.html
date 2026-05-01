@@ -20,6 +20,15 @@
             <span>新規</span>
         </div>
 
+        <!-- 編集 -->
+        <div class="img-btn"
+            th:if="${btns != null and btns['edit'] != null}"
+            data-action="edit"
+            th:id="${btns['edit']}">
+            <img src="/icons/edit.png">
+            <span>編集</span>
+        </div>
+
         <!-- 削除 -->
         <div class="img-btn"
             th:if="${btns != null and btns['delete'] != null}"

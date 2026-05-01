@@ -13,9 +13,9 @@ public class RecycleLogSqlProvider implements LogSqlProvider {
     @Override
     public String buildLogTable(String tableVar) {
         return "DECLARE " + tableVar + " TABLE (" + """
-            company_id INT, category NVARCHAR(255), name NVARCHAR(255), name_kana NVARCHAR(255),
-            tel_number NVARCHAR(255), fax_number NVARCHAR(255), postal_code NVARCHAR(255),
-            full_address NVARCHAR(255), email NVARCHAR(255), web_address NVARCHAR(255), is_original_price INT,
+            recycle_id INT, recycle_number NVARCHAR(255), 
+            maker_id INT, item_id INT, use_date DATE, delivery_date DATE, shipping_date DATE, loss_date DATE,
+            company_id INT, office_id INT, recycling_fee INT, disposal_site_id INT, slip_number INT,
             version INT, state INT );
             """;
     }
@@ -23,9 +23,10 @@ public class RecycleLogSqlProvider implements LogSqlProvider {
     @Override
     public String buildOutput() {
         return """
-            OUTPUT INSERTED.company_id, INSERTED.category, INSERTED.name, INSERTED.name_kana,
-            INSERTED.tel_number, INSERTED.fax_number, INSERTED.postal_code, INSERTED.full_address,
-            INSERTED.email, INSERTED.web_address, INSERTED.is_original_price, INSERTED.version, INSERTED.state 
+            OUTPUT INSERTED.recycle_id, INSERTED.recycle_number, INSERTED.maker_id, INSERTED.item_id,
+            INSERTED.use_date, INSERTED.delivery_date, INSERTED.shipping_date, INSERTED.loss_date,
+            INSERTED.company_id, INSERTED.office_id, INSERTED.recycling_fee, INSERTED.disposal_site_id, INSERTED.slip_number,
+            INSERTED.version, INSERTED.state
             """;
     }
 
@@ -33,12 +34,13 @@ public class RecycleLogSqlProvider implements LogSqlProvider {
     public String buildInsertLog(String tableVar, String action) {
         return """
             INSERT INTO recycles_log (
-            company_id, editor, process, log_date, category, name, name_kana, tel_number, fax_number,
-            postal_code, full_address, email, web_address, is_original_price, version, state
+              recycle_id, editor, process, log_date,
+              recycle_number, maker_id, item_id, use_date, delivery_date, shipping_date, loss_date,
+              company_id, office_id, recycling_fee, disposal_site_id, slip_number, version, state
             )
-            SELECT company_id, ?, ?, CURRENT_TIMESTAMP,
-                category, name, name_kana, tel_number, fax_number,
-                postal_code, full_address, email, web_address, is_original_price, version, state
+            SELECT recycle_id, ?, ?, CURRENT_TIMESTAMP,
+              recycle_number, maker_id, item_id, use_date, delivery_date, shipping_date, loss_date,
+              company_id, office_id, recycling_fee, disposal_site_id, slip_number, version, state
             FROM %s;
             """.formatted(tableVar);
     }

@@ -63,3 +63,31 @@
         </select>
     </div>
 </th:block>
+
+<th:block th:fragment="dateRangeFragment(data)">
+    <div class="form-parts range">
+        <label th:if="${data['text']}"
+               th:text="${data['text']}"></label>
+        <div class="range-inputs">
+            <!-- FROM -->
+            <input
+                class="normal-input"
+                type="date"
+                th:attr="
+                    id=${data['fromId']},
+                    name=${data['fromName']},
+                    data-trim=true
+                ">
+            <span class="range-separator">〜</span>
+            <!-- TO -->
+            <input
+                class="normal-input"
+                type="date"
+                th:attr="
+                    id=${data['toId']},
+                    name=${data['toName']},
+                    data-trim=true
+                ">
+        </div>
+    </div>
+</th:block>

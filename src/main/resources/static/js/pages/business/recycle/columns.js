@@ -2,31 +2,40 @@
 
 export const createRecycleListColumns = (controller) => [
     {
-        field: "companyId",
-        label: "ID",
+        field: "recycleNumber",
+        label: "お問合せ管理票番号",
         sortable: true,
         class: "link-cell",
-        format: (v) => String(v).padStart(4, "0")
+        format: (v) => {
+            const s = String(v ?? "").replace(/\D/g, "").padStart(13, "0");
+            return `${s.slice(0,4)}-${s.slice(4,12)}-${s.slice(12)}`;
+        }
     },
     {
-        field: "nameKana",
-        label: "名前",
+        field: "date",
+        label: "使用日/引渡日",
         sortable: true,
         render: (item) => `
-            <span class="kana">${item.nameKana ?? "-----"}</span><br>
-            <span>${item.name}</span>
+            <span>${item.useDate ?? "-----"}</span><br>
+            <span>${item.DeliveryDate ?? "-----"}</span>
         `
     },
     {
-        field: "telNumber",
-        label: "電話番号",
+        field: "maker",
+        label: "品目/製造業者等名",
         sortable: true,
-        default: "登録なし"
+        render: (item) => `
+            <span>${item.itemName ?? "-----"}</span><br>
+            <span>${item.makerName ?? "-----"}</span>
+        `
     },
     {
-        field: "email",
-        label: "メールアドレス",
+        field: "shipper",
+        label: "小売業者",
         sortable: true,
-        default: "登録なし"
+        render: (item) => `
+            <span>${item.companyName ?? "-----"}</span><br>
+            <span>${item.officeName ?? "-----"}</span>
+        `
     }
 ];

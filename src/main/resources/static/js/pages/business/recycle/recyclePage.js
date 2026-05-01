@@ -65,7 +65,10 @@ export const recycleListPage = () => {
                 checkable: true,
                 buildParams: () => ({
                     state: APP.cache.common.state.INITIAL,
-                    // category: APP.cache.common.companyCategory.PARTNER
+                    // category: controller.selectedCategory,
+                    // date: controller.selectedDate
+                    category: 'use_date',
+                    date: '2026-1-1'
                 }),
                 buildCsvParams: () => ({
                     state: APP.cache.common.state.INITIAL
