@@ -3,20 +3,22 @@
 // import { initCombo } from "./initCombo.js";
 import { DataResolver } from "../behavior/DataResolver.js"
 import { setEnterFocus } from "../ui/enterfocus.js";
-import { initClick } from "./initClick.js";
-import { initChange } from "./initChange.js";
-import { initInput } from "./initInput.js";
-import { initFocus } from "./initFocus.js";
+// import { initClick } from "./initClick.js";
+// import { initChange } from "./initChange.js";
+// import { initInput } from "./initInput.js";
+// import { initFocus } from "./initFocus.js";
+import { initEvents } from "../events/eventHandlers.js";
 
 export async function initCommon(){
     
-    initClick();
-    initChange();
-    initInput();
+    // initClick();
+    // initChange();
+    // initInput();
     
-    initFocus();
-    // initCombo();
+    // initFocus();
+    // // initCombo();
 
+    initEvents();
     setEnterFocus();
     DataResolver.init();
 }

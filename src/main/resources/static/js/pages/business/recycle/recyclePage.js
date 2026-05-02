@@ -9,7 +9,7 @@ import { registerController } from "../../../controllers/controllers.js";
 import { filterFactory } from "../../../util/filterFactory.js";
 import { api } from "../../../core/api/apiService.js";
 import { initPageCache } from "../../../core/init/initPageCache.js";
-import { dispatchAction } from "../../../util/actionDispatcher.js";
+import { dispatchAction } from "../../../core/events/actionDispatcher.js";
 import { initParentChildLink } from "../../../util/link.js";
 
 export async function init() {

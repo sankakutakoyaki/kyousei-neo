@@ -1,7 +1,7 @@
 "use strict"
 
 import { loadPage } from "./core/dom/loadPage.js";
-import { initGlobalActions } from "./core/init/initGlobalActions.js";
+// import { initGlobalActions } from "./core/init/initGlobalActions.js";
 
 window.APP = {
     security: {
@@ -34,5 +34,5 @@ export function initApp() {
         loadPage(path, target);
         hamburgerClose();
     });
-    initGlobalActions();
+    // initGlobalActions();
 }
