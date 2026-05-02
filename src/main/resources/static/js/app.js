@@ -1,6 +1,7 @@
 "use strict"
 
 import { loadPage } from "./core/dom/loadPage.js";
+import { initGlobalActions } from "./core/init/initGlobalActions.js";
 
 window.APP = {
     security: {
@@ -18,25 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
 let initialized = false;
 
 export function initApp() {
-    // document.querySelectorAll(".hamburger-item")
-    //     .forEach(item => {
-
-    //         item.addEventListener("click", () => {
-
-    //             if (item.classList.contains("selected")) return;
-
-    //             const path = item.dataset.path;
-    //             const target = item.dataset.target || "body";
-    //             loadPage(path, target);
-    //             hamburgerClose();
-    //         });
-    //     });
-
     if (initialized) return;
     initialized = true;
     
     document.addEventListener("click", (e) => {
-
         const item = e.target.closest(".hamburger-item");
         if (!item) return;
 
@@ -48,4 +34,5 @@ export function initApp() {
         loadPage(path, target);
         hamburgerClose();
     });
+    initGlobalActions();
 }

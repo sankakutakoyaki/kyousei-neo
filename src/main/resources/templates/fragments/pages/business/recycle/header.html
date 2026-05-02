@@ -1,15 +1,7 @@
 <th:block th:fragment="header01Fragment()">
     <div id="header-01" class="flex-area pc-style">
         <div>
-            <th:block th:replace="~{fragments/components/input :: dateRangeFragment(${
-                {
-                    'text':'使用日',
-                    'fromId':'useDateFrom',
-                    'fromName':'useDateFrom',
-                    'toId':'useDateTo',
-                    'toName':'useDateTo'
-                }}
-            )}"></th:block>
+            <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-03')}"></th:block>
             <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${
                 {
                     'edit' : 'edit-btn-01',
@@ -19,6 +11,33 @@
                     'reload' : 'reload-btn-01'
                 }}
             )}"></th:block>
+        </div>
+        <div>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'分類', 
+                    'id':'cateogy01', 
+                    'name':'category01',
+                    'action':'filter',
+                    'combo': 'recycleCategoryComboList',
+                    'top': '-----',
+                    'key':'category'
+                }}
+            )}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: dateRangeFragment(${
+                {
+                    'fromText':'開始日',
+                    'fromId':'dateFrom01',
+                    'fromName':'dateFrom',
+                    'toText':'終了日',
+                    'toId':'dateTo01',
+                    'toName':'dateTo'
+                }}
+            )}"></th:block>
+            <div class="form-parts">
+                <label></label>
+                <th:block th:replace="~{fragments/components/btn :: monthMoveBtnFragment('dateFrom01','dateTo01')}" />
+            </div>            
         </div>
     </div>
 </th:block>

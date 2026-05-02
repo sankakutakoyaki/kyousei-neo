@@ -1,12 +1,7 @@
 "use strict"
 
 import { getController } from "../controllers/controllers.js";
-
-// export function dispatchAction(e){
-//     const el = e.target.closest("[data-action]");
-//     if(!el) return;
-//     runAction(el, e);
-// }
+import { handleDateMove } from "../core/dom/dateActions.js";
 
 export function dispatchAction(input){
 
@@ -34,7 +29,8 @@ export function dispatchAction(input){
 // UI操作はコントローラー不要なので処理を分ける
 const uiActions = {
     tab: handleTab,
-    "select-on-focus": handleSelectOnFocus
+    "select-on-focus": handleSelectOnFocus,
+    "date-move": handleDateMove
 };
 
 export function runAction(el, e){
@@ -79,6 +75,7 @@ export function runAction(el, e){
 
     console.warn("action not found:", action);
 }
+
 export function runActionDirect(controller, action, data){
 
     const handler = controller.actions?.[action];
@@ -93,22 +90,6 @@ export function runActionDirect(controller, action, data){
         return;
     }
 }
-// export function runActionDirect(controller, action, data){
-
-//     const handler = controller.actions[action];
-
-//     if(typeof handler === "function"){
-//         handler(controller, data);
-//         return;
-//     }
-
-//     if(typeof controller[action] === "function"){
-//         controller[action](data);
-//         return;
-//     }
-
-//     console.warn("action not found:", action);
-// }
 
 export function resolveController(el){
     const name =

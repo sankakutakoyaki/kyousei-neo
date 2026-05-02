@@ -39,7 +39,7 @@ export async function init() {
         // }
     });
     await list.dataTable.refresh();
-
+    
     initParentChildLink();
 }
 

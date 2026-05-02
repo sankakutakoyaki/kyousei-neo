@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.abstracts.BaseController;
+import com.kyouseipro.neo.common.enums.code.RecycleCategory;
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.util.EnumUtil;
 
@@ -30,12 +31,12 @@ public class BusinessPageController extends BaseController {
         return Map.of(
             "common", Map.of(
                 "state", EnumUtil.toMap(State.class)
-            //     "companyCategory", EnumUtil.toMap(CompanyCategory.class)
-            // ),
-            // "page", Map.of(
+                // "companyCategory", EnumUtil.toMap(RecycleCategory.class)
+            ),
+            "page", Map.of(
             //     "companyComboList", companyService.findComboClientAll(),
             //     "officeComboList", officeService.findComboClientAll(),
-            //     "clientCategoryComboList", EnumUtil.toCombo(ClientCategory.class)
+                "recycleCategoryComboList", EnumUtil.toCombo(RecycleCategory.class)
             )
         );
     }

@@ -65,10 +65,10 @@
 </th:block>
 
 <th:block th:fragment="dateRangeFragment(data)">
-    <div class="form-parts range">
-        <label th:if="${data['text']}"
-               th:text="${data['text']}"></label>
-        <div class="range-inputs">
+    <div class="date-range">
+        <div class="form-parts">
+            <label th:if="${data['fromText']}"
+                th:text="${data['fromText']}"></label>
             <!-- FROM -->
             <input
                 class="normal-input"
@@ -78,7 +78,14 @@
                     name=${data['fromName']},
                     data-trim=true
                 ">
+        </div>
+        <div class="form-parts">
+            <label></label>
             <span class="range-separator">〜</span>
+        </div>        
+        <div class="form-parts">
+            <label th:if="${data['toText']}"
+                th:text="${data['toText']}"></label>
             <!-- TO -->
             <input
                 class="normal-input"

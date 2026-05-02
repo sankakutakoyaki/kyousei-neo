@@ -1,0 +1,24 @@
+
+<div th:fragment="monthMoveBtnFragment(startId, endId)" class="flex-area date-move">
+    <button type="button"
+        class="normal-btn frameless"
+        data-action="date-move"
+        data-type="prev-day"
+        th:attr="data-start=${startId}, data-end=${endId}">
+        前日
+    </button>
+    <button type="button"
+        class="normal-btn frameless"
+        data-action="date-move"
+        data-type="today"
+        th:attr="data-start=${startId}, data-end=${endId}">
+        当日
+    </button>
+    <button type="button"
+        class="normal-btn frameless"
+        data-action="date-move"
+        data-type="next-day"
+        th:attr="data-start=${startId}, data-end=${endId}">
+        翌日
+    </button>
+</div>

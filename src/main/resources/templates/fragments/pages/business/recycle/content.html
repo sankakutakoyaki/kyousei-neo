@@ -9,7 +9,7 @@
             <!-- <li class="tab-menu-item" data-action="tab" data-group="client-tabs" data-tab="tab-03">担当</li> -->
         </ul>
         <div class="tab-panel is-show" id="tab-01" data-tab-content="recycle-tabs">
-            <div class="table-area" data-controller="recycle" data-sync-group="recycle">
+            <div class="table-area" data-controller="recycleList" data-sync-group="recycle">
                 <!-- ヘッダー -->
                 <div th:replace="~{fragments/pages/business/recycle/header :: header01Fragment()}"></div>
                 <!-- コンテンツ -->
@@ -22,7 +22,7 @@
     <!-- </main> -->
     <div id="form-dialog-area">
         <!-- フォーム画面をここに記入する -->
-        <form id="form-01" class="form-dialog none" data-controller="recycle" data-sync-group="recycle" data-key="recycle-id">
+        <form id="form-01" class="form-dialog none" data-controller="recycleList" data-sync-group="recycle" data-key="recycle-id">
             <div class="dialog-main">
                 <!-- ヘッダー -->
                 <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '一覧'} })}"></div>

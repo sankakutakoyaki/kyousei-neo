@@ -48,6 +48,19 @@ button:disabled:hover {
     cursor: not-allowed;
 }
 
+.date-range {
+    display: grid;
+    grid-template-columns: auto 2rem auto;
+    &>.form-parts:nth-of-type(2) {
+        text-align: center;
+    }
+}
+
+.date-move .normal-btn {
+    min-width: 2.5rem;
+    padding: .5rem .7rem;
+}
+
 /******************************************************************************************************* アカウント名 */
 
 .user-btn {
