@@ -5,7 +5,9 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import com.kyouseipro.neo.common.enums.code.RecycleCategory;
 import com.kyouseipro.neo.common.enums.system.QueryId;
+import com.kyouseipro.neo.common.enums.util.EnumUtil;
 import com.kyouseipro.neo.interfaces.QueryBuilder;
 import com.kyouseipro.neo.sql.query.recycle.RecycleQuery;
 
@@ -16,7 +18,11 @@ public class QueryBuilderProvider {
     public QueryBuilderProvider() {
 
         builders.put(QueryId.RECYCLE_LIST, req -> {
-            String category = (String) req.getParams().get("category");
+            // String category = (String) req.getParams().get("category");
+            // return RecycleQuery.recycleList(category);
+            String categoryStr = (String) req.getParams().get("category");
+            RecycleCategory category =
+                EnumUtil.of(RecycleCategory.class, Integer.parseInt(categoryStr));
             return RecycleQuery.recycleList(category);
         });
 

@@ -23,3 +23,11 @@ export function formatDate(date = new Date(), format = "yyyy-MM-dd"){
 export function formatTime(value){
     return formatDate(value, "HH:mm");
 }
+
+export function getToday() {
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+}

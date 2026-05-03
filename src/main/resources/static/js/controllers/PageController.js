@@ -1,12 +1,16 @@
 "use strict"
 
 import { initCombo } from "../core/init/initCombo.js";
-import { createInputComponent } from "../core/init/initInput.js";
+// import { createInputComponent } from "../core/init/initInput.js";
+import { createInputComponent } from "../core/form/components/inputComponent.js";
 import { smartFilterHandler } from "../core/behavior/filterHandler.js";
-import { resolveController } from "../util/actionDispatcher.js";
+// import { resolveController } from "../util/actionDispatcher.js";
+import { resolveController } from "../core/events/controllerResolver.js";
 import { openMsgDialog, closeMsgDialog, openConfirmDialog } from "../core/ui/dialog.js";
 
 const defaultConditions = {
+    Edit: (c) => c.dataTable?.hasSelection(),
+    bulkEdit: (c) => c.dataTable?.hasSelection(),
     delete: (c) => c.dataTable?.hasSelection(),
     download: (c) => c.dataTable?.hasSelection(),
     save: (c) => c.form?.canSubmit()
@@ -14,13 +18,14 @@ const defaultConditions = {
 
 const defaultActions = {
     create: (c) => c.form.open(),
-    edit: (c, el) => c.openEdit(el.dataset.id),
     // search: (c, el) => {c.state.keyword = el.value; c.dataTable.reload();},
-    search: (c, el) => {
+    keywordSearch: (c, el) => {
         c.state.keyword = el.value;
         c.dataTable.reload();
     },
     filter: smartFilterHandler,
+    Edit: async (c) => c.openEdit(),
+    bulkEdit: async (c) => c.bulkSelected(),
     delete: async (c) => c.deleteSelected(),
     download: async (c) => c.downloadSelected(),
 };
@@ -53,6 +58,11 @@ export class PageController {
         };
         this.initComponents();
         this.initUI();
+
+        if (this.config.onInit) {
+            this.config.onInit(this);
+        }
+
         this.updateButtons();
     }
 
@@ -97,11 +107,25 @@ export class PageController {
     // UI操作
     // -------------------------
     create(){
+        this.state.bulkMode = false;
         this.form.open();
     }
 
     async openEdit(id){
+        this.state.bulkMode = false;
         await this.form.open(id);
+    }
+
+    async bulkSelected(){
+        const ids = this.dataTable.model.getSelectedIds();
+        if(ids.length === 0){
+            openMsgDialog({
+                message:"選択してください",
+                color:"red"
+            });
+        }
+        this.state.bulkMode = true;
+        this.form.open();
     }
 
     async deleteSelected(){

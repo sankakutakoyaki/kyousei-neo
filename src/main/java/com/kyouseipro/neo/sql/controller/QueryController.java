@@ -1,5 +1,6 @@
 package com.kyouseipro.neo.sql.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,33 +79,48 @@ public class QueryController {
             // SAVE
             // ========================
             case SAVE -> {
-
                 Map<String, Object> params = req.getParams();
-
                 String editor = (String) params.getOrDefault("editor", "system");
+                Object idsObj = params.get("ids");
+                if (idsObj != null) {
+                    @SuppressWarnings("unchecked")
+                    List<Object> ids = (List<Object>) idsObj;
+                    if (ids.isEmpty()) {
+                        return Map.of("count", 0);
+                    }
 
+                    Map<String, Object> diff = new HashMap<>(params);
+                    diff.remove("ids");
+                    diff.remove(def.getTableMeta().idColumn());
+                    diff.remove(def.getTableMeta().versionColumn());
+                    if (diff.isEmpty()) {
+                        return Map.of("count", 0);
+                    }
+                    int count = baseRepository.updateByIds(
+                        def.getTableMeta(),
+                        ids,
+                        diff,
+                        editor
+                    );
+                    return Map.of("count", count);
+                }
+
+                // 単一処理
                 Object idValue = params.get(def.getTableMeta().idColumn());
-
                 boolean isInsert = (idValue == null) || (Long.valueOf(idValue.toString()) == 0);
-
                 if (isInsert) {
-
                     Long id = baseRepository.insert(
                         def.getTableMeta(),
                         params,
                         editor
                     );
-
                     return Map.of("data", id);
-
                 } else {
-
                     int count = baseRepository.update(
                         def.getTableMeta(),
                         params,
                         editor
                     );
-
                     return Map.of("count", count);
                 }
             }

@@ -1,7 +1,7 @@
 <th:block th:fragment="searchBoxFragment(searchId)">
     <!-- 検索 -->
     <div class="search-box">
-        <input th:id="${searchId}" type="search" data-action="search" placeholder="検索">
+        <input th:id="${searchId}" type="search" data-action="keywordSearch" placeholder="検索">
         <img title="検索" src="/icons/search.png">
         
     </div>
@@ -25,6 +25,15 @@
             th:if="${btns != null and btns['edit'] != null}"
             data-action="edit"
             th:id="${btns['edit']}">
+            <img src="/icons/edit.png">
+            <span>編集</span>
+        </div>
+
+        <!-- 一括編集 -->
+        <div class="img-btn"
+            th:if="${btns != null and btns['bulkEdit'] != null}"
+            data-action="bulkEdit"
+            th:id="${btns['bulkEdit']}">
             <img src="/icons/edit.png">
             <span>編集</span>
         </div>

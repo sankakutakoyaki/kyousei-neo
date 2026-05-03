@@ -1,5 +1,8 @@
 "use strict"
 
+import { uiActions } from "./actions/uiActions.js";
+import { resolveController } from "./controllerResolver.js";
+
 export function dispatchAction(input){
 
     // DOMイベント

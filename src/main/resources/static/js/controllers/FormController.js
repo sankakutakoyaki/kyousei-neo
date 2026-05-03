@@ -167,6 +167,44 @@ export class FormController {
             return;
         }
 
+        const controller = this.controller;
+        const ids = controller?.dataTable?.model.getSelectedIds?.() ?? [];
+
+        if(controller?.state?.bulkMode){
+            if(ids.length === 0){
+                openMsgDialog({
+                    message:"選択してください",
+                    color:"red"
+                });
+                return;
+            }
+
+            payload.ids = ids;
+            openConfirmDialog({
+                message: `${ids.length}件に適用しますか？`,
+                onSubmit: async () => {
+                    try {
+                        const res = await this.api.request({
+                            queryId: this.api.save,
+                            params: payload
+                        });
+                        openMsgDialog({
+                            message: "一括更新しました",
+                            color: "blue"
+                        });
+                        closeFormDialog(this.formId);
+                        controller.state.bulkMode = false;
+                        if(this.onSaved){
+                            await this.onSaved();
+                        }
+                    } catch(e){
+                        this.handleError(e);
+                    }
+                }
+            });
+            return;
+        }
+
         try {
             if (this.beforeSave) {
                 await this.beforeSave(payload, form);
@@ -195,7 +233,7 @@ export class FormController {
             });
 
             closeFormDialog(this.formId);
-
+            controller.state.bulkMode = false;
             if(this.onSaved){
                 await this.onSaved(id ?? this.currentEntity?.[this.key]);
             }
@@ -207,7 +245,6 @@ export class FormController {
     }
 
     handleError(e) {
-
         // ★ メッセージ表示
         openMsgDialog({
             message: e.message || "エラーが発生しました",

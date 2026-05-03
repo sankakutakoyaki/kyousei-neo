@@ -4,11 +4,10 @@
             <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-03')}"></th:block>
             <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${
                 {
-                    'edit' : 'edit-btn-01',
+                    'bulkEdit' : 'edit-btn-01',
                     'form' : 'form-01',
                     'delete' : 'delete-btn-01',
-                    'download' : 'download-btn-01',
-                    'reload' : 'reload-btn-01'
+                    'download' : 'download-btn-01'
                 }}
             )}"></th:block>
         </div>
@@ -20,7 +19,6 @@
                     'name':'category01',
                     'action':'filter',
                     'combo': 'recycleCategoryComboList',
-                    'top': '-----',
                     'key':'category'
                 }}
             )}"></th:block>
@@ -36,8 +34,16 @@
             )}"></th:block>
             <div class="form-parts">
                 <label></label>
-                <th:block th:replace="~{fragments/components/btn :: monthMoveBtnFragment('dateFrom01','dateTo01')}" />
-            </div>            
+                <div>
+                    <th:block th:replace="~{fragments/components/btn :: dayMoveBtnFragment('dateFrom01','dateTo01')}" />
+                    <th:block th:replace="~{fragments/components/btn :: weekMoveBtnFragment('dateFrom01','dateTo01')}" />
+                    <th:block th:replace="~{fragments/components/btn :: monthMoveBtnFragment('dateFrom01','dateTo01')}" />                    
+                </div>
+            </div>
+            <div class="form-parts">
+                <label></label>
+                <button class="normal-btn ok" type="button" id="search-btn" data-action="search">検索</button>
+            </div>
         </div>
     </div>
 </th:block>
