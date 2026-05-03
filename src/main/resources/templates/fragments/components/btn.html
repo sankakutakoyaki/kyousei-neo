@@ -1,5 +1,5 @@
 
-<div th:fragment="monthMoveBtnFragment(startId, endId)" class="flex-area date-move">
+<div th:fragment="dayMoveBtnFragment(startId, endId)" class="flex-area date-move">
     <button type="button"
         class="normal-btn frameless"
         data-action="date-move"
@@ -20,5 +20,53 @@
         data-type="next-day"
         th:attr="data-start=${startId}, data-end=${endId}">
         翌日
+    </button>
+</div>
+
+<div th:fragment="weekMoveBtnFragment(startId, endId)" class="flex-area date-move">
+    <button type="button"
+        class="normal-btn frameless"
+        data-action="date-move"
+        data-type="prev-week"
+        th:attr="data-start=${startId}, data-end=${endId}">
+        前週
+    </button>
+    <button type="button"
+        class="normal-btn frameless"
+        data-action="date-move"
+        data-type="this-week"
+        th:attr="data-start=${startId}, data-end=${endId}">
+        今週
+    </button>
+    <button type="button"
+        class="normal-btn frameless"
+        data-action="date-move"
+        data-type="next-week"
+        th:attr="data-start=${startId}, data-end=${endId}">
+        翌週
+    </button>
+</div>
+
+<div th:fragment="monthMoveBtnFragment(startId, endId)" class="flex-area date-move">
+    <button type="button"
+        class="normal-btn frameless"
+        data-action="date-move"
+        data-type="prev-month"
+        th:attr="data-start=${startId}, data-end=${endId}">
+        前月
+    </button>
+    <button type="button"
+        class="normal-btn frameless"
+        data-action="date-move"
+        data-type="this-month"
+        th:attr="data-start=${startId}, data-end=${endId}">
+        当月
+    </button>
+    <button type="button"
+        class="normal-btn frameless"
+        data-action="date-move"
+        data-type="next-month"
+        th:attr="data-start=${startId}, data-end=${endId}">
+        翌月
     </button>
 </div>

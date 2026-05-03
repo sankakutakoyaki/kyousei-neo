@@ -1,5 +1,7 @@
 package com.kyouseipro.neo.sql.repository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,9 +89,7 @@ public class BaseRepository {
             String editor
     ){
         req.put("editor", editor);
-
         LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-
         SqlResult result = SqlBuilder.buildSqlWithLog(
             meta.tableName(),
             req,
@@ -98,7 +98,6 @@ public class BaseRepository {
             meta.versionColumn(),
             logProvider
         );
-
         return sqlRepository.insert(
             result.getSql(),
             result.getParams(),
@@ -112,9 +111,7 @@ public class BaseRepository {
             String editor
     ){
         req.put("editor", editor);
-
         LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-
         SqlResult result = SqlBuilder.buildSqlWithLog(
             meta.tableName(),
             req,
@@ -123,7 +120,28 @@ public class BaseRepository {
             meta.versionColumn(),
             logProvider
         );
+        return sqlRepository.updateRequired(
+            result.getSql(),
+            result.getParams(),
+            "更新に失敗しました"
+        );
+    }
 
+    public int updateByIds(
+            TableMeta meta,
+            List<?> ids,
+            Map<String,Object> req,
+            String editor
+    ){
+        req.put("editor", editor);
+        LogSqlProvider logProvider = resolver.resolve(meta.tableName());
+        SqlResult result = SqlBuilder.buildUpdateByIds(
+            meta,
+            ids,
+            req,
+            editor,
+            logProvider
+        );
         return sqlRepository.updateRequired(
             result.getSql(),
             result.getParams(),
@@ -137,9 +155,7 @@ public class BaseRepository {
             String editor
     ){
         req.put("editor", editor);
-
         LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-
         SqlResult result = SqlBuilder.buildSqlWithLog(
             meta.tableName(),
             req,
@@ -148,7 +164,6 @@ public class BaseRepository {
             meta.versionColumn(),
             logProvider
         );
-
         return sqlRepository.updateRequired(
             result.getSql(),
             result.getParams(),
@@ -157,24 +172,17 @@ public class BaseRepository {
     }
 
     public int deleteByIds(
-            // String table,
-            // String idKey,
             TableMeta meta,
             List<?> ids,
             String editor
     ){
-        // TableMeta meta = new TableMeta(table, idKey, "state", "version");
-
-
         LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-
         SqlResult result = SqlBuilder.buildDeleteByIds(
             meta,
             ids,
             editor,
             logProvider
         );
-
         return sqlRepository.updateRequired(
             result.getSql(),
             result.getParams(),

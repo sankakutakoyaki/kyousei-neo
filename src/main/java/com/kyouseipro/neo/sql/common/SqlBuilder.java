@@ -142,11 +142,7 @@ public class SqlBuilder {
         sql.append(logProvider.buildLogTable(tableVar));
 
         String placeholders = SqlUtil.placeholders(ids.size());
-        // String placeholders = ids.stream()
-        //         .map(i -> "?")
-        //         .collect(Collectors.joining(","));
-
-        // ★ここが汎用化ポイント
+        
         sql.append("UPDATE ").append(meta.tableName()).append(" SET ")
         .append(meta.stateColumn()).append(" = ? ");
 
@@ -166,6 +162,90 @@ public class SqlBuilder {
         ctx.put("editor", editor);
 
         params.addAll(logProvider.buildLogParams(ctx, action));
+
+        return new SqlResult(sql.toString(), params);
+    }
+
+    public static <T> SqlResult buildUpdateByIds(
+            TableMeta meta,
+            List<T> ids,
+            Map<String, Object> req,
+            String editor,
+            LogSqlProvider logProvider
+    ){
+
+        if (ids == null || ids.isEmpty()) {
+            throw new IllegalArgumentException("更新対象が指定されていません");
+        }
+
+        StringBuilder sql = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+        List<String> sets = new ArrayList<>();
+
+        String tableVar = "@UpdatedRows";
+
+        sql.append(logProvider.buildLogTable(tableVar));
+
+        // ========================
+        // SET句（diffのみ）
+        // ========================
+        for (Map.Entry<String, Object> entry : req.entrySet()) {
+
+            String key = entry.getKey();
+
+            if (key.equals(meta.idColumn())
+                || key.equals(meta.versionColumn())
+                || key.equals("editor")
+                || key.equals("ids")) continue;
+
+            sets.add(toSnake(key) + " = ?");
+            params.add(entry.getValue());
+        }
+
+        if (sets.isEmpty()) {
+            throw new IllegalArgumentException("更新項目がありません");
+        }
+
+        // 共通項目
+        sets.add("version = version + 1");
+        sets.add("update_date = SYSDATETIME()");
+
+        sql.append("UPDATE ").append(meta.tableName()).append(" SET ");
+        sql.append(String.join(", ", sets));
+
+        sql.append(logProvider.buildOutput()).append(" INTO ").append(tableVar).append(" ");
+
+        // ========================
+        // WHERE句（IN）
+        // ========================
+        String placeholders = SqlUtil.placeholders(ids.size());
+
+        sql.append("WHERE ").append(toSnake(meta.idColumn()))
+        .append(" IN (").append(placeholders).append(") ");
+
+        sql.append("AND NOT(").append(meta.stateColumn()).append(" = ?); ");
+
+        params.addAll(ids);
+        params.add(Enums.state.DELETE.getCode());
+
+        // ========================
+        // ログ
+        // ========================
+        String action = "UPDATE";
+
+        sql.append(logProvider.buildInsertLog(tableVar, action));
+
+        Map<String, Object> ctx = new HashMap<>();
+        ctx.put("editor", editor);
+
+        params.addAll(logProvider.buildLogParams(ctx, action));
+
+        // ========================
+        // 戻り値
+        // ========================
+        sql.append("""
+            SELECT COUNT(*) FROM %s;
+        """.formatted(tableVar));
 
         return new SqlResult(sql.toString(), params);
     }

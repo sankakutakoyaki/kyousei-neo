@@ -1,25 +1,27 @@
 package com.kyouseipro.neo.sql.query.recycle;
 
 import java.util.List;
-import java.util.Set;
 
+import com.kyouseipro.neo.common.enums.code.RecycleCategory;
 import com.kyouseipro.neo.sql.model.CsvColumn;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 
 public class RecycleQuery {
-    public static QueryDefinition recycleList(String category) {
+    public static QueryDefinition recycleList(RecycleCategory category) {
 
-        // ★ 許可カラム（必須：SQLインジェクション対策）
-        Set<String> allowed = Set.of(
-            "use_date",
-            "delivery_date",
-            "shipping_date",
-            "loss_date"
-        );
+        // // ★ 許可カラム（必須：SQLインジェクション対策）
+        // Set<String> allowed = Set.of(
+        //     "use_date",
+        //     "delivery_date",
+        //     "shipping_date",
+        //     "loss_date"
+        // );
 
-        if (!allowed.contains(category)) {
-            throw new IllegalArgumentException("invalid category: " + category);
-        }
+        // if (!allowed.contains(category)) {
+        //     throw new IllegalArgumentException("invalid category: " + category);
+        // }
+        
+        String column = category.getColumn();
 
         String sql = """
             SELECT r.recycle_id, r.recycle_number, 
@@ -32,12 +34,12 @@ public class RecycleQuery {
             LEFT OUTER JOIN offices o ON o.office_id = r.office_id AND o.state = ?
             LEFT OUTER JOIN recycle_makers rm ON rm.recycle_maker_id = r.maker_id AND rm.state = ?
             LEFT OUTER JOIN recycle_items ri ON ri.recycle_item_id = r.item_id AND ri.state = ?
-            WHERE r.state = ? AND r.%s = ?
-            """.formatted(category);
+            WHERE r.state = ? AND r.%s >= ? AND r.%s < ?
+            """.formatted(column, column);
 
         return QueryDefinition.select(
             sql,
-            List.of("state", "state", "state", "state", "state", "date")
+            List.of("state", "state", "state", "state", "state", "dateFrom", "dateTo")
         );
     }
 

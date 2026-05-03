@@ -1,7 +1,8 @@
 "use strict"
 
-import { initMenuActive } from "../init/initMenuActive.js";
+// import { initMenuActive } from "../init/initMenuActive.js";
 import { initApp } from "../../app.js";
+import { menuActive } from "./menuActive.js";
 
 export async function loadPage(url, target = "body") {
 
@@ -35,6 +36,8 @@ export async function loadPage(url, target = "body") {
         oldBody.replaceWith(newBody);
         base = newBody;
 
+        menuActive(url, "sidebar");
+
     } else if (target === "layout") {
 
         let newLayout = doc.querySelector(".normal-main");
@@ -53,13 +56,15 @@ export async function loadPage(url, target = "body") {
 
         oldLayout.replaceWith(newLayout);
         base = newLayout;
+
+        menuActive(url, "header");
     }
 
     // =========================
     // 共通処理
     // =========================
 
-    initMenuActive(url);
+    // initMenuActive(url);
 
     const cssPath = base.dataset.css;
     const modulePath = base.dataset.page;

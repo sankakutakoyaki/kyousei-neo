@@ -11,6 +11,7 @@ import { api } from "../../../core/api/apiService.js";
 import { initPageCache } from "../../../core/init/initPageCache.js";
 import { dispatchAction } from "../../../core/events/actionDispatcher.js";
 import { initParentChildLink } from "../../../util/link.js";
+import { getToday } from "../../../util/time.js";
 
 export async function init() {
 
@@ -21,24 +22,17 @@ export async function init() {
     const list = recycleListPage();
     registerController("recycleList", list);
 
-    list.init({
+    await list.init({
         columns: createRecycleListColumns(list),
         data: [],
         components: { combo: true, input: true },
-        // actions: {
-        //     companyChanged: async (c, payload) => {
-        //         const list = await api.get("/api/company/client/combo");
-        //         APP.cache.page.companyComboList = list.data;
-        //         await c.reset();
-        //     },
-        //     officeChanged: async (c, payload) => {
-        //         const list = await api.get("/api/office/client/combo");
-        //         APP.cache.page.officeComboList = list.data;
-        //         await c.reset();
-        //     }
-        // }
+        actions: {
+            search: async (c) => {
+                await c.dataTable.refresh();
+            }
+        }
     });
-    await list.dataTable.refresh();
+    await list.actions.search(list);
     
     initParentChildLink();
 }
@@ -48,12 +42,20 @@ export const recycleListPage = () => {
     const controller = new PageController({
         key:"recycleList",
 
-        onDeleted: () => {
-            dispatchAction({
-                action: "recycleChanged",
-                target: ["recycleUse", "recycleDeli", "recycleShip", "recycleLoss"]
-            });
+        onInit: () => {
+            const today = getToday();
+            const from = document.querySelector("[name='dateFrom']");
+            const to   = document.querySelector("[name='dateTo']");
+            if (from && !from.value) from.value = today;
+            if (to && !to.value) to.value = today;
         },
+
+        // onDeleted: () => {
+        //     dispatchAction({
+        //         action: "recycleChanged",
+        //         target: ["recycleUse", "recycleDeli", "recycleShip", "recycleLoss"]
+        //     });
+        // },
 
         table: {
             create: (controller, columns) => new DataTable({
@@ -63,13 +65,17 @@ export const recycleListPage = () => {
                 columns,
                 idKey: "recycleId",
                 checkable: true,
-                buildParams: () => ({
-                    state: APP.cache.common.state.INITIAL,
-                    // category: controller.selectedCategory,
-                    // date: controller.selectedDate
-                    category: 'use_date',
-                    date: '2026-1-1'
-                }),
+                buildParams: () => {
+                    const cate = document.querySelector("[name='category01']")?.value;
+                    const from = document.querySelector("[name='dateFrom']")?.value;
+                    const to   = document.querySelector("[name='dateTo']")?.value;
+                    return {
+                        state: APP.cache.common.state.INITIAL,
+                        category: cate,
+                        dateFrom: from,
+                        dateTo: to
+                    };
+                },
                 buildCsvParams: () => ({
                     state: APP.cache.common.state.INITIAL
                 }),
@@ -92,19 +98,14 @@ export const recycleListPage = () => {
                 controller: controller,
                 formId: "form-01",
                 key: controller.key,
-                // businessValidate: (payload) => {
-                //     if (!payload.category) {
-                //         throw { message: "分類を選択してください", field: "category" };
-                //     }
-                // },
                 onSaved: async (id) => {
                     await controller.dataTable.refresh();
                     controller.scrollToRow(id);
 
-                    dispatchAction({
-                        action: "recycleChanged",
-                        target: ["recycleUse", "recycleDeli", "recycleShip", "recycleLoss"]
-                    });
+                    // dispatchAction({
+                    //     action: "recycleChanged",
+                    //     target: ["recycleUse", "recycleDeli", "recycleShip", "recycleLoss"]
+                    // });
                 },
                 buildParams: (id) => ({
                     state: APP.cache.common.state.INITIAL,

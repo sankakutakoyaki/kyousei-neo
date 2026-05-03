@@ -56,9 +56,13 @@ button:disabled:hover {
     }
 }
 
+.date-move {
+    column-gap: 0;
+}
+
 .date-move .normal-btn {
     min-width: 2.5rem;
-    padding: .5rem .7rem;
+    padding: .3rem;
 }
 
 /******************************************************************************************************* アカウント名 */
