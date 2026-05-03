@@ -2,11 +2,14 @@
 <th:block th:fragment="inputBoxFragment(data)">
     <th:block th:with="
         patternVal=${data['pattern'] != null ? data['pattern'] :
+            (data['type'] == 'recycle' ? '[0-9]{4}-[0-9]{8}-[0-9]{1}' :
             (data['type'] == 'phone' ? '[0-9]{4}-[0-9]{4}-[0-9]{4}' :
-            (data['type'] == 'postal' ? '[0-9]{3}-?[0-9]{4}' : null))},
+            (data['type'] == 'postal' ? '[0-9]{3}-?[0-9]{4}' :
+            (data['type'] == 'date' ? '[0-9]{4}-[0-9]{2}-[0-9]{2}' : null))))},
 
-        inputmodeVal=${data['inputmode'] != null ? data['inputmode'] :
-            (data['type'] == 'phone' || data['type'] == 'postal' ? 'numeric' : null)}
+            inputmodeVal=${data['inputmode'] != null ? data['inputmode'] :
+                (data['type'] == 'recycle' || data['type'] == 'phone' || data['type'] == 'postal' || data['type'] == 'date'
+                    ? 'numeric' : null)}
     ">
         <div class="form-parts">
             <label th:if="${data['text']}"
@@ -15,7 +18,7 @@
 
             <input
                 class="normal-input"
-                th:type="${data['type'] != null ? data['type'] : 'text'}"
+                th:type="${data['type'] == 'date' ? 'text' : (data['type'] != null ? data['type'] : 'text')}"
                 th:attr="
                     id=${data['id']},
                     name=${data['name']},
@@ -26,10 +29,13 @@
                     data-resolve-id=${data['resolveId']},
                     data-resolve-name=${data['resolveName']},
                     tabindex=${data['index']},
+                    disabled=${data['disabled']},
                     data-trim=${data['trim'] != null ? 'true' : null},
                     data-number=${data['number'] != null ? 'true' : null},
                     data-skip-if-null=${data['skipIfNull'] != null ? 'true' : null},
-                    data-zero-to-null=${data['zeroToNull'] != null ? 'true' : null}
+                    data-zero-to-null=${data['zeroToNull'] != null ? 'true' : null},
+                    data-action=${data['action'] != null ? data['action'] : (data['type'] == 'date' ? 'date-picker' : 'select-on-focus')},
+                    data-format=${data['format'] != null ? data['format'] : (data['type'] == 'date' ? 'yyyy-MM-dd' : null)}
                 ">
         </div>
     </th:block>
