@@ -1,6 +1,6 @@
 "use strict"
 
-import { openFormDialog, closeFormDialog, openMsgDialog } from "../core/ui/dialog.js";
+import { openFormDialog, closeFormDialog, openMsgDialog, openConfirmDialog } from "../core/ui/dialog.js";
 import { FormModel } from "../core/form/FormModel.js";
 import { validate } from "../core/form/components/check.js";
 // import { api } from "../core/api/apiService.js";

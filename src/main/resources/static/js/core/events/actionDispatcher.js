@@ -5,27 +5,52 @@ import { resolveController } from "./controllerResolver.js";
 
 export function dispatchAction(input){
 
-    // DOMイベント
     if(input instanceof Event){
         const el = input.target.closest("[data-action]");
         if(!el) return;
 
-        const action = el.dataset.action;
+        const actionAttr = el.dataset.action;
+        if(!actionAttr) return;
 
-        // UIアクション
-        if(uiActions[action]){
-            return uiActions[action](el, input);
+        const actions = actionAttr.split(/\s+/);
+
+        for(const action of actions){
+
+            // UIアクション
+            if(uiActions[action]){
+                uiActions[action](el, input);
+                continue;
+            }
+
+            const controller = resolveController(el);
+            if(!controller) continue;
+
+            controller.actions?.[action]?.(controller, el, input);
         }
 
-        const controller = resolveController(el);
-        if(!controller) return;
-
-        return controller.actions?.[action]?.(controller, el, input);
+        return;
     }
+
+    // // DOMイベント
+    // if(input instanceof Event){
+    //     const el = input.target.closest("[data-action]");
+    //     if(!el) return;
+
+    //     const action = el.dataset.action;
+
+    //     // UIアクション
+    //     if(uiActions[action]){
+    //         return uiActions[action](el, input);
+    //     }
+
+    //     const controller = resolveController(el);
+    //     if(!controller) return;
+
+    //     return controller.actions?.[action]?.(controller, el, input);
+    // }
 
     // 直接呼び出し（アプリイベント）
     const { action, target, data } = input;
-
     const targets = Array.isArray(target) ? target : [target];
 
     targets.forEach(name => {

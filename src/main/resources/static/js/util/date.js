@@ -21,6 +21,11 @@ export function getBaseDate(el){
     return new Date(y, m - 1, d);
 }
 
+export function parseDate(v){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(v)) return null;
+    const [y,m,d] = v.split("-").map(Number);
+    return new Date(y, m - 1, d);
+}
 // "use strict"
 
 // /**

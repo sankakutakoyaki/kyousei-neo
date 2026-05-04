@@ -11,6 +11,7 @@ export function initEvents(){
     document.addEventListener("click", handleEvent);
     document.addEventListener("input", handleEvent);
     document.addEventListener("change", handleEvent);
+    document.addEventListener("keydown", handleEvent);
     document.addEventListener("focusin", handleFocus);
 }
 
