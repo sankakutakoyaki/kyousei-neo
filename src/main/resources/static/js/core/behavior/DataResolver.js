@@ -33,7 +33,6 @@ export const DataResolver = {
             /* Name(select) → ID */
             if (nameField.tagName === "SELECT") {
                 nameField.addEventListener("change", () => {
-                    // idInput.value = nameField.value;
                     updateField(idInput, nameField.value);
                     if (!nameField.value) {
                         this.clear(nameField);
@@ -43,34 +42,6 @@ export const DataResolver = {
         });
     },
 
-    // async resolve(group, type) {
-    //     const idInput = group.querySelector("[data-resolve-id]");
-    //     const nameField = group.querySelector("[data-resolve-name]");
-
-    //     // if (idInput?.dataset.resolving) return;
-        
-    //     const id = idInput.value.trim();
-
-    //     /* 空ならクリア */
-    //     if (!id) {
-    //         this.clear(nameField);
-    //         return;
-    //     }
-
-    //     /* 同じIDなら処理しない */
-    //     if (idInput.dataset.lastId === id) return;
-    //     idInput.dataset.lastId = id;
-
-        // if (nameField.tagName === "SELECT") {
-        //     const found = this.resolveSelect(nameField, id);
-        //     if (!found) {
-        //         idInput.value = "";
-        //     }
-        // } else {
-        //     await this.resolveApi(type, id, idInput, nameField);
-
-        // }
-    // },
     async resolve(group, type) {
         const idInput = group.querySelector("[data-resolve-id]");
         const nameField = group.querySelector("[data-resolve-name]");
@@ -114,11 +85,9 @@ export const DataResolver = {
             if (option.value === id) {
 
                 updateField(select, id);
-                // select.value = id;
                 return true;
             }
         }
-        // select.value = "";
         updateField(select, "");
         return false;
     },
@@ -139,9 +108,7 @@ function focusEnd(input) {
  * 共通処理
  */
 const defaultResolver = {
-
     async resolve({ type, id, nameField, idInput, clear }) {
-
         try {
             const res = await api.get(`/api/${type}/${id}`);
             const data = res?.data;
@@ -240,30 +207,6 @@ const resolvers = {
     query: queryResolver,
     default: defaultResolver
 };
-
-function createMasterResolver(url) {
-    return {
-        cache: null,
-
-        async resolve({ id, nameField, clear }) {
-            try {
-                if (!this.cache) {
-                    const res = await api.get(url);
-                    this.cache = res?.data?.data || [];
-                }
-                const found = this.cache.find(x => String(x.id) === String(id));
-                if (!found) {
-                    clear(nameField);
-                    return;
-                }
-                nameField.value = found.name ?? "";
-            } catch (e) {
-                console.error(e);
-                clear(nameField);
-            }
-        }
-    };
-}
 
 
     // async resolveApi(type, id, input) {

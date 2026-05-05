@@ -79,6 +79,7 @@ export const filterFactory = {
     custom(fn){
         return (v, value) => fn(v, value);
     },
+    
     parent(field) {
         return (v, value) => {
             // 未選択なら全部非表示
