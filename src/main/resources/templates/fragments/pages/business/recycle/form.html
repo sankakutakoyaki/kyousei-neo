@@ -33,7 +33,12 @@
             )}"></th:block>         
         </div>
         <!-- 製造業者等名 -->
-        <div class="form-row" data-resolve="maker-code" data-enterfocus="code-area">
+        <div class="form-row"
+                data-resolve="query"
+                data-query-id="recycleMakerList"
+                data-param-builder="makerParams"
+                data-id-key="code"
+                data-name-key="name">
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'コード',

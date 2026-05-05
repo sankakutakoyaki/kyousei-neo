@@ -40,6 +40,7 @@ public enum QueryId {
     // ===== Recycle =====
     RECYCLE_DETAIL("recycleDetail"),
     RECYCLE_LIST("recycleList"),
+    RECYCLE_MAKER_LIST("recycleMakerList"),
     RECYCLE_CSV("recycleCsv"),
     RECYCLE_DELETE_BY_IDS("recycleDeleteByIds"),
     RECYCLE_SAVE("recycleSave");

@@ -31,4 +31,14 @@ export class ApiService {
         });
     }
 
+    query(queryId, params = {}) {
+        return apiFetch("/api/query", {
+            method: "POST",
+            data: {
+                queryId,
+                params
+            },
+            token: this.getToken()
+        });
+    }
 }

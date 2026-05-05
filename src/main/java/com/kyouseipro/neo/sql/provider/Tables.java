@@ -19,6 +19,9 @@ public class Tables {
         public static final TableMeta RECYCLE_BY_IDS =
             new TableMeta("recycles", "recycleId", "state", "version");
 
+        public static final TableMeta RECYCLE_MAKERS_BY_IDS =
+            new TableMeta("recycle_makers", "recycleMakerId", "state", "version");
+
         // public static final TableMeta PARTNER_COMPANY =
         //     new TableMeta("companies", "companyId", "state", "version");
 
