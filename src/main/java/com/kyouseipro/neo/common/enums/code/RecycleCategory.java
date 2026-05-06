@@ -3,10 +3,11 @@ package com.kyouseipro.neo.common.enums.code;
 import com.kyouseipro.neo.interfaces.BaseEnum;
 
 public enum RecycleCategory implements BaseEnum {
-    USE(1, "使用日", "use_date"),
-    DELIVERY(2, "引渡日", "delivery_date"),
-    SHIPPER(3, "発送日", "shipping_date"),
-    LOSS(4, "ロス処理日", "loss_date");
+    REGIST(1,"登録日", "regist_date"),
+    USE(2, "使用日", "use_date"),
+    DELIVERY(3, "引渡日", "delivery_date"),
+    SHIPPER(4, "発送日", "shipping_date"),
+    LOSS(5, "ロス処理日", "loss_date");
 
     private final int code;
     private final String label;

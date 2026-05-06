@@ -8,25 +8,11 @@ import com.kyouseipro.neo.sql.model.QueryDefinition;
 
 public class RecycleQuery {
     public static QueryDefinition recycleList(RecycleCategory category) {
-
-        // // ★ 許可カラム（必須：SQLインジェクション対策）
-        // Set<String> allowed = Set.of(
-        //     "use_date",
-        //     "delivery_date",
-        //     "shipping_date",
-        //     "loss_date"
-        // );
-
-        // if (!allowed.contains(category)) {
-        //     throw new IllegalArgumentException("invalid category: " + category);
-        // }
-        
         String column = category.getColumn();
-
         String sql = """
             SELECT r.recycle_id, r.recycle_number, 
                 rm.name as maker_name, ri.name as item_name,
-                r.use_date, r.delivery_date, r.shipping_date, r.loss_date,
+                r.use_date, r.delivery_date, r.shipping_date, r.loss_date, CAST(r.regist_date AS DATE) AS regist_date,
                 c.name as company_name, o.name as office_name,
                 r.version, r.state
             FROM recycles r
@@ -49,7 +35,7 @@ public class RecycleQuery {
             SELECT r.recycle_id, r.recycle_number,
                 r.maker_id, rm.code as maker_code, rm.name as maker_name, 
                 r.item_id, ri.code as item_code, ri.name as item_name,
-                r.use_date, r.delivery_date, r.shipping_date, r.loss_date,
+                r.use_date, r.delivery_date, r.shipping_date, r.loss_date, CAST(r.regist_date AS DATE) AS regist_date,
                 r.company_id, r.office_id, c1.name as company_name, o.name as office_name,
                 r.recycling_fee, r.disposal_site_id, c2.name as disposal_site_name, r.slip_number, 
                 r.version, r.state, r.regist_date, r.update_date

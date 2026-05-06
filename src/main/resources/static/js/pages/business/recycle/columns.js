@@ -5,7 +5,6 @@ export const createRecycleListColumns = (controller) => [
         field: "recycleNumber",
         label: "お問合せ管理票番号",
         sortable: true,
-        class: "link-cell",
         format: (v) => {
             const s = String(v ?? "").replace(/\D/g, "").padStart(13, "0");
             return `${s.slice(0,4)}-${s.slice(4,12)}-${s.slice(12)}`;
@@ -17,7 +16,16 @@ export const createRecycleListColumns = (controller) => [
         sortable: true,
         render: (item) => `
             <span>${item.useDate ?? "-----"}</span><br>
-            <span>${item.DeliveryDate ?? "-----"}</span>
+            <span>${item.deliveryDate ?? "-----"}</span>
+        `
+    },
+    {
+        field: "date",
+        label: "発送日/登録日",
+        sortable: true,
+        render: (item) => `
+            <span>${item.shippingDate ?? "-----"}</span><br>
+            <span>${item.registDate ?? "-----"}</span>
         `
     },
     {

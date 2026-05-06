@@ -12,6 +12,7 @@ import { initPageCache } from "../../../core/init/initPageCache.js";
 import { dispatchAction } from "../../../core/events/actionDispatcher.js";
 import { initParentChildLink } from "../../../util/link.js";
 import { getToday } from "../../../util/time.js";
+import { toExclusiveDate } from "../../../util/date.js";
 
 export async function init() {
 
@@ -73,7 +74,7 @@ export const recycleListPage = () => {
                         state: APP.cache.common.state.INITIAL,
                         category: cate,
                         dateFrom: from,
-                        dateTo: to
+                        dateTo: toExclusiveDate(to)
                     };
                 },
                 buildCsvParams: () => ({
@@ -84,11 +85,6 @@ export const recycleListPage = () => {
                     select: "recycleList",
                     delete: "recycleDeleteByIds",
                     download: "recycleCsv"
-                },
-                model: {
-                    filters: {
-                        category: filterFactory.equals("category")
-                    }
                 },
                 onDoubleClick: (item) => controller.openEdit(item.recycleId)
             })
@@ -114,7 +110,7 @@ export const recycleListPage = () => {
                 api: {
                     request: api.request,
                     find: "recycleDetail",
-                    save: "recycleSave"
+                    save: "recycleBulkUpdate"
                 }
             })
         }

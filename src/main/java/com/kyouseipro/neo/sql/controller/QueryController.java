@@ -53,22 +53,16 @@ public class QueryController {
             // SQL（SELECT / UPDATEなど）
             // ========================
             case SQL -> {
-
                 List<Object> params =
                     paramBinder.build(def.getParamOrder(), req.getParams());
 
                 if (def.getType() == QueryType.SELECT) {
-
                     var result = sqlRepository.selectMap(def.getSql(), params);
-
                     return Map.of(
                         "data", result
                     );
-
                 } else {
-
                     int count = sqlRepository.update(def.getSql(), params);
-
                     return Map.of(
                         "count", count
                     );

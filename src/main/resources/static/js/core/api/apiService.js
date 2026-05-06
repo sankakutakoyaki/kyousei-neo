@@ -23,10 +23,11 @@ export const api = {
         });
     },
 
-    request: ({ queryId, params }) => {
+    request: ({ queryId, params, showProcessing = true }) => {
         return apiFetch("/api/query", {
             method: "POST",
-            data: { queryId, params }
+            data: { queryId, params },
+            showProcessing
         });
     }
 }

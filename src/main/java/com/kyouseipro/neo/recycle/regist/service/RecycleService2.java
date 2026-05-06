@@ -12,14 +12,14 @@ import com.kyouseipro.neo.interfaces.HistoryTarget;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleDateEntity;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleEntity;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleEntityRequest;
-import com.kyouseipro.neo.recycle.regist.repository.RecycleRepository;
+import com.kyouseipro.neo.recycle.regist.repository.RecycleRepository2;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class RecycleService {
-    private final RecycleRepository recycleRepository;
+public class RecycleService2 {
+    private final RecycleRepository2 recycleRepository;
 
     /**
      * Numberによる取得。

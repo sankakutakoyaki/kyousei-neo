@@ -1,15 +1,37 @@
 <th:block th:fragment="form01Fragment()">
     <div class="dialog-content" data-enterfocus="form-01">
-        <!-- 名称 -->
-        <div class="form-row">
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+        <!-- 会社名 -->
+        <div class="form-row" data-resolve="client" >
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 { 
-                    'text': 'お問合せ管理票番号', 
-                    'name': 'recycle-number', 
-                    'type': 'recycle', 
-                    'index': 1
-                }
-            })}"></th:block>
+                    'text': '小売業者',
+                    'id':'company01',
+                    'name': 'company-id', 
+                    'combo': 'clientComboList',
+                    'top': '-----',
+                    'key': 'company-id',
+                    'resolveName':true,
+                    'index': 7,
+                    'zeroToNull':true,
+                    'skipIfNull':true,
+                    'link': 'office01'
+                }}
+            )}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'支店名', 
+                    'id':'office01',
+                    'name': 'office-id',
+                    'combo': 'officeComboList',
+                    'top': '-----',
+                    'key':'office-id',
+                    'resolveName':true,
+                    'zeroToNull':true,
+                    'skipIfNull':true,
+                    'parent': 'company01',
+                    'linkDefault': 'empty'
+                }}
+            )}"></th:block>
         </div>
         <!-- 品目 -->
         <div class="form-row" data-resolve="item-code" data-enterfocus="code-area">
@@ -19,18 +41,25 @@
                     'id':'item-code02',
                     'name':'item-code',
                     'resolveId':true,
-                    'index':2
+                    'index':2,
+                    'submit':'none'
                 }}
             )}"></th:block>
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 {
                     'text':'品目', 
                     'id':'item-name02', 
                     'name':'item-name',
                     'resolveName':true,
-                    'disabled':true
+                    'combo': 'recycleItemComboList',
+                    'top': '-----',
+                    'key':'item-id',
+                    'submit':'dataset',
+                    'submitKey':'parent',
+                    'skipIfNull':true,
+                    'zeroToNull':true
                 }}
-            )}"></th:block>         
+            )}"></th:block>
         </div>
         <!-- 製造業者等名 -->
         <div class="form-row"
@@ -38,13 +67,15 @@
                 data-query-id="recycleMakerList"
                 data-param-builder="makerParams"
                 data-id-key="code"
-                data-name-key="abbr_name">
+                data-name-key="abbrName"
+                data-value-key="recycleMakerId">
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'コード',
                     'id':'maker-code02',
                     'name':'maker-code',
                     'resolveId':true,
+                    'submit':'none',
                     'index':3
                 }}
             )}"></th:block>
@@ -54,9 +85,17 @@
                     'id':'maker-name02', 
                     'name':'maker-name',
                     'resolveName':true,
+                    'submit':'none',
                     'disabled':true
                 }}
-            )}"></th:block>         
+            )}"></th:block>
+            <input
+                type="hidden"
+                data-role="hidden-id"
+                name="maker-id"
+                data-key="maker-id"
+                data-skip-if-null="true"
+                data-zero-to-null="true">
         </div>
         <!-- 日付 -->
         <div class="form-row">
@@ -67,7 +106,9 @@
                     'name':'use-date',
                     'type':'date',
                     'action':'date-arrow',
-                    'index': 4
+                    'index': 4,
+                    'skipIfNull':true,
+                    'zeroToNull':true
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -77,7 +118,9 @@
                     'name':'delivery-date',
                     'type':'date',
                     'action':'date-arrow',
-                    'index': 5
+                    'index': 5,
+                    'skipIfNull':true,
+                    'zeroToNull':true
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -87,22 +130,9 @@
                     'name':'shipping-date',
                     'type':'date',
                     'action':'date-arrow',
-                    'index': 6
-                }
-            })}"></th:block>
-        </div>
-        <!-- 会社名 -->
-        <div class="form-row">
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                { 
-                    'text': '小売業者', 
-                    'combo': 'clientComboList',
-                    'top': '-----',
-                    'key': 'company-id',
-                    'name': 'company-id', 
-                    'resolveName':true,
-                    'index': 7,
-                    'zeroToNull': true
+                    'index': 6,
+                    'skipIfNull':true,
+                    'zeroToNull':true
                 }
             })}"></th:block>
         </div>

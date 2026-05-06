@@ -20,7 +20,7 @@ import com.kyouseipro.neo.recycle.maker.entity.RecycleMakerEntity;
 import com.kyouseipro.neo.recycle.maker.service.RecycleMakerService;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleEntity;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleEntityRequest;
-import com.kyouseipro.neo.recycle.regist.service.RecycleService;
+import com.kyouseipro.neo.recycle.regist.service.RecycleService2;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class RecyclePageController extends BaseController {
-    private final RecycleService recycleService;
+    private final RecycleService2 recycleService;
     private final RecycleMakerService recycleMakerService;
     private final ComboBoxService comboBoxService;
 

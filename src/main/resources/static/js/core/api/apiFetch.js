@@ -10,10 +10,14 @@ export async function apiFetch(url, {
     data = null,
     allow404 = false,
     timeout = 15000,
-    retry = 0
+    retry = 0,
+    showProcessing = true
 } = {}) {
 
-    startProcessing();
+    // startProcessing();
+    if(showProcessing){
+        startProcessing();
+    }
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);
@@ -97,7 +101,10 @@ export async function apiFetch(url, {
         }
         throw err;
     } finally {
-        processingEnd();
+        // processingEnd();
+        if(showProcessing){
+            processingEnd();
+        }
     }
 }
 

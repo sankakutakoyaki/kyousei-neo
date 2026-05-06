@@ -2,6 +2,7 @@
 
 import { updateField } from "../../util/utils.js";
 import { api } from "../api/apiService.js";
+import { normalizeValue, getOptions } from "./valueNormalizer.js";
 
 const paramBuilders = {
     makerParams: () => ({
@@ -27,7 +28,7 @@ export const DataResolver = {
 
             /* ID → Name */
             idInput.addEventListener("blur", async () => {
-                await this.resolve(group, type);
+                this.resolve(group, type);
             });
 
             /* Name(select) → ID */
@@ -104,22 +105,105 @@ function focusEnd(input) {
     input.setSelectionRange(len, len);
 }
 
+export function resolveSubmitValue(el, value){
+    const mode = el.dataset.submit;
+    let v;
+    switch(mode){
+        // 無視
+        case "none":
+            return undefined;
+        // option.dataset.xxx
+        case "dataset": {
+            const option = el.selectedOptions?.[0];
+            const key = el.dataset.submitKey;
+            v = option?.dataset?.[key] ?? "";
+            break;
+        }
+        // checkbox
+        default: {
+            if(el.type === "checkbox"){
+                v = el.checked;
+            } else {
+                v = value;
+            }
+        }
+    }
+
+    // ★ 共通normalize
+    return normalizeValue(
+        v,
+        getOptions(el)
+    );
+}
+
 /**
  * 共通処理
  */
+// const defaultResolver = {
+//     async resolve({ type, id, nameField, idInput, clear }) {
+//         try {
+//             const res = await api.get(`/api/${type}/${id}`);
+//             const data = res?.data;
+
+//             // if (!data || !data.data) {
+//             //     clear(nameField);
+//             //     return;
+//             // }
+//             if (!data || !data.data) {
+//                 clear(nameField);
+
+//                 requestAnimationFrame(() => {
+//                     idInput.focus();
+//                     idInput.select();
+//                 });
+
+//                 return;
+//             }
+//             nameField.value = data.name ?? "";
+
+//         } catch (e) {
+//             console.error(e);
+//             clear(nameField);
+//         }
+//     }
+// };
 const defaultResolver = {
-    async resolve({ type, id, nameField, idInput, clear }) {
+    async resolve({
+        type,
+        id,
+        nameField,
+        idInput,
+        group,
+        clear
+    }) {
         try {
             const res = await api.get(`/api/${type}/${id}`);
             const data = res?.data;
-
             if (!data || !data.data) {
                 clear(nameField);
+                // hidden clear
+                const hidden =
+                    group?.querySelector("[data-role='hidden-id']");
+                if(hidden){
+                    hidden.value = "";
+                }
+                requestAnimationFrame(() => {
+                    idInput.focus();
+                    idInput.select();
+                });
                 return;
             }
-
+            // name
             nameField.value = data.name ?? "";
-
+            // hidden value
+            const valueKey = group?.dataset.valueKey;
+            if(valueKey){
+                const hidden =
+                    group.querySelector("[data-role='hidden-id']");
+                if(hidden){
+                    hidden.value = data[valueKey] ?? "";
+                }
+            }
         } catch (e) {
             console.error(e);
             clear(nameField);
@@ -127,10 +211,48 @@ const defaultResolver = {
     }
 };
 
+// const queryResolver = {
+//     cacheMap: {},
+
+//     async resolve({ group, id, idInput, nameField, clear }) {
+//         const queryId = group.dataset.queryId;
+//         const builderName = group.dataset.paramBuilder;
+//         const params = builderName && paramBuilders[builderName]
+//             ? paramBuilders[builderName]()
+//             : {};
+//         const cacheKey = queryId + ":" + JSON.stringify(params);
+//         try {
+//             if (!this.cacheMap[cacheKey]) {
+//                 const res = await api.request({ queryId, params, showProcessing: false });
+//                 this.cacheMap[cacheKey] = res?.data || [];
+//             }
+//             const list = this.cacheMap[cacheKey];
+//             const idKey = group.dataset.idKey || "id";
+//             const nameKey = group.dataset.nameKey || "name";
+//             const found = list.find(x =>
+//                 String(x[idKey]) === String(id)
+//             );
+//             if (!found) {
+//                 clear(nameField);
+
+//                 requestAnimationFrame(() => {
+//                     idInput.focus();
+//                     idInput.select();
+//                 });
+
+//                 return;
+//             }
+//             nameField.value = found?.[nameKey] ?? "";
+//         } catch (e) {
+//             console.error(e);
+//             clear(nameField);
+//         }
+//     }
+// };
 const queryResolver = {
     cacheMap: {},
 
-    async resolve({ group, id, nameField, clear }) {
+    async resolve({ group, id, idInput, nameField, clear }) {
         const queryId = group.dataset.queryId;
         const builderName = group.dataset.paramBuilder;
         const params = builderName && paramBuilders[builderName]
@@ -139,20 +261,46 @@ const queryResolver = {
         const cacheKey = queryId + ":" + JSON.stringify(params);
         try {
             if (!this.cacheMap[cacheKey]) {
-                const res = await api.request({ queryId, params });
+                const res = await api.request({
+                    queryId,
+                    params,
+                    showProcessing: false
+                });
                 this.cacheMap[cacheKey] = res?.data || [];
             }
+
             const list = this.cacheMap[cacheKey];
             const idKey = group.dataset.idKey || "id";
             const nameKey = group.dataset.nameKey || "name";
             const found = list.find(x =>
                 String(x[idKey]) === String(id)
             );
+
             if (!found) {
                 clear(nameField);
+                // hiddenも消す
+                const hidden =
+                    group.querySelector("[data-role='hidden-id']");
+                if(hidden){
+                    hidden.value = "";
+                }
+                requestAnimationFrame(() => {
+                    idInput.focus();
+                    idInput.select();
+                });
                 return;
             }
+            // 表示名
             nameField.value = found?.[nameKey] ?? "";
+            // ★ 追加部分
+            const valueKey = group.dataset.valueKey;
+            if(valueKey){
+                const hidden =
+                    group.querySelector("[data-role='hidden-id']");
+                if(hidden){
+                    hidden.value = found?.[valueKey] ?? "";
+                }
+            }
         } catch (e) {
             console.error(e);
             clear(nameField);

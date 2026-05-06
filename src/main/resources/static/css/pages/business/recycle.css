@@ -22,7 +22,7 @@
 }
 
 :is(#table-01, #table-header-01) tr {
-    grid-template-columns: 3rem 15rem 12rem 1fr 1fr 2rem;
+    grid-template-columns: 3rem 15rem 12rem 12rem 1fr 1fr 2rem;
 }
 
 .tab-panel .table-area {
@@ -47,21 +47,22 @@
         }
         & >.form-row:nth-of-type(1) {
             grid-template-columns: 1fr;
+            &>.form-parts:nth-child(1) {
+                grid-template-columns: 1fr;
+            }
+            &>.form-parts:nth-child(2) {
+                grid-template-columns: 1fr;
+            }
         }
         & >.form-row:nth-of-type(2) {
-            grid-template-columns: 1fr;
+            grid-template-columns: 5rem 1fr;
         }
         & >.form-row:nth-of-type(3) {
-            grid-template-columns: 12rem 12rem;
+            grid-template-columns: 5rem 1fr;
         }
         & >.form-row:nth-of-type(4) {
-            grid-template-columns: 8rem 1fr;
+            grid-template-columns: auto auto auto;
         }
-        & >.form-row:nth-of-type(5) {
-            grid-template-columns: 1fr;
-        }
-        & >.form-row:nth-of-type(6) {
-            grid-template-columns: 1fr auto;
-        }
+
     }
 }

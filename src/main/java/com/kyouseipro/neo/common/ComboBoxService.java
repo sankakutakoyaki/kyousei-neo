@@ -14,7 +14,7 @@ import com.kyouseipro.neo.corporation.staff.entity.StaffListEntity;
 import com.kyouseipro.neo.corporation.staff.repository.StaffListRepository;
 import com.kyouseipro.neo.interfaces.CodeEnum;
 import com.kyouseipro.neo.qualification.repository.QualificationsRepository;
-import com.kyouseipro.neo.recycle.regist.repository.RecycleRepository;
+import com.kyouseipro.neo.recycle.regist.repository.RecycleRepository2;
 import com.kyouseipro.neo.work.item.repository.WorkItemRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class ComboBoxService {
     private final OfficeListRepository officeListRepository;
     private final StaffListRepository staffListRepository;
     private final QualificationsRepository qualificationsRepository;
-    private final RecycleRepository recycleRepository;
+    private final RecycleRepository2 recycleRepository;
     private final WorkItemRepository workItemRepository;
 
     private <E extends Enum<E> & CodeEnum> List<SimpleData> toSimpleDataList(E[] values) {

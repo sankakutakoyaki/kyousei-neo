@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.domain.corporation.business.recycle;
+package com.kyouseipro.neo.domain.business.recycle;
 
 import java.util.List;
 
@@ -15,11 +15,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/recycle")
 public class RecycleController {
+    private final RecycleService recycleService;
 
-    // @GetMapping("/maker/combo")
-    // @ResponseBody
-    // public List<ComboDto> partnerCombo() {
-    //     return companyService.findComboByCategory(CompanyCategory.PARTNER.getCode());
-    // }
-    
+    @GetMapping("/item/combo")
+    @ResponseBody
+    public List<ComboDto> itemCombo() {
+        return recycleService.findItemCombo();
+    }
 }

@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-public class RecycleRepository {
+public class RecycleRepository2 {
     private final SqlRepository sqlRepository;
     
     /**

@@ -15,7 +15,6 @@
             <label th:if="${data['text']}"
                    th:for="${data['id']}"
                    th:text="${data['text']}"></label>
-
             <input
                 class="normal-input"
                 th:type="${data['type'] == 'date' ? 'date' : (data['type'] != null ? data['type'] : 'text')}"
@@ -25,7 +24,10 @@
                     placeholder=${data['placeholder']},
                     pattern=${patternVal},
                     inputmode=${inputmodeVal},
-                    data-action=${data['action'] != null ? data['action'] : 'select-on-focus'},
+                    data-action=${data['disabled'] == true ? null: (data['action'] != null ? data['action']: 'select-on-focus')},
+                    data-type=${data['type']},
+                    data-key=${data['key']},
+                    data-submit=${data['submit']},
                     data-resolve-id=${data['resolveId']},
                     data-resolve-name=${data['resolveName']},
                     tabindex=${data['index']},
@@ -34,7 +36,6 @@
                     data-number=${data['number'] != null ? 'true' : null},
                     data-skip-if-null=${data['skipIfNull'] != null ? 'true' : null},
                     data-zero-to-null=${data['zeroToNull'] != null ? 'true' : null},
-                    data-action=${data['action'] != null ? data['action'] : (data['type'] == 'date' ? 'date-picker' : 'select-on-focus')},
                     data-format=${data['format'] != null ? data['format'] : (data['type'] == 'date' ? 'yyyy-MM-dd' : null)}
                 ">
         </div>
@@ -61,10 +62,12 @@
                 data-link-child=${data['link']},
                 data-child-default=${data['linkDefault']},
                 tabindex=${data['index']},
+                data-submit=${data['submit']},
+                data-submit-key=${data['submitKey']},
                 data-trim=${data['trim'] != null ? '' : null},
                 data-number=${data['number'] != null ? '' : null},
-                data-skip-if-null=${data['skipIfNull'] != null ? '' : null},
-                data-zero-to-null=${data['zeroToNull'] != null ? '' : null}
+                data-skip-if-null=${data['skipIfNull'] != null ? 'true' : null},
+                data-zero-to-null=${data['zeroToNull'] != null ? 'true' : null}
             ">
         </select>
     </div>

@@ -25,13 +25,13 @@ import com.kyouseipro.neo.dto.IdListRequest;
 import com.kyouseipro.neo.dto.StringRequest;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleEntity;
 import com.kyouseipro.neo.recycle.regist.entity.RecycleEntityRequest;
-import com.kyouseipro.neo.recycle.regist.service.RecycleService;
+import com.kyouseipro.neo.recycle.regist.service.RecycleService2;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/recycle")
 public class RecycleApiController {
-    private final RecycleService recycleService;
+    private final RecycleService2 recycleService;
 
     /**
      * 

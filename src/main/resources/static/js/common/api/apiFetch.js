@@ -9,11 +9,15 @@ async function apiFetch(url, {
     token,
     allow404 = false,
     timeout = 15000,
-    retry = 0
+    retry = 0,
+    showSpinner = true
 } = {}) {
 
     const spinner = document.getElementById("loading");
-    if (spinner) spinner.classList.remove("loaded");
+    // if (spinner) spinner.classList.remove("loaded");
+    if (showSpinner && spinner) {
+        spinner.classList.remove("loaded");
+    }
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);
@@ -112,15 +116,15 @@ async function apiFetch(url, {
             });
 
         }
-
         throw err;
 
     } finally {
-
         clearTimeout(timer);
 
-        if (spinner) spinner.classList.add("loaded");
-
+        // if (spinner) spinner.classList.add("loaded");
+        if (showSpinner && spinner) {
+            spinner.classList.add("loaded");
+        }
     }
 }
 
