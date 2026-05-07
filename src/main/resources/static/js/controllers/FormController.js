@@ -107,7 +107,8 @@ export class FormController {
                 await this.save(form);
             },
             onReset: () => {
-                this.clear();
+                // this.clear();
+                this.resetForm();
             }
         });
 
@@ -184,6 +185,9 @@ export class FormController {
                 message: `${ids.length}件に適用しますか？`,
                 onSubmit: async () => {
                     try {
+                        if (this.businessValidate) {
+                            await this.businessValidate(payload);
+                        }
                         const res = await this.api.request({
                             queryId: this.api.save,
                             params: payload
@@ -276,6 +280,13 @@ export class FormController {
     clear(){
         const form = document.getElementById(this.formId);
         FormModel.clear(form);
+    }
+
+    resetForm(){
+        this.clearErrors();
+        const form = document.getElementById(this.formId);
+        FormModel.clear(form);
+        this.setSubmitEnabled(false);
     }
 
     set(data){

@@ -55,24 +55,28 @@ public class RecycleQuery {
 
         String sql = """
             SELECT
-                recycle_id,
                 recycle_number,
-                maker_name,
-                item_name,
-                company_name
-            FROM recycles
-            WHERE state = ?
-            AND recycle_id IN (:ids)
+                rm.name as maker_name,
+                ri.name as item_name,
+                c.name as company_name,
+                o.name as office_name
+            FROM recycles r
+            LEFT OUTER JOIN companies c ON c.company_id = r.company_id AND c.state = ?
+            LEFT OUTER JOIN offices o ON o.office_id = r.office_id AND o.state = ?
+            LEFT OUTER JOIN recycle_makers rm ON rm.recycle_maker_id = r.maker_id AND rm.state = ?
+            LEFT OUTER JOIN recycle_items ri ON ri.recycle_item_id = r.item_id AND ri.state = ?
+            WHERE r.state = ?
+            AND r.recycle_id IN (:ids)
         """;
 
-        List<String> params = List.of("state", "ids");
+        List<String> params = List.of("state", "state", "state", "state", "state", "ids");
 
         List<CsvColumn> columns = List.of(
-            new CsvColumn("recycleId", "リサイクルID"),
             new CsvColumn("recycleNumber", "お問合せ管理票番号"),
             new CsvColumn("makerName", "製造業者等名"),
             new CsvColumn("itemName", "品目"),
-            new CsvColumn("email", "小売業等名")
+            new CsvColumn("companyName", "小売業等名"),
+            new CsvColumn("officeName", "支店名")
         );
 
         return QueryDefinition.csv(sql, params, columns);

@@ -148,6 +148,12 @@ export class TableModel {
         }));
     }
 
+    findOriginById(id){
+        return this.originData.find(
+            v => String(v[this.idKey]) === String(id)
+        );
+    }
+
     // -------------------------
     // 選択
     // -------------------------

@@ -107,6 +107,31 @@ export const recycleListPage = () => {
                     state: APP.cache.common.state.INITIAL,
                     recycleId: id
                 }),
+                businessValidate: async (payload) => {
+                    const table = controller.dataTable;
+                    const ids = controller.state.bulkMode ? table.model.getSelectedIds(): [payload.recycleId];
+                    for(const id of ids){
+                        const origin = table.model.findOriginById(id);
+                        validatePersisted(
+                            payload,
+                            origin,
+                            "useDate",
+                            "使用日"
+                        );
+                        validatePersisted(
+                            payload,
+                            origin,
+                            "deliveryDate",
+                            "引渡日"
+                        );
+                        validatePersisted(
+                            payload,
+                            origin,
+                            "shippingDate",
+                            "発送日"
+                        );
+                    }
+                },
                 api: {
                     request: api.request,
                     find: "recycleDetail",
@@ -117,3 +142,28 @@ export const recycleListPage = () => {
     });
     return controller;
 };
+
+function validatePersisted(
+    payload,
+    origin,
+    field,
+    label
+){
+    // 未変更
+    if(!Object.hasOwn(payload, field)){
+        return;
+    }
+    // 空更新は許可
+    if(payload[field] == null || payload[field] === ""){
+        return;
+    }
+    // 元データなし
+    if(!origin?.[field]){
+        throw {
+            message:
+                `${label}が未登録のため変更できません`,
+            field:
+                convertKey(field, "camel", "kebab")
+        };
+    }
+}

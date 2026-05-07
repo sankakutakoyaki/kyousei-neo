@@ -6,55 +6,7 @@ import { resolveSubmitValue } from "../behavior/DataResolver.js";
 
 export const FormModel = {
 
-    // ------------------------
     // フォーム → entity
-    // ------------------------
-
-
-    // toEntity(form, base = {}){
-    //     const fd = new FormData(form);
-    //     const entity = {};
-
-    //     for(const [name, value] of fd.entries()){
-    //         const elRaw = form.elements[name];
-    //         const el = elRaw instanceof RadioNodeList ? elRaw[0] : elRaw;
-    //         if(!el) continue;
-
-    //         // submit mode
-    //         const submitMode = el.dataset.submit;
-    //         // 完全無視
-    //         if(submitMode === "none"){
-    //             continue;
-    //         }
-    //         const key = el.dataset.key
-    //             ? convertKey(el.dataset.key, "kebab", "camel")
-    //             : convertKey(name, "kebab", "camel");
-    //         let v;
-    //         // checkbox
-    //         if(el.type === "checkbox"){
-    //             v = el.checked;
-    //         // option data-parent
-    //         } else if(submitMode === "parent"){
-    //             const option = el.selectedOptions?.[0];
-    //             v = option?.dataset.parent ?? "";
-    //         // option data-id
-    //         } else if(submitMode === "id"){
-    //             const option = el.selectedOptions?.[0];
-    //             v = option?.dataset.id ?? "";
-    //         // option text
-    //         } else if(submitMode === "text"){
-    //             const option = el.selectedOptions?.[0];
-    //             v = option?.textContent ?? "";
-    //         // normal
-    //         } else {
-    //             v = normalizeValue(value, getOptions(el));
-    //         }
-    //         entity[key] = v;
-    //     }
-
-    //     injectMeta(entity, form, base);
-    //     return entity;
-    // },
     toEntity(form, base = {}){
         const fd = new FormData(form);
         const entity = {};
