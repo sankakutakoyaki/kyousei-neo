@@ -33,8 +33,18 @@ export function getOptions(el){
     };
 }
 
+// export function normalize(v){
+//     return v === "" || v === undefined ? null : v;
+// }
 export function normalize(v){
-    return v === "" || v === undefined ? null : v;
+    if(
+        v === "" ||
+        v === 0 ||
+        v === "0"
+    ){
+        return null;
+    }
+    return v;
 }
 
 export function normalizeParentChild(form){

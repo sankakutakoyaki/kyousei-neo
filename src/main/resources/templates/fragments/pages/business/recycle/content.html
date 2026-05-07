@@ -25,11 +25,21 @@
         <form id="form-01" class="form-dialog none" data-controller="recycleList" data-sync-group="recycle" data-key="recycle-id">
             <div class="dialog-main">
                 <!-- ヘッダー -->
-                <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '一括編集'} })}"></div>
+                <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '編集'} })}"></div>
                 <!-- コンテンツ -->
                 <form th:replace="~{fragments/pages/business/recycle/form :: form01Fragment()}"></form>
                 <!-- フッター -->
                 <div th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></div>
+            </div>
+        </form>
+        <form id="form-02" class="form-dialog none" data-controller="recycleList" data-sync-group="recycle" data-key="recycle-id">
+            <div class="dialog-main">
+                <!-- ヘッダー -->
+                <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '一括編集'} })}"></div>
+                <!-- コンテンツ -->
+                <form th:replace="~{fragments/pages/business/recycle/form :: form02Fragment()}"></form>
+                <!-- フッター -->
+                <div th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-02' } })}"></div>
             </div>
         </form>
     </div>

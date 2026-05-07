@@ -43,8 +43,8 @@ public enum QueryId {
     RECYCLE_MAKER_LIST("recycleMakerList"),
     RECYCLE_CSV("recycleCsv"),
     RECYCLE_DELETE_BY_IDS("recycleDeleteByIds"),
-    RECYCLE_SAVE("recycleSave"),
-    RECYCLE_BULK_UPDATE("recycleBulkUpdate");
+    RECYCLE_SAVE("recycleSave");
+    // RECYCLE_BULK_UPDATE("recycleBulkUpdate");
 
     private final String id;
 

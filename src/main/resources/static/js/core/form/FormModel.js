@@ -25,9 +25,9 @@ export const FormModel = {
 
             const v = resolveSubmitValue(el, value);
             if(v === undefined) continue;
-            if(v == null && "skipIfNull" in el.dataset){
-                continue;
-            }
+            // if(v == null && "skipIfNull" in el.dataset){
+            //     continue;
+            // }
             entity[key] = v;
         }
         injectMeta(entity, form, base);

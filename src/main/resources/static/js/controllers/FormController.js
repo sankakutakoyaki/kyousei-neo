@@ -58,19 +58,6 @@ export class FormController {
 
         const filters = this.controller.state?.filters || {};
 
-        // Object.entries(filters).forEach(([key, value]) => {
-
-        //     if (value == null || value === "") return;
-
-        //     const el = document.querySelector(
-        //         `#${this.formId} [name="${key}"], #${this.formId} [data-key="${key}"]`
-        //     );
-        //     if (!el) return;
-
-        //     if (data[key] == null || data[key] === "") {
-        //         data[key] = value;
-        //     }
-        // });
         Object.entries(filters).forEach(([key, value]) => {
 
             if (value == null || value === "") return;
@@ -397,4 +384,9 @@ export class FormController {
     //     btn.disabled = !enabled;
     //     btn.classList.toggle("disabled", !enabled);
     // }
+
+    isHidden(){
+        const form = document.getElementById(this.formId);
+        return form?.classList.contains("none");
+    }
 }

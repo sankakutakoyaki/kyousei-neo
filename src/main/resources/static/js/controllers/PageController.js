@@ -13,22 +13,51 @@ const defaultConditions = {
     bulkEdit: (c) => c.dataTable?.hasSelection(),
     delete: (c) => c.dataTable?.hasSelection(),
     download: (c) => c.dataTable?.hasSelection(),
-    save: (c) => c.form?.canSubmit()
+    save: (c) => c.getActiveForm()?.canSubmit()
 };
 
+// const defaultActions = {
+//     create: (c) => c.form.open(),
+//     // search: (c, el) => {c.state.keyword = el.value; c.dataTable.reload();},
+//     keywordSearch: (c, el) => {
+//         c.state.keyword = el.value;
+//         c.dataTable.reload();
+//     },
+//     filter: smartFilterHandler,
+//     Edit: async (c) => c.openEdit(),
+//     bulkEdit: async (c) => c.bulkSelected(),
+//     delete: async (c) => c.deleteSelected(),
+//     download: async (c) => c.downloadSelected(),
+// };
 const defaultActions = {
-    create: (c) => c.form.open(),
-    // search: (c, el) => {c.state.keyword = el.value; c.dataTable.reload();},
-    keywordSearch: (c, el) => {
-        c.state.keyword = el.value;
-        c.dataTable.reload();
-    },
+    create: (c) => c.openForm("detail", null, { bulkMode:false }),
+    keywordSearch: (c, el) => {c.state.keyword = el.value; c.dataTable.reload();},
     filter: smartFilterHandler,
-    Edit: async (c) => c.openEdit(),
-    bulkEdit: async (c) => c.bulkSelected(),
+    Edit: async (c) => {const ids = c.dataTable.model.getSelectedIds();
+        if(!c.ensureSelection(ids)){return;}
+        await c.openForm("detail", c.getSelectedId(), { bulkMode:false });
+    },
+    bulkEdit: async (c) => {
+        const ids = c.dataTable.model.getSelectedIds();
+        if(!c.ensureSelection(ids)){ return; }
+        await c.openForm("bulk", null, { bulkMode:true });
+    },
     delete: async (c) => c.deleteSelected(),
     download: async (c) => c.downloadSelected(),
 };
+
+const formAction = (name, options={}) =>
+    async (c) => {
+        const id = c.getSelectedId();
+        if(!id){
+            openMsgDialog({
+                message:"選択してください",
+                color:"red"
+            });
+            return;
+        }
+        await c.openForm(name, id, options);
+    };
 
 export class PageController {
 
@@ -39,7 +68,7 @@ export class PageController {
         this.conditions = config.conditions || {};
 
         this.dataTable = null;
-        this.form = null;
+        this.forms = {};
         this.components = {};
     }
 
@@ -78,8 +107,13 @@ export class PageController {
                 this.dataTable.initData(); // API
             }
         }
-        if(this.config.form){
-            this.form = this.config.form.create(this);
+        if(this.config.forms){
+            this.forms = {};
+            Object.entries(this.config.forms)
+                .forEach(([key, formConfig]) => {
+                    this.forms[key] =
+                        formConfig.create(this);
+                });
         }
     }
 
@@ -95,38 +129,34 @@ export class PageController {
         }
     }
 
-    // -------------------------
     // 検索
-    // -------------------------
     search(keyword){
         this.state.keyword = keyword;
         this.dataTable.reload();
     }
 
-    // -------------------------
     // UI操作
-    // -------------------------
-    create(){
-        this.state.bulkMode = false;
-        this.form.open();
-    }
+    // create(){
+    //     this.state.bulkMode = false;
+    //     this.openForm("detail", null, { bulkMode:false });
+    // }
 
-    async openEdit(id){
-        this.state.bulkMode = false;
-        await this.form.open(id);
-    }
+    // async openEdit(id){
+    //     this.state.bulkMode = false;
+    //     await this.openForm("detail", id, { bulkMode:false });
+    // }
 
-    async bulkSelected(){
-        const ids = this.dataTable.model.getSelectedIds();
-        if(ids.length === 0){
-            openMsgDialog({
-                message:"選択してください",
-                color:"red"
-            });
-        }
-        this.state.bulkMode = true;
-        this.form.open();
-    }
+    // async bulkSelected(){
+    //     const ids = this.dataTable.model.getSelectedIds();
+    //     if(ids.length === 0){
+    //         openMsgDialog({
+    //             message:"選択してください",
+    //             color:"red"
+    //         });
+    //     }
+    //     this.state.bulkMode = true;
+    //     this.openForm("bulk", null, { bulkMode:false });
+    // }
 
     async deleteSelected(){
         const ids = this.dataTable.model.getSelectedIds();
@@ -257,11 +287,39 @@ export class PageController {
         const submitBtn = dialog.querySelector('[name="submitBtn"]');
         if(!submitBtn) return;
 
-        const enabled = controller.form?.canSubmit();
+        const enabled = controller.getActiveForm()?.canSubmit();
 
         // ボタン制御
         submitBtn.disabled = !enabled;
         submitBtn.classList.toggle("disabled", !enabled);
+    }
+
+    async openForm(
+        name,
+        data = null,
+        options = {}
+    ){
+        if(options.bulkMode != null){
+            this.state.bulkMode =
+                options.bulkMode;
+        }
+        const form = this.forms?.[name];
+        if(!form){
+            throw new Error(
+                `form not found : ${name}`
+            );
+        }
+        return await form.open(data);
+    }
+
+    getActiveForm(){
+        return Object.values(this.forms)
+            .find(form => !form.isHidden?.());
+    }
+
+    getSelectedId(){
+        const ids = this.dataTable.model.getSelectedIds();
+        return ids[0] ?? null;
     }
 }
 

@@ -86,62 +86,110 @@ export const recycleListPage = () => {
                     delete: "recycleDeleteByIds",
                     download: "recycleCsv"
                 },
-                onDoubleClick: (item) => controller.openEdit(item.recycleId)
+                // onDoubleClick: (item) => controller.openEdit(item.recycleId)
+                onDoubleClick:(item) => controller.openForm("detail", item.recycleId, { bulkMode:false })
             })
         },
-        form: {
-            create: (controller) => new FormController({
-                controller: controller,
-                formId: "form-01",
-                key: controller.key,
-                onSaved: async (id) => {
-                    await controller.dataTable.refresh();
-                    controller.scrollToRow(id);
+        forms: {
+            detail: {
+                create: (controller) =>
+                    createRecycleForm(controller, {
+                        formId: "form-01",
+                        saveQueryId: "recycleSave"
+                    })
+            },
+            bulk: {
+                create: (controller) =>
+                    createRecycleForm(controller, {
+                        formId: "form-02",
+                        // saveQueryId: "recycleBulkUpdate"
+                        saveQueryId: "recycleSave"
+                    })
+                // create: (controller) => new FormController({
+                //     controller: controller,
+                //     formId: "form-01",
+                //     key: controller.key,
+                //     onSaved: async (id) => {
+                //         await controller.dataTable.refresh();
+                //         controller.scrollToRow(id);
 
-                    // dispatchAction({
-                    //     action: "recycleChanged",
-                    //     target: ["recycleUse", "recycleDeli", "recycleShip", "recycleLoss"]
-                    // });
-                },
-                buildParams: (id) => ({
-                    state: APP.cache.common.state.INITIAL,
-                    recycleId: id
-                }),
-                businessValidate: async (payload) => {
-                    const table = controller.dataTable;
-                    const ids = controller.state.bulkMode ? table.model.getSelectedIds(): [payload.recycleId];
-                    for(const id of ids){
-                        const origin = table.model.findOriginById(id);
-                        validatePersisted(
-                            payload,
-                            origin,
-                            "useDate",
-                            "使用日"
-                        );
-                        validatePersisted(
-                            payload,
-                            origin,
-                            "deliveryDate",
-                            "引渡日"
-                        );
-                        validatePersisted(
-                            payload,
-                            origin,
-                            "shippingDate",
-                            "発送日"
-                        );
-                    }
-                },
-                api: {
-                    request: api.request,
-                    find: "recycleDetail",
-                    save: "recycleBulkUpdate"
-                }
-            })
+                //         // dispatchAction({
+                //         //     action: "recycleChanged",
+                //         //     target: ["recycleUse", "recycleDeli", "recycleShip", "recycleLoss"]
+                //         // });
+                //     },
+                //     buildParams: (id) => ({
+                //         state: APP.cache.common.state.INITIAL,
+                //         recycleId: id
+                //     }),
+                //     businessValidate: async (payload) => {
+                //         const table = controller.dataTable;
+                //         const ids = controller.state.bulkMode ? table.model.getSelectedIds(): [payload.recycleId];
+                //         for(const id of ids){
+                //             const origin = table.model.findOriginById(id);
+                //             validatePersisted(
+                //                 payload,
+                //                 origin,
+                //                 "useDate",
+                //                 "使用日"
+                //             );
+                //             validatePersisted(
+                //                 payload,
+                //                 origin,
+                //                 "deliveryDate",
+                //                 "引渡日"
+                //             );
+                //             validatePersisted(
+                //                 payload,
+                //                 origin,
+                //                 "shippingDate",
+                //                 "発送日"
+                //             );
+                //         }
+                //     },
+                //     api: {
+                //         request: api.request,
+                //         find: "recycleDetail",
+                //         save: "recycleBulkUpdate"
+                //     }
+                // })
+            }
         }
     });
     return controller;
 };
+
+// tab1フォーム共通処理
+const createRecycleForm = (controller, options = {}) =>
+    new FormController({
+        controller,
+        formId: options.formId,
+        key: controller.key,
+        onSaved: async (id) => {
+            await controller.dataTable.refresh();
+            controller.scrollToRow(id);
+        },
+        buildParams: (id) => ({
+            state:APP.cache.common.state.INITIAL,
+            recycleId: id
+        }),
+        businessValidate:
+            async (payload) => {
+                const table =  controller.dataTable;
+                const ids = controller.state.bulkMode ? table.model.getSelectedIds(): [payload.recycleId];
+                for(const id of ids){
+                    const origin = table.model.findOriginById(id);
+                    validatePersisted(payload, origin, "useDate", "使用日");
+                    validatePersisted(payload, origin, "deliveryDate", "引渡日");
+                    validatePersisted(payload, origin, "shippingDate", "発送日");
+                }
+            },
+        api: {
+            request: api.request,
+            find: "recycleDetail",
+            save: options.saveQueryId
+        }
+    });
 
 function validatePersisted(
     payload,
