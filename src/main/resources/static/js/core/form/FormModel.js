@@ -3,6 +3,7 @@
 import { convertKey } from "../ui/keyCaseConverter.js"
 import { normalizeValue, getOptions, normalize } from "../behavior/valueNormalizer.js";
 import { resolveSubmitValue } from "../behavior/DataResolver.js";
+import { formatters } from "../behavior/formatters.js";
 
 export const FormModel = {
 
@@ -25,9 +26,9 @@ export const FormModel = {
 
             const v = resolveSubmitValue(el, value);
             if(v === undefined) continue;
-            // if(v == null && "skipIfNull" in el.dataset){
-            //     continue;
-            // }
+            if(v == null && "skipIfNull" in el.dataset){
+                continue;
+            }
             entity[key] = v;
         }
         injectMeta(entity, form, base);
@@ -51,25 +52,60 @@ export const FormModel = {
     // ------------------------
     // fill
     // ------------------------
-    fill(form, data){
+    // fill(form, data = {}){
+    //     Object.entries(data).forEach(([key, value]) => {
+    //         const name = convertKey(key, "camel", "kebab");
+    //         const el = form.elements[name];
+    //         if(!el) return;
 
+    //         if(el.type === "checkbox"){
+    //             el.checked = !!value;
+    //         }else{
+    //             let v = value;
+    //             // ★ 表示用の最小変換だけ
+    //             if("zeroToNull" in el.dataset && (v === 0 || v === "0")){
+    //                 v = null;
+    //             }
+    //             el.value = v ?? "";
+    //         }
+    //     });
+    // },
+    fill(form, data = {}){
         Object.entries(data).forEach(([key, value]) => {
-
-            const name = convertKey(key, "camel", "kebab");
-            const el = form.elements[name];
+            const kebab = convertKey(key, "camel", "kebab");
+            // data-key優先
+            let el = form.querySelector(`[data-key="${kebab}"]`);
+            // fallback
+            if(!el){
+                const elRaw = form.elements[kebab];
+                el = elRaw instanceof RadioNodeList ? elRaw[0]: elRaw;
+            }
             if(!el) return;
 
+            const dataset = el.dataset ?? {};
+            let v = value;
+            // fillKey
+            const fillKey = dataset.fillKey;
+            if(fillKey){
+                const camelFillKey = convertKey(fillKey, "kebab", "camel");
+                v = data[camelFillKey];
+            }
+            // validate formatter
+            const type = dataset.validate;
+            if(type){
+                const formatter = formatters[type];
+                if(formatter){
+                    v = formatter(v);
+                }
+            }
+            // checkbox
             if(el.type === "checkbox"){
-                el.checked = !!value;
-            }else{
-
-                let v = value;
-
-                // ★ 表示用の最小変換だけ
-                if("zeroToNull" in el.dataset && (v === 0 || v === "0")){
+                el.checked = !!v;
+            } else {
+                // normalize
+                if("zeroToNull" in dataset && (v === 0 || v === "0")){
                     v = null;
                 }
-
                 el.value = v ?? "";
             }
         });

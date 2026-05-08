@@ -40,7 +40,7 @@ export class FormController {
     }
 
     async open(dataOrId = {}) {
-        let data = dataOrId;
+        let data = dataOrId ?? {};
 
         if (typeof dataOrId !== "object") {
             if (!this.api.find) return;
@@ -57,19 +57,15 @@ export class FormController {
         }
 
         const filters = this.controller.state?.filters || {};
-
         Object.entries(filters).forEach(([key, value]) => {
-
             if (value == null || value === "") return;
 
             const kebab = convertKey(key, "camel", "kebab");
-
             const el = document.querySelector(
                 `#${this.formId} [name="${kebab}"], 
                 #${this.formId} [data-key="${kebab}"], 
                 #${this.formId} [data-key="${key}"]`
             );
-
             if (!el) return;
 
             if (data[key] == null || data[key] === "") {

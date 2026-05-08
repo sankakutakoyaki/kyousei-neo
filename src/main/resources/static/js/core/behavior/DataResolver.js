@@ -3,6 +3,7 @@
 import { updateField } from "../../util/utils.js";
 import { api } from "../api/apiService.js";
 import { normalizeValue, getOptions } from "./valueNormalizer.js";
+import { parsers } from "./parsers.js";
 
 const paramBuilders = {
     makerParams: () => ({
@@ -22,9 +23,9 @@ export const DataResolver = {
             if (!idInput || !nameField) return;
 
             /* ID入力中はNameクリア */
-            idInput.addEventListener("input", () => {
-                this.clear(nameField);
-            });
+            // idInput.addEventListener("input", () => {
+            //     this.clear(nameField);
+            // });
 
             /* ID → Name */
             idInput.addEventListener("blur", async () => {
@@ -67,6 +68,19 @@ export const DataResolver = {
             }
             return;
         }
+        // if (nameField.tagName === "SELECT") {
+        //     nameField.addEventListener("change", () => {
+        //             if(document.activeElement === idInput){
+        //                 return;
+        //             }
+        //             updateField(idInput, nameField.value);
+        //             // ★ select空ならIDも空
+        //             if (!nameField.value) {
+        //                 updateField(idInput, "");
+        //             }
+        //         }
+        //     );
+        // }
 
         // それ以外はresolverへ
         const resolver = resolvers[type] || resolvers.default;
@@ -128,7 +142,14 @@ export function resolveSubmitValue(el, value){
             }
         }
     }
-
+    // ★ parser
+    const validateType = el.dataset.validate;
+    if(validateType){
+        const parser = parsers[validateType];
+        if(parser){
+            v = parser(v);
+        }
+    }
     // ★ 共通normalize
     return normalizeValue(
         v,
@@ -350,8 +371,28 @@ const postalResolver = {
     }
 };
 
+/**
+ * リサイクル券番号
+ */
+export function recycleResolver(row){
+    const input = row.querySelector('[name="recycle-number"]');
+    if(!input) return;
+
+    input.addEventListener("input", () => {
+            let v = input.value.replace(/\D/g, "").slice(0, 13);
+            if(v.length > 10){
+                v = v.slice(0,4) + "-" + v.slice(4,10) + "-" + v.slice(10);
+            } else if(v.length > 4){
+                v = v.slice(0,4) + "-" + v.slice(4);
+            }
+            input.value = v;
+        }
+    );
+}
+
 const resolvers = {
     postal: postalResolver,
+    recycle: recycleResolver,
     query: queryResolver,
     default: defaultResolver
 };

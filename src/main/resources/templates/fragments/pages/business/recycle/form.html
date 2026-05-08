@@ -6,7 +6,9 @@
                 {
                     'text':'お問合せ管理票番号',
                     'id':'recycle-number01',
-                    'name':'recycle-number'
+                    'name':'recycle-number',
+                    'validate':'recycle',
+                    'error-message':'リサイクル券番号は13桁です'
                 }}
             )}"></th:block>
         </div>
@@ -62,6 +64,7 @@
                     'combo': 'recycleItemComboList',
                     'top': '-----',
                     'key':'item-id',
+                    'fillKey':'item-code',
                     'submit':'dataset',
                     'submitKey':'parent',
                     'zeroToNull':true
@@ -158,6 +161,7 @@
                     'resolveName':true,
                     'index': 11,
                     'zeroToNull':true,
+                    'skipIfNull':true,
                     'link': 'office02'
                 }}
             )}"></th:block>
@@ -171,6 +175,7 @@
                     'key':'office-id',
                     'resolveName':true,
                     'zeroToNull':true,
+                    'skipIfNull':true,
                     'parent': 'company02',
                     'linkDefault': 'empty'
                 }}
@@ -199,7 +204,8 @@
                     'key':'item-id',
                     'submit':'dataset',
                     'submitKey':'parent',
-                    'zeroToNull':true
+                    'zeroToNull':true,
+                    'skipIfNull':true
                 }}
             )}"></th:block>
         </div>
@@ -249,7 +255,8 @@
                     'type':'date',
                     'action':'date-arrow',
                     'index': 14,
-                    'zeroToNull':true
+                    'zeroToNull':true,
+                    'skipIfNull':true
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -260,7 +267,8 @@
                     'type':'date',
                     'action':'date-arrow',
                     'index': 15,
-                    'zeroToNull':true
+                    'zeroToNull':true,
+                    'skipIfNull':true
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -271,7 +279,8 @@
                     'type':'date',
                     'action':'date-arrow',
                     'index': 16,
-                    'zeroToNull':true
+                    'zeroToNull':true,
+                    'skipIfNull':true
                 }
             })}"></th:block>
         </div>
