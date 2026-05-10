@@ -14,7 +14,7 @@ import com.kyouseipro.neo.corporation.staff.entity.StaffListEntity;
 import com.kyouseipro.neo.corporation.staff.repository.StaffListRepository;
 import com.kyouseipro.neo.interfaces.CodeEnum;
 import com.kyouseipro.neo.qualification.repository.QualificationsRepository;
-import com.kyouseipro.neo.recycle.regist.repository.RecycleRepository2;
+// import com.kyouseipro.neo.recycle.regist.repository.RecycleRepository2;
 import com.kyouseipro.neo.work.item.repository.WorkItemRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class ComboBoxService {
     private final OfficeListRepository officeListRepository;
     private final StaffListRepository staffListRepository;
     private final QualificationsRepository qualificationsRepository;
-    private final RecycleRepository2 recycleRepository;
+    // private final RecycleRepository2 recycleRepository;
     private final WorkItemRepository workItemRepository;
 
     private <E extends Enum<E> & CodeEnum> List<SimpleData> toSimpleDataList(E[] values) {
@@ -254,18 +254,18 @@ public class ComboBoxService {
         return list;        
     }
 
-    // グループ用
-    public List<SimpleData> getRecycleGroupList() {
-        return recycleRepository.findGroupCombo();
-    }
+    // // グループ用
+    // public List<SimpleData> getRecycleGroupList() {
+    //     return recycleRepository.findGroupCombo();
+    // }
 
-    // メーカー用
-    public List<ComboData> getRecycleMakerComboList() {
-        return recycleRepository.findRecycleMakerCombo();
-    }
+    // // メーカー用
+    // public List<ComboData> getRecycleMakerComboList() {
+    //     return recycleRepository.findRecycleMakerCombo();
+    // }
 
-    // 品目用
-    public List<ComboData> getRecycleItemComboList() {
-        return recycleRepository.findRecycleItemCombo();
-    }
+    // // 品目用
+    // public List<ComboData> getRecycleItemComboList() {
+    //     return recycleRepository.findRecycleItemCombo();
+    // }
 }

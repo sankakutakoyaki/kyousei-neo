@@ -29,6 +29,7 @@ export class DataTable {
         this.buildParams = config.buildParams;
         this.buildCsvParams = config.buildCsvParams;
         this.api = config.api || {};
+        this.canSave = config.canSave;
 
         this.tableEl = document.getElementById(this.tableId);
         

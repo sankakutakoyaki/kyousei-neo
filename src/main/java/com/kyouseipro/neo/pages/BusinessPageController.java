@@ -36,7 +36,8 @@ public class BusinessPageController extends BaseController {
     public Map<String, Object> initRecycle() {
         return Map.of(
             "common", Map.of(
-                "state", EnumUtil.toMap(State.class)
+                "state", EnumUtil.toMap(State.class),
+                "recycleCategory", EnumUtil.toMap(RecycleCategory.class)
             ),
             "page", Map.of(
                 "recycleItemComboList", recycleService.findItemCombo(),

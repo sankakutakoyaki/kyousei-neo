@@ -5,7 +5,6 @@
             <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${
                 {
                     'bulkEdit' : 'edit-btn-01',
-                    'form' : 'form-01',
                     'delete' : 'delete-btn-01',
                     'download' : 'download-btn-01'
                 }}
@@ -25,24 +24,175 @@
             <th:block th:replace="~{fragments/components/box :: dateRangeFragment(${
                 {
                     'fromText':'開始日',
-                    'fromId':'dateFrom01',
-                    'fromName':'dateFrom',
+                    'fromId':'date-from01',
+                    'fromName':'date-from',
                     'toText':'終了日',
-                    'toId':'dateTo01',
-                    'toName':'dateTo'
+                    'toId':'date-to01',
+                    'toName':'date-to'
                 }}
             )}"></th:block>
             <div class="form-parts">
                 <label></label>
                 <div>
-                    <th:block th:replace="~{fragments/components/btn :: dayMoveBtnFragment('dateFrom01','dateTo01')}" />
-                    <th:block th:replace="~{fragments/components/btn :: weekMoveBtnFragment('dateFrom01','dateTo01')}" />
-                    <th:block th:replace="~{fragments/components/btn :: monthMoveBtnFragment('dateFrom01','dateTo01')}" />                    
+                    <th:block th:replace="~{fragments/components/btn :: dayMoveBtnFragment('date-from01','date-to01')}" />
+                    <th:block th:replace="~{fragments/components/btn :: weekMoveBtnFragment('date-from01','date-to01')}" />
+                    <th:block th:replace="~{fragments/components/btn :: monthMoveBtnFragment('date-from01','date-to01')}" />                    
                 </div>
             </div>
             <div class="form-parts">
                 <label></label>
                 <button class="normal-btn ok" type="button" id="search-btn" data-action="search">検索</button>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="header02Fragment()">
+    <div id="header-02" class="flex-area pc-style" data-enterfocus="header-02">
+        <div>
+            <!-- お問合せ管理票番号 -->
+            <div data-resolve="recycle">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text':'お問合せ管理票番号',
+                        'id':'recycle-number01',
+                        'name':'recycle-number',
+                        'validate':'recycle',
+                        'error-message':'リサイクル券番号は13桁です',
+                        'index': 1
+                    }}
+                )}"></th:block>
+            </div>
+            <!-- スキップ設定 -->
+            <div class="skip-area">
+                <label class="skip-item">
+                    <input type="checkbox" data-skip-target="company02" checked>小売業者
+                </label>
+                <label class="skip-item">
+                    <input type="checkbox" data-skip-target="office02" checked>支店
+                </label>
+                <label class="skip-item">
+                    <input type="checkbox" data-skip-target="use-date02" checked>使用日
+                </label>
+                <label class="skip-item">
+                    <input type="checkbox" data-skip-target="item-code02">品目
+                </label>
+                <label class="skip-item">
+                    <input type="checkbox" data-skip-target="maker-code02">製造業者
+                </label>
+            </div>
+        </div>
+        <!-- 会社名 -->
+        <div data-resolve="client" >
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                { 
+                    'text': '小売業者',
+                    'id':'company02',
+                    'name': 'company-id', 
+                    'combo': 'clientComboList',
+                    'top': '-----',
+                    'key': 'company-id',
+                    'resolveName':true,
+                    'index': 2,
+                    'zeroToNull':true,
+                    'link': 'office02'
+                }}
+            )}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'支店名', 
+                    'id':'office02',
+                    'name': 'office-id',
+                    'combo': 'officeComboList',
+                    'top': '-----',
+                    'key':'office-id',
+                    'resolveName':true,
+                    'zeroToNull':true,
+                    'parent': 'company02',
+                    'linkDefault': 'empty'
+                }}
+            )}"></th:block>
+        </div>
+        <div>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text':'使用日',
+                    'id':'use-date02',
+                    'name':'use-date',
+                    'type':'date',
+                    'action':'date-arrow',
+                    'index': 3,
+                    'zeroToNull':true,
+                    'action':'filter'
+                }
+            })}"></th:block>
+            <!-- 品目 -->
+            <div data-resolve="item-code">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text':'コード',
+                        'id':'item-code02',
+                        'name':'item-code',
+                        'resolveId':true,
+                        'index':4,
+                        'submit':'none'
+                    }}
+                )}"></th:block>
+                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                    {
+                        'text':'品目', 
+                        'id':'item-name02', 
+                        'name':'item-name',
+                        'resolveName':true,
+                        'combo': 'recycleItemComboList',
+                        'top': '-----',
+                        'key':'item-id',
+                        'fillKey':'item-code',
+                        'submit':'dataset',
+                        'submitKey':'parent',
+                        'zeroToNull':true
+                    }}
+                )}"></th:block>
+            </div>
+            <!-- 製造業者等名 -->
+            <div class="form-row"
+                    data-resolve="query"
+                    data-query-id="recycleMakerList"
+                    data-param-builder="makerParams"
+                    data-id-key="code"
+                    data-name-key="abbrName"
+                    data-value-key="recycleMakerId">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text':'コード',
+                        'id':'maker-code02',
+                        'name':'maker-code',
+                        'resolveId':true,
+                        'submit':'none',
+                        'index':5
+                    }}
+                )}"></th:block>
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text':'製造業者等名', 
+                        'id':'maker-name02', 
+                        'name':'maker-name',
+                        'resolveName':true,
+                        'submit':'none',
+                        'disabled':true
+                    }}
+                )}"></th:block>
+                <input
+                    type="hidden"
+                    data-role="hidden-id"
+                    name="maker-id"
+                    data-key="maker-id"
+                    data-skip-if-null="true"
+                    data-zero-to-null="true">
+            </div>
+            <div class="form-parts">
+                <label></label>
+                <button class="normal-btn ok" name="submitBtn" type="button" data-action="save" data-scope="table" tabindex="6">登録</button>
             </div>
         </div>
     </div>

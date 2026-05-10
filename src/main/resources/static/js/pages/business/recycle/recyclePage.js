@@ -3,7 +3,7 @@
 import { initCommon } from "../../../core/init/initPage.js";
 import { PageController } from "../../../controllers/PageController.js";
 import { DataTable } from "../../../core/table/DataTable.js";
-import { createRecycleListColumns } from "./columns.js";
+import { createRecycleListColumns, createRecycleUseColumns } from "./columns.js";
 import { FormController } from "../../../controllers/FormController.js";
 import { registerController } from "../../../controllers/controllers.js";
 import { filterFactory } from "../../../util/filterFactory.js";
@@ -35,6 +35,16 @@ export async function init() {
     });
     await list.actions.search(list);
     
+    // tab
+    const use = recycleUsePage();
+    registerController("recycleUse", use);
+
+    await use.init({
+        columns: createRecycleUseColumns(use),
+        data: [],
+        components: { combo: true, input: true }
+    });
+
     initParentChildLink();
 }
 
@@ -45,8 +55,8 @@ export const recycleListPage = () => {
 
         onInit: () => {
             const today = getToday();
-            const from = document.querySelector("[name='dateFrom']");
-            const to   = document.querySelector("[name='dateTo']");
+            const from = document.querySelector("[name='date-from']");
+            const to   = document.querySelector("[name='date-to']");
             if (from && !from.value) from.value = today;
             if (to && !to.value) to.value = today;
         },
@@ -68,8 +78,8 @@ export const recycleListPage = () => {
                 checkable: true,
                 buildParams: () => {
                     const cate = document.querySelector("[name='category01']")?.value;
-                    const from = document.querySelector("[name='dateFrom']")?.value;
-                    const to   = document.querySelector("[name='dateTo']")?.value;
+                    const from = document.querySelector("[name='date-from']")?.value;
+                    const to   = document.querySelector("[name='date-to']")?.value;
                     return {
                         state: APP.cache.common.state.INITIAL,
                         category: cate,
@@ -105,54 +115,6 @@ export const recycleListPage = () => {
                         // saveQueryId: "recycleBulkUpdate"
                         saveQueryId: "recycleSave"
                     })
-                // create: (controller) => new FormController({
-                //     controller: controller,
-                //     formId: "form-01",
-                //     key: controller.key,
-                //     onSaved: async (id) => {
-                //         await controller.dataTable.refresh();
-                //         controller.scrollToRow(id);
-
-                //         // dispatchAction({
-                //         //     action: "recycleChanged",
-                //         //     target: ["recycleUse", "recycleDeli", "recycleShip", "recycleLoss"]
-                //         // });
-                //     },
-                //     buildParams: (id) => ({
-                //         state: APP.cache.common.state.INITIAL,
-                //         recycleId: id
-                //     }),
-                //     businessValidate: async (payload) => {
-                //         const table = controller.dataTable;
-                //         const ids = controller.state.bulkMode ? table.model.getSelectedIds(): [payload.recycleId];
-                //         for(const id of ids){
-                //             const origin = table.model.findOriginById(id);
-                //             validatePersisted(
-                //                 payload,
-                //                 origin,
-                //                 "useDate",
-                //                 "使用日"
-                //             );
-                //             validatePersisted(
-                //                 payload,
-                //                 origin,
-                //                 "deliveryDate",
-                //                 "引渡日"
-                //             );
-                //             validatePersisted(
-                //                 payload,
-                //                 origin,
-                //                 "shippingDate",
-                //                 "発送日"
-                //             );
-                //         }
-                //     },
-                //     api: {
-                //         request: api.request,
-                //         find: "recycleDetail",
-                //         save: "recycleBulkUpdate"
-                //     }
-                // })
             }
         }
     });
@@ -190,6 +152,49 @@ const createRecycleForm = (controller, options = {}) =>
             save: options.saveQueryId
         }
     });
+
+export const recycleUsePage = () => {
+    const controller = new PageController({
+        key:"recycleUse",
+
+        onInit: () => {
+            const today = getToday();
+            const from = document.querySelector("[name='use-date']");
+            if (from && !from.value) from.value = today;
+            // document.querySelector("#header-02") ?.addEventListener("input", () => {controller.updateButtons();});
+        },
+
+        table: {
+            create: (controller, columns) => new DataTable({
+                controller: controller,
+                tableId: "table-02",
+                footerId: "footer-02",
+                columns,
+                idKey: "recycleId",
+                checkable: true,
+                buildParams: () => {
+                    const from = document.querySelector("[name='use-date']")?.value;
+                    return {
+                        state: APP.cache.common.state.INITIAL,
+                        category: String(APP.cache.common.recycleCategory.USE),
+                        dateFrom: from,
+                        dateTo: toExclusiveDate(from)
+                    };
+                },
+                api: {
+                    request: api.request, // 取得方法定義
+                    select: "recycleList"
+                },
+                canSave: () => {
+                    const recycle = document.querySelector("#header-02 [name='recycle-number']")?.value;
+                    return recycle?.trim() !== "";
+                },
+                onDoubleClick:(item) => controller.openForm("detail", item.recycleId, { bulkMode:false })
+            })
+        }
+    });
+    return controller;
+};
 
 function validatePersisted(
     payload,

@@ -68,6 +68,21 @@ input.normal-chk[type="checkbox"]:checked:before {
     gap: 4px;              /* ボックスと文字の間隔 */
 }
 
+.skip-area{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding-bottom:4px;
+}
+
+.skip-item{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    white-space:nowrap;
+    font-size:13px;
+}
+
 /******************************************************************************************************* 検索ボックス */
 
 .search-box {

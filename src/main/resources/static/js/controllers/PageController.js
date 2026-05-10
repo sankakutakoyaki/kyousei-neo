@@ -13,7 +13,19 @@ const defaultConditions = {
     bulkEdit: (c) => c.dataTable?.hasSelection(),
     delete: (c) => c.dataTable?.hasSelection(),
     download: (c) => c.dataTable?.hasSelection(),
-    save: (c) => c.getActiveForm()?.canSubmit()
+    // save: (c) => c.getActiveForm()?.canSubmit()
+    save: (c, btn) => {
+        const scope = btn.dataset.scope;
+        // table save
+        if(scope === "table"){
+            return c.dataTable?.canSave?.();
+        }
+        // form save
+        if(scope === "form"){
+            return c.getActiveForm()?.canSubmit?.();
+        }
+        return false;
+    }
 };
 
 // const defaultActions = {
@@ -87,6 +99,7 @@ export class PageController {
         };
         this.initComponents();
         this.initUI();
+        this.initButtonAutoUpdate();
 
         if (this.config.onInit) {
             this.config.onInit(this);
@@ -127,6 +140,25 @@ export class PageController {
         if(components?.input){
             this.components.input = createInputComponent(this);
         }
+    }
+
+    initButtonAutoUpdate(){
+        document.addEventListener("input", e => {
+            const controller =  resolveController(e.target);
+            // 自分の画面以外は無視
+            if(controller !== this){
+                return;
+            }
+            this.updateButtons();
+        });
+
+        document.addEventListener("change", e => {
+            const controller = resolveController(e.target);
+            if(controller !== this){
+                return;
+            }
+            this.updateButtons();
+        });
     }
 
     // 検索
@@ -243,11 +275,11 @@ export class PageController {
     /**
      * ボタンの状態判定
      */
-    isEnabled(action){
+    isEnabled(action, btn){
         const fn = this.conditions[action];
         if(!fn) return true;
 
-        return fn(this);
+        return fn(this, btn);
     }
 
     /**
@@ -264,7 +296,7 @@ export class PageController {
             if(controller !== this) return;
 
             const action = el.dataset.action;
-            const enabled = this.isEnabled(action);
+            const enabled = this.isEnabled(action, el);
 
             if("disabled" in el){
                 el.disabled = !enabled;

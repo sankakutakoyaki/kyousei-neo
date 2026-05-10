@@ -347,14 +347,14 @@ export class FormController {
     // }
 
     canSubmit(){
-        return this.hasChanges() && this.hasValidInput();
-        // // ★ 新規（これ重要）
-        // if(!this.currentEntity || !this.currentEntity[this.key]){
-        //     return this.hasValidInput();
-        // }
+        // return this.hasChanges() && this.hasValidInput();
+        // ★ 新規
+        if(!this.currentEntity || !this.currentEntity[this.key]){
+            return this.hasValidInput();
+        }
 
-        // // 編集
-        // return this.hasChanges();
+        // 編集
+        return this.hasChanges();
     }
 
     setSubmitEnabled(enabled){

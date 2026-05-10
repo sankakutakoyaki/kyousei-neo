@@ -125,7 +125,7 @@ export function setEnterFocus() {
                             }
 
                             // display:noneでない場合はフォーカスして終了
-                            if (nextElement.style.display !== "none" && (nextElement.offsetParent !== null || nextElement.style.position === "fixed")) {
+                            if (nextElement.style.display !== "none" && (nextElement.offsetParent !== null || nextElement.style.position === "fixed") && !isSkipFocusElement(nextElement)) {
                                 nextElement.focus();
                                 break;
                             }
@@ -145,7 +145,7 @@ export function setEnterFocus() {
                             }
 
                             // display:noneでない場合はフォーカスして終了
-                            if (nextElement.style.display !== "none" && (nextElement.offsetParent !== null || nextElement.style.position === "fixed")) {
+                            if (nextElement.style.display !== "none" && (nextElement.offsetParent !== null || nextElement.style.position === "fixed") && !isSkipFocusElement(nextElement)) {
                                 nextElement.focus();
                                 break;
                             }
@@ -209,3 +209,16 @@ const config = {
 
 // mutation observer監視開始
 observer.observe(document.body, config);
+
+//　チェックボックスでスキップ設定
+function isSkipFocusElement(target){
+    if(!target?.id){
+        return false;
+    }
+
+    const checkbox = document.querySelector(
+        `[data-skip-target='${target.id}']`
+    );
+
+    return checkbox?.checked === true;
+}

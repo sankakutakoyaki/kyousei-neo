@@ -307,6 +307,7 @@ function setFooterButtons(dialog, isConfirm, submitCallback, closeCallback) {
 
     closeBtn.onclick = onClose;
 
+    submitBtn.dataset.scope = "form";
     submitBtn.textContent = "はい";
     submitBtn.focus();
 }
