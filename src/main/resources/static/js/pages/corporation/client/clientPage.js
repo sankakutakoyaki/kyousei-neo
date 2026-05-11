@@ -27,7 +27,8 @@ export async function init() {
         data: [],
         components: { combo: true }
     });
-    await company.dataTable.refresh();
+    // await company.dataTable.refresh();
+    await company.refresh();
 
     // tab2
     const office = clientOfficePage();
@@ -45,7 +46,8 @@ export async function init() {
             }
         }
     });
-    await office.dataTable.refresh();
+    // await office.dataTable.refresh();
+    await office.refresh();
 
     // tab3
     const staff = clientStaffPage();
@@ -68,7 +70,8 @@ export async function init() {
             }
         }
     });
-    await staff.dataTable.refresh();
+    // await staff.dataTable.refresh();
+    await staff.refresh();
 
     initParentChildLink();
 }
@@ -114,35 +117,38 @@ export const clientCompanyPage = () => {
                 onDoubleClick: (item) => controller.openEdit(item.companyId)
             })
         },
-        form: {
-            create: (controller) => new FormController({
-                controller: controller,
-                formId: "form-01",
-                key: controller.key,
-                businessValidate: (payload) => {
-                    if (!payload.category) {
-                        throw { message: "分類を選択してください", field: "category" };
-                    }
-                },
-                onSaved: async (id) => {
-                    await controller.dataTable.refresh();
-                    controller.scrollToRow(id);
+        forms: {
+            detail: {
+                create: (controller) => new FormController({
+                    controller: controller,
+                    formId: "form-01",
+                    key: controller.key,
+                    businessValidate: (payload) => {
+                        if (!payload.category) {
+                            throw { message: "分類を選択してください", field: "category" };
+                        }
+                    },
+                    onSaved: async (id) => {
+                        // await controller.dataTable.refresh();
+                        // controller.scrollToRow(id);
+                        await controller.refresh(id);
 
-                    dispatchAction({
-                        action: "companyChanged",
-                        target: ["clientOffice", "clientStaff"]
-                    });
-                },
-                buildParams: (id) => ({
-                    state: APP.cache.common.state.INITIAL,
-                    companyId: id
-                }),
-                api: {
-                    request: api.request,
-                    find: "companyDetail",
-                    save: "companySave"
-                }
-            })
+                        dispatchAction({
+                            action: "companyChanged",
+                            target: ["clientOffice", "clientStaff"]
+                        });
+                    },
+                    buildParams: (id) => ({
+                        state: APP.cache.common.state.INITIAL,
+                        companyId: id
+                    }),
+                    api: {
+                        request: api.request,
+                        find: "companyDetail",
+                        save: "companySave"
+                    }
+                })
+            }
         }
     });
     return controller;
@@ -189,29 +195,32 @@ export const clientOfficePage = () => {
                 onDoubleClick: (item) => controller.openEdit(item.officeId),
             })
         },
-        form: {
-            create: (controller) => new FormController({
-                formId: "form-02",
-                key: controller.key,
-                controller: controller, 
-                onSaved: async (id) => {
-                    await controller.dataTable.refresh();
-                    controller.scrollToRow(id);
-                    dispatchAction({
-                        action: "officeChanged",
-                        target: ["clientOffice", "clientStaff"]
-                    });
-                },
-                buildParams: (id) => ({
-                    state: APP.cache.common.state.INITIAL,
-                    officeId: id                   
-                }),
-                api: {
-                    request: api.request,
-                    find: "officeDetail",
-                    save: "officeSave"
-                }
-            })
+        forms: {
+            detail: {
+                create: (controller) => new FormController({
+                    formId: "form-02",
+                    key: controller.key,
+                    controller: controller, 
+                    onSaved: async (id) => {
+                        // await controller.dataTable.refresh();
+                        // controller.scrollToRow(id);
+                        await controller.refresh(id);
+                        dispatchAction({
+                            action: "officeChanged",
+                            target: ["clientOffice", "clientStaff"]
+                        });
+                    },
+                    buildParams: (id) => ({
+                        state: APP.cache.common.state.INITIAL,
+                        officeId: id                   
+                    }),
+                    api: {
+                        request: api.request,
+                        find: "officeDetail",
+                        save: "officeSave"
+                    }
+                })
+            }
         }
     });
     return controller;
@@ -252,25 +261,28 @@ export const clientStaffPage = () => {
                 onDoubleClick: (item) => controller.openEdit(item.staffId),
             })
         },
-        form: {
-            create: (controller) => new FormController({
-                formId: "form-03",
-                key: controller.key,
-                controller: controller, 
-                onSaved: async (id) => {
-                    await controller.dataTable.refresh();
-                    controller.scrollToRow(id);
-                },
-                buildParams: (id) => ({
-                    state: APP.cache.common.state.INITIAL,
-                    staffId: id
-                }),
-                api: {
-                    request: api.request,
-                    find: "staffDetail",
-                    save: "staffSave"
-                }
-            })
+        forms: {
+            detail: {
+                create: (controller) => new FormController({
+                    formId: "form-03",
+                    key: controller.key,
+                    controller: controller, 
+                    onSaved: async (id) => {
+                        // await controller.dataTable.refresh();
+                        // controller.scrollToRow(id);
+                        await controller.refresh(id);
+                    },
+                    buildParams: (id) => ({
+                        state: APP.cache.common.state.INITIAL,
+                        staffId: id
+                    }),
+                    api: {
+                        request: api.request,
+                        find: "staffDetail",
+                        save: "staffSave"
+                    }
+                })
+            }
         }
     });
     return controller;

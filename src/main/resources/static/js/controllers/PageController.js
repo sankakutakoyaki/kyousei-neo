@@ -353,6 +353,23 @@ export class PageController {
         const ids = this.dataTable.model.getSelectedIds();
         return ids[0] ?? null;
     }
+
+    async refresh(targetId = null){
+        if(!this.dataTable) return;
+        await this.dataTable.refresh();
+        if(targetId){
+            this.scrollToRow(targetId);
+        }
+    }
+
+    scrollToRow(id){
+        if(!id) return;
+
+        const row = document.querySelector(`[data-id="${id}"]`);
+        if(row){
+            row.scrollIntoView({block:"center"});
+        }
+    }
 }
 
 

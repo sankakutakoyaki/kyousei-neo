@@ -26,7 +26,8 @@ export async function init() {
         data: [],
         components: { combo: true }
     });
-    await fulltime.dataTable.refresh();
+    // await fulltime.dataTable.refresh();
+    await fulltime.refresh();
 
     // tab2
     const parttime = parttimeEmployeePage();
@@ -37,7 +38,8 @@ export async function init() {
         data: [],
         components: { combo: true, input: true }
     });
-    await parttime.dataTable.refresh();
+    // await parttime.dataTable.refresh();
+    await parttime.refresh();
 }
 
 export const fulltimeEmployeePage = () => {
@@ -74,41 +76,44 @@ export const fulltimeEmployeePage = () => {
                 onDoubleClick: (item) => controller.openEdit(item.employeeId),
             })
         },
-        form: {
-            create: (controller) => new FormController({
-                formId: "form-01",
-                key: controller.key,
-                controller: controller, 
-                businessValidate: (payload) => {
-                    if (!payload.officeId) {
-                        throw { message: "営業所を選択してください", field: "officeId" };
+        forms: {
+            detail: {
+                create: (controller) => new FormController({
+                    formId: "form-01",
+                    key: controller.key,
+                    controller: controller, 
+                    businessValidate: (payload) => {
+                        if (!payload.officeId) {
+                            throw { message: "営業所を選択してください", field: "officeId" };
+                        }
+                    },
+                    beforeSave: (payload, form) => {
+                        const key = form.dataset.key;
+                        const id = payload[key];
+                        if (!id || Number(id) === 0) {
+                            payload.category = APP.cache.common.employeeCategory.FULLTIME;
+                        }
+                        const code = payload.code;
+                        if (!code || Number(code) === 0) {
+                            payload.code = 0;
+                        }
+                    },
+                    onSaved: async (id) => {
+                        // await controller.dataTable.refresh();
+                        // controller.scrollToRow(id);
+                        await controller.refresh(id);
+                    },
+                    buildParams: (id) => ({
+                        state: APP.cache.common.state.INITIAL,
+                        employeeId: id                   
+                    }),
+                    api: {
+                        request: api.request,
+                        find: "employeeDetail",
+                        save: "employeeSave"
                     }
-                },
-                beforeSave: (payload, form) => {
-                    const key = form.dataset.key;
-                    const id = payload[key];
-                    if (!id || Number(id) === 0) {
-                        payload.category = APP.cache.common.employeeCategory.FULLTIME;
-                    }
-                    const code = payload.code;
-                    if (!code || Number(code) === 0) {
-                        payload.code = 0;
-                    }
-                },
-                onSaved: async (id) => {
-                    await controller.dataTable.refresh();
-                    controller.scrollToRow(id);
-                },
-                buildParams: (id) => ({
-                    state: APP.cache.common.state.INITIAL,
-                    employeeId: id                   
-                }),
-                api: {
-                    request: api.request,
-                    find: "employeeDetail",
-                    save: "employeeSave"
-                }
-            })
+                })
+            }
         }
     });
     return controller;
@@ -148,41 +153,44 @@ export const parttimeEmployeePage = () => {
                 onDoubleClick: (item) => controller.openEdit(item.employeeId),
             })
         },
-        form: {
-            create: (controller) => new FormController({
-                formId: "form-01",
-                key: controller.key,
-                controller: controller,
-                businessValidate: (payload) => {
-                    if (!payload.officeId) {
-                        throw { message: "営業所を選択してください", field: "officeId" };
+        forms: {
+            detail:{
+                create: (controller) => new FormController({
+                    formId: "form-01",
+                    key: controller.key,
+                    controller: controller,
+                    businessValidate: (payload) => {
+                        if (!payload.officeId) {
+                            throw { message: "営業所を選択してください", field: "officeId" };
+                        }
+                    },
+                    beforeSave: (payload, form) => {
+                        const key = form.dataset.key;
+                        const id = payload[key];
+                        if (!id || Number(id) === 0) {
+                            payload.category = APP.cache.common.employeeCategory.PARTTIME;
+                        }
+                        const code = payload.code;
+                        if (!code || Number(code) === 0) {
+                            payload.code = 0;
+                        }
+                    },
+                    onSaved: async (id) => {
+                        // await controller.dataTable.refresh();
+                        // controller.scrollToRow(id);
+                        await controller.refresh(id);
+                    },
+                    buildParams: (id) => ({
+                        state: APP.cache.common.state.INITIAL,
+                        employeeId: id                   
+                    }),
+                    api: {
+                        request: api.request,
+                        find: "employeeDetail",
+                        save: "employeeSave"
                     }
-                },
-                beforeSave: (payload, form) => {
-                    const key = form.dataset.key;
-                    const id = payload[key];
-                    if (!id || Number(id) === 0) {
-                        payload.category = APP.cache.common.employeeCategory.PARTTIME;
-                    }
-                    const code = payload.code;
-                    if (!code || Number(code) === 0) {
-                        payload.code = 0;
-                    }
-                },
-                onSaved: async (id) => {
-                    await controller.dataTable.refresh();
-                    controller.scrollToRow(id);
-                },
-                buildParams: (id) => ({
-                    state: APP.cache.common.state.INITIAL,
-                    employeeId: id                   
-                }),
-                api: {
-                    request: api.request,
-                    find: "employeeDetail",
-                    save: "employeeSave"
-                }
-            })
+                })
+            }
         }
     });
     return controller;

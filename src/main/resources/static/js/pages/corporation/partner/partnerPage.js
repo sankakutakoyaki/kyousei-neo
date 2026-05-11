@@ -26,7 +26,8 @@ export async function init() {
         data: [],
         components: { combo: true }
     });
-    await company.dataTable.refresh();
+    // await company.dataTable.refresh();
+    await company.refresh();
 
     // tab2
     const employee = partnerEmployeePage();
@@ -47,7 +48,8 @@ export async function init() {
         }
     });
 
-    await employee.dataTable.refresh();
+    // await employee.dataTable.refresh();
+    await employee.refresh();
 }
 
 export const partnerCompanyPage = () => {
@@ -89,44 +91,47 @@ export const partnerCompanyPage = () => {
                 onDoubleClick: (item) => controller.openEdit(item.companyId)
             })
         },
-        form: {
-            create: (controller) => new FormController({
-                controller: controller,
-                formId: "form-01",
-                key: controller.key,
-                beforeSave: (payload, form) => {
-                    // const id = payload[controller.key];
-                    const key = form.dataset.key;
-                    const id = payload[key];
-                    if (!id || Number(id) === 0) {
-                        payload.category = APP.cache.common.companyCategory.PARTNER;
-                    }
-                },
-                onSaved: async (id) => {
-                    await controller.dataTable.refresh();
-                    controller.scrollToRow(id);
+        forms: {
+            detail: {
+                create: (controller) => new FormController({
+                    controller: controller,
+                    formId: "form-01",
+                    key: controller.key,
+                    beforeSave: (payload, form) => {
+                        // const id = payload[controller.key];
+                        const key = form.dataset.key;
+                        const id = payload[key];
+                        if (!id || Number(id) === 0) {
+                            payload.category = APP.cache.common.companyCategory.PARTNER;
+                        }
+                    },
+                    onSaved: async (id) => {
+                        // await controller.dataTable.refresh();
+                        // controller.scrollToRow(id);
+                        await controller.refresh(id);
 
-                    // window.dispatchEvent(new CustomEvent("partnerCompany:changed", {
-                    //     detail: { id }
-                    // }));
-                    dispatchAction({
-                        action: "companyChanged",
-                        target: "partnerEmployee",
-                        // data: { companyId: id }
-                    });
-                },
-                buildParams: (id) => ({
-                    state: APP.cache.common.state.INITIAL,
-                    companyId: id
-                }),
-                api: {
-                    request: api.request,
-                    // find: "partnerCompanyDetail",
-                    // save: "partnerCompanySave"
-                    find: "companyDetail",
-                    save: "companySave"
-                }
-            })
+                        // window.dispatchEvent(new CustomEvent("partnerCompany:changed", {
+                        //     detail: { id }
+                        // }));
+                        dispatchAction({
+                            action: "companyChanged",
+                            target: "partnerEmployee",
+                            // data: { companyId: id }
+                        });
+                    },
+                    buildParams: (id) => ({
+                        state: APP.cache.common.state.INITIAL,
+                        companyId: id
+                    }),
+                    api: {
+                        request: api.request,
+                        // find: "partnerCompanyDetail",
+                        // save: "partnerCompanySave"
+                        find: "companyDetail",
+                        save: "companySave"
+                    }
+                })
+            }
         }
     });
     return controller;
@@ -166,42 +171,45 @@ export const partnerEmployeePage = () => {
                 onDoubleClick: (item) => controller.openEdit(item.employeeId),
             })
         },
-        form: {
-            create: (controller) => new FormController({
-                formId: "form-02",
-                key: controller.key,
-                controller: controller, 
-                businessValidate: (payload) => {console.log(payload)
-                    if (!payload.companyId) {
-                        throw { message: "会社を選択してください", field: "companyId" };
+        forms: {
+            detail: {
+                create: (controller) => new FormController({
+                    formId: "form-02",
+                    key: controller.key,
+                    controller: controller, 
+                    businessValidate: (payload) => {console.log(payload)
+                        if (!payload.companyId) {
+                            throw { message: "会社を選択してください", field: "companyId" };
+                        }
+                    },
+                    beforeSave: (payload, form) => {
+                        // const id = payload[controller.key];
+                        const key = form.dataset.key;
+                        const id = payload[key];
+                        if (!id || Number(id) === 0) {
+                            payload.category = APP.cache.common.employeeCategory.CONSTRUCT;
+                        }
+                        const code = payload.code;
+                        if (!code || Number(code) === 0) {
+                            payload.code = 0;
+                        }
+                    },
+                    onSaved: async (id) => {
+                        // await controller.dataTable.refresh();
+                        // controller.scrollToRow(id);
+                        await controller.refresh(id);
+                    },
+                    buildParams: (id) => ({
+                        state: APP.cache.common.state.INITIAL,
+                        employeeId: id                   
+                    }),
+                    api: {
+                        request: api.request,
+                        find: "employeeDetail",
+                        save: "employeeSave"
                     }
-                },
-                beforeSave: (payload, form) => {
-                    // const id = payload[controller.key];
-                    const key = form.dataset.key;
-                    const id = payload[key];
-                    if (!id || Number(id) === 0) {
-                        payload.category = APP.cache.common.employeeCategory.CONSTRUCT;
-                    }
-                    const code = payload.code;
-                    if (!code || Number(code) === 0) {
-                        payload.code = 0;
-                    }
-                },
-                onSaved: async (id) => {
-                    await controller.dataTable.refresh();
-                    controller.scrollToRow(id);
-                },
-                buildParams: (id) => ({
-                    state: APP.cache.common.state.INITIAL,
-                    employeeId: id                   
-                }),
-                api: {
-                    request: api.request,
-                    find: "employeeDetail",
-                    save: "employeeSave"
-                }
-            })
+                })
+            }
         }
     });
     return controller;

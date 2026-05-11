@@ -28,8 +28,9 @@ export async function init() {
         data: [],
         components: { combo: true, input: true },
         actions: {
-            search: async (c) => {
-                await c.dataTable.refresh();
+            search: async (controller) => {
+                // await c.dataTable.refresh();
+                await controller.refresh();
             }
         }
     });
@@ -49,10 +50,8 @@ export async function init() {
 }
 
 export const recycleListPage = () => {
-
     const controller = new PageController({
         key:"recycleList",
-
         onInit: () => {
             const today = getToday();
             const from = document.querySelector("[name='date-from']");
@@ -128,8 +127,9 @@ const createRecycleForm = (controller, options = {}) =>
         formId: options.formId,
         key: controller.key,
         onSaved: async (id) => {
-            await controller.dataTable.refresh();
-            controller.scrollToRow(id);
+            // await controller.dataTable.refresh();
+            // controller.scrollToRow(id);
+            await controller.refresh(id);
         },
         buildParams: (id) => ({
             state:APP.cache.common.state.INITIAL,
@@ -138,9 +138,12 @@ const createRecycleForm = (controller, options = {}) =>
         businessValidate:
             async (payload) => {
                 const table =  controller.dataTable;
-                const ids = controller.state.bulkMode ? table.model.getSelectedIds(): [payload.recycleId];
+                // const ids = controller.state.bulkMode ? table.model.getSelectedIds(): [payload.recycleId];
+                const ids = controller.state.bulkMode ? table.getSelectedIds(): [payload.recycleId];
+
                 for(const id of ids){
-                    const origin = table.model.findOriginById(id);
+                    // const origin = table.model.findOriginById(id);
+                    const origin = table.findOriginById(id);
                     validatePersisted(payload, origin, "useDate", "使用日");
                     validatePersisted(payload, origin, "deliveryDate", "引渡日");
                     validatePersisted(payload, origin, "shippingDate", "発送日");
@@ -161,7 +164,6 @@ export const recycleUsePage = () => {
             const today = getToday();
             const from = document.querySelector("[name='use-date']");
             if (from && !from.value) from.value = today;
-            // document.querySelector("#header-02") ?.addEventListener("input", () => {controller.updateButtons();});
         },
 
         table: {
@@ -185,6 +187,7 @@ export const recycleUsePage = () => {
                     request: api.request, // 取得方法定義
                     select: "recycleList"
                 },
+                // ボタン disabled 制御
                 canSave: () => {
                     const recycle = document.querySelector("#header-02 [name='recycle-number']")?.value;
                     return recycle?.trim() !== "";

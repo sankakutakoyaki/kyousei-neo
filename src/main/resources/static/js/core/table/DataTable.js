@@ -29,6 +29,7 @@ export class DataTable {
         this.buildParams = config.buildParams;
         this.buildCsvParams = config.buildCsvParams;
         this.api = config.api || {};
+        // 移動予定
         this.canSave = config.canSave;
 
         this.tableEl = document.getElementById(this.tableId);
@@ -55,24 +56,10 @@ export class DataTable {
         this.initEvents();
     }
 
-    // -------------------------
     // 状態操作
-    // -------------------------
-    // set(key,value){
-    //     this.model.set(key,value);
-    //     this.reload(); // ★ここで自動再描画
-    // }
-
-    // setMany(obj){
-    //     Object.entries(obj).forEach(([k,v])=>{
-    //         this.model.set(k,v);
-    //     });
-    //     this.reload();
-    // }
-
     setData(list){
         this.model.setOrigin(list);
-        this.reload();
+        // this.reload();
     }
 
     // 初期表示
@@ -81,13 +68,6 @@ export class DataTable {
         this.reload();
     }
 
-    // async fetch(){
-    //     if(!this.api.select) return;
-
-    //     const params = this.buildParams ? this.buildParams() : {};
-    //     const res = await this.api.select(params);
-    //     this.model.setOrigin(res.data ?? res);
-    // }
     async fetch(){
         if(!this.api.select) return;
 
@@ -98,16 +78,6 @@ export class DataTable {
         });
         this.model.setOrigin(res.data ?? []);
     }
-
-    // async deleteByIds(ids){
-    //     if(!this.api.delete) return;
-
-    //     const result = await this.api.delete(ids);
-    //     // const result = await api.post(this.api.delete, { ids });
-    //     await this.refresh();
-
-    //     return result;
-    // }
 
     async deleteByIds(ids){
         if(!this.api.delete) return;
@@ -169,11 +139,16 @@ export class DataTable {
         return this.model.getSelectedIds().length > 0;
     }
 
-    // -------------------------
-    // イベント
-    // -------------------------
-    initEvents(){
+    getSelectedIds(){
+        return this.model.getSelectedIds();
+    }
 
+    findOriginById(id){
+        return this.model.findOriginById(id);
+    }
+
+    // イベント
+    initEvents(){
         const table = this.tableEl.closest('.normal-table');
         if (!table) return;
 

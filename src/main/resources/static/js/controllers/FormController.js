@@ -1,11 +1,15 @@
 "use strict"
 
-import { openFormDialog, closeFormDialog, openMsgDialog, openConfirmDialog } from "../core/ui/dialog.js";
+// import { openFormDialog, closeFormDialog, openMsgDialog, openConfirmDialog } from "../core/ui/dialog.js";
 import { FormModel } from "../core/form/FormModel.js";
 import { validate } from "../core/form/components/check.js";
 // import { api } from "../core/api/apiService.js";
 import { convertKey } from "../core/ui/keyCaseConverter.js";
-import { normalize, normalizeValue, getOptions, normalizeParentChild } from "../core/behavior/valueNormalizer.js";
+import { normalize, normalizeValue, getOptions } from "../core/behavior/valueNormalizer.js";
+import { openFormDialog } from "../core/ui/dialog.js";
+import { DialogService } from "../core/ui/DialogService.js";
+import { SaveBehavior } from "../core/save/SaveBehavior.js";
+import { FormPayloadBuilder } from "../core/form/FormPayloadBuilder.js";
 
 export class FormController {
 
@@ -37,6 +41,27 @@ export class FormController {
         this.businessValidate = businessValidate;
 
         this.currentEntity = null;
+        this.saveBehavior =
+            new SaveBehavior({
+                beforeSave:
+                    async (payload, context) => {
+                        if(this.beforeSave){
+                            await this.beforeSave(payload, context.form);
+                        }
+                    },
+                validateBusiness:
+                    async (payload) => {
+                        await this.validateBusiness(payload);
+                    },
+                confirmSave:
+                    async (payload) => {
+                        return await this.confirmSave(payload);
+                    },
+                executeSave:
+                    async (payload) => {
+                        return await this.executeSave(payload);
+                    }
+            });
     }
 
     async open(dataOrId = {}) {
@@ -73,7 +98,8 @@ export class FormController {
             }
         });
 
-        this.currentEntity = data;
+        // this.currentEntity = data;
+        this.currentEntity = structuredClone(data);
 
         const form = document.getElementById(this.formId);
         FormModel.fill(form, data);
@@ -99,8 +125,13 @@ export class FormController {
     }
 
     // async save(form){
-
-    //     if(!validate(form)) return;
+    //     try {
+    //         this.clearErrors();
+    //         validate(form);
+    //     } catch(e) {
+    //         this.handleError(e);
+    //         return;
+    //     }
 
     //     const payload = FormModel.buildPayload(form, this.currentEntity, this.key);
 
@@ -111,134 +142,206 @@ export class FormController {
     //         });
     //         return;
     //     }
-    //     if(!this.api.save) return;
 
-    //     const result = await api.post(this.api.save, payload);
-    //     if(result.ok){
-    //         openMsgDialog({
-    //             message:result.message,
-    //             color:"blue"
+    //     const controller = this.controller;
+    //     const ids = controller?.dataTable?.model.getSelectedIds?.() ?? [];
+
+    //     if(controller?.state?.bulkMode){
+    //         if(ids.length === 0){
+    //             openMsgDialog({
+    //                 message:"選択してください",
+    //                 color:"red"
+    //             });
+    //             return;
+    //         }
+
+    //         payload.ids = ids;
+    //         openConfirmDialog({
+    //             message: `${ids.length}件に適用しますか？`,
+    //             onSubmit: async () => {
+    //                 try {
+    //                     if (this.businessValidate) {
+    //                         await this.businessValidate(payload);
+    //                     }
+    //                     const res = await this.api.request({
+    //                         queryId: this.api.save,
+    //                         params: payload
+    //                     });
+    //                     openMsgDialog({
+    //                         message: "一括更新しました",
+    //                         color: "blue"
+    //                     });
+    //                     closeFormDialog(this.formId);
+    //                     controller.state.bulkMode = false;
+    //                     if(this.onSaved){
+    //                         await this.onSaved();
+    //                     }
+    //                 } catch(e){
+    //                     this.handleError(e);
+    //                 }
+    //             }
     //         });
+    //         return;
     //     }
 
-    //     closeFormDialog(this.formId);
+    //     try {
+    //         if (this.beforeSave) {
+    //             await this.beforeSave(payload, form);
+    //         }
 
+    //         if (this.businessValidate) {
+    //             await this.businessValidate(payload);
+    //         }
 
-    //     if(this.onSaved){
-    //         await this.onSaved(result.data);
+    //         if(!this.api.save) return;
+
+    //         const res = await this.api.request({
+    //             queryId: this.api.save,
+    //             params: payload
+    //         });
+
+    //         // INSERTの場合 idが返る
+    //         const id = res.data;
+
+    //         // UPDATEの場合 countが返る
+    //         const count = res.count;
+
+    //         openMsgDialog({
+    //             message: "保存しました",
+    //             color: "blue"
+    //         });
+
+    //         closeFormDialog(this.formId);
+    //         controller.state.bulkMode = false;
+    //         if(this.onSaved){
+    //             await this.onSaved(id ?? this.currentEntity?.[this.key]);
+    //         }
+
+    //         return id ?? count;
+    //     } catch (e) {
+    //         this.handleError(e);
     //     }
-        
-    //     return result.data;
     // }
     async save(form){
-
-        // if(!validate(form)) return;
         try {
-            this.clearErrors();
-            validate(form);
-        } catch(e) {
-            this.handleError(e);
-            return;
-        }
-
-        const payload = FormModel.buildPayload(form, this.currentEntity, this.key);
-
-        if(payload === null){
-            openMsgDialog({
-                message:"変更がありません",
-                color:"red"
-            });
-            return;
-        }
-
-        const controller = this.controller;
-        const ids = controller?.dataTable?.model.getSelectedIds?.() ?? [];
-
-        if(controller?.state?.bulkMode){
-            if(ids.length === 0){
-                openMsgDialog({
-                    message:"選択してください",
-                    color:"red"
-                });
+            const payload = this.preparePayload(form);
+            if(!payload){
                 return;
             }
-
-            payload.ids = ids;
-            openConfirmDialog({
-                message: `${ids.length}件に適用しますか？`,
-                onSubmit: async () => {
-                    try {
-                        if (this.businessValidate) {
-                            await this.businessValidate(payload);
-                        }
-                        const res = await this.api.request({
-                            queryId: this.api.save,
-                            params: payload
-                        });
-                        openMsgDialog({
-                            message: "一括更新しました",
-                            color: "blue"
-                        });
-                        closeFormDialog(this.formId);
-                        controller.state.bulkMode = false;
-                        if(this.onSaved){
-                            await this.onSaved();
-                        }
-                    } catch(e){
-                        this.handleError(e);
-                    }
-                }
-            });
-            return;
-        }
-
-        try {
-            if (this.beforeSave) {
-                await this.beforeSave(payload, form);
-            }
-
-            if (this.businessValidate) {
-                await this.businessValidate(payload);
-            }
-
-            if(!this.api.save) return;
-
-            const res = await this.api.request({
-                queryId: this.api.save,
-                params: payload
-            });
-
-            // INSERTの場合 idが返る
-            const id = res.data;
-
-            // UPDATEの場合 countが返る
-            const count = res.count;
-
-            openMsgDialog({
-                message: "保存しました",
-                color: "blue"
-            });
-
-            closeFormDialog(this.formId);
-            controller.state.bulkMode = false;
-            if(this.onSaved){
-                await this.onSaved(id ?? this.currentEntity?.[this.key]);
-            }
-
-            return id ?? count;
-        } catch (e) {
+            return await this.saveBehavior.save(payload, { form });
+        } catch(e){
             this.handleError(e);
         }
     }
 
-    handleError(e) {
-        // ★ メッセージ表示
-        openMsgDialog({
-            message: e.message || "エラーが発生しました",
-            color: "red"
+    async executeSave(payload){
+        if(!this.api.save){
+            return;
+        }
+
+        const res = await this.api.request({
+            queryId: this.api.save,
+            params: payload
         });
 
-        // ★ フィールド指定があれば強調
+        DialogService.info(
+            this.isBulkMode()
+                ? "一括更新しました"
+                : "保存しました"
+        );
+
+        DialogService.close(this.formId);
+
+        this.controller.state.bulkMode = false;
+
+        const id = res.data;
+        const count = res.count;
+
+        if(this.onSaved){
+            await this.onSaved(
+                id ?? this.currentEntity?.[this.key]
+            );
+        }
+
+        return id ?? count;
+    }
+
+    // preparePayload(form){
+    //     this.clearErrors();
+    //     validate(form);
+
+    //     const payload = FormModel.buildPayload(form, this.currentEntity, this.key);
+    //     if(payload === null){
+    //         DialogService.error(
+    //             "変更がありません"
+    //         );
+    //         return null;
+    //     }
+
+    //     if(this.isBulkMode()){
+    //         const ids = this.getTargetIds(payload);
+    //         if(ids.length === 0){
+    //             DialogService.error(
+    //                 "選択してください"
+    //             );
+    //             return null;
+    //         }
+    //         payload.ids = ids;
+    //     }
+    //     return payload;
+    // }
+    preparePayload(form){
+        this.clearErrors();
+        validate(form);
+
+        const payload = FormPayloadBuilder.build({
+                form,
+                currentEntity: this.currentEntity,
+                key: this.key,
+                isBulkMode: this.isBulkMode(),
+                getTargetIds: (payload) => this.getTargetIds(payload)
+            });
+
+        if(payload == null){
+            DialogService.error(
+                "変更がありません"
+            );
+            return null;
+        }
+
+        if(this.isBulkMode() && payload.ids.length === 0){
+            DialogService.error(
+                "選択してください"
+            );
+            return null;
+        }
+        return payload;
+    }
+
+    async validateBusiness(payload){
+        if(!this.businessValidate){
+            return;
+        }
+        await this.businessValidate(payload);
+    }
+
+    async confirmSave(payload){
+        if(!this.isBulkMode()){
+            return true;
+        }
+        const ids = this.getTargetIds(payload);
+        return await DialogService.confirm(
+            `${ids.length}件に適用しますか？`
+        );
+    }
+
+    handleError(e) {
+        // メッセージ表示
+        DialogService.error(
+            e.message || "エラーが発生しました"
+        );
+
+        // フィールド指定があれば強調
         if (e.field) {
             const form = document.getElementById(this.formId);
 
@@ -265,10 +368,19 @@ export class FormController {
         FormModel.clear(form);
     }
 
+    // resetForm(){
+    //     this.clearErrors();
+    //     const form = document.getElementById(this.formId);
+    //     FormModel.clear(form);
+    //     this.setSubmitEnabled(false);
+    // }
     resetForm(){
         this.clearErrors();
         const form = document.getElementById(this.formId);
-        FormModel.clear(form);
+        FormModel.fill(
+            form,
+            this.currentEntity ?? {}
+        );
         this.setSubmitEnabled(false);
     }
 
@@ -319,86 +431,12 @@ export class FormController {
         form.addEventListener("input", update);
         form.addEventListener("change", update);
     }
-    // initEvents(){
-    //     const form = document.getElementById(this.formId);
-    //     const update = () => {
-    //         const enabled = this.canSubmit();
-    //         this.setSubmitEnabled(enabled);
-    //     };
-
-    //     form.addEventListener("input", update);
-    //     form.addEventListener("change", update);
-
-    //     // ★ Enter制御
-    //     form.addEventListener("keydown", e => {
-    //         if(e.key !== "Enter") return;
-
-    //         const el = e.target;
-    //         // input以外は無視
-    //         if(!(el instanceof HTMLInputElement)) return;
-
-    //         const value = el.value?.trim();
-    //         // 空なら普通に次へ
-    //         if(!value){
-    //             el.classList.remove("error");
-    //             return;
-    //         }
-
-    //         // Enter時チェック対象か
-    //         if(el.dataset.enterValidate === undefined){
-    //             return;
-    //         }
-            
-    //         const type = el.dataset.validate;
-    //         // validate指定なし
-    //         if(!type) return;
-
-    //         const fn = validators[type];
-    //         // validatorなし
-    //         if(!fn) return;
-
-    //         // NG
-    //         if(!fn(value)){
-    //             e.preventDefault();
-    //             el.classList.add("error");
-    //             requestAnimationFrame(() => {
-    //                 el.select();
-    //             });
-    //             return;
-    //         }
-    //         // OK
-    //         el.classList.remove("error");
-
-    //     });
-    // }
-
-    // initEvents(){
-    //     const update = () => {
-    //         this.dirty = true;
-    //         this.updateSubmitButton();
-    //     };
-
-    //     // ★ 毎回最新のformを取る
-    //     document.addEventListener("input", (e) => {
-    //         if(e.target.closest(`#${this.formId}`)){
-    //             update();
-    //         }
-    //     });
-
-    //     document.addEventListener("change", (e) => {
-    //         if(e.target.closest(`#${this.formId}`)){
-    //             update();
-    //         }
-    //     });
-    // }
 
     canSubmit(){
-        // return this.hasChanges() && this.hasValidInput();
-        // ★ 新規
+        // 新規
         if(!this.currentEntity || !this.currentEntity[this.key]){
             return this.hasValidInput();
         }
-
         // 編集
         return this.hasChanges();
     }
@@ -414,21 +452,21 @@ export class FormController {
         btn.classList.toggle("disabled", !enabled);
     }
 
-    // updateSubmitButton(){
-    //     const form = document.getElementById(this.formId);
-    //     if(!form) return;
-
-    //     const btn = form.querySelector('[name="submitBtn"]');
-    //     if(!btn) return;
-
-    //     const enabled = this.canSubmit();
-
-    //     btn.disabled = !enabled;
-    //     btn.classList.toggle("disabled", !enabled);
-    // }
-
     isHidden(){
         const form = document.getElementById(this.formId);
         return form?.classList.contains("none");
+    }
+
+    isBulkMode(){
+        return !!this.controller?.state?.bulkMode;
+    }
+
+    getTargetIds(payload){
+        if(!this.isBulkMode()){
+            return [payload[this.key]];
+        }
+        return this.controller
+            ?.dataTable
+            ?.getSelectedIds?.() ?? [];
     }
 }

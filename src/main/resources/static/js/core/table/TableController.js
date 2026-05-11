@@ -1,195 +1,144 @@
-"use strict"
+// "use strict"
 
-import { openMsgDialog, closeFormDialog } from "../ui/dialog.js";
-import { getTable } from "../init/initTable.js";
-import { api } from "../api/apiService.js";
-import { FormModel } from "../../core/form/FormModel.js";
-import { validate } from "../../core/form/components/check.js";
-import { DataTable } from "./DataTable.js";
+// import { openMsgDialog, closeFormDialog } from "../ui/dialog.js";
+// import { getTable } from "../init/initTable.js";
+// import { api } from "../api/apiService.js";
+// import { FormModel } from "../../core/form/FormModel.js";
+// import { validate } from "../../core/form/components/check.js";
+// import { DataTable } from "./DataTable.js";
 
-export class TableController {
+// export class TableController {
 
-    constructor(config){
-        this.tableId = config.tableId;
-        this.formId = config.formId;
-        this.findUrl = config.findUrl;
-        this.selectUrl = config.selectUrl;
-        this.saveUrl = config.saveUrl;
-        this.deleteUrl = config.deleteUrl;
-        this.key = config.key;
+//     constructor(config){
+//         this.tableId = config.tableId;
+//         this.formId = config.formId;
+//         this.findUrl = config.findUrl;
+//         this.selectUrl = config.selectUrl;
+//         this.saveUrl = config.saveUrl;
+//         this.deleteUrl = config.deleteUrl;
+//         this.key = config.key;
 
-        this.currentEntity = null;
-        this.isEdit = false;
+//         this.currentEntity = null;
+//         this.isEdit = false;
 
-        this.config = config;
+//         this.config = config;
 
-        this.dataTable = new DataTable({
-            ...config.table,
-            tableId: config.tableId,
-            idKey: config.key,
+//         this.dataTable = new DataTable({
+//             ...config.table,
+//             tableId: config.tableId,
+//             idKey: config.key,
 
-            onDoubleClick: (item, row, e) => {
-                config.table.onDoubleClick.call(this, item, row, e);
-            }
-        });
-    }
+//             onDoubleClick: (item, row, e) => {
+//                 config.table.onDoubleClick.call(this, item, row, e);
+//             }
+//         });
+//     }
 
-    get table(){
-        return getTable(this.tableId);
-    }
+//     get table(){
+//         return getTable(this.tableId);
+//     }
 
-    // -------------------------
-    // 検索
-    // -------------------------
-    // search = (keyword) => {
-    //     this.table.set("keyword", keyword);
-    // }
-    search = (keyword) => {
-        this.state.keyword = keyword;
-        this.table.reload();
-    }
+//     // 検索
+//     search = (keyword) => {
+//         this.state.keyword = keyword;
+//         this.table.reload();
+//     }
 
-    // -------------------------
-    // 保存
-    // -------------------------
-    async save(form){
+//     // 保存
+//     async save(form){
+//         if(!validate(form)) return;
 
-        if(!validate(form)) return;
+//         const payload = FormModel.buildPayload(form, this.currentEntity, this.key);
+//         if(payload === null){
+//             openMsgDialog({
+//                 message:"変更がありません",
+//                 color:"red"
+//             });
+//             return;
+//         }
 
-        const payload = FormModel.buildPayload(form, this.currentEntity, this.key);
+//         const result = await api.post(this.saveUrl, payload);
+//         if(result.ok){
+//             openMsgDialog({
+//                 message:result.message,
+//                 color:"blue",
+//                 controller:this
+//             });
+//         }
 
-        if(payload === null){
-            openMsgDialog({
-                message:"変更がありません",
-                color:"red"
-            });
-            return;
-        }
+//         closeFormDialog(this.formId);
+//         await this.refresh(result.data);
+//     }
 
-        const result = await api.post(this.saveUrl, payload);
+//     // 再取得
+//     async refresh(targetId){
 
-        if(result.ok){
-            openMsgDialog({
-                message:result.message,
-                color:"blue",
-                controller:this
-            });
-        }
+//         const res = await api.get(this.selectUrl);
+//         this.table.setData(res.data);
 
-        closeFormDialog(this.formId);
+//         if(targetId){
+//             requestAnimationFrame(()=>{
+//                 this.scrollToRow(targetId);
+//             });
+//         }
+//     }
 
-        await this.refresh(result.data);
-    }
+//     scrollToRow(id){
+//         const row = document.querySelector(`[data-id="${id}"]`);
+//         if(row){
+//             row.scrollIntoView({ block:"center" });
+//         }
+//     }
 
-    // -------------------------
-    // 再取得
-    // -------------------------
-    async refresh(targetId){
+//     // 作成
+//     create(){
+//         this.form.open();
+//     }
 
-        const res = await api.get(this.selectUrl);
-        this.table.setData(res.data);
+//     // 編集画面を開く
+//     async openEdit(id){
+//         await this.form.open(id);
+//     }
 
-        if(targetId){
-            requestAnimationFrame(()=>{
-                this.scrollToRow(targetId);
-            });
-        }
-    }
+//     // フォームにセット
+//     fillForm(formId, data){
 
-    scrollToRow(id){
-        const row = document.querySelector(`[data-id="${id}"]`);
-        if(row){
-            row.scrollIntoView({ block:"center" });
-        }
-    }
+//         const form = document.getElementById(formId);
 
-    // =========================
-    // 作成
-    // =========================
-    // create(){
+//         Object.entries(data).forEach(([key, value]) => {
 
-    //     this.currentEntity = {};
-    //     this.isEdit = false;
+//             const name = convertKey(key, "camel", "kebab");
+//             const el = form.elements[name];
 
-    //     const form = document.getElementById(this.formId);
-    //     FormModel.clear(form);
+//             if(!el) return;
 
-    //     openFormDialog({
-    //         dialogId:this.formId,
-    //         controller:this,
-    //         onSubmit: async (form) => {
-    //             await this.save(form);
-    //         }
-    //     });
-    // }
-    create(){
-        this.form.open();
-    }
+//             if(el.type === "checkbox"){
+//                 el.checked = !!value;
+//             }else{
+//                 el.value = value ?? "";
+//             }
+//         });
+//     }
 
-    // =========================
-    // 編集画面を開く
-    // =========================
-    // async openEdit(id){
-    //     const res = await api.post(this.findUrl, { id });
+//     // フォームクリア
+//     clearForm(){
+//         const form = document.getElementById(this.formId);
 
-    //     const data = res.data;
-    //     this.currentEntity = data;
-    //     this.isEdit = true;
+//         [...form.elements].forEach(el => {
+//             if(!el.name) return;
 
-    //     const form = document.getElementById(this.formId);
-    //     FormModel.fill(form, data);
+//             if(el.type === "checkbox"){
+//                 el.checked = false;
+//             }else{
+//                 el.value = "";
+//             }
+//         });
+//     }
+// }
 
-    //     openFormDialog({
-    //         dialogId:this.formId,
-    //         controller:this,
-    //         onSubmit: async (form) => {
-    //             await this.save(form);
-    //         }
-    //     });
-    // }
-    async openEdit(id){
-        await this.form.open(id);
-    }
 
-    // =========================
-    // フォームにセット
-    // =========================
-    fillForm(formId, data){
 
-        const form = document.getElementById(formId);
 
-        Object.entries(data).forEach(([key, value]) => {
-
-            const name = convertKey(key, "camel", "kebab");
-            const el = form.elements[name];
-
-            if(!el) return;
-
-            if(el.type === "checkbox"){
-                el.checked = !!value;
-            }else{
-                el.value = value ?? "";
-            }
-        });
-    }
-
-    // =========================
-    // フォームクリア
-    // =========================
-    clearForm(){
-        const form = document.getElementById(this.formId);
-
-        [...form.elements].forEach(el => {
-            if(!el.name) return;
-
-            if(el.type === "checkbox"){
-                el.checked = false;
-            }else{
-                el.value = "";
-            }
-        });
-    }
-}
 
 
 
