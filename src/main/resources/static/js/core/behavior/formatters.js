@@ -9,9 +9,9 @@ export const formatters = {
         return (
             raw.slice(0,4) +
             "-" +
-            raw.slice(4,10) +
+            raw.slice(4,12) +
             "-" +
-            raw.slice(10)
+            raw.slice(12)
         );
     }
 };

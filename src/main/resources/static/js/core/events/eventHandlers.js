@@ -1,6 +1,7 @@
 "use strict"
 
 import { dispatchAction } from "./actionDispatcher.js";
+import { handleEnterValidate } from "./actions/enterAction.js";
 
 let initialized = false;
 
@@ -11,7 +12,8 @@ export function initEvents(){
     document.addEventListener("click", handleEvent);
     document.addEventListener("input", handleEvent);
     document.addEventListener("change", handleEvent);
-    document.addEventListener("keydown", handleEvent);
+    // document.addEventListener("keydown", handleEvent);
+    document.addEventListener("keydown", handleEnterValidate);
     document.addEventListener("focusin", handleFocus);
 }
 

@@ -311,13 +311,6 @@ export class FormController {
 
     initEvents(){
         const form = document.getElementById(this.formId);
-        // const update = () => {
-        //     this.controller?.updateButtons();
-        // };
-        // const update = () => {
-        //     this.dirty = true;
-        //     this.updateSubmitButton();
-        // };
         const update = () => {
             const enabled = this.canSubmit();
             this.setSubmitEnabled(enabled);
@@ -326,6 +319,59 @@ export class FormController {
         form.addEventListener("input", update);
         form.addEventListener("change", update);
     }
+    // initEvents(){
+    //     const form = document.getElementById(this.formId);
+    //     const update = () => {
+    //         const enabled = this.canSubmit();
+    //         this.setSubmitEnabled(enabled);
+    //     };
+
+    //     form.addEventListener("input", update);
+    //     form.addEventListener("change", update);
+
+    //     // ★ Enter制御
+    //     form.addEventListener("keydown", e => {
+    //         if(e.key !== "Enter") return;
+
+    //         const el = e.target;
+    //         // input以外は無視
+    //         if(!(el instanceof HTMLInputElement)) return;
+
+    //         const value = el.value?.trim();
+    //         // 空なら普通に次へ
+    //         if(!value){
+    //             el.classList.remove("error");
+    //             return;
+    //         }
+
+    //         // Enter時チェック対象か
+    //         if(el.dataset.enterValidate === undefined){
+    //             return;
+    //         }
+            
+    //         const type = el.dataset.validate;
+    //         // validate指定なし
+    //         if(!type) return;
+
+    //         const fn = validators[type];
+    //         // validatorなし
+    //         if(!fn) return;
+
+    //         // NG
+    //         if(!fn(value)){
+    //             e.preventDefault();
+    //             el.classList.add("error");
+    //             requestAnimationFrame(() => {
+    //                 el.select();
+    //             });
+    //             return;
+    //         }
+    //         // OK
+    //         el.classList.remove("error");
+
+    //     });
+    // }
+
     // initEvents(){
     //     const update = () => {
     //         this.dirty = true;
