@@ -267,10 +267,10 @@ export class PageController {
         return true;
     }
 
-    scrollToRow(id){
-        const row = document.querySelector(`[data-id="${id}"]`);
-        row?.scrollIntoView({ block:"center" });
-    }
+    // scrollToRow(id){
+    //     const row = document.querySelector(`[data-id="${id}"]`);
+    //     row?.scrollIntoView({ block:"center" });
+    // }
 
     /**
      * ボタンの状態判定
@@ -354,12 +354,26 @@ export class PageController {
         return ids[0] ?? null;
     }
 
+    getSelectedIds(){
+        return this.dataTable ?.getSelectedIds?.() ?? [];
+    }
+
+    // async refresh(targetId = null){
+    //     if(!this.dataTable) return;
+    //     await this.dataTable.refresh();
+    //     if(targetId){
+    //         this.scrollToRow(targetId);
+    //     }
+    // }
     async refresh(targetId = null){
-        if(!this.dataTable) return;
+        if(!this.dataTable){
+            return;
+        }
         await this.dataTable.refresh();
         if(targetId){
             this.scrollToRow(targetId);
         }
+        this.updateButtons();
     }
 
     scrollToRow(id){
@@ -369,6 +383,15 @@ export class PageController {
         if(row){
             row.scrollIntoView({block:"center"});
         }
+    }
+
+    isBulkMode(){
+        return !!this.state.bulkMode;
+    }
+
+    setBulkMode(value){
+        this.state.bulkMode = !!value;
+        this.updateButtons();
     }
 }
 

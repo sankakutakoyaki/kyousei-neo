@@ -126,7 +126,8 @@ const createRecycleForm = (controller, options = {}) =>
         controller,
         formId: options.formId,
         key: controller.key,
-        onSaved: async (id) => {
+        afterSave: async (id) => {
+        // onSaved: async (id) => {
             // await controller.dataTable.refresh();
             // controller.scrollToRow(id);
             await controller.refresh(id);
@@ -135,20 +136,21 @@ const createRecycleForm = (controller, options = {}) =>
             state:APP.cache.common.state.INITIAL,
             recycleId: id
         }),
-        businessValidate:
-            async (payload) => {
-                const table =  controller.dataTable;
-                // const ids = controller.state.bulkMode ? table.model.getSelectedIds(): [payload.recycleId];
-                const ids = controller.state.bulkMode ? table.getSelectedIds(): [payload.recycleId];
+        validateBusiness: async (payload) => {
+        // businessValidate:
+            // async (payload) => {
+            const table =  controller.dataTable;
+            // const ids = controller.state.bulkMode ? table.model.getSelectedIds(): [payload.recycleId];
+            const ids = controller.state.bulkMode ? table.getSelectedIds(): [payload.recycleId];
 
-                for(const id of ids){
-                    // const origin = table.model.findOriginById(id);
-                    const origin = table.findOriginById(id);
-                    validatePersisted(payload, origin, "useDate", "使用日");
-                    validatePersisted(payload, origin, "deliveryDate", "引渡日");
-                    validatePersisted(payload, origin, "shippingDate", "発送日");
-                }
-            },
+            for(const id of ids){
+                // const origin = table.model.findOriginById(id);
+                const origin = table.findOriginById(id);
+                validatePersisted(payload, origin, "useDate", "使用日");
+                validatePersisted(payload, origin, "deliveryDate", "引渡日");
+                validatePersisted(payload, origin, "shippingDate", "発送日");
+            }
+        },
         api: {
             request: api.request,
             find: "recycleDetail",

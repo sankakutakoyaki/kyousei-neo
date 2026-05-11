@@ -2,14 +2,16 @@
 
 // import { openFormDialog, closeFormDialog, openMsgDialog, openConfirmDialog } from "../core/ui/dialog.js";
 import { FormModel } from "../core/form/FormModel.js";
-import { validate } from "../core/form/components/check.js";
+// import { validate } from "../core/form/components/check.js";
 // import { api } from "../core/api/apiService.js";
-import { convertKey } from "../core/ui/keyCaseConverter.js";
-import { normalize, normalizeValue, getOptions } from "../core/behavior/valueNormalizer.js";
+// import { convertKey } from "../core/ui/keyCaseConverter.js";
+// import { normalize, normalizeValue, getOptions } from "../core/behavior/valueNormalizer.js";
 import { openFormDialog } from "../core/ui/dialog.js";
 import { DialogService } from "../core/ui/DialogService.js";
 import { SaveBehavior } from "../core/save/SaveBehavior.js";
 import { FormPayloadBuilder } from "../core/form/FormPayloadBuilder.js";
+import { UiValidator } from "../core/validate/UiValidator.js";
+import { FormStateBehavior } from "../core/form/FormStateBehavior.js";
 
 export class FormController {
 
@@ -22,10 +24,12 @@ export class FormController {
             key,
             api = {},
             beforeSave = null,
-            onSaved = null,
+            // onSaved = null,
+            afterSave = null,
             controller = {},
             buildParams = null,
-            businessValidate = null
+            // businessValidate = null
+            validateBusiness = null
         } = config;
 
         if(!formId) throw new Error("formId is required");
@@ -35,32 +39,84 @@ export class FormController {
         this.key = key;
         this.api = api;
         this.beforeSave = beforeSave;
-        this.onSaved = onSaved;
+        // this.onSaved = onSaved;
+        this.afterSave = afterSave;
         this.controller = controller;
         this.buildParams = buildParams;
-        this.businessValidate = businessValidate;
+        // this.businessValidate = businessValidate;
+        this.validateBusiness = validateBusiness;
 
         this.currentEntity = null;
+        // this.saveBehavior =
+        //     new SaveBehavior({
+        //         beforeSave:
+        //             async (payload, context) => {
+        //                 if(this.beforeSave){
+        //                     await this.beforeSave(payload, context.form);
+        //                 }
+        //             },
+        //         validateBusiness:
+        //             async (payload) => {
+        //                 await this.runBusinessValidation(payload);
+        //             },
+        //         confirmSave:
+        //             async (payload) => {
+        //                 return await this.confirmSave(payload);
+        //             },
+        //         executeSave:
+        //             async (payload) => {
+        //                 return await this.executeSave(payload);
+        //             }
+        //     });
         this.saveBehavior =
             new SaveBehavior({
-                beforeSave:
-                    async (payload, context) => {
-                        if(this.beforeSave){
-                            await this.beforeSave(payload, context.form);
-                        }
-                    },
-                validateBusiness:
-                    async (payload) => {
-                        await this.validateBusiness(payload);
-                    },
-                confirmSave:
-                    async (payload) => {
-                        return await this.confirmSave(payload);
-                    },
-                executeSave:
-                    async (payload) => {
-                        return await this.executeSave(payload);
+                beforeSave: async (payload, context) => {
+                    if(this.beforeSave){
+                        await this.beforeSave(
+                            payload,
+                            context.form
+                        );
                     }
+                },
+                validateBusiness: async (payload) => {
+                    await this.runBusinessValidation(
+                        payload
+                    );
+                },
+                confirmSave: async (payload) => {
+                    return await this.confirmSave(
+                        payload
+                    );
+                },
+                executeSave: async (payload) => {
+                    if(!this.api.save){
+                        return null;
+                    }
+                    const res = await this.api.request({
+                        queryId: this.api.save,
+                        params: payload
+                    });
+                    DialogService.info(
+                        this.isBulkMode()
+                            ? "一括更新しました"
+                            : "保存しました"
+                    );
+                    DialogService.close(this.formId);
+                    // this.controller.state.bulkMode = false;
+                    this.controller.setBulkMode(false);
+                    return {
+                        response: res,
+                        id: res.data,
+                        count: res.count
+                    };
+                },
+                afterSave: async (result) => {
+                    if(this.afterSave){
+                        await this.afterSave(
+                            result.id ?? this.currentEntity?.[this.key]
+                        );
+                    }
+                }
             });
     }
 
@@ -234,37 +290,41 @@ export class FormController {
         }
     }
 
-    async executeSave(payload){
-        if(!this.api.save){
-            return;
-        }
+    // async executeSave(payload){
+    //     if(!this.api.save){
+    //         return;
+    //     }
 
-        const res = await this.api.request({
-            queryId: this.api.save,
-            params: payload
-        });
+    //     const res = await this.api.request({
+    //         queryId: this.api.save,
+    //         params: payload
+    //     });
 
-        DialogService.info(
-            this.isBulkMode()
-                ? "一括更新しました"
-                : "保存しました"
-        );
+    //     DialogService.info(
+    //         this.isBulkMode()
+    //             ? "一括更新しました"
+    //             : "保存しました"
+    //     );
 
-        DialogService.close(this.formId);
+    //     DialogService.close(this.formId);
 
-        this.controller.state.bulkMode = false;
+    //     this.controller.state.bulkMode = false;
 
-        const id = res.data;
-        const count = res.count;
+    //     const id = res.data;
+    //     const count = res.count;
 
-        if(this.onSaved){
-            await this.onSaved(
-                id ?? this.currentEntity?.[this.key]
-            );
-        }
-
-        return id ?? count;
-    }
+    //     // if(this.onSaved){
+    //     //     await this.onSaved(
+    //     //         id ?? this.currentEntity?.[this.key]
+    //     //     );
+    //     // }
+    //     if(this.afterSave){
+    //         await this.afterSave(
+    //             id ?? this.currentEntity?.[this.key]
+    //         );
+    //     }
+    //     return id ?? count;
+    // }
 
     // preparePayload(form){
     //     this.clearErrors();
@@ -292,7 +352,8 @@ export class FormController {
     // }
     preparePayload(form){
         this.clearErrors();
-        validate(form);
+        // validate(form);
+        UiValidator.validate(form);
 
         const payload = FormPayloadBuilder.build({
                 form,
@@ -303,26 +364,28 @@ export class FormController {
             });
 
         if(payload == null){
-            DialogService.error(
-                "変更がありません"
-            );
+            DialogService.error("変更がありません");
             return null;
         }
 
         if(this.isBulkMode() && payload.ids.length === 0){
-            DialogService.error(
-                "選択してください"
-            );
+            DialogService.error("選択してください");
             return null;
         }
         return payload;
     }
 
-    async validateBusiness(payload){
-        if(!this.businessValidate){
+    // async validateBusiness(payload){
+    //     if(!this.businessValidate){
+    //         return;
+    //     }
+    //     await this.businessValidate(payload);
+    // }
+    async runBusinessValidation(payload){
+        if(!this.validateBusiness){
             return;
         }
-        await this.businessValidate(payload);
+        await this.validateBusiness(payload);
     }
 
     async confirmSave(payload){
@@ -389,36 +452,42 @@ export class FormController {
         FormModel.fill(form, data);
     }
 
+    // hasChanges(){
+    //     const form = document.getElementById(this.formId);
+    //     const fd = new FormData(form);
+
+    //     for(const [name, value] of fd.entries()){
+    //         const el = form.elements[name];
+    //         const key = el.dataset.key || convertKey(name, "kebab", "camel");
+    //         let v;
+    //         if(el.type === "checkbox"){
+    //             v = el.checked;
+    //         } else {
+    //             v = normalizeValue(value, getOptions(el));
+    //         }
+    //         const oldValue = this.currentEntity?.[key];
+    //         if(normalize(v) !== normalize(oldValue)){
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
     hasChanges(){
         const form = document.getElementById(this.formId);
-        const fd = new FormData(form);
-
-        for(const [name, value] of fd.entries()){
-            const el = form.elements[name];
-            const key = el.dataset.key || convertKey(name, "kebab", "camel");
-            let v;
-            if(el.type === "checkbox"){
-                v = el.checked;
-            } else {
-                v = normalizeValue(value, getOptions(el));
-            }
-            const oldValue = this.currentEntity?.[key];
-            if(normalize(v) !== normalize(oldValue)){
-                return true;
-            }
-        }
-        return false;
+        return FormStateBehavior.hasChanges({form, currentEntity: this.currentEntity});
     }
 
     hasValidInput(){
+        // const form = document.getElementById(this.formId);
+        // const fd = new FormData(form);
+        // for(const [, value] of fd.entries()){
+        //     if(value && value.trim() !== ""){
+        //         return true;
+        //     }
+        // }
+        // return false;
         const form = document.getElementById(this.formId);
-        const fd = new FormData(form);
-        for(const [, value] of fd.entries()){
-            if(value && value.trim() !== ""){
-                return true;
-            }
-        }
-        return false;
+        return FormStateBehavior.hasValidInput(form);
     }
 
     initEvents(){
@@ -458,15 +527,17 @@ export class FormController {
     }
 
     isBulkMode(){
-        return !!this.controller?.state?.bulkMode;
+        // return !!this.controller?.state?.bulkMode;
+        return this.controller?.isBulkMode?.() ?? false;
     }
 
     getTargetIds(payload){
         if(!this.isBulkMode()){
             return [payload[this.key]];
         }
-        return this.controller
-            ?.dataTable
-            ?.getSelectedIds?.() ?? [];
+        // return this.controller
+        //     ?.dataTable
+        //     ?.getSelectedIds?.() ?? [];
+        return this.controller?.getSelectedIds?.() ?? [];
     }
 }

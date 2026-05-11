@@ -123,12 +123,14 @@ export const clientCompanyPage = () => {
                     controller: controller,
                     formId: "form-01",
                     key: controller.key,
-                    businessValidate: (payload) => {
+                    validateBusiness: async (payload) => {
+                    // businessValidate: (payload) => {
                         if (!payload.category) {
                             throw { message: "分類を選択してください", field: "category" };
                         }
                     },
-                    onSaved: async (id) => {
+                    afterSave: async (id) => {
+                    // onSaved: async (id) => {
                         // await controller.dataTable.refresh();
                         // controller.scrollToRow(id);
                         await controller.refresh(id);
@@ -200,8 +202,9 @@ export const clientOfficePage = () => {
                 create: (controller) => new FormController({
                     formId: "form-02",
                     key: controller.key,
-                    controller: controller, 
-                    onSaved: async (id) => {
+                    controller: controller,
+                    afterSave: async (id) => {
+                    // onSaved: async (id) => {
                         // await controller.dataTable.refresh();
                         // controller.scrollToRow(id);
                         await controller.refresh(id);
@@ -266,8 +269,9 @@ export const clientStaffPage = () => {
                 create: (controller) => new FormController({
                     formId: "form-03",
                     key: controller.key,
-                    controller: controller, 
-                    onSaved: async (id) => {
+                    controller: controller,
+                    afterSave: async (id) => {
+                    // onSaved: async (id) => {
                         // await controller.dataTable.refresh();
                         // controller.scrollToRow(id);
                         await controller.refresh(id);

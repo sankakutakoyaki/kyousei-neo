@@ -105,7 +105,8 @@ export const partnerCompanyPage = () => {
                             payload.category = APP.cache.common.companyCategory.PARTNER;
                         }
                     },
-                    onSaved: async (id) => {
+                    afterSave: async (id) => {
+                    // onSaved: async (id) => {
                         // await controller.dataTable.refresh();
                         // controller.scrollToRow(id);
                         await controller.refresh(id);
@@ -177,7 +178,8 @@ export const partnerEmployeePage = () => {
                     formId: "form-02",
                     key: controller.key,
                     controller: controller, 
-                    businessValidate: (payload) => {console.log(payload)
+                    validateBusiness: async (payload) => {
+                    // businessValidate: (payload) => {
                         if (!payload.companyId) {
                             throw { message: "会社を選択してください", field: "companyId" };
                         }
@@ -194,7 +196,8 @@ export const partnerEmployeePage = () => {
                             payload.code = 0;
                         }
                     },
-                    onSaved: async (id) => {
+                    afterSave: async (id) => {
+                    // onSaved: async (id) => {
                         // await controller.dataTable.refresh();
                         // controller.scrollToRow(id);
                         await controller.refresh(id);

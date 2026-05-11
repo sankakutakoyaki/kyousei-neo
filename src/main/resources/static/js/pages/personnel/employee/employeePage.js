@@ -77,12 +77,13 @@ export const fulltimeEmployeePage = () => {
             })
         },
         forms: {
-            detail: {
+            detail:{
                 create: (controller) => new FormController({
                     formId: "form-01",
                     key: controller.key,
-                    controller: controller, 
-                    businessValidate: (payload) => {
+                    controller: controller,
+                    validateBusiness: async (payload) => {
+                    // businessValidate: (payload) => {
                         if (!payload.officeId) {
                             throw { message: "営業所を選択してください", field: "officeId" };
                         }
@@ -98,7 +99,8 @@ export const fulltimeEmployeePage = () => {
                             payload.code = 0;
                         }
                     },
-                    onSaved: async (id) => {
+                    afterSave: async (id) => {
+                    // onSaved: async (id) => {
                         // await controller.dataTable.refresh();
                         // controller.scrollToRow(id);
                         await controller.refresh(id);
@@ -159,7 +161,8 @@ export const parttimeEmployeePage = () => {
                     formId: "form-01",
                     key: controller.key,
                     controller: controller,
-                    businessValidate: (payload) => {
+                    validateBusiness: async (payload) => {
+                    // businessValidate: (payload) => {
                         if (!payload.officeId) {
                             throw { message: "営業所を選択してください", field: "officeId" };
                         }
@@ -175,7 +178,8 @@ export const parttimeEmployeePage = () => {
                             payload.code = 0;
                         }
                     },
-                    onSaved: async (id) => {
+                    afterSave: async (id) => {
+                    // onSaved: async (id) => {
                         // await controller.dataTable.refresh();
                         // controller.scrollToRow(id);
                         await controller.refresh(id);
