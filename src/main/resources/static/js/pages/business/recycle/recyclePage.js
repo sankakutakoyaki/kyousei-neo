@@ -28,10 +28,11 @@ export async function init() {
         data: [],
         components: { combo: true, input: true },
         actions: {
-            search: async (controller) => {
-                // await c.dataTable.refresh();
-                await controller.refresh();
-            }
+            // search: async (controller) => {
+            //     // await c.dataTable.refresh();
+            //     await controller.refresh();
+            // }
+            search: async (controller, payload) => {}
         }
     });
     // await list.actions.search(list);

@@ -397,12 +397,19 @@ export class PageController {
         this.updateButtons();
     }
 
-    async executeAction(name, ...args){
+    // async executeAction(name, ...args){
+    //     const fn = this.actions?.[name];
+    //     if(!fn){
+    //         return;
+    //     }
+    //     return await fn(this, ...args);
+    // }
+    async executeAction(name, payload = null){
         const fn = this.actions?.[name];
         if(!fn){
             return;
         }
-        return await fn(this, ...args);
+        return await fn(this, payload);
     }
 }
 
