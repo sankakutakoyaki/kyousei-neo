@@ -34,7 +34,8 @@ export async function init() {
             }
         }
     });
-    await list.actions.search(list);
+    // await list.actions.search(list);
+    await list.executeAction("search");
     
     // tab
     const use = recycleUsePage();

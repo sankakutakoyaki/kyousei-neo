@@ -38,12 +38,12 @@ export async function init() {
         data: [],
         components: { combo: true, input: true },
         actions: {
-            companyChanged: async (c, payload) => {
+            companyChanged: async (controller, payload) => {
                 // combo更新
                 const list = await api.get("/api/company/partner/combo");
                 APP.cache.page.companyComboList = list.data;
                 // UI & データ更新
-                await c.reset();
+                await controller.reset();
             }
         }
     });

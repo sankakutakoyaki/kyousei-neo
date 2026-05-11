@@ -39,10 +39,10 @@ export async function init() {
         data: [],
         components: { combo: true, input: true },
         actions: {
-            companyChanged: async (c, payload) => {
+            companyChanged: async (controller, payload) => {
                 const list = await api.get("/api/company/client/combo");
                 APP.cache.page.companyComboList = list.data;
-                await c.reset();
+                await controller.reset();
             }
         }
     });
@@ -58,10 +58,10 @@ export async function init() {
         data: [],
         components: { combo: true, input: true },
         actions: {
-            companyChanged: async (c, payload) => {
+            companyChanged: async (controller, payload) => {
                 const list = await api.get("/api/company/client/combo");
                 APP.cache.page.companyComboList = list.data;
-                await c.reset();
+                await controller.reset();
             },
             officeChanged: async (c, payload) => {
                 const list = await api.get("/api/office/client/combo");

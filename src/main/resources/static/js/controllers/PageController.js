@@ -7,6 +7,7 @@ import { smartFilterHandler } from "../core/behavior/filterHandler.js";
 // import { resolveController } from "../util/actionDispatcher.js";
 import { resolveController } from "../core/events/controllerResolver.js";
 import { openMsgDialog, closeMsgDialog, openConfirmDialog } from "../core/ui/dialog.js";
+import { ActionBehavior } from "../core/action/ActionBehavior.js";
 
 const defaultConditions = {
     Edit: (c) => c.dataTable?.hasSelection(),
@@ -82,6 +83,8 @@ export class PageController {
         this.dataTable = null;
         this.forms = {};
         this.components = {};
+
+        this.actions = new ActionBehavior(config.actions || {});
     }
 
     init(config = {}){
@@ -392,6 +395,14 @@ export class PageController {
     setBulkMode(value){
         this.state.bulkMode = !!value;
         this.updateButtons();
+    }
+
+    async executeAction(name, ...args){
+        const fn = this.actions?.[name];
+        if(!fn){
+            return;
+        }
+        return await fn(this, ...args);
     }
 }
 
