@@ -11,6 +11,7 @@ import { api } from "../../../core/api/apiService.js";
 import { initPageCache } from "../../../core/init/initPageCache.js";
 // import { dispatchAction } from "../../../util/actionDispatcher.js";
 import { dispatchAction } from "../../../core/events/actionDispatcher.js";
+import { CompanyService } from "../../../services/company/CompanyService.js";
 
 export async function init() {
 
@@ -38,11 +39,15 @@ export async function init() {
         data: [],
         components: { combo: true, input: true },
         actions: {
+            // companyChanged: async (controller, payload) => {
+            //     // combo更新
+            //     const list = await api.get("/api/company/partner/combo");
+            //     APP.cache.page.companyComboList = list.data;
+            //     // UI & データ更新
+            //     await controller.reset();
+            // }
             companyChanged: async (controller, payload) => {
-                // combo更新
-                const list = await api.get("/api/company/partner/combo");
-                APP.cache.page.companyComboList = list.data;
-                // UI & データ更新
+                await CompanyService.refreshCombo();
                 await controller.reset();
             }
         }

@@ -12,6 +12,8 @@ import { initPageCache } from "../../../core/init/initPageCache.js";
 // import { dispatchAction } from "../../../util/actionDispatcher.js";
 import { dispatchAction } from "../../../core/events/actionDispatcher.js";
 import { initParentChildLink } from "../../../util/link.js";
+import { CompanyService } from "../../../services/company/CompanyService.js";
+import { OfficeService } from "../../../services/company/OfficeService.js";
 
 export async function init() {
 
@@ -39,9 +41,13 @@ export async function init() {
         data: [],
         components: { combo: true, input: true },
         actions: {
+            // companyChanged: async (controller, payload) => {
+            //     const list = await api.get("/api/company/client/combo");
+            //     APP.cache.page.companyComboList = list.data;
+            //     await controller.reset();
+            // }
             companyChanged: async (controller, payload) => {
-                const list = await api.get("/api/company/client/combo");
-                APP.cache.page.companyComboList = list.data;
+                await CompanyService.refreshCombo();
                 await controller.reset();
             }
         }
@@ -58,15 +64,23 @@ export async function init() {
         data: [],
         components: { combo: true, input: true },
         actions: {
+            // companyChanged: async (controller, payload) => {
+            //     const list = await api.get("/api/company/client/combo");
+            //     APP.cache.page.companyComboList = list.data;
+            //     await controller.reset();
+            // },
+            // officeChanged: async (c, payload) => {
+            //     const list = await api.get("/api/office/client/combo");
+            //     APP.cache.page.officeComboList = list.data;
+            //     await c.reset();
+            // }
             companyChanged: async (controller, payload) => {
-                const list = await api.get("/api/company/client/combo");
-                APP.cache.page.companyComboList = list.data;
+                await CompanyService.refreshCombo();
                 await controller.reset();
             },
-            officeChanged: async (c, payload) => {
-                const list = await api.get("/api/office/client/combo");
-                APP.cache.page.officeComboList = list.data;
-                await c.reset();
+            officeChanged: async (controller, payload) => {
+                await OfficeService.refreshCombo();
+                await controller.reset();
             }
         }
     });
