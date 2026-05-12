@@ -2,6 +2,7 @@
 
 import { api } from "../../core/api/apiService";
 import { CompanyRepository } from "../../repositories/company/CompanyRepository";
+import { PageCacheService } from "../cache/PageCacheService";
 
 export const CompanyService = {
     // async getCombo(){
@@ -11,7 +12,8 @@ export const CompanyService = {
 
     async refreshCombo(){
         const list = await CompanyRepository.fetchCombo();
-        APP.cache.page.companyComboList = list;
+        // APP.cache.page.companyComboList = list;
+        PageCacheService.set("companyComboList", list);
         return list;
 
     }
