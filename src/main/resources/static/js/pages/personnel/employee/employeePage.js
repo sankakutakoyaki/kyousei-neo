@@ -10,7 +10,7 @@ import { filterFactory } from "../../../util/filterFactory.js";
 import { api } from "../../../core/api/apiService.js";
 import { initPageCache } from "../../../core/init/initPageCache.js";
 // import { dispatchAction } from "../../../util/actionDispatcher.js";
-import { dispatchAction } from "../../../core/events/actionDispatcher.js";
+// import { dispatchAction } from "../../../core/events/actionDispatcher.js";
 
 export async function init() {
 
@@ -73,7 +73,8 @@ export const fulltimeEmployeePage = () => {
                         officeId: filterFactory.equals("officeId")
                     }
                 },
-                onDoubleClick: (item) => controller.openEdit(item.employeeId),
+                // onDoubleClick: (item) => controller.openEdit(item.employeeId),
+                onDoubleClick: (item) => controller.openForm("detail", item.employeeId, { bulkMode:false }),
             })
         },
         forms: {

@@ -1,32 +1,33 @@
-"use strict"
+// "use strict"
 
-import { getController } from "../../controllers/controllers";
+// import { getController } from "../../controllers/controllers.js";
 
-export async function dispatchAction({
-    target,
-    action,
-    payload = null
-}){
-    if(!target || !action){
-        return;
-    }
+// export async function dispatchAction({
+//     target,
+//     action,
+//     payload = null
+// }){
+//     if(!target || !action){
+//         return;
+//     }
 
-    const targets =
-        Array.isArray(target)
-            ? target
-            : [target];
+//     const targets =
+//         Array.isArray(target)
+//             ? target
+//             : [target];
 
-    for(const key of targets){
-        const controller = getController(key);
-        if(!controller){
-            continue;
-        }
-        await controller.executeAction(
-            action,
-            payload
-        );
-    }
-}
+//     for(const key of targets){
+//         const controller = getController(key);
+//         if(!controller){
+//             continue;
+//         }
+//         await controller.executeAction(
+//             action,
+//             payload
+//         );
+//     }
+// }
+
 
 // "use strict"
 

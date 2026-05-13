@@ -7,9 +7,9 @@ import { smartFilterHandler } from "../core/behavior/filterHandler.js";
 // import { resolveController } from "../util/actionDispatcher.js";
 import { resolveController } from "../core/events/controllerResolver.js";
 import { openMsgDialog, closeMsgDialog, openConfirmDialog } from "../core/ui/dialog.js";
-import { ActionBehavior } from "../core/action/ActionBehavior.js";
+// import { ActionBehavior } from "../core/action/ActionBehavior.js";
 
-const defaultConditions = {
+const defaultPageConditions = {
     Edit: (c) => c.dataTable?.hasSelection(),
     bulkEdit: (c) => c.dataTable?.hasSelection(),
     delete: (c) => c.dataTable?.hasSelection(),
@@ -73,18 +73,19 @@ const formAction = (name, options={}) =>
     };
 
 export class PageController {
-
     constructor(config){
         this.config = Object.freeze(config);
         this.key = config.key;
         this.state = {};
-        this.conditions = config.conditions || {};
+        // this.conditions = config.conditions || {};
 
         this.dataTable = null;
         this.forms = {};
         this.components = {};
 
-        this.actions = new ActionBehavior(config.actions || {});
+        // this.actions = new ActionBehavior(config.actions || {});
+        this.pageActions = config.actions || {};
+        this.pageConditions = config.conditions || {};
     }
 
     init(config = {}){
@@ -92,14 +93,22 @@ export class PageController {
             ...this.config,
             ...config
         };
-        this.actions = {
+        this.pageActions = {
             ...defaultActions,
-            ...(config.actions || {})
+            ...(this.config.actions || {})
         };
-        this.conditions = {
-            ...defaultConditions,
-            ...(config.conditions || {})
+        this.pageConditions = {
+            ...defaultPageConditions,
+            ...(this.config.conditions || {})
         };
+        // this.actions = new ActionBehavior({
+        //     ...defaultActions,
+        //     ...(this.config.actions || {})
+        // });
+        // this.conditions = {
+        //     ...defaultConditions,
+        //     ...(this.config.conditions || {})
+        // };
         this.initComponents();
         this.initUI();
         this.initButtonAutoUpdate();
@@ -279,7 +288,8 @@ export class PageController {
      * ボタンの状態判定
      */
     isEnabled(action, btn){
-        const fn = this.conditions[action];
+        // const fn = this.conditions[action];
+        const fn = this.pageConditions[action];
         if(!fn) return true;
 
         return fn(this, btn);
@@ -405,7 +415,8 @@ export class PageController {
     //     return await fn(this, ...args);
     // }
     async executeAction(name, payload = null){
-        const fn = this.actions?.[name];
+        // const fn = this.actions?.[name];
+        const fn = this.pageActions?.[name];
         if(!fn){
             return;
         }

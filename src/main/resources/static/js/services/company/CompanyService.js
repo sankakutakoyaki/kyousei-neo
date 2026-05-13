@@ -1,8 +1,8 @@
 "use strict"
 
-import { api } from "../../core/api/apiService";
-import { CompanyRepository } from "../../repositories/company/CompanyRepository";
-import { PageCacheService } from "../cache/PageCacheService";
+import { api } from "../../core/api/apiService.js";
+import { CompanyRepository } from "../../repositories/company/CompanyRepository.js";
+import { PageCacheService } from "../cache/PageCacheService.js";
 
 export const CompanyService = {
     // async getCombo(){

@@ -1,6 +1,6 @@
 "use strict"
 
-import { api } from "../../core/api/apiService";
+import { api } from "../../core/api/apiService.js";
 
 export const CompanyRepository = {
     async fetchCombo(){

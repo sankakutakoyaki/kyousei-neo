@@ -93,7 +93,8 @@ export const partnerCompanyPage = () => {
                     delete: "companyDeleteByIds",
                     download: "companyCsv"
                 },
-                onDoubleClick: (item) => controller.openEdit(item.companyId)
+                // onDoubleClick: (item) => controller.openEdit(item.companyId)
+                onDoubleClick: (item) => controller.openForm("detail", item.companyId, { bulkMode:false })
             })
         },
         forms: {
@@ -174,7 +175,8 @@ export const partnerEmployeePage = () => {
                         companyId: filterFactory.equals("companyId")
                     }
                 },
-                onDoubleClick: (item) => controller.openEdit(item.employeeId),
+                // onDoubleClick: (item) => controller.openEdit(item.employeeId),
+                onDoubleClick: (item) => controller.openForm("detail", item.employeeId, { bulkMode:false })
             })
         },
         forms: {

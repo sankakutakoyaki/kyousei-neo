@@ -13,7 +13,8 @@ export const createEmployeeColumns = (controller) => [
         label: "コード",
         sortable: true,
         zeroToNull: true,
-        default: ""
+        default: "",
+        format: (v) => String(v).padStart(3, "0")
     },
     {
         field: "nameKana",

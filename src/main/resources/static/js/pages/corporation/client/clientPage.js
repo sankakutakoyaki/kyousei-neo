@@ -128,7 +128,8 @@ export const clientCompanyPage = () => {
                         category: filterFactory.equals("category")
                     }
                 },
-                onDoubleClick: (item) => controller.openEdit(item.companyId)
+                // onDoubleClick: (item) => controller.openEdit(item.companyId)
+                onDoubleClick: (item) => controller.openForm("detail", item.companyId, { bulkMode:false })
             })
         },
         forms: {
@@ -208,7 +209,8 @@ export const clientOfficePage = () => {
                         companyId: filterFactory.equals("companyId")
                     }
                 },
-                onDoubleClick: (item) => controller.openEdit(item.officeId),
+                // onDoubleClick: (item) => controller.openEdit(item.officeId),
+                onDoubleClick: (item) => controller.openForm("detail", item.officeId, { bulkMode:false })
             })
         },
         forms: {
@@ -275,7 +277,8 @@ export const clientStaffPage = () => {
                         officeId: filterFactory.equals("officeId")
                     }
                 },
-                onDoubleClick: (item) => controller.openEdit(item.staffId),
+                // onDoubleClick: (item) => controller.openEdit(item.staffId),
+                onDoubleClick: (item) => controller.openForm("detail", item.staffId, { bulkMode:false })
             })
         },
         forms: {

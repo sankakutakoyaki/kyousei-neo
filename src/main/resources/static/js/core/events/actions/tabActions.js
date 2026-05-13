@@ -12,13 +12,11 @@ export function handleTab(el){
         return;
     }
 
-    document.querySelectorAll(`[data-group="${group}"]`)
-        .forEach(tab => tab.classList.remove("is-active"));
+    document.querySelectorAll(`[data-group="${group}"]`).forEach(tab => tab.classList.remove("is-active"));
 
     el.classList.add("is-active");
 
-    document.querySelectorAll(`[data-tab-content="${group}"]`)
-        .forEach(panel => panel.classList.remove("is-show"));
+    document.querySelectorAll(`[data-tab-content="${group}"]`).forEach(panel => panel.classList.remove("is-show"));
 
     const target = document.getElementById(targetId);
     if(target){
