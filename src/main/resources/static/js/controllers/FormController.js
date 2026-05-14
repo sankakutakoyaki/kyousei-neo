@@ -4,7 +4,7 @@
 import { FormModel } from "../core/form/FormModel.js";
 // import { validate } from "../core/form/components/check.js";
 // import { api } from "../core/api/apiService.js";
-// import { convertKey } from "../core/ui/keyCaseConverter.js";
+import { convertKey } from "../core/ui/keyCaseConverter.js";
 // import { normalize, normalizeValue, getOptions } from "../core/behavior/valueNormalizer.js";
 import { openFormDialog } from "../core/ui/dialog.js";
 import { DialogService } from "../core/ui/DialogService.js";
@@ -22,7 +22,8 @@ export class FormController {
         const {
             formId,
             key,
-            api = {},
+            // api = {},
+            repository = null,
             beforeSave = null,
             // onSaved = null,
             afterSave = null,
@@ -37,7 +38,8 @@ export class FormController {
 
         this.formId = formId;
         this.key = key;
-        this.api = api;
+        // this.api = api;
+        this.repository = repository;
         this.beforeSave = beforeSave;
         // this.onSaved = onSaved;
         this.afterSave = afterSave;
@@ -89,13 +91,15 @@ export class FormController {
                     );
                 },
                 executeSave: async (payload) => {
-                    if(!this.api.save){
-                        return null;
-                    }
-                    const res = await this.api.request({
-                        queryId: this.api.save,
-                        params: payload
-                    });
+                    // if(!this.api.save){
+                    //     return null;
+                    // }
+                    // const res = await this.api.request({
+                    //     queryId: this.api.save,
+                    //     params: payload
+                    // });
+                    if(!this.repository?.save) return;
+                    const res = await this.repository.save(payload);
                     DialogService.info(
                         this.isBulkMode()
                             ? "一括更新しました"
@@ -124,17 +128,19 @@ export class FormController {
         let data = dataOrId ?? {};
 
         if (typeof dataOrId !== "object") {
-            if (!this.api.find) return;
+            // if (!this.api.find) return;
+            if(!this.repository?.find) return;
 
             const params = this.buildParams
                 ? this.buildParams(dataOrId)
                 : { id: dataOrId };
 
-            const res = await this.api.request({
-                queryId: this.api.find,
-                params: params
-            });
-            data = res.data?.[0] ?? {};
+            // const res = await this.api.request({
+            //     queryId: this.api.find,
+            //     params: params
+            // });
+            // data = res.data?.[0] ?? {};
+            data = await this.repository.find(params);
         }
 
         const filters = this.controller.state?.filters || {};
@@ -392,7 +398,8 @@ export class FormController {
         if(!this.isBulkMode()){
             return true;
         }
-        const ids = this.getTargetIds(payload);
+        // const ids = this.getTargetIds(payload);
+        const ids = payload.ids ?? [];
         return await DialogService.confirm(
             `${ids.length}件に適用しますか？`
         );
