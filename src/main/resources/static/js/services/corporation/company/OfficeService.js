@@ -1,8 +1,8 @@
 "use strict"
 
-import { api } from "../../core/api/apiService.js";
-import { OfficeRepository } from "../../repositories/company/OfficeRepository.js";
-import { PageCacheService } from "../cache/PageCacheService.js";
+import { api } from "../../../core/api/apiService.js";
+import { OfficeRepository } from "../../../repositories/corporation/company/OfficeRepository.js";
+import { PageCacheService } from "../../cache/PageCacheService.js";
 
 export const OfficeService = {
     // async getCombo(){

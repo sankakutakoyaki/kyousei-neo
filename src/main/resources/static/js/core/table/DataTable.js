@@ -3,7 +3,7 @@
 import { TableModel } from "./TableModel.js";
 import { renderTable } from "./tableRender.js";
 import { filterFactory } from "../../util/filterFactory.js";
-import { api } from "../api/apiService.js";
+// import { api } from "../api/apiService.js";
 
 const defaultModel = {
     pageSize: 50,
@@ -28,7 +28,8 @@ export class DataTable {
 
         this.buildParams = config.buildParams;
         this.buildCsvParams = config.buildCsvParams;
-        this.api = config.api || {};
+        // this.api = config.api || {};
+        this.repository = config.repository;
         // 移動予定
         this.canSave = config.canSave;
 
@@ -68,37 +69,61 @@ export class DataTable {
         this.reload();
     }
 
-    async fetch(){
-        if(!this.api.select) return;
+    // async fetch(){
+    //     if(!this.api.select) return;
 
-        const params = this.buildParams ? this.buildParams() : {};
-        const res = await this.api.request({
-            queryId: this.api.select,
-            params
-        });
-        this.model.setOrigin(res.data ?? []);
+    //     const params = this.buildParams ? this.buildParams() : {};
+    //     const res = await this.api.request({
+    //         queryId: this.api.select,
+    //         params
+    //     });
+    //     this.model.setOrigin(res.data ?? []);
+    // }
+    async fetch(){
+        if(!this.repository) return;
+
+        const params = this.buildParams
+                ? this.buildParams()
+                : {};
+        const data = await this.repository.search(params);
+        this.model.setOrigin(data ?? []);
     }
 
+    // async deleteByIds(ids){
+    //     if(!this.api.delete) return;
+
+    //     const result = await this.api.request({
+    //         queryId: this.api.delete,
+    //         params: { ids }
+    //     });
+
+    //     await this.refresh();
+    //     return result;
+    // }
     async deleteByIds(ids){
-        if(!this.api.delete) return;
+        if(!this.repository?.remove) return;
 
-        const result = await this.api.request({
-            queryId: this.api.delete,
-            params: { ids }
-        });
-
+        const result = await this.repository.remove({ids});
         await this.refresh();
         return result;
     }
 
+    // async downloadCsvByIds(ids){
+    //     if(!this.api.download) return;
+
+    //     const result = await this.api.request({
+    //         queryId: this.api.download,
+    //         params: { ...this.buildCsvParams(), ids }
+    //     });
+
+    //     await this.refresh();
+    //     return result;
+    // }
     async downloadCsvByIds(ids){
-        if(!this.api.download) return;
+        if(!this.repository?.download) return;
 
-        const result = await this.api.request({
-            queryId: this.api.download,
-            params: { ...this.buildCsvParams(), ids }
-        });
-
+        const params = {...(this.buildCsvParams ? this.buildCsvParams(): {}), ids};
+        const result = await this.repository.download(params);
         await this.refresh();
         return result;
     }

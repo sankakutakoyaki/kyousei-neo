@@ -1,6 +1,6 @@
 "use strict"
 
-import { RequestClient } from "../../core/request/RequestClient";
+import { RequestClient } from "../../../core/request/RequestClient.js";
 
 export const RecycleRepository = {
     async search(params){
@@ -19,5 +19,9 @@ export const RecycleRepository = {
 
     async remove(params){
         return await RequestClient.request({queryId: "recycleDeleteByIds", params});
+    },
+
+    async download(params){
+        return await RequestClient.request({queryId: "recycleCsv", params});
     }
 };

@@ -1,0 +1,58 @@
+"use strict";
+
+import { PageController } from "../../controllers/PageController.js";
+import { DataTable } from "../table/DataTable.js";
+import { FormController } from "../../controllers/FormController.js";
+
+export function createCrudPage(config){
+    return new PageController({
+        key: config.key,
+        components: config.components,
+        
+        onInit: config.onInit,
+        onDeleted: config.onDeleted,
+
+        actions: config.actions,
+        conditions: config.conditions,
+
+        table: {
+            create: (controller) => new DataTable({
+                controller,
+                tableId: config.tableId,
+                footerId: config.footerId,
+                columns: config.columns,
+
+                idKey: config.idKey,
+                checkable: config.checkable ?? true,
+                repository: config.repository,
+                buildParams: config.buildParams,
+                buildCsvParams: config.buildCsvParams,
+                model: config.model,
+                canSave: config.canSave,
+                onRowClick: config.onRowClick,
+                onDoubleClick: config.onDoubleClick ?? ((item) =>
+                    controller.openForm("detail", item[config.idKey], { bulkMode:false })
+                )
+            })
+        },
+
+        forms: {
+            detail: {
+                create: (controller) =>  new FormController({
+                    controller,
+
+                    formId: config.formId,
+                    key: config.key,
+
+                    repository: config.repository,
+                    beforeSave: config.beforeSave,
+                    afterSave: async (id) => {
+                        if(config.afterSave){await config.afterSave(controller, id);}
+                    },
+                    validateBusiness: config.validateBusiness,
+                    buildParams: config.buildDetailParams
+                })
+            }
+        }
+    });
+}

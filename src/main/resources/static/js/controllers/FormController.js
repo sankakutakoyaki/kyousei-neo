@@ -143,22 +143,40 @@ export class FormController {
             data = await this.repository.find(params);
         }
 
-        const filters = this.controller.state?.filters || {};
-        Object.entries(filters).forEach(([key, value]) => {
-            if (value == null || value === "") return;
+        // const filters = this.controller.state?.filters || {};
+        // Object.entries(filters).forEach(([key, value]) => {
+        //     if (value == null || value === "") return;
 
-            const kebab = convertKey(key, "camel", "kebab");
-            const el = document.querySelector(
-                `#${this.formId} [name="${kebab}"], 
-                #${this.formId} [data-key="${kebab}"], 
-                #${this.formId} [data-key="${key}"]`
-            );
-            if (!el) return;
+        //     const kebab = convertKey(key, "camel", "kebab");
+        //     const el = document.querySelector(
+        //         `#${this.formId} [name="${kebab}"], 
+        //         #${this.formId} [data-key="${kebab}"], 
+        //         #${this.formId} [data-key="${key}"]`
+        //     );
+        //     if (!el) return;
 
-            if (data[key] == null || data[key] === "") {
-                data[key] = value;
-            }
-        });
+        //     if (data[key] == null || data[key] === "") {
+        //         data[key] = value;
+        //     }
+        // });
+        const isCreate = !data?.[this.key];
+        if(isCreate){
+            const filters = this.controller.state?.filters || {};
+            Object.entries(filters).forEach(([key, value]) => {
+                if (value == null || value === "") return;
+                const kebab = convertKey(key, "camel", "kebab");
+                const el = document.querySelector(
+                    `#${this.formId} [name="${kebab}"],
+                    #${this.formId} [data-key="${kebab}"],
+                    #${this.formId} [data-key="${key}"]`
+                );
+                if (!el) return;
+
+                if (data[key] == null || data[key] === "") {
+                    data[key] = value;
+                }
+            });
+        }
 
         // this.currentEntity = data;
         this.currentEntity = structuredClone(data);

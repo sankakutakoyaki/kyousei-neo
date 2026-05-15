@@ -1,6 +1,6 @@
 "use strict"
 
-export const createClientCompanyColumns = (controller) => [
+export const createClientCompanyColumns = () => [
     {
         field: "companyId",
         label: "ID",
@@ -31,7 +31,7 @@ export const createClientCompanyColumns = (controller) => [
     }
 ];
 
-export const createOfficeColumns = (controller) => [
+export const createOfficeColumns = () => [
     {
         field: "companyId",
         label: "ID",
@@ -68,7 +68,7 @@ export const createOfficeColumns = (controller) => [
     }
 ];
 
-export const createStaffColumns = (controller) => [
+export const createStaffColumns = () => [
     {
         field: "staffId",
         label: "ID",

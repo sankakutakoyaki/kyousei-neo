@@ -10,10 +10,14 @@ import { openMsgDialog, closeMsgDialog, openConfirmDialog } from "../core/ui/dia
 // import { ActionBehavior } from "../core/action/ActionBehavior.js";
 
 const defaultPageConditions = {
-    Edit: (c) => c.dataTable?.hasSelection(),
-    bulkEdit: (c) => c.dataTable?.hasSelection(),
-    delete: (c) => c.dataTable?.hasSelection(),
-    download: (c) => c.dataTable?.hasSelection(),
+    // Edit: (c) => c.dataTable?.hasSelection(),
+    // bulkEdit: (c) => c.dataTable?.hasSelection(),
+    // delete: (c) => c.dataTable?.hasSelection(),
+    // download: (c) => c.dataTable?.hasSelection(),
+    Edit: (c) => c.hasSelection(),
+    bulkEdit: (c) => c.hasSelection(),
+    delete: (c) => c.hasSelection(),
+    download: (c) => c.hasSelection(),
     // save: (c) => c.getActiveForm()?.canSubmit()
     save: (c, btn) => {
         const scope = btn.dataset.scope;
@@ -44,14 +48,16 @@ const defaultPageConditions = {
 // };
 const defaultActions = {
     create: (c) => c.openForm("detail", null, { bulkMode:false }),
-    keywordSearch: (c, el) => {c.state.keyword = el.value; c.dataTable.reload();},
+    // keywordSearch: (c, el) => {c.state.keyword = el.value; c.dataTable.reload();},
+    keywordSearch: (c, el) => {c.setKeyword(el.value); c.reload();},// c.dataTable.reload();},
     filter: smartFilterHandler,
-    Edit: async (c) => {const ids = c.dataTable.model.getSelectedIds();
+    Edit: async (c) => {const ids = c.getSelectedIds();//c.dataTable.model.getSelectedIds();
         if(!c.ensureSelection(ids)){return;}
         await c.openForm("detail", c.getSelectedId(), { bulkMode:false });
     },
     bulkEdit: async (c) => {
-        const ids = c.dataTable.model.getSelectedIds();
+        // const ids = c.dataTable.model.getSelectedIds();
+        const ids = c.getSelectedIds()
         if(!c.ensureSelection(ids)){ return; }
         await c.openForm("bulk", null, { bulkMode:true });
     },
@@ -175,8 +181,10 @@ export class PageController {
 
     // 検索
     search(keyword){
-        this.state.keyword = keyword;
-        this.dataTable.reload();
+        // this.state.keyword = keyword;
+        this.setKeyword(keyword);
+        // this.dataTable.reload();
+        this.reload();
     }
 
     // UI操作
@@ -203,7 +211,8 @@ export class PageController {
     // }
 
     async deleteSelected(){
-        const ids = this.dataTable.model.getSelectedIds();
+        // const ids = this.dataTable.model.getSelectedIds();
+        const ids = this.getSelectedIds();
         if(!this.ensureSelection(ids)) return;
 
         openConfirmDialog({
@@ -217,7 +226,8 @@ export class PageController {
     }
 
     async reset(){
-        this.state = {};
+        // this.state = {};
+        this.clearState();
 
         this.components.input?.clear();
         this.components.combo?.clear();
@@ -225,6 +235,10 @@ export class PageController {
         this.components.combo?.reload();
 
         await this.dataTable.refresh();
+    }
+
+    reload(){
+        this.dataTable?.reload();
     }
 
     async executeDelete(ids){
@@ -244,7 +258,8 @@ export class PageController {
     }
 
     async downloadSelected(){
-        const ids = this.dataTable.model.getSelectedIds();
+        // const ids = this.dataTable.model.getSelectedIds();
+        const ids = this.getSelectedIds();
         if(!this.ensureSelection(ids)) return;
 
         const res = await this.dataTable.downloadCsvByIds(ids);
@@ -345,8 +360,8 @@ export class PageController {
         options = {}
     ){
         if(options.bulkMode != null){
-            this.state.bulkMode =
-                options.bulkMode;
+            // this.state.bulkMode = options.bulkMode;
+            this.setBulkMode(options.bulkMode);
         }
         const form = this.forms?.[name];
         if(!form){
@@ -363,7 +378,8 @@ export class PageController {
     }
 
     getSelectedId(){
-        const ids = this.dataTable.model.getSelectedIds();
+        // const ids = this.dataTable.model.getSelectedIds();
+        const ids = this.getSelectedIds();
         return ids[0] ?? null;
     }
 
@@ -378,6 +394,15 @@ export class PageController {
     //         this.scrollToRow(targetId);
     //     }
     // }
+
+    getKeyword(){
+        return this.state.keyword ?? "";
+    }
+
+    setKeyword(value){
+        this.state.keyword = value;
+    }
+
     async refresh(targetId = null){
         if(!this.dataTable){
             return;
@@ -421,6 +446,25 @@ export class PageController {
             return;
         }
         return await fn(this, payload);
+    }
+
+    getFilter(key){
+        return this.state.filters?.[key];
+    }
+
+    setFilter(key, value){
+        if(!this.state.filters){
+            this.state.filters = {};
+        }
+        this.state.filters[key] = value;
+    }
+
+    clearState(){
+        this.state = {};
+    }
+
+    hasSelection(){
+        return this.dataTable ?.hasSelection?.() ?? false;
     }
 }
 

@@ -1,6 +1,6 @@
 "use strict"
 
-import { api } from "../api/apiService";
+import { api } from "../api/apiService.js";
 
 export const RequestClient = {
     async request({queryId, params = {}}){

@@ -1,6 +1,7 @@
 "use strict"
 
 import { createComboBox } from "../../core/form/components/combo.js";
+import { PageCacheService } from "../../services/cache/PageCacheService.js";
 
 export function initCombo(controller){
 
@@ -12,7 +13,8 @@ export function initCombo(controller){
         selects.forEach(select => {
 
             const listName = select.dataset.combo;
-            const list = APP.cache.page[listName];
+            // const list = APP.cache.page[listName];
+            const list = PageCacheService.get(listName);
             if (!list) return;
 
             createComboBox({

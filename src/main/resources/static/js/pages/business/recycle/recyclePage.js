@@ -13,6 +13,7 @@ import { dispatchAction } from "../../../core/events/actionDispatcher.js";
 import { initParentChildLink } from "../../../util/link.js";
 import { getToday } from "../../../util/time.js";
 import { toExclusiveDate } from "../../../util/date.js";
+import { RecycleRepository } from "../../../repositories/business/recycle/RecycleRepository.js";
 
 export async function init() {
 
@@ -91,12 +92,13 @@ export const recycleListPage = () => {
                 buildCsvParams: () => ({
                     state: APP.cache.common.state.INITIAL
                 }),
-                api: {
-                    request: api.request, // 取得方法定義
-                    select: "recycleList",
-                    delete: "recycleDeleteByIds",
-                    download: "recycleCsv"
-                },
+                // api: {
+                //     request: api.request, // 取得方法定義
+                //     select: "recycleList",
+                //     delete: "recycleDeleteByIds",
+                //     download: "recycleCsv"
+                // },
+                repository: RecycleRepository,
                 // onDoubleClick: (item) => controller.openEdit(item.recycleId)
                 onDoubleClick:(item) => controller.openForm("detail", item.recycleId, { bulkMode:false })
             })
@@ -105,16 +107,16 @@ export const recycleListPage = () => {
             detail: {
                 create: (controller) =>
                     createRecycleForm(controller, {
-                        formId: "form-01",
-                        saveQueryId: "recycleSave"
+                        formId: "form-01"
+                        // saveQueryId: "recycleSave"
                     })
             },
             bulk: {
                 create: (controller) =>
                     createRecycleForm(controller, {
-                        formId: "form-02",
-                        // saveQueryId: "recycleBulkUpdate"
-                        saveQueryId: "recycleSave"
+                        formId: "form-02"
+                        // // saveQueryId: "recycleBulkUpdate"
+                        // saveQueryId: "recycleSave"
                     })
             }
         }
@@ -143,7 +145,7 @@ const createRecycleForm = (controller, options = {}) =>
             // async (payload) => {
             const table =  controller.dataTable;
             // const ids = controller.state.bulkMode ? table.model.getSelectedIds(): [payload.recycleId];
-            const ids = controller.state.bulkMode ? table.getSelectedIds(): [payload.recycleId];
+            const ids = controller.isBulkMode() ? table.getSelectedIds(): [payload.recycleId];
 
             for(const id of ids){
                 // const origin = table.model.findOriginById(id);
@@ -153,11 +155,12 @@ const createRecycleForm = (controller, options = {}) =>
                 validatePersisted(payload, origin, "shippingDate", "発送日");
             }
         },
-        api: {
-            request: api.request,
-            find: "recycleDetail",
-            save: options.saveQueryId
-        }
+        repository: RecycleRepository,
+        // api: {
+        //     request: api.request,
+        //     find: "recycleDetail",
+        //     save: options.saveQueryId
+        // }
     });
 
 export const recycleUsePage = () => {
@@ -187,10 +190,11 @@ export const recycleUsePage = () => {
                         dateTo: toExclusiveDate(from)
                     };
                 },
-                api: {
-                    request: api.request, // 取得方法定義
-                    select: "recycleList"
-                },
+                repository: RecycleRepository,
+                // api: {
+                //     request: api.request, // 取得方法定義
+                //     select: "recycleList"
+                // },
                 // ボタン disabled 制御
                 canSave: () => {
                     const recycle = document.querySelector("#header-02 [name='recycle-number']")?.value;
