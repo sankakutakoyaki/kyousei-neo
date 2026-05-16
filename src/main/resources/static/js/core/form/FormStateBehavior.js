@@ -1,6 +1,6 @@
 "use strict"
 
-import { convertKey } from "../ui/keyCaseConverter.js";
+import { convertKey } from "../../util/keyCaseConverter.js";
 import { normalize,normalizeValue,getOptions } from "../behavior/valueNormalizer.js";
 
 export const FormStateBehavior = {

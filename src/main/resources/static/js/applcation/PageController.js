@@ -1,10 +1,10 @@
 "use strict"
 
-import { initCombo } from "../core/init/initCombo.js";
+import { initCombo } from "../bootstrap/initCombo.js";
 import { createInputComponent } from "../core/form/components/inputComponent.js";
 import { smartFilterHandler } from "../core/behavior/filterHandler.js";
 import { resolveController } from "../core/events/controllerResolver.js";
-import { openMsgDialog, closeMsgDialog, openConfirmDialog } from "../core/ui/dialog.js";
+import { openMsgDialog, closeMsgDialog, openConfirmDialog } from "../core/ui/dialog/dialogCore.js";
 
 const defaultPageConditions = {
     Edit: (c) => c.hasSelection(),

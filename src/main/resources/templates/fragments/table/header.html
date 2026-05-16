@@ -1,0 +1,68 @@
+<th:block th:fragment="searchBoxFragment(searchId)">
+    <!-- 検索 -->
+    <div class="search-box">
+        <input th:id="${searchId}" type="search" data-action="keywordSearch" placeholder="検索">
+        <img title="検索" src="/icons/search.png">
+        
+    </div>
+</th:block>
+
+<th:block th:fragment="kebabBtnsFragment(btns)">
+    <div class="kebab-btns" data-area="kebabBtns">
+
+        <!-- 新規 -->
+        <div class="img-btn"
+            th:if="${btns != null and btns['add'] != null}"
+            data-action="create"
+            th:id="${btns['add']}">
+            <img src="/icons/add.png">
+            <span>新規</span>
+        </div>
+
+        <!-- 編集 -->
+        <div class="img-btn"
+            th:if="${btns != null and btns['edit'] != null}"
+            data-action="edit"
+            th:id="${btns['edit']}">
+            <img src="/icons/edit.png">
+            <span>編集</span>
+        </div>
+
+        <!-- 一括編集 -->
+        <div class="img-btn"
+            th:if="${btns != null and btns['bulkEdit'] != null}"
+            data-action="bulkEdit"
+            th:id="${btns['bulkEdit']}">
+            <img src="/icons/edit.png">
+            <span>編集</span>
+        </div>
+
+        <!-- 削除 -->
+        <div class="img-btn"
+            th:if="${btns != null and btns['delete'] != null}"
+            data-action="delete"
+            th:id="${btns['delete']}">
+            <img src="/icons/dust.png">
+            <span>削除</span>
+        </div>
+
+        <!-- CSV -->
+        <div class="img-btn"
+            th:if="${btns != null and btns['download'] != null}"
+            data-action="download"
+            th:id="${btns['download']}">
+            <img src="/icons/download.png">
+            <span>取得</span>
+        </div>
+
+        <!-- 更新 -->
+        <div class="img-btn"
+            th:if="${btns != null and btns['reload'] != null}"
+            data-action="reload"
+            th:id="${btns['reload']}">
+            <img src="/icons/update.png">
+            <span>更新</span>
+        </div>
+
+    </div>
+</th:block>

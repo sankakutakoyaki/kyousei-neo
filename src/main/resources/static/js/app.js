@@ -1,6 +1,9 @@
 "use strict"
 
 import { loadPage } from "./core/dom/loadPage.js";
+import { initHamburger } from "./core/ui/menu/hamburger.js";
+import { closeHamburger } from "./core/ui/menu/hamburger.js";
+import { initPushSubscription } from "./core/push/subscription.js";
 
 window.APP = {
     security: {
@@ -11,8 +14,10 @@ window.APP = {
     cacheLoaded: false
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-    initApp(); // 初回だけ実行
+document.addEventListener("DOMContentLoaded", async () => {
+    initApp();
+    // initHamburger();
+    // await initPushSubscription();
 });
 
 let initialized = false;
@@ -22,16 +27,17 @@ export function initApp() {
     initialized = true;
     
     document.addEventListener("click", (e) => {
-        const item = e.target.closest(".hamburger-item");
+        const item = e.target.closest(".hamburger-item") || e.target.closest("[data-link]");
         if (!item) return;
 
         if (item.classList.contains("selected")) return;
 
-        const path = item.dataset.path;
+        const path = item.dataset.path || item.dataset.link;
         const target = item.dataset.target || "body";
 
         loadPage(path, target);
-        hamburgerClose();
+        // hamburgerClose();
+        // closeHamburger();
     });
 }
 

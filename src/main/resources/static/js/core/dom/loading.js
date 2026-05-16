@@ -1,5 +1,7 @@
 "use strict"
 
+import { clearElement } from "./clearElement.js";
+
 // 処理開始時の処理　スピナー表示
 export function startProcessing() {
     const body = document.querySelector('.normal-body');
@@ -18,7 +20,8 @@ export function startProcessing() {
 export function processingEnd() {
     const spinner = document.querySelector('#loading');
     if (spinner == null) return;
-    deleteElementsAll("loading");
+    // deleteElementsAll("loading");
+    clearElement("loading", true)
 
     const body = document.querySelector('.normal-body');
     if (body != null) body.inert = false;

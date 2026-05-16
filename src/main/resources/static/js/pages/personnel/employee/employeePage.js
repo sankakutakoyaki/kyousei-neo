@@ -1,10 +1,10 @@
 "use strict"
 
-import { initCommon } from "../../../core/init/initPage.js";
+import { initCommon } from "../../../bootstrap/initPage.js";
+import { initPageCache } from "../../../bootstrap/initPageCache.js";
 import { createEmployeeColumns } from "./columns.js";
-import { registerController } from "../../../controllers/controllers.js";
-import { initPageCache } from "../../../core/init/initPageCache.js";
 import { createEmployeePage } from "../createEmployeePage.js";
+import { registerController } from "../../../applcation/controllerRegistry.js";
 
 export async function init() {
     await initCommon();

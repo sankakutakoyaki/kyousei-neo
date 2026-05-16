@@ -1,6 +1,6 @@
 "use strict"
 
-import { resetEnterFocus } from "./enterfocus.js";
+import { resetEnterFocus } from "../../form/components/enterfocus.js";
 
 /**
  * フォームダイアログを開く

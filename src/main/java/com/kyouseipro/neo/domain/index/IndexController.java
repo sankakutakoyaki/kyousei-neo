@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo._backup.personnel.employee.entity.EmployeeEntity;
 import com.kyouseipro.neo._backup.personnel.employee.service.EmployeeService2;
+import com.kyouseipro.neo.base.BaseController;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,8 +23,8 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class IndexController {
-	private final EmployeeService2 employeeService;
+public class IndexController extends BaseController {
+	// private final EmployeeService2 employeeService;
 
 	/**
 	 * スタートページ
@@ -32,21 +33,24 @@ public class IndexController {
 	 */
 	@GetMapping("/")
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	public String getIndex(Model model, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
-		// ユーザー名
-		String userName = principal.getAttribute("preferred_username");
-		EmployeeEntity loginUser = employeeService.getByAccount(userName);
-			// .orElseThrow(() -> new IllegalStateException("ユーザーが存在しません"));
-		if (loginUser == null) return null;
+	// public String getIndex(Model model, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
+		// // ユーザー名
+		// String userName = principal.getAttribute("preferred_username");
+		// EmployeeEntity loginUser = employeeService.getByAccount(userName);
+		// 	// .orElseThrow(() -> new IllegalStateException("ユーザーが存在しません"));
+		// if (loginUser == null) return null;
 
-		// セッションに保持
-		session.setAttribute("loginUser", loginUser);
-        model.addAttribute("user", loginUser);
+		// // セッションに保持
+		// session.setAttribute("loginUser", loginUser);
+        // model.addAttribute("user", loginUser);
 
-		model.addAttribute("title", "ホーム");
-        model.addAttribute("insertCss", "/css/index/home.css");
+		// model.addAttribute("title", "ホーム");
+        // // model.addAttribute("insertCss", "/css/index/home.css");
+		// model.addAttribute("insertCss", "/css/pages/index/home.css");
 
-        return "contents/index/home";
+        // return "contents/index/home";
+	public String getIndex() {
+		return "fragments/pages/index/home";
     }
 	
 	/**

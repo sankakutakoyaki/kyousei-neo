@@ -1,7 +1,7 @@
 "use strict"
 
 import { initApp } from "../../app.js";
-import { menuActive } from "./menuActive.js";
+import { menuActive } from "../ui/menu/menuActive.js";
 
 export async function loadPage(url, target = "body") {
     if (APP.currentPage === url && target === "body") {
@@ -15,6 +15,7 @@ export async function loadPage(url, target = "body") {
 
     const res = await fetch(url);
     const html = await res.text();
+    if(res.redirected){ console.warn("redirected:", res.url);}
 
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");

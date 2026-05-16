@@ -1,9 +1,9 @@
 "use strict"
 
 import { FormModel } from "../core/form/FormModel.js";
-import { convertKey } from "../core/ui/keyCaseConverter.js";
-import { openFormDialog } from "../core/ui/dialog.js";
-import { DialogService } from "../core/ui/DialogService.js";
+import { convertKey } from "../util/keyCaseConverter.js";
+import { openFormDialog } from "../core/ui/dialog/dialogCore.js";
+import { DialogService } from "../core/ui/dialog/DialogService.js";
 import { SaveBehavior } from "../core/save/SaveBehavior.js";
 import { FormPayloadBuilder } from "../core/form/FormPayloadBuilder.js";
 import { UiValidator } from "../core/validate/UiValidator.js";

@@ -1,10 +1,10 @@
 "use strict"
 
 import { clearElement } from "../dom/clearElement.js";
-import { setPageTopButton } from "../dom/pageTopButton.js";
+import { setPageTopButton } from "../ui/pageTopButton.js";
 import { formatDate } from "../../util/time.js";
 import { normalizeValue } from "../behavior/valueNormalizer.js";
-import { convertKey } from "../ui/keyCaseConverter.js";
+import { convertKey } from "../../util/keyCaseConverter.js";
 
 
 export function renderTable(table, config, list){

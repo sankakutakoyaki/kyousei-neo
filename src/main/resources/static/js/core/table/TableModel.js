@@ -1,7 +1,6 @@
 "use strict"
 
-import { convertKey } from "../ui/keyCaseConverter.js";
-
+import { convertKey } from "../../util/keyCaseConverter.js";
 export class TableModel {
     constructor(config){
         this.originData = [];

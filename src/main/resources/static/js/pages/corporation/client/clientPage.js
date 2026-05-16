@@ -1,16 +1,16 @@
 "use strict"
 
-import { initCommon } from "../../../core/init/initPage.js";
+import { initCommon } from "../../../bootstrap/initPage.js";
 import { createClientCompanyColumns, createOfficeColumns, createStaffColumns } from "./columns.js";
-import { registerController } from "../../../controllers/controllers.js";
+import { registerController } from "../../../applcation/controllerRegistry.js";
 import { filterFactory } from "../../../util/filterFactory.js";
-import { initPageCache } from "../../../core/init/initPageCache.js";
+import { initPageCache } from "../../../bootstrap/initPageCache.js";
 import { initParentChildLink } from "../../../util/link.js";
 import { CompanyService } from "../../../services/corporation/company/CompanyService.js";
 import { createCompanyPage } from "../createCompanyPage.js";
 import { createOfficePage } from "../createOfficePage.js";
 import { createStaffPage } from "../createStaffPage.js";
-import { getController } from "../../../controllers/controllers.js";
+import { getController } from "../../../applcation/controllerRegistry.js";
 import { ClientCompanyService } from "../../../services/corporation/company/ClientCompanyService.js";
 
 export async function init() {

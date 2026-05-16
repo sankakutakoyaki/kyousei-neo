@@ -1,6 +1,6 @@
 "use strict"
 
-import { convertKey } from "../ui/keyCaseConverter.js"
+import { convertKey } from "../../util/keyCaseConverter.js";
 import { normalizeValue, getOptions, normalize } from "../behavior/valueNormalizer.js";
 import { resolveSubmitValue } from "../behavior/DataResolver.js";
 import { formatters } from "../behavior/formatters.js";

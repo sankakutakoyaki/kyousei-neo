@@ -1,0 +1,12 @@
+@charset "UTF-8";
+
+.input-prompt {
+    display: flex;
+    justify-content: center;
+}
+
+#ai-form {
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+    width: 40rem;
+}

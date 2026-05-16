@@ -1,6 +1,6 @@
 "use strict";
 
-import { RequestClient } from "../../../core/request/RequestClient.js";
+import { RequestClient } from "../../../core/api/RequestClient.js";
 
 export const OfficeRepository = {
     async search(params){
