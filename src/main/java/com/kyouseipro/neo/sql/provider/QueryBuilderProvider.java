@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.kyouseipro.neo.common.enums.code.RecycleCategory;
 import com.kyouseipro.neo.common.enums.system.QueryId;
 import com.kyouseipro.neo.common.enums.util.EnumUtil;
-import com.kyouseipro.neo.interfaces.QueryBuilder;
+import com.kyouseipro.neo.interfaces.sql.QueryBuilder;
 import com.kyouseipro.neo.sql.query.recycle.RecycleMakerQuery;
 import com.kyouseipro.neo.sql.query.recycle.RecycleQuery;
 

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.kyouseipro.neo.interfaces.LogSqlProvider;
+import com.kyouseipro.neo.interfaces.sql.LogSqlProvider;
 
 @Component("staffs")
 public class StaffLogSqlProvider implements LogSqlProvider {

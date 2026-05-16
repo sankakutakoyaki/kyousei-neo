@@ -1,6 +1,6 @@
 package com.kyouseipro.neo.common.enums.code;
 
-import com.kyouseipro.neo.interfaces.BaseEnum;
+import com.kyouseipro.neo.interfaces.enums.BaseEnum;
 
 public enum ClientCategory implements BaseEnum {
 

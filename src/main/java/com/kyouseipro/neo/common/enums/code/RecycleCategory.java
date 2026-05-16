@@ -1,6 +1,6 @@
 package com.kyouseipro.neo.common.enums.code;
 
-import com.kyouseipro.neo.interfaces.BaseEnum;
+import com.kyouseipro.neo.interfaces.enums.BaseEnum;
 
 public enum RecycleCategory implements BaseEnum {
     REGIST(1,"登録日", "regist_date"),

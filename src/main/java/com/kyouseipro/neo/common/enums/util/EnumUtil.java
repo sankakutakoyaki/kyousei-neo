@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.kyouseipro.neo.common.master.combo.ComboDto;
-import com.kyouseipro.neo.interfaces.BaseEnum;
+import com.kyouseipro.neo.common.combo.entity.ComboDto;
+import com.kyouseipro.neo.interfaces.enums.BaseEnum;
 
 public class EnumUtil {
 

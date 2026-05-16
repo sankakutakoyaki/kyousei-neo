@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.kyouseipro.neo.interfaces.LogSqlProvider;
+import com.kyouseipro.neo.interfaces.sql.LogSqlProvider;
 import com.kyouseipro.neo.sql.model.SqlResult;
 
 public class SqlService {

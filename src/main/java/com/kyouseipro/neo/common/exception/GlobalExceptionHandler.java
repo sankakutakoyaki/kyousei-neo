@@ -5,8 +5,8 @@ import java.security.Principal;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.kyouseipro.neo.common.history.service.HistoryService;
 import com.kyouseipro.neo.common.response.SimpleResponse;
+import com.kyouseipro.neo.history.service.HistoryService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

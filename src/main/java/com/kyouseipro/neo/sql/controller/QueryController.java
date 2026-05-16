@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kyouseipro.neo.common.enums.system.QueryId;
 import com.kyouseipro.neo.common.enums.system.QueryType;
-import com.kyouseipro.neo.interfaces.QueryBuilder;
+import com.kyouseipro.neo.interfaces.sql.QueryBuilder;
 import com.kyouseipro.neo.sql.common.QueryParamBinder;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.QueryBuilderProvider;
 import com.kyouseipro.neo.sql.provider.SqlProvider;
-import com.kyouseipro.neo.sql.repository.BaseRepository;
+import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 import com.kyouseipro.neo.sql.service.CsvService;
 
@@ -30,7 +30,7 @@ public class QueryController {
     private final SqlProvider sqlProvider;
     private final QueryParamBinder paramBinder;
     private final SqlRepository sqlRepository;
-    private final BaseRepository baseRepository;
+    private final BaseSqlRepository baseRepository;
     private final CsvService csvService;
     private final QueryBuilderProvider queryBuilderProvider;
 

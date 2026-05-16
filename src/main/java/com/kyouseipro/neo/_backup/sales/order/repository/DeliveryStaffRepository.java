@@ -1,0 +1,32 @@
+package com.kyouseipro.neo._backup.sales.order.repository;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.kyouseipro.neo._backup.sales.order.entity.DeliveryStaffEntity;
+import com.kyouseipro.neo._backup.sales.order.mapper.DeliveryStaffEntityMapper;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Repository
+@RequiredArgsConstructor
+public class DeliveryStaffRepository {
+    private final SqlRepository sqlRepository;
+
+    /**
+     * 全件取得（OrderIDで指定）。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
+    public List<DeliveryStaffEntity> findAllByOrderId(Long id, String editor) {
+        String sql = DeliveryStaffSqlBuilder.buildFindAllByOrderId();
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, v) -> DeliveryStaffParameterBinder.bindFindAllByOrderId(ps, id),
+            DeliveryStaffEntityMapper::map
+        );
+    }
+}

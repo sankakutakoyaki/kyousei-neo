@@ -1,0 +1,32 @@
+package com.kyouseipro.neo._backup.sales.order.repository;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.kyouseipro.neo._backup.sales.order.entity.WorkContentEntity;
+import com.kyouseipro.neo._backup.sales.order.mapper.WorkContentEntityMapper;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Repository
+@RequiredArgsConstructor
+public class WorkContentRepository {
+    private final SqlRepository sqlRepository;
+
+    /**
+     * 全件取得。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
+    public List<WorkContentEntity> findAllByOrderId(Long id, String editor) {
+        String sql = WorkContentSqlBuilder.buildFindAllByOrderId();
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, v) -> WorkContentParameterBinder.bindFindAllByOrderId(ps, id),
+            WorkContentEntityMapper::map
+        );
+    }
+}

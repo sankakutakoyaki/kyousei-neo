@@ -1,0 +1,439 @@
+package com.kyouseipro.neo._backup.file.repository;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Repository;
+
+import com.kyouseipro.neo._backup.Enums;
+import com.kyouseipro.neo._backup.file.entity.FileDto;
+import com.kyouseipro.neo._backup.file.entity.FileEntity;
+import com.kyouseipro.neo._backup.file.mappaer.FileDtoMapper;
+import com.kyouseipro.neo._backup.file.mappaer.FileEntityMapper;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Repository
+@RequiredArgsConstructor
+public class FileRepository {
+    private final SqlRepository sqlRepository;
+
+    public Long insert(FileEntity entity) {
+
+        String sql = """
+            INSERT INTO files (
+                group_id,
+                stored_name,
+                original_name,
+                display_name,
+                file_type,
+                mime_type,
+                file_size,
+                width,
+                height,
+                display_order
+            )
+            OUTPUT INSERTED.file_id
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """;
+
+        return sqlRepository.insert(
+            sql,
+            (ps, en) -> {
+                int idx = 1;
+                ps.setLong(idx++, en.getGroupId());
+                ps.setString(idx++, en.getStoredName());
+                ps.setString(idx++, en.getOriginalName());
+                ps.setString(idx++, en.getDisplayName());
+                ps.setString(idx++, en.getFileType());
+                ps.setString(idx++, en.getMimeType());
+                ps.setLong(idx++, en.getFileSize());
+                ps.setObject(idx++, en.getWidth());
+                ps.setObject(idx++, en.getHeight());
+                ps.setInt(idx++, en.getDisplayOrder());
+            },
+            rs -> rs.getLong(1),
+            entity
+        );
+    }
+
+    public int getNextDisplayOrder(Long groupId) {
+
+        String sql = """
+            SELECT ISNULL(MAX(display_order), 0)
+            FROM files
+            WHERE group_id = ?
+            AND state <> ?
+        """;
+
+        Integer max = sqlRepository.queryOneOrNull(
+            sql,
+            (ps, id) -> {
+                ps.setLong(1, id);
+                ps.setInt(2, Enums.state.DELETE.getCode());
+            },
+            rs -> rs.getInt(1),
+            groupId
+        );
+
+        return (max == null ? 0 : max) + 1;
+    }
+
+    public void decrementDisplayOrderAfter(
+            Long groupId,
+            int deletedOrder
+    ) {
+
+        String sql = """
+            UPDATE files
+            SET display_order = display_order - 1
+            WHERE group_id = ?
+            AND display_order > ?
+            AND state <> ?;
+        """;
+
+        sqlRepository.update(
+            sql,
+            (ps, p) -> {
+                ps.setLong(1, groupId);
+                ps.setInt(2, deletedOrder);
+                ps.setInt(3, Enums.state.DELETE.getCode());
+            }
+        );
+    }
+
+    public List<FileDto> findFiles(String parentType, Long parentId) {
+
+        String sql = """
+            SELECT
+                f.file_id,
+                g.parent_id,
+                g.parent_type,
+                f.original_name,
+                f.display_name,
+                f.mime_type,
+                f.group_id,
+                g.group_name
+            FROM files f
+            JOIN files_group g
+            ON f.group_id = g.group_id
+            WHERE g.parent_type = ? 
+            AND g.parent_id = ?            
+            AND f.state <> ?
+            ORDER BY g.display_order, f.display_order
+        """;
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, v) -> {
+                int idx = 1;
+                ps.setString(idx++, parentType);
+                ps.setLong(idx++, parentId);
+                ps.setInt(idx++, Enums.state.DELETE.getCode());
+            },
+            FileDtoMapper::map
+        );
+    }
+
+    public List<FileDto> findFilesGroup(Long groupId) {
+
+        String sql = """
+            SELECT
+                f.file_id,
+                g.parent_id,
+                g.parent_type,
+                f.original_name,
+                f.display_name,
+                f.mime_type,
+                f.group_id,
+                g.group_name
+            FROM files f
+            JOIN files_group g
+            ON f.group_id = g.group_id
+            WHERE f.group_id = ? 
+            AND f.state <> ?
+            ORDER BY g.display_order, f.display_order
+        """;
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, v) -> {
+                int idx = 1;
+                ps.setLong(idx++, groupId);
+                ps.setInt(idx++, Enums.state.DELETE.getCode());
+            },
+            FileDtoMapper::map
+        );
+    }
+
+    public void delete(Long fileId) {
+
+        String sql = """
+            UPDATE files
+            SET
+                state = ?,
+                update_date = sysdatetime()
+            WHERE
+                file_id = ?
+                AND state <> ?;
+        """;
+
+        sqlRepository.update(
+            sql,
+            (ps, p) -> {
+                ps.setLong(1, Enums.state.DELETE.getCode());
+                ps.setLong(2, fileId);
+                ps.setInt(3, Enums.state.DELETE.getCode());
+            }
+        );
+    }
+
+    /**
+     * 同名のdisplay_nameがないかチェックする
+     * @param groupId
+     * @param displayName
+     * @return
+     */
+    public boolean existsDisplayName(Long groupId, Long fileId, String displayName) {
+
+        String sql = """
+            SELECT 1
+            FROM files
+            WHERE group_id = ?
+            AND display_name = ?
+            AND state <> ?
+        """;
+
+        if (fileId != null) {
+            sql += " AND file_id <> ?";
+        }
+
+        Integer count = sqlRepository.queryOneOrNull(
+            sql,
+            (ps, p) -> {
+                int idx = 1;
+                ps.setLong(idx++, groupId);
+                ps.setString(idx++, displayName);
+                ps.setInt(idx++, Enums.state.DELETE.getCode());
+                if (fileId != null) {
+                    ps.setLong(idx++, fileId);
+                }
+                
+            },
+            rs -> rs.getInt(1)
+        );
+
+        return count != null && count > 0;
+    }
+
+    private static String baseSqlString() {
+        return """
+                SELECT
+                f.file_id,
+                g.parent_id,
+                g.parent_type,
+                f.stored_name,
+                f.original_name,
+                f.display_name,
+                f.mime_type,
+                f.file_type,
+                f.file_size,
+                f.width,
+                f.height,
+                f.display_order,
+                f.group_id,
+                g.group_name,
+                f.create_date,
+                f.update_date,
+                f.state
+                FROM files f
+                JOIN files_group g
+                ON f.group_id = g.group_id
+                """;
+
+    }
+    public FileEntity findById(Long fileId) {
+        String sql = 
+            baseSqlString() + """
+                WHERE f.file_id = ?   
+                AND f.state <> ?
+                ORDER BY g.display_order, f.display_order
+            """;
+        // String sql = "SELECT * FROM files WHERE file_id = ? AND state <> ?";
+        return sqlRepository.queryOneOrNull(
+            sql, 
+            (ps, v) -> {
+                int idx = 1;
+                ps.setLong(idx++, fileId);
+                ps.setInt(idx++, Enums.state.DELETE.getCode());
+            },
+            FileEntityMapper::map
+        );
+    }
+
+    public boolean existsDisplayName(Long groupId, String displayName) {
+        String sql = "SELECT COUNT(*) FROM files WHERE group_id = ? AND display_name = ? AND state <> ?";
+        Integer count = sqlRepository.queryOneOrNull(
+            sql, 
+            (ps, v) -> {
+                ps.setLong(1, groupId);
+                ps.setString(2, displayName);
+                ps.setInt(3, Enums.state.DELETE.getCode());
+            }, 
+            rs -> rs.getInt(1));
+        return count != null && count > 0;
+    }
+
+    public boolean existsGroupName(Long parentId, String groupTitle) {
+        String sql = "SELECT COUNT(*) FROM files_group WHERE parent_id = ? AND group_name = ? AND state <> ?";
+        Integer count = sqlRepository.queryOneOrNull(
+            sql, 
+            (ps, v) -> {
+                ps.setLong(1, parentId);
+                ps.setString(2, groupTitle);
+                ps.setInt(3, Enums.state.DELETE.getCode());
+            }, 
+            rs -> rs.getInt(1));
+        return count != null && count > 0;
+    }
+
+    public void updateDisplayName(Long fileId, String displayName) {
+        String sql = "UPDATE files SET display_name = ?, update_date = sysdatetime() WHERE file_id = ?";
+        sqlRepository.update(
+            sql, 
+            (ps, v) -> {
+                ps.setString(1, displayName);
+                ps.setLong(2, fileId);
+            });
+    }
+
+    public List<FileEntity> findByParent(String parentType, Long parentId) {
+
+        String sql = 
+            baseSqlString() + """
+                WHERE g.parent_type = ?
+                AND g.parent_id = ?
+                AND f.state <> 0
+                ORDER BY f.version, f.file_id
+            """;
+
+        return sqlRepository.queryList(sql,
+            (ps, v) -> {
+                ps.setString(1, parentType);
+                ps.setLong(2, parentId);
+                ps.setInt(3, Enums.state.DELETE.getCode());
+            },
+            FileEntityMapper::map
+        );
+    }
+
+
+    public FileEntity findActiveById(Long fileId) {
+        String sql = 
+            baseSqlString() + """
+                WHERE f.file_id = ?
+                AND f.state = ?
+            """;
+        return sqlRepository.queryOneOrNull(
+            sql,
+            (ps, v) -> {
+                int idx = 1;
+                ps.setLong(idx++, fileId);
+                ps.setInt(idx++, Enums.state.INITIAL.getCode());
+            },
+            FileEntityMapper::map
+        );
+    }
+
+    public void updateState(Long fileId, int state) {
+        String sql = """
+            UPDATE files
+            SET state = ?
+            WHERE file_id = ?
+        """;
+
+        sqlRepository.update(
+            sql,
+            (ps, p) -> {
+                ps.setInt(1, state);
+                ps.setLong(2, fileId);
+            }
+        );
+    }
+
+    public int countByGroupIdAndState(Long groupId, int state) {
+        String sql = """
+            SELECT COUNT(*)
+            FROM files
+            WHERE group_id = ?
+            AND state = ?
+        """;
+        Integer count = sqlRepository.queryOneOrNull(
+            sql,
+            (ps, p) -> {
+                int idx = 1;
+                ps.setLong(idx++, groupId);
+                ps.setInt(idx++, state);                
+            },
+            rs -> rs.getInt(1)
+        );
+
+        return count == null ? 0: count;
+    }
+
+    public Map<Long, List<FileDto>> mapFilesByParentId(List<FileDto> files) {
+
+        return files.stream()
+            .collect(Collectors.groupingBy(FileDto::getParentId));
+    }
+
+    public List<FileDto> findFiles(String parentType, List<Long> parentIds) {
+
+        if (parentIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        String placeholders =
+            parentIds.stream().map(i -> "?").collect(Collectors.joining(","));
+
+        String sql = """
+            SELECT
+                f.file_id,
+                g.parent_id,
+                g.parent_type,
+                f.original_name,
+                f.display_name,
+                f.mime_type,
+                f.group_id,
+                g.group_name
+            FROM files f
+            JOIN files_group g
+            ON f.group_id = g.group_id
+            WHERE g.parent_type = ?
+            AND g.parent_id IN (%s)
+            AND f.state <> ?
+            ORDER BY g.display_order, f.display_order
+        """.formatted(placeholders);
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, v) -> {
+
+                int idx = 1;
+
+                ps.setString(idx++, parentType);
+
+                for (Long id : parentIds) {
+                    ps.setLong(idx++, id);
+                }
+
+                ps.setInt(idx++, Enums.state.DELETE.getCode());
+
+            },
+            FileDtoMapper::map
+        );
+    }
+}

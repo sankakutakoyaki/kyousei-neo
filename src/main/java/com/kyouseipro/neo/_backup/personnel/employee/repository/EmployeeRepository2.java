@@ -1,0 +1,332 @@
+package com.kyouseipro.neo._backup.personnel.employee.repository;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import com.kyouseipro.neo._backup.Enums;
+import com.kyouseipro.neo._backup.dto.IdListRequest;
+import com.kyouseipro.neo._backup.personnel.employee.entity.EmployeeEntity;
+import com.kyouseipro.neo._backup.personnel.employee.mapper.EmployeeEntityMapper;
+import com.kyouseipro.neo.common.exception.BusinessException;
+import com.kyouseipro.neo.common.exception.SqlExceptionUtil;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Repository
+@RequiredArgsConstructor
+public class EmployeeRepository2 {
+    private final SqlRepository sqlRepository;
+    // private final BaseRepository baseRepository;
+    // private final LogSqlProvider logProvider = new EmployeeLogSqlProvider();
+
+    // public EmployeeRepository(SqlRepository sqlRepository){
+    //     super(sqlRepository, new EmployeeLogSqlProvider());
+    // }
+
+    /**
+     * IDによる取得。
+     * @param id
+     * @return IDから取得したEntityをかえす。
+     */
+    public EmployeeEntity findById(Long id) {
+        String sql = EmployeeSqlBuilder.buildFindById();
+
+        Long targetId = ((Number) id).longValue();
+        // IDが3桁以下の場合はCODEなのでCODEからIDを取得する
+        if (String.valueOf(Math.abs(id)).length() < 4) {
+            EmployeeEntity entity = findByCode(((Number) id).intValue());
+
+            targetId = entity.getEmployeeId();
+        }
+
+        return sqlRepository.queryOne(
+            sql,
+            (ps, i) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setLong(index++, i);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            EmployeeEntityMapper::map,
+            targetId
+        );
+    }
+
+    /**
+     * CODEによる取得。
+     * @param code
+     * @return CODEから取得したEntityをかえす。
+     */
+    public EmployeeEntity findByCode(int code) {
+        String sql = EmployeeSqlBuilder.buildFindByCode();
+
+        return sqlRepository.queryOne(
+            sql,
+            (ps, c) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, c);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            EmployeeEntityMapper::map,
+            code
+        );
+    }
+
+    /**
+     * アカウントによる取得。
+     * @param account
+     * @return アカウントで指定したEntityを返す。
+     */
+    public EmployeeEntity findByAccount(String account) {
+        String sql = EmployeeSqlBuilder.buildFindByAccount();
+
+        return sqlRepository.queryOne(
+            sql,
+            (ps, a) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setString(index++, account);
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            EmployeeEntityMapper::map,
+            account
+        );
+    }
+
+    /**
+     * 全件取得。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
+    public List<EmployeeEntity> findAll() {
+        String sql = EmployeeSqlBuilder.buildFindAll();
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            EmployeeEntityMapper::map
+        );
+    }
+
+    // /**
+    //  * 新規作成。
+    //  * @param entity
+    //  * @param editor
+    //  * @return 新規IDを返す。
+    //  */
+    // // public int insert(EmployeeEntityRequest entity, String editor) {
+    // //     String sql = EmployeeSqlBuilder.buildBulkInsert(entity);
+        
+    // //     try {
+    // //         return sqlRepository.insert(
+    // //             sql,
+    // //             (ps, en) -> EmployeeParameterBinder.bindBulkInsert(ps, en, editor),
+    // //             rs -> rs.getInt("employee_id"),
+    // //             entity
+    // //         );
+    // //     } catch (RuntimeException e) {
+    // //         if (SqlExceptionUtil.isDuplicateKey(e)) {
+    // //             throw new BusinessException("このコードはすでに使用されています。");
+    // //         }
+    // //         throw e;
+    // //     }
+    // // }
+    // public Long insert(Map<String, Object> req, String editor) {
+    //     req.put("editor", editor);
+    //     // req.putIfAbsent("category", Enums.clientCategory.PARTNER.getCode());
+    //     SqlResult result = SqlBuilder.buildSqlWithLog(
+    //         "employees",
+    //         req,
+    //         SqlMode.INSERT,
+    //         "employeeId",
+    //         "version",
+    //         logProvider
+    //     );
+
+    //     return sqlRepository.insert(
+    //         result.getSql(),
+    //         result.getParams(),
+    //         rs -> rs.getLong("employee_id")
+    //     );
+    // }
+
+    // /**
+    //  * 更新。
+    //  * @param entity
+    //  * @param editor
+    //  * @return 成功件数を返す。
+    //  */
+    // // public int update(EmployeeEntityRequest entity, String editor) {
+    // //     String sql = EmployeeSqlBuilder.buildBulkUpdate(entity);
+
+    // //     try {
+    // //         int count = sqlRepository.updateRequired(
+    // //             sql,
+    // //             (ps, e) -> EmployeeParameterBinder.bindBulkUpdate(ps, e, editor),
+    // //             entity
+    // //         );
+
+    // //         return count;
+
+    // //     } catch (RuntimeException e) {
+    // //         if (SqlExceptionUtil.isDuplicateKey(e)) {
+    // //             throw new BusinessException("このコードはすでに使用されています。");
+    // //         }
+    // //         throw e;
+    // //     }
+    // // }
+    // public int update(Map<String, Object> req, String editor) {
+    //     req.put("editor", editor);
+    //     if(req.get("code") == null){
+    //         req.put("code", "");
+    //     }
+    //     SqlResult result = SqlBuilder.buildSqlWithLog(
+    //         "employees",
+    //         req,
+    //         SqlMode.UPDATE,
+    //         "employeeId",
+    //         "version",
+    //         logProvider
+    //     );
+    //     return sqlRepository.updateRequired(
+    //         result.getSql(),
+    //         result.getParams(),
+    //         "更新に失敗しました"
+    //     );
+    // }
+
+    public Long insert(Map<String,Object> req, String editor){
+        // return super.insert("employees", req, editor, "employeeId");
+        return null;
+    }
+
+    public int update(Map<String,Object> req, String editor){
+        if(req.get("code") == null){
+            req.put("code", "");
+        }
+        // return super.update("employees", req, editor, "employeeId");
+        return 0;
+    }
+
+    public int delete(Map<String,Object> req, String editor){
+        // return super.delete("employees", req, editor, "employeeId");
+        return 0;
+    }
+
+    public int deleteByIds(IdListRequest list, String editor){
+        // return super.deleteByIds("companies", "companyId", list.getIds(), editor);
+        return 0;
+    }
+
+    /**
+     * コードを更新。
+     * @param id
+     * @param code
+     * @return 成功件数を返す。
+     */
+    public int updateCode(int id, int code, String editor) {
+        String sql = EmployeeSqlBuilder.buildUpdateCode();
+        try {
+            int count = sqlRepository.updateRequired(
+                sql,
+                (ps, v) -> EmployeeParameterBinder.bindUpdateCode(ps, id, code, editor)
+            );
+
+            return count;
+
+        } catch (RuntimeException e) {
+            if (SqlExceptionUtil.isDuplicateKey(e)) {
+                throw new BusinessException("このコードはすでに使用されています。");
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * 電話番号を更新。
+     * @param id
+     * @param phone
+     * @return 成功件数を返す。
+     */
+    public int updatePhone(int id, String phone, String editor) {
+        String sql = EmployeeSqlBuilder.buildUpdatePhone();
+
+        int count = sqlRepository.updateRequired(
+            sql,
+            (ps, v) -> EmployeeParameterBinder.bindUpdatePhone(ps, id, phone, editor)
+        );
+
+        return count;
+    }
+
+    /**
+     * 削除。
+     * @param list
+     * @param editor
+     * @return 成功件数を返す。
+     */
+    // public int deleteByIds(IdListRequest list, String editor) {
+    //     if (list == null || list.getIds().isEmpty()) {
+    //         throw new IllegalArgumentException("削除対象が指定されていません");
+    //     }
+
+    //     String sql = EmployeeSqlBuilder.buildDeleteByIds(list.getIds().size());
+    //     int count = sqlRepository.updateRequired(
+    //         sql,
+    //         (ps, e) -> EmployeeParameterBinder.bindDeleteByIds(ps, e.getIds(), editor),
+    //         list
+    //     );
+
+    //     return count;
+    // }
+    // public int deleteByIds(IdListRequest list, String editor) {
+
+    //     TableMeta META =
+    //         new TableMeta("employees", "employee_id", "state");
+
+    //     SqlResult result = SqlBuilder.buildDeleteByIds(
+    //         META,
+    //         list.getIds(),
+    //         editor,
+    //         logProvider
+    //     );
+
+    //     return sqlRepository.updateRequired(
+    //         result.getSql(),
+    //         result.getParams(),
+    //         "削除に失敗しました"
+    //     );
+    // }
+
+    /**
+     * CSVファイルをダウンロードする。
+     * @param list
+     * @param editor
+     * @return Idsで選択したEntityリストを返す。
+     */
+    public List<EmployeeEntity> downloadCsvByIds(IdListRequest list, String editor) {
+        if (list == null || list.getIds().isEmpty()) {
+            throw new IllegalArgumentException("ダウンロード対象が指定されていません");
+        }
+
+        String sql = EmployeeSqlBuilder.buildDownloadCsvByIds(list.getIds().size());
+        return sqlRepository.queryList(
+            sql,
+            (ps, e) -> EmployeeParameterBinder.bindDownloadCsvByIds(ps, e.getIds()),
+            EmployeeEntityMapper::map,
+            list
+        );
+    }
+}

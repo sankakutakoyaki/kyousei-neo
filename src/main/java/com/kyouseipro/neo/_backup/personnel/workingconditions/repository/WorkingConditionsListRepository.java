@@ -1,0 +1,59 @@
+package com.kyouseipro.neo._backup.personnel.workingconditions.repository;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.kyouseipro.neo._backup.Enums;
+import com.kyouseipro.neo._backup.personnel.workingconditions.entity.WorkingConditionsListEntity;
+import com.kyouseipro.neo._backup.personnel.workingconditions.mapper.WorkingConditionsListEntityMapper;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Repository
+@RequiredArgsConstructor
+public class WorkingConditionsListRepository {
+    private final SqlRepository sqlRepository;
+
+    /**
+     * 全件取得。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
+    public List<WorkingConditionsListEntity> findAll() {
+        String sql = WorkingConditionsListSqlBuilder.buildFindAll();
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+            },
+            WorkingConditionsListEntityMapper::map
+        );
+    }
+
+    /**
+     * 全件取得（CategoryIDで指定）。
+     * 0件の場合は空リストを返す。
+     * @return 取得したリストを返す
+     */
+    public List<WorkingConditionsListEntity> findByCategoryId(int id) {
+        String sql = WorkingConditionsListSqlBuilder.buildFindAllByCategoryId();
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, v) -> {
+                int index = 1;
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, Enums.state.DELETE.getCode());
+                ps.setInt(index++, id);
+            },
+            WorkingConditionsListEntityMapper::map
+        );
+    }
+}
