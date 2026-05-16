@@ -34,11 +34,6 @@ export function filterTabFocusElements(nodeList) {
         if (target.nodeType !== Node.ELEMENT_NODE) {
             return false;
         }
-
-        // // <a><input><select><textarea><button>または正のtabindex属性を持つ場合は対象
-        // const targetTags = ["a", "input", "select", "textarea", "button"];
-        // return targetTags.includes(target.tagName.toLowerCase()) || (target.hasAttribute("tabindex") && target.tabIndex >= 0)
-
         // 正のtabindex属性を持つ場合は対象
         return target.hasAttribute("tabindex") && target.tabIndex >= 0;
     });

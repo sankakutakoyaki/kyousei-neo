@@ -1,10 +1,9 @@
 "use strict"
 
-import { createComboBox } from "../../core/form/components/combo.js";
-import { PageCacheService } from "../../services/cache/PageCacheService.js";
+import { createComboBox } from "../core/form/components/combo.js";
+import { PageCacheService } from "../services/cache/PageCacheService.js";
 
 export function initCombo(controller){
-
     function render(){
         const selects = document.querySelectorAll(
             `[data-controller="${controller.key}"] [data-combo]`
@@ -13,7 +12,6 @@ export function initCombo(controller){
         selects.forEach(select => {
 
             const listName = select.dataset.combo;
-            // const list = APP.cache.page[listName];
             const list = PageCacheService.get(listName);
             if (!list) return;
 
@@ -45,7 +43,6 @@ export function initCombo(controller){
 }
 
 function applyChildDefault(select){
-
     const type = select.dataset.childDefault;
     if (!type) return;
 
@@ -62,7 +59,6 @@ function applyChildDefault(select){
             }
 
         });
-
         select.value = "";
     }
 }

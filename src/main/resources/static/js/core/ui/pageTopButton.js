@@ -1,13 +1,10 @@
 "use strict"
 
-/**
- * ページトップボタン処理を登録する
- */
+// ページトップボタン処理を登録する
 export function setPageTopButton(tableId) {
     const tbl = tableId instanceof HTMLElement ? tableId: document.getElementById(tableId);
     if (tbl == null) return;
 
-    // const area = tbl.closest('.table-area');
     const area = tbl.closest('.table-wrapper');
     if (!area) return;
 

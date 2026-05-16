@@ -8,20 +8,14 @@ import { convertKey } from "../ui/keyCaseConverter.js";
 
 
 export function renderTable(table, config, list){
-
     // 初期化
     table.innerHTML = "";
-
     const wrapper = table.closest(".normal-table");
 
-    // -------------------------
     // ヘッダー
-    // -------------------------
     renderHeader(wrapper, config, list);
 
-    // -------------------------
     // ボディ
-    // -------------------------
     list.forEach(item=>{
         const tr = document.createElement("tr");
         tr.dataset.id = item[config.idKey];
@@ -32,15 +26,11 @@ export function renderTable(table, config, list){
         table.appendChild(tr);
     });
 
-    // -------------------------
     // フッター
-    // -------------------------
     if(config.footerId){
         createTableFooter(config.footerId, list);
     }
-
     setPageTopButton(table);
-
     // スクロール
     const header = wrapper?.querySelector('[name="table-header"]');
     if(header) toggleScrollbar(header);
@@ -138,9 +128,7 @@ export function renderHeader(tableEl,config,list){
     thead.appendChild(tr);
 }
 
-/**
- * フッターの件数項目を更新する
- */
+ // フッターの件数項目を更新する
 export function createTableFooter(footerId, list) {
     clearElement(footerId);
     const footer = document.getElementById(footerId);
@@ -149,9 +137,7 @@ export function createTableFooter(footerId, list) {
     footer.insertAdjacentHTML('beforeend', '<span>' + num + '件 : ' + formatDate(new Date(), "yyyy-MM-dd HH:mm") + ' 現在</span>');
 }
 
-/**
- * テーブルにスクロールバーが表示された時にクラスを付与する
- */
+// テーブルにスクロールバーが表示された時にクラスを付与する
 export function toggleScrollbar(element, className = 'has-scrollbar') {
     if (!element) return;
 
@@ -166,18 +152,3 @@ export function toggleScrollbar(element, className = 'has-scrollbar') {
         tbl.classList.remove(className);
     }
 }
-
-// /**
-//  * 指定した要素へスクロールさせる
-//  * @param {*} tableId 
-//  * @param {*} id 
-//  */
-// export function scrollIntoTableList(tableId, id) {
-//     const parent = document.getElementById(tableId);
-//     const row = parent.querySelector('[data-id="' + id + '"]');
-//     if (row != null) {
-//         row.scrollIntoView({
-//             block: "center"
-//         });
-//     }
-// }

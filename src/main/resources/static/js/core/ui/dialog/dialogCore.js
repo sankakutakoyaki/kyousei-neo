@@ -11,7 +11,6 @@ export function openFormDialog(options = {}) {
 
     const {
         dialogId,
-        // controller,
         onSubmit = async () => true,
         onClose = async () => closeFormDialog(dialogId),
         onReset
@@ -24,10 +23,6 @@ export function openFormDialog(options = {}) {
 
     const area = document.getElementById('form-dialog-area');
     if (!area) return;
-
-    // if(controller){
-    //     area.dataset.controller = controller.name;
-    // }
 
     area.classList.add('dialog');
     form.classList.remove('none');
@@ -55,7 +50,6 @@ export function closeFormDialog(dialogId, e) {
     const area = document.getElementById('form-dialog-area');
     if (area == null) return;
     area.classList.remove('dialog');
-    // delete area.dataset.controller;
 
     // フォーム画面に[none]クラスを付与して画面を消去する
     const form = document.getElementById(dialogId);
@@ -77,16 +71,11 @@ export function closeFormDialog(dialogId, e) {
  * @param {タイトル} title 
  * @param {ヘッダーの色} headerColor 
  */
-// export function openMsgDialog(msg, color, closeCallback = () => closeMsgDialog("msg-dialog"), options = {}) {
-//     openMsg('msg-dialog', msg, color, null, closeCallback, false, options);
-// }
 export function openMsgDialog(options = {}) {
-
     const {
         message,
         color,
         onClose = () => closeMsgDialog(),
-        // controller
     } = options;
 
     openMsg({
@@ -96,7 +85,6 @@ export function openMsgDialog(options = {}) {
         submitCallback: null,
         closeCallback: onClose,
         isConfirm: false,
-        // controller
     });
 }
 /**
@@ -106,19 +94,12 @@ export function openMsgDialog(options = {}) {
  * @param {*} submitFunc 
  * @param {*} closeFunc 
  */
-// export function openConfilmDialog(msg, color, submitCallback, closeCallback = () => closeMsgDialog("msg-dialog"), options = {}) {
-//     if (!submitCallback) return;
-
-//     openMsg('msg-dialog', msg, color, submitCallback, closeCallback, true, options);
-// }
 export function openConfirmDialog(options = {}) {
-
     const {
         message,
         color,
         onSubmit,
         onClose = () => closeMsgDialog()
-        // controller
     } = options;
 
     if (!onSubmit) return;
@@ -130,7 +111,6 @@ export function openConfirmDialog(options = {}) {
         submitCallback: onSubmit,
         closeCallback: onClose,
         isConfirm: true
-        // controller
     });
 }
 
@@ -144,34 +124,7 @@ export function openConfirmDialog(options = {}) {
  * @param {*} isConfirm 
  * @returns 
  */
-// function openMsg(dialogId, msg, color, submitCallback, closeCallback, isConfirm = false, options = {}) {
-
-//     const dialog = dialogId instanceof HTMLElement ? dialogId: document.getElementById(dialogId);
-//     if (!dialog) return;
-
-//     setInertState(true);
-
-//     // dialog.classList.remove('none');
-
-//     const parent = document.getElementById('msg-dialog-area');
-//     parent.classList.add('dialog');
-
-//     const header = parent.querySelector('.dialog-header');
-//     header.className = "dialog-header " + color;
-
-//     const content = parent.querySelector('.msg-dialog-content');
-//     content.textContent = msg;
-
-//     if(options.controllerName){
-//         area.dataset.controller = options.controllerName;
-//     }
-
-//     dialog.classList.remove('none');
-
-//     setFooterButtons(dialog, isConfirm, submitCallback, closeCallback);
-// }
 function openMsg(options = {}) {
-
     const {
         dialogId,
         message,
@@ -179,7 +132,6 @@ function openMsg(options = {}) {
         submitCallback,
         closeCallback,
         isConfirm = false
-        // controller
     } = options;
 
     const dialog = document.getElementById(dialogId);
@@ -189,10 +141,6 @@ function openMsg(options = {}) {
 
     const parent = document.getElementById('msg-dialog-area');
     if (!parent) return;
-
-    // if(controller){
-    //     parent.dataset.controller = controller.name;
-    // }
 
     parent.classList.add('dialog');
 
@@ -212,34 +160,17 @@ function openMsg(options = {}) {
  * @param {ダイアログのID名} dialogId 
  * @param {イベント} e 
  */
-// export function closeMsgDialog(dialogId = "msg-dialog") {
-//     // メッセージ画面エリアからダイアログクラスを取り除く
-//     const mArea = document.getElementById('msg-dialog-area');
-//     if (mArea == null) return;
-//     mArea.classList.remove('dialog');
-//     delete mArea.dataset.controller;
-
-//     // メッセージ画面に[none]クラスを付与して画面を消去する
-//     const dialog = document.getElementById(dialogId);
-//     if (dialog == null) return;
-//     dialog.classList.add('none');
-
-//     // 要素のクリック禁止を解除する
-//     setInertState(false);
-// }
 export function closeMsgDialog(dialogId = "msg-dialog") {
 
     const parent = document.getElementById('msg-dialog-area');
     if (parent){
         parent.classList.remove('dialog');
-        // delete parent.dataset.controller;
     }
 
     const dialog = document.getElementById(dialogId);
     if (dialog){
         dialog.classList.add('none');
     }
-
     setInertState(false);
 }
 
@@ -285,7 +216,7 @@ function setFooterButtons(dialog, isConfirm, submitCallback, closeCallback) {
 
     const onSubmit = async () => {
         if(submitCallback){
-            await submitCallback(dialog); // ←ここ重要
+            await submitCallback(dialog);
         }
     };
 
@@ -311,27 +242,3 @@ function setFooterButtons(dialog, isConfirm, submitCallback, closeCallback) {
     submitBtn.textContent = "はい";
     submitBtn.focus();
 }
-// function setFooterButtons(form, show, okCallback, cancelCallback){
-
-//     const submitBtn = form.querySelector("[data-role='ok']");
-//     const cancelBtn = form.querySelector("[data-role='cancel']");
-
-//     if(submitBtn){
-//         submitBtn.onclick = async () => {
-
-//             // OK処理
-//             if(okCallback){
-//                 await okCallback(form);
-//             }
-
-//             // 閉じる
-//             if(cancelCallback){
-//                 cancelCallback();
-//             }
-//         };
-//     }
-
-//     if(cancelBtn){
-//         cancelBtn.onclick = cancelCallback;
-//     }
-// }

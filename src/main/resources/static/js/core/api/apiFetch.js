@@ -1,7 +1,7 @@
 "use strict"
 
-import { startProcessing } from "../dom/process.js";
-import { processingEnd } from "../dom/process.js";
+import { startProcessing } from "../dom/loading.js";
+import { processingEnd } from "../dom/loading.js";
 /**
  * 共通fetch
  */
@@ -14,7 +14,6 @@ export async function apiFetch(url, {
     showProcessing = true
 } = {}) {
 
-    // startProcessing();
     if(showProcessing){
         startProcessing();
     }
@@ -101,61 +100,11 @@ export async function apiFetch(url, {
         }
         throw err;
     } finally {
-        // processingEnd();
         if(showProcessing){
             processingEnd();
         }
     }
 }
-
-// /**
-//  * 更新
-//  * @param {*} url 
-//  * @param {*} data 
-//  * @param {*} token 
-//  * @returns 
-//  */
-// export async function updateFetch(url, data, token) {
-//     return apiFetch(url, {
-//         method: "POST",
-//         data,
-//         token,
-//         retry: 1
-//     });
-// }
-
-// /**
-//  * 取得
-//  * @param {*} url 
-//  * @param {*} data 
-//  * @param {*} token 
-//  * @returns 
-//  */
-// export async function searchFetch(url, data, token) {
-//     return apiFetch(url, {
-//         method: "POST",
-//         data,
-//         token,
-//         allow404: true,
-//         retry: 1
-//     });
-// }
-
-// /**
-//  * アップロード
-//  * @param {*} url 
-//  * @param {*} formData 
-//  * @param {*} token 
-//  * @returns 
-//  */
-// export async function formFetch(url, formData, token) {
-//     return apiFetch(url, {
-//         method: "POST",
-//         data: formData,
-//         token,
-//         timeout: 60000
-//     });
-// }
 
 /**
  * HTTPエラー共通処理
@@ -169,24 +118,3 @@ export async function handleHttpError(status, json) {
     }
     console.error(status, message);
 }
-
-// async function handleHttpError(status, json) {
-//     switch (status) {
-//         case 401:
-//             openMsgDialog("msg-dialog", json?.message || "ログインが必要です。", "red");
-//             location.reload(); // 再ログイン
-//             break;
-//         case 403:
-//             openMsgDialog("msg-dialog", json?.message || "権限がありません。", "red");
-//             break;
-//         case 400:
-//             openMsgDialog("msg-dialog", json?.message || "入力内容に誤りがあります。", "red");
-//             break;
-//         case 404:
-//             openMsgDialog("msg-dialog", json?.message || "処理が見つかりません。", "red");
-//             break;
-//         case 500:
-//             openMsgDialog("msg-dialog", json?.message || "サーバーエラーが発生しました。", "red");
-//             break;
-//     }
-// }

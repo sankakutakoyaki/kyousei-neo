@@ -4,7 +4,7 @@ import {
     openMsgDialog,
     openConfirmDialog,
     closeFormDialog
-} from "./dialog.js";
+} from "./dialogCore.js";
 
 export const DialogService = {
     info(message){

@@ -1,8 +1,6 @@
 "use strict";
 
 import { createCrudPage } from "../../core/page/createCrudPage.js";
-import { filterFactory } from "../../util/filterFactory.js";
-import { CompanyRepository } from "../../repositories/corporation/company/CompanyRepository.js";
 
 export function createCompanyPage(config){
     return createCrudPage({
@@ -12,7 +10,6 @@ export function createCompanyPage(config){
         footerId: config.footerId,
         formId: config.formId,
         idKey: "companyId",
-        // repository: CompanyRepository,
         repository: config.service,
         columns: config.columns,
         buildParams: () => ({

@@ -1,11 +1,9 @@
 "use strict"
 
-// import { initMenuActive } from "../init/initMenuActive.js";
 import { initApp } from "../../app.js";
 import { menuActive } from "./menuActive.js";
 
 export async function loadPage(url, target = "body") {
-
     if (APP.currentPage === url && target === "body") {
         return;
     }
@@ -24,7 +22,6 @@ export async function loadPage(url, target = "body") {
     let base;
 
     if (target === "body") {
-
         const newBody = doc.querySelector(".normal-body");
         const oldBody = document.querySelector(".normal-body");
 
@@ -32,14 +29,10 @@ export async function loadPage(url, target = "body") {
             console.error("bodyが見つかりません");
             return;
         }
-
         oldBody.replaceWith(newBody);
         base = newBody;
-
         menuActive(url, "sidebar");
-
     } else if (target === "layout") {
-
         let newLayout = doc.querySelector(".normal-main");
         if (!newLayout) {
             newLayout = doc.querySelector(".no-side-body");
@@ -60,12 +53,7 @@ export async function loadPage(url, target = "body") {
         menuActive(url, "header");
     }
 
-    // =========================
     // 共通処理
-    // =========================
-
-    // initMenuActive(url);
-
     const cssPath = base.dataset.css;
     const modulePath = base.dataset.page;
 
@@ -80,43 +68,8 @@ export async function loadPage(url, target = "body") {
 
     initApp();
 }
-// export async function loadPage(url) {
-
-//     if (APP.currentPage === url) {
-//         return; // ★ 二重防御
-//     }
-//     APP.currentPage = url;
-
-//     APP.cache.common = {};
-//     APP.cache.page = {};
-
-//     const res = await fetch(url);
-//     const html = await res.text();
-
-//     const parser = new DOMParser();
-//     const doc = parser.parseFromString(html, "text/html");
-
-//     const newBody = doc.querySelector(".normal-body");
-//     const oldBody = document.querySelector(".normal-body");
-
-//     oldBody.replaceWith(newBody);
-//     initMenuActive(url);
-
-//     const cssPath = newBody.dataset.css;
-//     const modulePath = newBody.dataset.page;
-
-//     if (cssPath) {
-//         await replaceCss(cssPath);
-//     }
-
-//     if (modulePath) {
-//         const module = await import(modulePath);
-//         await module.init?.();
-//     }
-// }
 
 async function replaceCss(href) {
-
     // ① 前のページCSS削除
     document.querySelectorAll('link[data-page-css]')
         .forEach(el => el.remove());

@@ -1,0 +1,11 @@
+"use strict"
+
+import { DataResolver } from "../core/behavior/DataResolver.js"
+import { setEnterFocus } from "../ui/enterfocus.js";
+import { initEvents } from "../core/events/eventHandlers.js";
+
+export async function initCommon(){
+    initEvents();
+    setEnterFocus();
+    DataResolver.init();
+}

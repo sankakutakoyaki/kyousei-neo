@@ -41,15 +41,6 @@ export function createComboBox({area, items, text = null, onChange = null}) {
     }
 }
 
-
-
-
-
-
-
-
-
-
 /**
  * コンボボックスを作成する
  * @param {*} selectArea 
@@ -61,7 +52,6 @@ function createComboBoxValueString(selectArea, items) {
     if (selectArea == null) return;
     items.forEach(function (item) {
         if (item.number != null) {
-            // selectArea.insertAdjacentHTML('beforeend', '<option value="' + item.number + '">' + item.text + '</option>');
             selectArea.insertAdjacentHTML(
                 "beforeend",
                 `<option value="${item.number}" data-id="${item.data ?? ""}">${item.text}</option>`
@@ -83,7 +73,6 @@ function createComboBoxWithTop(selectArea, items, text) {
     selectArea.insertAdjacentHTML('beforeend', '<option value="0">' + text + '</option>');
     items.forEach(function (item) {
         if (item.number > -1) {
-            // selectArea.insertAdjacentHTML('beforeend', '<option value="' + item.number + '">' + item.text + '</option>');
             selectArea.insertAdjacentHTML(
                 "beforeend",
                 `<option value="${item.number}" data-id="${item.data ?? ""}">${item.text}</option>`

@@ -1,7 +1,6 @@
 "use strict"
 
 import { loadPage } from "./core/dom/loadPage.js";
-// import { initGlobalActions } from "./core/init/initGlobalActions.js";
 
 window.APP = {
     security: {
@@ -34,5 +33,18 @@ export function initApp() {
         loadPage(path, target);
         hamburgerClose();
     });
-    // initGlobalActions();
 }
+
+// export function initAi() {
+//     document.getElementById('ai-form').addEventListener('submit', async e => {
+//         e.preventDefault(); // ★ form送信を止める
+
+//         const q = e.target.question.value;
+//         if (!q) return;
+
+//         const res = await searchFetch('/api/ai/mock', JSON.stringify({ question: q }), token);
+
+//         // const json = await res.json();
+//         document.getElementById('answer-area').textContent = res.data.answer;
+//     });
+// }

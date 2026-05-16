@@ -27,16 +27,3 @@ export const ClientCompanyService = {
         return await CompanyRepository.fetchCombo("companyCombo");
     }
 };
-
-// "use strict"
-
-// import { CompanyRepository } from "../../../repositories/corporation/company/CompanyRepository";
-
-// export const ClientCompanyService = {
-//     async search(params = {}){
-//         return await CompanyRepository.search({
-//             ...params,
-//             category: APP.cache.common.companyCategory.CLIENT
-//         });
-//     }
-// };

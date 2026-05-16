@@ -33,9 +33,6 @@ export function getOptions(el){
     };
 }
 
-// export function normalize(v){
-//     return v === "" || v === undefined ? null : v;
-// }
 export function normalize(v){
     if(
         v === "" ||
@@ -77,24 +74,3 @@ export function normalizeParentChild(form){
 
     } while (updated);
 }
-
-// export function normalizeParentChild(form){
-
-//     const child = form.querySelector("[data-parent-target]");
-//     if (!child) return;
-
-//     const parentId = child.dataset.parentTarget;
-//     const parent = form.querySelector(`#${parentId}`);
-//     if (!parent) return;
-
-//     const selected = child.selectedOptions[0];
-//     if (!selected) return;
-
-//     const parentValue = selected.dataset.parent;
-
-//     // 親が空なら復元
-//     if (!parent.value && parentValue) {
-//         parent.value = parentValue;
-//         parent.dispatchEvent(new Event("change"));
-//     }
-// }

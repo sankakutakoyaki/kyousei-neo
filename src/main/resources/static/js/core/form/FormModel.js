@@ -6,7 +6,6 @@ import { resolveSubmitValue } from "../behavior/DataResolver.js";
 import { formatters } from "../behavior/formatters.js";
 
 export const FormModel = {
-
     // フォーム → entity
     toEntity(form, base = {}){
         const fd = new FormData(form);
@@ -37,39 +36,16 @@ export const FormModel = {
 
     // 差分抽出
     diff(oldObj = {}, newObj = {}){
-
         const diff = {};
-
         Object.keys(newObj).forEach(key => {
             if(normalize(oldObj[key]) !== normalize(newObj[key])){
                 diff[key] = newObj[key];
             }
         });
-
         return diff;
     },
 
-    // ------------------------
     // fill
-    // ------------------------
-    // fill(form, data = {}){
-    //     Object.entries(data).forEach(([key, value]) => {
-    //         const name = convertKey(key, "camel", "kebab");
-    //         const el = form.elements[name];
-    //         if(!el) return;
-
-    //         if(el.type === "checkbox"){
-    //             el.checked = !!value;
-    //         }else{
-    //             let v = value;
-    //             // ★ 表示用の最小変換だけ
-    //             if("zeroToNull" in el.dataset && (v === 0 || v === "0")){
-    //                 v = null;
-    //             }
-    //             el.value = v ?? "";
-    //         }
-    //     });
-    // },
     fill(form, data = {}){
         Object.entries(data).forEach(([key, value]) => {
             const kebab = convertKey(key, "camel", "kebab");
@@ -111,9 +87,7 @@ export const FormModel = {
         });
     },
 
-    // ------------------------
     // save
-    // ------------------------
     buildPayload(form, base, key){
 
         const entity = this.toEntity(form, base);
@@ -150,7 +124,6 @@ export const FormModel = {
 function injectMeta(entity, form, base){
 
     // 主キー
-    // const keyName = form.dataset.key;
     const rawKey = form.dataset.key;
     const keyName = convertKey(rawKey, "kebab", "camel");
 
