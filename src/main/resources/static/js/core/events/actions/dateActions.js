@@ -1,12 +1,12 @@
 "use strict"
 
-import { getToday } from "../../../util/time.js";
+// import { getToday } from "../../../util/time.js";
 import { getBaseDate } from "../../../util/date.js";
 import { calculateRange } from "../../../util/dateRange.js";
 import { formatDate } from "../../../util/date.js";
-import { parseDate } from "../../../util/date.js";
+// import { parseDate } from "../../../util/date.js";
 
-export function handleDateMove(el){
+export function handleDateMove(event, el){
     const type = el.dataset.type;
     const startId = el.dataset.start;
     const endId = el.dataset.end;
@@ -24,21 +24,54 @@ export function handleDateMove(el){
     endEl.value   = formatDate(range.end);
 }
 
-export function handleDateArrowMove(el, event){
+// export function handleDateArrowMove(event, el){
+//     if(event.type !== "keydown") return;
+//     if(el.dataset.type !== "date") return;
+
+//     let diff = 0;
+//     if(event.key === "ArrowUp") diff = 1;
+//     if(event.key === "ArrowDown") diff = -1;
+//     if(diff === 0) return;
+
+//     event.preventDefault();
+
+//     const current = el.valueAsDate ?? new Date();
+//     current.setDate(current.getDate() + diff);
+//     el.valueAsDate = current;
+
+//     adjustPair(el);
+// }
+export function handleDateArrowMove(event, el){
     if(event.type !== "keydown") return;
+
     if(el.dataset.type !== "date") return;
 
-    let diff = 0;
-    if(event.key === "ArrowUp") diff = 1;
-    if(event.key === "ArrowDown") diff = -1;
-    if(diff === 0) return;
+    // Shiftなしはブラウザ標準動作
+    if(!event.shiftKey) return;
+
+    let current = el.value ? new Date(el.value): new Date();
+
+    // Shift + 左右 → 日移動
+    if(event.key === "ArrowRight"){
+        current.setDate(current.getDate() + 1);
+    }
+    else if(event.key === "ArrowLeft"){
+        current.setDate(current.getDate() - 1);
+    }
+    // Shift + 上下 → 月移動
+    else if(event.key === "ArrowUp"){
+        current.setMonth(current.getMonth() + 1);
+    }
+    else if(event.key === "ArrowDown"){
+        current.setMonth(current.getMonth() - 1);
+    }
+    else{
+        return;
+    }
 
     event.preventDefault();
 
-    const current = el.valueAsDate ?? new Date();
-    current.setDate(current.getDate() + diff);
-    el.valueAsDate = current;
-
+    el.value = current.toISOString().slice(0, 10);
     adjustPair(el);
 }
 

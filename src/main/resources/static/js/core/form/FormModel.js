@@ -82,7 +82,8 @@ export const FormModel = {
                 if("zeroToNull" in dataset && (v === 0 || v === "0")){
                     v = null;
                 }
-                el.value = v ?? "";
+                // el.value = v ?? "";
+                el.value = v != null ? String(v): "";
             }
         });
     },

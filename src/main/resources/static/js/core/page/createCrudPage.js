@@ -5,6 +5,24 @@ import { FormController } from "../../applcation/FormController.js";
 import { DataTable } from "../table/DataTable.js";
 
 export function createCrudPage(config){
+    const defaultForms = {
+        detail: {
+            create: (controller) =>  new FormController({
+                controller,
+
+                formId: config.formId,
+                key: config.key,
+
+                repository: config.repository,
+                beforeSave: config.beforeSave,
+                afterSave: async (id) => {
+                    if(config.afterSave){await config.afterSave(controller, id);}
+                },
+                validateBusiness: config.validateBusiness,
+                buildParams: config.buildDetailParams
+            })
+        }
+    };
     return new PageController({
         key: config.key,
         components: config.components,
@@ -36,23 +54,6 @@ export function createCrudPage(config){
             })
         },
 
-        forms: {
-            detail: {
-                create: (controller) =>  new FormController({
-                    controller,
-
-                    formId: config.formId,
-                    key: config.key,
-
-                    repository: config.repository,
-                    beforeSave: config.beforeSave,
-                    afterSave: async (id) => {
-                        if(config.afterSave){await config.afterSave(controller, id);}
-                    },
-                    validateBusiness: config.validateBusiness,
-                    buildParams: config.buildDetailParams
-                })
-            }
-        }
+        forms: config.forms ?? defaultForms 
     });
 }

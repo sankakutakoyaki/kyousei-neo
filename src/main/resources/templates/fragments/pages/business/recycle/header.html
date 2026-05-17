@@ -16,7 +16,6 @@
                     'text':'分類', 
                     'id':'cateogy01', 
                     'name':'category01',
-                    'action':'filter',
                     'combo': 'recycleCategoryComboList',
                     'key':'category'
                 }}
@@ -83,50 +82,52 @@
                 </label>
             </div>
         </div>
-        <!-- 会社名 -->
-        <div data-resolve="client" >
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                { 
-                    'text': '小売業者',
-                    'id':'company02',
-                    'name': 'company-id', 
-                    'combo': 'clientComboList',
-                    'top': '-----',
-                    'key': 'company-id',
-                    'resolveName':true,
-                    'index': 2,
-                    'zeroToNull':true,
-                    'link': 'office02'
-                }}
-            )}"></th:block>
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                {
-                    'text':'支店名', 
-                    'id':'office02',
-                    'name': 'office-id',
-                    'combo': 'officeComboList',
-                    'top': '-----',
-                    'key':'office-id',
-                    'resolveName':true,
-                    'zeroToNull':true,
-                    'parent': 'company02',
-                    'linkDefault': 'empty'
-                }}
-            )}"></th:block>
-        </div>
         <div>
+            <!-- 使用日 -->
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
                     'text':'使用日',
                     'id':'use-date02',
                     'name':'use-date',
                     'type':'date',
-                    'action':'date-arrow',
-                    'index': 3,
-                    'zeroToNull':true,
-                    'action':'filter'
+                    'action':'date-arrow search',
+                    'index': 2,
+                    'zeroToNull':true
                 }
             })}"></th:block>
+            <!-- 会社名 -->
+            <div data-resolve="client" >
+                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                    { 
+                        'text': '小売業者',
+                        'id':'company02',
+                        'name': 'company-id', 
+                        'combo': 'clientComboList',
+                        'top': '-----',
+                        'key': 'company-id',
+                        'resolveName':true,
+                        'index': 3,
+                        'zeroToNull':true,
+                        'link': 'office02'
+                    }}
+                )}"></th:block>
+                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                    {
+                        'text':'支店名', 
+                        'id':'office02',
+                        'name': 'office-id',
+                        'combo': 'officeComboList',
+                        'top': '-----',
+                        'key':'office-id',
+                        'resolveName':true,
+                        'zeroToNull':true,
+                        'parent': 'company02',
+                        'linkDefault': 'empty'
+                    }}
+                )}"></th:block>
+            </div>
+        </div>
+        <div>
             <!-- 品目 -->
             <div data-resolve="item-code">
                 <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${

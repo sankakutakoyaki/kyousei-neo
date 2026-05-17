@@ -8,6 +8,7 @@ import { SaveBehavior } from "../core/save/SaveBehavior.js";
 import { FormPayloadBuilder } from "../core/form/FormPayloadBuilder.js";
 import { UiValidator } from "../core/validate/UiValidator.js";
 import { FormStateBehavior } from "../core/form/FormStateBehavior.js";
+import { initParentChildLink } from "../util/link.js";
 
 export class FormController {
     constructor(config){
@@ -116,8 +117,10 @@ export class FormController {
         this.currentEntity = structuredClone(data);
 
         const form = document.getElementById(this.formId);
-        FormModel.fill(form, data);
 
+        await initParentChildLink(form);        
+        FormModel.fill(form, data);
+        
         if (!this._eventsInitialized) {
             this.initEvents();
             this._eventsInitialized = true;

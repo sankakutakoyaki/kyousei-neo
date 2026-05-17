@@ -8,7 +8,9 @@
                     'id':'recycle-number01',
                     'name':'recycle-number',
                     'validate':'recycle',
-                    'error-message':'リサイクル券番号は13桁です'
+                    'enter-validate':true,
+                    'error-message':'リサイクル券番号は13桁です',
+                    'index': 1
                 }}
             )}"></th:block>
         </div>
@@ -23,8 +25,7 @@
                     'top': '-----',
                     'key': 'company-id',
                     'resolveName':true,
-                    'index': 1,
-                    'zeroToNull':true,
+                    'index': 2,
                     'link': 'office01'
                 }}
             )}"></th:block>
@@ -37,7 +38,6 @@
                     'top': '-----',
                     'key':'office-id',
                     'resolveName':true,
-                    'zeroToNull':true,
                     'parent': 'company01',
                     'linkDefault': 'empty'
                 }}
@@ -51,7 +51,7 @@
                     'id':'item-code01',
                     'name':'item-code',
                     'resolveId':true,
-                    'index':2,
+                    'index':3,
                     'submit':'none'
                 }}
             )}"></th:block>
@@ -66,8 +66,7 @@
                     'key':'item-id',
                     'fillKey':'item-code',
                     'submit':'dataset',
-                    'submitKey':'parent',
-                    'zeroToNull':true
+                    'submitKey':'parent'
                 }}
             )}"></th:block>
         </div>
@@ -86,7 +85,7 @@
                     'name':'maker-code',
                     'resolveId':true,
                     'submit':'none',
-                    'index':3
+                    'index':4
                 }}
             )}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -103,9 +102,7 @@
                 type="hidden"
                 data-role="hidden-id"
                 name="maker-id"
-                data-key="maker-id"
-                data-skip-if-null="true"
-                data-zero-to-null="true">
+                data-key="maker-id">
         </div>
         <!-- 日付 -->
         <div class="form-row">
@@ -116,8 +113,7 @@
                     'name':'use-date',
                     'type':'date',
                     'action':'date-arrow',
-                    'index': 4,
-                    'zeroToNull':true
+                    'index': 5
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -127,8 +123,7 @@
                     'name':'delivery-date',
                     'type':'date',
                     'action':'date-arrow',
-                    'index': 5,
-                    'zeroToNull':true
+                    'index': 6
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -138,8 +133,7 @@
                     'name':'shipping-date',
                     'type':'date',
                     'action':'date-arrow',
-                    'index': 6,
-                    'zeroToNull':true
+                    'index': 7
                 }
             })}"></th:block>
         </div>

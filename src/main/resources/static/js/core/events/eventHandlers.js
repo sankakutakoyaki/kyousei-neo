@@ -13,36 +13,60 @@ export function initEvents(){
     document.addEventListener("click", handleEvent);
     document.addEventListener("input", handleEvent);
     document.addEventListener("change", handleEvent);
-    document.addEventListener("keydown", handleEnterValidate);
     document.addEventListener("focusin", handleFocus);
+    document.addEventListener("keydown", handleEvent);
+    document.addEventListener("keydown", handleEnterValidate);
 }
+
+// function handleEvent(e){
+//     const el = e.target.closest("[data-action]");
+//     if (!el){
+//         return;
+//     }
+
+//     const action = el.dataset.action;
+//     // DOM actions
+//     if(domActions[action]){
+//         domActions[action](el);
+//         return;
+//     }
+
+//     const controller = resolveController(el);
+//     if(!controller){
+//         console.warn(
+//             "controller not found",
+//             el
+//         );
+//         return;
+//     }
+
+//     controller.executeAction(
+//         action,
+//         el
+//     );
+// }
 
 function handleEvent(e){
     const el = e.target.closest("[data-action]");
-    if (!el){
-        return;
-    }
-
-    const action = el.dataset.action;
-    // DOM actions
-    if(domActions[action]){
-        domActions[action](el);
-        return;
-    }
+    if(!el) return;
 
     const controller = resolveController(el);
-    if(!controller){
-        console.warn(
-            "controller not found",
-            el
-        );
-        return;
-    }
 
-    controller.executeAction(
-        action,
-        el
-    );
+    const actions = el.dataset.action?.split(/\s+/).filter(Boolean) ?? [];
+    actions.forEach(action => {
+        // DOM actions
+        if(domActions[action]){
+            domActions[action](e, el);
+            return;
+        }
+
+        if(!controller){
+            console.warn("controller not found", el);
+            return;
+        }
+
+        controller.executeAction(action, el);
+    });
 }
 
 function handleFocus(e){

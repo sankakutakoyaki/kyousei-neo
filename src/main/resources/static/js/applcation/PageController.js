@@ -82,7 +82,7 @@ export class PageController {
             ...defaultPageConditions,
             ...(this.config.conditions || {})
         };
-        this.initComponents();
+        
         this.initUI();
         this.initButtonAutoUpdate();
 
@@ -90,6 +90,8 @@ export class PageController {
             this.config.onInit(this);
         }
 
+        this.initComponents();
+        
         this.updateButtons();
     }
 

@@ -2,7 +2,7 @@
 
 import { getController } from "../../../applcation/controllerRegistry.js";
 
-export function handleTab(el){
+export function handleTab(event, el){
 
     const group = el.dataset.group;
     const targetId = el.dataset.tab;
