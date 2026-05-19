@@ -90,22 +90,17 @@ export const FormModel = {
 
     // save
     buildPayload(form, base, key){
-
         const entity = this.toEntity(form, base);
-
         if(!base || !base[key]){
             return entity;
         }
 
         const diff = this.diff(base, entity);
-
         if(Object.keys(diff).length === 0){
             return null;
         }
-
         diff[key] = base[key];
         diff.version = base.version;
-
         return diff;
     },
 
@@ -119,11 +114,27 @@ export const FormModel = {
                 el.value = "";
             }
         });
-    },
+    }
+    // clear(form){
+    //     [...form.elements].forEach(el => {
+    //         if(!el.name) return;
+
+    //         if(el.type === "checkbox"){
+    //             el.checked = false;
+    //         }else if(el.tagName === "SELECT"){
+    //             if(form.dataset.bulk === "true"){
+    //                 el.selectedIndex = -1;
+    //             }else{
+    //                 el.value = "0";
+    //             }
+    //         }else{
+    //             el.value = "";
+    //         }
+    //     });
+    // }
 };
 
 function injectMeta(entity, form, base){
-
     // 主キー
     const rawKey = form.dataset.key;
     const keyName = convertKey(rawKey, "kebab", "camel");

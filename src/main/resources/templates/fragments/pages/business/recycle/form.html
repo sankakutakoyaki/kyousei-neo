@@ -5,7 +5,7 @@
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'お問合せ管理票番号',
-                    'id':'recycle-number01',
+                    'id':'recycle-number11',
                     'name':'recycle-number',
                     'validate':'recycle',
                     'enter-validate':true,
@@ -19,26 +19,26 @@
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 { 
                     'text': '小売業者',
-                    'id':'company01',
+                    'id':'company11',
                     'name': 'company-id', 
                     'combo': 'clientComboList',
                     'top': '-----',
                     'key': 'company-id',
                     'resolveName':true,
                     'index': 2,
-                    'link': 'office01'
+                    'link': 'office11'
                 }}
             )}"></th:block>
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 {
                     'text':'支店名', 
-                    'id':'office01',
+                    'id':'office11',
                     'name': 'office-id',
                     'combo': 'officeComboList',
                     'top': '-----',
                     'key':'office-id',
                     'resolveName':true,
-                    'parent': 'company01',
+                    'parent': 'company11',
                     'linkDefault': 'empty'
                 }}
             )}"></th:block>
@@ -48,7 +48,7 @@
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'コード',
-                    'id':'item-code01',
+                    'id':'item-code11',
                     'name':'item-code',
                     'resolveId':true,
                     'index':3,
@@ -58,7 +58,7 @@
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 {
                     'text':'品目', 
-                    'id':'item-name01', 
+                    'id':'item-name11', 
                     'name':'item-name',
                     'resolveName':true,
                     'combo': 'recycleItemComboList',
@@ -81,7 +81,7 @@
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'コード',
-                    'id':'maker-code01',
+                    'id':'maker-code11',
                     'name':'maker-code',
                     'resolveId':true,
                     'submit':'none',
@@ -91,7 +91,7 @@
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'製造業者等名', 
-                    'id':'maker-name01', 
+                    'id':'maker-name11', 
                     'name':'maker-name',
                     'resolveName':true,
                     'submit':'none',
@@ -109,7 +109,7 @@
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
                     'text':'使用日',
-                    'id':'use-date01',
+                    'id':'use-date11',
                     'name':'use-date',
                     'type':'date',
                     'action':'date-arrow',
@@ -119,7 +119,7 @@
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
                     'text':'引渡日',
-                    'id':'delivery-date01',
+                    'id':'delivery-date11',
                     'name':'delivery-date',
                     'type':'date',
                     'action':'date-arrow',
@@ -129,7 +129,7 @@
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
                     'text':'発想日',
-                    'id':'shipping-date01',
+                    'id':'shipping-date11',
                     'name':'shipping-date',
                     'type':'date',
                     'action':'date-arrow',
@@ -147,31 +147,28 @@
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 { 
                     'text': '小売業者',
-                    'id':'company02',
+                    'id':'company12',
                     'name': 'company-id', 
                     'combo': 'clientComboList',
                     'top': '-----',
                     'key': 'company-id',
                     'resolveName':true,
                     'index': 11,
-                    'zeroToNull':true,
                     'skipIfNull':true,
-                    'link': 'office02'
+                    'link': 'office12'
                 }}
             )}"></th:block>
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 {
                     'text':'支店名', 
-                    'id':'office02',
+                    'id':'office12',
                     'name': 'office-id',
                     'combo': 'officeComboList',
                     'top': '-----',
                     'key':'office-id',
                     'resolveName':true,
-                    'zeroToNull':true,
                     'skipIfNull':true,
-                    'parent': 'company02',
-                    'linkDefault': 'empty'
+                    'parent': 'company12'
                 }}
             )}"></th:block>
         </div>
@@ -180,7 +177,7 @@
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'コード',
-                    'id':'item-code02',
+                    'id':'item-code12',
                     'name':'item-code',
                     'resolveId':true,
                     'index':12,
@@ -190,7 +187,7 @@
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 {
                     'text':'品目', 
-                    'id':'item-name02', 
+                    'id':'item-name12', 
                     'name':'item-name',
                     'resolveName':true,
                     'combo': 'recycleItemComboList',
@@ -214,7 +211,7 @@
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'コード',
-                    'id':'maker-code02',
+                    'id':'maker-code12',
                     'name':'maker-code',
                     'resolveId':true,
                     'submit':'none',
@@ -224,7 +221,7 @@
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'製造業者等名', 
-                    'id':'maker-name02', 
+                    'id':'maker-name12', 
                     'name':'maker-name',
                     'resolveName':true,
                     'submit':'none',
@@ -244,7 +241,7 @@
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
                     'text':'使用日',
-                    'id':'use-date02',
+                    'id':'use-date12',
                     'name':'use-date',
                     'type':'date',
                     'action':'date-arrow',
@@ -256,7 +253,7 @@
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
                     'text':'引渡日',
-                    'id':'delivery-date02',
+                    'id':'delivery-date12',
                     'name':'delivery-date',
                     'type':'date',
                     'action':'date-arrow',
@@ -268,7 +265,7 @@
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
                     'text':'発想日',
-                    'id':'shipping-date02',
+                    'id':'shipping-date12',
                     'name':'shipping-date',
                     'type':'date',
                     'action':'date-arrow',

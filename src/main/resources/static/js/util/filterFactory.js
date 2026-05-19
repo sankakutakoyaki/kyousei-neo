@@ -80,12 +80,12 @@ export const filterFactory = {
         return (v, value) => fn(v, value);
     },
     
-    parent(field) {
-        return (v, value) => {
-            // 未選択なら全部非表示
-            if (!value) return false;
+    // parent(field) {
+    //     return (v, value) => {
+    //         // 未選択なら全部非表示
+    //         if (!value) return false;
 
-            return v.dataset.parent === value;
-        };
-    }
+    //         return v.dataset.parent === value;
+    //     };
+    // }
 };

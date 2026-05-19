@@ -118,8 +118,13 @@ export class FormController {
 
         const form = document.getElementById(this.formId);
 
-        await initParentChildLink(form);        
+        FormModel.clear(form);
         FormModel.fill(form, data);
+        await initParentChildLink(form);
+        if(form.dataset.bulk === "true"){
+            form.querySelectorAll("select").forEach(select => {select.selectedIndex = -1;});
+        }
+        // FormModel.fill(form, data);
         
         if (!this._eventsInitialized) {
             this.initEvents();

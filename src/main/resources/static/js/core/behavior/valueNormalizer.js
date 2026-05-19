@@ -44,33 +44,28 @@ export function normalize(v){
     return v;
 }
 
-export function normalizeParentChild(form){
+// export function normalizeParentChild(form){
+//     let updated;
+//     do {
+//         updated = false;
 
-    let updated;
+//         const children = form.querySelectorAll("[data-parent-name]");
+//         children.forEach(child => {
+//             const parentName = child.dataset.parentName;
+//             const parent = form.querySelector(`[name="${parentName}"]`);
+//             if (!parent) return;
 
-    do {
-        updated = false;
+//             const selected = child.selectedOptions[0];
+//             if (!selected) return;
 
-        const children = form.querySelectorAll("[data-parent-name]");
+//             const parentValue = selected.dataset.parent;
+//             if (!parentValue) return;
 
-        children.forEach(child => {
-
-            const parentName = child.dataset.parentName;
-            const parent = form.querySelector(`[name="${parentName}"]`);
-            if (!parent) return;
-
-            const selected = child.selectedOptions[0];
-            if (!selected) return;
-
-            const parentValue = selected.dataset.parent;
-            if (!parentValue) return;
-
-            if (!parent.value) {
-                parent.value = parentValue;
-                parent.dispatchEvent(new Event("change"));
-                updated = true;
-            }
-        });
-
-    } while (updated);
-}
+//             if (!parent.value) {
+//                 parent.value = parentValue;
+//                 parent.dispatchEvent(new Event("change"));
+//                 updated = true;
+//             }
+//         });
+//     } while (updated);
+// }
