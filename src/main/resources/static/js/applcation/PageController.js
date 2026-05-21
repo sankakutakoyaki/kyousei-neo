@@ -16,6 +16,7 @@ const defaultPageConditions = {
         // table save
         if(scope === "table"){
             return c.dataTable?.canSave?.();
+            // return c.canSave?.();
         }
         // form save
         if(scope === "form"){
@@ -40,6 +41,11 @@ const defaultActions = {
     },
     delete: async (c) => c.deleteSelected(),
     download: async (c) => c.downloadSelected(),
+    save: async (c) => {
+        const form = c.forms?.detail;
+        if(!form) return;
+        await form.save(document.getElementById(form.formId));
+    },
 };
 
 const formAction = (name, options={}) =>
@@ -378,5 +384,9 @@ export class PageController {
 
     hasSelection(){
         return this.dataTable ?.hasSelection?.() ?? false;
+    }
+
+    canSave() {
+        return this.config.canSave?.();
     }
 }

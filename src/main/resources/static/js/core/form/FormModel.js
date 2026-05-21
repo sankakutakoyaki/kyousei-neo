@@ -7,29 +7,65 @@ import { formatters } from "../behavior/formatters.js";
 
 export const FormModel = {
     // フォーム → entity
+    // toEntity(form, base = {}){
+    //     const fd = new FormData(form);
+    //     const entity = {};
+    //     for(const [name, value] of fd.entries()){
+    //         const elRaw = form.elements[name];
+    //         const el = elRaw instanceof RadioNodeList
+    //             ? elRaw[0]
+    //             : elRaw;
+
+    //         if(!el) continue;
+
+    //         if(el.dataset.submit === "none") continue;
+
+    //         const rawKey = el.dataset.key || name;
+    //         if(!rawKey) continue;
+
+    //         const key = convertKey(rawKey, "kebab", "camel");
+
+    //         const v = resolveSubmitValue(el, value);
+    //         if(v === undefined) continue;
+    //         if(v == null && "skipIfNull" in el.dataset){
+    //             continue;
+    //         }
+    //         entity[key] = v;
+    //     }
+    //     injectMeta(entity, form, base);
+    //     return entity;
+    // },
     toEntity(form, base = {}){
-        const fd = new FormData(form);
         const entity = {};
+        const fields = form.querySelectorAll("input[name], select[name], textarea[name]");
 
-        for(const [name, value] of fd.entries()){
-            const elRaw = form.elements[name];
-            const el = elRaw instanceof RadioNodeList
-                ? elRaw[0]
-                : elRaw;
+        fields.forEach(el => {
+            if(el.disabled) return;
+            if(el.dataset.submit === "none") return;
 
-            if(!el) continue;
+            const name = el.name;
+            if(!name) return;
 
-            const key = el.dataset.key
-                ? convertKey(el.dataset.key, "kebab", "camel")
-                : convertKey(name, "kebab", "camel");
+            const rawKey = el.dataset.key || name;
+            if(!rawKey) return;
+
+            const key = convertKey(rawKey, "kebab", "camel");
+
+            let value;
+            if(el instanceof HTMLInputElement && el.type === "checkbox"){
+                value = el.checked;
+            } else {
+                value = el.value;
+            }
 
             const v = resolveSubmitValue(el, value);
-            if(v === undefined) continue;
-            if(v == null && "skipIfNull" in el.dataset){
-                continue;
-            }
+            if(v === undefined) return;
+
+            if(v == null && "skipIfNull" in el.dataset) return;
+
             entity[key] = v;
-        }
+        });
+
         injectMeta(entity, form, base);
         return entity;
     },
@@ -137,8 +173,9 @@ export const FormModel = {
 function injectMeta(entity, form, base){
     // 主キー
     const rawKey = form.dataset.key;
-    const keyName = convertKey(rawKey, "kebab", "camel");
+    if(!rawKey) return;
 
+    const keyName = convertKey(rawKey, "kebab", "camel");
     if(keyName && base[keyName] != null){
         entity[keyName] = base[keyName];
     }

@@ -6,15 +6,37 @@ import { FormController } from "../../applcation/FormController.js";
 import { convertKey } from "../../util/keyCaseConverter.js";
 
 export function createRecyclePage(config){
+    // const defaultForms = {
+    //     detail: {
+    //         create: (controller) => createRecycleForm(controller, {formId: config.formId})
+    //     },
+    //     ...(config.bulkFormId && {
+    //         bulk: {
+    //             create: (controller) => createRecycleForm(controller, {formId: config.bulkFormId})}
+    //         }
+    //     )
+    // };
     const defaultForms = {
         detail: {
-            create: (controller) => createRecycleForm(controller, {formId: config.formId})
+            create: (controller) => createRecycleForm(controller, { formId: config.formId })
+        },
+        inlineUse: {
+            create: (controller) => createRecycleUseForm(controller, { formId: config.formId })
+        },
+        inlineDelivery: {
+            create: (controller) => createRecycleDeliveryForm(controller, { formId: config.formId })
+        },
+        inlineShipping: {
+            create: (controller) => createRecycleShippingForm(controller, { formId: config.formId })
+        },
+        inlineLoss: {
+            create: (controller) => createRecycleLossForm(controller, { formId: config.formId })
         },
         ...(config.bulkFormId && {
             bulk: {
-                create: (controller) => createRecycleForm(controller, {formId: config.bulkFormId})}
+                create: (controller) => createRecycleForm(controller, { formId: config.bulkFormId })
             }
-        )
+        })
     };
     return createCrudPage({
         key: config.key,
@@ -32,7 +54,12 @@ export function createRecyclePage(config){
         buildCsvParams: config.buildCsvParams,
         model: config.model,
         canSave: config.canSave,
-        forms: config.forms ?? defaultForms,
+        // forms: config.forms ?? defaultForms,
+        forms: config.forms ?? {
+            [config.defaultFormName ?? "detail"]:
+                defaultForms[config.defaultFormName ?? "detail"],
+            ...(defaultForms.bulk && { bulk: defaultForms.bulk })
+        },
         onDeleted: config.onDeleted
     });
 }
@@ -62,6 +89,25 @@ const createRecycleForm = (controller, options = {}) =>
             }
         },
         repository: RecycleRepository,
+    });
+
+const createRecycleUseForm = (controller) =>
+    new FormController({
+        controller,
+        formId: "header-02",
+        key: controller.key,
+        repository: RecycleRepository,
+        afterSave: async () => {
+            await controller.refresh();
+        },
+        validateBusiness: async (payload) => {
+            const date = document.getElementById("use-date02");
+            if (!date || date.value == null) {
+                throw {
+                    message: '使用日を指定してください',
+                };
+            }
+        }
     });
 
 function validatePersisted(

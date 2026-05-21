@@ -73,23 +73,29 @@ export const recycleUsePage = () =>
         components: {combo: true, input: true},
         tableId: "table-02",
         footerId: "footer-02",
+        formId: "header-02",
         columns: createRecycleUseColumns(),
-        forms: {},
+        // forms: {
+        //     detail: {
+        //         create: (controller) => createRecycleUseForm(controller)
+        //     }
+        // },
+        defaultFormName: "inlineUse",
         onInit: () => {
             const today = getToday();
             const from = document.querySelector("[name='use-date']");
             if(from && !from.value){
                 from.value = today;
             }
-        },
-        buildParams: () => {
-            const from = document.querySelector("[name='use-date']")?.value;
-            return {
-                state: APP.cache.common.state.INITIAL,
-                category: String(APP.cache.common.recycleCategory.USE),
-                dateFrom: from,
-                dateTo: toExclusiveDate(from)
-            };
+        // },
+        // buildParams: () => {
+        //     const from = document.querySelector("[name='use-date']")?.value;
+        //     return {
+        //         state: APP.cache.common.state.INITIAL,
+        //         category: String(APP.cache.common.recycleCategory.USE),
+        //         dateFrom: from,
+        //         dateTo: toExclusiveDate(from)
+        //     };
         },
         canSave: () => {
             const recycle = document.querySelector("#header-02 [name='recycle-number']")?.value;
