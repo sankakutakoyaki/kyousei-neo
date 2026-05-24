@@ -47,6 +47,7 @@ export const DataResolver = {
 
         // 空ならクリア
         if (!id) {
+            delete idInput.dataset.lastId;
             this.clear(nameField);
             return;
         }
@@ -280,28 +281,28 @@ const postalResolver = {
     }
 };
 
-/**
- * リサイクル券番号
- */
-export function recycleResolver(row){
-    const input = row.querySelector('[name="recycle-number"]');
-    if(!input) return;
+// /**
+//  * リサイクル券番号
+//  */
+// export function recycleResolver(row){
+//     const input = row.querySelector('[name="recycle-number"]');
+//     if(!input) return;
 
-    input.addEventListener("input", () => {
-            let v = input.value.replace(/\D/g, "").slice(0, 13);
-            if(v.length > 10){
-                v = v.slice(0,4) + "-" + v.slice(4,10) + "-" + v.slice(10);
-            } else if(v.length > 4){
-                v = v.slice(0,4) + "-" + v.slice(4);
-            }
-            input.value = v;
-        }
-    );
-}
+//     input.addEventListener("input", () => {
+//             let v = input.value.replace(/\D/g, "").slice(0, 13);
+//             if(v.length > 10){
+//                 v = v.slice(0,4) + "-" + v.slice(4,10) + "-" + v.slice(10);
+//             } else if(v.length > 4){
+//                 v = v.slice(0,4) + "-" + v.slice(4);
+//             }
+//             input.value = v;
+//         }
+//     );
+// }
 
 const resolvers = {
     postal: postalResolver,
-    recycle: recycleResolver,
+    // recycle: recycleResolver,
     query: queryResolver,
     default: defaultResolver
 };

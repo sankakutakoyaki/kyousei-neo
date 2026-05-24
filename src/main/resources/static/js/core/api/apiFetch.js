@@ -2,6 +2,8 @@
 
 import { startProcessing } from "../dom/loading.js";
 import { processingEnd } from "../dom/loading.js";
+import { DialogService } from "../ui/dialog/DialogService.js";
+
 /**
  * 共通fetch
  */
@@ -116,5 +118,10 @@ export async function handleHttpError(status, json) {
     if (window.ApiErrorHandler) {
         return window.ApiErrorHandler(status, message);
     }
-    console.error(status, message);
+    // console.error(status, message);
+    if(status >= 500){
+        DialogService.error("システムエラーが発生しました");
+    } else {
+        DialogService.error(message);
+    }
 }

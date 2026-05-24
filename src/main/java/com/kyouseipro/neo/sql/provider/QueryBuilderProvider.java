@@ -17,11 +17,15 @@ public class QueryBuilderProvider {
     private final Map<QueryId, QueryBuilder> builders = new HashMap<>();
 
     public QueryBuilderProvider() {
-
+        // builders.put(QueryId.RECYCLE_LIST, req -> {
+        //     String categoryStr = (String) req.getParams().get("category");
+        //     RecycleCategory category =
+        //         EnumUtil.of(RecycleCategory.class, Integer.parseInt(categoryStr));
+        //     return RecycleQuery.recycleList(category);
+        // });
         builders.put(QueryId.RECYCLE_LIST, req -> {
-            String categoryStr = (String) req.getParams().get("category");
-            RecycleCategory category =
-                EnumUtil.of(RecycleCategory.class, Integer.parseInt(categoryStr));
+            Integer categoryInt = toInteger(req.getParams().get("category"));
+            RecycleCategory category = categoryInt == null ? null: EnumUtil.of(RecycleCategory.class, categoryInt);
             return RecycleQuery.recycleList(category);
         });
 
@@ -36,5 +40,14 @@ public class QueryBuilderProvider {
 
     public QueryBuilder get(QueryId id) {
         return builders.get(id);
+    }
+
+    private Integer toInteger(Object value){
+        if(value == null) return null;
+
+        String s = value.toString();
+        if(s.isBlank()) return null;
+
+        return Integer.parseInt(s);
     }
 }

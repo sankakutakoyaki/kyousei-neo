@@ -17,6 +17,18 @@ export const RecycleRepository = {
         return await RequestClient.request({queryId: "recycleSave", params});
     },
 
+    async saveDelivery(params){
+        return await RequestClient.request({queryId: "recycleDeliverySave", params});
+    },
+
+    async saveShipping(params){
+        return await RequestClient.request({queryId: "recycleShippingSave", params});
+    },
+
+    async saveLoss(params){
+        return await RequestClient.request({queryId: "recycleLossSave", params});
+    },
+
     async remove(params){
         return await RequestClient.request({queryId: "recycleDeleteByIds", params});
     },

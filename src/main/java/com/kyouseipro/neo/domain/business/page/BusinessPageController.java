@@ -7,8 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.kyouseipro.neo._backup.Enums;
 import com.kyouseipro.neo.base.BaseController;
+import com.kyouseipro.neo.common.enums.code.ClientCategory;
 import com.kyouseipro.neo.common.enums.code.RecycleCategory;
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.util.EnumUtil;
@@ -42,7 +42,8 @@ public class BusinessPageController extends BaseController {
             "page", Map.of(
                 "recycleItemComboList", recycleService.findItemCombo(),
                 "recycleCategoryComboList", EnumUtil.toCombo(RecycleCategory.class),
-                "clientComboList", companyService.findComboByCategory(Enums.clientCategory.SHIPPER.getCode()),
+                "clientComboList", companyService.findComboByCategory(ClientCategory.SHIPPER.getCode()),
+                "disposalComboList", companyService.findComboByCategory(ClientCategory.FACILITY.getCode()),
                 "officeComboList", officeService.findComboClientAll()
             )
         );

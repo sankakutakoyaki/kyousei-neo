@@ -2,13 +2,18 @@
 
 import { initCommon } from "../../../bootstrap/initPage.js";
 import { initPageCache } from "../../../bootstrap/initPageCache.js";
-import { createRecycleListColumns, createRecycleUseColumns } from "./columns.js";
+import { createRecycleListColumns, 
+         createRecycleUseColumns, 
+         createRecycleDeliveryColumns, 
+         createRecycleShippingColumns, 
+         createRecycleLossColumns } from "./columns.js";
 import { registerController } from "../../../applcation/controllerRegistry.js";
 import { initParentChildLink } from "../../../util/link.js";
 import { getToday } from "../../../util/time.js";
 import { toExclusiveDate } from "../../../util/date.js";
 import { RecycleRepository } from "../../../repositories/business/recycle/RecycleRepository.js";
 import { createRecyclePage } from "../createRecyclePage.js";
+import { getController } from "../../../applcation/controllerRegistry.js";
 
 export async function init() {
     await initCommon();
@@ -20,12 +25,48 @@ export async function init() {
     list.init();
     await list.executeAction("search");
     
-    // tab
+    // tab2
     const use = recycleUsePage();
     registerController("recycleUse", use);
     use.init();
-    
+
+    // tab3
+    const delivery = recycleDeliveryPage();
+    registerController("recycleDelivery", delivery);
+    delivery.init();
+
+    // tab4
+    const shipping = recycleShippingPage();
+    registerController("recycleShipping", shipping);
+    shipping.init();
+
+    // tab5
+    const loss = recycleLossPage();
+    registerController("recycleLoss", loss);
+    loss.init();
+
     initParentChildLink();
+}
+
+async function refreshRecycleChildren(){
+
+    const keys = [
+        "recycleUse",
+        "recycleDelivery",
+        "recycleShipping",
+        "recycleLoss"
+    ];
+
+    for(const key of keys){
+
+        const controller =
+            getController(key);
+
+        await controller
+            ?.executeAction(
+                "recycleChanged"
+            );
+    }
 }
 
 export const recycleListPage = () =>
@@ -37,10 +78,13 @@ export const recycleListPage = () =>
         formId: "form-01",
         bulkFormId: "form-02",
         columns: createRecycleListColumns(),
+        rowClass: (item) => item.lossDate ? "is-loss" : "",
         onInit: () => {
             const today = getToday();
-            const from = document.querySelector("[name='date-from']");
-            const to = document.querySelector("[name='date-to']");
+            // const from = document.querySelector("[name='date-from']");
+            // const to = document.querySelector("[name='date-to']");
+            const from = document.getElementById("date-from01");
+            const to = document.getElementById("date-to01");
             if(from && !from.value){
                 from.value = today;
             }
@@ -49,9 +93,12 @@ export const recycleListPage = () =>
             }
         },
         buildParams: () => {
-            const cate = document.querySelector("[name='category01']")?.value;
-            const from = document.querySelector("[name='date-from']")?.value;
-            const to = document.querySelector("[name='date-to']")?.value;
+            // const cate = document.querySelector("[name='category01']")?.value;
+            // const from = document.querySelector("[name='date-from']")?.value;
+            // const to = document.querySelector("[name='date-to']")?.value;
+            const cate = document.getElementById("category01")?.value;
+            const from = document.getElementById("date-from01")?.value;
+            const to = document.getElementById("date-to01")?.value;
             return {
                 state: APP.cache.common.state.INITIAL,
                 category: cate,
@@ -63,225 +110,358 @@ export const recycleListPage = () =>
             state: APP.cache.common.state.INITIAL
         }),
         actions: {
-            search: async (controller) => {await controller.refresh();}
-        }
+            search: async (controller) => {await controller.refresh();},
+            recycleChanged: async (controller) => {await controller.refresh();}
+        },
+        // afterSave: async () => {
+        //     const use = getController("recycleUse");
+        //     await use?.executeAction("recycleChanged");
+        //     const delivery = getController("recycleDelivery");
+        //     await delivery?.executeAction("recycleChanged");
+        //     const shipping = getController("recycleShipping");
+        //     await shipping?.executeAction("recycleChanged");
+        //     const loss = getController("recycleLoss");
+        //     await loss?.executeAction("recycleChanged");
+        // },
+        // onDeleted: async () => {
+        //     const use = getController("recycleUse");
+        //     await use?.executeAction("recycleChanged");
+        //     const delivery = getController("recycleDelivery");
+        //     await delivery?.executeAction("recycleChanged");
+        //     const shipping = getController("recycleShipping");
+        //     await shipping?.executeAction("recycleChanged");
+        //     const loss = getController("recycleLoss");
+        //     await loss?.executeAction("recycleChanged");
+        // }
+        afterSave: refreshRecycleChildren,
+        onDeleted: refreshRecycleChildren
     });
 
-export const recycleUsePage = () =>
-    createRecyclePage({
-        key: "recycleUse",
+function createInlineRecyclePage({
+    key,
+    tableId,
+    footerId,
+    formId,
+    columns,
+    category,
+    inputId,
+    formName
+}){
+    return createRecyclePage({
+        key,
         components: {combo: true, input: true},
+        tableId,
+        footerId,
+        formId,
+        columns,
+        rowClass: (item) => item.lossDate ? "is-loss": "",
+        defaultFormName: formName,
+        checkable: false,
+        onInit: () => initTodayValue(inputId),
+        buildParams: () => buildRecycleDateParams({category, inputId}),
+        canSave: () => {
+            const recycle = document.querySelector(`#${formId} [name='recycle-number']`)?.value;
+            return recycle?.trim() !== "";
+        },
+        actions: {
+            search: async (controller) => {
+                await controller.refresh();
+            },
+            recycleChanged:
+                async (controller) => {
+                    await controller.refresh();
+                }
+        },
+        afterSave: refreshRecycleList
+    });
+}
+
+export const recycleUsePage = () =>
+    createInlineRecyclePage({
+        key: "recycleUse",
         tableId: "table-02",
         footerId: "footer-02",
         formId: "header-02",
         columns: createRecycleUseColumns(),
-        // forms: {
-        //     detail: {
-        //         create: (controller) => createRecycleUseForm(controller)
-        //     }
-        // },
-        defaultFormName: "inlineUse",
-        onInit: () => {
-            const today = getToday();
-            const from = document.querySelector("[name='use-date']");
-            if(from && !from.value){
-                from.value = today;
-            }
-        // },
-        // buildParams: () => {
-        //     const from = document.querySelector("[name='use-date']")?.value;
-        //     return {
-        //         state: APP.cache.common.state.INITIAL,
-        //         category: String(APP.cache.common.recycleCategory.USE),
-        //         dateFrom: from,
-        //         dateTo: toExclusiveDate(from)
-        //     };
-        },
-        canSave: () => {
-            const recycle = document.querySelector("#header-02 [name='recycle-number']")?.value;
-            return recycle?.trim() !== "";
-        },
-        actions: {
-            search: async (controller) => {await controller.refresh();}
-        }
+        category: APP.cache.common.recycleCategory.USE,
+        inputId: "use-date02",
+        formName: "inlineUse"
     });
 
-// export const recycleListPage = () => {
-//     const controller = new PageController({
-//         key:"recycleList",
-//         onInit: () => {
-//             const today = getToday();
-//             const from = document.querySelector("[name='date-from']");
-//             const to   = document.querySelector("[name='date-to']");
-//             if (from && !from.value) from.value = today;
-//             if (to && !to.value) to.value = today;
-//         },
+export const recycleDeliveryPage = () =>
+    createInlineRecyclePage({
+        key: "recycleDelivery",
+        tableId: "table-03",
+        footerId: "footer-03",
+        formId: "header-03",
+        columns: createRecycleDeliveryColumns(),
+        category: APP.cache.common.recycleCategory.DELIVERY,
+        inputId: "delivery-date02",
+        formName: "inlineDelivery"
+    });
 
-//         // onDeleted: () => {
-//         //     dispatchAction({
-//         //         action: "recycleChanged",
-//         //         target: ["recycleUse", "recycleDeli", "recycleShip", "recycleLoss"]
-//         //     });
+export const recycleShippingPage = () =>
+    createInlineRecyclePage({
+        key: "recycleShipping",
+        tableId: "table-04",
+        footerId: "footer-04",
+        formId: "header-04",
+        columns: createRecycleShippingColumns(),
+        category: APP.cache.common.recycleCategory.SHIPPER,
+        inputId: "shipping-date02",
+        formName: "inlineShipping"
+    });
+
+export const recycleLossPage = () =>
+    createInlineRecyclePage({
+        key: "recycleLoss",
+        tableId: "table-05",
+        footerId: "footer-05",
+        formId: "header-05",
+        columns: createRecycleLossColumns(),
+        category: APP.cache.common.recycleCategory.LOSS,
+        inputId: "loss-date02",
+        formName: "inlineLoss"
+    });
+
+async function refreshRecycleList(){
+    const recycle = getController("recycleList");
+    await recycle?.executeAction("recycleChanged");
+}
+
+function buildRecycleDateParams({
+    category,
+    inputId
+}){
+    const from = document.getElementById(inputId)?.value;
+    return {
+        state: APP.cache.common.state.INITIAL,
+        category: String(category),
+        dateFrom: from,
+        dateTo: toExclusiveDate(from)
+    };
+}
+
+function initTodayValue(inputId){
+    const today = getToday();
+    const el = document.getElementById(inputId);
+    if(el && !el.value){
+        el.value = today;
+    }
+}
+
+
+// export const recycleUsePage = () =>
+//     createRecyclePage({
+//         key: "recycleUse",
+//         components: {combo: true, input: true},
+//         tableId: "table-02",
+//         footerId: "footer-02",
+//         formId: "header-02",
+//         columns: createRecycleUseColumns(),
+//         rowClass: (item) => item.lossDate ? "is-loss" : "",
+//         defaultFormName: "inlineUse",
+//         checkable:false,
+//         // onInit: () => {
+//         //     const today = getToday();
+//         //     // const from = document.querySelector("[name='use-date']");
+//         //     const from = document.getElementById("use-date02");
+//         //     if(from && !from.value){
+//         //         from.value = today;
+//         //     }
 //         // },
-
-//         table: {
-//             create: (controller, columns) => new DataTable({
-//                 controller: controller,
-//                 tableId: "table-01",
-//                 footerId: "footer-01",
-//                 columns,
-//                 idKey: "recycleId",
-//                 checkable: true,
-//                 buildParams: () => {
-//                     const cate = document.querySelector("[name='category01']")?.value;
-//                     const from = document.querySelector("[name='date-from']")?.value;
-//                     const to   = document.querySelector("[name='date-to']")?.value;
-//                     return {
-//                         state: APP.cache.common.state.INITIAL,
-//                         category: cate,
-//                         dateFrom: from,
-//                         dateTo: toExclusiveDate(to)
-//                     };
-//                 },
-//                 buildCsvParams: () => ({
-//                     state: APP.cache.common.state.INITIAL
-//                 }),
-//                 // api: {
-//                 //     request: api.request, // 取得方法定義
-//                 //     select: "recycleList",
-//                 //     delete: "recycleDeleteByIds",
-//                 //     download: "recycleCsv"
-//                 // },
-//                 repository: RecycleRepository,
-//                 // onDoubleClick: (item) => controller.openEdit(item.recycleId)
-//                 onDoubleClick:(item) => controller.openForm("detail", item.recycleId, { bulkMode:false })
-//             })
+//         // buildParams: () => {
+//         //     // const from = document.querySelector("[name='use-date']")?.value;
+//         //     const from = document.getElementById("use-date02")?.value;
+//         //     return {
+//         //         state: APP.cache.common.state.INITIAL,
+//         //         category: String(APP.cache.common.recycleCategory.USE),
+//         //         dateFrom: from,
+//         //         dateTo: toExclusiveDate(from)
+//         //     };
+//         // },
+//         onInit: () => initTodayValue("use-date02"),
+//         buildParams: () =>
+//             buildRecycleDateParams({
+//                 category: APP.cache.common.recycleCategory.USE,
+//                 inputId: "use-date02"
+//             }),
+//         canSave: () => {
+//             const recycle = document.querySelector("#header-02 [name='recycle-number']")?.value;
+//             return recycle?.trim() !== "";
 //         },
-//         forms: {
-//             detail: {
-//                 create: (controller) =>
-//                     createRecycleForm(controller, {
-//                         formId: "form-01"
-//                         // saveQueryId: "recycleSave"
-//                     })
-//             },
-//             bulk: {
-//                 create: (controller) =>
-//                     createRecycleForm(controller, {
-//                         formId: "form-02"
-//                         // // saveQueryId: "recycleBulkUpdate"
-//                         // saveQueryId: "recycleSave"
-//                     })
-//             }
-//         }
-//     });
-//     return controller;
-// };
-
-// // tab1フォーム共通処理
-// const createRecycleForm = (controller, options = {}) =>
-//     new FormController({
-//         controller,
-//         formId: options.formId,
-//         key: controller.key,
-//         afterSave: async (id) => {
-//         // onSaved: async (id) => {
-//             // await controller.dataTable.refresh();
-//             // controller.scrollToRow(id);
-//             await controller.refresh(id);
+//         actions: {
+//             search: async (controller) => {await controller.refresh();},
+//             recycleChanged: async (controller) => {await controller.refresh();}
 //         },
-//         buildParams: (id) => ({
-//             state:APP.cache.common.state.INITIAL,
-//             recycleId: id
-//         }),
-//         validateBusiness: async (payload) => {
-//         // businessValidate:
-//             // async (payload) => {
-//             const table =  controller.dataTable;
-//             // const ids = controller.state.bulkMode ? table.model.getSelectedIds(): [payload.recycleId];
-//             const ids = controller.isBulkMode() ? table.getSelectedIds(): [payload.recycleId];
-
-//             for(const id of ids){
-//                 // const origin = table.model.findOriginById(id);
-//                 const origin = table.findOriginById(id);
-//                 validatePersisted(payload, origin, "useDate", "使用日");
-//                 validatePersisted(payload, origin, "deliveryDate", "引渡日");
-//                 validatePersisted(payload, origin, "shippingDate", "発送日");
-//             }
-//         },
-//         repository: RecycleRepository,
-//         // api: {
-//         //     request: api.request,
-//         //     find: "recycleDetail",
-//         //     save: options.saveQueryId
+//         // afterSave: async () => {
+//         //     const recycle = getController("recycleList");
+//         //     await recycle?.executeAction("recycleChanged");
 //         // }
+//         afterSave: refreshRecycleList
 //     });
 
-// export const recycleUsePage = () => {
-//     const controller = new PageController({
-//         key:"recycleUse",
+// export const recycleDeliveryPage = () =>
+//     createRecyclePage({
+//         key: "recycleDelivery",
+//         components: {combo: true, input: true},
+//         tableId: "table-03",
+//         footerId: "footer-03",
+//         formId: "header-03",
+//         columns: createRecycleDeliveryColumns(),
+//         rowClass: (item) => item.lossDate ? "is-loss" : "",
+//         defaultFormName: "inlineDelivery",
+//         checkable:false,
+//         // onInit: () => {
+//         //     const today = getToday();
+//         //     // const from = document.querySelector("[name='delivery-date']");
+//         //     const from = document.getElementById("delivery-date02");
+//         //     if(from && !from.value){
+//         //         from.value = today;
+//         //     }
+//         // },
+//         // buildParams: () => {
+//         //     // const from = document.querySelector("[name='delivery-date']")?.value;
+//         //     const from = document.getElementById("delivery-date02")?.value;
+//         //     return {
+//         //         state: APP.cache.common.state.INITIAL,
+//         //         category: String(APP.cache.common.recycleCategory.DELIVERY),
+//         //         dateFrom: from,
+//         //         dateTo: toExclusiveDate(from)
+//         //     };
+//         // },
+//         onInit: () => initTodayValue("delivery-date02"),
+//         buildParams: () =>
+//             buildRecycleDateParams({
+//                 category:
+//                     APP.cache.common
+//                         .recycleCategory
+//                         .DELIVERY,
 
-//         onInit: () => {
-//             const today = getToday();
-//             const from = document.querySelector("[name='use-date']");
-//             if (from && !from.value) from.value = today;
+//                 inputId:
+//                     "delivery-date02"
+//             }),
+//         canSave: () => {
+//             const recycle = document.querySelector("#header-03 [name='recycle-number']")?.value;
+//             return recycle?.trim() !== "";
 //         },
-
-//         table: {
-//             create: (controller, columns) => new DataTable({
-//                 controller: controller,
-//                 tableId: "table-02",
-//                 footerId: "footer-02",
-//                 columns,
-//                 idKey: "recycleId",
-//                 checkable: true,
-//                 buildParams: () => {
-//                     const from = document.querySelector("[name='use-date']")?.value;
-//                     return {
-//                         state: APP.cache.common.state.INITIAL,
-//                         category: String(APP.cache.common.recycleCategory.USE),
-//                         dateFrom: from,
-//                         dateTo: toExclusiveDate(from)
-//                     };
-//                 },
-//                 repository: RecycleRepository,
-//                 // api: {
-//                 //     request: api.request, // 取得方法定義
-//                 //     select: "recycleList"
-//                 // },
-//                 // ボタン disabled 制御
-//                 canSave: () => {
-//                     const recycle = document.querySelector("#header-02 [name='recycle-number']")?.value;
-//                     return recycle?.trim() !== "";
-//                 },
-//                 onDoubleClick:(item) => controller.openForm("detail", item.recycleId, { bulkMode:false })
-//             })
-//         }
+//         actions: {
+//             search: async (controller) => {await controller.refresh();},
+//             recycleChanged: async (controller) => {await controller.refresh();}
+//         },
+//         // afterSave: async () => {
+//         //     const recycle = getController("recycleList");
+//         //     await recycle?.executeAction("recycleChanged");
+//         // }
+//         afterSave: refreshRecycleList
 //     });
-//     return controller;
-// };
 
-// function validatePersisted(
-//     payload,
-//     origin,
-//     field,
-//     label
-// ){
-//     // 未変更
-//     if(!Object.hasOwn(payload, field)){
-//         return;
-//     }
-//     // 空更新は許可
-//     if(payload[field] == null || payload[field] === ""){
-//         return;
-//     }
-//     // 元データなし
-//     if(!origin?.[field]){
-//         throw {
-//             message:
-//                 `${label}が未登録のため変更できません`,
-//             field:
-//                 convertKey(field, "camel", "kebab")
-//         };
-//     }
-// }
+// export const recycleShippingPage = () =>
+//     createRecyclePage({
+//         key: "recycleShipping",
+//         components: {combo: true, input: true},
+//         tableId: "table-04",
+//         footerId: "footer-04",
+//         formId: "header-04",
+//         columns: createRecycleShippingColumns(),
+//         rowClass: (item) => item.lossDate ? "is-loss" : "",
+//         defaultFormName: "inlineShipping",
+//         checkable:false,
+//         // onInit: () => {
+//         //     const today = getToday();
+//         //     // const from = document.querySelector("[name='shipping-date']");
+//         //     const from = document.getElementById("shipping-date02");
+//         //     if(from && !from.value){
+//         //         from.value = today;
+//         //     }
+//         // },
+//         // buildParams: () => {
+//         //     // const from = document.querySelector("[name='shipping-date']")?.value;
+//         //     const from = document.getElementById("shipping-date02")?.value;
+//         //     return {
+//         //         state: APP.cache.common.state.INITIAL,
+//         //         category: String(APP.cache.common.recycleCategory.SHIPPER),
+//         //         dateFrom: from,
+//         //         dateTo: toExclusiveDate(from)
+//         //     };
+//         // },
+//         onInit: () => initTodayValue("shipping-date02"),
+//         buildParams: () =>
+//             buildRecycleDateParams({
+//                 category:
+//                     APP.cache.common
+//                         .recycleCategory
+//                         .SHIPPER,
+
+//                 inputId:
+//                     "shipping-date02"
+//             }),
+//         canSave: () => {
+//             const recycle = document.querySelector("#header-04 [name='recycle-number']")?.value;
+//             return recycle?.trim() !== "";
+//         },
+//         actions: {
+//             search: async (controller) => {await controller.refresh();},
+//             recycleChanged: async (controller) => {await controller.refresh();}
+//         },
+//         // afterSave: async () => {
+//         //     const recycle = getController("recycleList");
+//         //     await recycle?.executeAction("recycleChanged");
+//         // }
+//         afterSave: refreshRecycleList
+//     });
+
+// export const recycleLossPage = () =>
+//     createRecyclePage({
+//         key: "recycleLoss",
+//         components: {combo: true, input: true},
+//         tableId: "table-05",
+//         footerId: "footer-05",
+//         formId: "header-05",
+//         columns: createRecycleLossColumns(),
+//         rowClass: (item) => item.lossDate ? "is-loss" : "",
+//         defaultFormName: "inlineLoss",
+//         checkable:false,
+//         // onInit: () => {
+//         //     const today = getToday();
+//         //     // const from = document.querySelector("[name='loss-date']");
+//         //     const from = document.getElementById("loss-date02");
+//         //     if(from && !from.value){
+//         //         from.value = today;
+//         //     }
+//         // },
+//         // buildParams: () => {
+//         //     // const from = document.querySelector("[name='loss-date']")?.value;
+//         //     const from = document.getElementById("loss-date02")?.value;
+//         //     return {
+//         //         state: APP.cache.common.state.INITIAL,
+//         //         category: String(APP.cache.common.recycleCategory.LOSS),
+//         //         dateFrom: from,
+//         //         dateTo: toExclusiveDate(from)
+//         //     };
+//         // },
+//         onInit: () => initTodayValue("loss-date02"),
+//         buildParams: () =>
+//             buildRecycleDateParams({
+//                 category:
+//                     APP.cache.common
+//                         .recycleCategory
+//                         .LOSS,
+
+//                 inputId:
+//                     "loss-date02"
+//             }),
+//         canSave: () => {
+//             const recycle = document.querySelector("#header-05 [name='recycle-number']")?.value;
+//             return recycle?.trim() !== "";
+//         },
+//         actions: {
+//             search: async (controller) => {await controller.refresh();},
+//             recycleChanged: async (controller) => {await controller.refresh();}
+//         },
+//         // afterSave: async () => {
+//         //     const recycle = getController("recycleList");
+//         //     await recycle?.executeAction("recycleChanged");
+//         // }
+//         afterSave: refreshRecycleList
+//     });

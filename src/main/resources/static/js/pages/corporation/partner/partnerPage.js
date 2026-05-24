@@ -60,7 +60,8 @@ export const partnerEmployeePage = () =>
             if (!payload.companyId) {
                 throw {
                     message: "会社を選択してください",
-                    field: "companyId"
+                    // field: "companyId"
+                    fields: ["companyId"]
                 };
             }
         }

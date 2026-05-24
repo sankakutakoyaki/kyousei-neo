@@ -6,5 +6,8 @@ public enum QueryKind {
     INSERT,
     UPDATE,
     SAVE,
-    CSV
+    CSV,
+    RECYCLE_DELIVERY_SAVE,
+    RECYCLE_SHIPPING_SAVE,
+    RECYCLE_LOSS_SAVE,
 }

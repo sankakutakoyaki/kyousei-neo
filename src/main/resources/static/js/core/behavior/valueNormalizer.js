@@ -1,27 +1,22 @@
 "use strict"
 
 export function normalizeValue(v, opt = {}){
-
     // trim
     if(typeof v === "string" && opt.trim !== false){
         v = v.trim();
     }
-
     // 空 → null
     if(v === ""){
         v = null;
     }
-
     // number
     if(opt.number && v !== null){
         v = Number(v);
     }
-
     // zeroToNull
     if(opt.zeroToNull && (v === 0 || v === "0")){
         v = null;
     }
-
     return v;
 }
 

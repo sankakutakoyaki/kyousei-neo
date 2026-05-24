@@ -25,6 +25,7 @@ export function createCrudPage(config){
     };
     return new PageController({
         key: config.key,
+        defaultFormName: config.defaultFormName,
         components: config.components,
         
         onInit: config.onInit,
@@ -39,7 +40,7 @@ export function createCrudPage(config){
                 tableId: config.tableId,
                 footerId: config.footerId,
                 columns: config.columns,
-
+                rowClass: config.rowClass,
                 idKey: config.idKey,
                 checkable: config.checkable ?? true,
                 repository: config.repository,

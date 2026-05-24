@@ -26,9 +26,12 @@ public class RecycleSqlProvider implements SqlProviderPart {
             new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.RECYCLE_BY_IDS));
         map.put(QueryId.RECYCLE_SAVE,
             new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.RECYCLE_BY_IDS));
-        // map.put(QueryId.RECYCLE_BULK_UPDATE,
-        //     new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.RECYCLE_BY_IDS));
-
+        map.put(QueryId.RECYCLE_DELIVERY_SAVE, 
+            new QueryDefinition(QueryType.UPDATE, QueryKind.RECYCLE_DELIVERY_SAVE, Tables.RECYCLE_BY_IDS));
+        map.put(QueryId.RECYCLE_SHIPPING_SAVE, 
+            new QueryDefinition(QueryType.UPDATE, QueryKind.RECYCLE_SHIPPING_SAVE, Tables.RECYCLE_BY_IDS));
+        map.put(QueryId.RECYCLE_LOSS_SAVE, 
+            new QueryDefinition(QueryType.UPDATE, QueryKind.RECYCLE_LOSS_SAVE, Tables.RECYCLE_BY_IDS));
         return map;
     }
 }

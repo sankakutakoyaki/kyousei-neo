@@ -12,6 +12,7 @@ import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.interfaces.sql.SQLBiConsumer;
 import com.kyouseipro.neo.interfaces.sql.SqlParameterBinder;
 import com.kyouseipro.neo.interfaces.sql.SqlResultExtractor;
+import com.kyouseipro.neo.sql.common.SqlExceptionMapper;
 import com.kyouseipro.neo.sql.common.SqlUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -287,7 +288,7 @@ public class SqlRepository {
                 return id;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("SQL実行エラー", e);
+            throw SqlExceptionMapper.map(e);
         } finally {
             DataSourceUtils.releaseConnection(conn, dataSource);
         }

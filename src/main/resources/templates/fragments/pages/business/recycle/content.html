@@ -6,6 +6,9 @@
         <ul class="tab-menu">
             <li class="tab-menu-item is-active" data-action="tab" data-group="recycle-tabs" data-tab="tab-01">一覧</li>
             <li class="tab-menu-item" data-action="tab" data-group="recycle-tabs" data-tab="tab-02">使用</li>
+            <li class="tab-menu-item" data-action="tab" data-group="recycle-tabs" data-tab="tab-03">引渡</li>
+            <li class="tab-menu-item" data-action="tab" data-group="recycle-tabs" data-tab="tab-04">発送</li>
+            <li class="tab-menu-item" data-action="tab" data-group="recycle-tabs" data-tab="tab-05">ロス</li>
         </ul>
         <div class="tab-panel is-show" id="tab-01" data-tab-content="recycle-tabs">
             <div class="table-area" data-controller="recycleList" data-sync-group="recycle">
@@ -25,6 +28,36 @@
                 <div th:replace="~{fragments/table/body :: normalFragment('table-header-02', 'table-02')}"></div>
                 <!-- フッター -->
                 <div th:replace="~{fragments/table/footer :: datetimeFragment('footer-02')}"></div>
+            </div>
+        </div>
+        <div class="tab-panel" id="tab-03" data-tab-content="recycle-tabs">
+            <div class="table-area" data-controller="recycleDelivery" data-sync-group="recycle">
+                <!-- ヘッダー -->
+                <div th:replace="~{fragments/pages/business/recycle/header :: header03Fragment()}"></div>
+                <!-- コンテンツ -->
+                <div th:replace="~{fragments/table/body :: normalFragment('table-header-03', 'table-03')}"></div>
+                <!-- フッター -->
+                <div th:replace="~{fragments/table/footer :: datetimeFragment('footer-03')}"></div>
+            </div>
+        </div>
+        <div class="tab-panel" id="tab-04" data-tab-content="recycle-tabs">
+            <div class="table-area" data-controller="recycleShipping" data-sync-group="recycle">
+                <!-- ヘッダー -->
+                <div th:replace="~{fragments/pages/business/recycle/header :: header04Fragment()}"></div>
+                <!-- コンテンツ -->
+                <div th:replace="~{fragments/table/body :: normalFragment('table-header-04', 'table-04')}"></div>
+                <!-- フッター -->
+                <div th:replace="~{fragments/table/footer :: datetimeFragment('footer-04')}"></div>
+            </div>
+        </div>
+        <div class="tab-panel" id="tab-05" data-tab-content="recycle-tabs">
+            <div class="table-area" data-controller="recycleLoss" data-sync-group="recycle">
+                <!-- ヘッダー -->
+                <div th:replace="~{fragments/pages/business/recycle/header :: header05Fragment()}"></div>
+                <!-- コンテンツ -->
+                <div th:replace="~{fragments/table/body :: normalFragment('table-header-05', 'table-05')}"></div>
+                <!-- フッター -->
+                <div th:replace="~{fragments/table/footer :: datetimeFragment('footer-05')}"></div>
             </div>
         </div>
     </div>

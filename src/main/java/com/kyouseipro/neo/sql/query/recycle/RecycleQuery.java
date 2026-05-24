@@ -13,10 +13,13 @@ public class RecycleQuery {
             SELECT r.recycle_id, r.recycle_number, 
                 rm.name as maker_name, ri.name as item_name,
                 r.use_date, r.delivery_date, r.shipping_date, r.loss_date, CAST(r.regist_date AS DATE) AS regist_date,
-                c.name as company_name, o.name as office_name,
+                c.name as company_name, o.name as office_name, r.shipping_address_id, s.name as shipping_address_name,
+                r.disposal_site_id, d.name as disposal_company_name, r.remarks,
                 r.version, r.state
             FROM recycles r
             LEFT OUTER JOIN companies c ON c.company_id = r.company_id AND c.state = ?
+            LEFT OUTER JOIN companies d ON d.company_id = r.disposal_site_id AND d.state = ?
+            LEFT OUTER JOIN companies s ON s.company_id = r.shipping_address_id AND s.state = ?
             LEFT OUTER JOIN offices o ON o.office_id = r.office_id AND o.state = ?
             LEFT OUTER JOIN recycle_makers rm ON rm.recycle_maker_id = r.maker_id AND rm.state = ?
             LEFT OUTER JOIN recycle_items ri ON ri.recycle_item_id = r.item_id AND ri.state = ?
@@ -25,7 +28,7 @@ public class RecycleQuery {
 
         return QueryDefinition.select(
             sql,
-            List.of("state", "state", "state", "state", "state", "dateFrom", "dateTo")
+            List.of("state", "state", "state", "state", "state", "state", "state", "dateFrom", "dateTo")
         );
     }
 
@@ -37,17 +40,19 @@ public class RecycleQuery {
                 r.item_id, ri.code as item_code, ri.name as item_name,
                 r.use_date, r.delivery_date, r.shipping_date, r.loss_date, CAST(r.regist_date AS DATE) AS regist_date,
                 r.company_id, r.office_id, c1.name as company_name, o.name as office_name,
-                r.recycling_fee, r.disposal_site_id, c2.name as disposal_site_name, r.slip_number, 
+                r.shipping_address_id, c3.name as shipping_address_name,
+                r.recycling_fee, r.disposal_site_id, c2.name as disposal_site_name, r.slip_number, r.remarks,
                 r.version, r.state, r.regist_date, r.update_date
             FROM recycles r
             LEFT OUTER JOIN companies c1 ON c1.company_id = r.company_id AND c1.state = ?
             LEFT OUTER JOIN companies c2 ON c2.company_id = r.disposal_site_id AND c2.state = ?
+            LEFT OUTER JOIN companies c3 ON c3.company_id = r.disposal_site_id AND c3.state = ?
             LEFT OUTER JOIN offices o ON o.office_id = r.office_id AND o.state = ?
             LEFT OUTER JOIN recycle_makers rm ON rm.recycle_maker_id = r.maker_id AND rm.state = ?
             LEFT OUTER JOIN recycle_items ri ON ri.recycle_item_id = r.item_id AND ri.state = ?
             WHERE r.state = ? AND recycle_id = ?;
             """,
-            List.of("state", "state", "state", "state", "state", "state", "recycleId")
+            List.of("state", "state", "state", "state", "state", "state", "state", "recycleId")
         );
     }
 

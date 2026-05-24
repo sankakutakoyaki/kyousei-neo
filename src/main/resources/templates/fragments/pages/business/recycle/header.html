@@ -14,8 +14,8 @@
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 {
                     'text':'分類', 
-                    'id':'cateogy01', 
-                    'name':'category01',
+                    'id':'category01', 
+                    'name':'category',
                     'combo': 'recycleCategoryComboList',
                     'key':'category'
                 }}
@@ -50,19 +50,18 @@
     <form id="header-02" class="flex-area pc-style" data-enterfocus="header-02">
         <div>
             <!-- お問合せ管理票番号 -->
-            <div data-resolve="recycle">
-                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                    {
-                        'text':'お問合せ管理票番号',
-                        'id':'recycle-number01',
-                        'name':'recycle-number',
-                        'validate':'recycle',
-                        'enter-validate':true,
-                        'error-message':'リサイクル券番号は13桁です',
-                        'index': 1
-                    }}
-                )}"></th:block>
-            </div>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'お問合せ管理票番号',
+                    'id':'recycle-number02',
+                    'name':'recycle-number',
+                    'validate':'recycle',
+                    'enter-validate':true,
+                    'error-message':'リサイクル券番号は13桁です',
+                    'index': 1,
+                    'format':'recycle'
+                }}
+            )}"></th:block>
             <!-- スキップ設定 -->
             <div class="skip-area">
                 <label class="skip-item">
@@ -101,13 +100,14 @@
                     { 
                         'text': '小売業者',
                         'id':'company02',
-                        'name': 'company-id', 
+                        'name': 'company', 
                         'combo': 'clientComboList',
                         'top': '-----',
                         'key': 'company-id',
                         'resolveName':true,
                         'index': 3,
                         'zeroToNull':true,
+                        'skipIfNull':true,
                         'link': 'office02'
                     }}
                 )}"></th:block>
@@ -115,12 +115,13 @@
                     {
                         'text':'支店名', 
                         'id':'office02',
-                        'name': 'office-id',
+                        'name': 'office',
                         'combo': 'officeComboList',
                         'top': '-----',
                         'key':'office-id',
                         'resolveName':true,
                         'zeroToNull':true,
+                        'skipIfNull':true,
                         'parent': 'company02',
                         'linkDefault': 'empty'
                     }}
@@ -195,6 +196,203 @@
             <div class="form-parts">
                 <label></label>
                 <button class="normal-btn ok" name="submitBtn" type="button" data-action="save" data-scope="table" tabindex="6">登録</button>
+            </div>
+        </div>
+    </form>
+</th:block>
+
+<th:block th:fragment="header03Fragment()">
+    <form id="header-03" class="flex-area pc-style" data-enterfocus="header-03">
+        <div>
+            <!-- 引渡日 -->
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text':'引渡日',
+                    'id':'delivery-date02',
+                    'name':'delivery-date',
+                    'type':'date',
+                    'action':'date-arrow search',
+                    'index': 32,
+                    'zeroToNull':true,
+                    'clearSkip':true
+                }
+            })}"></th:block>
+            <!-- 処分先 -->
+            <div data-resolve="client" >
+                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                    { 
+                        'text': '処分先',
+                        'id':'company03',
+                        'name': 'company', 
+                        'combo': 'disposalComboList',
+                        'top': '-----',
+                        'key': 'disposal-site-id',
+                        'resolveName':true,
+                        'index': 33,
+                        'zeroToNull':true,
+                        'skipIfNull':true,
+                        'link': 'office03',
+                        'clearSkip':true
+                    }}
+                )}"></th:block>
+                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                    {
+                        'text':'支店/営業所', 
+                        'id':'office03',
+                        'name': 'office',
+                        'combo': 'officeComboList',
+                        'top': '-----',
+                        'key':'office-id',
+                        'resolveName':true,
+                        'zeroToNull':true,
+                        'skipIfNull':true,
+                        'parent': 'company03',
+                        'linkDefault': 'empty',
+                        'clearSkip':true
+                    }}
+                )}"></th:block>
+            </div>
+        </div>
+        <div>
+            <!-- お問合せ管理票番号 -->
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'お問合せ管理票番号',
+                    'id':'recycle-number03',
+                    'name':'recycle-number',
+                    'validate':'recycle',
+                    'enterValidate':true,
+                    'errorMessage':'リサイクル券番号は13桁です',
+                    'index': 34,
+                    'format':'recycle',
+                    'enterSubmit':true
+                }}
+            )}"></th:block>
+            <div class="form-parts">
+                <label></label>
+                <button class="normal-btn ok" name="submitBtn" type="button" data-action="save" data-scope="table" tabindex="36">登録</button>
+            </div>
+        </div>
+    </form>
+</th:block>
+
+<th:block th:fragment="header04Fragment()">
+    <form id="header-04" class="flex-area pc-style" data-enterfocus="header-04">
+        <div>
+            <!-- 発送日 -->
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text':'発送日',
+                    'id':'shipping-date02',
+                    'name':'shipping-date',
+                    'type':'date',
+                    'action':'date-arrow search',
+                    'index': 42,
+                    'zeroToNull':true,
+                    'clearSkip':true
+                }
+            })}"></th:block>
+            <!-- 会社名 -->
+            <div data-resolve="client" >
+                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                    { 
+                        'text': '発送先',
+                        'id':'company04',
+                        'name': 'shipping-address', 
+                        'combo': 'clientComboList',
+                        'top': '-----',
+                        'key': 'shipping-address-id',
+                        'resolveName':true,
+                        'index': 43,
+                        'zeroToNull':true,
+                        'skipIfNull':true,
+                        'link': 'office04',
+                        'clearSkip':true
+                    }}
+                )}"></th:block>
+                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                    {
+                        'text':'支店/営業所', 
+                        'id':'office04',
+                        'name': 'office',
+                        'combo': 'officeComboList',
+                        'top': '-----',
+                        'key':'office-id',
+                        'resolveName':true,
+                        'zeroToNull':true,
+                        'skipIfNull':true,
+                        'parent': 'company04',
+                        'linkDefault': 'empty',
+                        'clearSkip':true
+                    }}
+                )}"></th:block>
+            </div>
+        </div>
+        <div>
+            <!-- お問合せ管理票番号 -->
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'お問合せ管理票番号',
+                    'id':'recycle-number04',
+                    'name':'recycle-number',
+                    'validate':'recycle',
+                    'enterValidate':true,
+                    'errorMessage':'リサイクル券番号は13桁です',
+                    'index': 44,
+                    'format':'recycle',
+                    'enterSubmit':true
+                }}
+            )}"></th:block>
+            <div class="form-parts">
+                <label></label>
+                <button class="normal-btn ok" name="submitBtn" type="button" data-action="save" data-scope="table" tabindex="46">登録</button>
+            </div>
+        </div>
+    </form>
+</th:block>
+
+<th:block th:fragment="header05Fragment()">
+    <form id="header-05" class="flex-area pc-style" data-enterfocus="header-05">
+        <div>
+            <!-- ロス処理日 -->
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text':'ロス処理日',
+                    'id':'loss-date02',
+                    'name':'loss-date',
+                    'type':'date',
+                    'action':'date-arrow search',
+                    'index': 52,
+                    'zeroToNull':true,
+                    'clearSkip':true
+                }
+            })}"></th:block>
+            <!-- お問合せ管理票番号 -->
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'お問合せ管理票番号',
+                    'id':'recycle-number05',
+                    'name':'recycle-number',
+                    'validate':'recycle',
+                    'enterValidate':true,
+                    'errorMessage':'リサイクル券番号は13桁です',
+                    'index': 53,
+                    'format':'recycle'
+                }}
+            )}"></th:block>
+            <!-- 備考 -->
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'備考',
+                    'id':'remarks05',
+                    'name':'remarks',
+                    'index': 55,
+                    'skipIfNull':true
+                }}
+            )}"></th:block>
+            <div class="form-parts">
+                <label></label>
+                <button class="normal-btn ok" name="submitBtn" type="button" data-action="save" data-scope="table" tabindex="56">登録</button>
             </div>
         </div>
     </form>

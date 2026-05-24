@@ -249,4 +249,39 @@ public class SqlBuilder {
 
         return new SqlResult(sql.toString(), params);
     }
+
+    // public static SqlResult buildRecycleDeliverySave(
+    //         TableMeta meta,
+    //         Map<String,Object> req,
+    //         LogSqlProvider logProvider
+    // ) {
+    //     StringBuilder sql = new StringBuilder();
+    //     List<Object> params = new ArrayList<>();
+    //     String tableVar = "@UpdatedRows";
+    //     sql.append(logProvider.buildLogTable(tableVar));
+    //     sql.append("""
+    //         UPDATE recycles
+    //         SET delivery_date = ?, version = version + 1, update_date = SYSDATETIME()
+    //     """);
+
+    //     params.add(req.get("deliveryDate"));
+    //     sql.append(logProvider.buildOutput()).append(" INTO ").append(tableVar).append(" ");
+    //     sql.append("""
+    //         WHERE recycle_number = ?
+    //         AND use_date IS NOT NULL
+    //         AND delivery_date IS NULL
+    //         AND NOT(state = ?);
+    //     """);
+    //     params.add(req.get("recycleNumber"));
+    //     params.add(Enums.state.DELETE.getCode());
+    //     String action = "UPDATE";
+    //     sql.append(logProvider.buildInsertLog(tableVar, action));
+
+    //     params.addAll(logProvider.buildLogParams(req, action));
+
+    //     sql.append("""
+    //         SELECT COUNT(*) FROM %s;
+    //     """.formatted(tableVar));
+    //     return new SqlResult(sql.toString(), params);
+    // }
 }

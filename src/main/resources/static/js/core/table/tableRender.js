@@ -37,6 +37,14 @@ export function renderTable(table, config, list){
 }
 
 export function createRow(tr, item, config){
+    // 行class
+    if(config.rowClass){
+        const cls = config.rowClass(item);
+        if(cls){
+            tr.classList.add(cls);
+        }
+    }
+
     // check
     if(config.checkable){
         const td = document.createElement("td");

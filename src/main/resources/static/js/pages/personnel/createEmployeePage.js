@@ -12,7 +12,8 @@ export function createEmployeePage(config){
         footerId: config.footerId,
         formId: config.formId,
         idKey: "employeeId",
-        repository: EmployeeRepository,
+        // repository: EmployeeRepository,
+        saveHandler: EmployeeRepository.save,
         columns: config.columns,
         buildParams: () => ({
             state: APP.cache.common.state.INITIAL,
@@ -28,7 +29,8 @@ export function createEmployeePage(config){
             if (!payload.officeId) {
                 throw {
                     message: "営業所を選択してください",
-                    field: "officeId"
+                    // field: "officeId"
+                    fields: ["officeId"]
                 };
             }
         }),

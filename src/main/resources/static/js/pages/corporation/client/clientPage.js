@@ -58,7 +58,8 @@ export const clientCompanyPage = () =>
                 if (!payload.category) {
                     throw {
                         message: "分類を選択してください",
-                        field: "category"
+                        // field: "category"
+                        fields: ["category"]
                     };
                 }
             },

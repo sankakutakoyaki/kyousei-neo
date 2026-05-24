@@ -42,7 +42,7 @@ const defaultActions = {
     delete: async (c) => c.deleteSelected(),
     download: async (c) => c.downloadSelected(),
     save: async (c) => {
-        const form = c.forms?.detail;
+        const form = c.getDefaultForm();
         if(!form) return;
         await form.save(document.getElementById(form.formId));
     },
@@ -311,6 +311,11 @@ export class PageController {
     getActiveForm(){
         return Object.values(this.forms)
             .find(form => !form.isHidden?.());
+    }
+
+    getDefaultForm(){
+        const name = this.config.defaultFormName ?? "detail";
+        return this.forms?.[name];
     }
 
     getSelectedId(){

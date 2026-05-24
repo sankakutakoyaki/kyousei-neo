@@ -85,3 +85,107 @@ export const createRecycleUseColumns = (controller) => [
         `
     }
 ];
+
+export const createRecycleDeliveryColumns = (controller) => [
+    {
+        field: "recycleNumber",
+        label: "お問合せ管理票番号",
+        sortable: true,
+        format: (v) => {
+            const s = String(v ?? "").replace(/\D/g, "").padStart(13, "0");
+            return `${s.slice(0,4)}-${s.slice(4,12)}-${s.slice(12)}`;
+        }
+    },
+    {
+        field: "date",
+        label: "引渡日",
+        sortable: true,
+        render: (item) => `
+            <span>${item.deliveryDate ?? "-----"}</span>
+        `
+    },
+    {
+        field: "maker",
+        label: "品目/製造業者等名",
+        sortable: true,
+        render: (item) => `
+            <span>${item.itemName ?? "-----"}</span><br>
+            <span>${item.makerName ?? "-----"}</span>
+        `
+    },
+    {
+        field: "disposal",
+        label: "処分先",
+        sortable: true,
+        render: (item) => `
+            <span>${item.disposalSiteName ?? "-----"}</span><br>
+            <span>${item.disposalSiteOfficeName ?? "-----"}</span>
+        `
+    }
+];
+
+export const createRecycleShippingColumns = (controller) => [
+    {
+        field: "recycleNumber",
+        label: "お問合せ管理票番号",
+        sortable: true,
+        format: (v) => {
+            const s = String(v ?? "").replace(/\D/g, "").padStart(13, "0");
+            return `${s.slice(0,4)}-${s.slice(4,12)}-${s.slice(12)}`;
+        }
+    },
+    {
+        field: "date",
+        label: "発送日",
+        sortable: true,
+        render: (item) => `
+            <span>${item.shippingDate ?? "-----"}</span>
+        `
+    },
+    {
+        field: "maker",
+        label: "品目/製造業者等名",
+        sortable: true,
+        render: (item) => `
+            <span>${item.itemName ?? "-----"}</span><br>
+            <span>${item.makerName ?? "-----"}</span>
+        `
+    },
+    {
+        field: "shipper",
+        label: "発送先",
+        sortable: true,
+        render: (item) => `
+            <span>${item.shippingCompanyName ?? "-----"}</span><br>
+            <span>${item.shippingOfficeName ?? "-----"}</span>
+        `
+    }
+];
+
+export const createRecycleLossColumns = (controller) => [
+    {
+        field: "recycleNumber",
+        label: "お問合せ管理票番号",
+        sortable: true,
+        format: (v) => {
+            const s = String(v ?? "").replace(/\D/g, "").padStart(13, "0");
+            return `${s.slice(0,4)}-${s.slice(4,12)}-${s.slice(12)}`;
+        }
+    },
+    {
+        field: "date",
+        label: "ロス処理日",
+        sortable: true,
+        render: (item) => `
+            <span>${item.lossDate ?? "-----"}</span>
+        `
+    },
+    {
+        field: "remarks",
+        label: "備考",
+        sortable: true,
+        render: (item) => `
+            <span>${item.remarks ?? "-----"}</span>
+        `
+    }
+];

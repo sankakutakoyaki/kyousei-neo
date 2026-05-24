@@ -131,4 +131,23 @@ public class BaseSqlRepository {
     private String toSnake(String camel){
         return camel.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
     }
+
+    // public int updateRecycleDelivery(
+    //         TableMeta meta,
+    //         Map<String,Object> req,
+    //         String editor
+    // ){
+    //     req.put("editor", editor);
+    //     LogSqlProvider logProvider = resolver.resolve(meta.tableName());
+    //     SqlResult result = SqlBuilder.buildRecycleDeliverySave(
+    //         meta,
+    //         req,
+    //         logProvider
+    //     );
+    //     return sqlRepository.updateRequired(
+    //         result.getSql(),
+    //         result.getParams(),
+    //         "引渡登録に失敗しました"
+    //     );
+    // }
 }

@@ -15,7 +15,8 @@ public class RecycleLogSqlProvider implements LogSqlProvider {
         return "DECLARE " + tableVar + " TABLE (" + """
             recycle_id INT, recycle_number NVARCHAR(255), 
             maker_id INT, item_id INT, use_date DATE, delivery_date DATE, shipping_date DATE, loss_date DATE,
-            company_id INT, office_id INT, recycling_fee INT, disposal_site_id INT, slip_number INT,
+            company_id INT, office_id INT, recycling_fee INT, disposal_site_id INT, 
+            shipping_address_id INT, remarks NVARCHAR(255), slip_number INT,
             version INT, state INT );
             """;
     }
@@ -25,7 +26,8 @@ public class RecycleLogSqlProvider implements LogSqlProvider {
         return """
             OUTPUT INSERTED.recycle_id, INSERTED.recycle_number, INSERTED.maker_id, INSERTED.item_id,
             INSERTED.use_date, INSERTED.delivery_date, INSERTED.shipping_date, INSERTED.loss_date,
-            INSERTED.company_id, INSERTED.office_id, INSERTED.recycling_fee, INSERTED.disposal_site_id, INSERTED.slip_number,
+            INSERTED.company_id, INSERTED.office_id, INSERTED.recycling_fee, INSERTED.disposal_site_id,
+            INSERTED.shipping_address_id, INSERTED.remarks, INSERTED.slip_number,
             INSERTED.version, INSERTED.state
             """;
     }
@@ -36,11 +38,13 @@ public class RecycleLogSqlProvider implements LogSqlProvider {
             INSERT INTO recycles_log (
               recycle_id, editor, process, log_date,
               recycle_number, maker_id, item_id, use_date, delivery_date, shipping_date, loss_date,
-              company_id, office_id, recycling_fee, disposal_site_id, slip_number, version, state
+              company_id, office_id, recycling_fee, disposal_site_id,
+              shipping_address_id, remarks, slip_number, version, state
             )
             SELECT recycle_id, ?, ?, CURRENT_TIMESTAMP,
               recycle_number, maker_id, item_id, use_date, delivery_date, shipping_date, loss_date,
-              company_id, office_id, recycling_fee, disposal_site_id, slip_number, version, state
+              company_id, office_id, recycling_fee, disposal_site_id,
+              shipping_address_id, remarks, slip_number, version, state
             FROM %s;
             """.formatted(tableVar);
     }

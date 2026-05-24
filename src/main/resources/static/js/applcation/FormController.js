@@ -16,12 +16,15 @@ export class FormController {
         const {
             formId,
             key,
-            repository = null,
+            // repository = null,
+            saveHandler = null,
             beforeSave = null,
             afterSave = null,
             controller = {},
             buildParams = null,
-            validateBusiness = null
+            validateBusiness = null,
+            closeOnSave = true,
+            showSuccessDialog = true
         } = config;
 
         if(!formId) throw new Error("formId is required");
@@ -29,12 +32,15 @@ export class FormController {
 
         this.formId = formId;
         this.key = key;
-        this.repository = repository;
+        // this.repository = repository;
+        this.saveHandler = saveHandler;
         this.beforeSave = beforeSave;
         this.afterSave = afterSave;
         this.controller = controller;
         this.buildParams = buildParams;
         this.validateBusiness = validateBusiness;
+        this.closeOnSave = closeOnSave;
+        this.showSuccessDialog = showSuccessDialog;
 
         this.currentEntity = null;
         this.saveBehavior =
@@ -58,19 +64,23 @@ export class FormController {
                     );
                 },
                 executeSave: async (payload) => {
-                    if(!this.repository?.save) return;
-                    const res = await this.repository.save(payload);
-                    DialogService.info(
-                        this.isBulkMode()
-                            ? "一括更新しました"
-                            : "保存しました"
-                    );
-                    DialogService.close(this.formId);
+                    if(!this.saveHandler) return;
+                    const res = await this.saveHandler(payload);
+                    if(this.showSuccessDialog){
+                        DialogService.info(
+                            this.isBulkMode()
+                                ? "一括更新しました"
+                                : "保存しました"
+                        );
+                    }
+                    if(this.closeOnSave){
+                        DialogService.close(this.formId);
+                    }
                     this.controller.setBulkMode(false);
                     return {
                         response: res,
-                        id: res.data,
-                        count: res.count
+                        id: res?.data?.data,
+                        count: res?.data?.count
                     };
                 },
                 afterSave: async (result) => {
@@ -124,7 +134,6 @@ export class FormController {
         if(form.dataset.bulk === "true"){
             form.querySelectorAll("select").forEach(select => {select.selectedIndex = -1;});
         }
-        // FormModel.fill(form, data);
         
         if (!this._eventsInitialized) {
             this.initEvents();
@@ -146,14 +155,17 @@ export class FormController {
     }
 
     async save(form){
+        if(this._saving) return;
+        this._saving = true;
+
         try {
             const payload = this.preparePayload(form);
-            if(!payload){
-                return;
-            }
+            if(!payload) return;
             return await this.saveBehavior.save(payload, { form });
         } catch(e){
             this.handleError(e);
+        } finally {
+            this._saving = false;
         }
     }
 
@@ -199,24 +211,29 @@ export class FormController {
     }
 
     handleError(e) {
-        // メッセージ表示
-        DialogService.error(
-            e.message || "エラーが発生しました"
-        );
+        DialogService.error(e.message || "エラーが発生しました");
 
-        // フィールド指定があれば強調
-        if (e.field) {
-            const form = document.getElementById(this.formId);
+        const form = document.getElementById(this.formId);
+        if(!form) return;
+        // 単数・複数両対応
+        const fields = [
+            ...(e.field ? [e.field] : []),
+            ...(e.fields ?? [])
+        ];
 
+        fields.forEach((field, index) => {
             const el =
-                form?.querySelector(`[name="${e.field}"]`) ||
-                form?.querySelector(`#${e.field}`);
-
-            if (el) {
-                el.classList.add("error");
-                el.focus();
+                form.querySelector(`[name="${field}"]`) ||
+                form.querySelector(`#${field}`);
+            if (!el) return;
+            el.classList.add("error");
+            // 最初だけfocus
+            if(index === 0){
+                requestAnimationFrame(() => {
+                    el.focus();
+                });
             }
-        }
+        });
     }
 
     clearErrors() {

@@ -23,6 +23,7 @@ export class DataTable {
         this.controller = config.controller;
 
         this.checkable = config.checkable;
+        this.rowClass = config.rowClass;
         this.onRowClick = config.onRowClick;
         this.onDoubleClick = config.onDoubleClick;
 
@@ -145,7 +146,8 @@ export class DataTable {
                 columns: this.columns,
                 idKey: this.idKey,
                 footerId: this.footerId,
-                checkable: this.checkable
+                checkable: this.checkable,
+                rowClass: this.rowClass
             },
             this.model.getViewData()
         );
