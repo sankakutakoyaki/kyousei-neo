@@ -147,7 +147,10 @@ export class DataTable {
                 idKey: this.idKey,
                 footerId: this.footerId,
                 checkable: this.checkable,
-                rowClass: this.rowClass
+                rowClass: this.rowClass,
+                controller: this.controller,
+                onRowClick: this.onRowClick,
+                onDoubleClick: this.onDoubleClick
             },
             this.model.getViewData()
         );

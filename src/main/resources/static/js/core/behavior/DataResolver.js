@@ -30,10 +30,25 @@ export const DataResolver = {
             /* Name(select) → ID */
             if (nameField.tagName === "SELECT") {
                 nameField.addEventListener("change", () => {
-                    updateField(idInput, nameField.value);
-                    if (!nameField.value) {
-                        this.clear(nameField);
-                    }
+                    // updateField(idInput, nameField.value);
+                    // if (!nameField.value) {
+                    //     this.clear(nameField);
+                    // }
+                    const value =
+
+                        nameField.value;
+
+                    updateField(
+
+                        idInput,
+
+                        Number(value) === 0
+
+                            ? ""
+
+                            : value
+
+                    );
                 });
             }
         });

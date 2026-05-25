@@ -14,9 +14,32 @@ export const filterFactory = {
         };
     },
 
-    equals(field){
-        return (v,value)=> v[field] == value;
-    },
+    // equals(field){
+    //     return (v,value)=> v[field] == value;
+    // },
+    equals: (field) =>
+
+        (item, value) => {
+
+            if(
+
+                value == null ||
+
+                value === "" ||
+
+                Number(value) === 0
+
+            ){
+
+                return true;
+
+            }
+
+            return String(item[field])
+
+                === String(value);
+
+        },
 
     between(field){
         return (v, value) => {

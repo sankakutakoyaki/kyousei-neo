@@ -16,7 +16,7 @@ export class FormController {
         const {
             formId,
             key,
-            // repository = null,
+            repository = null,
             saveHandler = null,
             beforeSave = null,
             afterSave = null,
@@ -32,7 +32,9 @@ export class FormController {
 
         this.formId = formId;
         this.key = key;
-        // this.repository = repository;
+        // this.idKey = config.idKey;
+
+        this.repository = repository;
         this.saveHandler = saveHandler;
         this.beforeSave = beforeSave;
         this.afterSave = afterSave;

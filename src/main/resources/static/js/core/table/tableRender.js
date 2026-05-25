@@ -95,6 +95,28 @@ export function createRow(tr, item, config){
         }
         tr.appendChild(td);
     }
+
+    // if(config.onDoubleClick){
+
+    //     tr.addEventListener(
+
+    //         "dblclick",
+
+    //         () => {
+
+    //             config.onDoubleClick(
+
+    //                 item,
+
+    //                 config.controller
+
+    //             );
+
+    //         }
+
+    //     );
+
+    // }
 }
 
 export function renderHeader(tableEl,config,list){

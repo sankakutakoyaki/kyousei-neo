@@ -5,7 +5,6 @@ import { RecycleRepository } from "../../repositories/business/recycle/RecycleRe
 import { FormController } from "../../applcation/FormController.js";
 import { convertKey } from "../../util/keyCaseConverter.js";
 import { clearFormExceptSkipped } from "../../core/form/util/clearForm.js";
-// import { handleValidationError } from "../../core/events/eventHandlers.js";
 
 export function createRecyclePage(config){
     const defaultForms = {
@@ -85,6 +84,7 @@ const createRecycleForm = (controller, options = {}) =>
         repository: RecycleRepository,
     });
 
+// tab(2,3,4,5)フォーム共通処理
 const createInlineRecycleForm = ({
     controller,
     formId,
@@ -170,8 +170,6 @@ const createRecycleDeliveryForm =
             formId: "header-03",
             saveHandler: RecycleRepository.saveDelivery,
             recycleInputId: "recycle-number03",
-            // dateInputId: "delivery-date02",
-            // dateLabel: "引渡日",
             afterSave: options.afterSave,
             requiredFields: [
                 {
@@ -192,8 +190,6 @@ const createRecycleShippingForm =
             formId: "header-04",
             saveHandler: RecycleRepository.saveShipping,
             recycleInputId: "recycle-number04",
-            // dateInputId: "shipping-date02",
-            // dateLabel: "発送日",
             afterSave: options.afterSave,
             requiredFields: [
                 {
@@ -214,8 +210,6 @@ const createRecycleLossForm =
             formId: "header-05",
             saveHandler: RecycleRepository.saveLoss,
             recycleInputId: "recycle-number05",
-            // dateInputId: "loss-date02",
-            // dateLabel: "ロス処理日",
             afterSave: options.afterSave,
             requiredFields: [
                 {

@@ -48,27 +48,6 @@ export async function init() {
     initParentChildLink();
 }
 
-async function refreshRecycleChildren(){
-
-    const keys = [
-        "recycleUse",
-        "recycleDelivery",
-        "recycleShipping",
-        "recycleLoss"
-    ];
-
-    for(const key of keys){
-
-        const controller =
-            getController(key);
-
-        await controller
-            ?.executeAction(
-                "recycleChanged"
-            );
-    }
-}
-
 export const recycleListPage = () =>
     createRecyclePage({
         key: "recycleList",
@@ -81,8 +60,6 @@ export const recycleListPage = () =>
         rowClass: (item) => item.lossDate ? "is-loss" : "",
         onInit: () => {
             const today = getToday();
-            // const from = document.querySelector("[name='date-from']");
-            // const to = document.querySelector("[name='date-to']");
             const from = document.getElementById("date-from01");
             const to = document.getElementById("date-to01");
             if(from && !from.value){
@@ -93,9 +70,6 @@ export const recycleListPage = () =>
             }
         },
         buildParams: () => {
-            // const cate = document.querySelector("[name='category01']")?.value;
-            // const from = document.querySelector("[name='date-from']")?.value;
-            // const to = document.querySelector("[name='date-to']")?.value;
             const cate = document.getElementById("category01")?.value;
             const from = document.getElementById("date-from01")?.value;
             const to = document.getElementById("date-to01")?.value;
@@ -113,26 +87,6 @@ export const recycleListPage = () =>
             search: async (controller) => {await controller.refresh();},
             recycleChanged: async (controller) => {await controller.refresh();}
         },
-        // afterSave: async () => {
-        //     const use = getController("recycleUse");
-        //     await use?.executeAction("recycleChanged");
-        //     const delivery = getController("recycleDelivery");
-        //     await delivery?.executeAction("recycleChanged");
-        //     const shipping = getController("recycleShipping");
-        //     await shipping?.executeAction("recycleChanged");
-        //     const loss = getController("recycleLoss");
-        //     await loss?.executeAction("recycleChanged");
-        // },
-        // onDeleted: async () => {
-        //     const use = getController("recycleUse");
-        //     await use?.executeAction("recycleChanged");
-        //     const delivery = getController("recycleDelivery");
-        //     await delivery?.executeAction("recycleChanged");
-        //     const shipping = getController("recycleShipping");
-        //     await shipping?.executeAction("recycleChanged");
-        //     const loss = getController("recycleLoss");
-        //     await loss?.executeAction("recycleChanged");
-        // }
         afterSave: refreshRecycleChildren,
         onDeleted: refreshRecycleChildren
     });
@@ -167,10 +121,7 @@ function createInlineRecyclePage({
             search: async (controller) => {
                 await controller.refresh();
             },
-            recycleChanged:
-                async (controller) => {
-                    await controller.refresh();
-                }
+            recycleChanged: async (controller) => {await controller.refresh();}
         },
         afterSave: refreshRecycleList
     });
@@ -229,10 +180,20 @@ async function refreshRecycleList(){
     await recycle?.executeAction("recycleChanged");
 }
 
-function buildRecycleDateParams({
-    category,
-    inputId
-}){
+async function refreshRecycleChildren(){
+    const keys = [
+        "recycleUse",
+        "recycleDelivery",
+        "recycleShipping",
+        "recycleLoss"
+    ];
+    for(const key of keys){
+        const controller = getController(key);
+        await controller?.executeAction("recycleChanged");
+    }
+}
+
+function buildRecycleDateParams({category, inputId}){
     const from = document.getElementById(inputId)?.value;
     return {
         state: APP.cache.common.state.INITIAL,
