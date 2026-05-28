@@ -1,10 +1,8 @@
 "use strict"
 
-// import { getToday } from "../../../util/time.js";
 import { getBaseDate } from "../../../util/date.js";
 import { calculateRange } from "../../../util/dateRange.js";
 import { formatDate } from "../../../util/date.js";
-// import { parseDate } from "../../../util/date.js";
 
 export function handleDateMove(event, el){
     const type = el.dataset.type;
@@ -24,33 +22,14 @@ export function handleDateMove(event, el){
     endEl.value   = formatDate(range.end);
 }
 
-// export function handleDateArrowMove(event, el){
-//     if(event.type !== "keydown") return;
-//     if(el.dataset.type !== "date") return;
-
-//     let diff = 0;
-//     if(event.key === "ArrowUp") diff = 1;
-//     if(event.key === "ArrowDown") diff = -1;
-//     if(diff === 0) return;
-
-//     event.preventDefault();
-
-//     const current = el.valueAsDate ?? new Date();
-//     current.setDate(current.getDate() + diff);
-//     el.valueAsDate = current;
-
-//     adjustPair(el);
-// }
 export function handleDateArrowMove(event, el){
     if(event.type !== "keydown") return;
 
     if(el.dataset.type !== "date") return;
-
     // Shiftなしはブラウザ標準動作
     if(!event.shiftKey) return;
 
     let current = el.value ? new Date(el.value): new Date();
-
     // Shift + 左右 → 日移動
     if(event.key === "ArrowRight"){
         current.setDate(current.getDate() + 1);
@@ -68,9 +47,7 @@ export function handleDateArrowMove(event, el){
     else{
         return;
     }
-
     event.preventDefault();
-
     el.value = current.toISOString().slice(0, 10);
     adjustPair(el);
 }
@@ -85,7 +62,6 @@ export function autoFormatDate(el){
     if(v.length >= 7){
         v = v.slice(0,7) + "-" + v.slice(7,8);
     }
-
     el.value = v;
 }
 

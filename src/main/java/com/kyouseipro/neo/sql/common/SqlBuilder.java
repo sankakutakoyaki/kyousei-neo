@@ -26,96 +26,63 @@ public class SqlBuilder {
             String versionKey,
             LogSqlProvider logProvider
     ) {
-
         StringBuilder sql = new StringBuilder();
         List<Object> params = new ArrayList<>();
         List<String> sets = new ArrayList<>();
-
         String tableVar = switch (mode) {
             case INSERT -> "@InsertedRows";
             case UPDATE, DELETE -> "@UpdatedRows";
         };
-
         // ① ログテーブル
         sql.append(logProvider.buildLogTable(tableVar));
-
         if (mode == SqlMode.INSERT) {
-
-            // ========================
             // INSERT
-            // ========================
             List<String> columns = new ArrayList<>();
             List<String> values = new ArrayList<>();
-
             for (Map.Entry<String, Object> entry : req.entrySet()) {
                 String key = entry.getKey();
                 // ★除外
                 if (key.equals(idKey) || key.equals("editor")) continue;
-
                 columns.add(toSnake(entry.getKey()));
                 values.add("?");
                 params.add(entry.getValue());
             }
-
             sql.append("INSERT INTO ").append(table).append(" (");
             sql.append(String.join(", ", columns));
             sql.append(") ");
-
             sql.append(logProvider.buildOutput()).append(" INTO ").append(tableVar).append(" ");
-
             sql.append("VALUES (");
             sql.append(String.join(", ", values));
             sql.append(");");
-
         } else {
-
-            // ========================
             // UPDATE / DELETE
-            // ========================
             for (Map.Entry<String, Object> entry : req.entrySet()) {
-
                 String key = entry.getKey();
-
                 if (key.equals(idKey) || key.equals(versionKey) || key.equals("editor")) continue;
-
                 sets.add(toSnake(key) + " = ?");
                 params.add(entry.getValue());
             }
-
             if (mode == SqlMode.DELETE) {
                 // 論理削除
                 sets.add("state = ?");
                 params.add(Enums.state.DELETE.getCode());
             }
-
             // 共通
             sets.add("version = version + 1");
             sets.add("update_date = SYSDATETIME()");
-
             sql.append("UPDATE ").append(table).append(" SET ");
             sql.append(String.join(", ", sets));
-
             sql.append(logProvider.buildOutput()).append(" INTO ").append(tableVar).append(" ");
-
-            sql.append(" WHERE ")
-            .append(toSnake(idKey)).append(" = ? AND ")
-            .append(toSnake(versionKey)).append(" = ? AND NOT(state = ?);");
-
+            sql.append(" WHERE ").append(toSnake(idKey)).append(" = ? AND ").append(toSnake(versionKey)).append(" = ? AND NOT(state = ?);");
             params.add(req.get(idKey));
             params.add(req.get(versionKey));
             params.add(Enums.state.DELETE.getCode());
         }
-
-        // ========================
         // ログ
-        // ========================
         String action = mode.name();
-
         sql.append(logProvider.buildInsertLog(tableVar, action));
-
         // ★順番重要
         params.addAll(logProvider.buildLogParams(req, action));
-
         // ★snakeに変換
         sql.append("""
             SELECT %s FROM %s;
@@ -133,36 +100,25 @@ public class SqlBuilder {
         if (ids == null || ids.isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
-
         StringBuilder sql = new StringBuilder();
         List<Object> params = new ArrayList<>();
-
         String tableVar = "@Deleted";
-
         sql.append(logProvider.buildLogTable(tableVar));
 
         String placeholders = SqlUtil.placeholders(ids.size());
-        
-        sql.append("UPDATE ").append(meta.tableName()).append(" SET ")
-        .append(meta.stateColumn()).append(" = ? ");
-
+        sql.append("UPDATE ").append(meta.tableName()).append(" SET ").append(meta.stateColumn()).append(" = ? ");
         sql.append(logProvider.buildOutput()).append(" INTO ").append(tableVar).append(" ");
-
         sql.append("WHERE ").append(toSnake(meta.idColumn())).append(" IN (").append(placeholders).append(") ");
         sql.append("AND NOT(").append(meta.stateColumn()).append(" = ?); ");
-
         params.add(Enums.state.DELETE.getCode());
         params.addAll(ids);
         params.add(Enums.state.DELETE.getCode());
 
         String action = "DELETE";
         sql.append(logProvider.buildInsertLog(tableVar, action));
-
         Map<String, Object> ctx = new HashMap<>();
         ctx.put("editor", editor);
-
         params.addAll(logProvider.buildLogParams(ctx, action));
-
         return new SqlResult(sql.toString(), params);
     }
 
@@ -173,35 +129,25 @@ public class SqlBuilder {
             String editor,
             LogSqlProvider logProvider
     ){
-
         if (ids == null || ids.isEmpty()) {
             throw new IllegalArgumentException("更新対象が指定されていません");
         }
-
         StringBuilder sql = new StringBuilder();
         List<Object> params = new ArrayList<>();
         List<String> sets = new ArrayList<>();
-
         String tableVar = "@UpdatedRows";
-
         sql.append(logProvider.buildLogTable(tableVar));
 
-        // ========================
         // SET句（diffのみ）
-        // ========================
         for (Map.Entry<String, Object> entry : req.entrySet()) {
-
             String key = entry.getKey();
-
             if (key.equals(meta.idColumn())
                 || key.equals(meta.versionColumn())
                 || key.equals("editor")
                 || key.equals("ids")) continue;
-
             sets.add(toSnake(key) + " = ?");
             params.add(entry.getValue());
         }
-
         if (sets.isEmpty()) {
             throw new IllegalArgumentException("更新項目がありません");
         }
@@ -209,79 +155,30 @@ public class SqlBuilder {
         // 共通項目
         sets.add("version = version + 1");
         sets.add("update_date = SYSDATETIME()");
-
         sql.append("UPDATE ").append(meta.tableName()).append(" SET ");
         sql.append(String.join(", ", sets));
-
         sql.append(logProvider.buildOutput()).append(" INTO ").append(tableVar).append(" ");
 
-        // ========================
         // WHERE句（IN）
-        // ========================
         String placeholders = SqlUtil.placeholders(ids.size());
-
-        sql.append("WHERE ").append(toSnake(meta.idColumn()))
-        .append(" IN (").append(placeholders).append(") ");
-
+        sql.append("WHERE ").append(toSnake(meta.idColumn())).append(" IN (").append(placeholders).append(") ");
         sql.append("AND NOT(").append(meta.stateColumn()).append(" = ?); ");
 
         params.addAll(ids);
         params.add(Enums.state.DELETE.getCode());
 
-        // ========================
         // ログ
-        // ========================
         String action = "UPDATE";
-
         sql.append(logProvider.buildInsertLog(tableVar, action));
-
         Map<String, Object> ctx = new HashMap<>();
         ctx.put("editor", editor);
-
         params.addAll(logProvider.buildLogParams(ctx, action));
 
-        // ========================
         // 戻り値
-        // ========================
         sql.append("""
             SELECT COUNT(*) FROM %s;
         """.formatted(tableVar));
 
         return new SqlResult(sql.toString(), params);
     }
-
-    // public static SqlResult buildRecycleDeliverySave(
-    //         TableMeta meta,
-    //         Map<String,Object> req,
-    //         LogSqlProvider logProvider
-    // ) {
-    //     StringBuilder sql = new StringBuilder();
-    //     List<Object> params = new ArrayList<>();
-    //     String tableVar = "@UpdatedRows";
-    //     sql.append(logProvider.buildLogTable(tableVar));
-    //     sql.append("""
-    //         UPDATE recycles
-    //         SET delivery_date = ?, version = version + 1, update_date = SYSDATETIME()
-    //     """);
-
-    //     params.add(req.get("deliveryDate"));
-    //     sql.append(logProvider.buildOutput()).append(" INTO ").append(tableVar).append(" ");
-    //     sql.append("""
-    //         WHERE recycle_number = ?
-    //         AND use_date IS NOT NULL
-    //         AND delivery_date IS NULL
-    //         AND NOT(state = ?);
-    //     """);
-    //     params.add(req.get("recycleNumber"));
-    //     params.add(Enums.state.DELETE.getCode());
-    //     String action = "UPDATE";
-    //     sql.append(logProvider.buildInsertLog(tableVar, action));
-
-    //     params.addAll(logProvider.buildLogParams(req, action));
-
-    //     sql.append("""
-    //         SELECT COUNT(*) FROM %s;
-    //     """.formatted(tableVar));
-    //     return new SqlResult(sql.toString(), params);
-    // }
 }

@@ -16,7 +16,6 @@ const defaultPageConditions = {
         // table save
         if(scope === "table"){
             return c.dataTable?.canSave?.();
-            // return c.canSave?.();
         }
         // form save
         if(scope === "form"){
@@ -66,11 +65,9 @@ export class PageController {
         this.config = Object.freeze(config);
         this.key = config.key;
         this.state = {};
-
         this.dataTable = null;
         this.forms = {};
         this.components = {};
-
         this.pageActions = config.actions || {};
         this.pageConditions = config.conditions || {};
     }
@@ -95,9 +92,7 @@ export class PageController {
         if (this.config.onInit) {
             this.config.onInit(this);
         }
-
-        this.initComponents();
-        
+        this.initComponents();        
         this.updateButtons();
     }
 
@@ -115,21 +110,18 @@ export class PageController {
         }
         if(this.config.forms){
             this.forms = {};
-            Object.entries(this.config.forms)
-                .forEach(([key, formConfig]) => {
-                    this.forms[key] =
-                        formConfig.create(this);
-                });
+            Object.entries(this.config.forms).forEach(([key, formConfig]) => {
+                this.forms[key] =
+                    formConfig.create(this);
+            });
         }
     }
 
     initUI(){
         const components = this.config.components;
-
         if(components?.combo){
             this.components.combo = initCombo(this);
         }
-
         if(components?.input){
             this.components.input = createInputComponent(this);
         }
@@ -144,7 +136,6 @@ export class PageController {
             }
             this.updateButtons();
         });
-
         document.addEventListener("change", e => {
             const controller = resolveController(e.target);
             if(controller !== this){
@@ -176,12 +167,10 @@ export class PageController {
 
     async reset(){
         this.clearState();
-
         this.components.input?.clear();
         this.components.combo?.clear();
         // combo再描画（データ更新後に効く）
         this.components.combo?.reload();
-
         await this.dataTable.refresh();
     }
 
@@ -191,14 +180,11 @@ export class PageController {
 
     async executeDelete(ids){
         closeMsgDialog();
-
         const result = await this.dataTable.deleteByIds(ids);
-
         openMsgDialog({
             message: `${result.data.count ?? 0}件削除しました`,
             color:"blue"
         });
-
         // ★ 汎用フック
         if(this.config.onDeleted){
             this.config.onDeleted(ids, result);
@@ -215,7 +201,6 @@ export class PageController {
         const disposition = res.title;
 
         let fileName = "download.csv";
-
         if (disposition) {
             const match = disposition.match(/filename="(.+)"/);
             if (match) {
@@ -291,11 +276,7 @@ export class PageController {
         submitBtn.classList.toggle("disabled", !enabled);
     }
 
-    async openForm(
-        name,
-        data = null,
-        options = {}
-    ){
+    async openForm(name, data = null, options = {}){
         if(options.bulkMode != null){
             this.setBulkMode(options.bulkMode);
         }
@@ -309,8 +290,7 @@ export class PageController {
     }
 
     getActiveForm(){
-        return Object.values(this.forms)
-            .find(form => !form.isHidden?.());
+        return Object.values(this.forms).find(form => !form.isHidden?.());
     }
 
     getDefaultForm(){

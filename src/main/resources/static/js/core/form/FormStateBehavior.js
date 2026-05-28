@@ -10,15 +10,12 @@ export const FormStateBehavior = {
             const el = form.elements[name];
             const key = el.dataset.key || convertKey(name, "kebab", "camel");
             let v;
-
             if(el.type === "checkbox"){
                 v = el.checked;
             } else {
                 v = normalizeValue(value, getOptions(el));
             }
-
             const oldValue = currentEntity?.[key];
-
             if(normalize(v) !== normalize(oldValue)){
                 return true;
             }

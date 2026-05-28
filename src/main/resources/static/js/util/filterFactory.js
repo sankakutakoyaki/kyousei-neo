@@ -14,31 +14,12 @@ export const filterFactory = {
         };
     },
 
-    // equals(field){
-    //     return (v,value)=> v[field] == value;
-    // },
     equals: (field) =>
-
         (item, value) => {
-
-            if(
-
-                value == null ||
-
-                value === "" ||
-
-                Number(value) === 0
-
-            ){
-
+            if(value == null || value === "" || Number(value) === 0){
                 return true;
-
             }
-
-            return String(item[field])
-
-                === String(value);
-
+            return String(item[field]) === String(value);
         },
 
     between(field){
@@ -101,14 +82,5 @@ export const filterFactory = {
 
     custom(fn){
         return (v, value) => fn(v, value);
-    },
-    
-    // parent(field) {
-    //     return (v, value) => {
-    //         // 未選択なら全部非表示
-    //         if (!value) return false;
-
-    //         return v.dataset.parent === value;
-    //     };
-    // }
+    }
 };

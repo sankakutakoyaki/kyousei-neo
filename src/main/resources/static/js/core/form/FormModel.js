@@ -6,39 +6,9 @@ import { resolveSubmitValue } from "../behavior/DataResolver.js";
 import { formatters } from "../behavior/formatters.js";
 
 export const FormModel = {
-    // フォーム → entity
-    // toEntity(form, base = {}){
-    //     const fd = new FormData(form);
-    //     const entity = {};
-    //     for(const [name, value] of fd.entries()){
-    //         const elRaw = form.elements[name];
-    //         const el = elRaw instanceof RadioNodeList
-    //             ? elRaw[0]
-    //             : elRaw;
-
-    //         if(!el) continue;
-
-    //         if(el.dataset.submit === "none") continue;
-
-    //         const rawKey = el.dataset.key || name;
-    //         if(!rawKey) continue;
-
-    //         const key = convertKey(rawKey, "kebab", "camel");
-
-    //         const v = resolveSubmitValue(el, value);
-    //         if(v === undefined) continue;
-    //         if(v == null && "skipIfNull" in el.dataset){
-    //             continue;
-    //         }
-    //         entity[key] = v;
-    //     }
-    //     injectMeta(entity, form, base);
-    //     return entity;
-    // },
     toEntity(form, base = {}){
         const entity = {};
         const fields = form.querySelectorAll("input[name], select[name], textarea[name]");
-
         fields.forEach(el => {
             if(el.disabled) return;
             if(el.dataset.submit === "none") return;
@@ -50,26 +20,20 @@ export const FormModel = {
             if(!rawKey) return;
 
             const key = convertKey(rawKey, "kebab", "camel");
-
             let value;
             if(el instanceof HTMLInputElement && el.type === "checkbox"){
                 value = el.checked;
             } else {
                 value = el.value;
             }
-
             const v = resolveSubmitValue(el, value);
             if(v === undefined) return;
-
             if(v == null && "skipIfNull" in el.dataset) return;
-
             entity[key] = v;
         });
-
         injectMeta(entity, form, base);
         return entity;
     },
-
     // 差分抽出
     diff(oldObj = {}, newObj = {}){
         const diff = {};
@@ -80,7 +44,6 @@ export const FormModel = {
         });
         return diff;
     },
-
     // fill
     fill(form, data = {}){
         Object.entries(data).forEach(([key, value]) => {
@@ -151,23 +114,6 @@ export const FormModel = {
             }
         });
     }
-    // clear(form){
-    //     [...form.elements].forEach(el => {
-    //         if(!el.name) return;
-
-    //         if(el.type === "checkbox"){
-    //             el.checked = false;
-    //         }else if(el.tagName === "SELECT"){
-    //             if(form.dataset.bulk === "true"){
-    //                 el.selectedIndex = -1;
-    //             }else{
-    //                 el.value = "0";
-    //             }
-    //         }else{
-    //             el.value = "";
-    //         }
-    //     });
-    // }
 };
 
 function injectMeta(entity, form, base){
@@ -178,8 +124,7 @@ function injectMeta(entity, form, base){
     const keyName = convertKey(rawKey, "kebab", "camel");
     if(keyName && base[keyName] != null){
         entity[keyName] = base[keyName];
-    }
-    
+    }    
     // version
     if(base.version != null){
         entity.version = base.version;

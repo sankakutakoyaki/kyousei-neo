@@ -7,15 +7,11 @@ export class TableModel {
         this.filters = config.filters || {};
         this.requiredFilters = config.requiredFilters || [];
         this.idKey = config.idKey;
-
         this.sortKey = null;
         this.sortDir = "asc";
-
         this.selected = new Set();
-
         this.page = 1;
         this.pageSize = config.pageSize || 50;
-
         this.index = null;
         this.result = [];
     }
@@ -29,7 +25,6 @@ export class TableModel {
 
     toggleSort(field){
         const key = convertKey(field, "kebab", "camel");
-
         if(this.sortKey === key){
             this.sortDir = this.sortDir === "asc" ? "desc" : "asc";
         } else {
@@ -46,9 +41,7 @@ export class TableModel {
                 return;
             }
         }
-
         let list = [...this.originData];
-
         list = this.applyFilter(list, state);
         list = this.applySort(list);
         list = this.applyPage(list);
@@ -75,14 +68,11 @@ export class TableModel {
 
         const key = this.sortKey;
         const dir = this.sortDir === "asc" ? 1 : -1;
-
         return [...list].sort((a,b)=>{
             let av = a[key];
             let bv = b[key];
-
             if(av == null) return 1;
             if(bv == null) return -1;
-
             if(typeof av === "number" && typeof bv === "number"){
                 return (av - bv) * dir;
             }

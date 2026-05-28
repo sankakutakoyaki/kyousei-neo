@@ -40,14 +40,26 @@ public enum QueryId {
     // ===== Recycle =====
     RECYCLE_DETAIL("recycleDetail"),
     RECYCLE_LIST("recycleList"),
-    RECYCLE_MAKER_LIST("recycleMakerList"),
     RECYCLE_CSV("recycleCsv"),
     RECYCLE_DELETE_BY_IDS("recycleDeleteByIds"),
     RECYCLE_SAVE("recycleSave"),
     RECYCLE_DELIVERY_SAVE("recycleDeliverySave"),
     RECYCLE_SHIPPING_SAVE("recycleShippingSave"),
-    RECYCLE_LOSS_SAVE("recycleLossSave");
-    // RECYCLE_BULK_UPDATE("recycleBulkUpdate");
+    RECYCLE_LOSS_SAVE("recycleLossSave"),
+
+    // ===== RecycleMaker =====
+    RECYCLE_MAKER_DETAIL("recycleMakerDetail"),
+    RECYCLE_MAKER_LIST("recycleMakerList"),
+    RECYCLE_MAKER_CSV("recycleMakerCsv"),
+    RECYCLE_MAKER_DELETE_BY_IDS("recycleMakerDeleteByIds"),
+    RECYCLE_MAKER_SAVE("recycleMakerSave"),
+
+    // ===== RecyclePrice =====
+    RECYCLE_PRICE_DETAIL("recyclePriceDetail"),
+    RECYCLE_PRICE_LIST("recyclePriceList"),
+    RECYCLE_PRICE_CSV("recyclePriceCsv"),
+    RECYCLE_PRICE_DELETE_BY_IDS("recyclePriceDeleteByIds"),
+    RECYCLE_PRICE_SAVE("recyclePriceSave");
 
     private final String id;
 

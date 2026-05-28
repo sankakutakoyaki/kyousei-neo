@@ -6,7 +6,6 @@ import { createPartnerCompanyColumns, createPartnerEmployeeColumns } from "./col
 import { registerController } from "../../../applcation/controllerRegistry.js";
 import { filterFactory } from "../../../util/filterFactory.js";
 import { CompanyService } from "../../../services/corporation/company/CompanyService.js";
-// import { createCompanyPage } from "../createCompanyPage.js";
 import { createEmployeePage } from "../../personnel/createEmployeePage.js";
 import { getController } from "../../../applcation/controllerRegistry.js";
 import { createMasterPage } from "../../../core/page/createMasterPage.js";
@@ -30,103 +29,49 @@ export async function init() {
 
 export const partnerCompanyPage = () =>
     createMasterPage({
-
         key: "partnerCompany",
-
         tableId: "table-01",
         footerId: "footer-01",
         formId: "form-01",
-
         idKey: "companyId",
-
-        repository:
-            CompanyService,
-
-        category:
-            APP.cache.common
-                .companyCategory
-                .PARTNER,
-
-        columns:
-            createPartnerCompanyColumns(),
-
-        components: {
-            combo: true
-        },
-
+        repository: CompanyService,
+        category: APP.cache.common.companyCategory.PARTNER,
+        columns: createPartnerCompanyColumns(),
+        components: {combo: true},
         model: {
-            filters: {
-                category:
-                    filterFactory
-                        .equals("category")
+            filters: {category: filterFactory.equals("category")}
+        },
+        validateBusiness: async (payload) => {
+            if(!payload.category){
+                throw {
+                    message: "分類を選択してください",
+                    fields: ["category"]
+                };
             }
         },
-
-        validateBusiness:
-            async (payload) => {
-
-                if(!payload.category){
-
-                    throw {
-
-                        message:
-                            "分類を選択してください",
-
-                        fields:
-                            ["category"]
-                    };
-                }
-            },
-
-        afterSave:
-            refreshClientChildren
+        afterSave: refreshClientChildren
     });
 
 export const partnerEmployeePage = () =>
     createEmployeePage({
-
         key: "partnerEmployee",
-
         tableId: "table-02",
         footerId: "footer-02",
         formId: "form-02",
-
-        category:
-            APP.cache.common
-                .employeeCategory
-                .CONSTRUCT,
-
-        columns:
-            createPartnerEmployeeColumns(),
-
-        components: {
-            combo: true,
-            input: true
-        },
-
+        category: APP.cache.common.employeeCategory.CONSTRUCT,
+        columns: createPartnerEmployeeColumns(),
+        components: {combo: true, input: true},
         model: {
-            filters: {
-                companyId:
-                    filterFactory
-                        .equals("companyId")
-            }
+            filters: {companyId: filterFactory.equals("companyId")}
         },
-
-        validateBusiness:
-            async (payload) => {
-
-                if(!payload.companyId){
-
-                    throw {
-
-                        message:
-                            "会社を選択してください",
-
-                        fields:
-                            ["companyId"]
-                    };
-                }
+        validateBusiness: async (payload) => {
+            if(!payload.companyId){
+                throw {
+                    message: "会社を選択してください",
+                    fields: ["companyId"]
+                };
             }
+        }
     });
 
 async function refreshClientChildren(){
@@ -138,42 +83,3 @@ async function refreshClientChildren(){
         await controller?.executeAction("companyChanged");
     }
 }
-
-// export const partnerCompanyPage = () =>
-//     createCompanyPage({
-//         key: "partnerCompany",
-//         tableId: "table-01",
-//         footerId: "footer-01",
-//         formId: "form-01",
-//         service: CompanyService,
-//         category: APP.cache.common.companyCategory.PARTNER,
-//         columns: createPartnerCompanyColumns(),
-//         afterSave: async () => {
-//             const employee = getController("partnerEmployee");
-//             await employee?.executeAction("companyChanged");
-//         }
-//     });
-
-// export const partnerEmployeePage = () =>
-//     createEmployeePage({
-//         key: "partnerEmployee",
-//         components: {combo: true, input: true},
-//         tableId: "table-02",
-//         footerId: "footer-02",
-//         formId: "form-02",
-//         category: APP.cache.common.employeeCategory.CONSTRUCT,
-//         columns: createPartnerEmployeeColumns(),
-//         model: {
-//             filters: {
-//                 companyId: filterFactory.equals("companyId")
-//             }
-//         },
-//         validateBusiness: async (payload) => {
-//             if (!payload.companyId) {
-//                 throw {
-//                     message: "会社を選択してください",
-//                     fields: ["companyId"]
-//                 };
-//             }
-//         }
-//     });

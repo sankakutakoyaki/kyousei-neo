@@ -24,8 +24,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class IndexController extends BaseController {
-	// private final EmployeeService2 employeeService;
-
+	
 	/**
 	 * スタートページ
 	 * @param mv
@@ -33,22 +32,6 @@ public class IndexController extends BaseController {
 	 */
 	@GetMapping("/")
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
-	// public String getIndex(Model model, @AuthenticationPrincipal OidcUser principal, HttpSession session) {
-		// // ユーザー名
-		// String userName = principal.getAttribute("preferred_username");
-		// EmployeeEntity loginUser = employeeService.getByAccount(userName);
-		// 	// .orElseThrow(() -> new IllegalStateException("ユーザーが存在しません"));
-		// if (loginUser == null) return null;
-
-		// // セッションに保持
-		// session.setAttribute("loginUser", loginUser);
-        // model.addAttribute("user", loginUser);
-
-		// model.addAttribute("title", "ホーム");
-        // // model.addAttribute("insertCss", "/css/index/home.css");
-		// model.addAttribute("insertCss", "/css/pages/index/home.css");
-
-        // return "contents/index/home";
 	public String getIndex() {
 		return "fragments/pages/index/home";
     }

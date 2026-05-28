@@ -94,7 +94,6 @@ export async function apiFetch(url, {
             return apiFetch(url, {
                 method,
                 data,
-                // token,
                 allow404,
                 timeout,
                 retry: retry - 1
@@ -118,7 +117,6 @@ export async function handleHttpError(status, json) {
     if (window.ApiErrorHandler) {
         return window.ApiErrorHandler(status, message);
     }
-    // console.error(status, message);
     if(status >= 500){
         DialogService.error("システムエラーが発生しました");
     } else {

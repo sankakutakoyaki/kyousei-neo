@@ -1,0 +1,47 @@
+<th:block th:fragment="form01Fragment()">
+    <div class="dialog-content" data-enterfocus="form-01">
+        <!-- コード -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': 'コード', 
+                    'name': 'code', 
+                    'inputmode': 'numeric',
+                    'pattern': '\d*',
+                    'placeholder': '000',
+                    'resolveId':true,
+                    'index': 1,
+                    'number': true
+                }
+            })}"></th:block>
+        </div>
+        <!-- 名称 -->
+        <!-- かな -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': '製造業者等名', 
+                    'name': 'name', 
+                    'index': 2
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': 'かな', 
+                    'name': 'kana', 
+                    'index': 3
+                }
+            })}"></th:block>
+        </div>
+        <!-- 略称 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': '略称', 
+                    'name': 'abbr-name', 
+                    'index': 4
+                }
+            })}"></th:block>
+        </div>
+    </div>
+</th:block>

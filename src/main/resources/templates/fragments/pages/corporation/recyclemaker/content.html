@@ -1,0 +1,29 @@
+<main th:fragment="content"
+        class="normal-body"
+        data-page="/js/pages/corporation/recyclemaker/recycleMakerPage.js"
+        data-css="/css/pages/corporation/recyclemaker.css">
+    <div class="tab-area">
+        <ul class="tab-menu">
+            <li class="tab-menu-item is-active" data-action="tab" data-group="recyclemaker-tabs" data-tab="tab-01">メーカー</li>
+        </ul>
+        <div class="tab-panel is-show" id="tab-01" data-tab-content="recycleMmaker-tabs">
+            <div class="table-area" data-controller="recycleMaker">
+                <header th:replace="~{fragments/pages/corporation/recyclemaker/header :: header01Fragment()}"></header>
+                <section th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01')}"></section>
+                <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></footer>
+            </div>
+        </div>
+    </div>
+    <div id="form-dialog-area">
+        <form id="form-01" class="form-dialog none" data-controller="recycleMaker" data-key="recycle-maker-id">
+            <div class="dialog-main">
+                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': 'メーカー登録'} })}"></header>
+                <section th:replace="~{fragments/pages/corporation/recyclemaker/form :: form01Fragment()}"></section>
+                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></footer>
+            </div>
+        </form>
+    </div>
+    <div id="msg-dialog-area">
+        <div th:replace="~{fragments/dialog/content :: messageFragment}"></div>
+    </div>
+</main>

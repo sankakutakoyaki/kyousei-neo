@@ -6,7 +6,6 @@ import { clearElement } from "./clearElement.js";
 export function startProcessing() {
     const body = document.querySelector('.normal-body');
     if (body == null) return;
-    // body.inert = true;
 
     const spinner = document.querySelector('#loading');
     if (spinner == null) {
@@ -21,7 +20,4 @@ export function processingEnd() {
     const spinner = document.querySelector('#loading');
     if (spinner == null) return;
     clearElement("loading", true)
-
-    // const body = document.querySelector('.normal-body');
-    // if (body != null) body.inert = false;
 }

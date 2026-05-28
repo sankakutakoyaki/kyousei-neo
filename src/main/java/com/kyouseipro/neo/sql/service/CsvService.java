@@ -22,32 +22,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class CsvService {
-
     private final QueryParamBinder paramBinder;
     private final SqlRepository sqlRepository;
 
-    // public ResponseEntity<byte[]> execute(QueryDefinition def, SelectRequest req) {
-
-    //     if (def.getCsvColumns() == null || def.getCsvColumns().isEmpty()) {
-    //         throw new IllegalStateException("CSVカラム定義がありません");
-    //     }
-
-    //     List<Object> params =
-    //         paramBinder.build(def.getParamOrder(), req.getParams());
-
-    //     var result = sqlRepository.selectMap(def.getSql(), params);
-
-    //     String csv = CsvBuilder.build(result, def.getCsvColumns());
-
-    //     byte[] bytes = ("\uFEFF" + csv).getBytes(StandardCharsets.UTF_8);
-
-    //     return ResponseEntity.ok()
-    //         .header(HttpHeaders.CONTENT_DISPOSITION,
-    //                 "attachment; filename=\"data.csv\"")
-    //         .body(bytes);
-    // }
     public ResponseEntity<byte[]> execute(QueryDefinition def, SelectRequest req) {
-
         if (def.getCsvColumns() == null || def.getCsvColumns().isEmpty()) {
             throw new IllegalStateException("CSVカラム定義がありません");
         }
@@ -64,13 +42,8 @@ public class CsvService {
         );
 
         String csv = CsvBuilder.build(result, def.getCsvColumns());
-
         byte[] bytes = ("\uFEFF" + csv).getBytes(StandardCharsets.UTF_8);
-
-        String fileName = "download_" +
-        // String fileName = def.getKind().name().toLowerCase() + "_" +
-            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) +
-            ".csv";
+        String fileName = "download_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".csv";
 
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION,

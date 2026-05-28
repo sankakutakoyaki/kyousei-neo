@@ -13,9 +13,7 @@ export function handleTab(event, el){
     }
 
     document.querySelectorAll(`[data-group="${group}"]`).forEach(tab => tab.classList.remove("is-active"));
-
     el.classList.add("is-active");
-
     document.querySelectorAll(`[data-tab-content="${group}"]`).forEach(panel => panel.classList.remove("is-show"));
 
     const target = document.getElementById(targetId);
@@ -24,7 +22,6 @@ export function handleTab(event, el){
         const area = target.querySelector("[data-controller]");
         const name = area?.dataset.controller;
         const controller = getController(name);
-
         controller?.updateButtons();
     }
 }

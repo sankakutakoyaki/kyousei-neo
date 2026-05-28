@@ -1,88 +1,44 @@
-<!-- <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/with-sidebar}"> -->
-<body>
-    <!-- サイドバー -->
-    <!-- <div layout:fragment="sidebar-content">
-        <div th:replace="~{fragments/common/menu :: registFragment}"></div>
-    </div> -->
-
-    <!-- 本体 -->
-    <!-- <main layout:fragment="content" data-page="/js/pages/corporation/partner/partnerPage.js"> -->
-    <main th:fragment="content"
-            class="normal-body"
-            data-page="/js/pages/corporation/partner/partnerPage.js"
-            data-css="/css/pages/corporation/partner.css">
-        <div class="tab-area">
-            <ul class="tab-menu">
-                <li class="tab-menu-item is-active" data-action="tab" data-group="partner-tabs" data-tab="tab-01">施工店</li>
-                <li class="tab-menu-item" data-action="tab" data-group="partner-tabs" data-tab="tab-02">担当者</li>
-            </ul>
-            <div class="tab-panel is-show" id="tab-01" data-tab-content="partner-tabs">
-                <div class="table-area" data-controller="partnerCompany">
-                    <!-- ヘッダー -->
-                    <div th:replace="~{fragments/pages/corporation/partner/header :: header01Fragment()}"></div>
-                    <!-- コンテンツ -->
-                    <div th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01')}"></div>
-                    <!-- フッター -->
-                    <div th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></div>
-                </div>
-            </div>
-            <div class="tab-panel" id="tab-02" data-tab-content="partner-tabs">
-                <div class="table-area" data-controller="partnerEmployee">
-                    <!-- ヘッダー -->
-                    <div th:replace="~{fragments/pages/corporation/partner/header :: header02Fragment()}"></div>
-                    <!-- コンテンツ -->
-                    <div th:replace="~{fragments/table/body :: normalFragment('table-header-02', 'table-02')}"></div>
-                    <!-- フッター -->
-                    <div th:replace="~{fragments/table/footer :: datetimeFragment('footer-02')}"></div>
-                </div>
+<main th:fragment="content"
+        class="normal-body"
+        data-page="/js/pages/corporation/partner/partnerPage.js"
+        data-css="/css/pages/corporation/partner.css">
+    <div class="tab-area">
+        <ul class="tab-menu">
+            <li class="tab-menu-item is-active" data-action="tab" data-group="partner-tabs" data-tab="tab-01">施工店</li>
+            <li class="tab-menu-item" data-action="tab" data-group="partner-tabs" data-tab="tab-02">担当者</li>
+        </ul>
+        <div class="tab-panel is-show" id="tab-01" data-tab-content="partner-tabs">
+            <div class="table-area" data-controller="partnerCompany">
+                <header th:replace="~{fragments/pages/corporation/partner/header :: header01Fragment()}"></header>
+                <section th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01')}"></section>
+                <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></footer>
             </div>
         </div>
-        <!-- </main> -->
-        <div id="form-dialog-area">
-            <!-- フォーム画面をここに記入する -->
-            <form id="form-01" class="form-dialog none" data-controller="partnerCompany" data-key="company-id">
-                <div class="dialog-main">
-                    <!-- ヘッダー -->
-                    <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '施工店登録'} })}"></div>
-                    <!-- コンテンツ -->
-                    <form th:replace="~{fragments/pages/corporation/partner/form :: form01Fragment()}"></form>
-                    <!-- フッター -->
-                    <div th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></div>
-                </div>
-            </form>
-            <form id="form-02" class="form-dialog none" data-controller="partnerEmployee" data-key="employee-id">
-                <div class="dialog-main">
-                    <!-- ヘッダー -->
-                    <div th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '担当者登録'} })}"></div>
-                    <!-- コンテンツ -->
-                    <form th:replace="~{fragments/pages/corporation/partner/form :: form02Fragment()}"></form>
-                    <!-- フッター -->
-                    <div th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-02' } })}"></div>
-                </div>
-            </form>
+        <div class="tab-panel" id="tab-02" data-tab-content="partner-tabs">
+            <div class="table-area" data-controller="partnerEmployee">
+                <header th:replace="~{fragments/pages/corporation/partner/header :: header02Fragment()}"></header>
+                <section th:replace="~{fragments/table/body :: normalFragment('table-header-02', 'table-02')}"></section>
+                <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-02')}"></footer>
+            </div>
         </div>
-        <div id="msg-dialog-area">
-            <div th:replace="~{fragments/dialog/content :: messageFragment}"></div>
-        </div>
-        <!-- <script type="text/JavaScript" th:inline="JavaScript">
-            window.APP = {
-                security: {
-                    csrfToken: /*[[${_csrf.token}]]*/,
-                    csrfHeader: /*[[${_csrf.headerName}]]*/
-                },
-                cache: {                    
-                    companyComboList: /*[[${companyComboList}]]*/,
-                    genderComboList: /*[[${genderComboList}]]*/,
-                    bloodTypeComboList: /*[[${bloodTypeComboList}]]*/,
-                    state: /*[[${state}]]*/,
-                    clientCategory: /*[[${clientCategory}]]*/,
-                    employeeCategory: /*[[${employeeCategory}]]*/
-                }
-            };
-        </script> -->
-        <!-- <script type="module" th:src="@{/js/pages/corporation/partner/partnerPage.js}"></script> -->
-    </main>
-
-</body>
+    </div>
+    <div id="form-dialog-area">
+        <form id="form-01" class="form-dialog none" data-controller="partnerCompany" data-key="company-id">
+            <div class="dialog-main">
+                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '施工店登録'} })}"></header>
+                <section th:replace="~{fragments/pages/corporation/partner/form :: form01Fragment()}"></section>
+                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></footer>
+            </div>
+        </form>
+        <form id="form-02" class="form-dialog none" data-controller="partnerEmployee" data-key="employee-id">
+            <div class="dialog-main">
+                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '担当者登録'} })}"></header>
+                <section th:replace="~{fragments/pages/corporation/partner/form :: form02Fragment()}"></section>
+                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-02' } })}"></footer>
+            </div>
+        </form>
+    </div>
+    <div id="msg-dialog-area">
+        <div th:replace="~{fragments/dialog/content :: messageFragment}"></div>
+    </div>
+</main>

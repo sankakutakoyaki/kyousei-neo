@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.kyouseipro.neo.common.enums.system.QueryKind;
 import com.kyouseipro.neo.common.enums.system.QueryType;
-// import com.kyouseipro.neo.common.Enums.SqlMode;
 
 import lombok.Data;
 

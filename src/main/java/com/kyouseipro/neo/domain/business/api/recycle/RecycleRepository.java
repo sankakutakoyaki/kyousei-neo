@@ -108,53 +108,19 @@ public class RecycleRepository {
     }
 
     public int updateRecycleLoss(
-
             TableMeta meta,
-
             Map<String,Object> req,
-
             String editor
-
     ){
-
         req.put("editor", editor);
-
-        String recycleNumber =
-
-            String.valueOf(req.get("recycleNumber"));
-
-        Map<String,Object> recycle =
-
-            findRecycleByNumber(recycleNumber);
+        String recycleNumber = String.valueOf(req.get("recycleNumber"));
+        Map<String,Object> recycle = findRecycleByNumber(recycleNumber);
 
         if(recycle == null){
-
             return insertLoss(meta, req, editor);
-
         }
-
         return updateLoss(meta, req, editor);
-
     }
-
-    // public int updateRecycleLoss(
-    //         TableMeta meta,
-    //         Map<String,Object> req,
-    //         String editor
-    // ){
-    //     req.put("editor", editor);
-    //     LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-    //     SqlResult result = RecycleSqlBuilder.buildRecycleLossSave(
-    //         meta,
-    //         req,
-    //         logProvider
-    //     );
-    //     return sqlRepository.updateRequired(
-    //         result.getSql(),
-    //         result.getParams(),
-    //         "ロス登録に失敗しました"
-    //     );
-    // }
 
     private Map<String,Object> findRecycleByNumber(String recycleNumber){
         String sql = """

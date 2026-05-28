@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/no-sidebar}">
 <body>
-    <!-- 本体 -->
     <main layout:fragment="content">
-        <!-- ボディ -->
         <section class="input-prompt">
             <form id="ai-form">
                 <div class="flex-area">
@@ -17,19 +15,6 @@
 
             <div id="answer-area"></div>
         </section>
-        <!-- <div id="form-dialog-area">
-
-        </div>
-        <div id="msg-dialog-area">
-            <div th:replace="~{fragments/common/dialog :: messageFragment}"></div>
-        </div> -->
-        <!-- <script th:src="@{/js/data/subscription.js}"></script> -->
-        <!-- <script type="text/JavaScript" th:inline="JavaScript">
-            const token = /*[[${_csrf.token}]]*/;
-            const user_name = /*[[${user_name}]]*/;
-            const employeeId = /*[[${employeeId}]]*/;
-        </script> -->
-        <!-- <script th:src="@{/js/index/home.js}"></script> -->
     </main>
 </body>
 

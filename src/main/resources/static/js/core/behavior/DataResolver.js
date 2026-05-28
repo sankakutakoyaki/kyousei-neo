@@ -30,24 +30,8 @@ export const DataResolver = {
             /* Name(select) → ID */
             if (nameField.tagName === "SELECT") {
                 nameField.addEventListener("change", () => {
-                    // updateField(idInput, nameField.value);
-                    // if (!nameField.value) {
-                    //     this.clear(nameField);
-                    // }
-                    const value =
-
-                        nameField.value;
-
-                    updateField(
-
-                        idInput,
-
-                        Number(value) === 0
-
-                            ? ""
-
-                            : value
-
+                    const value = nameField.value;
+                    updateField(idInput, Number(value) === 0 ? "": value
                     );
                 });
             }
@@ -59,7 +43,6 @@ export const DataResolver = {
         const nameField = group.querySelector("[data-resolve-name]");
 
         const id = idInput.value.trim();
-
         // 空ならクリア
         if (!id) {
             delete idInput.dataset.lastId;
@@ -121,10 +104,8 @@ export function resolveSubmitValue(el, value){
     const mode = el.dataset.submit;
     let v;
     switch(mode){
-        // 無視
         case "none":
             return undefined;
-        // option.dataset.xxx
         case "dataset": {
             const option = el.selectedOptions?.[0];
             const key = el.dataset.submitKey;
@@ -229,8 +210,7 @@ const queryResolver = {
             if (!found) {
                 clear(nameField);
                 // hiddenも消す
-                const hidden =
-                    group.querySelector("[data-role='hidden-id']");
+                const hidden = group.querySelector("[data-role='hidden-id']");
                 if(hidden){
                     hidden.value = "";
                 }
@@ -245,8 +225,7 @@ const queryResolver = {
             // ★ 追加部分
             const valueKey = group.dataset.valueKey;
             if(valueKey){
-                const hidden =
-                    group.querySelector("[data-role='hidden-id']");
+                const hidden = group.querySelector("[data-role='hidden-id']");
                 if(hidden){
                     hidden.value = found?.[valueKey] ?? "";
                 }
@@ -296,28 +275,8 @@ const postalResolver = {
     }
 };
 
-// /**
-//  * リサイクル券番号
-//  */
-// export function recycleResolver(row){
-//     const input = row.querySelector('[name="recycle-number"]');
-//     if(!input) return;
-
-//     input.addEventListener("input", () => {
-//             let v = input.value.replace(/\D/g, "").slice(0, 13);
-//             if(v.length > 10){
-//                 v = v.slice(0,4) + "-" + v.slice(4,10) + "-" + v.slice(10);
-//             } else if(v.length > 4){
-//                 v = v.slice(0,4) + "-" + v.slice(4);
-//             }
-//             input.value = v;
-//         }
-//     );
-// }
-
 const resolvers = {
     postal: postalResolver,
-    // recycle: recycleResolver,
     query: queryResolver,
     default: defaultResolver
 };

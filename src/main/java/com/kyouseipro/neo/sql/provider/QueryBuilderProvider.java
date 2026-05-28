@@ -17,12 +17,6 @@ public class QueryBuilderProvider {
     private final Map<QueryId, QueryBuilder> builders = new HashMap<>();
 
     public QueryBuilderProvider() {
-        // builders.put(QueryId.RECYCLE_LIST, req -> {
-        //     String categoryStr = (String) req.getParams().get("category");
-        //     RecycleCategory category =
-        //         EnumUtil.of(RecycleCategory.class, Integer.parseInt(categoryStr));
-        //     return RecycleQuery.recycleList(category);
-        // });
         builders.put(QueryId.RECYCLE_LIST, req -> {
             Integer categoryInt = toInteger(req.getParams().get("category"));
             RecycleCategory category = categoryInt == null ? null: EnumUtil.of(RecycleCategory.class, categoryInt);

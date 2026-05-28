@@ -10,7 +10,6 @@ let initialized = false;
 export function initEvents(){
     if(initialized) return;
     initialized = true;
-
     document.addEventListener("click", handleEvent);
     document.addEventListener("input", handleEvent);
     document.addEventListener("change", handleEvent);
@@ -19,98 +18,17 @@ export function initEvents(){
     document.addEventListener("keydown", handleEnterValidate);
 }
 
-// // function handleEvent(e){
-// //     const el = e.target.closest("[data-action]");
-// //     if (!el){
-// //         return;
-// //     }
-
-// //     const action = el.dataset.action;
-// //     // DOM actions
-// //     if(domActions[action]){
-// //         domActions[action](el);
-// //         return;
-// //     }
-
-// //     const controller = resolveController(el);
-// //     if(!controller){
-// //         console.warn(
-// //             "controller not found",
-// //             el
-// //         );
-// //         return;
-// //     }
-
-// //     controller.executeAction(
-// //         action,
-// //         el
-// //     );
-// // }
-
-// function handleEvent(e){
-//     const el = e.target.closest("[data-action]");
-//     if(!el) return;
-
-//     const controller = resolveController(el);
-
-//     const actions = el.dataset.action?.split(/\s+/).filter(Boolean) ?? [];
-//     actions.forEach(action => {
-//         // DOM actions
-//         if(domActions[action]){
-//             domActions[action](e, el);
-//             return;
-//         }
-
-//         if(!controller){
-//             console.warn("controller not found", el);
-//             return;
-//         }
-
-//         controller.executeAction(action, el);
-//     });
-// }
-
 function handleEvent(e){
     const el = e.target.closest("[data-action]");
     if(!el) return;
 
     const controller = resolveController(el);
     const actions = el.dataset.action?.split(/\s+/).filter(Boolean) ?? [];
-
     const keydownActions = [
         "date-arrow",
         "search"
     ];
 
-    // actions.forEach(action => {
-    //     // keydown制限
-    //     if(e.type === "keydown"){
-    //         if(e.key !== "Enter") return;
-    //         // save は click のみ
-    //         if(action === "save") return;
-    //     }
-
-    //     if(e.type === "keydown" && e.key === "Enter" && el.dataset.enterSubmit === "true"){
-    //         e.preventDefault();
-    //         const form = el.closest("form");
-    //         const submitBtn = form?.querySelector('[name="submitBtn"]');
-    //         submitBtn?.click();
-    //         return;
-    //     }
-
-    //     // DOM actions
-    //     if(domActions[action]){
-    //         domActions[action](e, el);
-    //         return;
-    //     }
-
-    //     if(!controller){
-    //         console.warn("controller not found", el);
-    //         return;
-    //     }
-
-    //     controller.executeAction(action, el);
-    // });
     actions.forEach(action => {
         // keydown制限
         if(e.type === "keydown"){
@@ -126,18 +44,15 @@ function handleEvent(e){
             // save は click のみ
             if(action === "save") return;
         }
-
         // DOM actions
         if(domActions[action]){
             domActions[action](e, el);
             return;
         }
-
         if(!controller){
             console.warn("controller not found", el);
             return;
         }
-
         controller.executeAction(action, el);
     });
 }

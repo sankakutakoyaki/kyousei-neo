@@ -9,7 +9,6 @@ export async function loadPage(url, target = "body") {
     }
 
     APP.currentPage = url;
-
     APP.cache.common = {};
     APP.cache.page = {};
 
@@ -21,11 +20,9 @@ export async function loadPage(url, target = "body") {
     const doc = parser.parseFromString(html, "text/html");
 
     let base;
-
     if (target === "body") {
         const newBody = doc.querySelector(".normal-body");
         const oldBody = document.querySelector(".normal-body");
-
         if (!newBody || !oldBody) {
             console.error("bodyが見つかりません");
             return;
@@ -47,39 +44,30 @@ export async function loadPage(url, target = "body") {
             console.error("layoutが見つかりません");
             return;
         }
-
         oldLayout.replaceWith(newLayout);
         base = newLayout;
-
         menuActive(url, "header");
     }
-
     // 共通処理
     const cssPath = base.dataset.css;
     const modulePath = base.dataset.page;
-
     if (cssPath) {
         await replaceCss(cssPath);
     }
-
     if (modulePath) {
         const module = await import(modulePath);
         await module.init?.();
     }
-
     initApp();
 }
 
 async function replaceCss(href) {
     // ① 前のページCSS削除
-    document.querySelectorAll('link[data-page-css]')
-        .forEach(el => el.remove());
-
+    document.querySelectorAll('link[data-page-css]').forEach(el => el.remove());
     // ② 新しいCSS追加
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = href;
     link.dataset.pageCss = "true";
-
     document.head.appendChild(link);
 }

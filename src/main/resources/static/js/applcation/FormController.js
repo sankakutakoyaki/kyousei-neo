@@ -32,8 +32,6 @@ export class FormController {
 
         this.formId = formId;
         this.key = key;
-        // this.idKey = config.idKey;
-
         this.repository = repository;
         this.saveHandler = saveHandler;
         this.beforeSave = beforeSave;
@@ -43,7 +41,6 @@ export class FormController {
         this.validateBusiness = validateBusiness;
         this.closeOnSave = closeOnSave;
         this.showSuccessDialog = showSuccessDialog;
-
         this.currentEntity = null;
         this.saveBehavior =
             new SaveBehavior({
@@ -81,8 +78,8 @@ export class FormController {
                     this.controller.setBulkMode(false);
                     return {
                         response: res,
-                        id: res?.data?.data,
-                        count: res?.data?.count
+                        id: res?.data,
+                        count: res?.count
                     };
                 },
                 afterSave: async (result) => {
@@ -125,11 +122,9 @@ export class FormController {
                 }
             });
         }
-
         this.currentEntity = structuredClone(data);
 
         const form = document.getElementById(this.formId);
-
         FormModel.clear(form);
         FormModel.fill(form, data);
         await initParentChildLink(form);

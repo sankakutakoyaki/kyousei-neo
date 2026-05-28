@@ -10,21 +10,14 @@ export const FormPayloadBuilder = {
         isBulkMode,
         getTargetIds
     }){
-        const payload = FormModel.buildPayload(
-                form,
-                currentEntity,
-                key
-            );
-
+        const payload = FormModel.buildPayload(form, currentEntity, key);
         if(payload == null){
             return null;
         }
-
         if(isBulkMode){
             const ids = getTargetIds(payload);
             payload.ids = ids;
         }
-
         return payload;
     }
 };

@@ -16,8 +16,6 @@ window.APP = {
 
 document.addEventListener("DOMContentLoaded", async () => {
     initApp();
-    // initHamburger();
-    // await initPushSubscription();
 });
 
 let initialized = false;
@@ -36,21 +34,5 @@ export function initApp() {
         const target = item.dataset.target || "body";
 
         loadPage(path, target);
-        // hamburgerClose();
-        // closeHamburger();
     });
 }
-
-// export function initAi() {
-//     document.getElementById('ai-form').addEventListener('submit', async e => {
-//         e.preventDefault(); // ★ form送信を止める
-
-//         const q = e.target.question.value;
-//         if (!q) return;
-
-//         const res = await searchFetch('/api/ai/mock', JSON.stringify({ question: q }), token);
-
-//         // const json = await res.json();
-//         document.getElementById('answer-area').textContent = res.data.answer;
-//     });
-// }

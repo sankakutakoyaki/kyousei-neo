@@ -9,11 +9,10 @@ export function createCrudPage(config){
         detail: {
             create: (controller) =>  new FormController({
                 controller,
-
                 formId: config.formId,
                 key: config.key,
-
                 repository: config.repository,
+                saveHandler: config.saveHandler,
                 beforeSave: config.beforeSave,
                 afterSave: async (id) => {
                     if(config.afterSave){await config.afterSave(controller, id);}
@@ -26,14 +25,11 @@ export function createCrudPage(config){
     return new PageController({
         key: config.key,
         defaultFormName: config.defaultFormName,
-        components: config.components,
-        
+        components: config.components,        
         onInit: config.onInit,
         onDeleted: config.onDeleted,
-
         actions: config.actions,
         conditions: config.conditions,
-
         table: {
             create: (controller) => new DataTable({
                 controller,
@@ -44,6 +40,7 @@ export function createCrudPage(config){
                 idKey: config.idKey,
                 checkable: config.checkable ?? true,
                 repository: config.repository,
+                saveHandler: config.saveHandler,
                 buildParams: config.buildParams,
                 buildCsvParams: config.buildCsvParams,
                 model: config.model,
@@ -54,7 +51,6 @@ export function createCrudPage(config){
                 )
             })
         },
-
         forms: config.forms ?? defaultForms 
     });
 }
