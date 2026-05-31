@@ -58,6 +58,7 @@ public class SqlRepository {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException("SQL実行エラー", e);
         } finally {
             DataSourceUtils.releaseConnection(conn, dataSource);

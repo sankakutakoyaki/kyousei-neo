@@ -2,11 +2,13 @@
 
 import { initCommon } from "../../../bootstrap/initPage.js";
 import { initPageCache } from "../../../bootstrap/initPageCache.js";
-import { createRecycleMakerColumns, createRecycleManufacturerColumns } from "./columns.js";
+import { createRecycleMakerColumns, createRecycleManufacturerColumns, createRecyclePriceColumns } from "./columns.js";
 import { registerController } from "../../../applcation/controllerRegistry.js";
 import { filterFactory } from "../../../util/filterFactory.js";
 import { RecycleMakerRepository } from "../../../repositories/corporation/recyclemaker/recycleMakerRepository.js";
 import { RecycleManufacturerRepository } from "../../../repositories/corporation/recyclemaker/RecycleManufacturerRepository.js";
+import { RecyclePriceRepository } from "../../../repositories/corporation/recyclemaker/RecyclePriceRepository.js";
+import { RecycleItemRepository } from "../../../repositories/corporation/recyclemaker/RecycleItemRepository.js";
 import { getController } from "../../../applcation/controllerRegistry.js";
 import { createMasterPage } from "../../../core/page/createMasterPage.js";
 
@@ -25,6 +27,12 @@ export async function init() {
     registerController("recycleManufacturer", manufacturer);
     manufacturer.init();
     await manufacturer.refresh();
+
+    // tab3
+    const price = await recyclePricePage();
+    registerController("recyclePrice", price);
+    price.init();
+    await price.refresh();
 }
 
 export const recycleMakerPage = () =>
@@ -68,9 +76,135 @@ export const recycleManufacturerPage = () =>
         }
     });
 
+// export const recyclePricePage = () =>
+
+//     createMasterPage({
+//         key: "recyclePrice",
+//         tableId: "table-03",
+//         footerId: "footer-03",
+//         formId: "form-03",
+//         idKey: "recyclePriceId",
+//         repository: RecyclePriceRepository,
+//         saveHandler: RecyclePriceRepository.save,
+//         columns: createRecyclePriceColumns(),
+//         components: {combo: true, input: true},
+//         checkable: false,
+//         model: {
+//             filters: {code: filterFactory.equals("code")},
+//             pageSize: 50
+//         }
+//     });
+export const recyclePricePage = async () => {
+
+    const items =
+
+    await RecycleItemRepository.search({
+
+        state: APP.cache.common.state.INITIAL
+
+    });
+
+
+    return createMasterPage({
+
+        key: "recyclePrice",
+
+        tableId: "table-03",
+
+        footerId: "footer-03",
+
+        formId: "form-03",
+
+        idKey: "recycleMakerId",
+
+        repository: RecyclePriceRepository,
+
+        saveHandler: RecyclePriceRepository.save,
+
+        columns: createRecyclePriceColumns(items),
+
+        components: {
+
+            combo: true,
+
+            input: true
+
+        },
+
+        checkable: false,
+
+        model: {
+
+            filters: {
+
+                code: filterFactory.equals("code")
+
+            },
+
+            pageSize: 50
+
+        },
+        beforeSave: payload => {
+
+            payload.details = [];
+
+            for(let i = 1; i <= 8; i++){
+
+                const recyclePriceId =
+
+                    payload[`recycle-price-id-${i}`];
+
+                // const price =
+
+                //     Number(
+
+                //         payload[`price${i}`] ?? 0
+
+                //     );
+                const price =
+
+                    Number(
+
+                        String(payload[`price${i}`] ?? 0)
+
+                            .replace(/,/g, "")
+
+                    );
+                // 新規で0円なら送らない
+
+                if(!recyclePriceId && price <= 0){
+
+                    continue;
+
+                }
+                payload.details.push({
+
+                    recyclePriceId,
+
+                    recycleMakerId:
+
+                        payload.recycleMakerId,
+
+                    recycleItemId:
+
+                        i,
+
+                    price
+
+                });
+
+            }
+
+        }
+
+    });
+
+};
+
 async function refreshMakerChildren(){
     const keys = [
-        "recycleManufacturer"
+        "recycleManufacturer",
+        "recyclePrice"
     ];
     for(const key of keys){
         const controller = getController(key);

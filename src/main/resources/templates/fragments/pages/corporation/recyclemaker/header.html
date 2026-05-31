@@ -52,3 +52,17 @@
         </div>
     </div>
 </th:block>
+
+<th:block th:fragment="header03Fragment()">
+    <div id="header-03" class="flex-area pc-style">
+        <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-03')}"></th:block>
+        <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${
+            {
+                'add' : 'add-btn-03',
+                'form' : 'form-03',
+                'download' : 'download-btn-03',
+                'reload' : 'reload-btn-03'
+            }}
+        )}"></th:block>
+    </div>
+</th:block>

@@ -13,6 +13,7 @@ export function createMasterPage(config){
         repository: config.repository,
         saveHandler: config.saveHandler,
         columns: config.columns,
+        checkable: config.checkable,
         buildParams: () => ({
             state: APP.cache.common.state.INITIAL,
             category: config.category

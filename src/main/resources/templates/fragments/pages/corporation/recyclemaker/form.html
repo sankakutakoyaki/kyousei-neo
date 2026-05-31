@@ -88,4 +88,131 @@
             })}"></th:block>            
         </div>
     </div>
-</th:block>   
+</th:block>
+
+<th:block th:fragment="form03Fragment()">
+    <div class="dialog-content" data-enterfocus="form-03">
+        <input type="hidden" name="recycle-maker-id">
+        <input type="hidden" name="recycle-price-id-1">
+        <input type="hidden" name="recycle-price-id-2">
+        <input type="hidden" name="recycle-price-id-3">
+        <input type="hidden" name="recycle-price-id-4">
+        <input type="hidden" name="recycle-price-id-5">
+        <input type="hidden" name="recycle-price-id-6">
+        <input type="hidden" name="recycle-price-id-7">
+        <input type="hidden" name="recycle-price-id-8">
+        <!-- 略称 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'name': 'name', 
+                    'index': 1,
+                    'disabled':true
+                }
+            })}"></th:block>
+        </div>
+        <!-- タイトル -->
+        <div class="form-row">
+            <div>
+                <p></p>
+            </div>
+            <div>
+                <p>品目</p>
+            </div>
+            <div>
+                <p>小</p>
+            </div>
+            <div>
+                <p>大</p>
+            </div>
+        </div>
+        <!-- エアコン -->
+        <div class="form-row">
+            <div>
+                <p>エアコン</p>
+            </div>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'name': 'price1', 
+                    'index': 2,
+                    'validate': 'currency'
+                }
+            })}"></th:block>
+        </div>
+        <!-- TV -->
+        <div class="form-row">
+            <div>
+                <p>テレビ ブラウン管</p>
+            </div>
+            <div></div>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'name': 'price2', 
+                    'index': 3,
+                    'validate': 'currency'
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'name': 'price3', 
+                    'index': 4,
+                    'validate': 'currency'
+                }
+            })}"></th:block>
+        </div>
+        <div class="form-row">
+            <div>
+                <p>テレビ 薄型</p>
+            </div>
+            <div></div>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'name': 'price4', 
+                    'index': 5,
+                    'validate': 'currency'
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'name': 'price5', 
+                    'index': 6,
+                    'validate': 'currency'
+                }
+            })}"></th:block>
+        </div>
+        <!-- 冷蔵庫 -->
+        <div class="form-row">
+            <div>
+                <p>冷蔵庫・冷凍庫</p>
+            </div>
+            <div></div>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'name': 'price6', 
+                    'index': 7,
+                    'validate': 'currency'
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'name': 'price7', 
+                    'index': 8,
+                    'validate': 'currency'
+                }
+            })}"></th:block>
+        </div>
+        <!-- 洗濯機 -->
+        <div class="form-row">
+            <div>
+                <p>洗濯機・衣類乾燥機</p>
+            </div>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'name': 'price8', 
+                    'index': 9,
+                    'validate': 'currency'
+                }
+            })}"></th:block>
+        </div>
+    </div>
+</th:block>

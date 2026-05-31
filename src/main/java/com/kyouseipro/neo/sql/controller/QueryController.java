@@ -1,6 +1,9 @@
 package com.kyouseipro.neo.sql.controller;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +23,7 @@ import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.QueryBuilderProvider;
 import com.kyouseipro.neo.sql.provider.SqlProvider;
+import com.kyouseipro.neo.sql.provider.Tables;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 import com.kyouseipro.neo.sql.service.CsvService;
@@ -50,7 +54,7 @@ public class QueryController {
         } else {
             def = sqlProvider.get(queryId);
         }
-        
+
         return switch (def.getKind()) {
             case SQL -> executeSql(def, req);
             case SAVE -> executeSave(def, req);
@@ -63,19 +67,81 @@ public class QueryController {
                  RECYCLE_LOSS_SAVE
                 -> executeRecycle(def, req);
             // case RECYCLE_MAKER_SAVE -> executeRecycleMaker(def, req);
-            case RECYCLE_PRICE_SAVE -> executeRecyclePrices(def, req);
+            case RECYCLE_PRICE_LIST -> executeRecyclePriceList(def, req);
+            case RECYCLE_PRICE_SAVE -> executeRecyclePriceSave(def, req);
+            case RECYCLE_PRICE_DETAIL -> executeRecyclePriceDetail(def, req);
         };
     }
 
     // SQL
-    private Object executeSql(QueryDefinition def, SelectRequest req) {
-        List<Object> params = paramBinder.build(def.getParamOrder(), req.getParams());
+    // private Object executeSql(QueryDefinition def, SelectRequest req) {
+    //     List<Object> params = paramBinder.build(def.getParamOrder(), req.getParams());
+    //     if (def.getType() == QueryType.SELECT) {
+    //         var result = sqlRepository.selectMap(def.getSql(), params);
+    //         return Map.of("data", result);
+    //     }
+    //     int count = sqlRepository.update(def.getSql(), params);
+    //     return Map.of("count", count);
+    // }
+    private Object executeSql(
+
+            QueryDefinition def,
+
+            SelectRequest req) {
+
         if (def.getType() == QueryType.SELECT) {
-            var result = sqlRepository.selectMap(def.getSql(), params);
-            return Map.of("data", result);
+
+            return Map.of(
+
+                    "data",
+
+                    select(def, req));
+
         }
-        int count = sqlRepository.update(def.getSql(), params);
+
+        List<Object> params =
+
+                paramBinder.build(
+
+                        def.getParamOrder(),
+
+                        req.getParams());
+
+        int count =
+
+                sqlRepository.update(
+
+                        def.getSql(),
+
+                        params);
+
         return Map.of("count", count);
+
+    }
+
+
+    @SuppressWarnings("unchecked")
+
+    private List<Map<String, Object>> select(
+
+            QueryDefinition def,
+
+            SelectRequest req) {
+
+        List<Object> params =
+
+                paramBinder.build(
+
+                        def.getParamOrder(),
+
+                        req.getParams());
+
+        return sqlRepository.selectMap(
+
+                def.getSql(),
+
+                params);
+
     }
 
     // SAVE
@@ -185,18 +251,18 @@ public class QueryController {
     //     return Map.of("data", id);
     // }
 
-    @Transactional
-    private Object executeRecyclePrices(QueryDefinition def, SelectRequest req){
-        Map<String, Object> params = req.getParams();
+    // @Transactional
+    // private Object executeRecyclePrices(QueryDefinition def, SelectRequest req){
+    //     Map<String, Object> params = req.getParams();
 
-        List<Map<String, Object>> prices = (List<Map<String, Object>>) params.get("prices");
-        Long makerId = (Long) params.get("recycleMakerId");
-        for(Map<String, Object> item : prices){
-            SelectRequest priceReq = createRecyclePriceEntity(makerId, item, req);
-            executeSave(def, priceReq);
-        }
-        return Map.of("count", 1);
-    }
+    //     List<Map<String, Object>> prices = (List<Map<String, Object>>) params.get("prices");
+    //     Long makerId = (Long) params.get("recycleMakerId");
+    //     for(Map<String, Object> item : prices){
+    //         SelectRequest priceReq = createRecyclePriceEntity(makerId, item, req);
+    //         executeSave(def, priceReq);
+    //     }
+    //     return Map.of("count", 1);
+    // }
 
     // private SelectRequest createRecycleMakerEntity(SelectRequest req){
     //     Map<String, Object> params = req.getParams();
@@ -217,36 +283,228 @@ public class QueryController {
     //     return request;
     // }
 
-    private SelectRequest createRecyclePriceEntity(Long id, Map<String, Object> item, SelectRequest req){
-        Map<String, Object> params = req.getParams();
-        String editor = (String) params.getOrDefault("editor", "system");
+    // private SelectRequest createRecyclePriceEntity(Long id, Map<String, Object> item, SelectRequest req){
+    //     Map<String, Object> params = req.getParams();
+    //     String editor = (String) params.getOrDefault("editor", "system");
 
-        Map<String,Object> insert = new HashMap<>();
-        insert.put("recycleMakerId", id);
-        insert.put("recycleItemId", item.get("recycleItemId"));
-        insert.put("price", item.get("price"));
-        insert.put("taxPrice", item.get("taxPrice"));
-        insert.put("state", State.INITIAL.getCode());
-        insert.put("editor", editor);
+    //     Map<String,Object> insert = new HashMap<>();
+    //     insert.put("recycleMakerId", id);
+    //     insert.put("recycleItemId", item.get("recycleItemId"));
+    //     insert.put("price", item.get("price"));
+    //     insert.put("taxPrice", item.get("taxPrice"));
+    //     insert.put("state", State.INITIAL.getCode());
+    //     insert.put("editor", editor);
 
-        SelectRequest request = new SelectRequest();
-        request.setQueryId("recyclePriceSave");
-        request.setParams(insert);
-        return request;
+    //     SelectRequest request = new SelectRequest();
+    //     request.setQueryId("recyclePriceSave");
+    //     request.setParams(insert);
+    //     return request;
+    // }
+
+    private Object executeRecyclePriceList(
+            QueryDefinition def,
+            SelectRequest req) {
+
+        List<Map<String, Object>> records =
+                select(def, req);
+
+        Map<Long, Map<String, Object>> makers =
+                new LinkedHashMap<>();
+
+        for (Map<String, Object> record : records) {
+
+            Long makerId =
+                    ((Number) record.get("recycleMakerId"))
+                            .longValue();
+
+            Map<String, Object> row =
+                    makers.computeIfAbsent(
+                            makerId,
+                            id -> {
+
+                                Map<String, Object> r =
+                                        new LinkedHashMap<>();
+
+                                r.put(
+                                    "recycleMakerId",
+                                    id);
+
+                                r.put(
+                                    "code",
+                                    record.get("code"));
+
+                                r.put(
+                                    "name",
+                                    record.get("name"));
+
+                                r.put(
+                                    "kana",
+                                    record.get("kana"));
+
+                                return r;
+                            });
+
+            Object itemObj =
+                    record.get("recycleItemId");
+
+            if(itemObj == null){
+                continue;
+            }
+
+            Long itemId =
+                    ((Number)itemObj)
+                            .longValue();
+
+            row.put(
+                    "price_" + itemId,
+                    record.get("price"));
+        }
+        return Map.of(
+                "data",
+                new ArrayList<>(makers.values()));
     }
 
-    private void putIfPresent(
-        Map<String, Object> target,
-        String key,
-        Map<String, Object> source
-    ){
-        Object value = source.get(key);
-        if(value == null) return;
+    private Object executeRecyclePriceDetail(
+            QueryDefinition def,
+            SelectRequest req) {
 
-        if(value instanceof String str && str.isBlank()){
-            return;
+        List<Map<String,Object>> records =
+                select(def, req);
+
+        if(records.isEmpty()){
+            return Map.of(
+                "data",
+                List.of());
         }
 
-        target.put(key, value);
+        Map<String,Object> row =
+                new LinkedHashMap<>();
+
+        Map<String,Object> first =
+                records.get(0);
+
+        row.put(
+            "recycleMakerId",
+            first.get("recycleMakerId"));
+
+        row.put(
+            "name",
+            first.get("name"));
+
+        for(Map<String,Object> record : records){
+
+            Object itemObj =
+                    record.get("recycleItemId");
+
+            if(itemObj == null){
+                continue;
+            }
+
+            int itemId =
+                    ((Number)itemObj)
+                        .intValue();
+
+            row.put(
+                "price" + itemId,
+                record.get("price"));
+
+            row.put(
+                "recyclePriceId" + itemId,
+                record.get("recyclePriceId"));
+        }
+
+        return Map.of(
+            "data",
+            List.of(row));
     }
+
+    @SuppressWarnings("unchecked")
+    private Object executeRecyclePriceSave(
+            QueryDefinition def,
+            SelectRequest req) {
+
+        Map<String, Object> params =
+                req.getParams();
+
+        String editor =
+                (String) params.getOrDefault(
+                        "editor",
+                        "system");
+
+        List<Map<String, Object>> details =
+                (List<Map<String, Object>>)
+                        params.get("details");
+
+        int count = 0;
+
+        for (Map<String, Object> detail : details) {
+
+            Long id =
+                detail.get("recyclePriceId") == null
+                    ? null
+                    : ((Number) detail.get(
+                            "recyclePriceId"))
+                            .longValue();
+
+            BigDecimal price =
+                detail.get("price") == null
+                    ? BigDecimal.ZERO
+                    : new BigDecimal(
+                            detail.get("price")
+                                .toString());
+
+            if (id == null) {
+
+                if (price.compareTo(
+                        BigDecimal.ZERO) > 0) {
+
+                    baseRepository.insert(
+                        Tables.RECYCLE_PRICE_BY_IDS,
+                        detail,
+                        editor);
+
+                    count++;
+                }
+
+                continue;
+            }
+
+            if (price.compareTo(
+                    BigDecimal.ZERO) <= 0) {
+
+                baseRepository.deleteByIds(
+                    Tables.RECYCLE_PRICE_BY_IDS,
+                    List.of(id),
+                    editor);
+
+                count++;
+
+                continue;
+            }
+
+            count += baseRepository.update(
+                Tables.RECYCLE_PRICE_BY_IDS,
+                detail,
+                editor);
+        }
+
+        return Map.of(
+                "count",
+                count);
+    }
+
+    // private void putIfPresent(
+    //     Map<String, Object> target,
+    //     String key,
+    //     Map<String, Object> source
+    // ){
+    //     Object value = source.get(key);
+    //     if(value == null) return;
+
+    //     if(value instanceof String str && str.isBlank()){
+    //         return;
+    //     }
+
+    //     target.put(key, value);
+    // }
 }

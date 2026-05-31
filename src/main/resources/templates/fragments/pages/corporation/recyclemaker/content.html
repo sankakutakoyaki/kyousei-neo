@@ -6,6 +6,7 @@
         <ul class="tab-menu">
             <li class="tab-menu-item is-active" data-action="tab" data-group="recyclemaker-tabs" data-tab="tab-01">略称</li>
             <li class="tab-menu-item" data-action="tab" data-group="recyclemaker-tabs" data-tab="tab-02">製造業者</li>
+            <li class="tab-menu-item" data-action="tab" data-group="recyclemaker-tabs" data-tab="tab-03">料金</li>
         </ul>
         <div class="tab-panel is-show" id="tab-01" data-tab-content="recyclemaker-tabs">
             <div class="table-area" data-controller="recycleMaker">
@@ -19,6 +20,13 @@
                 <header th:replace="~{fragments/pages/corporation/recyclemaker/header :: header02Fragment()}"></header>
                 <section th:replace="~{fragments/table/body :: normalFragment('table-header-02', 'table-02')}"></section>
                 <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-02')}"></footer>
+            </div>
+        </div>
+        <div class="tab-panel" id="tab-03" data-tab-content="recyclemaker-tabs">
+            <div class="table-area" data-controller="recyclePrice">
+                <header th:replace="~{fragments/pages/corporation/recyclemaker/header :: header03Fragment()}"></header>
+                <section th:replace="~{fragments/table/body :: normalFragment('table-header-03', 'table-03')}"></section>
+                <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-03')}"></footer>
             </div>
         </div>
     </div>
@@ -35,6 +43,13 @@
                 <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '製造業者登録'} })}"></header>
                 <section th:replace="~{fragments/pages/corporation/recyclemaker/form :: form02Fragment()}"></section>
                 <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-02' } })}"></footer>
+            </div>
+        </form>
+        <form id="form-03" class="form-dialog none" data-controller="recyclePrice" data-key="recycle-price-id">
+            <div class="dialog-main">
+                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': 'リサイクル料登録'} })}"></header>
+                <section th:replace="~{fragments/pages/corporation/recyclemaker/form :: form03Fragment()}"></section>
+                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-03' } })}"></footer>
             </div>
         </form>
     </div>
