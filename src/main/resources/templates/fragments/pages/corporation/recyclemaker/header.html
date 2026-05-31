@@ -12,3 +12,43 @@
         )}"></th:block>
     </div>
 </th:block>
+
+<th:block th:fragment="header02Fragment()">
+    <div id="header-02" class="flex-area pc-style">
+        <div>
+            <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-02')}"></th:block>
+            <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${
+                {
+                    'add': 'add-btn-02',
+                    'form': 'form-02',
+                    'delete': 'delete-btn-02',
+                    'download': 'download-btn-02',
+                    'reload': 'reload-btn-02'
+                }}
+            )}"></th:block>
+        </div>
+        <div th:id="code-area" class="flex-area" data-resolve="company" data-enterfocus="code-area">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'コード',
+                    'id':'code02',
+                    'name':'name02',
+                    'resolveId':true,
+                    'index':1
+                }}
+            )}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'略称', 
+                    'id':'code03', 
+                    'name':'name03',
+                    'action':'filter',
+                    'combo': 'recyclemakerComboList',
+                    'top': '-----',
+                    'key':'code',
+                    'resolveName':true
+                }}
+            )}"></th:block>
+        </div>
+    </div>
+</th:block>

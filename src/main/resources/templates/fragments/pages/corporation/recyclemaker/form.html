@@ -15,8 +15,7 @@
                 }
             })}"></th:block>
         </div>
-        <!-- 名称 -->
-        <!-- かな -->
+        <!-- 略称 -->
         <div class="form-row">
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
@@ -25,6 +24,9 @@
                     'index': 2
                 }
             })}"></th:block>
+        </div>
+        <!-- かな -->
+        <div class="form-row">
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
                     'text': 'かな', 
@@ -33,15 +35,57 @@
                 }
             })}"></th:block>
         </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="form02Fragment()">
+    <div class="dialog-content" data-enterfocus="form-02">
         <!-- 略称 -->
+        <div class="form-row"
+                data-resolve="query"
+                data-query-id="recycleMakerList"
+                data-param-builder="makerParams"
+                data-id-key="recycleMakerId"
+                data-name-key="name"
+                data-value-key="recycleMakerId">
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                { 
+                    'text': '略称', 
+                    'combo': 'recyclemakerComboList',
+                    'top': '-----',
+                    'key': 'code',
+                    'name': 'code', 
+                    'resolveName':true,
+                    'index': 1,
+                    'zeroToNull': true,
+                    'submit':'none'
+                }
+            })}"></th:block>
+            <input
+                type="hidden"
+                data-role="hidden-id"
+                name="recycle-maker-id"
+                data-key="recycle-maker-id">
+        </div>
+        <!-- 製造業者等名 -->
         <div class="form-row">
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
-                    'text': '略称', 
-                    'name': 'abbr-name', 
-                    'index': 4
+                    'text': '製造業者等名', 
+                    'name': 'name', 
+                    'index': 2
                 }
             })}"></th:block>
         </div>
+        <!-- かな -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': 'かな', 
+                    'name': 'kana', 
+                    'index': 3
+                }
+            })}"></th:block>            
+        </div>
     </div>
-</th:block>
+</th:block>   

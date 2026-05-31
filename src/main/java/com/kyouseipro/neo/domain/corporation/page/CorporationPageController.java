@@ -15,6 +15,7 @@ import com.kyouseipro.neo.common.enums.code.EmployeeCategory;
 import com.kyouseipro.neo.common.enums.code.Gender;
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.util.EnumUtil;
+import com.kyouseipro.neo.domain.business.api.recycle.RecycleService;
 import com.kyouseipro.neo.domain.corporation.api.company.CompanyService;
 import com.kyouseipro.neo.domain.corporation.api.office.OfficeService;
 
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class CorporationPageController extends BaseController {
     private final CompanyService companyService;
     private final OfficeService officeService;
+    private final RecycleService recycleService;
 
     /**
 	 * 取引先
@@ -96,14 +98,10 @@ public class CorporationPageController extends BaseController {
     public Map<String, Object> initRecycleMaker() {
         return Map.of(
             "common", Map.of(
-                "state", EnumUtil.toMap(State.class),
-                "companyCategory", EnumUtil.toMap(CompanyCategory.class),
-                "employeeCategory", EnumUtil.toMap(EmployeeCategory.class)
+                "state", EnumUtil.toMap(State.class)
             ),
             "page", Map.of(
-                "companyComboList", companyService.findComboByCategory(CompanyCategory.PARTNER.getCode()),
-                "genderComboList", EnumUtil.toCombo(Gender.class),
-                "bloodTypeComboList", EnumUtil.toCombo(BloodType.class)
+                "recyclemakerComboList", recycleService.findMakerCombo()
             )
         );
     }

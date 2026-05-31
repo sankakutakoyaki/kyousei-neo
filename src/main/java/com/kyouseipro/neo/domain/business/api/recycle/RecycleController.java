@@ -22,4 +22,10 @@ public class RecycleController {
     public List<ComboDto> itemCombo() {
         return recycleService.findItemCombo();
     }
+
+    @GetMapping("/maker/combo")
+    @ResponseBody
+    public List<ComboDto> makerCombo() {
+        return recycleService.findMakerCombo();
+    }
 }

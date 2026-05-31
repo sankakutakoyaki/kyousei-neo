@@ -13,7 +13,11 @@ import lombok.RequiredArgsConstructor;
 public class RecycleService {
     private final RecycleRepository recycleRepository;
 
-        public List<ComboDto> findItemCombo() {
+    public List<ComboDto> findItemCombo() {
         return recycleRepository.findItemCombo();
+    }
+
+    public List<ComboDto> findMakerCombo() {
+        return recycleRepository.findMakerCombo();
     }
 }

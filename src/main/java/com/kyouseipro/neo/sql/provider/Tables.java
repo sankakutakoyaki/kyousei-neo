@@ -22,6 +22,9 @@ public class Tables {
         public static final TableMeta RECYCLE_MAKER_BY_IDS =
             new TableMeta("recycle_makers", "recycleMakerId", "state", "version");
 
+        public static final TableMeta RECYCLE_MANUFACTURER_BY_IDS =
+            new TableMeta("recycle_manufacturers", "recycleManufacturerId", "state", "version");
+
         public static final TableMeta RECYCLE_PRICE_BY_IDS =
             new TableMeta("recycle_prices", "recyclePriceId", "state", "version");
 }

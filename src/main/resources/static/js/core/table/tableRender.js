@@ -28,7 +28,7 @@ export function renderTable(table, config, list){
 
     // フッター
     if(config.footerId){
-        createTableFooter(config.footerId, list);
+        createTableFooter(config.footerId, list, config.totalCount);
     }
     setPageTopButton(table);
     // スクロール
@@ -137,12 +137,18 @@ export function renderHeader(tableEl,config,list){
 }
 
  // フッターの件数項目を更新する
-export function createTableFooter(footerId, list) {
+export function createTableFooter(footerId, list, totalCount) {
     clearElement(footerId);
     const footer = document.getElementById(footerId);
     if (!footer) return;
-    const num = list == null ? 0: list.length;
-    footer.insertAdjacentHTML('beforeend', '<span>' + num + '件 : ' + formatDate(new Date(), "yyyy-MM-dd HH:mm") + ' 現在</span>');
+    // const num = list == null ? 0: list.length;
+    const viewCount = list?.length ?? 0;
+    // const totalCount = totalList?.length ?? 0;
+    footer.insertAdjacentHTML('beforeend', `<span>
+        ${viewCount}/${totalCount}件 :
+        ${formatDate(new Date(), "yyyy-MM-dd HH:mm")}
+        現在
+    </span>`);
 }
 
 // テーブルにスクロールバーが表示された時にクラスを付与する

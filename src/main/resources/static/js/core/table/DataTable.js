@@ -5,7 +5,7 @@ import { renderTable } from "./tableRender.js";
 import { filterFactory } from "../../util/filterFactory.js";
 
 const defaultModel = {
-    pageSize: 100,
+    pageSize: 50,
     filters: {
         keyword: filterFactory.keyword()
     }
@@ -108,7 +108,8 @@ export class DataTable {
                 rowClass: this.rowClass,
                 controller: this.controller,
                 onRowClick: this.onRowClick,
-                onDoubleClick: this.onDoubleClick
+                onDoubleClick: this.onDoubleClick,
+                totalCount: this.model.getTotalCount()
             },
             this.model.getViewData()
         );
@@ -211,11 +212,11 @@ export class DataTable {
             const nearBottom =
                 wrapper.scrollTop +
                 wrapper.clientHeight >=
-                wrapper.scrollHeight - 100;
+                wrapper.scrollHeight - 50;
             if(!nearBottom) return;
 
             loading = true;
-            this.model.pageSize += 100;
+            this.model.pageSize += 50;
             this.reload();
             requestAnimationFrame(() => {
                 loading = false;

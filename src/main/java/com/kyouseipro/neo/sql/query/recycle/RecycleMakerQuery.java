@@ -15,7 +15,7 @@ public class RecycleMakerQuery {
             WHERE r.state = ?
             ORDER BY
                 CASE WHEN r.kana IS NULL OR r.kana = '' THEN 1 ELSE 0 END,
-                r.kana, r.abbr_name,
+                r.kana,
                 CASE
                     WHEN r.name LIKE '(株)%'
                         THEN SUBSTRING(r.name, 4, LEN(r.name))
@@ -58,8 +58,7 @@ public class RecycleMakerQuery {
         List<CsvColumn> columns = List.of(
             new CsvColumn("code", "コード"),
             new CsvColumn("groupName", "グループ"),
-            new CsvColumn("name", "製造業者等名"),
-            new CsvColumn("abbrName", "略称"),
+            new CsvColumn("name", "略称"),
             new CsvColumn("itemCode", "コード"),
             new CsvColumn("itemName", "品目"),
             new CsvColumn("price", "料金")

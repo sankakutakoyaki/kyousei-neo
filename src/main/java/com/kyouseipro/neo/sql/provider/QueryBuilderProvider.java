@@ -9,7 +9,6 @@ import com.kyouseipro.neo.common.enums.code.RecycleCategory;
 import com.kyouseipro.neo.common.enums.system.QueryId;
 import com.kyouseipro.neo.common.enums.util.EnumUtil;
 import com.kyouseipro.neo.interfaces.sql.QueryBuilder;
-import com.kyouseipro.neo.sql.query.recycle.RecycleMakerQuery;
 import com.kyouseipro.neo.sql.query.recycle.RecycleQuery;
 
 @Component
@@ -22,11 +21,6 @@ public class QueryBuilderProvider {
             RecycleCategory category = categoryInt == null ? null: EnumUtil.of(RecycleCategory.class, categoryInt);
             return RecycleQuery.recycleList(category);
         });
-
-        builders.put(QueryId.RECYCLE_MAKER_LIST, req -> {
-            return RecycleMakerQuery.recycleMakerList();
-        });
-
 
         // ここに追加
 

@@ -54,6 +54,13 @@ public enum QueryId {
     RECYCLE_MAKER_DELETE_BY_IDS("recycleMakerDeleteByIds"),
     RECYCLE_MAKER_SAVE("recycleMakerSave"),
 
+    // ===== RecycleMaker =====
+    RECYCLE_MANUFACTURER_DETAIL("recycleManufacturerDetail"),
+    RECYCLE_MANUFACTURER_LIST("recycleManufacturerList"),
+    RECYCLE_MANUFACTURER_CSV("recycleManufacturerCsv"),
+    RECYCLE_MANUFACTURER_DELETE_BY_IDS("recycleManufacturerDeleteByIds"),
+    RECYCLE_MANUFACTURER_SAVE("recycleManufacturerSave"),
+
     // ===== RecyclePrice =====
     RECYCLE_PRICE_DETAIL("recyclePriceDetail"),
     RECYCLE_PRICE_LIST("recyclePriceList"),

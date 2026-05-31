@@ -136,4 +136,8 @@ export class TableModel {
 
         this.clearSelection();
     }
+
+    getTotalCount(){
+        return this.originData.length;
+    }
 }

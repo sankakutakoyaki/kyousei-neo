@@ -46,6 +46,28 @@ public class RecycleRepository {
         );
     }
 
+    public List<ComboDto> findMakerCombo() {
+        String sql = """
+            SELECT *
+            FROM recycle_makers
+            WHERE state = ? ORDER BY code
+        """;
+
+        return sqlRepository.queryList(
+            sql,
+            (ps, p) -> {
+                ps.setInt(1, State.INITIAL.getCode());
+            },
+            rs -> {
+                ComboDto c = new ComboDto(
+                    rs.getLong("code"),
+                    rs.getString("name"),
+                    rs.getLong("recycle_maker_id"));
+                return c;
+            }
+        );
+    }
+
     public int updateRecycleDelivery(
             TableMeta meta,
             Map<String,Object> req,
