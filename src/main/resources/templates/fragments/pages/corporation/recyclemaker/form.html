@@ -103,13 +103,7 @@
         <input type="hidden" name="recycle-price-id-8">
         <!-- 略称 -->
         <div class="form-row">
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                { 
-                    'name': 'name', 
-                    'index': 1,
-                    'disabled':true
-                }
-            })}"></th:block>
+            <div>略称：<span data-key="name"></span></div>
         </div>
         <!-- タイトル -->
         <div class="form-row">
@@ -138,6 +132,8 @@
                     'validate': 'currency'
                 }
             })}"></th:block>
+            <div></div>
+            <div></div>
         </div>
         <!-- TV -->
         <div class="form-row">
@@ -213,6 +209,8 @@
                     'validate': 'currency'
                 }
             })}"></th:block>
+            <div></div>
+            <div></div>
         </div>
     </div>
 </th:block>

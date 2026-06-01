@@ -22,6 +22,7 @@ export class DataTable {
         this.rowClass = config.rowClass;
         this.onRowClick = config.onRowClick;
         this.onDoubleClick = config.onDoubleClick;
+        this.currentRowId = null;
         this.buildParams = config.buildParams;
         this.buildCsvParams = config.buildCsvParams;
         this.repository = config.repository;
@@ -44,6 +45,7 @@ export class DataTable {
         }
         this.initEvents();
         this.initInfiniteScroll();
+        this.initOutsideClick();
     }
 
     // 状態操作
@@ -179,6 +181,12 @@ export class DataTable {
             }
             const row = e.target.closest("[data-id]");
             if(!row) return;
+            // 選択解除
+            this.tableEl.querySelectorAll(".selected").forEach(r => r.classList.remove("selected"));
+            // 選択
+            row.classList.add("selected");
+            this.currentRowId = row.dataset.id;
+            this.controller?.updateButtons();
 
             if(this.onRowClick){
                 const id = row.dataset.id;
@@ -224,10 +232,48 @@ export class DataTable {
         });
     }
 
+    initOutsideClick(){
+
+        document.addEventListener("click", (e) => {
+
+            const table = this.tableEl.closest(".normal-table");
+
+            if(table?.contains(e.target)){
+
+                return;
+
+            }
+
+            this.clearCurrentRow();
+
+        });
+
+    }
+
     scrollToRow(id){
         const row = this.tableEl.querySelector(`[data-id="${id}"]`);
         if(!row) return;
 
         row.scrollIntoView({behavior: "smooth", block: "center"});
+    }
+
+    getCurrentRowId(){
+
+        return this.currentRowId;
+
+    }
+
+    clearCurrentRow(){
+
+        this.currentRowId = null;
+
+        this.tableEl
+
+            .querySelectorAll(".selected")
+
+            .forEach(r => r.classList.remove("selected"));
+
+        this.controller?.updateButtons();
+
     }
 }

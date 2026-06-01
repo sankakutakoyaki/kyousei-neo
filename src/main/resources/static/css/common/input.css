@@ -32,6 +32,13 @@
     width: 8rem;
 }
 
+.normal-input.readonly-view {
+    border: none;
+    background: transparent;
+    pointer-events: none;
+    padding: 0;
+}
+
 /******************************************************************************************************* チェックボックス */
 
 input.normal-chk[type="checkbox"] {

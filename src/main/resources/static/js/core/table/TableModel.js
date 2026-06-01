@@ -116,6 +116,24 @@ export class TableModel {
         }
     }
 
+    getSelectedItem(){
+
+        const row = this.tableEl.querySelector(
+
+            "tr.selected"
+
+        );
+
+        if(!row) return null;
+
+        return this.model.findById(
+
+            row.dataset.id
+
+        );
+
+    }
+
     getSelectedIds(){
         return Array.from(this.selected);
     }

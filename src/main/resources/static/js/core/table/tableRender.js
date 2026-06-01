@@ -33,7 +33,8 @@ export function renderTable(table, config, list){
     setPageTopButton(table);
     // スクロール
     const header = wrapper?.querySelector('[name="table-header"]');
-    if(header) toggleScrollbar(header);
+    if(header) toggleScrollbar(table);
+    // if(header) toggleScrollbar(header);
 }
 
 export function createRow(tr, item, config){
@@ -157,12 +158,18 @@ export function toggleScrollbar(element, className = 'has-scrollbar') {
 
     const hasScrollbar = element.scrollHeight > element.clientHeight;
 
-    const tbl = element.closest('table');
+    // const tbl = element.closest('table');
+    const tbl = element.closest('.normal-table');
     if (!tbl) return;
-    
+
+    // const header = tbl.querySelector('[name="table-header"]');
+    // if (!header) return;
+
     if (hasScrollbar) {
         tbl.classList.add(className);
+        // header.classList.add(className);
     } else {
         tbl.classList.remove(className);
+        // header.classList.remove(className);
     }
 }

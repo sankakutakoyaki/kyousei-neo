@@ -1,6 +1,7 @@
 "use strict"
 
 import { getController } from "../../../applcation/controllerRegistry.js";
+import { toggleScrollbar } from "../../table/tableRender.js";
 
 export function handleTab(event, el){
 
@@ -23,5 +24,15 @@ export function handleTab(event, el){
         const name = area?.dataset.controller;
         const controller = getController(name);
         controller?.updateButtons();
+
+        requestAnimationFrame(() => {
+
+            target
+
+                .querySelectorAll(".scroll-area")
+
+                .forEach(el => toggleScrollbar(el));
+
+        });
     }
 }

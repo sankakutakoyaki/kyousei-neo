@@ -8,6 +8,7 @@ import { openMsgDialog, closeMsgDialog, openConfirmDialog } from "../core/ui/dia
 
 const defaultPageConditions = {
     Edit: (c) => c.hasSelection(),
+    singleEdit: (c) => c.hasCurrentRow(),
     bulkEdit: (c) => c.hasSelection(),
     delete: (c) => c.hasSelection(),
     download: (c) => c.hasSelection(),
@@ -45,6 +46,29 @@ const defaultActions = {
         if(!form) return;
         await form.save(document.getElementById(form.formId));
     },
+
+
+    singleEdit: async (c) => {
+
+        const id = c.getCurrentRowId();
+
+        if(!id){
+
+            return;
+
+        }
+
+        await c.openForm(
+
+            "detail",
+
+            id,
+
+            { bulkMode:false }
+
+        );
+
+    }
 };
 
 const formAction = (name, options={}) =>
@@ -373,5 +397,13 @@ export class PageController {
 
     canSave() {
         return this.config.canSave?.();
+    }
+
+    hasCurrentRow(){
+        return !!this.dataTable?.getCurrentRowId();
+    }
+
+    getCurrentRowId(){
+        return this.dataTable?.getCurrentRowId();
     }
 }

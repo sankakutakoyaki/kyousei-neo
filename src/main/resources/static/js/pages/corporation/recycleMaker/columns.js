@@ -184,7 +184,22 @@ export function createRecyclePriceColumns(items){
 
                 return Number(v).toLocaleString("ja-JP");
 
-            }
+            },
+            class:
+
+                item.recycleItemId <= 1
+
+                    ? "aircon-column"
+
+                    : item.recycleItemId <= 3
+
+                    ? "tv-column"
+
+                    : item.recycleItemId <= 5
+
+                    ? "fridge-column"
+
+                    : "washer-column"
 
         }))
 

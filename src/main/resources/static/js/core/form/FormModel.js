@@ -81,8 +81,16 @@ export const FormModel = {
                 if("zeroToNull" in dataset && (v === 0 || v === "0")){
                     v = null;
                 }
-                // el.value = v ?? "";
-                el.value = v != null ? String(v): "";
+                const text = v != null ? String(v) : "";
+                if(
+                    el instanceof HTMLInputElement ||
+                    el instanceof HTMLSelectElement ||
+                    el instanceof HTMLTextAreaElement
+                ){
+                    el.value = text;
+                }else{
+                    el.textContent = text;
+                }
             }
         });
     },

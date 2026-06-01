@@ -23,7 +23,7 @@ public class RecycleItemQuery {
 
             WHERE state = ?
 
-            ORDER BY code
+            ORDER BY display_order
 
             """,
 
