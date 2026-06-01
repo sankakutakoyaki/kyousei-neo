@@ -16,22 +16,13 @@ export const formatters = {
     },
 
     currency: (v) => {
-
         if(v == null || v === "") return "";
-
         const num = Number(
-
             String(v).replace(/,/g, "")
-
         );
-
         if(Number.isNaN(num)){
-
             return v;
-
         }
-
         return num.toLocaleString("ja-JP");
-
     }
 };

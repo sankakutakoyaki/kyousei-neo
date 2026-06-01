@@ -24,15 +24,8 @@ export function handleTab(event, el){
         const name = area?.dataset.controller;
         const controller = getController(name);
         controller?.updateButtons();
-
         requestAnimationFrame(() => {
-
-            target
-
-                .querySelectorAll(".scroll-area")
-
-                .forEach(el => toggleScrollbar(el));
-
+            target.querySelectorAll(".scroll-area").forEach(el => toggleScrollbar(el));
         });
     }
 }

@@ -6,7 +6,6 @@ import { formatDate } from "../../util/time.js";
 import { normalizeValue } from "../behavior/valueNormalizer.js";
 import { convertKey } from "../../util/keyCaseConverter.js";
 
-
 export function renderTable(table, config, list){
     // 初期化
     table.innerHTML = "";
@@ -142,9 +141,7 @@ export function createTableFooter(footerId, list, totalCount) {
     clearElement(footerId);
     const footer = document.getElementById(footerId);
     if (!footer) return;
-    // const num = list == null ? 0: list.length;
     const viewCount = list?.length ?? 0;
-    // const totalCount = totalList?.length ?? 0;
     footer.insertAdjacentHTML('beforeend', `<span>
         ${viewCount}/${totalCount}件 :
         ${formatDate(new Date(), "yyyy-MM-dd HH:mm")}
@@ -158,18 +155,12 @@ export function toggleScrollbar(element, className = 'has-scrollbar') {
 
     const hasScrollbar = element.scrollHeight > element.clientHeight;
 
-    // const tbl = element.closest('table');
     const tbl = element.closest('.normal-table');
     if (!tbl) return;
 
-    // const header = tbl.querySelector('[name="table-header"]');
-    // if (!header) return;
-
     if (hasScrollbar) {
         tbl.classList.add(className);
-        // header.classList.add(className);
     } else {
         tbl.classList.remove(className);
-        // header.classList.remove(className);
     }
 }

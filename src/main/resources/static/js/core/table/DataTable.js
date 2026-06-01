@@ -233,21 +233,11 @@ export class DataTable {
     }
 
     initOutsideClick(){
-
         document.addEventListener("click", (e) => {
-
             const table = this.tableEl.closest(".normal-table");
-
-            if(table?.contains(e.target)){
-
-                return;
-
-            }
-
+            if(table?.contains(e.target)) return;
             this.clearCurrentRow();
-
         });
-
     }
 
     scrollToRow(id){
@@ -258,22 +248,12 @@ export class DataTable {
     }
 
     getCurrentRowId(){
-
         return this.currentRowId;
-
     }
 
     clearCurrentRow(){
-
         this.currentRowId = null;
-
-        this.tableEl
-
-            .querySelectorAll(".selected")
-
-            .forEach(r => r.classList.remove("selected"));
-
+        this.tableEl.querySelectorAll(".selected").forEach(r => r.classList.remove("selected"));
         this.controller?.updateButtons();
-
     }
 }

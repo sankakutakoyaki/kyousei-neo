@@ -160,14 +160,10 @@ td.aircon-column,
     }
 }
 
-.form-row > :nth-child(3) {
-
+#form-03 .form-row > :nth-child(3) {
     background: #eef8ff;
-
 }
 
-.form-row > :nth-child(4) {
-
+#form-03 .form-row > :nth-child(4) {
     background: #fff3e6;
-
 }

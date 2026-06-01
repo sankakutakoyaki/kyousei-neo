@@ -1,6 +1,7 @@
 "use strict"
 
 import { convertKey } from "../../util/keyCaseConverter.js";
+
 export class TableModel {
     constructor(config){
         this.originData = [];
@@ -117,21 +118,10 @@ export class TableModel {
     }
 
     getSelectedItem(){
-
-        const row = this.tableEl.querySelector(
-
-            "tr.selected"
-
-        );
-
+        const row = this.tableEl.querySelector("tr.selected");
         if(!row) return null;
 
-        return this.model.findById(
-
-            row.dataset.id
-
-        );
-
+        return this.model.findById(row.dataset.id);
     }
 
     getSelectedIds(){
@@ -144,14 +134,12 @@ export class TableModel {
 
     removeByIds(ids){
         const idSet = new Set(ids.map(String));
-
         this.originData = this.originData.filter(
             v => !idSet.has(String(v[this.idKey]))
         );
         this.index = new Map(
             this.originData.map(v => [String(v[this.idKey]), v])
         );
-
         this.clearSelection();
     }
 

@@ -318,20 +318,10 @@ export class FormController {
     }
 
     setEditMode(editable){
-
-        this.formEl
-
-            .querySelectorAll("[data-editable]")
-
-            .forEach(el => {
-
-                el.readOnly = !editable;
-
-                el.classList.toggle("readonly-view", !editable);
-
-                el.classList.toggle("edit-mode", editable);
-
-            });
-
+        this.formEl.querySelectorAll("[data-editable]").forEach(el => {
+            el.readOnly = !editable;
+            el.classList.toggle("readonly-view", !editable);
+            el.classList.toggle("edit-mode", editable);
+        });
     }
 }

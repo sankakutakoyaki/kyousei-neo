@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.system.QueryId;
 import com.kyouseipro.neo.common.enums.system.QueryType;
 import com.kyouseipro.neo.domain.business.api.recycle.RecycleRepository;
@@ -23,6 +22,7 @@ import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.QueryBuilderProvider;
 import com.kyouseipro.neo.sql.provider.SqlProvider;
 import com.kyouseipro.neo.sql.provider.Tables;
+import com.kyouseipro.neo.sql.provider.recycle.QueryHandlerProvider;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 import com.kyouseipro.neo.sql.service.CsvService;
@@ -41,6 +41,7 @@ public class QueryController {
     private final CsvService csvService;
     private final QueryBuilderProvider queryBuilderProvider;
     private final RecycleRepository recycleRepository;
+    private final QueryHandlerProvider handlerProvider;
 
     @PostMapping("/query")
     public Object request(@RequestBody SelectRequest req) {
@@ -61,86 +62,30 @@ public class QueryController {
             case UPDATE -> executeUpdate(def, req);
             case DELETE_BY_IDS -> executeDeleteByIds(def, req);
             case CSV -> executeCsv(def, req);
-            case RECYCLE_DELIVERY_SAVE,
-                 RECYCLE_SHIPPING_SAVE,
-                 RECYCLE_LOSS_SAVE
-                -> executeRecycle(def, req);
-            // case RECYCLE_MAKER_SAVE -> executeRecycleMaker(def, req);
-            case RECYCLE_PRICE_LIST -> executeRecyclePriceList(def, req);
-            case RECYCLE_PRICE_SAVE -> executeRecyclePriceSave(def, req);
-            case RECYCLE_PRICE_DETAIL -> executeRecyclePriceDetail(def, req);
+            // case RECYCLE_DELIVERY_SAVE,
+            //      RECYCLE_SHIPPING_SAVE,
+            //      RECYCLE_LOSS_SAVE
+            //     -> executeRecycle(def, req);
+            // case RECYCLE_PRICE_LIST -> executeRecyclePriceList(def, req);
+            // case RECYCLE_PRICE_SAVE -> executeRecyclePriceSave(def, req);
+            // case RECYCLE_PRICE_DETAIL -> executeRecyclePriceDetail(def, req);
+            default -> handlerProvider.get(def.getKind()).execute(def, req);
         };
     }
 
     // SQL
-    // private Object executeSql(QueryDefinition def, SelectRequest req) {
-    //     List<Object> params = paramBinder.build(def.getParamOrder(), req.getParams());
-    //     if (def.getType() == QueryType.SELECT) {
-    //         var result = sqlRepository.selectMap(def.getSql(), params);
-    //         return Map.of("data", result);
-    //     }
-    //     int count = sqlRepository.update(def.getSql(), params);
-    //     return Map.of("count", count);
-    // }
-    private Object executeSql(
-
-            QueryDefinition def,
-
-            SelectRequest req) {
-
+    private Object executeSql(QueryDefinition def, SelectRequest req) {
         if (def.getType() == QueryType.SELECT) {
-
-            return Map.of(
-
-                    "data",
-
-                    select(def, req));
-
+            return Map.of("data", select(def, req));
         }
-
-        List<Object> params =
-
-                paramBinder.build(
-
-                        def.getParamOrder(),
-
-                        req.getParams());
-
-        int count =
-
-                sqlRepository.update(
-
-                        def.getSql(),
-
-                        params);
-
+        List<Object> params = paramBinder.build(def.getParamOrder(), req.getParams());
+        int count = sqlRepository.update(def.getSql(), params);
         return Map.of("count", count);
-
     }
 
-
-    @SuppressWarnings("unchecked")
-
-    private List<Map<String, Object>> select(
-
-            QueryDefinition def,
-
-            SelectRequest req) {
-
-        List<Object> params =
-
-                paramBinder.build(
-
-                        def.getParamOrder(),
-
-                        req.getParams());
-
-        return sqlRepository.selectMap(
-
-                def.getSql(),
-
-                params);
-
+    private List<Map<String, Object>> select(QueryDefinition def, SelectRequest req) {
+        List<Object> params = paramBinder.build(def.getParamOrder(), req.getParams());
+        return sqlRepository.selectMap(def.getSql(), params);
     }
 
     // SAVE
@@ -209,301 +154,112 @@ public class QueryController {
         return csvService.execute(def, req);
     }
 
-    // RECYCLE
-    private Object executeRecycle(QueryDefinition def, SelectRequest req){
-        return switch(def.getKind()) {
-            case RECYCLE_DELIVERY_SAVE -> executeRecycleDelivery(def, req);
-            case RECYCLE_SHIPPING_SAVE -> executeRecycleShipping(def, req);
-            case RECYCLE_LOSS_SAVE -> executeRecycleLoss(def, req);
-            default ->
-                throw new IllegalStateException("未対応 recycle kind: " + def.getKind());
-        };
-    }
-
-        // 
-        // RECYCLE
-        private Object executeRecycleDelivery(QueryDefinition def, SelectRequest req) {
-            Map<String, Object> params = req.getParams();
-            String editor = (String) params.getOrDefault("editor", "system");
-            int count = recycleRepository.updateRecycleDelivery(def.getTableMeta(), params, editor);
-            return Map.of("count", count);
-        }
-        private Object executeRecycleShipping(QueryDefinition def, SelectRequest req) {
-            Map<String, Object> params = req.getParams();
-            String editor = (String) params.getOrDefault("editor", "system");
-            int count = recycleRepository.updateRecycleShipping(def.getTableMeta(), params, editor);
-            return Map.of("count", count);
-        }
-        private Object executeRecycleLoss(QueryDefinition def, SelectRequest req) {
-            Map<String, Object> params = req.getParams();
-            String editor = (String) params.getOrDefault("editor", "system");
-            int count = recycleRepository.updateRecycleLoss(def.getTableMeta(), params, editor);
-            return Map.of("count", count);
-        }
-
-    // // RECYCLE_MAKER
-    // @Transactional
-    // private Object executeRecycleMaker(QueryDefinition def, SelectRequest req){
-    //     SelectRequest maker = createRecycleMakerEntity(req);
-    //     executeSave(def, maker);
-    //     Long id = Long.parseLong(maker.getParams().get("recycleMakerId").toString());
-    //     return Map.of("data", id);
+    // // RECYCLE
+    // private Object executeRecycle(QueryDefinition def, SelectRequest req){
+    //     return switch(def.getKind()) {
+    //         case RECYCLE_DELIVERY_SAVE -> executeRecycleDelivery(def, req);
+    //         case RECYCLE_SHIPPING_SAVE -> executeRecycleShipping(def, req);
+    //         case RECYCLE_LOSS_SAVE -> executeRecycleLoss(def, req);
+    //         default ->
+    //             throw new IllegalStateException("未対応 recycle kind: " + def.getKind());
+    //     };
     // }
 
-    // @Transactional
-    // private Object executeRecyclePrices(QueryDefinition def, SelectRequest req){
-    //     Map<String, Object> params = req.getParams();
-
-    //     List<Map<String, Object>> prices = (List<Map<String, Object>>) params.get("prices");
-    //     Long makerId = (Long) params.get("recycleMakerId");
-    //     for(Map<String, Object> item : prices){
-    //         SelectRequest priceReq = createRecyclePriceEntity(makerId, item, req);
-    //         executeSave(def, priceReq);
-    //     }
-    //     return Map.of("count", 1);
-    // }
-
-    // private SelectRequest createRecycleMakerEntity(SelectRequest req){
+    // // 
+    // // RECYCLE
+    // private Object executeRecycleDelivery(QueryDefinition def, SelectRequest req) {
     //     Map<String, Object> params = req.getParams();
     //     String editor = (String) params.getOrDefault("editor", "system");
-
-    //     Map<String,Object> insert = new HashMap<>();
-    //     putIfPresent(insert, "code", params);
-    //     putIfPresent(insert, "name", params);
-    //     putIfPresent(insert, "kana", params);
-    //     putIfPresent(insert, "abbrName", params);
-    //     putIfPresent(insert, "group", params);
-    //     insert.put("state", State.INITIAL.getCode());
-    //     insert.put("editor", editor);
-
-    //     SelectRequest request = new SelectRequest();
-    //     request.setQueryId(req.getQueryId());
-    //     request.setParams(insert);
-    //     return request;
+    //     int count = recycleRepository.updateRecycleDelivery(def.getTableMeta(), params, editor);
+    //     return Map.of("count", count);
     // }
-
-    // private SelectRequest createRecyclePriceEntity(Long id, Map<String, Object> item, SelectRequest req){
+    // private Object executeRecycleShipping(QueryDefinition def, SelectRequest req) {
     //     Map<String, Object> params = req.getParams();
     //     String editor = (String) params.getOrDefault("editor", "system");
-
-    //     Map<String,Object> insert = new HashMap<>();
-    //     insert.put("recycleMakerId", id);
-    //     insert.put("recycleItemId", item.get("recycleItemId"));
-    //     insert.put("price", item.get("price"));
-    //     insert.put("taxPrice", item.get("taxPrice"));
-    //     insert.put("state", State.INITIAL.getCode());
-    //     insert.put("editor", editor);
-
-    //     SelectRequest request = new SelectRequest();
-    //     request.setQueryId("recyclePriceSave");
-    //     request.setParams(insert);
-    //     return request;
+    //     int count = recycleRepository.updateRecycleShipping(def.getTableMeta(), params, editor);
+    //     return Map.of("count", count);
+    // }
+    // private Object executeRecycleLoss(QueryDefinition def, SelectRequest req) {
+    //     Map<String, Object> params = req.getParams();
+    //     String editor = (String) params.getOrDefault("editor", "system");
+    //     int count = recycleRepository.updateRecycleLoss(def.getTableMeta(), params, editor);
+    //     return Map.of("count", count);
     // }
 
-    private Object executeRecyclePriceList(
-            QueryDefinition def,
-            SelectRequest req) {
+    // private Object executeRecyclePriceList(QueryDefinition def, SelectRequest req) {
+    //     List<Map<String, Object>> records = select(def, req);
+    //     Map<Long, Map<String, Object>> makers = new LinkedHashMap<>();
 
-        List<Map<String, Object>> records =
-                select(def, req);
+    //     for (Map<String, Object> record : records) {
+    //         Long makerId = ((Number) record.get("recycleMakerId")).longValue();
+    //         Map<String, Object> row = 
+    //             makers.computeIfAbsent(makerId, id -> {
+    //                 Map<String, Object> r = new LinkedHashMap<>();
+    //                 r.put("recycleMakerId", id);
+    //                 r.put("code", record.get("code"));
+    //                 r.put("name", record.get("name"));
+    //                 r.put("kana", record.get("kana"));
+    //                 return r;
+    //             });
 
-        Map<Long, Map<String, Object>> makers =
-                new LinkedHashMap<>();
+    //         Object itemObj = record.get("recycleItemId");
+    //         if(itemObj == null) continue;
 
-        for (Map<String, Object> record : records) {
+    //         Long itemId = ((Number)itemObj).longValue();
+    //         row.put("price_" + itemId, record.get("price"));
+    //     }
+    //     return Map.of("data", new ArrayList<>(makers.values()));
+    // }
 
-            Long makerId =
-                    ((Number) record.get("recycleMakerId"))
-                            .longValue();
+    // private Object executeRecyclePriceDetail(QueryDefinition def, SelectRequest req) {
+    //     List<Map<String,Object>> records = select(def, req);
 
-            Map<String, Object> row =
-                    makers.computeIfAbsent(
-                            makerId,
-                            id -> {
-
-                                Map<String, Object> r =
-                                        new LinkedHashMap<>();
-
-                                r.put(
-                                    "recycleMakerId",
-                                    id);
-
-                                r.put(
-                                    "code",
-                                    record.get("code"));
-
-                                r.put(
-                                    "name",
-                                    record.get("name"));
-
-                                r.put(
-                                    "kana",
-                                    record.get("kana"));
-
-                                return r;
-                            });
-
-            Object itemObj =
-                    record.get("recycleItemId");
-
-            if(itemObj == null){
-                continue;
-            }
-
-            Long itemId =
-                    ((Number)itemObj)
-                            .longValue();
-
-            row.put(
-                    "price_" + itemId,
-                    record.get("price"));
-        }
-        return Map.of(
-                "data",
-                new ArrayList<>(makers.values()));
-    }
-
-    private Object executeRecyclePriceDetail(
-            QueryDefinition def,
-            SelectRequest req) {
-
-        List<Map<String,Object>> records =
-                select(def, req);
-
-        if(records.isEmpty()){
-            return Map.of(
-                "data",
-                List.of());
-        }
-
-        Map<String,Object> row =
-                new LinkedHashMap<>();
-
-        Map<String,Object> first =
-                records.get(0);
-
-        row.put(
-            "recycleMakerId",
-            first.get("recycleMakerId"));
-
-        row.put(
-            "name",
-            first.get("name"));
-
-        for(Map<String,Object> record : records){
-
-            Object itemObj =
-                    record.get("recycleItemId");
-
-            if(itemObj == null){
-                continue;
-            }
-
-            int itemId =
-                    ((Number)itemObj)
-                        .intValue();
-
-            row.put(
-                "price" + itemId,
-                record.get("price"));
-
-            row.put(
-                "recyclePriceId" + itemId,
-                record.get("recyclePriceId"));
-        }
-
-        return Map.of(
-            "data",
-            List.of(row));
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object executeRecyclePriceSave(
-            QueryDefinition def,
-            SelectRequest req) {
-
-        Map<String, Object> params =
-                req.getParams();
-
-        String editor =
-                (String) params.getOrDefault(
-                        "editor",
-                        "system");
-
-        List<Map<String, Object>> details =
-                (List<Map<String, Object>>)
-                        params.get("details");
-
-        int count = 0;
-
-        for (Map<String, Object> detail : details) {
-
-            Long id =
-                detail.get("recyclePriceId") == null
-                    ? null
-                    : ((Number) detail.get(
-                            "recyclePriceId"))
-                            .longValue();
-
-            BigDecimal price =
-                detail.get("price") == null
-                    ? BigDecimal.ZERO
-                    : new BigDecimal(
-                            detail.get("price")
-                                .toString());
-
-            if (id == null) {
-
-                if (price.compareTo(
-                        BigDecimal.ZERO) > 0) {
-
-                    baseRepository.insert(
-                        Tables.RECYCLE_PRICE_BY_IDS,
-                        detail,
-                        editor);
-
-                    count++;
-                }
-
-                continue;
-            }
-
-            if (price.compareTo(
-                    BigDecimal.ZERO) <= 0) {
-
-                baseRepository.deleteByIds(
-                    Tables.RECYCLE_PRICE_BY_IDS,
-                    List.of(id),
-                    editor);
-
-                count++;
-
-                continue;
-            }
-
-            count += baseRepository.update(
-                Tables.RECYCLE_PRICE_BY_IDS,
-                detail,
-                editor);
-        }
-
-        return Map.of(
-                "count",
-                count);
-    }
-
-    // private void putIfPresent(
-    //     Map<String, Object> target,
-    //     String key,
-    //     Map<String, Object> source
-    // ){
-    //     Object value = source.get(key);
-    //     if(value == null) return;
-
-    //     if(value instanceof String str && str.isBlank()){
-    //         return;
+    //     if(records.isEmpty()){
+    //         return Map.of("data", List.of());
     //     }
 
-    //     target.put(key, value);
+    //     Map<String,Object> row = new LinkedHashMap<>();
+    //     Map<String,Object> first = records.get(0);
+    //     row.put("recycleMakerId", first.get("recycleMakerId"));
+    //     row.put("name", first.get("name"));
+
+    //     for(Map<String,Object> record : records){
+    //         Object itemObj = record.get("recycleItemId");
+    //         if(itemObj == null) continue;
+
+    //         int itemId = ((Number)itemObj).intValue();
+    //         row.put("price" + itemId, record.get("price"));
+    //         row.put("recyclePriceId" + itemId, record.get("recyclePriceId"));
+    //     }
+    //     return Map.of("data", List.of(row));
+    // }
+
+    // @SuppressWarnings("unchecked")
+    // private Object executeRecyclePriceSave(QueryDefinition def, SelectRequest req) {
+    //     Map<String, Object> params = req.getParams();
+    //     String editor = (String) params.getOrDefault("editor", "system");
+    //     List<Map<String, Object>> details = (List<Map<String, Object>>) params.get("details");
+    //     int count = 0;
+
+    //     for (Map<String, Object> detail : details) {
+    //         Long id = detail.get("recyclePriceId") == null ? null: ((Number) detail.get("recyclePriceId")).longValue();
+    //         BigDecimal price = detail.get("price") == null ? BigDecimal.ZERO: new BigDecimal(detail.get("price").toString());
+
+    //         if (id == null) {
+    //             if (price.compareTo(BigDecimal.ZERO) > 0) {
+    //                 baseRepository.insert(Tables.RECYCLE_PRICE_BY_IDS, detail, editor);
+    //                 count++;
+    //             }
+    //             continue;
+    //         }
+
+    //         if (price.compareTo(BigDecimal.ZERO) <= 0) {
+    //             baseRepository.deleteByIds(Tables.RECYCLE_PRICE_BY_IDS, List.of(id), editor);
+    //             count++;
+    //             continue;
+    //         }
+    //         count += baseRepository.update(Tables.RECYCLE_PRICE_BY_IDS, detail, editor);
+    //     }
+    //     return Map.of("count", count);
     // }
 }
