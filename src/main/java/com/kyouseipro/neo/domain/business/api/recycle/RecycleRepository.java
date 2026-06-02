@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
 import com.kyouseipro.neo.common.combo.entity.ComboDto;
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.exception.BusinessException;
+import com.kyouseipro.neo.domain.business.api.recycle.query.RecycleSqlBuilder;
 import com.kyouseipro.neo.interfaces.sql.LogSqlProvider;
 import com.kyouseipro.neo.sql.model.SqlResult;
 import com.kyouseipro.neo.sql.model.TableMeta;
 import com.kyouseipro.neo.sql.provider.LogSqlProviderResolver;
-import com.kyouseipro.neo.sql.query.recycle.RecycleSqlBuilder;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
