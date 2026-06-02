@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.kyouseipro.neo.base.BaseController;
 import com.kyouseipro.neo.common.enums.code.ClientCategory;
 import com.kyouseipro.neo.common.enums.code.RecycleCategory;
 import com.kyouseipro.neo.common.enums.code.State;
@@ -20,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class BusinessPageController extends BaseController {
+public class BusinessPageController {
     private final RecycleService recycleService;
     private final CompanyService companyService;
     private final OfficeService officeService;

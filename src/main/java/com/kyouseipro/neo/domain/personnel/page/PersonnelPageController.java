@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.kyouseipro.neo.base.BaseController;
 import com.kyouseipro.neo.common.enums.code.BloodType;
 import com.kyouseipro.neo.common.enums.code.CompanyCategory;
 import com.kyouseipro.neo.common.enums.code.EmployeeCategory;
@@ -20,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class PersonnelPageController extends BaseController {
+public class PersonnelPageController {
     private final OfficeService officeService;
 
     /**
