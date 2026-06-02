@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.kyouseipro.neo._backup.Enums;
+import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.system.SqlMode;
 import com.kyouseipro.neo.interfaces.sql.LogSqlProvider;
 import com.kyouseipro.neo.sql.model.SqlResult;
@@ -65,7 +65,7 @@ public class SqlBuilder {
             if (mode == SqlMode.DELETE) {
                 // 論理削除
                 sets.add("state = ?");
-                params.add(Enums.state.DELETE.getCode());
+                params.add(State.DELETE.getCode());
             }
             // 共通
             sets.add("version = version + 1");
@@ -76,7 +76,7 @@ public class SqlBuilder {
             sql.append(" WHERE ").append(toSnake(idKey)).append(" = ? AND ").append(toSnake(versionKey)).append(" = ? AND NOT(state = ?);");
             params.add(req.get(idKey));
             params.add(req.get(versionKey));
-            params.add(Enums.state.DELETE.getCode());
+            params.add(State.DELETE.getCode());
         }
         // ログ
         String action = mode.name();
@@ -110,9 +110,9 @@ public class SqlBuilder {
         sql.append(logProvider.buildOutput()).append(" INTO ").append(tableVar).append(" ");
         sql.append("WHERE ").append(toSnake(meta.idColumn())).append(" IN (").append(placeholders).append(") ");
         sql.append("AND NOT(").append(meta.stateColumn()).append(" = ?); ");
-        params.add(Enums.state.DELETE.getCode());
+        params.add(State.DELETE.getCode());
         params.addAll(ids);
-        params.add(Enums.state.DELETE.getCode());
+        params.add(State.DELETE.getCode());
 
         String action = "DELETE";
         sql.append(logProvider.buildInsertLog(tableVar, action));
@@ -165,7 +165,7 @@ public class SqlBuilder {
         sql.append("AND NOT(").append(meta.stateColumn()).append(" = ?); ");
 
         params.addAll(ids);
-        params.add(Enums.state.DELETE.getCode());
+        params.add(State.DELETE.getCode());
 
         // ログ
         String action = "UPDATE";

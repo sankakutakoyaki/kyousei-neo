@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.kyouseipro.neo._backup.Enums;
+import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.interfaces.sql.LogSqlProvider;
 import com.kyouseipro.neo.sql.model.SqlResult;
 import com.kyouseipro.neo.sql.model.TableMeta;
@@ -34,7 +34,7 @@ public class RecycleSqlBuilder {
             AND NOT(state = ?);
         """);
         params.add(req.get("recycleNumber"));
-        params.add(Enums.state.DELETE.getCode());
+        params.add(State.DELETE.getCode());
         String action = "UPDATE";
         sql.append(logProvider.buildInsertLog(tableVar, action));
 
@@ -70,7 +70,7 @@ public class RecycleSqlBuilder {
             AND NOT(state = ?);
         """);
         params.add(req.get("recycleNumber"));
-        params.add(Enums.state.DELETE.getCode());
+        params.add(State.DELETE.getCode());
         String action = "UPDATE";
         sql.append(logProvider.buildInsertLog(tableVar, action));
 
@@ -121,7 +121,7 @@ public class RecycleSqlBuilder {
         """);
 
         params.add(req.get("recycleNumber"));
-        params.add(Enums.state.DELETE.getCode());
+        params.add(State.DELETE.getCode());
 
         String action = "UPDATE";
         sql.append(logProvider.buildInsertLog(tableVar, action));
@@ -159,7 +159,7 @@ public class RecycleSqlBuilder {
         params.add(req.get("recycleNumber"));
         params.add(req.get("lossDate"));
         params.add(req.get("remarks"));
-        params.add(Enums.state.INITIAL.getCode());
+        params.add(State.INITIAL.getCode());
 
         String action = "INSERT";
         sql.append(logProvider.buildInsertLog(tableVar, action));
@@ -170,37 +170,4 @@ public class RecycleSqlBuilder {
 
         return new SqlResult(sql.toString(), params);
     }
-    // public static SqlResult buildRecycleLossSave(
-    //         TableMeta meta,
-    //         Map<String,Object> req,
-    //         LogSqlProvider logProvider
-    // ) {
-    //     StringBuilder sql = new StringBuilder();
-    //     List<Object> params = new ArrayList<>();
-    //     String tableVar = "@UpdatedRows";
-    //     sql.append(logProvider.buildLogTable(tableVar));
-    //     sql.append("""
-    //         UPDATE recycles
-    //         SET loss_date = ?, remarks = ?, version = version + 1, update_date = SYSDATETIME()
-    //     """);
-
-    //     params.add(req.get("lossDate"));
-    //     params.add(req.get("remarks"));
-    //     sql.append(logProvider.buildOutput()).append(" INTO ").append(tableVar).append(" ");
-    //     sql.append("""
-    //         WHERE recycle_number = ?
-    //         AND NOT(state = ?);
-    //     """);
-    //     params.add(req.get("recycleNumber"));
-    //     params.add(Enums.state.DELETE.getCode());
-    //     String action = "UPDATE";
-    //     sql.append(logProvider.buildInsertLog(tableVar, action));
-
-    //     params.addAll(logProvider.buildLogParams(req, action));
-
-    //     sql.append("""
-    //         SELECT COUNT(*) FROM %s;
-    //     """.formatted(tableVar));
-    //     return new SqlResult(sql.toString(), params);
-    // }
 }

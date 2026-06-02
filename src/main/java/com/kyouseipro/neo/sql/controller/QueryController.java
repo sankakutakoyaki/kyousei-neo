@@ -20,9 +20,9 @@ import com.kyouseipro.neo.sql.common.QueryParamBinder;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.QueryBuilderProvider;
+import com.kyouseipro.neo.sql.provider.QueryHandlerProvider;
 import com.kyouseipro.neo.sql.provider.SqlProvider;
 import com.kyouseipro.neo.sql.provider.Tables;
-import com.kyouseipro.neo.sql.provider.recycle.QueryHandlerProvider;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 import com.kyouseipro.neo.sql.service.CsvService;
@@ -62,13 +62,6 @@ public class QueryController {
             case UPDATE -> executeUpdate(def, req);
             case DELETE_BY_IDS -> executeDeleteByIds(def, req);
             case CSV -> executeCsv(def, req);
-            // case RECYCLE_DELIVERY_SAVE,
-            //      RECYCLE_SHIPPING_SAVE,
-            //      RECYCLE_LOSS_SAVE
-            //     -> executeRecycle(def, req);
-            // case RECYCLE_PRICE_LIST -> executeRecyclePriceList(def, req);
-            // case RECYCLE_PRICE_SAVE -> executeRecyclePriceSave(def, req);
-            // case RECYCLE_PRICE_DETAIL -> executeRecyclePriceDetail(def, req);
             default -> handlerProvider.get(def.getKind()).execute(def, req);
         };
     }

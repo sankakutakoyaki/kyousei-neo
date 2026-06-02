@@ -1,0 +1,605 @@
+src/main/java
+└── com
+    └── kyouseipro
+        └── neo
+            ├── NeoApplication.java
+            ├── _backup
+            │   ├── ComboBoxService.java
+            │   ├── Enums.java
+            │   ├── FileAttachable.java
+            │   ├── FileUpload.java
+            │   ├── FrameOptionsFilter.java
+            │   ├── HomeController.java
+            │   ├── Utilities.java
+            │   ├── ai
+            │   │   ├── api
+            │   │   │   ├── AiApiClient.java
+            │   │   │   └── AiApiClientStub.java
+            │   │   ├── controller
+            │   │   │   ├── AiApiController.java
+            │   │   │   └── AiKnowledgeAdminController.java
+            │   │   ├── entity
+            │   │   │   ├── AiInsertParam.java
+            │   │   │   ├── AiKnowledge.java
+            │   │   │   ├── AiKnowledgeChunk.java
+            │   │   │   └── AiPromptTemplate.java
+            │   │   ├── mapper
+            │   │   │   ├── AiKnowledgeChunkMapper.java
+            │   │   │   ├── AiKnowledgeMapper.java
+            │   │   │   └── AiPromptTemplateMapper.java
+            │   │   ├── parameter
+            │   │   │   └── AiParameterBinder.java
+            │   │   ├── repository
+            │   │   │   ├── AiAskLogRepository.java
+            │   │   │   ├── AiKnowledgeChunkRepository.java
+            │   │   │   ├── AiKnowledgeRepository.java
+            │   │   │   └── AiPromptTemplateRepository.java
+            │   │   ├── service
+            │   │   │   └── AiQuestionService.java
+            │   │   └── sql
+            │   │       └── AiSqlBuilder.java
+            │   ├── corporation
+            │   │   ├── CorporationPageController.java
+            │   │   ├── company
+            │   │   │   ├── controller
+            │   │   │   │   ├── CompanyApiController.java
+            │   │   │   │   └── CompanyListApiController.java
+            │   │   │   ├── dto
+            │   │   │   │   ├── CompanyListResponse.java
+            │   │   │   │   └── CompanyRequest.java
+            │   │   │   ├── entity
+            │   │   │   │   └── CompanyEntity.java
+            │   │   │   ├── mapper
+            │   │   │   │   ├── CompanyEntityMapper.java
+            │   │   │   │   └── CompanyListResponseMapper.java
+            │   │   │   ├── repository
+            │   │   │   │   ├── CompanyListRepository.java
+            │   │   │   │   ├── CompanyLogSqlProvider.java
+            │   │   │   │   ├── CompanyParameterBinder.java
+            │   │   │   │   ├── CompanyRepository.java
+            │   │   │   │   └── CompanySqlBuilder.java
+            │   │   │   └── service
+            │   │   │       ├── CompanyListService.java
+            │   │   │       └── CompanyService.java
+            │   │   ├── office
+            │   │   │   ├── controller
+            │   │   │   │   ├── OfficeApiController.java
+            │   │   │   │   └── OfficeListApiController.java
+            │   │   │   ├── entity
+            │   │   │   │   ├── OfficeComboEntity.java
+            │   │   │   │   ├── OfficeEntity.java
+            │   │   │   │   ├── OfficeEntityRequest.java
+            │   │   │   │   └── OfficeListEntity.java
+            │   │   │   ├── mapper
+            │   │   │   │   ├── OfficeComboEntityMapper.java
+            │   │   │   │   ├── OfficeEntityMapper.java
+            │   │   │   │   └── OfficeListEntityMapper.java
+            │   │   │   ├── repository
+            │   │   │   │   ├── OfficeListRepository.java
+            │   │   │   │   ├── OfficeListSqlBuilder.java
+            │   │   │   │   ├── OfficeParameterBinder.java
+            │   │   │   │   ├── OfficeRepository.java
+            │   │   │   │   └── OfficeSqlBuilder.java
+            │   │   │   └── service
+            │   │   │       ├── OfficeListService.java
+            │   │   │       └── OfficeService.java
+            │   │   └── staff
+            │   │       ├── controller
+            │   │       │   ├── StaffApiController.java
+            │   │       │   └── StaffListApiController.java
+            │   │       ├── entity
+            │   │       │   ├── StaffEntity.java
+            │   │       │   ├── StaffEntityRequest.java
+            │   │       │   └── StaffListEntity.java
+            │   │       ├── mapper
+            │   │       │   ├── StaffEntityMapper.java
+            │   │       │   └── StaffListEntityMapper.java
+            │   │       ├── repository
+            │   │       │   ├── StaffListRepository.java
+            │   │       │   ├── StaffListSqlBuilder.java
+            │   │       │   ├── StaffParameterBinder.java
+            │   │       │   ├── StaffRepository.java
+            │   │       │   └── StaffSqlBuilder.java
+            │   │       └── service
+            │   │           ├── StaffListService.java
+            │   │           └── StaffService.java
+            │   ├── dto
+            │   │   ├── BetweenRequest.java
+            │   │   ├── CsvExporter.java
+            │   │   ├── IdDateRequest.java
+            │   │   ├── IdListRequest.java
+            │   │   ├── IdPairRequest.java
+            │   │   ├── IdRequest.java
+            │   │   ├── NumberRequest.java
+            │   │   └── StringRequest.java
+            │   ├── file
+            │   │   ├── ConstructionPageController.java
+            │   │   ├── abstruct
+            │   │   │   └── BaseFileEntity.java
+            │   │   ├── controller
+            │   │   │   ├── ConstructionFileController.java
+            │   │   │   ├── EntityFileController.java
+            │   │   │   └── FileController.java
+            │   │   ├── entity
+            │   │   │   ├── ConstructionFileDto.java
+            │   │   │   ├── ConstructionFileEntity.java
+            │   │   │   ├── ConstructionFileGroupEntity.java
+            │   │   │   ├── FileDto.java
+            │   │   │   ├── FileEntity.java
+            │   │   │   ├── FileGroupEntity.java
+            │   │   │   ├── FileMeta.java
+            │   │   │   ├── GroupRequest.java
+            │   │   │   └── RenameRequest.java
+            │   │   ├── mappaer
+            │   │   │   ├── ConstructionFileDtoMapper.java
+            │   │   │   ├── ConstructionFileGroupMapper.java
+            │   │   │   ├── ConstructionFileMapper.java
+            │   │   │   ├── FileDtoMapper.java
+            │   │   │   ├── FileEntityMapper.java
+            │   │   │   └── FileGroupEntityMapper.java
+            │   │   ├── repository
+            │   │   │   ├── ConstructionFileGroupRepository.java
+            │   │   │   ├── ConstructionFileRepository.java
+            │   │   │   ├── EntityFileRepository.java
+            │   │   │   ├── FileGroupRepository.java
+            │   │   │   └── FileRepository.java
+            │   │   └── service
+            │   │       ├── ConstructionFileGroupService.java
+            │   │       ├── ConstructionFileService.java
+            │   │       ├── EntityFileService.java
+            │   │       ├── FileAttachService.java
+            │   │       ├── FileGroupService.java
+            │   │       └── FileService.java
+            │   ├── ks
+            │   │   ├── KsPageController.java
+            │   │   ├── controller
+            │   │   │   └── KsSalesApiController.java
+            │   │   ├── entity
+            │   │   │   └── KsSalesEntity.java
+            │   │   ├── mapper
+            │   │   │   ├── KsSalesEntityMapper.java
+            │   │   │   └── KsSalesStaffEntityMapper.java
+            │   │   ├── repository
+            │   │   │   ├── KsSalesParameterBinder.java
+            │   │   │   ├── KsSalesRepository.java
+            │   │   │   └── KsSalesSqlBuilder.java
+            │   │   └── service
+            │   │       └── KsSalesService.java
+            │   ├── personnel
+            │   │   ├── PersonnelPageController2.java
+            │   │   ├── employee
+            │   │   │   ├── controller
+            │   │   │   │   ├── EmployeeApiController2.java
+            │   │   │   │   └── EmployeeListApiController.java
+            │   │   │   ├── entity
+            │   │   │   │   ├── EmployeeEntity.java
+            │   │   │   │   ├── EmployeeEntityRequest.java
+            │   │   │   │   └── EmployeeListEntity.java
+            │   │   │   ├── mapper
+            │   │   │   │   ├── EmployeeEntityMapper.java
+            │   │   │   │   └── EmployeeListEntityMapper.java
+            │   │   │   ├── repository
+            │   │   │   │   ├── EmployeeListRepository.java
+            │   │   │   │   ├── EmployeeListSqlBuilder.java
+            │   │   │   │   ├── EmployeeLogSqlProvider.java
+            │   │   │   │   ├── EmployeeParameterBinder.java
+            │   │   │   │   ├── EmployeeRepository2.java
+            │   │   │   │   └── EmployeeSqlBuilder.java
+            │   │   │   └── service
+            │   │   │       ├── EmployeeListService.java
+            │   │   │       └── EmployeeService2.java
+            │   │   ├── paidholiday
+            │   │   │   ├── controller
+            │   │   │   │   └── PaidHolidayApiController.java
+            │   │   │   ├── entity
+            │   │   │   │   ├── PaidHolidayEntity.java
+            │   │   │   │   └── PaidHolidayListEntity.java
+            │   │   │   ├── mapper
+            │   │   │   │   ├── PaidHolidayEntityMapper.java
+            │   │   │   │   └── PaidHolidayListEntityMapper.java
+            │   │   │   ├── repository
+            │   │   │   │   ├── PaidHolidayParameterBinder.java
+            │   │   │   │   ├── PaidHolidayRepository.java
+            │   │   │   │   └── PaidHolidaySqlBuilder.java
+            │   │   │   └── service
+            │   │   │       └── PaidHolidayService.java
+            │   │   ├── shift
+            │   │   │   ├── controller
+            │   │   │   │   └── ShiftController.java
+            │   │   │   ├── entity
+            │   │   │   │   └── PlannedShift.java
+            │   │   │   ├── repository
+            │   │   │   │   └── PlannedShiftRepository.java
+            │   │   │   └── service
+            │   │   │       └── ShiftService.java
+            │   │   ├── timeworks
+            │   │   │   ├── controller
+            │   │   │   │   └── TimeworksController.java
+            │   │   │   ├── entity
+            │   │   │   │   ├── LeaveUsageEntity.java
+            │   │   │   │   ├── TimeworksEntity.java
+            │   │   │   │   ├── TimeworksRegistRequest.java
+            │   │   │   │   ├── TimeworksRequestDto.java
+            │   │   │   │   └── TimeworksSummaryEntity.java
+            │   │   │   ├── mapper
+            │   │   │   │   ├── TimeworksEntityMapper.java
+            │   │   │   │   └── TimeworksSummaryEntityMapper.java
+            │   │   │   ├── repository
+            │   │   │   │   ├── TimeworksRepository.java
+            │   │   │   │   └── TimeworksSqlBuilder.java
+            │   │   │   └── service
+            │   │   │       └── TimeworksService.java
+            │   │   └── workingconditions
+            │   │       ├── controller
+            │   │       │   ├── WorkingConditionsApiController.java
+            │   │       │   └── WorkingConditionsListApiController.java
+            │   │       ├── entity
+            │   │       │   ├── WorkingConditionsEntity.java
+            │   │       │   └── WorkingConditionsListEntity.java
+            │   │       ├── mapper
+            │   │       │   ├── WorkingConditionsEntityMapper.java
+            │   │       │   └── WorkingConditionsListEntityMapper.java
+            │   │       ├── repository
+            │   │       │   ├── WorkingConditionsListRepository.java
+            │   │       │   ├── WorkingConditionsListSqlBuilder.java
+            │   │       │   ├── WorkingConditionsParameterBinder.java
+            │   │       │   ├── WorkingConditionsRepository.java
+            │   │       │   └── WorkingConditionsSqlBuilder.java
+            │   │       └── service
+            │   │           ├── WorkingConditionsListService.java
+            │   │           └── WorkingConditionsService.java
+            │   ├── push
+            │   │   ├── controller
+            │   │   │   └── PushApiController.java
+            │   │   ├── entity
+            │   │   │   └── SubscriptionRequest.java
+            │   │   ├── mapper
+            │   │   │   └── SubscriptionRequestMapper.java
+            │   │   ├── repository
+            │   │   │   └── PushRepository.java
+            │   │   └── service
+            │   │       └── WebPushService.java
+            │   ├── qualification
+            │   │   ├── QualificationPageController.java
+            │   │   ├── controller
+            │   │   │   └── QualificationsApiController.java
+            │   │   ├── entity
+            │   │   │   ├── QualificationFilesEntity.java
+            │   │   │   ├── QualificationMasterEntity.java
+            │   │   │   ├── QualificationsDto.java
+            │   │   │   ├── QualificationsEntity.java
+            │   │   │   └── QualificationsEntityRequest.java
+            │   │   ├── mapper
+            │   │   │   ├── QualificationFilesEntityMapper.java
+            │   │   │   ├── QualificationMasterEntityMapper.java
+            │   │   │   ├── QualificationsDtoMapper.java
+            │   │   │   └── QualificationsEntityMapper.java
+            │   │   ├── repository
+            │   │   │   ├── QualificationFilesParameterBinder.java
+            │   │   │   ├── QualificationFilesRepository.java
+            │   │   │   ├── QualificationFilesSqlBuilder.java
+            │   │   │   ├── QualificationsParameterBinder.java
+            │   │   │   ├── QualificationsRepository.java
+            │   │   │   └── QualificationsSqlBuilder.java
+            │   │   └── service
+            │   │       ├── QualificationFilesService.java
+            │   │       └── QualificationsService.java
+            │   ├── recycle
+            │   │   ├── RecyclePageController.java
+            │   │   ├── item
+            │   │   │   ├── controller
+            │   │   │   │   └── RecycleItemApiController.java
+            │   │   │   ├── entity
+            │   │   │   │   └── RecycleItemEntity.java
+            │   │   │   ├── mapper
+            │   │   │   │   └── RecycleItemEntityMapper.java
+            │   │   │   ├── repository
+            │   │   │   │   ├── RecycleItemParameterBinder.java
+            │   │   │   │   ├── RecycleItemRepository.java
+            │   │   │   │   └── RecycleItemSqlBuilder.java
+            │   │   │   └── service
+            │   │   │       └── RecycleItemService.java
+            │   │   ├── maker
+            │   │   │   ├── controller
+            │   │   │   │   └── RecycleMakerApiController.java
+            │   │   │   ├── entity
+            │   │   │   │   └── RecycleMakerEntity.java
+            │   │   │   ├── mapper
+            │   │   │   │   └── RecycleMakerEntityMapper.java
+            │   │   │   ├── repository
+            │   │   │   │   ├── RecycleMakerParameterBinder.java
+            │   │   │   │   ├── RecycleMakerRepository.java
+            │   │   │   │   └── RecycleMakerSqlBuilder.java
+            │   │   │   └── service
+            │   │   │       └── RecycleMakerService.java
+            │   │   ├── price
+            │   │   │   ├── entity
+            │   │   │   │   └── RecyclePriceEntity.java
+            │   │   │   └── mapper
+            │   │   │       └── RecyclePriceEntityMapper.java
+            │   │   └── regist
+            │   │       ├── controller
+            │   │       │   └── RecycleApiController.java
+            │   │       ├── entity
+            │   │       │   ├── RecycleDateEntity.java
+            │   │       │   ├── RecycleEntity.java
+            │   │       │   └── RecycleEntityRequest.java
+            │   │       ├── mapper
+            │   │       │   └── RecycleEntityMapper.java
+            │   │       ├── repository
+            │   │       │   ├── RecycleParameterBinder.java
+            │   │       │   ├── RecycleRepository2.java
+            │   │       │   └── RecycleSqlBuilder.java
+            │   │       └── service
+            │   │           └── RecycleService2.java
+            │   ├── sales
+            │   │   ├── SalesPageController.java
+            │   │   └── order
+            │   │       ├── controller
+            │   │       │   ├── OrderApiController.java
+            │   │       │   ├── OrderItemApiController.java
+            │   │       │   └── OrderListApiController.java
+            │   │       ├── entity
+            │   │       │   ├── DeliveryStaffEntity.java
+            │   │       │   ├── OrderEntity.java
+            │   │       │   ├── OrderItemEntity.java
+            │   │       │   ├── OrderListEntity.java
+            │   │       │   └── WorkContentEntity.java
+            │   │       ├── mapper
+            │   │       │   ├── DeliveryStaffEntityMapper.java
+            │   │       │   ├── OrderEntityMapper.java
+            │   │       │   ├── OrderItemEntityMapper.java
+            │   │       │   ├── OrderListEntityMapper.java
+            │   │       │   └── WorkContentEntityMapper.java
+            │   │       ├── repository
+            │   │       │   ├── DeliveryStaffParameterBinder.java
+            │   │       │   ├── DeliveryStaffRepository.java
+            │   │       │   ├── DeliveryStaffSqlBuilder.java
+            │   │       │   ├── OrderItemParameterBinder.java
+            │   │       │   ├── OrderItemRepository.java
+            │   │       │   ├── OrderItemSqlBuilder.java
+            │   │       │   ├── OrderListParameterBinder.java
+            │   │       │   ├── OrderListRepository.java
+            │   │       │   ├── OrderListSqlBuilder.java
+            │   │       │   ├── OrderParameterBinder.java
+            │   │       │   ├── OrderRepository.java
+            │   │       │   ├── OrderSqlBuilder.java
+            │   │       │   ├── WorkContentParameterBinder.java
+            │   │       │   ├── WorkContentRepository.java
+            │   │       │   └── WorkContentSqlBuilder.java
+            │   │       └── service
+            │   │           ├── OrderItemService.java
+            │   │           ├── OrderListService.java
+            │   │           └── OrderService.java
+            │   ├── simpledata
+            │   │   ├── entity
+            │   │   │   └── SimpleData.java
+            │   │   └── mapper
+            │   │       └── SimpleDataMapper.java
+            │   ├── validation
+            │   │   ├── repository
+            │   │   │   └── ValidateRepository.java
+            │   │   └── service
+            │   │       └── ValidateService.java
+            │   └── work
+            │       ├── WorkPageController.java
+            │       ├── item
+            │       │   ├── controller
+            │       │   │   └── WorkItemApiController.java
+            │       │   ├── entity
+            │       │   │   └── WorkItemEntity.java
+            │       │   ├── mapper
+            │       │   │   └── WorkItemEntityMapper.java
+            │       │   ├── repository
+            │       │   │   ├── WorkItemParameterBinder.java
+            │       │   │   ├── WorkItemRepository.java
+            │       │   │   └── WorkItemSqlBuilder.java
+            │       │   └── service
+            │       │       └── WorkItemService.java
+            │       └── price
+            │           ├── controller
+            │           │   └── WorkPriceApiController.java
+            │           ├── entity
+            │           │   └── WorkPriceEntity.java
+            │           ├── mapper
+            │           │   └── WorkPriceEntityMapper.java
+            │           ├── repository
+            │           │   ├── WorkPriceParameterBinder.java
+            │           │   ├── WorkPriceRepository.java
+            │           │   └── WorkPriceSqlBuilder.java
+            │           └── service
+            │               └── WorkPriceService.java
+            ├── base
+            │   └── BaseController.java
+            ├── common
+            │   ├── combo
+            │   │   ├── entity
+            │   │   │   ├── ComboData.java
+            │   │   │   └── ComboDto.java
+            │   │   └── mapper
+            │   │       └── ComboDataMapper.java
+            │   ├── constants
+            │   │   └── CompanyContants.java
+            │   ├── enums
+            │   │   ├── code
+            │   │   │   ├── BloodType.java
+            │   │   │   ├── ClientCategory.java
+            │   │   │   ├── CompanyCategory.java
+            │   │   │   ├── EmployeeCategory.java
+            │   │   │   ├── Gender.java
+            │   │   │   ├── RecycleCategory.java
+            │   │   │   └── State.java
+            │   │   ├── system
+            │   │   │   ├── CodeType.java
+            │   │   │   ├── ParentType.java
+            │   │   │   ├── QueryId.java
+            │   │   │   ├── QueryKind.java
+            │   │   │   ├── QueryType.java
+            │   │   │   └── SqlMode.java
+            │   │   └── util
+            │   │       └── EnumUtil.java
+            │   ├── exception
+            │   │   ├── ApiExceptionHandler.java
+            │   │   ├── BusinessException.java
+            │   │   ├── GlobalControllerAdvice.java
+            │   │   ├── GlobalExceptionHandler.java
+            │   │   ├── GlobalRestExceptionHandler.java
+            │   │   ├── SessionExpiredException.java
+            │   │   ├── SqlExceptionUtil.java
+            │   │   └── SystemException.java
+            │   ├── response
+            │   │   └── SimpleResponse.java
+            │   └── util
+            │       ├── EnumUtils.java
+            │       ├── MapUtils.java
+            │       └── SqlUtils.java
+            ├── config
+            │   ├── SecurityConfig.java
+            │   ├── UploadConfig.java
+            │   └── WebConfig.java
+            ├── domain
+            │   ├── address
+            │   │   ├── controller
+            │   │   │   └── AddressApiController.java
+            │   │   ├── entity
+            │   │   │   ├── AddressDto.java
+            │   │   │   └── AddressEntity.java
+            │   │   ├── mapper
+            │   │   │   └── AddressEntityMapper.java
+            │   │   ├── repository
+            │   │   │   └── AddressRepository.java
+            │   │   └── service
+            │   │       └── AddressService.java
+            │   ├── ai
+            │   │   └── controller
+            │   │       └── MockAiController.java
+            │   ├── business
+            │   │   ├── api
+            │   │   │   └── recycle
+            │   │   │       ├── RecycleController.java
+            │   │   │       ├── RecycleRepository.java
+            │   │   │       └── RecycleService.java
+            │   │   └── page
+            │   │       └── BusinessPageController.java
+            │   ├── corporation
+            │   │   ├── api
+            │   │   │   ├── company
+            │   │   │   │   ├── CompanyController.java
+            │   │   │   │   ├── CompanyRepository.java
+            │   │   │   │   ├── CompanyService.java
+            │   │   │   │   └── entity
+            │   │   │   │       └── CompanyEntity.java
+            │   │   │   └── office
+            │   │   │       ├── OfficeController.java
+            │   │   │       ├── OfficeRepository.java
+            │   │   │       └── OfficeService.java
+            │   │   └── page
+            │   │       └── CorporationPageController.java
+            │   ├── index
+            │   │   ├── IndexController.java
+            │   │   └── page
+            │   │       └── IndexPageController.java
+            │   └── personnel
+            │       ├── employee
+            │       └── page
+            │           └── PersonnelPageController.java
+            ├── history
+            │   ├── HistoryAspect.java
+            │   ├── entity
+            │   │   └── HistoryEntity.java
+            │   ├── mapper
+            │   │   └── HistoryEntityMapper.java
+            │   ├── repository
+            │   │   ├── HistoryParameterBinder.java
+            │   │   ├── HistoryRepository.java
+            │   │   └── HistorySqlBuilder.java
+            │   └── service
+            │       └── HistoryService.java
+            ├── interfaces
+            │   ├── CsvExportable.java
+            │   ├── HistoryTarget.java
+            │   ├── ResultSetMapper.java
+            │   ├── enums
+            │   │   ├── BaseEnum.java
+            │   │   └── CodeEnum.java
+            │   └── sql
+            │       ├── LogSqlProvider.java
+            │       ├── PreparedStatementSetter.java
+            │       ├── QueryBuilder.java
+            │       ├── QueryHandler.java
+            │       ├── SQLBiConsumer.java
+            │       ├── SQLConsumer.java
+            │       ├── SQLFunction.java
+            │       ├── SqlParameterBinder.java
+            │       ├── SqlProviderPart.java
+            │       └── SqlResultExtractor.java
+            ├── security
+            │   ├── ApiAuthenticationEntryPoint.java
+            │   ├── advice
+            │   │   └── LoginUserAdvice.java
+            │   └── interceptor
+            │       └── LoginInterceptor.java
+            └── sql
+                ├── common
+                │   ├── CsvBuilder.java
+                │   ├── CsvUtils.java
+                │   ├── QueryParamBinder.java
+                │   ├── SqlBuilder.java
+                │   ├── SqlExceptionMapper.java
+                │   └── SqlUtil.java
+                ├── controller
+                │   └── QueryController.java
+                ├── handler
+                │   └── RecycleHandler.java
+                ├── model
+                │   ├── BoundSql.java
+                │   ├── CsvColumn.java
+                │   ├── QueryDefinition.java
+                │   ├── Row.java
+                │   ├── SelectRequest.java
+                │   ├── SqlResult.java
+                │   └── TableMeta.java
+                ├── provider
+                │   ├── LogSqlProviderResolver.java
+                │   ├── QueryBuilderProvider.java
+                │   ├── SqlProvider.java
+                │   ├── Tables.java
+                │   └── recycle
+                │       └── QueryHandlerProvider.java
+                ├── query
+                │   ├── company
+                │   │   ├── CompanyLogSqlProvider.java
+                │   │   ├── CompanyQuery.java
+                │   │   └── CompanySqlProvider.java
+                │   ├── employee
+                │   │   ├── EmployeeLogSqlProvider.java
+                │   │   ├── EmployeeQuery.java
+                │   │   └── EmployeeSqlProvider.java
+                │   ├── office
+                │   │   ├── OfficeLogSqlProvider.java
+                │   │   ├── OfficeQuery.java
+                │   │   └── OfficeSqlProvider.java
+                │   ├── recycle
+                │   │   ├── RecycleItemQuery.java
+                │   │   ├── RecycleLogSqlProvider.java
+                │   │   ├── RecycleMakerLogSqlProvider.java
+                │   │   ├── RecycleMakerQuery.java
+                │   │   ├── RecycleManufacturerLogSqlProvider.java
+                │   │   ├── RecycleManufacturerQuery.java
+                │   │   ├── RecyclePriceLogSqlProvider.java
+                │   │   ├── RecyclePriceQuery.java
+                │   │   ├── RecycleQuery.java
+                │   │   ├── RecycleSqlBuilder.java
+                │   │   └── RecycleSqlProvider.java
+                │   └── staff
+                │       ├── StaffLogSqlProvider.java
+                │       ├── StaffQuery.java
+                │       └── StaffSqlProvider.java
+                ├── repository
+                │   ├── BaseSqlRepository.java
+                │   └── SqlRepository.java
+                └── service
+                    ├── CsvService.java
+                    └── SqlService.java
+
+202 directories, 401 files
