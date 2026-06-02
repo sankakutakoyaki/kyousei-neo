@@ -11,12 +11,11 @@ import org.springframework.stereotype.Component;
 import com.kyouseipro.neo.common.enums.system.QueryKind;
 import com.kyouseipro.neo.domain.business.api.recycle.RecycleRepository;
 import com.kyouseipro.neo.interfaces.sql.QueryHandler;
-import com.kyouseipro.neo.sql.common.QueryParamBinder;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.Tables;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
-import com.kyouseipro.neo.sql.repository.SqlRepository;
+import com.kyouseipro.neo.sql.service.QueryExecutor;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,8 +25,7 @@ public class RecycleHandler implements QueryHandler {
 
     private final RecycleRepository recycleRepository;
     private final BaseSqlRepository baseRepository;
-    private final SqlRepository sqlRepository;
-    private final QueryParamBinder paramBinder;
+    private final QueryExecutor queryExecutor;
 
     @Override
     public boolean supports(QueryKind kind) {
@@ -79,7 +77,8 @@ public class RecycleHandler implements QueryHandler {
     }
 
     private Object executePriceList(QueryDefinition def, SelectRequest req) {
-        List<Map<String, Object>> records = select(def, req);
+        // List<Map<String, Object>> records = select(def, req);
+        List<Map<String, Object>> records = queryExecutor.select(def, req);
         Map<Long, Map<String, Object>> makers = new LinkedHashMap<>();
 
         for (Map<String, Object> record : records) {
@@ -104,7 +103,8 @@ public class RecycleHandler implements QueryHandler {
     }
 
     private Object executePriceDetail(QueryDefinition def, SelectRequest req) {
-        List<Map<String,Object>> records = select(def, req);
+        // List<Map<String,Object>> records = select(def, req);
+        List<Map<String, Object>> records = queryExecutor.select(def, req);
 
         if(records.isEmpty()){
             return Map.of("data", List.of());
@@ -153,10 +153,5 @@ public class RecycleHandler implements QueryHandler {
             count += baseRepository.update(Tables.RECYCLE_PRICE_BY_IDS, detail, editor);
         }
         return Map.of("count", count);
-    }
-
-    private List<Map<String, Object>> select(QueryDefinition def, SelectRequest req) {
-        List<Object> params = paramBinder.build(def.getParamOrder(), req.getParams());
-        return sqlRepository.selectMap(def.getSql(), params);
     }
 }
