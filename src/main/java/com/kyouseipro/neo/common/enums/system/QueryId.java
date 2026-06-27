@@ -68,6 +68,14 @@ public enum QueryId {
     RECYCLE_PRICE_DELETE_BY_IDS("recyclePriceDeleteByIds"),
     RECYCLE_PRICE_SAVE("recyclePriceSave"),
 
+
+    // ===== WorkSkill =====
+    WORK_SKILL_DETAIL("workSkillDetail"),
+    WORK_SKILL_LIST("workSkillList"),
+    WORK_SKILL_CSV("workSkillCsv"),
+    WORK_SKILL_DELETE_BY_IDS("workSkillDeleteByIds"),
+    WORK_SKILL_SAVE("workSkillSave"),
+
     // ===== RecycleItem =====
     RECYCLE_ITEM_LIST("recycleItemList");
 

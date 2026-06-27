@@ -33,7 +33,8 @@ export class FormController {
         this.formId = formId;
         this.key = key;
         this.repository = repository;
-        this.saveHandler = saveHandler;
+        // this.saveHandler = saveHandler;
+        this.saveHandler = saveHandler ?? repository?.save?.bind(repository) ?? null;
         this.beforeSave = beforeSave;
         this.afterSave = afterSave;
         this.controller = controller;
@@ -160,6 +161,7 @@ export class FormController {
             if(!payload) return;
             return await this.saveBehavior.save(payload, { form });
         } catch(e){
+            console.error(e.stack); 
             this.handleError(e);
         } finally {
             this._saving = false;
@@ -171,12 +173,12 @@ export class FormController {
         UiValidator.validate(form);
 
         const payload = FormPayloadBuilder.build({
-                form,
-                currentEntity: this.currentEntity,
-                key: this.key,
-                isBulkMode: this.isBulkMode(),
-                getTargetIds: (payload) => this.getTargetIds(payload)
-            });
+            form,
+            currentEntity: this.currentEntity,
+            key: this.key,
+            isBulkMode: this.isBulkMode(),
+            getTargetIds: (payload) => this.getTargetIds(payload)
+        });
 
         if(payload == null){
             DialogService.error("変更がありません");
