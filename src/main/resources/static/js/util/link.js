@@ -17,6 +17,22 @@ export function initParentChildLink(area = document){
             });
             parent.dataset.linkInitialized = "true";
         }
-        parent.dispatchEvent(new Event("change"));
+        // parent.dispatchEvent(new Event("change"));
+        parent.addEventListener("change", () => {
+            const comboName = child.dataset.combo;
+            const allItems = APP.cache.page[comboName] ?? [];
+            const items = allItems.filter(
+                x => String(x.parent) === String(parent.value)
+            );
+            createComboBox({
+                area: child,
+                items,
+                text: "-----"
+            });
+            // 孫へ連鎖
+            if (child.dataset.linkChild) {
+                child.dispatchEvent(new Event("change"));
+            }
+        });
     });
 }

@@ -39,6 +39,22 @@
     padding: 0;
 }
 
+
+/******************************************************************************************************* 基本のテキストエリア */
+
+.normal-textarea {
+    width: 100%;
+    border-radius: .3rem;
+    border: 1px solid var(--br);
+    /* padding: 0 .8rem; */
+    padding: .5rem 1rem;
+}
+
+.normal-input.frameless {
+    border: 0;
+    background-color: var(--white);
+}
+
 /******************************************************************************************************* チェックボックス */
 
 input.normal-chk[type="checkbox"] {

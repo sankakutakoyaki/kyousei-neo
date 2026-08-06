@@ -82,13 +82,26 @@ export const FormModel = {
                     v = null;
                 }
                 const text = v != null ? String(v) : "";
-                if(
+                // if(
+                //     el instanceof HTMLInputElement ||
+                //     el instanceof HTMLSelectElement ||
+                //     el instanceof HTMLTextAreaElement
+                // ){
+                //     el.value = text;
+                // }else{
+                //     el.textContent = text;
+                // }
+                if (
                     el instanceof HTMLInputElement ||
-                    el instanceof HTMLSelectElement ||
                     el instanceof HTMLTextAreaElement
-                ){
+                ) {
                     el.value = text;
-                }else{
+                } else if (el instanceof HTMLSelectElement) {
+                    // コンボボックス
+                    el.value = text;
+                    // 後でコンボが作り直されたときに復元できるよう保存
+                    el.dataset.pendingValue = text;
+                } else {
                     el.textContent = text;
                 }
             }
@@ -111,9 +124,22 @@ export const FormModel = {
         return diff;
     },
 
+    // clear(form){
+    //     [...form.elements].forEach(el => {
+    //         if(!el.name) return;
+
+    //         if(el.type === "checkbox"){
+    //             el.checked = false;
+    //         }else{
+    //             el.value = "";
+    //         }
+    //     });
+    // }
     clear(form){
         [...form.elements].forEach(el => {
             if(!el.name) return;
+
+            delete el.dataset.pendingValue;
 
             if(el.type === "checkbox"){
                 el.checked = false;

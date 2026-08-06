@@ -27,4 +27,7 @@ public class Tables {
 
         public static final TableMeta RECYCLE_PRICE_BY_IDS =
             new TableMeta("recycle_prices", "recyclePriceId", "state", "version");
+
+        public static final TableMeta ORDER_BY_IDS =
+            new TableMeta("orders", "orderId", "state", "version");
 }

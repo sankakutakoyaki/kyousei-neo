@@ -251,7 +251,8 @@ const postalResolver = {
         const postalInput = idInput;
         const addressInput = group.querySelector('[name="full-address"]');
         // データなし
-        if (!data || !data.data || (Array.isArray(data) && data.length === 0)) {
+        // if (!data || !data.data || (Array.isArray(data) && data.length === 0)) {
+        if (!data || (Array.isArray(data) && data.length === 0)) {
             postalInput.value = "";
             postalInput.focus();
             return;

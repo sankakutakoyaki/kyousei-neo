@@ -209,20 +209,49 @@
         <div class="form-row" data-resolve="staff">
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 { 
+                    'text': '会社名',
+                    'id':'company11',
+                    'name': 'company-id', 
+                    'combo': 'companyComboList',
+                    'top': '-----',
+                    'key': 'company-id',
+                    'resolveName':true,
+                    'index': 1,
+                    'link': 'office11'
+                }}
+            )}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'支店名', 
+                    'id':'office11',
+                    'name': 'office-id',
+                    'combo': 'officeComboList',
+                    'top': '-----',
+                    'key':'office-id',
+                    'resolveName':true,
+                    'parent': 'company11',
+                    'linkDefault': 'empty'
+                }}
+            )}"></th:block>
+        </div>
+        <!-- <div class="form-row" data-resolve="staff">
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                { 
                     'text': '会社名', 
                     'combo': 'companyComboList',
                     'top': '-----',
+                    'id': 'company11',
                     'key': 'company-id',
                     'name': 'company-id', 
                     'resolveName':true,
                     'index': 2,
                     'zeroToNull': true,
-                    'parent': 'office-id'
+                    'link': 'office11'
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 { 
-                    'id': 'code07',
+                    'id': 'office11',
                     'text': '支店名', 
                     'combo': 'officeComboList',
                     'top': '-----',
@@ -231,10 +260,11 @@
                     'resolveName':true,
                     'index': 3,
                     'zeroToNull': true,
-                    'linkDefault': 'empty'
+                    'linkDefault': 'empty',
+                    'parent': 'company11'
                 }
             })}"></th:block>
-        </div>
+        </div> -->
         <!-- 氏名 -->
         <!-- かな -->
         <div class="flex-area form-row">

@@ -96,7 +96,15 @@ export const clientStaffPage = () =>
                 companyId: filterFactory.equals("companyId"),
                 officeId: filterFactory.equals("officeId")
             }
-        }
+        },
+        validateBusiness: async (payload) => {
+            if(!payload.companyId){
+                throw {
+                    message: "会社を選択してください",
+                    fields: ["company-id"]
+                };
+            }
+        },
     });
 
 async function refreshClientChildren(){

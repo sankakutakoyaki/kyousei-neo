@@ -77,7 +77,14 @@ public enum QueryId {
     WORK_SKILL_SAVE("workSkillSave"),
 
     // ===== RecycleItem =====
-    RECYCLE_ITEM_LIST("recycleItemList");
+    RECYCLE_ITEM_LIST("recycleItemList"),
+
+    // ===== Order =====
+    ORDER_DETAIL("orderDetail"),
+    ORDER_LIST("orderList"),
+    ORDER_CSV("orderCsv"),
+    ORDER_DELETE_BY_IDS("orderDeleteByIds"),
+    ORDER_SAVE("orderSave");
 
     private final String id;
 

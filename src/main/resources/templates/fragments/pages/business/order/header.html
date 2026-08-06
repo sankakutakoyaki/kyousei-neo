@@ -1,0 +1,47 @@
+<th:block th:fragment="header01Fragment()">
+    <div id="header-01" class="flex-area pc-style">
+        <div>
+            <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-01')}"></th:block>
+            <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${
+                {
+                    'bulkEdit' : 'edit-btn-01',
+                    'delete' : 'delete-btn-01',
+                    'download' : 'download-btn-01'
+                }}
+            )}"></th:block>
+        </div>
+        <div>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'分類', 
+                    'id':'category01', 
+                    'name':'category',
+                    'combo': 'categoryComboList',
+                    'key':'category'
+                }}
+            )}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: dateRangeFragment(${
+                {
+                    'fromText':'開始日',
+                    'fromId':'date-from01',
+                    'fromName':'date-from',
+                    'toText':'終了日',
+                    'toId':'date-to01',
+                    'toName':'date-to'
+                }}
+            )}"></th:block>
+            <div class="form-parts">
+                <label></label>
+                <div>
+                    <th:block th:replace="~{fragments/components/btn :: dayMoveBtnFragment('date-from01','date-to01')}" />
+                    <th:block th:replace="~{fragments/components/btn :: weekMoveBtnFragment('date-from01','date-to01')}" />
+                    <th:block th:replace="~{fragments/components/btn :: monthMoveBtnFragment('date-from01','date-to01')}" />                    
+                </div>
+            </div>
+            <div class="form-parts">
+                <label></label>
+                <button class="normal-btn ok" type="button" id="search-btn" data-action="search">検索</button>
+            </div>
+        </div>
+    </div>
+</th:block>

@@ -36,6 +36,16 @@ export function createComboBox({area, items, text = null, onChange = null}) {
         }
     });
 
+    // コンボ作り直し後に値を復元
+    const pendingValue = area.dataset.pendingValue;
+    if (
+        pendingValue &&
+        [...area.options].some(o => String(o.value) === String(pendingValue))
+    ) {
+        area.value = pendingValue;
+        delete area.dataset.pendingValue;
+    }
+
     if (typeof onChange === "function") {
         area.addEventListener("change", onChange);
     }

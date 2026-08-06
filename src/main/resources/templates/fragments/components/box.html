@@ -79,6 +79,29 @@
     </div>
 </th:block>
 
+<th:block th:fragment="textareaFragment(data)">
+    <div class="form-parts">
+        <label th:if="${data['text']}"
+               th:for="${data['id']}"
+               th:text="${data['text']}"></label>
+
+        <textarea
+            class="normal-textarea"
+            th:attr="
+                id=${data['id']},
+                name=${data['name']},
+                rows=${data['rows']},
+                cols=${data['cols']},
+                placeholder=${data['placeholder']},
+                data-key=${data['key']},
+                data-submit=${data['submit']},
+                data-trim=${data['trim'] != null ? 'true' : null},
+                tabindex=${data['index']}
+            ">
+        </textarea>
+    </div>
+</th:block>
+
 <th:block th:fragment="dateRangeFragment(data)">
     <div class="date-range">
 

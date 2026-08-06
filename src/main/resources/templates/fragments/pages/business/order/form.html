@@ -1,0 +1,132 @@
+<th:block th:fragment="form01Fragment()">
+    <div class="dialog-content" data-enterfocus="form-01">
+        <!-- 会社名 -->
+        <div class="form-row" data-resolve="client" >
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                { 
+                    'text': '小売業者',
+                    'id':'primeConstractor11',
+                    'name': 'prime-constractor-id', 
+                    'combo': 'clientComboList',
+                    'top': '-----',
+                    'key': 'prime-constractor-id',
+                    'resolveName':true,
+                    'index': 1,
+                    'link': 'primeConstractorOffice11'
+                }}
+            )}"></th:block>
+            <div>
+                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                    {
+                        'text':'支店名', 
+                        'id':'primeConstractorOffice11',
+                        'name': 'prime-constractor-office-id',
+                        'combo': 'officeComboList',
+                        'top': '-----',
+                        'key':'prime-constractor-office-id',
+                        'resolveName':true,
+                        'parent': 'primeConstractor11',
+                        'link': 'staff11',
+                        'linkDefault': 'empty'
+                    }}
+                )}"></th:block>
+                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                    {
+                        'text':'営業担当者', 
+                        'id':'staff11',
+                        'name': 'staff-id',
+                        'combo': 'staffComboList',
+                        'top': '-----',
+                        'key':'staff-id',
+                        'resolveName':true,
+                        'parent': 'primeConstractorOffice11',
+                        'linkDefault': 'empty'
+                    }}
+                )}"></th:block>
+            </div>
+        </div>
+        <!-- 受注番号 -->
+        <div class="form-row" data-resolve="order">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'受注番号',
+                    'id':'request-number11',
+                    'name':'request-number',
+                    'index': 2
+                }}
+            )}"></th:block>
+        </div>
+        <!-- 日付 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text':'訪問日',
+                    'id':'visitDate11',
+                    'name':'visit-date',
+                    'type':'date',
+                    'action':'date-arrow',
+                    'index': 3
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text':'訪問時間',
+                    'id':'visitTime11',
+                    'name':'visit-time',
+                    'index': 4
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': '連絡先',
+                    'name': 'contact-information', 
+                    'type': 'phone', 
+                    'index': 5
+                }
+            })}"></th:block>
+        </div>
+        <!-- 件名 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'件名',
+                    'id':'title11',
+                    'name':'title',
+                    'index': 6
+                }}
+            )}"></th:block>
+        </div>
+        <!-- 住所 -->
+        <div class="form-row" data-resolve="postal">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': '郵便番号', 
+                    'name': 'postal-code', 
+                    'resolveId': true, 
+                    'type': 'postal', 
+                    'index': 7
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                { 
+                    'text': '住所', 
+                    'name': 'full-address', 
+                    'placeholder': '例）大阪府高槻市柱本5丁目7番10号', 
+                    'resolveName': true, 
+                    'index': 8
+                }
+            })}"></th:block>
+        </div>
+        <!-- 備考 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: textareaFragment(${
+                {
+                    'text':'備考',
+                    'id':'remarks11',
+                    'name':'remarks',
+                    'index': 9
+                }}
+            )}"></th:block>
+        </div>
+    </div>
+</th:block>
