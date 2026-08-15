@@ -68,7 +68,6 @@ public enum QueryId {
     RECYCLE_PRICE_DELETE_BY_IDS("recyclePriceDeleteByIds"),
     RECYCLE_PRICE_SAVE("recyclePriceSave"),
 
-
     // ===== WorkSkill =====
     WORK_SKILL_DETAIL("workSkillDetail"),
     WORK_SKILL_LIST("workSkillList"),
@@ -84,7 +83,9 @@ public enum QueryId {
     ORDER_LIST("orderList"),
     ORDER_CSV("orderCsv"),
     ORDER_DELETE_BY_IDS("orderDeleteByIds"),
-    ORDER_SAVE("orderSave");
+    ORDER_SAVE("orderSave"),
+    ORDER_ITEM_LIST("orderItemList"),
+    ORDER_WORK_LIST("orderWorkList");
 
     private final String id;
 

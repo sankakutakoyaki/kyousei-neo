@@ -36,3 +36,20 @@ export function setPageTopButton(tableId) {
         }
     });
 }
+
+export function hidePageTopButton(tableId) {
+    const tbl = tableId instanceof HTMLElement
+            ? tableId
+            : document.getElementById(tableId);
+
+    if(!tbl) return;
+
+    const area = tbl.closest(".table-wrapper");
+    if(!area) return;
+
+    const btn = area.querySelector(".page-top");
+
+    if(btn){
+        btn.style.display = "none";
+    }
+}

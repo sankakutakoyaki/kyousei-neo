@@ -10,7 +10,9 @@ import com.kyouseipro.neo.common.enums.system.QueryType;
 import com.kyouseipro.neo.interfaces.sql.SqlProviderPart;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.provider.Tables;
+import com.kyouseipro.neo.sql.query.business.order.OrderItemQuery;
 import com.kyouseipro.neo.sql.query.business.order.OrderQuery;
+import com.kyouseipro.neo.sql.query.business.order.OrderWorkQuery;
 
 @Component
 public class OrderSqlProvider implements SqlProviderPart {
@@ -26,7 +28,9 @@ public class OrderSqlProvider implements SqlProviderPart {
         map.put(QueryId.ORDER_DELETE_BY_IDS,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.ORDER_BY_IDS));
         map.put(QueryId.ORDER_SAVE,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.ORDER_BY_IDS));
+            new QueryDefinition(QueryType.UPDATE, QueryKind.ORDER_SAVE, Tables.ORDER_BY_IDS));
+        map.put(QueryId.ORDER_ITEM_LIST, OrderItemQuery.orderItemList());
+        map.put(QueryId.ORDER_WORK_LIST, OrderWorkQuery.orderWorkList());
 
         return map;
     }

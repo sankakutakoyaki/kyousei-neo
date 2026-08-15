@@ -1,132 +1,276 @@
 <th:block th:fragment="form01Fragment()">
     <div class="dialog-content" data-enterfocus="form-01">
-        <!-- 会社名 -->
-        <div class="form-row" data-resolve="client" >
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                { 
-                    'text': '小売業者',
-                    'id':'primeConstractor11',
-                    'name': 'prime-constractor-id', 
-                    'combo': 'clientComboList',
-                    'top': '-----',
-                    'key': 'prime-constractor-id',
-                    'resolveName':true,
-                    'index': 1,
-                    'link': 'primeConstractorOffice11'
-                }}
-            )}"></th:block>
-            <div>
-                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                    {
-                        'text':'支店名', 
-                        'id':'primeConstractorOffice11',
-                        'name': 'prime-constractor-office-id',
-                        'combo': 'officeComboList',
-                        'top': '-----',
-                        'key':'prime-constractor-office-id',
-                        'resolveName':true,
-                        'parent': 'primeConstractor11',
-                        'link': 'staff11',
-                        'linkDefault': 'empty'
-                    }}
-                )}"></th:block>
-                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                    {
-                        'text':'営業担当者', 
-                        'id':'staff11',
-                        'name': 'staff-id',
-                        'combo': 'staffComboList',
-                        'top': '-----',
-                        'key':'staff-id',
-                        'resolveName':true,
-                        'parent': 'primeConstractorOffice11',
-                        'linkDefault': 'empty'
-                    }}
-                )}"></th:block>
+        <div class="tab-area">
+            <ul class="tab-menu">
+                <li class="tab-menu-item is-active" data-action="tab" data-group="order-add-tabs" data-tab="tab-11">基本</li>
+                <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="tab-12">商品</li>
+                <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="tab-13">作業</li>
+            </ul>
+            <div class="tab-panel is-show" id="tab-11" data-tab-content="order-add-tabs">
+                <!-- 会社名 -->
+                <div class="form-row" data-resolve="client" >
+                    <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                        { 
+                            'text': '小売業者',
+                            'id':'primeConstractor11',
+                            'name': 'prime-constractor-id', 
+                            'combo': 'clientComboList',
+                            'top': '-----',
+                            'key': 'prime-constractor-id',
+                            'resolveName':true,
+                            'index': 1,
+                            'link': 'primeConstractorOffice11',
+                            'zeroToNull':true,
+                            'skipIfNull':true
+                        }}
+                    )}"></th:block>
+                    <div>
+                        <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                            {
+                                'text':'支店名', 
+                                'id':'primeConstractorOffice11',
+                                'name': 'prime-constractor-office-id',
+                                'combo': 'officeComboList',
+                                'top': '-----',
+                                'key':'prime-constractor-office-id',
+                                'resolveName':true,
+                                'parent': 'primeConstractor11',
+                                'link': 'staff11',
+                                'linkDefault': 'empty',
+                                'zeroToNull':true,
+                                'skipIfNull':true
+                            }}
+                        )}"></th:block>
+                        <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                            {
+                                'text':'営業担当者', 
+                                'id':'staff11',
+                                'name': 'staff-id',
+                                'combo': 'staffComboList',
+                                'top': '-----',
+                                'key':'staff-id',
+                                'resolveName':true,
+                                'parent': 'primeConstractorOffice11',
+                                'linkDefault': 'empty',
+                                'zeroToNull':true,
+                                'skipIfNull':true
+                            }}
+                        )}"></th:block>
+                    </div>
+                </div>
+                <!-- 受注番号 -->
+                <div class="form-row" data-resolve="order">
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        {
+                            'text':'受注番号',
+                            'id':'request-number11',
+                            'name':'request-number',
+                            'index': 2,
+                            'skipIfNull':true
+                        }}
+                    )}"></th:block>
+                </div>
+                <!-- 日付 -->
+                <div class="form-row">
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        { 
+                            'text':'訪問日',
+                            'id':'visitDate11',
+                            'name':'visit-date',
+                            'type':'date',
+                            'action':'date-arrow',
+                            'index': 3,
+                            'skipIfNull':true
+                        }
+                    })}"></th:block>
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        { 
+                            'text':'訪問時間',
+                            'id':'visitTime11',
+                            'name':'visit-time',
+                            'index': 4,
+                            'skipIfNull':true
+                        }
+                    })}"></th:block>
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        { 
+                            'text': '連絡先',
+                            'name': 'contact-information', 
+                            'type': 'phone',
+                            'validate': 'phone',
+                            'index': 5,
+                            'skipIfNull':true
+                        }
+                    })}"></th:block>
+                </div>
+                <!-- 件名 -->
+                <div class="form-row">
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        {
+                            'text':'件名',
+                            'id':'title11',
+                            'name':'title',
+                            'required': '件名を入力してください',
+                            'index': 6,
+                            'skipIfNull':true
+                        }}
+                    )}"></th:block>
+                </div>
+                <!-- 住所 -->
+                <div class="form-row" data-resolve="postal">
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        { 
+                            'text': '郵便番号', 
+                            'name': 'postal-code', 
+                            'resolveId': true, 
+                            'type': 'postal', 
+                            'index': 7,
+                            'skipIfNull':true
+                        }
+                    })}"></th:block>
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        { 
+                            'text': '住所', 
+                            'name': 'full-address', 
+                            'placeholder': '例）大阪府高槻市柱本5丁目7番10号', 
+                            'resolveName': true, 
+                            'index': 8,
+                            'skipIfNull':true
+                        }
+                    })}"></th:block>
+                </div>
+                <!-- 備考 -->
+                <div class="form-row">
+                    <th:block th:replace="~{fragments/components/box :: textareaFragment(${
+                        {
+                            'text':'備考',
+                            'id':'remarks11',
+                            'name':'remarks',
+                            'index': 9,
+                            'skipIfNull':true
+                        }}
+                    )}"></th:block>
+                </div>
             </div>
-        </div>
-        <!-- 受注番号 -->
-        <div class="form-row" data-resolve="order">
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                {
-                    'text':'受注番号',
-                    'id':'request-number11',
-                    'name':'request-number',
-                    'index': 2
-                }}
-            )}"></th:block>
-        </div>
-        <!-- 日付 -->
-        <div class="form-row">
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                { 
-                    'text':'訪問日',
-                    'id':'visitDate11',
-                    'name':'visit-date',
-                    'type':'date',
-                    'action':'date-arrow',
-                    'index': 3
-                }
-            })}"></th:block>
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                { 
-                    'text':'訪問時間',
-                    'id':'visitTime11',
-                    'name':'visit-time',
-                    'index': 4
-                }
-            })}"></th:block>
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                { 
-                    'text': '連絡先',
-                    'name': 'contact-information', 
-                    'type': 'phone', 
-                    'index': 5
-                }
-            })}"></th:block>
-        </div>
-        <!-- 件名 -->
-        <div class="form-row">
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                {
-                    'text':'件名',
-                    'id':'title11',
-                    'name':'title',
-                    'index': 6
-                }}
-            )}"></th:block>
-        </div>
-        <!-- 住所 -->
-        <div class="form-row" data-resolve="postal">
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                { 
-                    'text': '郵便番号', 
-                    'name': 'postal-code', 
-                    'resolveId': true, 
-                    'type': 'postal', 
-                    'index': 7
-                }
-            })}"></th:block>
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                { 
-                    'text': '住所', 
-                    'name': 'full-address', 
-                    'placeholder': '例）大阪府高槻市柱本5丁目7番10号', 
-                    'resolveName': true, 
-                    'index': 8
-                }
-            })}"></th:block>
-        </div>
-        <!-- 備考 -->
-        <div class="form-row">
-            <th:block th:replace="~{fragments/components/box :: textareaFragment(${
-                {
-                    'text':'備考',
-                    'id':'remarks11',
-                    'name':'remarks',
-                    'index': 9
-                }}
-            )}"></th:block>
+            <div class="tab-panel" id="tab-12" data-tab-content="order-add-tabs">
+                <!-- JANコード -->
+                <!-- 商品名 -->
+                <div class="form-row">
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        {
+                            'text':'JANコード',
+                            'id':'janCode11',
+                            'name':'jan-code',
+                            'index': 1,
+                            'skipIfNull':true
+                        }}
+                    )}"></th:block>
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        {
+                            'text':'商品名',
+                            'id':'itemName11',
+                            'name':'item-name',
+                            'index': 2,
+                            'skipIfNull':true
+                        }}
+                    )}"></th:block>
+                </div>
+                <!-- メーカー -->
+                <!-- 型番 -->
+                <!-- 数量 -->
+                <div class="form-row">
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        {
+                            'text':'メーカー',
+                            'id':'itemMaker11',
+                            'name':'item-maker',
+                            'index': 3,
+                            'skipIfNull':true
+                        }}
+                    )}"></th:block>
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        {
+                            'text':'型番',
+                            'id':'itemModel11',
+                            'name':'item-model',
+                            'index': 4,
+                            'skipIfNull':true
+                        }}
+                    )}"></th:block>
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        {
+                            'text':'数量',
+                            'id':'itemQuantity11',
+                            'name':'item-quantity',
+                            'index': 5,
+                            'skipIfNull':true
+                        }}
+                    )}"></th:block>
+                    <div class="form-parts">
+                        <label></label>
+                        <button class="normal-btn ok" type="button" id="add-item-btn" tabindex="6">登録</button>
+                    </div>
+                </div>
+                <div class="table-area" data-controller="orderItemList" data-sync-group="order-item-add">
+                    <section th:replace="~{fragments/table/body :: normalFragment('table-header-11', 'table-11')}"></section>
+                </div>
+            </div>
+            <div class="tab-panel" id="tab-13" data-tab-content="order-add-tabs">
+                <!-- 作業コード -->
+                <!-- 作業名 -->
+                <div class="form-row">
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        {
+                            'text':'作業コード',
+                            'id':'orderWorkCode11',
+                            'name':'order-work-code',
+                            'index': 1,
+                            'skipIfNull':true
+                        }}
+                    )}"></th:block>
+                </div>
+                <!-- メーカー -->
+                <!-- 型番 -->
+                <!-- 数量 -->
+                <div class="form-row">
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        {
+                            'text':'作業名',
+                            'id':'orderWorkName11',
+                            'name':'order-work-name',
+                            'index': 2,
+                            'skipIfNull':true
+                        }}
+                    )}"></th:block>
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        {
+                            'text':'金額',
+                            'id':'orderWorkPrice11',
+                            'name':'order-work-price',
+                            'index': 3,
+                            'skipIfNull':true
+                        }}
+                    )}"></th:block>
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        {
+                            'text':'数量',
+                            'id':'orderWorkQuantity11',
+                            'name':'order-work-quantity',
+                            'index': 4,
+                            'skipIfNull':true
+                        }}
+                    )}"></th:block>
+                    <div class="form-parts">
+                        <label></label>
+                        <button class="normal-btn ok" type="button" id="add-work-btn" tabindex="5">登録</button>
+                    </div>
+                </div>
+                <div class="table-area" data-controller="orderWorkList" data-sync-group="order-work-add">
+                    <section th:replace="~{fragments/table/body :: normalFragment('table-header-12', 'table-12')}"></section>
+                </div>
+            </div>
         </div>
     </div>
 </th:block>
+
+

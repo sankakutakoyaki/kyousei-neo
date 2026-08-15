@@ -1,24 +1,22 @@
 "use strict"
 
 import { clearElement } from "../dom/clearElement.js";
-import { setPageTopButton } from "../ui/pageTopButton.js";
+import { setPageTopButton, hidePageTopButton } from "../ui/pageTopButton.js";
 import { formatDate } from "../../util/time.js";
 import { normalizeValue } from "../behavior/valueNormalizer.js";
 import { convertKey } from "../../util/keyCaseConverter.js";
 
 export function renderTable(table, config, list){
-    // 初期化
     table.innerHTML = "";
     const wrapper = table.closest(".normal-table");
-
     // ヘッダー
     renderHeader(wrapper, config, list);
-
     // ボディ
-    list.forEach(item=>{
+    list.forEach(item => {
         const tr = document.createElement("tr");
+
         tr.dataset.id = item[config.idKey];
-        tr.setAttribute('name', 'data-row');
+        tr.setAttribute("name", "data-row");
 
         createRow(tr, item, config);
 
@@ -27,13 +25,28 @@ export function renderTable(table, config, list){
 
     // フッター
     if(config.footerId){
-        createTableFooter(config.footerId, list, config.totalCount);
+        createTableFooter(
+            config.footerId,
+            list,
+            config.totalCount
+        );
     }
-    setPageTopButton(table);
+
+    // ページトップボタン
+    const area = table.closest(".table-wrapper");
+    const pageTop = area?.querySelector(".page-top");
+
+    if(config.pageTopButton){
+        setPageTopButton(table);
+    } else {
+        hidePageTopButton(table);
+    }
+
     // スクロール
     const header = wrapper?.querySelector('[name="table-header"]');
-    if(header) toggleScrollbar(table);
-    // if(header) toggleScrollbar(header);
+    if(header){
+        toggleScrollbar(table);
+    }
 }
 
 export function createRow(tr, item, config){

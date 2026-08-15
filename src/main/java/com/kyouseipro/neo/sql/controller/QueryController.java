@@ -40,7 +40,6 @@ public class QueryController {
     private final BaseSqlRepository baseRepository;
     private final CsvService csvService;
     private final QueryBuilderProvider queryBuilderProvider;
-    private final RecycleRepository recycleRepository;
     private final QueryHandlerProvider handlerProvider;
 
     @PostMapping("/query")
@@ -81,40 +80,77 @@ public class QueryController {
         return sqlRepository.selectMap(def.getSql(), params);
     }
 
-    // SAVE
     private Object executeSave(QueryDefinition def, SelectRequest req) {
         Map<String, Object> params = req.getParams();
-        String editor = (String) params.getOrDefault("editor","system");
-        Object idsObj = params.get("ids");
-        // 一括更新
-        if (idsObj != null) {
-            @SuppressWarnings("unchecked")
-            List<Object> ids = (List<Object>) idsObj;
-            if (ids.isEmpty()) {
-                return Map.of("count", 0);
-            }
-            Map<String, Object> diff = new HashMap<>(params);
-            diff.remove("ids");
-            diff.remove(def.getTableMeta().idColumn());
-            diff.remove(def.getTableMeta().versionColumn());
-
-            if (diff.isEmpty()) {
-                return Map.of("count", 0);
-            }
-
-            int count = baseRepository.updateByIds(def.getTableMeta(), ids, diff, editor);
-            return Map.of("count", count);
-        }
-        // 単一
         Object idValue = params.get(def.getTableMeta().idColumn());
-        boolean isInsert = (idValue == null) || (Long.valueOf(idValue.toString()) == 0);
+
+        boolean isInsert =
+            idValue == null
+            || Long.valueOf(idValue.toString()) == 0;
+
+        String editor = (String) params.getOrDefault("editor", "system");
+
+        // itemsを注文本体から除外
+        Map<String, Object> orderParams = new HashMap<>(params);
+        orderParams.remove("items");
+
         if (isInsert) {
-            Long id = baseRepository.insert(def.getTableMeta(), params, editor);
-            return Map.of("data", id, "count", 1);
+            Long id = baseRepository.insert(
+                def.getTableMeta(),
+                orderParams,
+                editor
+            );
+            return Map.of(
+                "data", id,
+                "count", 1
+            );
         }
-        int count = baseRepository.update(def.getTableMeta(), params, editor);
-        return Map.of("data", idValue, "count", count);
+
+        int count = baseRepository.update(
+            def.getTableMeta(),
+            orderParams,
+            editor
+        );
+
+        return Map.of(
+            "data", idValue,
+            "count", count
+        );
     }
+    // SAVE
+    // private Object executeSave(QueryDefinition def, SelectRequest req) {
+    //     Map<String, Object> params = req.getParams();
+    //     String editor = (String) params.getOrDefault("editor","system");
+    //     Object idsObj = params.get("ids");
+    //     // 一括更新
+    //     if (idsObj != null) {
+    //         @SuppressWarnings("unchecked")
+    //         List<Object> ids = (List<Object>) idsObj;
+    //         if (ids.isEmpty()) {
+    //             return Map.of("count", 0);
+    //         }
+    //         Map<String, Object> diff = new HashMap<>(params);
+    //         diff.remove("ids");
+    //         diff.remove(def.getTableMeta().idColumn());
+    //         diff.remove(def.getTableMeta().versionColumn());
+
+    //         if (diff.isEmpty()) {
+    //             return Map.of("count", 0);
+    //         }
+
+    //         int count = baseRepository.updateByIds(def.getTableMeta(), ids, diff, editor);
+    //         return Map.of("count", count);
+    //     }
+    //     // // 単一
+    //     Object idValue = params.get(def.getTableMeta().idColumn());
+    //     boolean isInsert = (idValue == null) || (Long.valueOf(idValue.toString()) == 0);
+    //     if (isInsert) {
+    //         Long id = baseRepository.insert(def.getTableMeta(), params, editor);
+    //         return Map.of("data", id, "count", 1);
+    //     }
+    //     int count = baseRepository.update(def.getTableMeta(), params, editor);
+    //     return Map.of("data", idValue, "count", count);
+    // }
 
     // INSERT
     private Object executeInsert(QueryDefinition def, SelectRequest req) {

@@ -26,8 +26,11 @@ export class DataTable {
         this.buildParams = config.buildParams;
         this.buildCsvParams = config.buildCsvParams;
         this.repository = config.repository;
-        // 移動予定
-        this.canSave = config.canSave;
+        // 表示機能
+        this.infiniteScroll = config.infiniteScroll ?? true;
+        this.pageTopButton = config.pageTopButton ?? true;
+
+        this.canSave = config.canSave;        
         this.tableEl = document.getElementById(this.tableId);        
         const userModel = config.model || {};
         this.model = new TableModel({
@@ -35,16 +38,20 @@ export class DataTable {
             // デフォルト + 上書き
             ...defaultModel,
             ...userModel,
-            filters: {
-                ...defaultModel.filters,
-                ...(userModel.filters || {})
-            }
+            // filters: {
+            //     ...defaultModel.filters,
+            //     ...(userModel.filters || {})
+            // }
+            filters: userModel.filters ?? defaultModel.filters
         });
         if(config.data){
             this.model.setOrigin(config.data);
         }
         this.initEvents();
-        this.initInfiniteScroll();
+        // this.initInfiniteScroll();
+        if(this.infiniteScroll){
+            this.initInfiniteScroll();
+        }
         this.initOutsideClick();
     }
 
@@ -111,7 +118,8 @@ export class DataTable {
                 controller: this.controller,
                 onRowClick: this.onRowClick,
                 onDoubleClick: this.onDoubleClick,
-                totalCount: this.model.getTotalCount()
+                totalCount: this.model.getTotalCount(),
+                pageTopButton: this.pageTopButton
             },
             this.model.getViewData()
         );

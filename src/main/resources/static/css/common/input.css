@@ -50,11 +50,6 @@
     padding: .5rem 1rem;
 }
 
-.normal-input.frameless {
-    border: 0;
-    background-color: var(--white);
-}
-
 /******************************************************************************************************* チェックボックス */
 
 input.normal-chk[type="checkbox"] {

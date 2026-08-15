@@ -121,6 +121,7 @@ public class BaseSqlRepository {
             editor,
             logProvider
         );
+
         return sqlRepository.updateRequired(
             result.getSql(),
             result.getParams(),

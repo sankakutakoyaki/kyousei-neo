@@ -23,5 +23,15 @@ export const OrderRepository = {
 
     async download(params){
         return await RequestClient.request({queryId: "orderCsv", params});
+    },
+
+    async findItems(params){
+        const res = await RequestClient.request({queryId: "orderItemList", params});
+        return res.data ?? [];
+    },
+
+    async findWorks(params) {
+        const res = await RequestClient.request({queryId: "orderWorkList", params});
+        return res.data ?? [];
     }
 };

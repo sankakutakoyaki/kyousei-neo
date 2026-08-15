@@ -9,15 +9,6 @@ import com.kyouseipro.neo.sql.model.QueryDefinition;
 public class OrderQuery {
     public static QueryDefinition orderList(OrderCategory category) {
         String column = category.getColumn();
-        // String column1 = "start_date", column2 = "end_date";
-        // switch (column) {
-        //     case "regist":
-        //         column1 = "regist_date"; column2 = "regist_date";
-        //         break;
-        //     default:
-        //         break;
-        // }
-
         String sql = """
             SELECT o.order_id, o.request_number, o.visit_date, o.visit_time, o.title, o.full_address, o.remarks,
                 c.name as prime_constractor_name, co.name as prime_constractor_office_name, s.full_name as staff_name,

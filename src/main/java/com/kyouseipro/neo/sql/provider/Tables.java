@@ -30,4 +30,10 @@ public class Tables {
 
         public static final TableMeta ORDER_BY_IDS =
             new TableMeta("orders", "orderId", "state", "version");
+
+        public static final TableMeta ORDER_ITEM_BY_IDS =
+            new TableMeta("order_items", "orderItemId", "state", "version");
+
+        public static final TableMeta ORDER_WORK_BY_IDS =
+            new TableMeta("order_works", "orderWorkId", "state", "version");
 }

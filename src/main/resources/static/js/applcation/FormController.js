@@ -24,7 +24,13 @@ export class FormController {
             buildParams = null,
             validateBusiness = null,
             closeOnSave = true,
-            showSuccessDialog = true
+            showSuccessDialog = true,
+            buildAdditionalPayload = null,
+            hasAdditionalChanges = null,
+            resetAdditional = null,
+            onOpen = null,
+            changeTargetSelector = null,
+            validInputSelector = null
         } = config;
 
         if(!formId) throw new Error("formId is required");
@@ -43,6 +49,12 @@ export class FormController {
         this.closeOnSave = closeOnSave;
         this.showSuccessDialog = showSuccessDialog;
         this.currentEntity = null;
+        this.buildAdditionalPayload = buildAdditionalPayload;
+        this.hasAdditionalChanges = hasAdditionalChanges;
+        this.resetAdditional = resetAdditional;
+        this.onOpen = onOpen;
+        this.changeTargetSelector = changeTargetSelector;
+        this.validInputSelector = validInputSelector;
         this.saveBehavior =
             new SaveBehavior({
                 beforeSave: async (payload, context) => {
@@ -97,25 +109,31 @@ export class FormController {
         let data = dataOrId ?? {};
 
         if (typeof dataOrId !== "object") {
-            if(!this.repository?.find) return;
+            if (!this.repository?.find) return;
 
             const params = this.buildParams
                 ? this.buildParams(dataOrId)
                 : { id: dataOrId };
+
             data = await this.repository.find(params);
         }
 
         const isCreate = !data?.[this.key];
-        if(isCreate){
+
+        if (isCreate) {
             const filters = this.controller.state?.filters || {};
+
             Object.entries(filters).forEach(([key, value]) => {
                 if (value == null || value === "") return;
+
                 const kebab = convertKey(key, "camel", "kebab");
+
                 const el = document.querySelector(
                     `#${this.formId} [name="${kebab}"],
                     #${this.formId} [data-key="${kebab}"],
                     #${this.formId} [data-key="${key}"]`
                 );
+
                 if (!el) return;
 
                 if (data[key] == null || data[key] === "") {
@@ -123,19 +141,54 @@ export class FormController {
                 }
             });
         }
+
         this.currentEntity = structuredClone(data);
 
         const form = document.getElementById(this.formId);
+
         FormModel.clear(form);
         FormModel.fill(form, data);
+
         await initParentChildLink(form);
-        if(form.dataset.bulk === "true"){
-            form.querySelectorAll("select").forEach(select => {select.selectedIndex = -1;});
+
+        // フォームを開いたときは先頭タブ
+        const firstTab = form.querySelector(".tab-menu-item");
+        const tabPanels = form.querySelectorAll(".tab-panel");
+
+        if (firstTab) {
+            form.querySelectorAll(".tab-menu-item").forEach(tab => {
+                tab.classList.remove("is-active");
+            });
+
+            firstTab.classList.add("is-active");
         }
-        
+
+        if (tabPanels.length > 0) {
+            tabPanels.forEach(panel => {
+                panel.classList.remove("is-show");
+            });
+
+            const firstTabId = firstTab?.dataset.tab;
+
+            if (firstTabId) {
+                form.querySelector(`#${firstTabId}`)?.classList.add("is-show");
+            }
+        }
+
+        if (form.dataset.bulk === "true") {
+            form.querySelectorAll("select").forEach(select => {
+                select.selectedIndex = -1;
+            });
+        }
+
         if (!this._eventsInitialized) {
             this.initEvents();
             this._eventsInitialized = true;
+        }
+
+        // フォームと関連データの初期化
+        if (this.onOpen) {
+            await this.onOpen(data, this);
         }
 
         openFormDialog({
@@ -158,6 +211,7 @@ export class FormController {
 
         try {
             const payload = this.preparePayload(form);
+
             if(!payload) return;
             return await this.saveBehavior.save(payload, { form });
         } catch(e){
@@ -168,11 +222,34 @@ export class FormController {
         }
     }
 
+    // preparePayload(form){
+    //     this.clearErrors();
+    //     UiValidator.validate(form);
+
+    //     const payload = FormPayloadBuilder.build({
+    //         form,
+    //         currentEntity: this.currentEntity,
+    //         key: this.key,
+    //         isBulkMode: this.isBulkMode(),
+    //         getTargetIds: (payload) => this.getTargetIds(payload)
+    //     });
+
+    //     if(payload == null){
+    //         DialogService.error("変更がありません");
+    //         return null;
+    //     }
+
+    //     if(this.isBulkMode() && payload.ids.length === 0){
+    //         DialogService.error("選択してください");
+    //         return null;
+    //     }
+    //     return payload;
+    // }
     preparePayload(form){
         this.clearErrors();
         UiValidator.validate(form);
 
-        const payload = FormPayloadBuilder.build({
+        let payload = FormPayloadBuilder.build({
             form,
             currentEntity: this.currentEntity,
             key: this.key,
@@ -180,15 +257,43 @@ export class FormController {
             getTargetIds: (payload) => this.getTargetIds(payload)
         });
 
-        if(payload == null){
+        const additionalChanged =
+            this.hasAdditionalChanges?.() ?? false;
+
+        // フォーム変更なし＋追加データ変更なし
+        if(payload == null && !additionalChanged){
             DialogService.error("変更がありません");
             return null;
         }
 
-        if(this.isBulkMode() && payload.ids.length === 0){
+        // フォーム変更なしでも明細変更があれば保存可能
+        if(payload == null){
+            payload = {};
+        }
+
+        // 編集時はIDを必ず保持
+        if(this.currentEntity?.[this.key]){
+            payload[this.key] = this.currentEntity[this.key];
+        }
+
+        // 楽観ロック用
+        if(this.currentEntity?.version != null){
+            payload.
+            version = this.currentEntity.version;
+        }
+        // 追加データ
+        if(this.buildAdditionalPayload){
+            Object.assign(
+                payload,
+                this.buildAdditionalPayload()
+            );
+        }
+
+        if(this.isBulkMode() && payload.ids?.length === 0){
             DialogService.error("選択してください");
             return null;
         }
+
         return payload;
     }
 
@@ -247,13 +352,27 @@ export class FormController {
         FormModel.clear(form);
     }
 
+    // resetForm(){
+    //     this.clearErrors();
+    //     const form = document.getElementById(this.formId);
+    //     FormModel.fill(
+    //         form,
+    //         this.currentEntity ?? {}
+    //     );
+    //     this.setSubmitEnabled(false);
+    // }
     resetForm(){
         this.clearErrors();
+
         const form = document.getElementById(this.formId);
+
         FormModel.fill(
             form,
             this.currentEntity ?? {}
         );
+
+        this.resetAdditional?.();
+
         this.setSubmitEnabled(false);
     }
 
@@ -262,14 +381,29 @@ export class FormController {
         FormModel.fill(form, data);
     }
 
+    // hasChanges(){
+    //     const form = document.getElementById(this.formId);
+    //     return FormStateBehavior.hasChanges({form, currentEntity: this.currentEntity});
+    // }
     hasChanges(){
         const form = document.getElementById(this.formId);
-        return FormStateBehavior.hasChanges({form, currentEntity: this.currentEntity});
+
+        return FormStateBehavior.hasChanges({
+            form,
+            currentEntity: this.currentEntity,
+            selector: this.changeTargetSelector
+        });
     }
 
+    // hasValidInput(){
+    //     const form = document.getElementById(this.formId);
+    //     return FormStateBehavior.hasValidInput(form);
+    // }
     hasValidInput(){
         const form = document.getElementById(this.formId);
-        return FormStateBehavior.hasValidInput(form);
+        if(!form) return false;
+
+        return FormStateBehavior.hasValidInput(form, this.validInputSelector);
     }
 
     initEvents(){
@@ -283,13 +417,49 @@ export class FormController {
         form.addEventListener("change", update);
     }
 
+    // canSubmit(){
+    //     // 新規
+    //     if(!this.currentEntity || !this.currentEntity[this.key]){
+    //         return this.hasValidInput();
+    //     }
+    //     // 編集
+    //     return this.hasChanges();
+    // }
+    // canSubmit(){
+    //     const form =  document.getElementById(this.formId);
+    //     if(!form) return false;
+
+    //     const requiredValid = UiValidator.hasRequiredInput(form, this.validInputSelector);
+
+    //     // 新規
+    //     if(!this.currentEntity || !this.currentEntity[this.key]){
+    //         return requiredValid;
+    //     }
+
+    //     // 編集
+    //     return this.hasChanges() ||
+    //         (this.hasAdditionalChanges?.() ?? false);
+    // }
+    // canSubmit(){
+    //     const additionalChanged =
+    //         this.hasAdditionalChanges?.() ?? false;
+
+    //     if(!this.currentEntity || !this.currentEntity[this.key]){
+    //         return this.hasValidInput() || additionalChanged;
+    //     }
+
+    //     return this.hasChanges() || additionalChanged;
+    // }
     canSubmit(){
-        // 新規
+        const formChanged = this.hasChanges();
+        const additionalChanged =
+            this.hasAdditionalChanges?.() ?? false;
+
         if(!this.currentEntity || !this.currentEntity[this.key]){
-            return this.hasValidInput();
+            return this.hasValidInput() || additionalChanged;
         }
-        // 編集
-        return this.hasChanges();
+
+        return formChanged || additionalChanged;
     }
 
     setSubmitEnabled(enabled){

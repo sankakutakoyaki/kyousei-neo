@@ -29,6 +29,7 @@
                     data-key=${data['key']},
                     data-submit=${data['submit']},
                     data-validate=${data['validate']},
+                    data-required=${data['required']},
                     data-enter-validate=${data['enterValidate']},
                     data-enter-submit=${data['enterSubmit']},
                     data-message=${data['errorMessage']},
@@ -96,6 +97,7 @@
                 data-key=${data['key']},
                 data-submit=${data['submit']},
                 data-trim=${data['trim'] != null ? 'true' : null},
+                data-skip-if-null=${data['skipIfNull'] != null ? 'true' : null},
                 tabindex=${data['index']}
             ">
         </textarea>

@@ -70,3 +70,29 @@ export function validate(form){
     }
     return true;
 }
+
+// 必須項目だけをチェック
+export function hasRequiredInput(form, selector = null){
+    const root = selector
+        ? form.querySelector(selector)
+        : form;
+
+    if(!root) return false;
+
+    const elements =
+        root.querySelectorAll("[name]");
+
+    for(const el of elements){
+        if(el.disabled) continue;
+
+        let value = el.value ?? "";
+        if(el.dataset.trim){
+            value = value.trim();
+        }
+
+        if(el.dataset.required && value === ""){
+            return false;
+        }
+    }
+    return true;
+}

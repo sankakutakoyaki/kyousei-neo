@@ -38,3 +38,86 @@ export const createOrderListColumns = (controller) => [
         `
     }
 ];
+
+export const createOrderItemListColumns = () => [
+    {
+        field: "itemCode",
+        label: "JANコード/商品名",
+        render: (item) => `
+            <span>${item.janCode ?? "-----"}</span><br>
+            <span>${item.itemName ?? "-----"}</span>
+        `
+    },
+    {
+        field: "itemName",
+        label: "メーカー/型番",
+        render: (item) => `
+            <span>${item.itemMaker ?? "-----"}</span><br>
+            <span>${item.itemModel ?? "-----"}</span>
+        `
+    },
+    {
+        field: "itemQuantity",
+        label: "数量",
+        render: (item) => `
+            <span>${item.itemQuantity ?? "-----"}</span>
+        `
+        // render: (item) => `
+        //     <input
+        //         class="normal-input frameless text-right"
+        //         data-id="${item._tempId}"
+        //         value="${item.quantity ?? 1}"
+        //         min="1">
+        // `
+    },
+    {    
+        field: "action",
+        label: "",
+        render: (item) => `
+            <button
+                type="button"
+                class="img-btn"
+                data-action="delete-order-item"
+                data-id="${item._tempId}">
+                <img src="/icons/dust.png">
+            </button>
+        `
+    }
+];
+
+export const createOrderWorkListColumns = () => [
+    {
+        field: "orderWorkName",
+        label: "作業名",
+        render: (item) => `
+            <span>${item.orderWorkName ?? "-----"}</span>
+        `
+    },
+    {
+        field: "orderWorkPrice",
+        label: "金額",
+        render: (item) => `
+            <span>${item.orderWorkPrice ?? "-----"}</span>
+        `
+    },
+    {
+        field: "orderWorkQuantity",
+        label: "数量",
+        render: (item) => `
+            <span>${item.orderWorkQuantity ?? "-----"}</span>
+        `
+    },
+    {    
+        field: "action",
+        label: "",
+        render: (item) => `
+            <button
+                type="button"
+                class="img-btn"
+                data-action="delete-order-work"
+                data-id="${item._tempId}">
+                <img src="/icons/dust.png">
+            </button>
+        `
+    }
+];
