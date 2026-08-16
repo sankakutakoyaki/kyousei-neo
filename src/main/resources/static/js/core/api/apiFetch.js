@@ -81,7 +81,13 @@ export async function apiFetch(url, {
         return {
             ok: true,
             status: response.status,
-            data: result?.data ?? result,
+            // data: result?.data ?? result,
+            data: Object.prototype.hasOwnProperty.call(
+                result ?? {},
+                "data"
+            )
+                ? result.data
+                : result,
             message: result?.message ?? "",
             title: cd
         };

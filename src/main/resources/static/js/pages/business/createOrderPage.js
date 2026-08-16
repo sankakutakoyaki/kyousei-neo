@@ -143,21 +143,38 @@ function initOrderItemInput(formController, formEl, itemList) {
 
     const addButton = formEl.querySelector("#add-item-btn");
     if (!addButton) return;
-    
+
+    // JANコード入力
+    const janInput = formEl.querySelector('[name="jan-code"]');
+
+    if (janInput && janInput.dataset.initialized !== "true") {
+        janInput.dataset.initialized = "true";
+
+        janInput.addEventListener("input", () => {
+            janInput.value = janInput.value
+                .replace(/[０-９]/g, s =>
+                    String.fromCharCode(
+                        s.charCodeAt(0) - 0xfee0
+                    )
+                )
+                .replace(/[^0-9]/g, "");
+        });
+    }
+
+    // 登録ボタン
     if (addButton.dataset.initialized === "true") {
         return;
     }
 
     addButton.dataset.initialized = "true";
     addButton.addEventListener("click", () => {
+        const quantity = formEl.querySelector('[name="item-quantity"]')?.value?.trim();
         const item = {
             janCode: formEl.querySelector('[name="jan-code"]')?.value?.trim() ?? "",
             itemName: formEl.querySelector('[name="item-name"]')?.value?.trim() ?? "",
             itemMaker: formEl.querySelector('[name="item-maker"]')?.value?.trim() ?? "",
             itemModel: formEl.querySelector('[name="item-model"]')?.value?.trim() ?? "",
-            itemQuantity: Number(
-                formEl.querySelector('[name="item-quantity"]')?.value ?? 1
-            )
+            itemQuantity: quantity ? Number(quantity) : 1
         };
 
         if (!item.itemModel) {
@@ -208,15 +225,13 @@ function initOrderWorkInput(formController, formEl, workList) {
 
     addButton.dataset.initialized = "true";
     addButton.addEventListener("click", () => {
+        const price = formEl.querySelector('[name="order-work-price"]')?.value?.trim();
+        const quantity = formEl.querySelector('[name="order-work-quantity"]')?.value?.trim();
         const work = {
             orderWorkCode: formEl.querySelector('[name="order-work-code"]')?.value?.trim() ?? "",
             orderWorkName: formEl.querySelector('[name="order-work-name"]')?.value?.trim() ?? "",
-            orderWorkPrice: Number(
-                formEl.querySelector('[name="order-work-price"]')?.value ?? 0
-            ),
-            orderWorkQuantity: Number(
-                formEl.querySelector('[name="order-work-quantity"]')?.value ?? 1
-            )
+            orderWorkPrice: price ? Number(price) : 0,
+            orderWorkQuantity: quantity ? Number(quantity) : 1
         };
         // 作業名 必須
         if (!work.orderWorkName) {

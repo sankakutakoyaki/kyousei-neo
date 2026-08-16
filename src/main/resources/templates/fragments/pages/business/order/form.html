@@ -155,12 +155,13 @@
             <div class="tab-panel" id="tab-12" data-tab-content="order-add-tabs">
                 <!-- JANコード -->
                 <!-- 商品名 -->
-                <div class="form-row">
+                <div class="form-row" data-resolve="item">
                     <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                         {
                             'text':'JANコード',
                             'id':'janCode11',
                             'name':'jan-code',
+                            'resolveId': true,
                             'index': 1,
                             'skipIfNull':true
                         }}
@@ -170,6 +171,7 @@
                             'text':'商品名',
                             'id':'itemName11',
                             'name':'item-name',
+                            'resolveName':true,
                             'index': 2,
                             'skipIfNull':true
                         }}
@@ -178,7 +180,7 @@
                 <!-- メーカー -->
                 <!-- 型番 -->
                 <!-- 数量 -->
-                <div class="form-row">
+                <div class="form-row" data-resolve="item">
                     <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                         {
                             'text':'メーカー',
@@ -218,12 +220,13 @@
             <div class="tab-panel" id="tab-13" data-tab-content="order-add-tabs">
                 <!-- 作業コード -->
                 <!-- 作業名 -->
-                <div class="form-row">
+                <div class="form-row" data-resolve="work">
                     <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                         {
                             'text':'作業コード',
                             'id':'orderWorkCode11',
                             'name':'order-work-code',
+                            'resolveId': true,
                             'index': 1,
                             'skipIfNull':true
                         }}
@@ -232,7 +235,7 @@
                 <!-- メーカー -->
                 <!-- 型番 -->
                 <!-- 数量 -->
-                <div class="form-row">
+                <div class="form-row" data-resolve="work">
                     <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                         {
                             'text':'作業名',

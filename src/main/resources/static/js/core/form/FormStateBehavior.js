@@ -61,20 +61,12 @@ hasChanges({form, currentEntity, selector = null}){
         //     console.log("normalized old =", normalize(oldValue));
         //     return true;
         // }
-    const current = normalize(v ?? null);
-const old = normalize(oldValue ?? null);
+        const current = normalize(v ?? null);
+        const old = normalize(oldValue ?? null);
 
-if(current !== old){
-    console.log("===== FORM CHANGE DETECTED =====");
-    console.log("name =", name);
-    console.log("key =", key);
-    console.log("formValue =", v);
-    console.log("oldValue =", oldValue);
-    console.log("normalized form =", current);
-    console.log("normalized old =", old);
-
-    return true;
-}
+        if(current !== old){
+            return true;
+        }
     }
 
     return false;

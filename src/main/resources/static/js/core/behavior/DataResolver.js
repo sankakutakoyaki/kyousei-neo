@@ -20,15 +20,16 @@ export const DataResolver = {
             const idInput = group.querySelector("[data-resolve-id]");
             const nameField = group.querySelector("[data-resolve-name]");
 
-            if (!idInput || !nameField) return;
+            // if (!idInput || !nameField) return;
+            if (!idInput) return;
 
-            /* ID → Name */
+            /* ID → Resolve */
             idInput.addEventListener("blur", async () => {
                 this.resolve(group, type);
             });
 
             /* Name(select) → ID */
-            if (nameField.tagName === "SELECT") {
+            if (nameField?.tagName === "SELECT") {
                 nameField.addEventListener("change", () => {
                     const value = nameField.value;
                     updateField(idInput, Number(value) === 0 ? "": value
@@ -46,7 +47,10 @@ export const DataResolver = {
         // 空ならクリア
         if (!id) {
             delete idInput.dataset.lastId;
-            this.clear(nameField);
+            // this.clear(nameField);
+            if (nameField) {
+                this.clear(nameField);
+            }
             return;
         }
 
@@ -55,7 +59,7 @@ export const DataResolver = {
         idInput.dataset.lastId = id;
 
         // SELECTはここで処理
-        if (nameField.tagName === "SELECT") {
+        if (nameField?.tagName === "SELECT") {
             const found = this.resolveSelect(nameField, id);
             if (!found) {
                 idInput.value = "";
@@ -242,12 +246,9 @@ const queryResolver = {
  */
 const postalResolver = {
     async resolve({ id, idInput, group }) {
-        const res = await api.post(
-            "/api/address/get/postalcode",
-            { value: id }
-        );
-
+        const res = await api.post("/api/address/get/postalcode", { value: id });
         const data = res?.data;
+
         const postalInput = idInput;
         const addressInput = group.querySelector('[name="full-address"]');
         // データなし
@@ -276,8 +277,143 @@ const postalResolver = {
     }
 };
 
+const itemResolver = {
+    async resolve({ id, idInput, group }) {
+        try {
+            const res = await api.post("/api/item/get/jancode", { value: id });
+            const data = res?.data;
+
+            const panel = group.closest(".tab-panel");
+            const itemName = panel?.querySelector('[name="item-name"]');
+            const itemMaker = panel?.querySelector('[name="item-maker"]');
+            const itemModel = panel?.querySelector('[name="item-model"]');
+            const itemQuantity = panel?.querySelector('[name="item-quantity"]');
+
+            // データなし
+            if (!data) {
+                // 商品情報をクリア
+                if (itemName) {
+                    itemName.value = "";
+                }
+
+                if (itemMaker) {
+                    itemMaker.value = "";
+                }
+
+                if (itemModel) {
+                    itemModel.value = "";
+                }
+
+                if (itemQuantity) {
+                    itemQuantity.value = "";
+                }
+
+                // JANコードもクリア
+                idInput.value = "";
+
+                requestAnimationFrame(() => {
+                    idInput.focus();
+                    idInput.select();
+                });
+
+                return;
+            }
+
+            // 商品情報セット
+            if (itemName) {
+                itemName.value = data.itemName ?? "";
+            }
+
+            if (itemMaker) {
+                itemMaker.value = data.itemMaker ?? "";
+            }
+
+            if (itemModel) {
+                itemModel.value = data.itemModel ?? "";
+            }
+
+            // 商品情報取得成功 → 数量へ
+            if (itemQuantity) {
+                itemQuantity.focus();
+                itemQuantity.select();
+            }
+        } catch (e) {
+            console.error(e);
+            idInput.value = "";
+            requestAnimationFrame(() => {
+                idInput.focus();
+                idInput.select();
+            });
+        }
+    }
+};
+
+const workResolver = {
+    async resolve({ id, idInput, group }) {
+        try {
+            const res = await api.post("/api/work/get/workcode", { value: id });
+            const data = res?.data;
+
+            const panel = group.closest(".tab-panel");
+            const workName = panel?.querySelector('[name="order-work-name"]');
+            const workPrice = panel?.querySelector('[name="order-work-price"]');
+            const workQuantity = panel?.querySelector('[name="order-work-quantity"]');
+
+            // データなし
+            if (!data) {
+                // 作業情報をクリア
+                if (workName) {
+                    workName.value = "";
+                }
+
+                if (workPrice) {
+                    workPrice.value = "";
+                }
+
+                if (workQuantity) {
+                    workQuantity.value = "";
+                }
+
+                // 作業コードもクリア
+                idInput.value = "";
+
+                requestAnimationFrame(() => {
+                    idInput.focus();
+                    idInput.select();
+                });
+
+                return;
+            }
+
+            // 作業情報セット
+            if (workName) {
+                workName.value = data.workName ?? "";
+            }
+
+            if (workPrice) {
+                workPrice.value = data.workPrice ?? "";
+            }
+
+            // 作業情報取得成功 → 数量へ
+            if (workQuantity) {
+                workQuantity.focus();
+                workQuantity.select();
+            }
+        } catch (e) {
+            console.error(e);
+            idInput.value = "";
+            requestAnimationFrame(() => {
+                idInput.focus();
+                idInput.select();
+            });
+        }
+    }
+};
+
 const resolvers = {
     postal: postalResolver,
+    item: itemResolver,
+    work: workResolver,
     query: queryResolver,
     default: defaultResolver
 };

@@ -5,7 +5,6 @@ import { DataTable } from "../../../core/table/DataTable.js";
 import { createOrderItemListColumns } from "./columns.js";
 
 export function createOrderItemListController() {
-
     const controller = {
         key: "orderItemList",
         state: {
@@ -123,18 +122,18 @@ export function createOrderItemListController() {
         //     return JSON.stringify(this.items)
         //         !== JSON.stringify(this.originalItems);
         // },
-hasChanges() {
-    const normalizeItems = (items) => {
-        return items.map(item => {
-            const copy = structuredClone(item);
-            delete copy._tempId;
-            return copy;
-        });
-    };
+        hasChanges() {
+            const normalizeItems = (items) => {
+                return items.map(item => {
+                    const copy = structuredClone(item);
+                    delete copy._tempId;
+                    return copy;
+                });
+            };
 
-    return JSON.stringify(normalizeItems(this.items))
-        !== JSON.stringify(normalizeItems(this.originalItems));
-},
+            return JSON.stringify(normalizeItems(this.items))
+                !== JSON.stringify(normalizeItems(this.originalItems));
+        },
 
         reset() {
             this.items = structuredClone(this.originalItems);

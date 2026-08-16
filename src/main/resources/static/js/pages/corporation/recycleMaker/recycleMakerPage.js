@@ -5,7 +5,7 @@ import { initPageCache } from "../../../bootstrap/initPageCache.js";
 import { createRecycleMakerColumns, createRecycleManufacturerColumns, createRecyclePriceColumns } from "./columns.js";
 import { registerController } from "../../../applcation/controllerRegistry.js";
 import { filterFactory } from "../../../util/filterFactory.js";
-import { RecycleMakerRepository } from "../../../repositories/corporation/recyclemaker/recycleMakerRepository.js";
+import { RecycleMakerRepository } from "../../../repositories/corporation/recyclemaker/RecycleMakerRepository.js";
 import { RecycleManufacturerRepository } from "../../../repositories/corporation/recyclemaker/RecycleManufacturerRepository.js";
 import { RecyclePriceRepository } from "../../../repositories/corporation/recyclemaker/RecyclePriceRepository.js";
 import { RecycleItemRepository } from "../../../repositories/corporation/recyclemaker/RecycleItemRepository.js";
