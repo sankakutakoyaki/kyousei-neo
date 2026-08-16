@@ -85,7 +85,14 @@ public enum QueryId {
     ORDER_DELETE_BY_IDS("orderDeleteByIds"),
     ORDER_SAVE("orderSave"),
     ORDER_ITEM_LIST("orderItemList"),
-    ORDER_WORK_LIST("orderWorkList");
+    ORDER_WORK_LIST("orderWorkList"),
+
+    // ===== Order =====
+    WORK_MASTER_DETAIL("workMasterDetail"),
+    WORK_MASTER_LIST("workMasterList"),
+    WORK_MASTER_CSV("workMasterCsv"),
+    WORK_MASTER_DELETE_BY_IDS("workMasterDeleteByIds"),
+    WORK_MASTER_SAVE("workMasterSave");
 
     private final String id;
 

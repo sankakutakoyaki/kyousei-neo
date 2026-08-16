@@ -46,28 +46,12 @@ const defaultActions = {
         if(!form) return;
         await form.save(document.getElementById(form.formId));
     },
-
-
     singleEdit: async (c) => {
-
         const id = c.getCurrentRowId();
-
         if(!id){
-
             return;
-
         }
-
-        await c.openForm(
-
-            "detail",
-
-            id,
-
-            { bulkMode:false }
-
-        );
-
+        await c.openForm("detail", id, { bulkMode:false });
     }
 };
 

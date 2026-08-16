@@ -39,7 +39,6 @@ export class FormController {
         this.formId = formId;
         this.key = key;
         this.repository = repository;
-        // this.saveHandler = saveHandler;
         this.saveHandler = saveHandler ?? repository?.save?.bind(repository) ?? null;
         this.beforeSave = beforeSave;
         this.afterSave = afterSave;
@@ -222,29 +221,6 @@ export class FormController {
         }
     }
 
-    // preparePayload(form){
-    //     this.clearErrors();
-    //     UiValidator.validate(form);
-
-    //     const payload = FormPayloadBuilder.build({
-    //         form,
-    //         currentEntity: this.currentEntity,
-    //         key: this.key,
-    //         isBulkMode: this.isBulkMode(),
-    //         getTargetIds: (payload) => this.getTargetIds(payload)
-    //     });
-
-    //     if(payload == null){
-    //         DialogService.error("変更がありません");
-    //         return null;
-    //     }
-
-    //     if(this.isBulkMode() && payload.ids.length === 0){
-    //         DialogService.error("選択してください");
-    //         return null;
-    //     }
-    //     return payload;
-    // }
     preparePayload(form){
         this.clearErrors();
         UiValidator.validate(form);
@@ -352,15 +328,6 @@ export class FormController {
         FormModel.clear(form);
     }
 
-    // resetForm(){
-    //     this.clearErrors();
-    //     const form = document.getElementById(this.formId);
-    //     FormModel.fill(
-    //         form,
-    //         this.currentEntity ?? {}
-    //     );
-    //     this.setSubmitEnabled(false);
-    // }
     resetForm(){
         this.clearErrors();
 
@@ -381,10 +348,6 @@ export class FormController {
         FormModel.fill(form, data);
     }
 
-    // hasChanges(){
-    //     const form = document.getElementById(this.formId);
-    //     return FormStateBehavior.hasChanges({form, currentEntity: this.currentEntity});
-    // }
     hasChanges(){
         const form = document.getElementById(this.formId);
 
@@ -395,10 +358,6 @@ export class FormController {
         });
     }
 
-    // hasValidInput(){
-    //     const form = document.getElementById(this.formId);
-    //     return FormStateBehavior.hasValidInput(form);
-    // }
     hasValidInput(){
         const form = document.getElementById(this.formId);
         if(!form) return false;
@@ -417,39 +376,6 @@ export class FormController {
         form.addEventListener("change", update);
     }
 
-    // canSubmit(){
-    //     // 新規
-    //     if(!this.currentEntity || !this.currentEntity[this.key]){
-    //         return this.hasValidInput();
-    //     }
-    //     // 編集
-    //     return this.hasChanges();
-    // }
-    // canSubmit(){
-    //     const form =  document.getElementById(this.formId);
-    //     if(!form) return false;
-
-    //     const requiredValid = UiValidator.hasRequiredInput(form, this.validInputSelector);
-
-    //     // 新規
-    //     if(!this.currentEntity || !this.currentEntity[this.key]){
-    //         return requiredValid;
-    //     }
-
-    //     // 編集
-    //     return this.hasChanges() ||
-    //         (this.hasAdditionalChanges?.() ?? false);
-    // }
-    // canSubmit(){
-    //     const additionalChanged =
-    //         this.hasAdditionalChanges?.() ?? false;
-
-    //     if(!this.currentEntity || !this.currentEntity[this.key]){
-    //         return this.hasValidInput() || additionalChanged;
-    //     }
-
-    //     return this.hasChanges() || additionalChanged;
-    // }
     canSubmit(){
         const formChanged = this.hasChanges();
         const additionalChanged =

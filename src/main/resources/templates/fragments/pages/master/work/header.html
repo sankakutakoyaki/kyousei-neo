@@ -1,0 +1,30 @@
+<th:block th:fragment="header01Fragment()">
+    <div id="header-01" class="flex-area pc-style">
+        <div>
+            <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-01')}"></th:block>
+            <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${
+                {
+                    'add': 'add-btn-01',
+                    'form': 'form-01',
+                    'delete': 'delete-btn-01',
+                    'download': 'download-btn-01',
+                    'reload': 'reload-btn-01'
+                }}
+            )}"></th:block>
+        </div>
+        <div th:id="code-area" class="flex-area" data-resolve="employee" data-enterfocus="code-area">
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'営業所', 
+                    'id':'code01', 
+                    'name':'name01',
+                    'action':'filter',
+                    'combo': 'officeComboList',
+                    'top': '-----',
+                    'key':'office-id',
+                    'resolveName':true
+                }}
+            )}"></th:block>
+        </div>
+    </div>
+</th:block>

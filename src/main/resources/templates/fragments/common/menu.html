@@ -23,6 +23,9 @@
     <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/recyclemaker">
         <img th:src="@{/icons/recycle.png}"><span>製造業者</span>
     </div>
+    <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/master">
+        <img th:src="@{/icons/master.png}"><span>マスター</span>
+    </div>
 </div>
 
 <div th:fragment="businessFragment" th:remove="tag">

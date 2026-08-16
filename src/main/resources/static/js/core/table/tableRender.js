@@ -154,9 +154,14 @@ export function createTableFooter(footerId, list, totalCount) {
     clearElement(footerId);
     const footer = document.getElementById(footerId);
     if (!footer) return;
-    const viewCount = list?.length ?? 0;
+    // const viewCount = list?.length ?? 0;
+    // footer.insertAdjacentHTML('beforeend', `<span>
+    //     ${viewCount}/${totalCount}件 :
+    //     ${formatDate(new Date(), "yyyy-MM-dd HH:mm")}
+    //     現在
+    // </span>`);
     footer.insertAdjacentHTML('beforeend', `<span>
-        ${viewCount}/${totalCount}件 :
+        $/${totalCount}件 :
         ${formatDate(new Date(), "yyyy-MM-dd HH:mm")}
         現在
     </span>`);

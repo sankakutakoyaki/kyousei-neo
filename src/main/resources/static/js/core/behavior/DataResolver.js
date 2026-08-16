@@ -14,13 +14,11 @@ const paramBuilders = {
 export const DataResolver = {
     init(area = document) {
         const groups = area.querySelectorAll("[data-resolve]");
-
         groups.forEach(group => {
             const type = group.dataset.resolve;
             const idInput = group.querySelector("[data-resolve-id]");
             const nameField = group.querySelector("[data-resolve-name]");
 
-            // if (!idInput || !nameField) return;
             if (!idInput) return;
 
             /* ID → Resolve */
@@ -42,7 +40,6 @@ export const DataResolver = {
     async resolve(group, type) {
         const idInput = group.querySelector("[data-resolve-id]");
         const nameField = group.querySelector("[data-resolve-name]");
-
         const id = idInput.value.trim();
         // 空ならクリア
         if (!id) {
@@ -83,7 +80,6 @@ export const DataResolver = {
     resolveSelect(select, id) {
         for (const option of select.options) {
             if (option.value === id) {
-
                 updateField(select, id);
                 return true;
             }
@@ -91,7 +87,6 @@ export const DataResolver = {
         updateField(select, "");
         return false;
     },
-
     clear(field) {
         updateField(field, "");
     }
@@ -186,13 +181,10 @@ const defaultResolver = {
 
 const queryResolver = {
     cacheMap: {},
-
     async resolve({ group, id, idInput, nameField, clear }) {
         const queryId = group.dataset.queryId;
         const builderName = group.dataset.paramBuilder;
-        const params = builderName && paramBuilders[builderName]
-            ? paramBuilders[builderName]()
-            : {};
+        const params = builderName && paramBuilders[builderName] ? paramBuilders[builderName](): {};
         const cacheKey = queryId + ":" + JSON.stringify(params);
         try {
             if (!this.cacheMap[cacheKey]) {
@@ -252,7 +244,6 @@ const postalResolver = {
         const postalInput = idInput;
         const addressInput = group.querySelector('[name="full-address"]');
         // データなし
-        // if (!data || !data.data || (Array.isArray(data) && data.length === 0)) {
         if (!data || (Array.isArray(data) && data.length === 0)) {
             postalInput.value = "";
             postalInput.focus();
@@ -282,7 +273,6 @@ const itemResolver = {
         try {
             const res = await api.post("/api/item/get/jancode", { value: id });
             const data = res?.data;
-
             const panel = group.closest(".tab-panel");
             const itemName = panel?.querySelector('[name="item-name"]');
             const itemMaker = panel?.querySelector('[name="item-maker"]');
@@ -353,7 +343,6 @@ const workResolver = {
         try {
             const res = await api.post("/api/work/get/workcode", { value: id });
             const data = res?.data;
-
             const panel = group.closest(".tab-panel");
             const workName = panel?.querySelector('[name="order-work-name"]');
             const workPrice = panel?.querySelector('[name="order-work-price"]');
@@ -376,12 +365,10 @@ const workResolver = {
 
                 // 作業コードもクリア
                 idInput.value = "";
-
                 requestAnimationFrame(() => {
                     idInput.focus();
                     idInput.select();
                 });
-
                 return;
             }
 
