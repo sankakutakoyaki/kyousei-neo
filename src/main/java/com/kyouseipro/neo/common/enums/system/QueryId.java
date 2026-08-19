@@ -87,12 +87,17 @@ public enum QueryId {
     ORDER_ITEM_LIST("orderItemList"),
     ORDER_WORK_LIST("orderWorkList"),
 
-    // ===== Order =====
+    // ===== Master =====
     WORK_MASTER_DETAIL("workMasterDetail"),
     WORK_MASTER_LIST("workMasterList"),
     WORK_MASTER_CSV("workMasterCsv"),
     WORK_MASTER_DELETE_BY_IDS("workMasterDeleteByIds"),
-    WORK_MASTER_SAVE("workMasterSave");
+    WORK_MASTER_SAVE("workMasterSave"),
+    ITEM_MASTER_DETAIL("itemMasterDetail"),
+    ITEM_MASTER_LIST("itemMasterList"),
+    ITEM_MASTER_CSV("itemMasterCsv"),
+    ITEM_MASTER_DELETE_BY_IDS("itemMasterDeleteByIds"),
+    ITEM_MASTER_SAVE("itemMasterSave");
 
     private final String id;
 

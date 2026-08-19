@@ -12,7 +12,7 @@ public class RecycleManufacturerQuery {
             """
             SELECT r.*, m.code, m.name as abbr_name, m.kana as abbr_kana, g.name as group_name FROM recycle_manufacturers r
             LEFT OUTER JOIN recycle_makers m ON m.recycle_maker_id = r.recycle_maker_id AND m.state = ?
-            LEFT OUTER JOIN recycle_groups g ON g.recycle_group_id = [m].[group] AND g.state = ?
+            LEFT OUTER JOIN recycle_groups g ON g.recycle_group_id = m.group_code AND g.state = ?
             WHERE r.state = ?
             ORDER BY
                 CASE WHEN r.kana IS NULL OR r.kana = '' THEN 1 ELSE 0 END,
@@ -48,7 +48,7 @@ public class RecycleManufacturerQuery {
             LEFT OUTER JOIN recycle_makers m ON m.recycle_maker_id = r.recycle_maker_id AND m.state = ?
             LEFT OUTER JOIN recycle_prices p ON p.recycle_maker_id = r.recycle_maker_id AND p.state = ?
             LEFT OUTER JOIN recycle_items i ON i.recycle_item_id = p.recycle_item_id AND i.state = ?
-            LEFT OUTER JOIN recycle_groups g ON g.recycle_group_id = [m].[group] AND g.state = ?
+            LEFT OUTER JOIN recycle_groups g ON g.recycle_group_id = m.group_code AND g.state = ?
             WHERE r.state = ?
             AND r.recycle_manufacturer_id IN (:ids)
             ORDER BY r.kana

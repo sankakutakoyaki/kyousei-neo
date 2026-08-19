@@ -17,8 +17,8 @@ public class OrderQuery {
             LEFT OUTER JOIN companies c ON c.company_id = o.prime_constractor_id AND c.state = ?
             LEFT OUTER JOIN offices co ON co.office_id = o.prime_constractor_office_id AND co.state = ?
             LEFT OUTER JOIN staffs s ON s.staff_id = o.staff_id AND s.state = ?
-            WHERE (o.state = ? OR o.state = ?) AND o.%s >= ? AND o.%s < ?
-            """.formatted(column, column);
+            WHERE (o.state = ? OR o.state = ?) AND ((o.%s >= ? AND o.%s < ?) OR o.%s IS NULL)
+            """.formatted(column, column, column);
 
         return QueryDefinition.select(
             sql,

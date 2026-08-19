@@ -11,7 +11,7 @@ public class RecycleMakerQuery {
         return QueryDefinition.select(
             """
             SELECT r.*, g.name as group_name FROM recycle_makers r
-            LEFT OUTER JOIN recycle_groups g ON g.recycle_group_id = [r].[group] AND g.state = ?
+            LEFT OUTER JOIN recycle_groups g ON g.recycle_group_id = r.group_code AND g.state = ?
             WHERE r.state = ?
             ORDER BY
                 CASE WHEN r.kana IS NULL OR r.kana = '' THEN 1 ELSE 0 END,
@@ -34,7 +34,7 @@ public class RecycleMakerQuery {
             SELECT r.*, p.price, i.code as item_code, i.name as item_name, g.name as group_name FROM recycle_makers r
             LEFT OUTER JOIN recycle_prices p ON p.recycle_maker_id = r.recycle_maker_id AND p.state = ?
             LEFT OUTER JOIN recycle_items i ON i.recycle_item_id = p.recycle_item_id AND i.state = ?
-            LEFT OUTER JOIN recycle_groups g ON g.recycle_group_id = [r].[group] AND g.state = ?
+            LEFT OUTER JOIN recycle_groups g ON g.recycle_group_id = r.group_code AND g.state = ?
             WHERE r.state = ? AND r.recycle_maker_id = ?;
             """,
             List.of("state", "state", "state", "state", "recycleMakerId")
@@ -47,7 +47,7 @@ public class RecycleMakerQuery {
             SELECT r.*, p.price, i.code as item_code, i.name as item_name, g.name as group_name FROM recycle_makers r
             LEFT OUTER JOIN recycle_prices p ON p.recycle_maker_id = r.recycle_maker_id AND p.state = ?
             LEFT OUTER JOIN recycle_items i ON i.recycle_item_id = p.recycle_item_id AND i.state = ?
-            LEFT OUTER JOIN recycle_groups g ON g.recycle_group_id = [r].[group] AND g.state = ?
+            LEFT OUTER JOIN recycle_groups g ON g.recycle_group_id = r.group_code AND g.state = ?
             WHERE r.state = ?
             AND r.recycle_maker_id IN (:ids)
             ORDER BY r.kana

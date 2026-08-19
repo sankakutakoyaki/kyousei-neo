@@ -13,7 +13,7 @@ public class RecycleMakerLogSqlProvider implements LogSqlProvider {
     @Override
     public String buildLogTable(String tableVar) {
         return "DECLARE " + tableVar + " TABLE (" + """
-            recycle_maker_id INT, code INT, name NVARCHAR(255), kana NVARCHAR(255), [group] INT,
+            recycle_maker_id INT, code INT, name NVARCHAR(255), kana NVARCHAR(255), group_code INT,
             version INT, state INT );
             """;
     }
@@ -21,7 +21,7 @@ public class RecycleMakerLogSqlProvider implements LogSqlProvider {
     @Override
     public String buildOutput() {
         return """
-            OUTPUT INSERTED.recycle_maker_id, INSERTED.code, INSERTED.name, INSERTED.kana, INSERTED.[group],
+            OUTPUT INSERTED.recycle_maker_id, INSERTED.code, INSERTED.name, INSERTED.kana, INSERTED.group_code,
             INSERTED.version, INSERTED.state
             """;
     }
@@ -31,10 +31,10 @@ public class RecycleMakerLogSqlProvider implements LogSqlProvider {
         return """
             INSERT INTO recycle_makers_log (
               recycle_maker_id, editor, process, log_date,
-              code, name, kana, [group], version, state
+              code, name, kana, group_code, version, state
             )
             SELECT recycle_maker_id, ?, ?, CURRENT_TIMESTAMP,
-              code, name, kana, [group], version, state
+              code, name, kana, group_code, version, state
             FROM %s;
             """.formatted(tableVar);
     }

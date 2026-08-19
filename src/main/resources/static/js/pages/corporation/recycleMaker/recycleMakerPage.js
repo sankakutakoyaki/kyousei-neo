@@ -45,9 +45,10 @@ export const recycleMakerPage = () =>
         repository: RecycleMakerRepository,
         saveHandler: RecycleMakerRepository.save,
         columns: createRecycleMakerColumns(),
+        components: {combo: true, input: true},
         afterSave: refreshMakerChildren,
         model: {
-            pageSize: 300
+            pageSize: 500
         },
     });
 
@@ -64,7 +65,7 @@ export const recycleManufacturerPage = () =>
         components: {combo: true, input: true},
         model: {
             filters: {code: filterFactory.equals("code")},
-            pageSize: 300
+            pageSize: 500
         },
         validateBusiness: async (payload) => {
             if(!payload.recycleMakerId){
@@ -94,7 +95,7 @@ export const recyclePricePage = async () => {
         checkable: false,
         model: {
             filters: {code: filterFactory.equals("code")},
-            pageSize: 50
+            pageSize: 500
         },
         beforeSave: payload => {
             payload.details = [];

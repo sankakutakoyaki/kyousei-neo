@@ -161,7 +161,7 @@ export function createTableFooter(footerId, list, totalCount) {
     //     現在
     // </span>`);
     footer.insertAdjacentHTML('beforeend', `<span>
-        $/${totalCount}件 :
+        ${totalCount}件 :
         ${formatDate(new Date(), "yyyy-MM-dd HH:mm")}
         現在
     </span>`);

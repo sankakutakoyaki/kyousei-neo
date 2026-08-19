@@ -18,19 +18,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MasterPageController  {
     /**
-	 * 従業員
+	 * 作業項目
 	 * @param mv
 	 * @return
 	 */
 	@GetMapping("/master")
 	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-	public String getEmployee() {
-        return "fragments/pages/master/work/content :: content";
+	public String getItemMaster() {
+        return "fragments/pages/master/content :: content";
     }
 
     @GetMapping("/api/master/init/cache")
     @ResponseBody
-    public Map<String, Object> initMaster() {
+    public Map<String, Object> initItemMaster() {
         return Map.of(
             "common", Map.of(
                 "state", EnumUtil.toMap(State.class)

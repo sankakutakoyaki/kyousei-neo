@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.domain.master.work.query;
+package com.kyouseipro.neo.domain.master.api.work.query;
 
 import java.util.HashMap;
 import java.util.Map;

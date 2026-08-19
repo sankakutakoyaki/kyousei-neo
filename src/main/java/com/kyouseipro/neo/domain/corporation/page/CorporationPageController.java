@@ -12,6 +12,7 @@ import com.kyouseipro.neo.common.enums.code.ClientCategory;
 import com.kyouseipro.neo.common.enums.code.CompanyCategory;
 import com.kyouseipro.neo.common.enums.code.EmployeeCategory;
 import com.kyouseipro.neo.common.enums.code.Gender;
+import com.kyouseipro.neo.common.enums.code.RecycleGroup;
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.util.EnumUtil;
 import com.kyouseipro.neo.domain.business.api.recycle.RecycleService;
@@ -100,7 +101,8 @@ public class CorporationPageController {
                 "state", EnumUtil.toMap(State.class)
             ),
             "page", Map.of(
-                "recyclemakerComboList", recycleService.findMakerCombo()
+                "recyclemakerComboList", recycleService.findMakerCombo(),
+                "groupComboList", EnumUtil.toCombo(RecycleGroup.class)
             )
         );
     }

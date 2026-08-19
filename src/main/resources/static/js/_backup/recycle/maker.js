@@ -26,7 +26,7 @@ function createTable01Row(newRow, item) {
     // コード
     newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="code">' + (item.code ?? "-----") + '</td>');
     // グループ
-    newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="group" data-edit-type="select" data-options-key="group" data-value="' + item.group + '">' + (item.groupName ?? "0") + '</td>');
+    newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="group" data-edit-type="select" data-options-key="group" data-value="' + item.groupCode + '">' + (item.groupName ?? "0") + '</td>');
     // 製造業者等名
     newRow.insertAdjacentHTML('beforeend', '<td class="editable" data-col="name" data-edit-type="text">' + (item.name ?? "-----") + '</td>');
     // 略称

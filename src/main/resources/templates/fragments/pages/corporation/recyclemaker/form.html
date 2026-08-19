@@ -14,6 +14,15 @@
                     'number': true
                 }
             })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                { 
+                    'text': 'グループ',
+                    'combo': 'groupComboList',
+                    'key': 'group-code',
+                    'name': 'group-code', 
+                    'index': 2
+                }
+            })}"></th:block>
         </div>
         <!-- 略称 -->
         <div class="form-row">
@@ -21,7 +30,7 @@
                 { 
                     'text': '製造業者等名', 
                     'name': 'name', 
-                    'index': 2
+                    'index': 3
                 }
             })}"></th:block>
         </div>
@@ -31,7 +40,7 @@
                 { 
                     'text': 'かな', 
                     'name': 'kana', 
-                    'index': 3
+                    'index': 4
                 }
             })}"></th:block>
         </div>
@@ -73,7 +82,7 @@
                 { 
                     'text': '製造業者等名', 
                     'name': 'name', 
-                    'index': 2
+                    'index': 3
                 }
             })}"></th:block>
         </div>
@@ -83,7 +92,7 @@
                 { 
                     'text': 'かな', 
                     'name': 'kana', 
-                    'index': 3
+                    'index': 4
                 }
             })}"></th:block>            
         </div>

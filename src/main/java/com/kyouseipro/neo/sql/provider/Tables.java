@@ -37,6 +37,9 @@ public class Tables {
         public static final TableMeta ORDER_WORK_BY_IDS =
             new TableMeta("order_works", "orderWorkId", "state", "version");
 
+        public static final TableMeta ITEM_MASTER_BY_IDS =
+            new TableMeta("item_masters", "itemMasterId", "state", "version");
+
         public static final TableMeta WORK_MASTER_BY_IDS =
             new TableMeta("work_masters", "workMasterId", "state", "version");
 }
