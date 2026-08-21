@@ -3,25 +3,25 @@
 import { RequestClient } from "../../../core/api/RequestClient.js";
 
 export const ItemMasterRepository = {
-    async search(queryId, params){
-        const res = await RequestClient.request({queryId, params});
+    async search(params) {
+        const res = await RequestClient.request({queryId: "itemMasterList", params});
         return res.data ?? [];
     },
 
-    async find(queryId, params){
-        const res = await RequestClient.request({queryId, params});
+    async find(params) {
+        const res = await RequestClient.request({queryId: "itemMasterDetail", params});
         return res.data?.[0] ?? null;
     },
 
-    async save(queryId, params){
-        return await RequestClient.request({queryId, params});
+    async save(params) {
+        return await RequestClient.request({queryId: "itemMasterSave", params});
     },
 
-    async remove(queryId, params){
-        return await RequestClient.request({queryId, params});
+    async remove(params) {
+        return await RequestClient.request({queryId: "itemMasterDelete", params});
     },
 
-    async download(queryId, params){
-        return await RequestClient.request({queryId, params});
+    async download(params) {
+        return await RequestClient.request({queryId: "itemMasterCsv", params});
     }
 };

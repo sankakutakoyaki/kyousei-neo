@@ -3,25 +3,25 @@
 import { RequestClient } from "../../../core/api/RequestClient.js";
 
 export const WorkMasterRepository = {
-    async search(queryId, params){
-        const res = await RequestClient.request({queryId, params});
+    async search(params) {
+        const res = await RequestClient.request({queryId: "workMasterList", params});
         return res.data ?? [];
     },
 
-    async find(queryId, params){
-        const res = await RequestClient.request({queryId, params});
+    async find(params) {
+        const res = await RequestClient.request({queryId: "workMasterDetail", params});
         return res.data?.[0] ?? null;
     },
 
-    async save(queryId, params){
-        return await RequestClient.request({queryId, params});
+    async save(params) {
+        return await RequestClient.request({queryId: "workMasterSave", params});
     },
 
-    async remove(queryId, params){
-        return await RequestClient.request({queryId, params});
+    async remove(params) {
+        return await RequestClient.request({queryId: "workMasterDelete", params});
     },
 
-    async download(queryId, params){
-        return await RequestClient.request({queryId, params});
+    async download(params) {
+        return await RequestClient.request({queryId: "workmMasterCsv", params});
     }
 };

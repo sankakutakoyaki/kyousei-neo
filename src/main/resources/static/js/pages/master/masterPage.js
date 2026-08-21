@@ -4,7 +4,8 @@ import { initCommon } from "../../bootstrap/initPage.js";
 import { initPageCache } from "../../bootstrap/initPageCache.js";
 import { registerController } from "../../applcation/controllerRegistry.js";
 import { filterFactory } from "../../util/filterFactory.js";
-import { ItemMasterRepository, WorkMasterRepository } from "../../repositories/master/item/itemMasterRepository.js";
+import { ItemMasterRepository } from "../../repositories/master/item/itemMasterRepository.js";
+import { WorkMasterRepository } from "../../repositories/master/work/workMasterRepository.js";
 import { createItemMasterColumns, createWorkMasterColumns } from "./columns.js";
 import { getController } from "../../applcation/controllerRegistry.js";
 import { createMasterPage } from "../../core/page/createMasterPage.js";
@@ -54,15 +55,6 @@ export const workMasterPage = () =>
         columns: createWorkMasterColumns(),
         components: {combo: true, input: true},
         model: {
-            // filters: {code: filterFactory.equals("code")},
             pageSize: 500
-        },
-        // validateBusiness: async (payload) => {
-        //     if(!payload.recycleMakerId){
-        //         throw {
-        //             message: "略称を選択してください",
-        //             fields: ["code"]
-        //         };
-        //     }
-        // }
+        }
     });

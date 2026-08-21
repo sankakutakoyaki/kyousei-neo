@@ -12,19 +12,5 @@
                 }}
             )}"></th:block>
         </div>
-        <div th:id="code-area" class="flex-area" data-resolve="employee" data-enterfocus="code-area">
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                {
-                    'text':'営業所', 
-                    'id':'code01', 
-                    'name':'name01',
-                    'action':'filter',
-                    'combo': 'officeComboList',
-                    'top': '-----',
-                    'key':'office-id',
-                    'resolveName':true
-                }}
-            )}"></th:block>
-        </div>
     </div>
 </th:block>

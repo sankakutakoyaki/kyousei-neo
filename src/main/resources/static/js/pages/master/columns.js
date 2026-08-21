@@ -2,57 +2,51 @@
 
 export const createItemMasterColumns = () => [
     {
-        field: "code",
-        label: "コード",
-        sortable: true,
-        format: (v) => String(v).padStart(3, "0")
-    },
-    {
-        field: "groupName",
-        label: "グループ",
+        field: "janCode",
+        label: "JANコード",
         sortable: true,
         default: "登録なし"
     },
     {
-        field: "name",
-        label: "名前",
+        field: "itemMaker",
+        label: "メーカー",
+        sortable: true,
+        default: "登録なし"
+    },
+    {
+        field: "itemName",
+        label: "商品名",
+        sortable: true,
+        default: "登録なし"
+    },
+    {
+        field: "itemModel",
+        label: "型番",
         sortable:true,
-        render: (item) => `
-            <span class="kana">${item.kana ?? "-----"}</span><br>
-            <span>${item.name}</span>
-        `
+        default: "登録なし"
     }
 ];
 
 export const createWorkMasterColumns = () => [
     {
-        field: "code",
+        field: "workCode",
         label: "コード",
-        sortable: true,
-        format: (v) => String(v).padStart(3, "0")
-    },
-    {
-        field: "groupName",
-        label: "グループ",
         sortable: true,
         default: "登録なし"
     },
     {
-        field: "name",
-        label: "製造業者等名",
-        sortable:true,
-        render: (item) => `
-            <span class="kana">${item.kana ?? "-----"}</span><br>
-            <span>${item.name}</span>
-        `
+        field: "workName",
+        label: "作業名",
+        sortable: true,
+        default: "登録なし"
     },
     {
-        field: "abbrName",
-        label: "略称",
+        field: "workPrice",
+        label: "金額",
         sortable:true,
-        render: (item) => `
-            <span class="kana">${item.abbrKana ?? "-----"}</span><br>
-            <span>${item.abbrName}</span>
-        `
+        format: v => {
+            if(v == null || v === "") return "";
+            return Number(v).toLocaleString("ja-JP");
+        },
     }
 ];

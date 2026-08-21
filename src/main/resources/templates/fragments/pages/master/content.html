@@ -1,39 +1,39 @@
 <main th:fragment="content"
         class="normal-body"
-        data-page="/js/pages/personnel/employee/employeePage.js"
-        data-css="/css/pages/personnel/employee.css">
+        data-page="/js/pages/master/masterPage.js"
+        data-css="/css/pages/master/master.css">
     <div class="tab-area">
         <ul class="tab-menu">
-            <li class="tab-menu-item is-active" data-action="tab" data-group="employee-tabs" data-tab="tab-01">社員</li>
-            <li class="tab-menu-item" data-action="tab" data-group="employee-tabs" data-tab="tab-02">アルバイト</li>
+            <li class="tab-menu-item is-active" data-action="tab" data-group="master-tabs" data-tab="tab-01">商品</li>
+            <li class="tab-menu-item" data-action="tab" data-group="master-tabs" data-tab="tab-02">作業</li>
         </ul>
-        <div class="tab-panel is-show" id="tab-01" data-tab-content="employee-tabs">
-            <div class="table-area" data-controller="fulltime">
-                <header th:replace="~{fragments/pages/personnel/employee/header :: header01Fragment()}"></header>
+        <div class="tab-panel is-show" id="tab-01" data-tab-content="master-tabs">
+            <div class="table-area" data-controller="itemMaster">
+                <header th:replace="~{fragments/pages/master/header :: header01Fragment()}"></header>
                 <section th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01')}"></section>
                 <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></footer>
             </div>
         </div>
-        <div class="tab-panel" id="tab-02" data-tab-content="employee-tabs">
-            <div class="table-area" data-controller="parttime">
-                <header th:replace="~{fragments/pages/personnel/employee/header :: header01Fragment()}"></header>
+        <div class="tab-panel" id="tab-02" data-tab-content="master-tabs">
+            <div class="table-area" data-controller="workMaster">
+                <header th:replace="~{fragments/pages/master/header :: header01Fragment()}"></header>
                 <section th:replace="~{fragments/table/body :: normalFragment('table-header-02', 'table-02')}"></section>
                 <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-02')}"></footer>
             </div>
         </div>
     </div>
     <div id="form-dialog-area">
-        <form id="form-01" class="form-dialog none" data-controller="fulltime" data-key="employee-id">
+        <form id="form-01" class="form-dialog none" data-controller="itemMaster" data-key="item-master-id">
             <div class="dialog-main">
-                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '社員登録'} })}"></header>
-                <section th:replace="~{fragments/pages/personnel/employee/form :: form01Fragment()}"></section>
+                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '商品マスター登録'} })}"></header>
+                <section th:replace="~{fragments/pages/master/form :: form01Fragment()}"></section>
                 <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></footer>
             </div>
         </form>
-        <form id="form-02" class="form-dialog none" data-controller="partnerEmployee" data-key="employee-id">
+        <form id="form-02" class="form-dialog none" data-controller="workMaster" data-key="work-master-id">
             <div class="dialog-main">
-                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': 'アルバイト登録'} })}"></header>
-                <section th:replace="~{fragments/pages/personnel/employee/form :: form01Fragment()}"></section>
+                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '作業マスター登録'} })}"></header>
+                <section th:replace="~{fragments/pages/master/form :: form02Fragment()}"></section>
                 <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-02' } })}"></footer>
             </div>
         </form>
