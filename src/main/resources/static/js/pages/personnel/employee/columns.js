@@ -14,7 +14,11 @@ export const createEmployeeColumns = (controller) => [
         sortable: true,
         zeroToNull: true,
         default: "",
-        format: (v) => String(v).padStart(3, "0")
+        format: v => {
+            if(v == null || v === "" || v === 0) return "";
+            return String(v).padStart(3, "0");
+        }
+        // format: (v) => String(v).padStart(3, "0")
     },
     {
         field: "nameKana",

@@ -16,6 +16,7 @@ export class FormController {
         const {
             formId,
             key,
+            idKey,
             repository = null,
             saveHandler = null,
             beforeSave = null,
@@ -30,7 +31,9 @@ export class FormController {
             resetAdditional = null,
             onOpen = null,
             changeTargetSelector = null,
-            validInputSelector = null
+            validInputSelector = null,
+            submitText = "はい",
+            cancelText = "いいえ"
         } = config;
 
         if(!formId) throw new Error("formId is required");
@@ -38,6 +41,7 @@ export class FormController {
 
         this.formId = formId;
         this.key = key;
+        this.idKey = idKey;
         this.repository = repository;
         this.saveHandler = saveHandler ?? repository?.save?.bind(repository) ?? null;
         this.beforeSave = beforeSave;
@@ -54,6 +58,8 @@ export class FormController {
         this.onOpen = onOpen;
         this.changeTargetSelector = changeTargetSelector;
         this.validInputSelector = validInputSelector;
+        this.submitText = submitText;
+        this.cancelText = cancelText;
         this.saveBehavior =
             new SaveBehavior({
                 beforeSave: async (payload, context) => {
@@ -116,8 +122,8 @@ export class FormController {
 
             data = await this.repository.find(params);
         }
-
-        const isCreate = !data?.[this.key];
+        // const isCreate = !data?.[this.key];
+        const isCreate = !data?.[this.idKey];
 
         if (isCreate) {
             const filters = this.controller.state?.filters || {};
@@ -193,6 +199,8 @@ export class FormController {
         openFormDialog({
             dialogId: this.formId,
             controller: this.controller,
+            submitText: this.submitText,
+            cancelText: this.cancelText,
             onSubmit: async (form) => {
                 await this.save(form);
             },
@@ -210,7 +218,6 @@ export class FormController {
 
         try {
             const payload = this.preparePayload(form);
-
             if(!payload) return;
             return await this.saveBehavior.save(payload, { form });
         } catch(e){
@@ -246,10 +253,13 @@ export class FormController {
         if(payload == null){
             payload = {};
         }
-
+        
         // 編集時はIDを必ず保持
-        if(this.currentEntity?.[this.key]){
-            payload[this.key] = this.currentEntity[this.key];
+        // if(this.currentEntity?.[this.key]){
+        //     payload[this.key] = this.currentEntity[this.key];
+        // }
+        if(this.currentEntity?.[this.idKey]){
+            payload[this.idKey] = this.currentEntity[this.idKey];
         }
 
         // 楽観ロック用
@@ -257,6 +267,7 @@ export class FormController {
             payload.
             version = this.currentEntity.version;
         }
+
         // 追加データ
         if(this.buildAdditionalPayload){
             Object.assign(
@@ -410,7 +421,8 @@ export class FormController {
 
     getTargetIds(payload){
         if(!this.isBulkMode()){
-            return [payload[this.key]];
+            // return [payload[this.key]];
+            return [payload[this.idKey]];
         }
         return this.controller?.getSelectedIds?.() ?? [];
     }

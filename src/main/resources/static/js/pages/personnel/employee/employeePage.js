@@ -31,6 +31,8 @@ export const fulltimeEmployeePage = () =>
         footerId: "footer-01",
         formId: "form-01",
         columns: createEmployeeColumns(),
+        submitText: "保存",
+        cancelText: "キャンセル",
         category:APP.cache.common.employeeCategory.FULLTIME
     });
 
@@ -42,5 +44,7 @@ export const parttimeEmployeePage = () =>
         footerId: "footer-02",
         formId: "form-01",
         columns: createEmployeeColumns(),
+        submitText: "保存",
+        cancelText: "キャンセル",
         category: APP.cache.common.employeeCategory.PARTTIME
     });

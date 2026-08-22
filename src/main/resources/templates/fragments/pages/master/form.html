@@ -7,8 +7,7 @@
                     'text': 'JANコード',
                     'id':'janCode11',
                     'name': 'jan-code', 
-                    'index': 1,
-                    'skipIfNull':true
+                    'index': 1
                 }
             })}"></th:block>
         </div>
@@ -19,8 +18,7 @@
                     'text':'商品名',
                     'id':'itemName11',
                     'name':'item-name',
-                    'index': 2,
-                    'skipIfNull':true
+                    'index': 2
                 }}
             )}"></th:block>    
         </div>
@@ -32,8 +30,7 @@
                     'text':'メーカー',
                     'id':'itemMaker11',
                     'name':'item-maker',
-                    'index': 3,
-                    'skipIfNull':true
+                    'index': 3
                 }}
             )}"></th:block>
         </div>
@@ -43,8 +40,7 @@
                     'text':'型番',
                     'id':'itemModel11',
                     'name':'item-model',
-                    'index': 4,
-                    'skipIfNull':true
+                    'index': 4
                 }}
             )}"></th:block>
         </div>
@@ -59,31 +55,30 @@
                 {
                     'text':'作業コード',
                     'id':'orderWorkCode12',
-                    'name':'order-work-code',
-                    'index': 1,
-                    'skipIfNull':true
+                    'name':'work-code',
+                    'index': 1
                 }}
             )}"></th:block>
         </div>
         <!-- 作業名 -->
-        <!-- 金額 -->
-        <div class="form-row" data-resolve="work">
+        <div class="form-row">
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'作業名',
                     'id':'orderWorkName12',
-                    'name':'order-work-name',
-                    'index': 2,
-                    'skipIfNull':true
+                    'name':'work-name',
+                    'index': 2
                 }}
             )}"></th:block>
+        </div>
+        <!-- 金額 -->
+        <div class="form-row">
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'金額',
                     'id':'orderWorkPrice12',
-                    'name':'order-work-price',
-                    'index': 3,
-                    'skipIfNull':true
+                    'name':'work-price',
+                    'index': 3
                 }}
             )}"></th:block>
         </div>

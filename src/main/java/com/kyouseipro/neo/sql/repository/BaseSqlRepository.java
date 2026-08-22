@@ -27,14 +27,19 @@ public class BaseSqlRepository {
             String editor
     ){
         req.put("editor", editor);
-        LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-        SqlResult result = SqlBuilder.buildSqlWithLog(
-            meta.tableName(),
+        // LogSqlProvider logProvider = resolver.resolve(meta.tableName());
+        // SqlResult result = SqlBuilder.buildSqlWithLog(
+        //     meta.tableName(),
+        //     req,
+        //     SqlMode.INSERT,
+        //     meta.idColumn(),
+        //     meta.versionColumn(),
+        //     logProvider
+        // );
+        SqlResult result = buildSql(
+            meta,
             req,
-            SqlMode.INSERT,
-            meta.idColumn(),
-            meta.versionColumn(),
-            logProvider
+            SqlMode.INSERT
         );
         return sqlRepository.insert(
             result.getSql(),
@@ -49,14 +54,19 @@ public class BaseSqlRepository {
             String editor
     ){
         req.put("editor", editor);
-        LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-        SqlResult result = SqlBuilder.buildSqlWithLog(
-            meta.tableName(),
+        // LogSqlProvider logProvider = resolver.resolve(meta.tableName());
+        // SqlResult result = SqlBuilder.buildSqlWithLog(
+        //     meta.tableName(),
+        //     req,
+        //     SqlMode.UPDATE,
+        //     meta.idColumn(),
+        //     meta.versionColumn(),
+        //     logProvider
+        // );
+        SqlResult result = buildSql(
+            meta,
             req,
-            SqlMode.UPDATE,
-            meta.idColumn(),
-            meta.versionColumn(),
-            logProvider
+            SqlMode.UPDATE
         );
         return sqlRepository.updateRequired(
             result.getSql(),
@@ -73,13 +83,19 @@ public class BaseSqlRepository {
     ){
         req.put("editor", editor);
         LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-        SqlResult result = SqlBuilder.buildUpdateByIds(
-            meta,
-            ids,
-            req,
-            editor,
-            logProvider
-        );
+        // SqlResult result = SqlBuilder.buildUpdateByIds(
+        //     meta,
+        //     ids,
+        //     req,
+        //     editor,
+        //     logProvider
+        // );
+        SqlResult result;
+        if (logProvider != null) {
+            result = SqlBuilder.buildUpdateByIds(meta, ids, req, editor, logProvider);
+        } else {
+            result = SqlBuilder.buildUpdateByIdsNoLog(meta, ids, req);
+        }
         return sqlRepository.updateRequired(
             result.getSql(),
             result.getParams(),
@@ -93,14 +109,19 @@ public class BaseSqlRepository {
             String editor
     ){
         req.put("editor", editor);
-        LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-        SqlResult result = SqlBuilder.buildSqlWithLog(
-            meta.tableName(),
+        // LogSqlProvider logProvider = resolver.resolve(meta.tableName());
+        // SqlResult result = SqlBuilder.buildSqlWithLog(
+        //     meta.tableName(),
+        //     req,
+        //     SqlMode.DELETE,
+        //     meta.idColumn(),
+        //     meta.versionColumn(),
+        //     logProvider
+        // );
+        SqlResult result = buildSql(
+            meta,
             req,
-            SqlMode.DELETE,
-            meta.idColumn(),
-            meta.versionColumn(),
-            logProvider
+            SqlMode.INSERT
         );
         return sqlRepository.updateRequired(
             result.getSql(),
@@ -115,13 +136,18 @@ public class BaseSqlRepository {
             String editor
     ){
         LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-        SqlResult result = SqlBuilder.buildDeleteByIds(
-            meta,
-            ids,
-            editor,
-            logProvider
-        );
-
+        // SqlResult result = SqlBuilder.buildDeleteByIds(
+        //     meta,
+        //     ids,
+        //     editor,
+        //     logProvider
+        // );
+        SqlResult result;
+        if (logProvider != null) {
+            result = SqlBuilder.buildDeleteByIds(meta, ids, editor, logProvider);
+        } else {
+            result = SqlBuilder.buildDeleteByIdsNoLog(meta, ids);
+        }
         return sqlRepository.updateRequired(
             result.getSql(),
             result.getParams(),
@@ -131,5 +157,33 @@ public class BaseSqlRepository {
 
     private String toSnake(String camel){
         return camel.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
+    }
+
+    private SqlResult buildSql(
+            TableMeta meta,
+            Map<String,Object> req,
+            SqlMode mode
+    ){
+        LogSqlProvider logProvider =
+            resolver.resolve(meta.tableName());
+
+        if (logProvider != null) {
+            return SqlBuilder.buildSqlWithLog(
+                meta.tableName(),
+                req,
+                mode,
+                meta.idColumn(),
+                meta.versionColumn(),
+                logProvider
+            );
+        }
+
+        return SqlBuilder.buildSqlNoLog(
+            meta.tableName(),
+            req,
+            mode,
+            meta.idColumn(),
+            meta.versionColumn()
+        );
     }
 }

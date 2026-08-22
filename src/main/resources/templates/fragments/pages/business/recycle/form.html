@@ -154,7 +154,6 @@
                     'key': 'company-id',
                     'resolveName':true,
                     'index': 11,
-                    'skipIfNull':true,
                     'link': 'office12'
                 }}
             )}"></th:block>
@@ -167,7 +166,6 @@
                     'top': '-----',
                     'key':'office-id',
                     'resolveName':true,
-                    'skipIfNull':true,
                     'parent': 'company12'
                 }}
             )}"></th:block>
@@ -194,9 +192,7 @@
                     'top': '-----',
                     'key':'item-id',
                     'submit':'dataset',
-                    'submitKey':'parent',
-                    'zeroToNull':true,
-                    'skipIfNull':true
+                    'submitKey':'parent'
                 }}
             )}"></th:block>
         </div>
@@ -228,13 +224,18 @@
                     'disabled':true
                 }}
             )}"></th:block>
-            <input
+            <!-- <input
                 type="hidden"
                 data-role="hidden-id"
                 name="maker-id"
                 data-key="maker-id"
                 data-skip-if-null="true"
-                data-zero-to-null="true">
+                data-zero-to-null="true"> -->
+            <input
+                type="hidden"
+                data-role="hidden-id"
+                name="maker-id"
+                data-key="maker-id">
         </div>
         <!-- 日付 -->
         <div class="form-row">
@@ -245,9 +246,7 @@
                     'name':'use-date',
                     'type':'date',
                     'action':'date-arrow',
-                    'index': 14,
-                    'zeroToNull':true,
-                    'skipIfNull':true
+                    'index': 14
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -257,9 +256,7 @@
                     'name':'delivery-date',
                     'type':'date',
                     'action':'date-arrow',
-                    'index': 15,
-                    'zeroToNull':true,
-                    'skipIfNull':true
+                    'index': 15
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -269,9 +266,7 @@
                     'name':'shipping-date',
                     'type':'date',
                     'action':'date-arrow',
-                    'index': 16,
-                    'zeroToNull':true,
-                    'skipIfNull':true
+                    'index': 16
                 }
             })}"></th:block>
         </div>

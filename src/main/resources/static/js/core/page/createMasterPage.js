@@ -12,6 +12,8 @@ export function createMasterPage(config){
         idKey: config.idKey,
         repository: config.repository,
         saveHandler: config.saveHandler,
+        submitText: config.submitText,
+        cancelText: config.cancelText,
         columns: config.columns,
         checkable: config.checkable,
         buildParams: () => ({

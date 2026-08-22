@@ -4,7 +4,7 @@ import com.kyouseipro.neo.interfaces.enums.BaseEnum;
 
 public enum BloodType implements BaseEnum {
 
-    NULL(0, ""),
+    NULL(0, "-----"),
     A(1, "A型"),
     B(2, "B型"),
     O(3, "O型"),

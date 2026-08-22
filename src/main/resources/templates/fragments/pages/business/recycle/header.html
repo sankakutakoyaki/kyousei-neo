@@ -90,8 +90,7 @@
                     'name':'use-date',
                     'type':'date',
                     'action':'date-arrow search',
-                    'index': 2,
-                    'zeroToNull':true
+                    'index': 2
                 }
             })}"></th:block>
             <!-- 会社名 -->
@@ -105,9 +104,7 @@
                         'top': '-----',
                         'key': 'company-id',
                         'resolveName':true,
-                        'index': 3,
-                        'zeroToNull':true,
-                        'skipIfNull':true,
+                        'index': 3
                         'link': 'office02'
                     }}
                 )}"></th:block>
@@ -119,9 +116,7 @@
                         'combo': 'officeComboList',
                         'top': '-----',
                         'key':'office-id',
-                        'resolveName':true,
-                        'zeroToNull':true,
-                        'skipIfNull':true,
+                        'resolveName':true
                         'parent': 'company02',
                         'linkDefault': 'empty'
                     }}
@@ -152,8 +147,7 @@
                         'key':'item-id',
                         'fillKey':'item-code',
                         'submit':'dataset',
-                        'submitKey':'parent',
-                        'zeroToNull':true
+                        'submitKey':'parent'
                     }}
                 )}"></th:block>
             </div>
@@ -185,13 +179,18 @@
                         'disabled':true
                     }}
                 )}"></th:block>
-                <input
+                <!-- <input
                     type="hidden"
                     data-role="hidden-id"
                     name="maker-id"
                     data-key="maker-id"
                     data-skip-if-null="true"
-                    data-zero-to-null="true">
+                    data-zero-to-null="true"> -->
+                <input
+                    type="hidden"
+                    data-role="hidden-id"
+                    name="maker-id"
+                    data-key="maker-id">
             </div>
             <div class="form-parts">
                 <label></label>
@@ -213,7 +212,6 @@
                     'type':'date',
                     'action':'date-arrow search',
                     'index': 32,
-                    'zeroToNull':true,
                     'clearSkip':true
                 }
             })}"></th:block>
@@ -229,8 +227,6 @@
                         'key': 'disposal-site-id',
                         'resolveName':true,
                         'index': 33,
-                        'zeroToNull':true,
-                        'skipIfNull':true,
                         'link': 'office03',
                         'clearSkip':true
                     }}
@@ -244,8 +240,6 @@
                         'top': '-----',
                         'key':'office-id',
                         'resolveName':true,
-                        'zeroToNull':true,
-                        'skipIfNull':true,
                         'parent': 'company03',
                         'linkDefault': 'empty',
                         'clearSkip':true
@@ -288,7 +282,6 @@
                     'type':'date',
                     'action':'date-arrow search',
                     'index': 42,
-                    'zeroToNull':true,
                     'clearSkip':true
                 }
             })}"></th:block>
@@ -304,8 +297,6 @@
                         'key': 'shipping-address-id',
                         'resolveName':true,
                         'index': 43,
-                        'zeroToNull':true,
-                        'skipIfNull':true,
                         'link': 'office04',
                         'clearSkip':true
                     }}
@@ -319,8 +310,6 @@
                         'top': '-----',
                         'key':'office-id',
                         'resolveName':true,
-                        'zeroToNull':true,
-                        'skipIfNull':true,
                         'parent': 'company04',
                         'linkDefault': 'empty',
                         'clearSkip':true
@@ -363,7 +352,6 @@
                     'type':'date',
                     'action':'date-arrow search',
                     'index': 52,
-                    'zeroToNull':true,
                     'clearSkip':true
                 }
             })}"></th:block>
@@ -387,7 +375,6 @@
                     'id':'remarks05',
                     'name':'remarks',
                     'index': 55,
-                    'skipIfNull':true
                 }}
             )}"></th:block>
             <div class="form-parts">

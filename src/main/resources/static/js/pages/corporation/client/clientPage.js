@@ -48,6 +48,8 @@ export const clientCompanyPage = () =>
         repository: ClientCompanyService,
         category: APP.cache.common.companyCategory.PARTNER,
         columns: createClientCompanyColumns(),
+        submitText: "保存",
+        cancelText: "キャンセル",
         components: {combo: true},
         model: {
             filters: {category: filterFactory.equals("category")}
@@ -73,6 +75,8 @@ export const clientOfficePage = () =>
         repository: OfficeRepository,
         category: APP.cache.common.companyCategory.PARTNER,
         columns: createOfficeColumns(),
+        submitText: "保存",
+        cancelText: "キャンセル",
         components: {combo: true, input: true},
         model: {
             filters: {companyId: filterFactory.equals("companyId")}
@@ -90,6 +94,8 @@ export const clientStaffPage = () =>
         repository: StaffRepository,
         category: APP.cache.common.companyCategory.PARTNER,
         columns: createStaffColumns(),
+        submitText: "保存",
+        cancelText: "キャンセル",
         components: {combo: true, input: true},
         model: {
             filters: {

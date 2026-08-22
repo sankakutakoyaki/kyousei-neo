@@ -33,6 +33,8 @@ export const orderListPage = () =>
         footerId: "footer-01",
         formId: "form-01",
         columns: createOrderListColumns(),
+        submitText: "保存",
+        cancelText: "キャンセル",
         onInit: () => {
             const today = getToday();
             const from = document.getElementById("date-from01");

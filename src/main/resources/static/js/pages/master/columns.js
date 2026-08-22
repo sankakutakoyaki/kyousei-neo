@@ -44,6 +44,7 @@ export const createWorkMasterColumns = () => [
         field: "workPrice",
         label: "金額",
         sortable:true,
+        class: "text-right",
         format: v => {
             if(v == null || v === "") return "";
             return Number(v).toLocaleString("ja-JP");

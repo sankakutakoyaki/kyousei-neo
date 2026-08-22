@@ -37,6 +37,8 @@ export const partnerCompanyPage = () =>
         repository: CompanyService,
         category: APP.cache.common.companyCategory.PARTNER,
         columns: createPartnerCompanyColumns(),
+        submitText: "保存",
+        cancelText: "キャンセル",
         components: {combo: true},
         model: {
             filters: {category: filterFactory.equals("category")}
@@ -60,6 +62,8 @@ export const partnerEmployeePage = () =>
         formId: "form-02",
         category: APP.cache.common.employeeCategory.CONSTRUCT,
         columns: createPartnerEmployeeColumns(),
+        submitText: "保存",
+        cancelText: "キャンセル",
         components: {combo: true, input: true},
         model: {
             filters: {companyId: filterFactory.equals("companyId")}

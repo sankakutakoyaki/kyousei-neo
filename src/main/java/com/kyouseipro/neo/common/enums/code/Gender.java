@@ -4,7 +4,7 @@ import com.kyouseipro.neo.interfaces.enums.BaseEnum;
 
 public enum Gender implements BaseEnum {
 
-    NULL(0, ""),
+    NULL(0, "-----"),
     MAN(1, "男性"),
     WOMAN(2, "女性"),
     OTHERS(9, "無回答");

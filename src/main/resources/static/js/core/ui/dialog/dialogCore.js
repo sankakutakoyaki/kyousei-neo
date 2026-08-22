@@ -13,7 +13,9 @@ export function openFormDialog(options = {}) {
         dialogId,
         onSubmit = async () => true,
         onClose = async () => closeFormDialog(dialogId),
-        onReset
+        onReset,
+        submitText = "はい",
+        cancelText = "いいえ"
     } = options;
 
     const form = document.getElementById(dialogId);
@@ -30,7 +32,7 @@ export function openFormDialog(options = {}) {
     const el = area.querySelector('[autofocus]');
     if (el) el.focus();
 
-    setFooterButtons(form, true, onSubmit, onClose);
+    setFooterButtons(form, true, onSubmit, onClose, {submitText, cancelText});
 
     setInertState(true);
     resetEnterFocus();
@@ -208,8 +210,16 @@ export async function withInertButton(button, asyncFunc) {
     }
 }
 
-function setFooterButtons(dialog, isConfirm, submitCallback, closeCallback) {
-
+function setFooterButtons(
+    dialog,
+    isConfirm,
+    submitCallback,
+    closeCallback,
+    {
+        submitText = "はい",
+        cancelText = "いいえ"
+    } = {}
+) {
     const submitBtn = dialog.querySelector('[name="submitBtn"]');
     const cancelBtn = dialog.querySelector('[name="cancelBtn"]');
     const closeBtn = dialog.querySelector('[name="closeBtn"]');
@@ -230,7 +240,7 @@ function setFooterButtons(dialog, isConfirm, submitCallback, closeCallback) {
         submitBtn.onclick = onSubmit;
         cancelBtn.onclick = onClose;
         cancelBtn.style.display = "";
-        cancelBtn.textContent = "いいえ";
+        cancelBtn.textContent = cancelText;
     } else {
         submitBtn.onclick = onClose;
         cancelBtn.style.display = "none";
@@ -239,6 +249,6 @@ function setFooterButtons(dialog, isConfirm, submitCallback, closeCallback) {
     closeBtn.onclick = onClose;
 
     submitBtn.dataset.scope = "form";
-    submitBtn.textContent = "はい";
+    submitBtn.textContent = submitText;
     submitBtn.focus();
 }

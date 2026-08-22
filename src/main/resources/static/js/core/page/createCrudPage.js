@@ -10,9 +10,11 @@ export function createCrudPage(config){
             create: (controller) =>  new FormController({
                 controller,
                 formId: config.formId,
-                key: config.key,
+                key: config.idKey,
                 repository: config.repository,
                 saveHandler: config.saveHandler,
+                submitText: config.submitText,
+                cancelText: config.cancelText,
                 beforeSave: config.beforeSave,
                 afterSave: async (id) => {
                     if(config.afterSave){await config.afterSave(controller, id);}

@@ -13,6 +13,10 @@ export function normalizeValue(v, opt = {}){
     if(opt.number && v !== null){
         v = Number(v);
     }
+    // null → 0
+    if(v == null && opt.zeroIfNull){
+        v = 0;
+    }
     // zeroToNull
     if(opt.zeroToNull && (v === 0 || v === "0")){
         v = null;
@@ -24,17 +28,41 @@ export function getOptions(el){
     return {
         trim: !("noTrim" in el.dataset),
         number: "number" in el.dataset,
-        zeroToNull: "zeroToNull" in el.dataset
+        zeroToNull: "zeroToNull" in el.dataset,
+        zeroIfNull: "zeroIfNull" in el.dataset
     };
 }
 
+// export function normalize(v){
+//     if(
+//         v === "" ||
+//         v === 0 ||
+//         v === "0"
+//     ){
+//         return null;
+//     }
+//     return v;
+// }
 export function normalize(v){
-    if(
-        v === "" ||
-        v === 0 ||
-        v === "0"
-    ){
+    // null / undefined / 空文字
+    if(v == null || v === ""){
         return null;
     }
+
+    // 数値文字列を数値に統一
+    if(typeof v === "string"){
+        const value = v.trim();
+
+        if(value === ""){
+            return null;
+        }
+
+        if(!Number.isNaN(Number(value))){
+            return Number(value);
+        }
+
+        return value;
+    }
+
     return v;
 }

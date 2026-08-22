@@ -45,6 +45,8 @@ export const recycleMakerPage = () =>
         repository: RecycleMakerRepository,
         saveHandler: RecycleMakerRepository.save,
         columns: createRecycleMakerColumns(),
+        submitText: "保存",
+        cancelText: "キャンセル",
         components: {combo: true, input: true},
         afterSave: refreshMakerChildren,
         model: {
@@ -62,6 +64,8 @@ export const recycleManufacturerPage = () =>
         repository: RecycleManufacturerRepository,
         saveHandler: RecycleManufacturerRepository.save,
         columns: createRecycleManufacturerColumns(),
+        submitText: "保存",
+        cancelText: "キャンセル",
         components: {combo: true, input: true},
         model: {
             filters: {code: filterFactory.equals("code")},
@@ -91,6 +95,8 @@ export const recyclePricePage = async () => {
         repository: RecyclePriceRepository,
         saveHandler: RecyclePriceRepository.save,
         columns: createRecyclePriceColumns(items),
+        submitText: "保存",
+        cancelText: "キャンセル",
         components: {combo: true, input: true},
         checkable: false,
         model: {

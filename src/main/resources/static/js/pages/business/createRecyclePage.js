@@ -42,6 +42,8 @@ export function createRecyclePage(config){
         idKey: "recycleId",
         repository: RecycleRepository,
         columns: config.columns,
+        submitText: "保存",
+        cancelText: "キャンセル",
         rowClass: config.rowClass,
         buildParams: config.buildParams,
         buildCsvParams: config.buildCsvParams,

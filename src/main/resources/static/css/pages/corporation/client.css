@@ -133,7 +133,9 @@
             gap: .3rem;
         }
         & >.form-row:nth-of-type(1) {
-            grid-template-columns: minmax(10rem, auto) minmax(10rem, auto);
+            width: 100%;
+            grid-template-columns: 1fr;
+            /* grid-template-columns: minmax(10rem, auto) minmax(10rem, auto); */
         }
         /* & >.form-row:nth-of-type(2) {
             grid-template-columns: minmax(10rem, auto);

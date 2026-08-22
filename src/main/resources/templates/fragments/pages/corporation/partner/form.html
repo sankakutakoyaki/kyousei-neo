@@ -98,8 +98,7 @@
                     'key': 'company-id',
                     'name': 'company-id', 
                     'resolveName':true,
-                    'index': 3,
-                    'zeroToNull': true
+                    'index': 1
                 }
             })}"></th:block>
         </div>
@@ -114,9 +113,7 @@
                     'pattern': '\d*',
                     'placeholder': '0000',
                     'resolveId':true,
-                    'index': 2,
-                    'number': true,
-                    'zeroToNull': true
+                    'index': 2
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -124,7 +121,7 @@
                     'text': 'アカウント', 
                     'name': 'account', 
                     'placeholder': 'example@kyouseibin.com',
-                    'index': 1 
+                    'index': 3
                 }
             })}"></th:block>            
         </div>
@@ -230,9 +227,7 @@
                     'text': '性別', 
                     'name': 'gender',
                     'combo': 'genderComboList',
-                    'index': 13,
-                    'number': true,
-                    'zeroToNull': true
+                    'index': 13
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
@@ -240,9 +235,7 @@
                     'text': '血液型', 
                     'name': 'blood-type',
                     'combo': 'bloodTypeComboList',
-                    'index': 14,
-                    'number': true,
-                    'zeroToNull': true
+                    'index': 14
                 }
             })}"></th:block>            
         </div>

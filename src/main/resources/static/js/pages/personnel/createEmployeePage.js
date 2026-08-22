@@ -17,21 +17,37 @@ export function createEmployeePage(config){
         model: config.model ?? {
             filters: { officeId: filterFactory.equals("officeId")}
         },
-        validateBusiness: config.validateBusiness ?? (async (payload) => {
-            if(!payload.officeId){
-                throw {
-                    message: "営業所を選択してください",
-                    fields: ["officeId"]
-                };
-            }
-        }),
+        // validateBusiness: config.validateBusiness ?? (async (payload) => {
+        //     if(!payload.officeId){
+        //         throw {
+        //             message: "営業所を選択してください",
+        //             fields: ["officeId"]
+        //         };
+        //     }
+        // }),
+        // beforeSave: (payload) => {
+        //     if(!payload.employeeId || Number(payload.employeeId) === 0){
+        //         payload.category = config.category;
+        //     }
+        //     if(!payload.code || Number(payload.code) === 0){
+        //         payload.code = 0;
+        //     }
+        //     if(config.beforeSave){
+        //         config.beforeSave(payload);
+        //     }
+        // }
         beforeSave: (payload) => {
-            if(!payload.employeeId || Number(payload.employeeId) === 0){
+            const isInsert =
+                !payload.employeeId ||
+                Number(payload.employeeId) === 0;
+
+            if(isInsert){
                 payload.category = config.category;
+                if(payload.code == null || payload.code === ""){
+                    payload.code = 0;
+                }
             }
-            if(!payload.code || Number(payload.code) === 0){
-                payload.code = 0;
-            }
+
             if(config.beforeSave){
                 config.beforeSave(payload);
             }

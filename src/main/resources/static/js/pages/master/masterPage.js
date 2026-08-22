@@ -37,6 +37,8 @@ export const itemMasterPage = () =>
         repository: ItemMasterRepository,
         saveHandler: ItemMasterRepository.save,
         columns: createItemMasterColumns(),
+        submitText: "保存",
+        cancelText: "キャンセル",
         components: {combo: true, input: true},
         model: {
             pageSize: 500
@@ -53,6 +55,8 @@ export const workMasterPage = () =>
         repository: WorkMasterRepository,
         saveHandler: WorkMasterRepository.save,
         columns: createWorkMasterColumns(),
+        submitText: "保存",
+        cancelText: "キャンセル",
         components: {combo: true, input: true},
         model: {
             pageSize: 500

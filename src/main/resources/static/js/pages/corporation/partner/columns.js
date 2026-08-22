@@ -43,8 +43,12 @@ export const createPartnerEmployeeColumns = () => [
         field: "code",
         label: "コード",
         sortable: true,
-        zeroToNull: true,
-        default: ""
+        // zeroToNull: true,
+        // default: ""
+        format: v => {
+            if(v == null || v === "" || v === 0) return "";
+            return String(v).padStart(3, "0");
+        }
     },
     {
         field: "nameKana",

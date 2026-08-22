@@ -81,6 +81,9 @@ export const FormModel = {
                 if("zeroToNull" in dataset && (v === 0 || v === "0")){
                     v = null;
                 }
+                if ("zeroToBlank" in dataset && (v === 0 || v === "0")) {
+                    v = "";
+                }
                 const text = v != null ? String(v) : "";
                 // if(
                 //     el instanceof HTMLInputElement ||
@@ -135,19 +138,34 @@ export const FormModel = {
     //         }
     //     });
     // }
-    clear(form){
-        [...form.elements].forEach(el => {
-            if(!el.name) return;
+    // clear(form){
+    //     [...form.elements].forEach(el => {
+    //         if(!el.name) return;
 
-            delete el.dataset.pendingValue;
+    //         delete el.dataset.pendingValue;
 
-            if(el.type === "checkbox"){
-                el.checked = false;
-            }else{
-                el.value = "";
-            }
-        });
-    }
+    //         if(el.type === "checkbox"){
+    //             el.checked = false;
+    //         }else{
+    //             el.value = "";
+    //         }
+    //     });
+    // }
+clear(form){
+    [...form.elements].forEach(el => {
+        if(!el.name) return;
+
+        delete el.dataset.pendingValue;
+
+        if(el.type === "checkbox"){
+            el.checked = false;
+        }else if(el instanceof HTMLSelectElement){
+            el.selectedIndex = 0;
+        }else{
+            el.value = "";
+        }
+    });
+}
 };
 
 function injectMeta(entity, form, base){
