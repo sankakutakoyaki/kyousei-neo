@@ -104,7 +104,10 @@ export const clientStaffPage = () =>
             }
         },
         validateBusiness: async (payload) => {
-            if(!payload.companyId){
+            if(
+                payload.companyId !== undefined &&
+                Number(payload.companyId) === 0
+            ){
                 throw {
                     message: "会社を選択してください",
                     fields: ["company-id"]

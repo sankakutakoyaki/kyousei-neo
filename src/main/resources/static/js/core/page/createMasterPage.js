@@ -30,8 +30,9 @@ export function createMasterPage(config){
                 config.beforeSave(payload, form);
             }
             if(config.category && config.insertCategory){
-                const key = form.dataset.key;
-                const id = payload[key];
+                // const key = form.dataset.key;
+                // const id = payload[key];
+                const id = payload[config.idKey];
                 if(!id || Number(id) === 0){
                     payload.category = config.category;
                 }

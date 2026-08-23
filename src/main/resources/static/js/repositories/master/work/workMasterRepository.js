@@ -18,7 +18,7 @@ export const WorkMasterRepository = {
     },
 
     async remove(params) {
-        return await RequestClient.request({queryId: "workMasterDelete", params});
+        return await RequestClient.request({queryId: "workMasterDeleteByIds", params});
     },
 
     async download(params) {

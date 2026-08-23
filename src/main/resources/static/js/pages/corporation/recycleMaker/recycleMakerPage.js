@@ -52,6 +52,19 @@ export const recycleMakerPage = () =>
         model: {
             pageSize: 500
         },
+        validateBusiness: async (payload, currentEntity) => {
+            const code =
+                payload.code !== undefined
+                    ? payload.code
+                    : currentEntity?.code;
+
+            if (code != null && Number(code) === 0) {
+                throw {
+                    message: "コードは0以外の数字を入力してください",
+                    fields: ["code"]
+                };
+            }
+        }
     });
 
 export const recycleManufacturerPage = () =>
@@ -71,8 +84,23 @@ export const recycleManufacturerPage = () =>
             filters: {code: filterFactory.equals("code")},
             pageSize: 500
         },
+        // validateBusiness: async (payload) => {
+        //     if(!payload.recycleMakerId){
+        //         throw {
+        //             message: "略称を選択してください",
+        //             fields: ["code"]
+        //         };
+        //     }
+        // }
         validateBusiness: async (payload) => {
-            if(!payload.recycleMakerId){
+            const isInsert =
+                !payload.recycleManufacturerId ||
+                Number(payload.recycleManufacturerId) === 0;
+
+            if (isInsert && (
+                payload.recycleMakerId == null ||
+                Number(payload.recycleMakerId) === 0
+            )) {
                 throw {
                     message: "略称を選択してください",
                     fields: ["code"]

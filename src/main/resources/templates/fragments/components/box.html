@@ -41,7 +41,7 @@
                     data-trim=${data['trim'] != null ? 'true' : null},
                     data-skip-if-null=${data['skipIfNull'] != null ? 'true' : null},
                     data-zero-to-null=${data['zeroToNull'] != null ? 'true' : null},
-                    data-zero-if-null=${data['zeroIfNull'] != null ? 'true' : null},
+                    data-zero-as-blank=${data['zeroAsBlank'] != null ? 'true' : null},
                     data-format=${data['format'] != null ? data['format'] : (data['type'] == 'date' ? 'yyyy-MM-dd' : null)}
                 ">
         </div>
@@ -74,7 +74,8 @@
                 data-trim=${data['trim'] != null ? '' : null},
                 data-skip-if-null=${data['skipIfNull'] != null ? 'true' : null},
                 data-zero-if-null=${data['zeroIfNull'] != null ? 'true' : null},
-                data-zero-to-null=${data['zeroToNull'] != null ? 'true' : null}
+                data-zero-to-null=${data['zeroToNull'] != null ? 'true' : null},
+                data-empty-option=${data['emptyOption'] != null ? 'true' : null}
             ">
         </select>
     </div>

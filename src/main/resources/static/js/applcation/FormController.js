@@ -239,7 +239,7 @@ export class FormController {
             isBulkMode: this.isBulkMode(),
             getTargetIds: (payload) => this.getTargetIds(payload)
         });
-
+        
         const additionalChanged =
             this.hasAdditionalChanges?.() ?? false;
 

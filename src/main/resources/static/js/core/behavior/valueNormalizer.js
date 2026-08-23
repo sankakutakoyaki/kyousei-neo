@@ -57,9 +57,14 @@ export function normalize(v){
             return null;
         }
 
-        if(!Number.isNaN(Number(value))){
-            return Number(value);
+        // 数値文字列
+        const numeric = value.replace(/,/g, "");
+        if(!Number.isNaN(Number(numeric))){
+            return Number(numeric);
         }
+        // if(!Number.isNaN(Number(value))){
+        //     return Number(value);
+        // }
 
         return value;
     }

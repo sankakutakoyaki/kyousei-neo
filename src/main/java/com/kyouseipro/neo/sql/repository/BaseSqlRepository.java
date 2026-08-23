@@ -27,15 +27,6 @@ public class BaseSqlRepository {
             String editor
     ){
         req.put("editor", editor);
-        // LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-        // SqlResult result = SqlBuilder.buildSqlWithLog(
-        //     meta.tableName(),
-        //     req,
-        //     SqlMode.INSERT,
-        //     meta.idColumn(),
-        //     meta.versionColumn(),
-        //     logProvider
-        // );
         SqlResult result = buildSql(
             meta,
             req,

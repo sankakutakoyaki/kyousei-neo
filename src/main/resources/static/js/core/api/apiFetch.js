@@ -77,7 +77,6 @@ export async function apiFetch(url, {
                 data: result
             };
         }
-
         return {
             ok: true,
             status: response.status,
@@ -117,15 +116,28 @@ export async function apiFetch(url, {
  * HTTPエラー共通処理
  * @param {*} status 
  */
-export async function handleHttpError(status, json) {
-    const message = json?.message;
+// export async function handleHttpError(status, json) {
+//     const message = json?.message;
 
-    if (window.ApiErrorHandler) {
-        return window.ApiErrorHandler(status, message);
-    }
-    if(status >= 500){
-        DialogService.error("システムエラーが発生しました");
-    } else {
-        DialogService.error(message);
-    }
+//     if (window.ApiErrorHandler) {
+//         return window.ApiErrorHandler(status, message);
+//     }
+//     if(status >= 500){
+//         DialogService.error("システムエラーが発生しました");
+//     } else {
+//         DialogService.error(message);
+//     }
+// }
+export async function handleHttpError(status, json) {
+    const message =
+        json?.message ||
+        "エラーが発生しました";
+
+    const error = new Error(message);
+
+    error.status = status;
+    error.field = json?.field ?? null;
+    error.fields = json?.fields ?? [];
+
+    throw error;
 }

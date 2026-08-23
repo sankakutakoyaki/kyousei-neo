@@ -10,8 +10,7 @@
                     'key': 'category',
                     'name': 'category', 
                     'resolveName':true,
-                    'index': 3,
-                    'zeroToNull': true
+                    'index': 3
                 }
             })}"></th:block>
         </div>
@@ -100,8 +99,7 @@
             })}"></th:block>
             <div class="form-parts" name="price-area">
                 <label>料金表</label>
-                <select tabindex="9" name="is-original-price" class="normal-select"
-                    data-number data-zero-to-null>
+                <select tabindex="9" name="is-original-price" class="normal-select">
                     <option value="0"></option>
                     <option value="1">有</option>
                 </select>
@@ -234,37 +232,6 @@
                 }}
             )}"></th:block>
         </div>
-        <!-- <div class="form-row" data-resolve="staff">
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                { 
-                    'text': '会社名', 
-                    'combo': 'companyComboList',
-                    'top': '-----',
-                    'id': 'company11',
-                    'key': 'company-id',
-                    'name': 'company-id', 
-                    'resolveName':true,
-                    'index': 2,
-                    'zeroToNull': true,
-                    'link': 'office11'
-                }
-            })}"></th:block>
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                { 
-                    'id': 'office11',
-                    'text': '支店名', 
-                    'combo': 'officeComboList',
-                    'top': '-----',
-                    'key': 'office-id',
-                    'name': 'office-id', 
-                    'resolveName':true,
-                    'index': 3,
-                    'zeroToNull': true,
-                    'linkDefault': 'empty',
-                    'parent': 'company11'
-                }
-            })}"></th:block>
-        </div> -->
         <!-- 氏名 -->
         <!-- かな -->
         <div class="flex-area form-row">

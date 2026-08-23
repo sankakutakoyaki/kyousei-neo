@@ -323,26 +323,43 @@ export class PageController {
         this.state.keyword = value;
     }
 
+    // async refresh(targetId = null){
+    //     if(!this.dataTable){
+    //         return;
+    //     }
+    //     await this.dataTable.refresh();
+    //     if(targetId){
+    //         this.scrollToRow(targetId);
+    //     }
+    //     this.updateButtons();
+    // }
     async refresh(targetId = null){
         if(!this.dataTable){
             return;
         }
-        await this.dataTable.refresh();
-        if(targetId){
-            this.scrollToRow(targetId);
-        }
+        await this.dataTable.refresh(targetId);
         this.updateButtons();
     }
+    // scrollToRow(id){
+    //     if(!id) return;
 
-    scrollToRow(id){
-        if(!id) return;
+    //     const row = document.querySelector(`[data-id="${id}"]`);
+    //     if(row){
+    //         row.scrollIntoView({block:"center"});
+    //     }
+    // }
+// scrollToRow(id){
+//     if(!id) return;
 
-        const row = document.querySelector(`[data-id="${id}"]`);
-        if(row){
-            row.scrollIntoView({block:"center"});
-        }
-    }
+//     const row = document.querySelector(`[data-id="${id}"]`);
 
+//     console.log("scroll target id =", id);
+//     console.log("scroll target row =", row);
+
+//     if(row){
+//         row.scrollIntoView({block:"center"});
+//     }
+// }
     isBulkMode(){
         return !!this.state.bulkMode;
     }

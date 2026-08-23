@@ -7,10 +7,10 @@
                     'text': 'コード', 
                     'name': 'code', 
                     'inputmode': 'numeric',
-                    'pattern': '\d*',
+                    'pattern': '\\d*',
                     'placeholder': '000',
-                    'resolveId':true,
-                    'index': 1
+                    'index': 1,
+                    'required': 'コードを入力してください。'
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
@@ -60,13 +60,13 @@
                 { 
                     'text': '略称', 
                     'combo': 'recyclemakerComboList',
-                    'top': '-----',
                     'key': 'code',
                     'name': 'code', 
                     'resolveName':true,
                     'index': 1,
-                    'zeroToNull': true,
-                    'submit':'none'
+                    'submit':'none',
+                    'emptyOption': true,
+                    'zeroToNull': true
                 }
             })}"></th:block>
             <input
@@ -171,14 +171,14 @@
             <div></div>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
-                    'name': 'price4', 
+                    'name': 'price7', 
                     'index': 5,
                     'validate': 'currency'
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
-                    'name': 'price5', 
+                    'name': 'price8', 
                     'index': 6,
                     'validate': 'currency'
                 }
@@ -192,14 +192,14 @@
             <div></div>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
-                    'name': 'price6', 
+                    'name': 'price4', 
                     'index': 7,
                     'validate': 'currency'
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
-                    'name': 'price7', 
+                    'name': 'price5', 
                     'index': 8,
                     'validate': 'currency'
                 }
@@ -212,7 +212,7 @@
             </div>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
-                    'name': 'price8', 
+                    'name': 'price6', 
                     'index': 9,
                     'validate': 'currency'
                 }

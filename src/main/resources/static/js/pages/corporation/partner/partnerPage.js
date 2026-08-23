@@ -36,6 +36,7 @@ export const partnerCompanyPage = () =>
         idKey: "companyId",
         repository: CompanyService,
         category: APP.cache.common.companyCategory.PARTNER,
+        insertCategory: true,
         columns: createPartnerCompanyColumns(),
         submitText: "保存",
         cancelText: "キャンセル",
@@ -43,15 +44,11 @@ export const partnerCompanyPage = () =>
         model: {
             filters: {category: filterFactory.equals("category")}
         },
-        validateBusiness: async (payload) => {
-            if(!payload.category){
-                throw {
-                    message: "分類を選択してください",
-                    fields: ["category"]
-                };
-            }
-        },
-        afterSave: refreshClientChildren
+        // afterSave: refreshClientChildren
+        afterSave: async (controller, id) => {
+            await controller.refresh(id);
+            await refreshClientChildren();
+        }
     });
 
 export const partnerEmployeePage = () =>

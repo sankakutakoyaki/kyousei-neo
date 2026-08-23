@@ -81,11 +81,14 @@ export class TableModel {
         });
     }
 
+    // applyPage(list){
+    //     const start = (this.page - 1) * this.pageSize;
+    //     return list.slice(start, start + this.pageSize);
+    // }
     applyPage(list){
-        const start = (this.page - 1) * this.pageSize;
-        return list.slice(start, start + this.pageSize);
+        return list.slice(0, this.pageSize);
     }
-
+    
     // 取得
     getData(){
         return this.result;

@@ -96,12 +96,35 @@ export class DataTable {
         this.render();
     }
 
-    async refresh(id){
+    // async refresh(id){
+    //     await this.fetch();
+    //     this.reload();
+    //     if(id){
+    //         requestAnimationFrame(() => {
+    //             this.scrollToRow(id);
+    //         });
+    //     }
+    // }
+    async refresh(id = null){
         await this.fetch();
+
+        if(id){
+            const index = this.model.originData.findIndex(
+                item => String(item[this.idKey]) === String(id)
+            );
+
+            if(index >= 0){
+                while(index >= this.model.pageSize){
+                    this.model.pageSize += 50;
+                }
+            }
+        }
+
         this.reload();
+
         if(id){
             requestAnimationFrame(() => {
-                this.scrollToRow(id);
+                this.scrollToRow(id, "auto");
             });
         }
     }
@@ -248,11 +271,20 @@ export class DataTable {
         });
     }
 
-    scrollToRow(id){
+    // scrollToRow(id){
+    //     const row = this.tableEl.querySelector(`[data-id="${id}"]`);
+    //     if(!row) return;
+
+    //     row.scrollIntoView({behavior: "smooth", block: "center"});
+    // }
+    scrollToRow(id, behavior = "smooth"){
         const row = this.tableEl.querySelector(`[data-id="${id}"]`);
         if(!row) return;
 
-        row.scrollIntoView({behavior: "smooth", block: "center"});
+        row.scrollIntoView({
+            behavior,
+            block: "center"
+        });
     }
 
     getCurrentRowId(){

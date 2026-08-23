@@ -26,9 +26,11 @@ export const FormModel = {
             } else {
                 value = el.value;
             }
-            const v = resolveSubmitValue(el, value);
+            let v = resolveSubmitValue(el, value);
             if(v === undefined) return;
-            if(v == null && "skipIfNull" in el.dataset) return;
+            if("zeroAsBlank" in el.dataset && (v === "" || v == null)){
+                v = 0;
+            } else if(v == null && "skipIfNull" in el.dataset) return;
             entity[key] = v;
         });
         injectMeta(entity, form, base);
@@ -81,7 +83,7 @@ export const FormModel = {
                 if("zeroToNull" in dataset && (v === 0 || v === "0")){
                     v = null;
                 }
-                if ("zeroToBlank" in dataset && (v === 0 || v === "0")) {
+                if ("zeroAsBlank" in dataset && (v === 0 || v === "0")) {
                     v = "";
                 }
                 const text = v != null ? String(v) : "";

@@ -18,7 +18,7 @@ export const EmployeeRepository = {
     },
 
     async remove(params){
-        return await RequestClient.request({queryId: "employeeDelete", params});
+        return await RequestClient.request({queryId: "employeeDeleteByIds", params});
     },
 
     async download(params){

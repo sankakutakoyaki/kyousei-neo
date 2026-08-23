@@ -11,6 +11,7 @@ export function createCrudPage(config){
                 controller,
                 formId: config.formId,
                 key: config.idKey,
+                idKey: config.idKey,
                 repository: config.repository,
                 saveHandler: config.saveHandler,
                 submitText: config.submitText,

@@ -59,7 +59,8 @@ public class SqlRepository {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("SQL実行エラー", e);
+            // throw new RuntimeException("SQL実行エラー", e);
+            throw SqlExceptionMapper.map(e);
         } finally {
             DataSourceUtils.releaseConnection(conn, dataSource);
         }
@@ -88,7 +89,8 @@ public class SqlRepository {
                 return result;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("SQL実行エラー", e);
+            // throw new RuntimeException("SQL実行エラー", e);
+            throw SqlExceptionMapper.map(e);
         } finally {
             DataSourceUtils.releaseConnection(conn, dataSource);
         }
@@ -116,7 +118,8 @@ public class SqlRepository {
                 return list;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("SQL実行エラー", e);
+            // throw new RuntimeException("SQL実行エラー", e);
+            throw SqlExceptionMapper.map(e);
         } finally {
             DataSourceUtils.releaseConnection(conn, dataSource);
         }
@@ -133,7 +136,8 @@ public class SqlRepository {
             if (binder != null) binder.bind(ps, param);
             return ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            // throw new RuntimeException(e);
+            throw SqlExceptionMapper.map(e);
         }
     }
 
@@ -180,7 +184,8 @@ public class SqlRepository {
             setParams(ps, params);
             return ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            // throw new RuntimeException(e);
+            throw SqlExceptionMapper.map(e);
         }
     }
 
@@ -206,7 +211,8 @@ public class SqlRepository {
             return Arrays.stream(results).sum();
 
         } catch (SQLException e) {
-            throw new RuntimeException("SQLバッチ実行エラー", e);
+            // throw new RuntimeException("SQLバッチ実行エラー", e);
+            throw SqlExceptionMapper.map(e);
         }
     }
 

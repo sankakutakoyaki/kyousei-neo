@@ -15,23 +15,84 @@ export function init(area, config) {
     });
 }
 
-export function createComboBox({area, items, text = null, onChange = null}) {
+// export function createComboBox({area, items, text = null, onChange = null}) {
+//     if (!area) return;
+//     area.replaceChildren();
+
+//     if (text !== null) {
+//         area.insertAdjacentHTML("beforeend",`<option value="0" data-parent="0" data-id="0">${text}</option>`);
+//     }
+
+//     (items ?? []).forEach(item => {
+//         const v = item.value;
+
+//         if ((typeof v === "number" && v > -1) || (typeof v === "string" && v !== "")) {
+//             const option = document.createElement("option");
+//             option.value = item.value;
+//             option.dataset.parent = item.parent ?? "";
+//             option.dataset.id = item.data ?? "";
+//             option.textContent = item.label;
+//             area.appendChild(option);
+//         }
+//     });
+
+//     // コンボ作り直し後に値を復元
+//     const pendingValue = area.dataset.pendingValue;
+//     if (
+//         pendingValue &&
+//         [...area.options].some(o => String(o.value) === String(pendingValue))
+//     ) {
+//         area.value = pendingValue;
+//         delete area.dataset.pendingValue;
+//     }
+
+//     if (typeof onChange === "function") {
+//         area.addEventListener("change", onChange);
+//     }
+// }
+export function createComboBox({
+    area,
+    items,
+    text = null,
+    emptyOption = false,
+    onChange = null
+}) {
     if (!area) return;
+
     area.replaceChildren();
 
+    // 未選択用
+    if (emptyOption) {
+        const option = document.createElement("option");
+        option.value = "";
+        option.dataset.parent = "";
+        option.dataset.id = "";
+        option.textContent = "";
+        area.appendChild(option);
+    }
+
+    // 従来のトップ
     if (text !== null) {
-        area.insertAdjacentHTML("beforeend",`<option value="0" data-id="0">${text}</option>`);
+        area.insertAdjacentHTML(
+            "beforeend",
+            `<option value="0" data-parent="0" data-id="0">${text}</option>`
+        );
     }
 
     (items ?? []).forEach(item => {
         const v = item.value;
 
-        if ((typeof v === "number" && v > -1) || (typeof v === "string" && v !== "")) {
+        if (
+            (typeof v === "number" && v > -1) ||
+            (typeof v === "string" && v !== "")
+        ) {
             const option = document.createElement("option");
+
             option.value = item.value;
             option.dataset.parent = item.parent ?? "";
             option.dataset.id = item.data ?? "";
             option.textContent = item.label;
+
             area.appendChild(option);
         }
     });
@@ -39,8 +100,10 @@ export function createComboBox({area, items, text = null, onChange = null}) {
     // コンボ作り直し後に値を復元
     const pendingValue = area.dataset.pendingValue;
     if (
-        pendingValue &&
-        [...area.options].some(o => String(o.value) === String(pendingValue))
+        pendingValue !== undefined &&
+        [...area.options].some(
+            o => String(o.value) === String(pendingValue)
+        )
     ) {
         area.value = pendingValue;
         delete area.dataset.pendingValue;

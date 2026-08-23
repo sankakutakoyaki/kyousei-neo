@@ -18,7 +18,7 @@ export const ItemMasterRepository = {
     },
 
     async remove(params) {
-        return await RequestClient.request({queryId: "itemMasterDelete", params});
+        return await RequestClient.request({queryId: "itemMasterDeleteByIds", params});
     },
 
     async download(params) {

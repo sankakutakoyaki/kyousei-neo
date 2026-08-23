@@ -5,7 +5,6 @@ export const createClientCompanyColumns = () => [
         field: "companyId",
         label: "ID",
         sortable: true,
-        class: "link-cell",
         format: (v) => String(v).padStart(4, "0")
     },
     {
@@ -48,7 +47,6 @@ export const createOfficeColumns = () => [
         field: "officeId",
         label: "ID",
         sortable: true,
-        class: "link-cell",
         format: (v) => String(v).padStart(4, "0")
     },
     {
@@ -73,7 +71,6 @@ export const createStaffColumns = () => [
         field: "staffId",
         label: "ID",
         sortable: true,
-        class: "link-cell",
         format: (v) => String(v).padStart(4, "0")
     },
     {
