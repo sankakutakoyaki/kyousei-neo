@@ -23,6 +23,7 @@ public class ItemMasterSqlProvider implements SqlProviderPart {
         // ===== ItemMaster =====
         map.put(QueryId.ITEM_MASTER_DETAIL, ItemMasterQuery.itemMasterDetail());
         map.put(QueryId.ITEM_MASTER_LIST, ItemMasterQuery.itemMasterList());
+        map.put(QueryId.ITEM_MASTER_FIND_BY_JAN_CODE, ItemMasterQuery.findByJanCode());
         map.put(QueryId.ITEM_MASTER_CSV, ItemMasterQuery.itemMasterCsv());
         map.put(QueryId.ITEM_MASTER_DELETE_BY_IDS,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.ITEM_MASTER_BY_IDS));

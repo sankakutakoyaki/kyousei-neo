@@ -39,7 +39,7 @@ export const createOrderListColumns = (controller) => [
     }
 ];
 
-export const createOrderItemListColumns = () => [
+export const createOrderItemFormListColumns = () => [
     {
         field: "itemCode",
         label: "JANコード/商品名",
@@ -85,7 +85,7 @@ export const createOrderItemListColumns = () => [
     }
 ];
 
-export const createOrderWorkListColumns = () => [
+export const createOrderWorkFormListColumns = () => [
     {
         field: "orderWorkName",
         label: "作業名",
@@ -117,6 +117,52 @@ export const createOrderWorkListColumns = () => [
                 data-action="delete-order-work"
                 data-id="${item._tempId}">
                 <img src="/icons/dust.png">
+            </button>
+        `
+    }
+];
+
+export const createOrderItemListColumns = () => [
+    {
+        field: "janCode",
+        label: "JANコード/商品名",
+        render: (item) => `
+            <span>${item.janCode ?? "-----"}</span><br>
+            <span>${item.itemName ?? "-----"}</span>
+        `
+    },
+    {
+        field: "itemName",
+        label: "メーカー/型番",
+        render: (item) => `
+            <span>${item.itemMaker ?? "-----"}</span><br>
+            <span>${item.itemModel ?? "-----"}</span>
+        `
+    },
+    {
+        field: "itemQuantity",
+        label: "数量",
+        render: (item) => `
+            <span>${item.itemQuantity ?? "-----"}</span>
+        `
+    },
+    {
+        field: "date",
+        label: "入荷日",
+        sortable: true,
+        render: (item) => `
+            <span>${item.arrivalDate ?? "-----"}</span>
+        `
+    },
+    {    
+        field: "action",
+        label: "",
+        render: (item) => `
+            <button
+                type="button"
+                class="img-btn"
+                data-action="delete-order-item"
+                data-id="${item._tempId}">入荷
             </button>
         `
     }

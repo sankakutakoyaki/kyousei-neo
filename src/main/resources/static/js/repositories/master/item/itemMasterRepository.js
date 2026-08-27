@@ -8,6 +8,11 @@ export const ItemMasterRepository = {
         return res.data ?? [];
     },
 
+    async findByJanCode(params) {
+        const res = await RequestClient.request({queryId: "itemMasterFindByJanCode", params});
+        return res.data?.[0] ?? null;
+    },
+
     async find(params) {
         const res = await RequestClient.request({queryId: "itemMasterDetail", params});
         return res.data?.[0] ?? null;

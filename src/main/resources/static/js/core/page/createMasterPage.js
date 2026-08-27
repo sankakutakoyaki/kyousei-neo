@@ -16,13 +16,20 @@ export function createMasterPage(config){
         cancelText: config.cancelText,
         columns: config.columns,
         checkable: config.checkable,
-        buildParams: () => ({
+        // buildParams: () => ({
+        //     state: APP.cache.common.state.INITIAL,
+        //     category: config.category
+        // }),
+        buildParams: config.buildParams ?? (() => ({
             state: APP.cache.common.state.INITIAL,
             category: config.category
-        }),
-        buildCsvParams: () => ({
+        })),
+        buildCsvParams: config.buildCsvParams ?? (() => ({
             state: APP.cache.common.state.INITIAL
-        }),
+        })),
+        // buildCsvParams: () => ({
+        //     state: APP.cache.common.state.INITIAL
+        // }),
         model: config.model,
         validateBusiness: config.validateBusiness,
         beforeSave: (payload, form) => {

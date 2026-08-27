@@ -7,8 +7,8 @@ import { FormController } from "../../applcation/FormController.js";
 // import { clearFormExceptSkipped } from "../../core/form/util/clearForm.js";
 // import { filterFactory } from "../../util/filterFactory.js";
 // import { createMasterPage } from "../../core/page/createMasterPage.js";
-import { createOrderItemListController } from "./order/orderItemList.js";
-import { createOrderWorkListController } from "./order/orderWorkList.js";
+import { createOrderItemFormListController } from "./order/orderItemList.js";
+import { createOrderWorkFormListController } from "./order/orderWorkList.js";
 import { DialogService } from "../../core/ui/dialog/DialogService.js";
 
 export function createOrderPage(config){
@@ -61,8 +61,8 @@ export function createOrderPage(config){
 
 const createOrderForm = (controller, options = {}) => {
 
-    const itemList = createOrderItemListController();
-    const workList = createOrderWorkListController();
+    const itemList = createOrderItemFormListController();
+    const workList = createOrderWorkFormListController();
 
     const form = new FormController({
         controller,

@@ -5,12 +5,20 @@
     <div class="tab-area">
         <ul class="tab-menu">
             <li class="tab-menu-item is-active" data-action="tab" data-group="order-tabs" data-tab="tab-01">一覧</li>
+            <li class="tab-menu-item" data-action="tab" data-group="order-tabs" data-tab="tab-02">商品</li>
         </ul>
         <div class="tab-panel is-show" id="tab-01" data-tab-content="order-tabs">
             <div class="table-area" data-controller="orderList" data-sync-group="order">
                 <header th:replace="~{fragments/pages/business/order/header :: header01Fragment()}"></header>
                 <section th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01')}"></section>
                 <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></footer>
+            </div>
+        </div>
+        <div class="tab-panel" id="tab-02" data-tab-content="order-tabs">
+            <div class="table-area" data-controller="orderItemList" data-sync-group="order">
+                <header th:replace="~{fragments/pages/business/order/header :: header02Fragment()}"></header>
+                <section th:replace="~{fragments/table/body :: normalFragment('table-header-02', 'table-02')}"></section>
+                <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-02')}"></footer>
             </div>
         </div>
     </div>
@@ -25,5 +33,30 @@
     </div>
     <div id="msg-dialog-area">
         <div th:replace="~{fragments/dialog/content :: messageFragment}"></div>
+    </div>
+    <div id="barcode-dialog-area">
+        <div id="barcode-dialog" class="barcode-dialog none">
+            <div class="dialog-main">
+                <header
+                    th:replace="~{fragments/dialog/header :: headerFragment(
+                        ${ {'title': 'JANコードをスキャン'} }
+                    )}">
+                </header>
+
+                <section class="barcode-scanner">
+                    <div class="barcode-camera">
+                        <video id="barcode-scanner-video" autoplay playsinline></video>
+                        <div class="barcode-guide">
+                            <div class="barcode-guide-line"></div>
+                        </div>
+                    </div>
+                    <div id="barcode-scanner-message" class="barcode-message">バーコードを枠内に合わせてください</div>
+                </section>
+
+                <footer class="dialog-footer">
+                    <button class="normal-btn frameless" type="button" name="cancelBtn">キャンセル</button>
+                </footer>
+            </div>
+        </div>
     </div>
 </main>

@@ -2,9 +2,9 @@
 
 import { DataTable } from "../../../core/table/DataTable.js";
 // import { filterFactory } from "../../../util/filterFactory.js";
-import { createOrderItemListColumns } from "./columns.js";
+import { createOrderItemFormListColumns } from "./columns.js";
 
-export function createOrderItemListController() {
+export function createOrderItemFormListController() {
     const controller = {
         key: "orderItemList",
         state: {
@@ -65,7 +65,7 @@ export function createOrderItemListController() {
                 controller: this,
                 tableId: "table-11",
                 footerId: null,
-                columns: createOrderItemListColumns(this),
+                columns: createOrderItemFormListColumns(this),
                 idKey: "_tempId",
                 checkable: false,
                 data: this.items,

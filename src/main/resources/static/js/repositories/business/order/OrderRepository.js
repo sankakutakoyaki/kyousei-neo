@@ -26,12 +26,12 @@ export const OrderRepository = {
     },
 
     async findItems(params){
-        const res = await RequestClient.request({queryId: "orderItemList", params});
+        const res = await RequestClient.request({queryId: "orderItemFormList", params});
         return res.data ?? [];
     },
 
     async findWorks(params) {
-        const res = await RequestClient.request({queryId: "orderWorkList", params});
+        const res = await RequestClient.request({queryId: "orderWorkFormList", params});
         return res.data ?? [];
     }
 };

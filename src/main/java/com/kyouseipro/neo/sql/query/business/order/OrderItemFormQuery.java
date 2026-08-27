@@ -5,45 +5,21 @@ import java.util.List;
 import com.kyouseipro.neo.sql.model.CsvColumn;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 
-public class OrderItemQuery {
-    public static QueryDefinition orderItemList() {
+public class OrderItemFormQuery {
+    public static QueryDefinition orderItemFormList() {
         return QueryDefinition.select(
             """
             SELECT o.order_item_id, o.order_id, o.arrival_date, o.jan_code,
                 o.item_maker, o.item_name, o.item_model, o.item_quantity, o.item_payment, o.remarks,
                 o.version, o.state
             FROM order_items o
-            WHERE o.state = ?;
+            WHERE o.state = ? AND order_id = ?;
             """,
-            List.of("state")
+            List.of("state", "orderId")
         );
     }
 
-public static QueryDefinition orderItemListByItemModel() {
-    return QueryDefinition.select(
-        """
-        SELECT
-            o.order_item_id,
-            o.order_id,
-            o.arrival_date,
-            o.jan_code,
-            o.item_maker,
-            o.item_name,
-            o.item_model,
-            o.item_quantity,
-            o.item_payment,
-            o.remarks,
-            o.version,
-            o.state
-        FROM order_items o
-        WHERE o.state = ?
-          AND o.item_model = ?;
-        """,
-        List.of("state", "itemModel")
-    );
-}
-
-    public static QueryDefinition orderItemDetail() {
+    public static QueryDefinition orderItemFormDetail() {
         return QueryDefinition.select(
             """
             SELECT o.order_item_id, o.order_id, o.arrival_date, o.jan_code,
@@ -56,7 +32,7 @@ public static QueryDefinition orderItemListByItemModel() {
         );
     }
 
-    public static QueryDefinition orderItemCsv() {
+    public static QueryDefinition orderItemFormCsv() {
         String sql = """
             SELECT
                 o.order_item_id,

@@ -84,8 +84,23 @@ public enum QueryId {
     ORDER_CSV("orderCsv"),
     ORDER_DELETE_BY_IDS("orderDeleteByIds"),
     ORDER_SAVE("orderSave"),
+    ORDER_ITEM_FORM_LIST("orderItemFormList"),
+    ORDER_WORK_FORM_LIST("orderWorkFormList"),
+
+    // ===== OrderItem =====
+    ORDER_ITEM_DETAIL("orderItemDetail"),
     ORDER_ITEM_LIST("orderItemList"),
+    ORDER_ITEM_LIST_BY_ITEM_MODEL("orderItemListByItemModel"),
+    ORDER_ITEM_CSV("orderItemCsv"),
+    ORDER_ITEM_DELETE_BY_IDS("orderDeleteItemByIds"),
+    ORDER_ITEM_SAVE("orderItemSave"),
+
+    // ===== OrderWork =====
+    ORDER_WORK_DETAIL("orderWorkDetail"),
     ORDER_WORK_LIST("orderWorkList"),
+    ORDER_WORK_CSV("orderWorkCsv"),
+    ORDER_WORK_DELETE_BY_IDS("orderDeleteWorkByIds"),
+    ORDER_WORK_SAVE("orderWorkSave"),
 
     // ===== Master =====
     WORK_MASTER_DETAIL("workMasterDetail"),
@@ -95,6 +110,7 @@ public enum QueryId {
     WORK_MASTER_SAVE("workMasterSave"),
     ITEM_MASTER_DETAIL("itemMasterDetail"),
     ITEM_MASTER_LIST("itemMasterList"),
+    ITEM_MASTER_FIND_BY_JAN_CODE("itemMasterFindByJanCode"),
     ITEM_MASTER_CSV("itemMasterCsv"),
     ITEM_MASTER_DELETE_BY_IDS("itemMasterDeleteByIds"),
     ITEM_MASTER_SAVE("itemMasterSave");

@@ -18,6 +18,25 @@ public class ItemMasterQuery {
         );
     }
 
+    public static QueryDefinition findByJanCode() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                i.item_master_id,
+                i.jan_code,
+                i.item_maker,
+                i.item_name,
+                i.item_model,
+                i.version,
+                i.state
+            FROM item_masters i
+            WHERE i.state = ?
+            AND i.jan_code = ?;
+            """,
+            List.of("state", "janCode")
+        );
+    }
+
     public static QueryDefinition itemMasterDetail() {
         return QueryDefinition.select(
             """

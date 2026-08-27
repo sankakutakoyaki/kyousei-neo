@@ -15,8 +15,7 @@ public class ApiExceptionHandler {
     public ResponseEntity<SimpleResponse<Void>> handleBusiness(BusinessException e) {
         return ResponseEntity
                 .badRequest()
-                // .body(SimpleResponse.error(e.getMessage()));
-                .body(SimpleResponse.error(e.getCause().getMessage()));
+                .body(SimpleResponse.error(e.getMessage()));
     }
 
     @ExceptionHandler(SystemException.class)
@@ -32,7 +31,7 @@ public class ApiExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 // .body(SimpleResponse.error("予期しないエラーが発生しました。"));
-                .body(SimpleResponse.error(e.getCause().getMessage()));
+                .body(SimpleResponse.error("予期しないエラーが発生しました。" + e.getMessage()));
     }
 }
 

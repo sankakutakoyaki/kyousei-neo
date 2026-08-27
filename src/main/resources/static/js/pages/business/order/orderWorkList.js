@@ -1,9 +1,9 @@
 "use strict";
 
 import { DataTable } from "../../../core/table/DataTable.js";
-import { createOrderWorkListColumns } from "./columns.js";
+import { createOrderWorkFormListColumns } from "./columns.js";
 
-export function createOrderWorkListController() {
+export function createOrderWorkFormListController() {
 
     const controller = {
         key: "orderWorkList",
@@ -29,7 +29,7 @@ export function createOrderWorkListController() {
                 controller: this,
                 tableId: "table-12",
                 footerId: null,
-                columns: createOrderWorkListColumns(this),
+                columns: createOrderWorkFormListColumns(this),
                 idKey: "_tempId",
                 checkable: false,
                 data: this.items,

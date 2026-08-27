@@ -21,8 +21,30 @@
     }
 }
 
+#header-02 {
+    display: grid;
+    grid-template-columns: 1fr;
+    &>div:nth-of-type(1) {
+        display: grid;
+        grid-template-columns: 12rem 4rem 1fr 1fr 1fr;
+        column-gap: .3rem;
+        & .img-btn {
+            margin: 0;
+            padding: 0;
+            margin-right: 1rem;
+        }
+    }
+
+}
+
 :is(#table-01, #table-header-01) tr {
     grid-template-columns: 3rem 12rem 10rem 25rem 1fr 2rem;
+}
+:is(#table-02, #table-header-02) tr {
+    grid-template-columns: 3rem 1fr 1fr 5rem 7rem 5rem 2rem;
+    & .img-btn {
+        padding: 0;
+    }
 }
 
 #table-11 tr {
@@ -176,4 +198,47 @@
         grid-template-rows: 1fr;
         margin-top: 0;
     }
+}
+
+#barcode-dialog-area.dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#barcode-dialog {
+    width: min(90vw, 720px);
+    min-width: 0;
+}
+
+#barcode-dialog {
+    width: 90vw;
+    max-width: 720px;
+    min-width: 0;
+}
+
+#barcode-dialog .dialog-main {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.barcode-scanner {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: black;
+}
+
+.barcode-camera {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.barcode-camera video {
+    display: block;
+    width: 100%;
+    height: auto;
 }

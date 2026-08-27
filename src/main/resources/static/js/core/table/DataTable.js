@@ -66,10 +66,19 @@ export class DataTable {
         this.reload();
     }
 
+    // async fetch(){
+    //     if(!this.repository) return;
+
+    //     const params = this.buildParams ? this.buildParams(): {};
+    //     const data = await this.repository.search(params);
+    //     this.model.setOrigin(data ?? []);
+    // }
     async fetch(){
         if(!this.repository) return;
 
-        const params = this.buildParams ? this.buildParams(): {};
+        const params = this.buildParams
+            ? this.buildParams(this.controller)
+            : {};
         const data = await this.repository.search(params);
         this.model.setOrigin(data ?? []);
     }
@@ -127,6 +136,7 @@ export class DataTable {
                 this.scrollToRow(id, "auto");
             });
         }
+        return this.model.originData;
     }
 
     render(){

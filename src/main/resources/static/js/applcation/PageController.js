@@ -333,12 +333,20 @@ export class PageController {
     //     }
     //     this.updateButtons();
     // }
+    // async refresh(targetId = null){
+    //     if(!this.dataTable){
+    //         return;
+    //     }
+    //     await this.dataTable.refresh(targetId);
+    //     this.updateButtons();
+    // }
     async refresh(targetId = null){
         if(!this.dataTable){
-            return;
+            return [];
         }
-        await this.dataTable.refresh(targetId);
+        const data = await this.dataTable.refresh(targetId);
         this.updateButtons();
+        return data;
     }
     // scrollToRow(id){
     //     if(!id) return;

@@ -45,3 +45,52 @@
         </div>
     </div>
 </th:block>
+
+<th:block th:fragment="header02Fragment()">
+    <form id="header-02" class="flex-area pc-style" data-enterfocus="header-02">
+        <div>
+            <!-- JANコード -->
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'JANコード',
+                    'id':'jan-code01',
+                    'name':'jan-code',
+                    'enterValidate':true,
+                    'errorMessage':'JANコードは13桁です',
+                    'index': 11,
+                    'enterSubmit':true
+                }}
+            )}"></th:block>
+            <div class="form-parts">
+                <label></label>
+                <button class="img-btn" type="button" id="btn-barcode-scan"><img src="/icons/camera.png"></button>
+            </div>
+            <!-- メーカー -->
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'メーカー',
+                    'id':'item-maker01',
+                    'name':'item-maker'
+                }}
+            )}"></th:block>
+
+            <!-- 商品名 -->
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'商品名',
+                    'id':'item-name01',
+                    'name':'item-name'
+                }}
+            )}"></th:block>
+
+            <!-- 型番 -->
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'型番',
+                    'id':'item-model01',
+                    'name':'item-model'
+                }}
+            )}"></th:block>
+        </div>
+    </form>
+</th:block>
