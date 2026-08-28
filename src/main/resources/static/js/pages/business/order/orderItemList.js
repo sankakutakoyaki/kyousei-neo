@@ -14,42 +14,6 @@ export function createOrderItemFormListController() {
         originalItems: [],
         table: null,
 
-        // // init(initialItems = []) {
-        // init(initialItems = [], formController = null) {
-
-        //     this.formController = formController;
-
-        //     this.items = structuredClone(initialItems);
-        //     // this.originalItems = structuredClone(initialItems);
-        //     this.originalItems = structuredClone(this.items);
-
-        //     // this.items = structuredClone(initialItems);
-        //     this.items = structuredClone(initialItems).map(item => ({
-        //         ...item,
-        //         _tempId: item._tempId ?? crypto.randomUUID()
-        //     }));
-        //     this.originalItems = structuredClone(initialItems);
-
-        //     this.table = new DataTable({
-        //         controller: this,
-        //         tableId: "table-11",
-        //         footerId: null,
-        //         columns: createOrderItemListColumns(this),
-        //         idKey: "_tempId",
-        //         checkable: false,
-        //         data: this.items,
-        //         model: {
-        //             filters: {}
-        //         },
-        //         // 商品明細では不要
-        //         pageTopButton: false,
-        //         infiniteScroll: false,
-        //     });
-
-        //     this.initEvents();
-        //     this.table.reload();
-        // },
-
         // init(initialItems = []) {
         init(initialItems = [], formController = null) {
             this.formController = formController;

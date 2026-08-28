@@ -3,20 +3,8 @@
 import { RequestClient } from "../../../core/api/RequestClient.js";
 
 export const OrderItemRepository = {
-    // async search(params){
-    //     const res = await RequestClient.request({queryId:"orderItemList", params});
-    //     return res.data ?? [];
-    // },
     async search(params){
-        const queryId = params?.itemModel
-            ? "orderItemListByItemModel"
-            : "orderItemList";
-        const res = await RequestClient.request({queryId, params});
-        return res.data ?? [];
-    },
-
-    async searchByItemModel(params) {
-        const res = await RequestClient.request({queryId: "orderItemListByItemModel", params});
+        const res = await RequestClient.request({queryId: "orderItemList", params});
         return res.data ?? [];
     },
 
@@ -35,5 +23,15 @@ export const OrderItemRepository = {
 
     async download(params){
         return await RequestClient.request({queryId: "orderItemCsv", params});
-    }
+    },
+
+    async arrival(params){
+        return await RequestClient.request({queryId: "orderItemArrival", params});
+    },
+
+    async create(params){
+    console.log("=== orderItemCreate ===");
+    console.log("params:", params);
+        return await RequestClient.request({queryId: "orderItemCreate", params});
+    },
 };

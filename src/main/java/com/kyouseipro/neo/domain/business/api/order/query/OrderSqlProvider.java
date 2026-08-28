@@ -36,13 +36,15 @@ public class OrderSqlProvider implements SqlProviderPart {
 
         // ===== OrderItem =====
         map.put(QueryId.ORDER_ITEM_DETAIL, OrderItemQuery.orderItemDetail());
-        map.put(QueryId.ORDER_ITEM_LIST, OrderItemQuery.orderItemList());
-        map.put(QueryId.ORDER_ITEM_LIST_BY_ITEM_MODEL, OrderItemQuery.orderItemListByItemModel());
+        // map.put(QueryId.ORDER_ITEM_LIST, OrderItemQuery.orderItemList());
+        // map.put(QueryId.ORDER_ITEM_LIST_BY_ITEM_MODEL, OrderItemQuery.orderItemListByItemModel());
         map.put(QueryId.ORDER_ITEM_CSV, OrderItemQuery.orderItemCsv());
         map.put(QueryId.ORDER_ITEM_DELETE_BY_IDS,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.ORDER_ITEM_BY_IDS));
         map.put(QueryId.ORDER_ITEM_SAVE,
             new QueryDefinition(QueryType.UPDATE, QueryKind.ORDER_SAVE, Tables.ORDER_ITEM_BY_IDS));
+        map.put(QueryId.ORDER_ITEM_ARRIVAL, OrderItemQuery.orderItemArrival());
+        map.put(QueryId.ORDER_ITEM_CREATE, new QueryDefinition(QueryType.UPDATE, QueryKind.ORDER_ITEM_CREATE, Tables.ORDER_ITEM_BY_IDS));
     
         // ===== OrderWork =====
         map.put(QueryId.ORDER_WORK_DETAIL, OrderWorkQuery.orderWorkDetail());

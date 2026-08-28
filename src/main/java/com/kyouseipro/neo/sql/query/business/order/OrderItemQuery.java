@@ -6,42 +6,24 @@ import com.kyouseipro.neo.sql.model.CsvColumn;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 
 public class OrderItemQuery {
-    public static QueryDefinition orderItemList() {
-        return QueryDefinition.select(
+    public static QueryDefinition orderItemArrival() {
+        return QueryDefinition.update(
             """
-            SELECT o.order_item_id, o.order_id, o.arrival_date, o.jan_code,
-                o.item_maker, o.item_name, o.item_model, o.item_quantity, o.item_payment, o.remarks,
-                o.version, o.state
-            FROM order_items o
-            WHERE o.state = ?;
+            UPDATE order_items
+            SET
+                arrival_date = CAST(GETDATE() AS date),
+                update_date = GETDATE()
+            WHERE
+                order_item_id = ?
+                AND state = ?
+                AND arrival_date IS NULL
             """,
-            List.of("state")
+            List.of(
+                "orderItemId",
+                "state"
+            )
         );
     }
-
-public static QueryDefinition orderItemListByItemModel() {
-    return QueryDefinition.select(
-        """
-        SELECT
-            o.order_item_id,
-            o.order_id,
-            o.arrival_date,
-            o.jan_code,
-            o.item_maker,
-            o.item_name,
-            o.item_model,
-            o.item_quantity,
-            o.item_payment,
-            o.remarks,
-            o.version,
-            o.state
-        FROM order_items o
-        WHERE o.state = ?
-          AND o.item_model = ?;
-        """,
-        List.of("state", "itemModel")
-    );
-}
 
     public static QueryDefinition orderItemDetail() {
         return QueryDefinition.select(

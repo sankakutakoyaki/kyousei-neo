@@ -45,6 +45,8 @@ export async function init() {
     // initBarcodeScanner();
     initBarcodeSearch(items);
     initJanCodeInput(items);
+    initItemMakerInput(items);
+    initItemNameInput(items);
     initItemModelInput(items);
 
     initParentChildLink();    
@@ -100,16 +102,78 @@ export const orderItemListPage = () =>
         footerId: "footer-02",
         formId: "form-02",
         idKey: "orderItemId",
+        components: {combo: true, input: true},
         repository: OrderItemRepository,
         columns: createOrderItemListColumns(),
         submitText: "保存",
         cancelText: "キャンセル",
-        components: {combo: true, input: true},
+        model: {
+            filters: {
+                category: filterFactory.nullState("arrivalDate"),
+                primeConstractorId: filterFactory.equals("primeConstractorId"),
+                primeConstractorOfficeId: filterFactory.equals("primeConstractorOfficeId")
+            }
+        },
+        actions: {
+            "arrival-item": async (c, el) => {
+                const orderItemId = el.dataset.id;
+                await OrderItemRepository.arrival({
+                    orderItemId,
+                    state: APP.cache.common.state.INITIAL
+                });
+                await c.refresh();
+            },
+            "create": async (c) => {
+                // まずフォームを開く
+                await c.openForm("orderItem", null);
+                // 検索画面の値を取得
+                const janCode = document.getElementById("jan-code01")?.value?.trim() ?? "";
+                const itemMaker = document.getElementById("item-maker01")?.value?.trim() ?? "";
+                const itemName = document.getElementById("item-name01")?.value?.trim() ?? "";
+                const itemModel = document.getElementById("item-model01")?.value?.trim() ?? "";
+                // 新規フォーム
+                const form = document.getElementById("form-04");
+                if (!form) {
+                    console.warn("form-04 が見つかりません。");
+                    return;
+                }
+                // 検索条件をフォームへコピー
+                const janInput = form.querySelector('[name="jan-code"]');
+                const makerInput = form.querySelector('[name="item-maker"]');
+                const nameInput = form.querySelector('[name="item-name"]');
+                const modelInput = form.querySelector('[name="item-model"]');
+                if (janInput) {
+                    janInput.value = janCode;
+                }
+                if (makerInput) {
+                    makerInput.value = itemMaker;
+                }
+                if (nameInput) {
+                    nameInput.value = itemName;
+                }
+                if (modelInput) {
+                    modelInput.value = itemModel;
+                }
+                // 数量は初期値1
+                const quantityInput = form.querySelector('[name="item-quantity"]');
+
+                if (quantityInput) {
+                    quantityInput.value = "1";
+                }
+            },
+        },
         buildParams: (controller) => ({
             state: APP.cache.common.state.INITIAL,
+            category: controller.getFilter("category"),
+            primeConstractorId: controller.getFilter("prime-constractor-id"),
+            primeConstractorOfficeId: controller.getFilter("prime-constractor-office-id"),
+            janCode: controller.getFilter("janCode"),
+            itemMaker: controller.getFilter("itemMaker"),
+            itemName: controller.getFilter("itemName"),
             itemModel: controller.getFilter("itemModel")
         }),
         forms: {
+            // 商品マスター登録
             itemMaster: {
                 create: (controller) => new FormController({
                     controller,
@@ -117,7 +181,7 @@ export const orderItemListPage = () =>
                     key: "itemMasterId",
                     idKey: "itemMasterId",
                     repository: ItemMasterRepository,
-                    saveHandler: ItemMasterRepository.save,
+                    saveHandler: OrderItemRepository.save,
                     submitText: "保存",
                     cancelText: "キャンセル",
                     initialFocusSelector: '[name="item-name"]',
@@ -128,6 +192,23 @@ export const orderItemListPage = () =>
                             return;
                         }
                         await searchByJanCode(controller, janCode);
+                    }
+                })
+            },
+            // 受注商品登録
+            orderItem: {
+                create: (controller) => new FormController({
+                    controller,
+                    formId: "form-04",
+                    key: "orderItemId",
+                    idKey: "orderItemId",
+                    repository: OrderItemRepository,
+                    saveHandler: OrderItemRepository.create,
+                    submitText: "保存",
+                    cancelText: "キャンセル",
+                    initialFocusSelector: '[name="item-name"]',
+                    afterSave: async () => {
+                        await controller.refresh();
                     }
                 })
             }
@@ -144,7 +225,7 @@ function initBarcodeSearch(controller) {
     scanButton.addEventListener("click", () => {
         BarcodeScanner.open({
             onScan: async (code) => {
-                console.log("読み取ったJAN:", code);
+                // console.log("読み取ったJAN:", code);
                 await searchByJanCode(controller, code);
             }
         });
@@ -183,6 +264,37 @@ function initJanCodeInput(controller) {
         await searchByJanCode(controller, janCode);
     });
 }
+function initItemMakerInput(controller) {
+    const input = document.getElementById("item-maker01");
+
+    if (!input) {
+        return;
+    }
+
+    input.addEventListener("keydown", async (e) => {
+        if (e.key !== "Enter") {
+            return;
+        }
+        e.preventDefault();
+        await searchOrderItems(controller);
+    });
+}
+
+function initItemNameInput(controller) {
+    const input = document.getElementById("item-name01");
+
+    if (!input) {
+        return;
+    }
+
+    input.addEventListener("keydown", async (e) => {
+        if (e.key !== "Enter") {
+            return;
+        }
+        e.preventDefault();
+        await searchOrderItems(controller);
+    });
+}
 
 function initItemModelInput(controller) {
     const input = document.getElementById("item-model01");
@@ -195,32 +307,8 @@ function initItemModelInput(controller) {
         if (e.key !== "Enter") {
             return;
         }
-
         e.preventDefault();
-
-        const itemModel = input.value.trim();
-
-        const janInput = document.getElementById("jan-code01");
-
-        if (janInput) {
-            janInput.value = "";
-        }
-
-        if (!itemModel) {
-            controller.setFilter("itemModel", null);
-            controller.dataTable.setData([]);
-            controller.dataTable.reload();
-            return;
-        }
-
-        controller.setFilter("itemModel", itemModel);
-        const data = await controller.refresh();
-        if (data.length === 0) {
-            openMsgDialog({
-                message: `型番「${itemModel}」の受注はありません。`,
-                color: "blue"
-            });
-        }
+        await searchOrderItems(controller);
     });
 }
 
@@ -267,8 +355,6 @@ async function searchByJanCode(controller, janCode) {
         return;
     }
 
-    console.log("商品マスター:", item);
-
     const makerInput = document.getElementById("item-maker01");
     const nameInput = document.getElementById("item-name01");
     // const modelInput = document.getElementById("item-model01");
@@ -285,18 +371,21 @@ async function searchByJanCode(controller, janCode) {
         modelInput.value = item.itemModel ?? "";
     }
 
-    if(!item.itemModel){
-        controller.dataTable.setData([]);
-        controller.dataTable.reload();
+    // if(!item.itemModel){
+    //     controller.dataTable.setData([]);
+    //     controller.dataTable.reload();
 
-        openMsgDialog({
-            message: "商品マスターに型番が登録されていません。",
-            color: "red"
-        });
-        return;
-    }
+    //     openMsgDialog({
+    //         message: "商品マスターに型番が登録されていません。",
+    //         color: "red"
+    //     });
+    //     return;
+    // }
 
-    controller.setFilter("itemModel", item.itemModel);
+    controller.setFilter("janCode", janCode);
+    controller.setFilter("itemMaker", null);
+    controller.setFilter("itemName", null);
+    controller.setFilter("itemModel", null);
 
     const data = await controller.refresh();
 
@@ -306,4 +395,29 @@ async function searchByJanCode(controller, janCode) {
             color: "blue"
         });
     }
+}
+
+async function searchOrderItems(controller) {
+    const category = document.getElementById("category02")?.value.trim() ?? "";
+    const janCode = document.getElementById("jan-code01")?.value.trim() ?? "";
+    const itemMaker = document.getElementById("item-maker01")?.value.trim() ?? "";
+    const itemName = document.getElementById("item-name01")?.value.trim() ?? "";
+    const itemModel = document.getElementById("item-model01")?.value.trim() ?? "";
+
+    controller.setFilter("category", category || null);
+    controller.setFilter("janCode", janCode || null);
+    controller.setFilter("itemMaker", itemMaker || null);
+    controller.setFilter("itemName", itemName || null);
+    controller.setFilter("itemModel", itemModel || null);
+
+    const data = await controller.refresh();
+
+    if (data.length === 0) {
+        openMsgDialog({
+            message: "条件に一致する受注商品がありません。",
+            color: "blue"
+        });
+    }
+
+    return data;
 }

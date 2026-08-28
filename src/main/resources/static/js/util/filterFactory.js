@@ -72,6 +72,24 @@ export const filterFactory = {
         };
     },
 
+    nullState(field){
+        return (item, value) => {
+            // 0 = 全て
+            if(value == null || value === "" || Number(value) === 0){
+                return true;
+            }
+            // 1 = 未
+            if(Number(value) === 1){
+                return item[field] == null;
+            }
+            // 2 = 済
+            if(Number(value) === 2){
+                return item[field] != null;
+            }
+            return true;
+        };
+    },
+
     gte(field){
         return (v, value) => v[field] >= value;
     },

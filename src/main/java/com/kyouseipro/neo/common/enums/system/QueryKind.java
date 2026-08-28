@@ -9,6 +9,8 @@ public enum QueryKind {
     CSV,
     
     ORDER_SAVE,
+    ORDER_ITEM_CREATE,
+    ORDER_ITEM_ARRIVAL,
 
     RECYCLE_DELIVERY_SAVE,
     RECYCLE_SHIPPING_SAVE,

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kyouseipro.neo.common.enums.code.ArrivalState;
 import com.kyouseipro.neo.common.enums.code.ClientCategory;
 import com.kyouseipro.neo.common.enums.code.OrderCategory;
 import com.kyouseipro.neo.common.enums.code.RecycleCategory;
@@ -39,10 +40,10 @@ public class BusinessPageController {
         return Map.of(
             "common", Map.of(
                 "state", EnumUtil.toMap(State.class)
-                // "recycleCategory", EnumUtil.toMap(RecycleCategory.class)
             ),
             "page", Map.of(
                 "categoryComboList", EnumUtil.toCombo(OrderCategory.class),
+                "arrivalStateComboList", EnumUtil.toCombo(ArrivalState.class),
                 "clientComboList", companyService.findComboByCategory(ClientCategory.SHIPPER.getCode()),
                 "officeComboList", officeService.findComboClientAll(),
                 "staffComboList", staffService.findComboAll()

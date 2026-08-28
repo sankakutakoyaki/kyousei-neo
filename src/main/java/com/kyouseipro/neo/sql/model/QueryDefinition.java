@@ -49,6 +49,10 @@ public class QueryDefinition {
         return new QueryDefinition(sql, params, QueryType.UPDATE);
     }
 
+    public static QueryDefinition update(String sql, List<String> params) {
+        return new QueryDefinition(sql, params, QueryType.UPDATE);
+    }
+
     public static QueryDefinition csv(String sql, List<String> params, List<CsvColumn> columns) {
         QueryDefinition def = new QueryDefinition(QueryType.SELECT, sql, params);
         def.setKind(QueryKind.CSV);

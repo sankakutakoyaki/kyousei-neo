@@ -124,6 +124,24 @@ export const createOrderWorkFormListColumns = () => [
 
 export const createOrderItemListColumns = () => [
     {
+        field: "orderId",
+        label: "受注ID/発注番号",
+        sortable: true,
+        render: (item) => `
+            <span>${Number(item.orderId) > 0 ? String(item.orderId).padStart(6, "0") : "-----"}</span><br>
+            <span>${item.requestNumber ?? "-----"}</span>
+        `
+    },
+    {
+        field: "shipper",
+        label: "小売業者",
+        sortable: true,
+        render: (item) => `
+            <span>${item.primeConstractorName ?? "-----"}</span><br>
+            <span>${item.primeConstractorOfficeName ?? "-----"}</span>
+        `
+    },
+    {
         field: "janCode",
         label: "JANコード/商品名",
         render: (item) => `
@@ -142,6 +160,7 @@ export const createOrderItemListColumns = () => [
     {
         field: "itemQuantity",
         label: "数量",
+        class: "text-right",
         render: (item) => `
             <span>${item.itemQuantity ?? "-----"}</span>
         `
@@ -157,13 +176,19 @@ export const createOrderItemListColumns = () => [
     {    
         field: "action",
         label: "",
-        render: (item) => `
-            <button
-                type="button"
-                class="img-btn"
-                data-action="delete-order-item"
-                data-id="${item._tempId}">入荷
-            </button>
-        `
+        class: "img-btn",
+        render: (item) => {
+            if (item.arrivalDate != null) {
+                return "";
+            }
+            return `
+                <button
+                    type="button"
+                    class="normal-btn"
+                    data-action="arrival-item"
+                    data-id="${item.orderItemId}">入荷
+                </button>
+            `;
+        }
     }
 ];

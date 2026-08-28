@@ -52,9 +52,48 @@
             <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-02')}"></th:block>
             <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${
                 {
-                    'add' : 'add-btn-01',
-                    'delete' : 'delete-btn-01',
-                    'download' : 'download-btn-01'
+                    'add' : 'add-btn-02',
+                    'delete' : 'delete-btn-02',
+                    'download' : 'download-btn-02'
+                }}
+            )}"></th:block>
+        </div>
+        <div>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'入荷状態',
+                    'id':'category02',
+                    'name':'category',
+                    'action': 'filter',
+                    'top': '-----',
+                    'combo': 'arrivalStateComboList',
+                    'key':'category'
+                }}
+            )}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                { 
+                    'text': '小売業者',
+                    'id':'primeConstractor02',
+                    'name': 'prime-constractor-id', 
+                    'combo': 'clientComboList',
+                    'top': '-----',
+                    'key': 'prime-constractor-id',
+                    'resolveName':true,
+                    'link': 'primeConstractorOffice02',
+                    'action': 'filter'
+                }}
+            )}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'支店名', 
+                    'id':'primeConstractorOffice02',
+                    'name': 'prime-constractor-office-id',
+                    'combo': 'officeComboList',
+                    'top': '-----',
+                    'key':'prime-constractor-office-id',
+                    'resolveName':true,
+                    'parent': 'primeConstractor02',
+                    'linkDefault': 'empty'
                 }}
             )}"></th:block>
         </div>
@@ -67,16 +106,13 @@
                     'name':'jan-code',
                     'enterValidate':true,
                     'errorMessage':'JANコードは13桁です',
-                    'index': 11,
                     'enterSubmit':true
                 }}
             )}"></th:block>
             <div class="form-parts">
                 <label></label>
-                <button class="img-btn" type="button" id="btn-barcode-scan"><img src="/icons/camera.png"></button>
+                <button tabindex="-1" class="img-btn" type="button" id="btn-barcode-scan"><img src="/icons/camera.png"></button>
             </div>
-        </div>
-        <div>
             <!-- メーカー -->
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {

@@ -17,6 +17,8 @@ export function createMasterPage(config){
         columns: config.columns,
         checkable: config.checkable,
         forms: config.forms,
+        actions: config.actions,
+        conditions: config.conditions,
         buildParams: config.buildParams ?? (() => ({
             state: APP.cache.common.state.INITIAL,
             category: config.category

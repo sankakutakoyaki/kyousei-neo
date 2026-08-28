@@ -92,14 +92,16 @@ public enum QueryId {
     ORDER_ITEM_LIST("orderItemList"),
     ORDER_ITEM_LIST_BY_ITEM_MODEL("orderItemListByItemModel"),
     ORDER_ITEM_CSV("orderItemCsv"),
-    ORDER_ITEM_DELETE_BY_IDS("orderDeleteItemByIds"),
+    ORDER_ITEM_DELETE_BY_IDS("orderItemDeleteByIds"),
     ORDER_ITEM_SAVE("orderItemSave"),
+    ORDER_ITEM_ARRIVAL("orderItemArrival"),
+    ORDER_ITEM_CREATE("orderItemCreate"),
 
     // ===== OrderWork =====
     ORDER_WORK_DETAIL("orderWorkDetail"),
     ORDER_WORK_LIST("orderWorkList"),
     ORDER_WORK_CSV("orderWorkCsv"),
-    ORDER_WORK_DELETE_BY_IDS("orderDeleteWorkByIds"),
+    ORDER_WORK_DELETE_BY_IDS("orderWorkDeleteByIds"),
     ORDER_WORK_SAVE("orderWorkSave"),
 
     // ===== Master =====
