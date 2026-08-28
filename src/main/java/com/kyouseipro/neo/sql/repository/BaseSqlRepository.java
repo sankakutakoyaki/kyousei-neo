@@ -112,7 +112,7 @@ public class BaseSqlRepository {
         SqlResult result = buildSql(
             meta,
             req,
-            SqlMode.INSERT
+            SqlMode.DELETE
         );
         return sqlRepository.updateRequired(
             result.getSql(),

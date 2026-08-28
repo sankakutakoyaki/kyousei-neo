@@ -215,14 +215,24 @@ public class SqlBuilder {
                 throw new IllegalArgumentException("登録項目がありません");
             }
 
+            // sql.append("INSERT INTO ")
+            // .append(table)
+            // .append(" (")
+            // .append(String.join(", ", columns))
+            // .append(") VALUES (")
+            // .append(String.join(", ", values))
+            // .append(");");
             sql.append("INSERT INTO ")
-            .append(table)
-            .append(" (")
-            .append(String.join(", ", columns))
-            .append(") VALUES (")
-            .append(String.join(", ", values))
-            .append(");");
-
+                .append(table)
+                .append(" (")
+                .append(String.join(", ", columns))
+                .append(") ")
+                .append("OUTPUT INSERTED.")
+                .append(toSnake(idKey))
+                .append(" ")
+                .append("VALUES (")
+                .append(String.join(", ", values))
+                .append(");");
         } else {
 
             List<String> sets = new ArrayList<>();

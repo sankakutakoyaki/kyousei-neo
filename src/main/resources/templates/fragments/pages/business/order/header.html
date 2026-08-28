@@ -49,6 +49,16 @@
 <th:block th:fragment="header02Fragment()">
     <form id="header-02" class="flex-area pc-style" data-enterfocus="header-02">
         <div>
+            <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-02')}"></th:block>
+            <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${
+                {
+                    'add' : 'add-btn-01',
+                    'delete' : 'delete-btn-01',
+                    'download' : 'download-btn-01'
+                }}
+            )}"></th:block>
+        </div>
+        <div>
             <!-- JANコード -->
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
@@ -65,6 +75,8 @@
                 <label></label>
                 <button class="img-btn" type="button" id="btn-barcode-scan"><img src="/icons/camera.png"></button>
             </div>
+        </div>
+        <div>
             <!-- メーカー -->
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {

@@ -9,6 +9,7 @@ import { FormPayloadBuilder } from "../core/form/FormPayloadBuilder.js";
 import { UiValidator } from "../core/validate/UiValidator.js";
 import { FormStateBehavior } from "../core/form/FormStateBehavior.js";
 import { initParentChildLink } from "../util/link.js";
+import { setEnterFocus } from "../core/form/components/enterfocus.js";
 
 export class FormController {
     constructor(config){
@@ -33,7 +34,8 @@ export class FormController {
             changeTargetSelector = null,
             validInputSelector = null,
             submitText = "はい",
-            cancelText = "いいえ"
+            cancelText = "いいえ",
+            initialFocusSelector = null,
         } = config;
 
         if(!formId) throw new Error("formId is required");
@@ -60,6 +62,7 @@ export class FormController {
         this.validInputSelector = validInputSelector;
         this.submitText = submitText;
         this.cancelText = cancelText;
+        this.initialFocusSelector = initialFocusSelector;
         this.saveBehavior =
             new SaveBehavior({
                 beforeSave: async (payload, context) => {
@@ -209,7 +212,17 @@ export class FormController {
             }
         });
 
+        // 動的に開いたフォームにもEnterフォーカスを設定
+        setEnterFocus();
+        
         this.setSubmitEnabled(false);
+
+        // 初期フォーカス
+        if (this.initialFocusSelector) {
+            requestAnimationFrame(() => {
+                form.querySelector(this.initialFocusSelector)?.focus();
+            });
+        }
     }
 
     async save(form){

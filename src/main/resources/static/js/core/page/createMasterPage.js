@@ -16,10 +16,7 @@ export function createMasterPage(config){
         cancelText: config.cancelText,
         columns: config.columns,
         checkable: config.checkable,
-        // buildParams: () => ({
-        //     state: APP.cache.common.state.INITIAL,
-        //     category: config.category
-        // }),
+        forms: config.forms,
         buildParams: config.buildParams ?? (() => ({
             state: APP.cache.common.state.INITIAL,
             category: config.category
@@ -27,9 +24,6 @@ export function createMasterPage(config){
         buildCsvParams: config.buildCsvParams ?? (() => ({
             state: APP.cache.common.state.INITIAL
         })),
-        // buildCsvParams: () => ({
-        //     state: APP.cache.common.state.INITIAL
-        // }),
         model: config.model,
         validateBusiness: config.validateBusiness,
         beforeSave: (payload, form) => {
@@ -37,8 +31,6 @@ export function createMasterPage(config){
                 config.beforeSave(payload, form);
             }
             if(config.category && config.insertCategory){
-                // const key = form.dataset.key;
-                // const id = payload[key];
                 const id = payload[config.idKey];
                 if(!id || Number(id) === 0){
                     payload.category = config.category;

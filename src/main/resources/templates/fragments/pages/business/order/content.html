@@ -30,6 +30,13 @@
                 <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></footer>
             </div>
         </form>
+        <form id="form-03" class="form-dialog none" data-controller="orderItemMaster" data-key="item-master-id">
+            <div class="dialog-main">
+                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '商品マスター登録'} })}"></header>
+                <section th:replace="~{fragments/pages/master/form :: form01Fragment('form-03')}"></section>
+                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId':'form-footer-03'} })}"></footer>
+            </div>
+        </form>
     </div>
     <div id="msg-dialog-area">
         <div th:replace="~{fragments/dialog/content :: messageFragment}"></div>

@@ -22,14 +22,30 @@ function handleEvent(e){
     const el = e.target.closest("[data-action]");
     if(!el) return;
 
-    const controller = resolveController(el);
+    // const controller = resolveController(el);
+    // const actions = el.dataset.action?.split(/\s+/).filter(Boolean) ?? [];
     const actions = el.dataset.action?.split(/\s+/).filter(Boolean) ?? [];
+
+    // select-on-focus は focusin 専用なのでここでは処理しない
+    const controllerActions = actions.filter(
+        action => action !== "select-on-focus"
+    );
+
+    if(controllerActions.length === 0){
+        return;
+    }
+
+    const controller = resolveController(el);
+    // // DOM actionsだけならcontrollerは不要
+    // const hasControllerAction = actions.some(action => !domActions[action]);
+    // const controller = hasControllerAction ? resolveController(el): null;
     const keydownActions = [
         "date-arrow",
         "search"
     ];
 
-    actions.forEach(action => {
+    controllerActions.forEach(action => {
+    // actions.forEach(action => {
         // keydown制限
         if(e.type === "keydown"){
             if(e.key !== "Enter") return;

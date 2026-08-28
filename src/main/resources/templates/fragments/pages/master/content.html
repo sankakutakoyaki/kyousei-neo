@@ -26,7 +26,7 @@
         <form id="form-01" class="form-dialog none" data-controller="itemMaster" data-key="item-master-id">
             <div class="dialog-main">
                 <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '商品マスター登録'} })}"></header>
-                <section th:replace="~{fragments/pages/master/form :: form01Fragment()}"></section>
+                <section th:replace="~{fragments/pages/master/form :: form01Fragment('form-01')}"></section>
                 <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></footer>
             </div>
         </form>

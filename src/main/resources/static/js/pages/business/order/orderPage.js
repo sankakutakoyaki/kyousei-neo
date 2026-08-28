@@ -3,6 +3,7 @@
 import { initCommon } from "../../../bootstrap/initPage.js";
 import { initPageCache } from "../../../bootstrap/initPageCache.js";
 import { createMasterPage } from "../../../core/page/createMasterPage.js";
+import { createCrudPage } from "../../../core/page/createCrudPage.js";
 import { OrderRepository } from "../../../repositories/business/order/OrderRepository.js";
 import { OrderItemRepository } from "../../../repositories/business/order/OrderItemRepository.js";
 import { createOrderListColumns, createOrderItemListColumns } from "./columns.js";
@@ -17,6 +18,7 @@ import { BarcodeScanner } from "../../../util/barcodeScanner.js";
 import { ItemMasterRepository } from "../../../repositories/master/item/itemMasterRepository.js";
 import { DataTable } from "../../../core/table/DataTable.js";
 import { openMsgDialog } from "../../../core/ui/dialog/dialogCore.js";
+import { FormController } from "../../../applcation/FormController.js";
 
 export async function init() {
     await initCommon();
@@ -34,6 +36,10 @@ export async function init() {
     registerController("orderItemList", items);
     items.init();
     await items.executeAction("search");
+
+    // const itemMaster = orderItemMasterPage();
+    // registerController("orderItemMaster", itemMaster);
+    // itemMaster.init();
 
     // JANスキャン
     // initBarcodeScanner();
@@ -102,28 +108,31 @@ export const orderItemListPage = () =>
         buildParams: (controller) => ({
             state: APP.cache.common.state.INITIAL,
             itemModel: controller.getFilter("itemModel")
-        })
+        }),
+        forms: {
+            itemMaster: {
+                create: (controller) => new FormController({
+                    controller,
+                    formId: "form-03",
+                    key: "itemMasterId",
+                    idKey: "itemMasterId",
+                    repository: ItemMasterRepository,
+                    saveHandler: ItemMasterRepository.save,
+                    submitText: "保存",
+                    cancelText: "キャンセル",
+                    initialFocusSelector: '[name="item-name"]',
+                    afterSave: async () => {
+                        const janInput = document.getElementById("jan-code01");
+                        const janCode = janInput?.value?.trim();
+                        if (!janCode) {
+                            return;
+                        }
+                        await searchByJanCode(controller, janCode);
+                    }
+                })
+            }
+        },
     });
-
-// function initBarcodeScanner() {
-//     const scanButton = document.getElementById("btn-barcode-scan");
-//     if (!scanButton) {
-//         console.warn("JANスキャンボタンが見つかりません。");
-//         return;
-//     }
-//     scanButton.addEventListener("click", () => {
-//         BarcodeScanner.open({
-//             onScan(code) {
-//                 console.log("読み取ったJAN:", code);
-
-//                 const janCode = document.getElementById("jan-code01");
-//                 if (janCode) {
-//                     janCode.value = code;
-//                 }
-//             }
-//         });
-//     });
-// }
 
 function initBarcodeSearch(controller) {
     const scanButton = document.getElementById("btn-barcode-scan");
@@ -155,10 +164,6 @@ function initJanCodeInput(controller) {
 
         e.preventDefault();
 
-        // const janCode = input.value.trim();
-        // if (!janCode) {
-        //     return;
-        // }
         const janCode = input.value.trim();
 
         if (!janCode) {
@@ -208,8 +213,6 @@ function initItemModelInput(controller) {
             return;
         }
 
-        // controller.setFilter("itemModel", itemModel);
-        // await controller.refresh();
         controller.setFilter("itemModel", itemModel);
         const data = await controller.refresh();
         if (data.length === 0) {
@@ -222,7 +225,6 @@ function initItemModelInput(controller) {
 }
 
 async function searchByJanCode(controller, janCode) {
-
     const janInput = document.getElementById("jan-code01");
     const modelInput = document.getElementById("item-model01");
 
@@ -248,14 +250,36 @@ async function searchByJanCode(controller, janCode) {
         controller.dataTable.setData([]);
         controller.dataTable.reload();
 
-        openMsgDialog({
-            message: `JANコード「${janCode}」の商品が登録されていません。`,
-            color: "red"
-        });
+        // 商品マスター登録フォームを開く
+        await controller.openForm("itemMaster", null);
+
+        // JANコードを登録フォームへセット
+        const form = document.getElementById("form-03");
+
+        if(form){
+            const janInput = form.querySelector('[name="jan-code"]');
+
+            if(janInput){
+                janInput.value = janCode;
+            }
+        }
+
         return;
     }
 
     console.log("商品マスター:", item);
+
+    const makerInput = document.getElementById("item-maker01");
+    const nameInput = document.getElementById("item-name01");
+    // const modelInput = document.getElementById("item-model01");
+
+    if(makerInput){
+        makerInput.value = item.itemMaker ?? "";
+    }
+
+    if(nameInput){
+        nameInput.value = item.itemName ?? "";
+    }
 
     if(modelInput){
         modelInput.value = item.itemModel ?? "";
@@ -272,20 +296,6 @@ async function searchByJanCode(controller, janCode) {
         return;
     }
 
-    // // controller.setFilter(
-    // //     "itemModel",
-    // //     item.itemModel
-    // // );
-
-    // // const data = await OrderItemRepository.searchByItemModel({
-    // //     state: APP.cache.common.state.INITIAL,
-    // //     itemModel: item.itemModel
-    // // });
-
-    // // controller.dataTable.setData(data);
-    // // controller.dataTable.reload();
-    // controller.setFilter("itemModel", item.itemModel);
-    // await controller.refresh();
     controller.setFilter("itemModel", item.itemModel);
 
     const data = await controller.refresh();
