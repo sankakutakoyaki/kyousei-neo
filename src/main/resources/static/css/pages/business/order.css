@@ -244,45 +244,70 @@
     }
 }
 
-#barcode-dialog-area.dialog {
+#barcode-dialog-area {
+    width: 100%;
+}
+
+#barcode-scan-dialog {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
+    background: rgba(0, 0, 0, 0.7);
 }
 
-#barcode-dialog {
-    width: min(90vw, 720px);
-    min-width: 0;
+#barcode-scan-dialog.none {
+    display: none;
 }
 
-#barcode-dialog {
-    width: 90vw;
-    max-width: 720px;
-    min-width: 0;
-}
-
-#barcode-dialog .dialog-main {
-    width: 100%;
-    box-sizing: border-box;
-    background-color: white;
-}
-
-.barcode-scanner {
-    width: 100%;
-    box-sizing: border-box;
-    background-color: black;
-}
-
-.barcode-camera {
+.barcode-scan-content {
     position: relative;
-    width: 100%;
-    max-width: 640px;
-    margin: 0 auto;
-    overflow: hidden;
+
+    width: min(90vw, 720px);
+    max-width: 720px;
+
+    background: white;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-.barcode-camera video {
+#barcode-video {
     display: block;
+
     width: 100%;
     height: auto;
+
+    background: black;
+
+    object-fit: cover;
+}
+
+.barcode-scan-frame {
+    position: absolute;
+
+    left: 10%;
+    right: 10%;
+    top: 35%;
+
+    height: 30%;
+
+    border: 2px solid white;
+
+    pointer-events: none;
+}
+
+#barcode-scan-message {
+    margin-top: 10px;
+    text-align: center;
+}
+
+#barcode-scan-cancel {
+    display: block;
+
+    margin: 15px auto 0;
+    padding: 8px 24px;
 }

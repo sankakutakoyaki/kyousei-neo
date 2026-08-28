@@ -215,21 +215,54 @@ export const orderItemListPage = () =>
         },
     });
 
-function initBarcodeSearch(controller) {
-    const scanButton = document.getElementById("btn-barcode-scan");
-    if(!scanButton){
-        console.warn("JANスキャンボタンが見つかりません。");
-        return;
-    }
+// function initBarcodeSearch(controller) {
+//     const scanButton = document.getElementById("btn-barcode-scan");
+//     if(!scanButton){
+//         console.warn("JANスキャンボタンが見つかりません。");
+//         return;
+//     }
 
-    scanButton.addEventListener("click", () => {
-        BarcodeScanner.open({
-            onScan: async (code) => {
-                // console.log("読み取ったJAN:", code);
-                await searchByJanCode(controller, code);
-            }
+//     scanButton.addEventListener("click", () => {
+//         BarcodeScanner.open({
+//             onScan: async (code) => {
+//                 // console.log("読み取ったJAN:", code);
+//                 await searchByJanCode(controller, code);
+//             }
+//         });
+//     });
+// }
+function initBarcodeSearch(controller) {
+
+    document
+        .getElementById("btn-barcode-scan")
+        ?.addEventListener("click", async () => {
+
+            document
+                .getElementById("barcode-scan-dialog")
+                ?.classList.remove("none");
+
+            await BarcodeScanner.open({
+
+                formats: [
+                    ZXing.BarcodeFormat.EAN_13
+                ],
+
+                onScan: async (code) => {
+
+                    await searchByJanCode(
+                        controller,
+                        code
+                    );
+                }
+            });
         });
-    });
+
+    document
+        .getElementById("barcode-scan-cancel")
+        ?.addEventListener("click", () => {
+
+            BarcodeScanner.close();
+        });
 }
 
 function initJanCodeInput(controller) {

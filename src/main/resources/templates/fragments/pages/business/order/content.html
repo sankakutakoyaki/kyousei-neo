@@ -49,27 +49,28 @@
         <div th:replace="~{fragments/dialog/content :: messageFragment}"></div>
     </div>
     <div id="barcode-dialog-area">
-        <div id="barcode-dialog" class="barcode-dialog none">
-            <div class="dialog-main">
-                <header
-                    th:replace="~{fragments/dialog/header :: headerFragment(
-                        ${ {'title': 'JANコードをスキャン'} }
-                    )}">
-                </header>
+        <div id="barcode-scan-dialog" class="barcode-scan-dialog none">
+            <div class="barcode-scan-content">
 
-                <section class="barcode-scanner">
-                    <div class="barcode-camera">
-                        <video id="barcode-scanner-video" autoplay playsinline></video>
-                        <div class="barcode-guide">
-                            <div class="barcode-guide-line"></div>
-                        </div>
-                    </div>
-                    <div id="barcode-scanner-message" class="barcode-message">バーコードを枠内に合わせてください</div>
-                </section>
+                <video
+                    id="barcode-video"
+                    autoplay
+                    playsinline
+                    muted>
+                </video>
 
-                <footer class="dialog-footer">
-                    <button class="normal-btn frameless" type="button" name="cancelBtn">キャンセル</button>
-                </footer>
+                <div class="barcode-scan-frame"></div>
+
+                <div id="barcode-scan-message">
+                    JANコードをカメラに映してください
+                </div>
+
+                <button
+                    type="button"
+                    id="barcode-scan-cancel">
+                    キャンセル
+                </button>
+
             </div>
         </div>
     </div>
