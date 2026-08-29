@@ -116,26 +116,78 @@ hasChanges({form, currentEntity, selector = null}){
 
     //     return false;
     // }
+// hasValidInput(form, selector = null){
+//     const target = selector
+//         ? form.querySelector(selector)
+//         : form;
+
+//     if(!target) return false;
+
+//     const elements = target.querySelectorAll("[name]");
+
+//     for(const el of elements){
+//         const value = el.value ?? "";
+
+//         if(
+//             typeof value === "string" &&
+//             value.trim() !== ""
+//         ){
+//             return true;
+//         }
+//     }
+
+//     return false;
+// },
 hasValidInput(form, selector = null){
-    const target = selector
-        ? form.querySelector(selector)
-        : form;
+    if(!form) return false;
 
-    if(!target) return false;
+    if(selector){
+        const el = form.querySelector(selector);
 
-    const elements = target.querySelectorAll("[name]");
+        if(!el || el.disabled) {
+            return false;
+        }
+
+        if(el.type === "checkbox" || el.type === "radio"){
+            return el.checked;
+        }
+
+        const value = normalizeValue(
+            el.value,
+            getOptions(el)
+        );
+
+        return (
+            value != null &&
+            String(value).trim() !== ""
+        );
+    }
+
+    const elements = form.querySelectorAll("[name]");
 
     for(const el of elements){
-        const value = el.value ?? "";
+        if(el.disabled) continue;
+
+        if(el.type === "checkbox" || el.type === "radio"){
+            if(el.checked){
+                return true;
+            }
+            continue;
+        }
+
+        const value = normalizeValue(
+            el.value,
+            getOptions(el)
+        );
 
         if(
-            typeof value === "string" &&
-            value.trim() !== ""
+            value != null &&
+            String(value).trim() !== ""
         ){
             return true;
         }
     }
 
     return false;
-},
+}
 };

@@ -1,3 +1,234 @@
+"use strict"
+
+export const BarcodeScanner = {
+
+    video: null,
+    codeReader: null,
+    controls: null,
+    onScan: null,
+    completed: false,
+
+    // ============================================================
+    // スキャナーダイアログ作成
+    // ============================================================
+    init() {
+
+        // すでに存在するなら何もしない
+        if (document.getElementById("barcode-scan-dialog")) {
+            return;
+        }
+
+        const area = document.createElement("div");
+
+        area.id = "barcode-dialog-area";
+
+        area.innerHTML = `
+            <div
+                id="barcode-scan-dialog"
+                class="barcode-scan-dialog none">
+
+                <div class="barcode-scan-content">
+
+                    <video
+                        id="barcode-video"
+                        autoplay
+                        playsinline
+                        muted>
+                    </video>
+
+                    <div class="barcode-scan-frame"></div>
+
+                    <div id="barcode-scan-message">
+                        JANコードをカメラに映してください
+                    </div>
+
+                    <button
+                        type="button"
+                        id="barcode-scan-cancel">
+                        キャンセル
+                    </button>
+
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(area);
+
+        // キャンセル
+        document
+            .getElementById("barcode-scan-cancel")
+            ?.addEventListener("click", () => {
+                this.close();
+            });
+    },
+
+    async open(options = {}) {
+
+        // ダイアログがなければ作成
+        this.init();
+
+        this.video =
+            document.getElementById("barcode-video");
+
+        if (!this.video) {
+            console.error(
+                "barcode-video がありません"
+            );
+            return;
+        }
+
+        // ダイアログ表示
+        const dialog =
+            document.getElementById(
+                "barcode-scan-dialog"
+            );
+
+        dialog?.classList.remove("none");
+
+        this.onScan =
+            options.onScan ?? (() => {});
+
+        this.completed = false;
+
+        const formats =
+            options.formats ?? [
+                // ZXingBrowser.BarcodeFormat.EAN_13
+                ZXingBrowser.BarcodeFormat.CODABAR
+            ];
+
+        try {
+
+            this.codeReader =
+                new ZXingBrowser.BrowserMultiFormatReader();
+
+            this.codeReader.possibleFormats =
+                formats;
+console.log("★★ 読み取り形式 ★★", formats);
+            this.controls =
+                await this.codeReader.decodeFromConstraints(
+                    {
+                        video: {
+                            facingMode: {
+                                ideal: "environment"
+                            }
+                        },
+                        audio: false
+                    },
+                    this.video,
+                    (result, error) => {
+
+                        if (this.completed) {
+                            return;
+                        }
+
+                        if (!result) {
+                            return;
+                        }
+
+                        const code =
+                            result.getText();
+
+                        console.log(
+                            "読み取り:",
+                            code
+                        );
+
+                        this.completed = true;
+
+                        setTimeout(() => {
+                            this.complete(code);
+                        }, 0);
+                    }
+                );
+
+        } catch (error) {
+
+            console.error(
+                "バーコードスキャナー起動エラー",
+                error
+            );
+
+            alert(
+                "バーコード読み取りを開始できませんでした。\n"
+                + error.message
+            );
+
+            this.close();
+        }
+    },
+
+    complete(code) {
+
+        if (!this.completed) {
+            return;
+        }
+
+        const callback = this.onScan;
+
+        this.close();
+
+        if (callback) {
+            callback(code);
+        }
+    },
+
+    close() {
+
+        this.completed = true;
+
+        if (this.controls) {
+
+            try {
+                this.controls.stop();
+            } catch (e) {
+                console.warn(
+                    "ZXing停止時のエラー:",
+                    e
+                );
+            }
+
+            this.controls = null;
+        }
+
+        this.codeReader = null;
+
+        if (this.video) {
+
+            const stream =
+                this.video.srcObject;
+
+            if (stream) {
+                stream
+                    .getTracks()
+                    .forEach(track => {
+                        try {
+                            track.stop();
+                        } catch (e) {
+                            console.warn(
+                                "カメラ停止エラー:",
+                                e
+                            );
+                        }
+                    });
+            }
+
+            this.video.pause();
+            this.video.srcObject = null;
+        }
+
+        const dialog =
+            document.getElementById(
+                "barcode-scan-dialog"
+            );
+
+        if (dialog) {
+            dialog.classList.add("none");
+        }
+
+        this.onScan = null;
+    }
+};
+
 // "use strict";
 
 // import { setInertState } from "../core/ui/dialog/dialogCore.js";
@@ -246,221 +477,3 @@
 //     }
 
 // };
-
-"use strict";
-
-export const BarcodeScanner = {
-
-    video: null,
-    codeReader: null,
-    controls: null,
-    onScan: null,
-
-    async open(options = {}) {
-
-        this.video =
-            document.getElementById("barcode-video");
-
-        if (!this.video) {
-            console.error(
-                "barcode-video がありません"
-            );
-            return;
-        }
-
-        /*
-         * 読み取り対象
-         *
-         * デフォルト：JANコード
-         *
-         * 将来：
-         *   QR_CODE
-         *   EAN_8
-         *   CODE_128
-         *   CODE_39
-         *   ITF
-         *   など
-         */
-        const formats =
-            options.formats ?? ["EAN_13"];
-
-        this.onScan =
-            options.onScan ?? (() => {});
-
-        try {
-
-            this.codeReader =
-                new ZXing.BrowserMultiFormatReader();
-
-            /*
-             * ZXingのフォーマットへ変換
-             */
-            const zxingFormats =
-                formats.map(format => {
-
-                    switch (format) {
-
-                        case "EAN_13":
-                            return ZXing.BarcodeFormat.EAN_13;
-
-                        case "EAN_8":
-                            return ZXing.BarcodeFormat.EAN_8;
-
-                        case "QR_CODE":
-                            return ZXing.BarcodeFormat.QR_CODE;
-
-                        case "CODE_128":
-                            return ZXing.BarcodeFormat.CODE_128;
-
-                        case "CODE_39":
-                            return ZXing.BarcodeFormat.CODE_39;
-
-                        case "ITF":
-                            return ZXing.BarcodeFormat.ITF;
-
-                        default:
-                            throw new Error(
-                                `未対応のバーコード形式です: ${format}`
-                            );
-                    }
-                });
-
-            this.codeReader.possibleFormats =
-                zxingFormats;
-
-            /*
-             * カメラ一覧
-             */
-            const devices =
-                await ZXing.BrowserCodeReader
-                    .listVideoInputDevices();
-
-            if (!devices.length) {
-                throw new Error(
-                    "カメラが見つかりません。"
-                );
-            }
-
-            /*
-             * 背面カメラを優先
-             */
-            let deviceId =
-                devices[0].deviceId;
-
-            const backCamera =
-                devices.find(device =>
-                    /back|rear|environment/i.test(
-                        device.label
-                    )
-                );
-
-            if (backCamera) {
-                deviceId =
-                    backCamera.deviceId;
-            }
-
-            console.log(
-                "使用カメラ:",
-                deviceId
-            );
-
-            /*
-             * 読み取り開始
-             */
-            this.controls =
-                await this.codeReader
-                    .decodeFromVideoDevice(
-                        deviceId,
-                        this.video,
-                        (result, error) => {
-
-                            if (!result) {
-                                return;
-                            }
-
-                            const code =
-                                result.getText();
-
-                            console.log(
-                                "読み取り:",
-                                code
-                            );
-
-                            this.complete(code);
-                        }
-                    );
-
-        } catch (error) {
-
-            console.error(
-                "バーコードスキャナー起動エラー",
-                error
-            );
-
-            alert(
-                "バーコード読み取りを開始できませんでした。\n" +
-                error.message
-            );
-
-            this.close();
-        }
-    },
-
-    complete(code) {
-
-        /*
-         * 二重読み取り防止
-         */
-        const callback =
-            this.onScan;
-
-        this.close();
-
-        callback?.(code);
-    },
-
-    close() {
-
-        /*
-         * 読み取り停止
-         */
-        if (this.controls) {
-
-            this.controls.stop();
-
-            this.controls = null;
-        }
-
-        /*
-         * ZXing停止
-         */
-        if (this.codeReader) {
-
-            this.codeReader.reset();
-
-            this.codeReader = null;
-        }
-
-        /*
-         * video停止
-         */
-        if (this.video) {
-
-            this.video.pause();
-
-            this.video.srcObject = null;
-        }
-
-        /*
-         * ダイアログを閉じる
-         */
-        const dialog =
-            document.getElementById(
-                "barcode-scan-dialog"
-            );
-
-        dialog?.classList.add("none");
-
-        this.onScan = null;
-    }
-};

@@ -1,6 +1,6 @@
 <th:block th:fragment="form01Fragment(formId)">
     <!-- <div class="dialog-content" data-enterfocus="form-01"> -->
-    <div class="dialog-content" th:attr="data-enterfocus=${formId}">
+    <div class="dialog-content">
         <!-- コード -->
         <div class="form-row">
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -12,6 +12,18 @@
                 }
             })}"></th:block>
         </div>
+        <!-- 型番 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'型番',
+                    'id':'itemModel11',
+                    'name':'item-model',
+                    'index': 2,
+                    'required': '型番を入力してください。'
+                }}
+            )}"></th:block>
+        </div>
         <!-- 商品名 -->
         <div class="form-row">
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -19,30 +31,18 @@
                     'text':'商品名',
                     'id':'itemName11',
                     'name':'item-name',
-                    'index': 2
+                    'index': 3
                 }}
             )}"></th:block>    
         </div>
         <!-- メーカー -->
-        <!-- 型番 -->
         <div class="form-row">
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'メーカー',
                     'id':'itemMaker11',
                     'name':'item-maker',
-                    'index': 3
-                }}
-            )}"></th:block>
-        </div>
-        <div class="form-row">
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                {
-                    'text':'型番',
-                    'id':'itemModel11',
-                    'name':'item-model',
-                    'index': 4,
-                    'required': '型番を入力してください。'
+                    'index': 4
                 }}
             )}"></th:block>
         </div>
@@ -50,7 +50,7 @@
 </th:block>
 
 <th:block th:fragment="form02Fragment()">
-    <div class="dialog-content" data-enterfocus="form-02">
+    <div class="dialog-content">
         <!-- 作業コード -->
         <div class="form-row">
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${

@@ -32,9 +32,16 @@ tr.is-loss{
     row-gap: .5rem;
     &>div:nth-of-type(1) {
         display: grid;
-        grid-template-columns: 15rem auto 1fr;
-        column-gap: 2rem;
+        grid-template-columns: 15rem 3.5rem auto 1fr;
+        column-gap: .5rem;
         margin-left: 1rem;
+        & .img-btn {
+            padding: 0;
+            margin-right: 1rem;
+            &>img {
+                padding: 0;
+            }
+        }
     }
     &>div:nth-of-type(2) {
         display: grid;
@@ -65,6 +72,10 @@ tr.is-loss{
     }
 }
 
+#header-02 .skip-area {
+    margin-left: 2rem;
+}
+
 #header-03 {
     display: grid;
     grid-template-columns: 1fr;
@@ -81,8 +92,15 @@ tr.is-loss{
     }
     &>div:nth-of-type(2) {
         display: grid;
-        grid-template-columns: 15rem 6rem;
+        grid-template-columns: 15rem 3.5rem 6rem 1fr;
         column-gap: .5rem;
+        & .img-btn {
+            padding: 0;
+            margin-right: 1rem;
+            &>img {
+                padding: 0;
+            }
+        }
     }
 }
 
@@ -102,8 +120,15 @@ tr.is-loss{
     }
     &>div:nth-of-type(2) {
         display: grid;
-        grid-template-columns: 15rem 6rem;
+        grid-template-columns: 15rem 3.5rem 6rem 1fr;
         column-gap: .5rem;
+        & .img-btn {
+            padding: 0;
+            margin-right: 1rem;
+            &>img {
+                padding: 0;
+            }
+        }
     }
 }
 
@@ -113,8 +138,15 @@ tr.is-loss{
     row-gap: .5rem;
     &>div:nth-of-type(1) {
         display: grid;
-        grid-template-columns: auto 15rem 1fr 6rem;
+        grid-template-columns: auto 15rem 3.5rem 1fr 6rem;
         column-gap: .5rem;
+        & .img-btn {
+            padding: 0;
+            margin-right: 1rem;
+            &>img {
+                padding: 0;
+            }
+        }
     }
 }
 

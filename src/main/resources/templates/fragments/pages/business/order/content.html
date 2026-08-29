@@ -23,21 +23,21 @@
         </div>
     </div>
     <div id="form-dialog-area">
-        <form id="form-01" class="form-dialog none" data-controller="orderList" data-sync-group="order" data-key="order-id">
+        <form id="form-01" class="form-dialog none" data-controller="orderList" data-sync-group="order" data-key="order-id" data-enterfocus="formー01">
             <div class="dialog-main">
                 <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '編集'} })}"></header>
                 <section th:replace="~{fragments/pages/business/order/form :: form01Fragment()}"></section>
                 <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></footer>
             </div>
         </form>
-        <form id="form-03" class="form-dialog none" data-controller="orderItemMaster" data-key="item-master-id">
+        <form id="form-03" class="form-dialog none" data-controller="orderItemMaster" data-key="item-master-id" data-enterfocus="formー03">
             <div class="dialog-main">
                 <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '商品マスター登録'} })}"></header>
                 <section th:replace="~{fragments/pages/master/form :: form01Fragment('form-03')}"></section>
                 <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId':'form-footer-03'} })}"></footer>
             </div>
         </form>
-        <form id="form-04" class="form-dialog none" data-controller="orderItem" data-key="order-item-id">
+        <form id="form-04" class="form-dialog none" data-controller="orderItem" data-key="order-item-id" data-enterfocus="formー04">
             <div class="dialog-main">
                 <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '受注商品登録'} })}"></header>
                 <section th:replace="~{fragments/pages/business/order/form :: orderItemFormFragment('form-04')}"></section>
@@ -48,7 +48,7 @@
     <div id="msg-dialog-area">
         <div th:replace="~{fragments/dialog/content :: messageFragment}"></div>
     </div>
-    <div id="barcode-dialog-area">
+    <!-- <div id="barcode-dialog-area">
         <div id="barcode-scan-dialog" class="barcode-scan-dialog none">
             <div class="barcode-scan-content">
 
@@ -70,8 +70,7 @@
                     id="barcode-scan-cancel">
                     キャンセル
                 </button>
-
             </div>
         </div>
-    </div>
+    </div> -->
 </main>

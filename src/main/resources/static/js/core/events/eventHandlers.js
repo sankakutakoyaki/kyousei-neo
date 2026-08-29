@@ -19,6 +19,7 @@ export function initEvents(){
 }
 
 function handleEvent(e){
+
     const el = e.target.closest("[data-action]");
     if(!el) return;
 

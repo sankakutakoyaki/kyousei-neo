@@ -1,5 +1,5 @@
 <th:block th:fragment="form01Fragment()">
-    <div class="dialog-content" data-enterfocus="form-01">
+    <div class="dialog-content">
         <div class="tab-area">
             <ul class="tab-menu">
                 <li class="tab-menu-item is-active" data-action="tab" data-group="order-add-tabs" data-tab="tab-11">基本</li>
@@ -255,34 +255,15 @@
 </th:block>
 
 <th:block th:fragment="orderItemFormFragment(formId)">
-    <div class="dialog-content" th:data-enterfocus="${formId}">
+    <div class="dialog-content">
         <div class="form-row">
             <!-- JANコード -->
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'JANコード',
                     'id':'order-item-jan-code',
-                    'name':'jan-code'
-                }
-            })}"></th:block>
-        </div>
-        <div class="form-row">
-            <!-- メーカー -->
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                {
-                    'text':'メーカー',
-                    'id':'order-item-maker',
-                    'name':'item-maker'
-                }
-            })}"></th:block>
-        </div>
-        <div class="form-row">
-            <!-- 商品名 -->
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                {
-                    'text':'商品名',
-                    'id':'order-item-name',
-                    'name':'item-name'
+                    'name':'jan-code',
+                    'index': 1
                 }
             })}"></th:block>
         </div>
@@ -293,7 +274,30 @@
                     'text':'型番',
                     'id':'order-item-model',
                     'name':'item-model',
-                    'required': '型番を入力してください。'
+                    'required': '型番を入力してください。',
+                    'index': 2
+                }
+            })}"></th:block>
+        </div>
+        <div class="form-row">
+            <!-- メーカー -->
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'メーカー',
+                    'id':'order-item-maker',
+                    'name':'item-maker',
+                    'index': 3
+                }
+            })}"></th:block>
+        </div>
+        <div class="form-row">
+            <!-- 商品名 -->
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'商品名',
+                    'id':'order-item-name',
+                    'name':'item-name',
+                    'index': 4
                 }
             })}"></th:block>
         </div>
@@ -303,7 +307,8 @@
                 {
                     'text':'数量',
                     'id':'order-item-quantity',
-                    'name':'item-quantity'
+                    'name':'item-quantity',
+                    'index': 5
                 }
             })}"></th:block>
         </div>
@@ -313,7 +318,8 @@
                 {
                     'text':'備考',
                     'id':'order-item-remarks',
-                    'name':'remarks'
+                    'name':'remarks',
+                    'index': 6
                 }
             })}"></th:block>
         </div>

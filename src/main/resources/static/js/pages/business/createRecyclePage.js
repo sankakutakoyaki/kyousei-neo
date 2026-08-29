@@ -101,6 +101,7 @@ const createInlineRecycleForm = ({
         saveHandler,
         closeOnSave: false,
         showSuccessDialog: false,
+        recycleInputId: "recycle-number05",
         afterSave: async (...args) => {
             await controller.refresh();
             const form = document.getElementById(formId);

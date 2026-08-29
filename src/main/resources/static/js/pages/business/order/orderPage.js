@@ -160,6 +160,8 @@ export const orderItemListPage = () =>
                 if (quantityInput) {
                     quantityInput.value = "1";
                 }
+                // 自動入力した値を保存ボタンの判定に反映
+                modelInput?.dispatchEvent(new Event("input", { bubbles: true }));
             },
         },
         buildParams: (controller) => ({
@@ -181,10 +183,11 @@ export const orderItemListPage = () =>
                     key: "itemMasterId",
                     idKey: "itemMasterId",
                     repository: ItemMasterRepository,
-                    saveHandler: OrderItemRepository.save,
+                    saveHandler: ItemMasterRepository.save,
+                    // saveHandler: OrderItemRepository.save,
                     submitText: "保存",
                     cancelText: "キャンセル",
-                    initialFocusSelector: '[name="item-name"]',
+                    initialFocusSelector: '[name="item-model"]',
                     afterSave: async () => {
                         const janInput = document.getElementById("jan-code01");
                         const janCode = janInput?.value?.trim();
@@ -206,7 +209,8 @@ export const orderItemListPage = () =>
                     saveHandler: OrderItemRepository.create,
                     submitText: "保存",
                     cancelText: "キャンセル",
-                    initialFocusSelector: '[name="item-name"]',
+                    validInputSelector: '[name="item-model"]',
+                    initialFocusSelector: '[name="item-model"]',
                     afterSave: async () => {
                         await controller.refresh();
                     }
@@ -231,22 +235,14 @@ export const orderItemListPage = () =>
 //         });
 //     });
 // }
-function initBarcodeSearch(controller) {
-
+async function initBarcodeSearch(controller) {
     document
         .getElementById("btn-barcode-scan")
         ?.addEventListener("click", async () => {
-
             document
                 .getElementById("barcode-scan-dialog")
                 ?.classList.remove("none");
-
             await BarcodeScanner.open({
-
-                formats: [
-                    ZXing.BarcodeFormat.EAN_13
-                ],
-
                 onScan: async (code) => {
 
                     await searchByJanCode(
@@ -256,11 +252,9 @@ function initBarcodeSearch(controller) {
                 }
             });
         });
-
     document
         .getElementById("barcode-scan-cancel")
         ?.addEventListener("click", () => {
-
             BarcodeScanner.close();
         });
 }

@@ -3,6 +3,15 @@
 // フォーカス遷移対象要素
 let tabFocusElements = createTabFocusElements();
 
+// ============================================================
+// EnterキーがIME確定操作かどうか
+// ============================================================
+function isImeEnter(event) {
+    return (
+        event.isComposing === true
+        || event.keyCode === 229
+    );
+}
 
 // ============================================================
 // ページ全体のフォーカス遷移対象要素作成
@@ -14,7 +23,6 @@ function createTabFocusElements() {
     );
 
     elements.sort((a, b) => {
-
         if (a.tabIndex === 0) return 1;
         if (b.tabIndex === 0) return -1;
 
@@ -23,7 +31,6 @@ function createTabFocusElements() {
 
     return elements;
 }
-
 
 // ============================================================
 // フォーカス遷移対象要素フィルタリング
@@ -61,15 +68,12 @@ function filterTabFocusElements(nodeList) {
     });
 }
 
-
 // ============================================================
 // フォーカス遷移対象を再設定
 // ============================================================
 export function resetEnterFocus() {
-
     tabFocusElements = createTabFocusElements();
 }
-
 
 // ============================================================
 // data-enterfocus の設定
@@ -82,7 +86,6 @@ export function setEnterFocus() {
 
     areas.forEach(area => {
 
-        // 二重登録防止
         if (
             area.dataset.enterFocusInitialized === "true"
         ) {
@@ -91,35 +94,6 @@ export function setEnterFocus() {
 
         area.dataset.enterFocusInitialized = "true";
 
-
-        let isComposing = false;
-
-
-        // ====================================================
-        // IME変換開始
-        // ====================================================
-        area.addEventListener(
-            "compositionstart",
-            () => {
-                isComposing = true;
-            }
-        );
-
-
-        // ====================================================
-        // IME変換終了
-        // ====================================================
-        area.addEventListener(
-            "compositionend",
-            () => {
-                isComposing = false;
-            }
-        );
-
-
-        // ====================================================
-        // Enterキー
-        // ====================================================
         area.addEventListener(
             "keydown",
             event => {
@@ -128,26 +102,25 @@ export function setEnterFocus() {
                     return;
                 }
 
-
                 // search inputは通常動作
                 if (event.target.type === "search") {
                     return;
                 }
 
-
-                // IME変換中
-                if (isComposing) {
+                // ====================================================
+                // IME確定のEnterはフォーカス移動しない
+                // Safari対策
+                // ====================================================
+                if (isImeEnter(event)) {
                     return;
                 }
-
 
                 // Enterの通常動作を抑止
                 event.preventDefault();
 
-
-                // =================================================
+                // ====================================================
                 // このエリア内だけのフォーカス対象を作成
-                // =================================================
+                // ====================================================
                 let focusElements =
                     filterTabFocusElements(
                         area.querySelectorAll(
@@ -155,8 +128,6 @@ export function setEnterFocus() {
                         )
                     );
 
-
-                // tabindex順
                 focusElements.sort((a, b) => {
 
                     if (a.tabIndex === 0) return 1;
@@ -165,27 +136,22 @@ export function setEnterFocus() {
                     return a.tabIndex - b.tabIndex;
                 });
 
-
                 // 現在の要素
                 const current =
                     event.target.closest(
                         "input, textarea, select, button, a"
                     );
 
-
                 const arrayIndex =
                     focusElements.indexOf(current);
 
-
-                // 対象外なら終了
                 if (arrayIndex < 0) {
                     return;
                 }
 
-
-                // =================================================
+                // ====================================================
                 // textarea Alt+Enter
-                // =================================================
+                // ====================================================
                 if (
                     event.target.tagName.toLowerCase()
                     === "textarea"
@@ -208,7 +174,6 @@ export function setEnterFocus() {
                             event.target.selectionEnd
                         );
 
-
                     event.target.selectionStart =
                         currentSelectionStart + 1;
 
@@ -218,42 +183,34 @@ export function setEnterFocus() {
                     return;
                 }
 
-
-                // =================================================
+                // ====================================================
                 // Alt + Enter
-                // =================================================
+                // ====================================================
                 if (
                     event.target.onclick !== null
                     &&
                     event.altKey
                 ) {
-
                     event.target.click();
-
                     return;
                 }
 
-
-                // =================================================
+                // ====================================================
                 // buttonのEnter
-                // =================================================
+                // ====================================================
                 if (
                     event.target.tagName.toLowerCase()
                     === "button"
                 ) {
-
                     event.target.click();
-
                     return;
                 }
 
-
                 let nextElement = null;
 
-
-                // =================================================
+                // ====================================================
                 // Enter → 次へ
-                // =================================================
+                // ====================================================
                 if (!event.shiftKey) {
 
                     for (
@@ -262,23 +219,16 @@ export function setEnterFocus() {
                         i++
                     ) {
 
-                        let index =
-                            arrayIndex + i;
+                        let index = arrayIndex + i;
 
-
-                        // 最後まで行ったら先頭へ
                         if (
                             index >= focusElements.length
                         ) {
-
-                            index -=
-                                focusElements.length;
+                            index -= focusElements.length;
                         }
-
 
                         nextElement =
                             focusElements[index];
-
 
                         if (
                             nextElement.style.display
@@ -298,16 +248,14 @@ export function setEnterFocus() {
                         ) {
 
                             nextElement.focus();
-
                             break;
                         }
                     }
                 }
 
-
-                // =================================================
+                // ====================================================
                 // Shift + Enter → 前へ
-                // =================================================
+                // ====================================================
                 if (event.shiftKey) {
 
                     for (
@@ -316,21 +264,15 @@ export function setEnterFocus() {
                         i++
                     ) {
 
-                        let index =
-                            arrayIndex - i;
+                        let index = arrayIndex - i;
 
-
-                        // 先頭まで行ったら最後へ
                         if (index < 0) {
-
                             index +=
                                 focusElements.length;
                         }
 
-
                         nextElement =
                             focusElements[index];
-
 
                         if (
                             nextElement.style.display
@@ -350,34 +292,28 @@ export function setEnterFocus() {
                         ) {
 
                             nextElement.focus();
-
                             break;
                         }
                     }
                 }
-
             }
         );
     });
 
-
-    // ページ全体の対象も更新
     resetEnterFocus();
 }
-
 
 // ============================================================
 // MutationObserver
 // ============================================================
+
 const observer =
     new MutationObserver(mutations => {
 
         let shouldReset = false;
 
-
         for (const mutation of mutations) {
 
-            // 要素追加・削除
             if (
                 filterTabFocusElements(
                     mutation.addedNodes
@@ -387,23 +323,17 @@ const observer =
                     mutation.removedNodes
                 ).length > 0
             ) {
-
                 shouldReset = true;
                 break;
             }
 
-
-            // 属性変更
             if (
                 mutation.type === "attributes"
             ) {
-
                 shouldReset = true;
                 break;
             }
 
-
-            // 追加された要素の子孫
             for (
                 const addedNode
                 of mutation.addedNodes
@@ -416,24 +346,20 @@ const observer =
                     continue;
                 }
 
-
                 if (
                     filterTabFocusElements(
                         addedNode.querySelectorAll("*")
                     ).length > 0
                 ) {
-
                     shouldReset = true;
                     break;
                 }
             }
 
-
             if (shouldReset) {
                 break;
             }
         }
-
 
         if (shouldReset) {
             tabFocusElements =
@@ -441,16 +367,10 @@ const observer =
         }
     });
 
-
-// ============================================================
-// MutationObserver監視設定
-// ============================================================
 const config = {
-
     childList: true,
     subtree: true,
     attributes: true,
-
     attributeFilter: [
         "class",
         "tabindex",
@@ -460,28 +380,25 @@ const config = {
     ]
 };
 
-
 observer.observe(
     document.body,
     config
 );
 
-
 // ============================================================
 // チェックボックスによるスキップ
 // ============================================================
+
 function isSkipFocusElement(target) {
 
     if (!target?.id) {
         return false;
     }
 
-
     const checkbox =
         document.querySelector(
             `[data-skip-target='${target.id}']`
         );
-
 
     return checkbox?.checked === true;
 }

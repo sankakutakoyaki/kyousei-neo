@@ -215,7 +215,8 @@ export class FormController {
         // 動的に開いたフォームにもEnterフォーカスを設定
         setEnterFocus();
         
-        this.setSubmitEnabled(false);
+        // this.setSubmitEnabled(false);
+        this.setSubmitEnabled(this.canSubmit());
 
         // 初期フォーカス
         if (this.initialFocusSelector) {
@@ -405,22 +406,44 @@ export class FormController {
         const additionalChanged =
             this.hasAdditionalChanges?.() ?? false;
 
-        if(!this.currentEntity || !this.currentEntity[this.key]){
+        if(!this.currentEntity || !this.currentEntity[this.idKey]){
             return this.hasValidInput() || additionalChanged;
         }
 
         return formChanged || additionalChanged;
     }
 
-    setSubmitEnabled(enabled){
-        const form = document.getElementById(this.formId);
-        if(!form) return;
+    // setSubmitEnabled(enabled){
+    //     const form = document.getElementById(this.formId);
+    //     if(!form) return;
 
-        const btn = form.querySelector('[name="submitBtn"]');
-        if(!btn) return;
+    //     const btn = form.querySelector('[name="submitBtn"]');
+    //     if(!btn) return;
 
-        btn.disabled = !enabled;
-        btn.classList.toggle("disabled", !enabled);
+    //     btn.disabled = !enabled;
+    //     btn.classList.toggle("disabled", !enabled);
+    // }
+setSubmitEnabled(enabled){
+    const form = document.getElementById(this.formId);
+    if(!form) return;
+
+    const btn = form.querySelector('[name="submitBtn"]');
+    if(!btn) return;
+
+    // console.log(
+    //     "setSubmitEnabled:",
+    //     this.formId,
+    //     "enabled =", enabled
+    // );
+
+    // console.trace();
+
+    btn.disabled = !enabled;
+    btn.classList.toggle("disabled", !enabled);
+}
+
+    updateSubmitState() {
+        this.setSubmitEnabled(this.canSubmit());
     }
 
     isHidden(){

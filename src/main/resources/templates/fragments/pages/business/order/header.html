@@ -111,7 +111,8 @@
             )}"></th:block>
             <div class="form-parts">
                 <label></label>
-                <button tabindex="-1" class="img-btn" type="button" id="btn-barcode-scan"><img src="/icons/camera.png"></button>
+                <button tabindex="-1" class="img-btn" type="button" id="btn-barcode-scan" data-action="barcode-scan"
+                    data-barcode-target="jan-code01" data-barcode-format="EAN_13"><img src="/icons/camera.png"></button>
             </div>
             <!-- メーカー -->
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${

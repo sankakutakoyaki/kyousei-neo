@@ -2,9 +2,16 @@
 
 #header-01 {
     display: grid;
+    row-gap: .7rem;
     &>div:first-of-type {
         display: grid;
         grid-template-columns: 1fr auto;
+        column-gap: 2rem;
+        align-items: center;
+    }
+    &>div:nth-of-type(2) {
+        display: grid;
+        grid-template-columns: auto 1fr;
     }
 }
 

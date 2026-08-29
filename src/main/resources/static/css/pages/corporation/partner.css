@@ -3,19 +3,26 @@
 #header-01 {
     display: grid;
     grid-template-columns: 1fr auto;
+    column-gap: 2rem;
+    align-items: center;
+    row-gap: .7rem;
 }
 
 #header-02 {
     display: grid;
+    row-gap: .7rem;
     &>div:first-of-type {
         display: grid;
         grid-template-columns: 1fr auto;
+        column-gap: 2rem;
+        align-items: center;
     }
 }
 
 #code-area {
     display: grid;
     grid-template-columns: 6rem minmax(10rem, auto) 1fr;
+    margin-left: 1rem;
 }
 
 :is(#table-01, #table-header-01) tr {

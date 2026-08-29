@@ -30,8 +30,6 @@ export const OrderItemRepository = {
     },
 
     async create(params){
-    console.log("=== orderItemCreate ===");
-    console.log("params:", params);
         return await RequestClient.request({queryId: "orderItemCreate", params});
     },
 };
