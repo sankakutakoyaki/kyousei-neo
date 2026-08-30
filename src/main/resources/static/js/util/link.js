@@ -17,7 +17,7 @@ export function initParentChildLink(area = document){
             });
             parent.dataset.linkInitialized = "true";
         }
-        // parent.dispatchEvent(new Event("change"));
+        parent.dispatchEvent(new Event("change"));
         parent.addEventListener("change", () => {
             const comboName = child.dataset.combo;
             const allItems = APP.cache.page[comboName] ?? [];

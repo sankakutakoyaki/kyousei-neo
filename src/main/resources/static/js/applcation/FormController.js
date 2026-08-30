@@ -67,47 +67,32 @@ export class FormController {
             new SaveBehavior({
                 beforeSave: async (payload, context) => {
                     if(this.beforeSave){
-                        await this.beforeSave(
-                            payload,
-                            context.form
-                        );
+                        await this.beforeSave(payload, context.form);
                     }
                 },
                 validateBusiness: async (payload) => {
-                    await this.runBusinessValidation(
-                        payload
-                    );
+                    await this.runBusinessValidation(payload);
                 },
                 confirmSave: async (payload) => {
-                    return await this.confirmSave(
-                        payload
-                    );
+                    return await this.confirmSave(payload);
                 },
                 executeSave: async (payload) => {
                     if(!this.saveHandler) return;
                     const res = await this.saveHandler(payload);
                     if(this.showSuccessDialog){
                         DialogService.info(
-                            this.isBulkMode()
-                                ? "一括更新しました"
-                                : "保存しました"
+                            this.isBulkMode() ? "一括更新しました": "保存しました"
                         );
                     }
                     if(this.closeOnSave){
                         DialogService.close(this.formId);
                     }
                     this.controller.setBulkMode(false);
-                    return {
-                        response: res,
-                        id: res?.data,
-                        count: res?.count
-                    };
+                    return {response: res, id: res?.data, count: res?.count};
                 },
                 afterSave: async (result) => {
                     if(this.afterSave){
-                        await this.afterSave(
-                            result.id ?? this.currentEntity?.[this.key]
-                        );
+                        await this.afterSave(result.id ?? this.currentEntity?.[this.key]);
                     }
                 }
             });
@@ -119,29 +104,22 @@ export class FormController {
         if (typeof dataOrId !== "object") {
             if (!this.repository?.find) return;
 
-            const params = this.buildParams
-                ? this.buildParams(dataOrId)
-                : { id: dataOrId };
-
+            const params = this.buildParams ? this.buildParams(dataOrId): { id: dataOrId };
             data = await this.repository.find(params);
         }
-        // const isCreate = !data?.[this.key];
-        const isCreate = !data?.[this.idKey];
 
+        const isCreate = !data?.[this.idKey];
         if (isCreate) {
             const filters = this.controller.state?.filters || {};
-
             Object.entries(filters).forEach(([key, value]) => {
                 if (value == null || value === "") return;
 
                 const kebab = convertKey(key, "camel", "kebab");
-
                 const el = document.querySelector(
                     `#${this.formId} [name="${kebab}"],
                     #${this.formId} [data-key="${kebab}"],
                     #${this.formId} [data-key="${key}"]`
                 );
-
                 if (!el) return;
 
                 if (data[key] == null || data[key] === "") {
@@ -151,23 +129,19 @@ export class FormController {
         }
 
         this.currentEntity = structuredClone(data);
-
         const form = document.getElementById(this.formId);
 
         FormModel.clear(form);
         FormModel.fill(form, data);
-
         await initParentChildLink(form);
 
         // フォームを開いたときは先頭タブ
         const firstTab = form.querySelector(".tab-menu-item");
         const tabPanels = form.querySelectorAll(".tab-panel");
-
         if (firstTab) {
             form.querySelectorAll(".tab-menu-item").forEach(tab => {
                 tab.classList.remove("is-active");
             });
-
             firstTab.classList.add("is-active");
         }
 
@@ -177,7 +151,6 @@ export class FormController {
             });
 
             const firstTabId = firstTab?.dataset.tab;
-
             if (firstTabId) {
                 form.querySelector(`#${firstTabId}`)?.classList.add("is-show");
             }
@@ -214,10 +187,8 @@ export class FormController {
 
         // 動的に開いたフォームにもEnterフォーカスを設定
         setEnterFocus();
-        
         // this.setSubmitEnabled(false);
         this.setSubmitEnabled(this.canSubmit());
-
         // 初期フォーカス
         if (this.initialFocusSelector) {
             requestAnimationFrame(() => {
@@ -254,47 +225,35 @@ export class FormController {
             getTargetIds: (payload) => this.getTargetIds(payload)
         });
         
-        const additionalChanged =
-            this.hasAdditionalChanges?.() ?? false;
+        const additionalChanged = this.hasAdditionalChanges?.() ?? false;
 
         // フォーム変更なし＋追加データ変更なし
         if(payload == null && !additionalChanged){
             DialogService.error("変更がありません");
             return null;
         }
-
         // フォーム変更なしでも明細変更があれば保存可能
         if(payload == null){
             payload = {};
         }
-        
         // 編集時はIDを必ず保持
-        // if(this.currentEntity?.[this.key]){
-        //     payload[this.key] = this.currentEntity[this.key];
-        // }
         if(this.currentEntity?.[this.idKey]){
             payload[this.idKey] = this.currentEntity[this.idKey];
         }
-
         // 楽観ロック用
         if(this.currentEntity?.version != null){
             payload.
             version = this.currentEntity.version;
         }
-
         // 追加データ
         if(this.buildAdditionalPayload){
-            Object.assign(
-                payload,
-                this.buildAdditionalPayload()
-            );
+            Object.assign(payload, this.buildAdditionalPayload());
         }
 
         if(this.isBulkMode() && payload.ids?.length === 0){
             DialogService.error("選択してください");
             return null;
         }
-
         return payload;
     }
 
@@ -357,14 +316,9 @@ export class FormController {
         this.clearErrors();
 
         const form = document.getElementById(this.formId);
-
-        FormModel.fill(
-            form,
-            this.currentEntity ?? {}
-        );
+        FormModel.fill(form,this.currentEntity ?? {});
 
         this.resetAdditional?.();
-
         this.setSubmitEnabled(false);
     }
 
@@ -403,44 +357,24 @@ export class FormController {
 
     canSubmit(){
         const formChanged = this.hasChanges();
-        const additionalChanged =
-            this.hasAdditionalChanges?.() ?? false;
+        const additionalChanged = this.hasAdditionalChanges?.() ?? false;
 
         if(!this.currentEntity || !this.currentEntity[this.idKey]){
             return this.hasValidInput() || additionalChanged;
         }
-
         return formChanged || additionalChanged;
     }
 
-    // setSubmitEnabled(enabled){
-    //     const form = document.getElementById(this.formId);
-    //     if(!form) return;
+    setSubmitEnabled(enabled){
+        const form = document.getElementById(this.formId);
+        if(!form) return;
 
-    //     const btn = form.querySelector('[name="submitBtn"]');
-    //     if(!btn) return;
+        const btn = form.querySelector('[name="submitBtn"]');
+        if(!btn) return;
 
-    //     btn.disabled = !enabled;
-    //     btn.classList.toggle("disabled", !enabled);
-    // }
-setSubmitEnabled(enabled){
-    const form = document.getElementById(this.formId);
-    if(!form) return;
-
-    const btn = form.querySelector('[name="submitBtn"]');
-    if(!btn) return;
-
-    // console.log(
-    //     "setSubmitEnabled:",
-    //     this.formId,
-    //     "enabled =", enabled
-    // );
-
-    // console.trace();
-
-    btn.disabled = !enabled;
-    btn.classList.toggle("disabled", !enabled);
-}
+        btn.disabled = !enabled;
+        btn.classList.toggle("disabled", !enabled);
+    }
 
     updateSubmitState() {
         this.setSubmitEnabled(this.canSubmit());
@@ -457,7 +391,6 @@ setSubmitEnabled(enabled){
 
     getTargetIds(payload){
         if(!this.isBulkMode()){
-            // return [payload[this.key]];
             return [payload[this.idKey]];
         }
         return this.controller?.getSelectedIds?.() ?? [];

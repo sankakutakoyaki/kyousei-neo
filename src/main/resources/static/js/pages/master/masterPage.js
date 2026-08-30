@@ -41,7 +41,7 @@ export const itemMasterPage = () =>
         cancelText: "キャンセル",
         components: {combo: true, input: true},
         model: {
-            pageSize: 500
+            pageSize: 50
         },
     });
 
@@ -59,6 +59,6 @@ export const workMasterPage = () =>
         cancelText: "キャンセル",
         components: {combo: true, input: true},
         model: {
-            pageSize: 500
+            pageSize: 50
         }
     });

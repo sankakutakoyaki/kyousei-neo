@@ -10,7 +10,8 @@
                     'pattern': '\\d*',
                     'placeholder': '000',
                     'index': 1,
-                    'required': 'コードを入力してください。'
+                    'required': 'コードを入力してください。',
+                    'format': 'num'
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
@@ -137,7 +138,8 @@
                 { 
                     'name': 'price1', 
                     'index': 2,
-                    'validate': 'currency'
+                    'validate': 'currency',
+                    'format': 'num'
                 }
             })}"></th:block>
             <div></div>
@@ -153,14 +155,16 @@
                 { 
                     'name': 'price2', 
                     'index': 3,
-                    'validate': 'currency'
+                    'validate': 'currency',
+                    'format': 'num'
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
                     'name': 'price3', 
                     'index': 4,
-                    'validate': 'currency'
+                    'validate': 'currency',
+                    'format': 'num'
                 }
             })}"></th:block>
         </div>
@@ -173,14 +177,16 @@
                 { 
                     'name': 'price7', 
                     'index': 5,
-                    'validate': 'currency'
+                    'validate': 'currency',
+                    'format': 'num'
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
                     'name': 'price8', 
                     'index': 6,
-                    'validate': 'currency'
+                    'validate': 'currency',
+                    'format': 'num'
                 }
             })}"></th:block>
         </div>
@@ -194,14 +200,16 @@
                 { 
                     'name': 'price4', 
                     'index': 7,
-                    'validate': 'currency'
+                    'validate': 'currency',
+                    'format': 'num'
                 }
             })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 { 
                     'name': 'price5', 
                     'index': 8,
-                    'validate': 'currency'
+                    'validate': 'currency',
+                    'format': 'num'
                 }
             })}"></th:block>
         </div>
@@ -214,7 +222,8 @@
                 { 
                     'name': 'price6', 
                     'index': 9,
-                    'validate': 'currency'
+                    'validate': 'currency',
+                    'format': 'num'
                 }
             })}"></th:block>
             <div></div>

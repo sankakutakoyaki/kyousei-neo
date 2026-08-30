@@ -15,6 +15,8 @@ export class TableModel {
         this.pageSize = config.pageSize || 50;
         this.index = null;
         this.result = [];
+        // フィルター後の件数
+        this.filteredCount = 0;
     }
 
     // 基本
@@ -35,16 +37,36 @@ export class TableModel {
     }
 
     // 計算
+    // compute(state){
+    //     for(const key of this.requiredFilters){
+    //         if(state[key] == null){
+    //             this.result = [];
+    //             return;
+    //         }
+    //     }
+    //     let list = [...this.originData];
+    //     list = this.applyFilter(list, state);
+    //     list = this.applySort(list);
+    //     list = this.applyPage(list);
+
+    //     this.result = list;
+    // }
     compute(state){
         for(const key of this.requiredFilters){
             if(state[key] == null){
                 this.result = [];
+                this.filteredCount = 0;
                 return;
             }
         }
         let list = [...this.originData];
+        // フィルター
         list = this.applyFilter(list, state);
+        // フィルター後の件数を保存
+        this.filteredCount = list.length;
+        // ソート
         list = this.applySort(list);
+        // 表示件数に制限
         list = this.applyPage(list);
 
         this.result = list;
@@ -81,10 +103,6 @@ export class TableModel {
         });
     }
 
-    // applyPage(list){
-    //     const start = (this.page - 1) * this.pageSize;
-    //     return list.slice(start, start + this.pageSize);
-    // }
     applyPage(list){
         return list.slice(0, this.pageSize);
     }
@@ -148,5 +166,9 @@ export class TableModel {
 
     getTotalCount(){
         return this.originData.length;
+    }
+
+    getFilteredCount(){
+        return this.filteredCount;
     }
 }

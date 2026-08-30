@@ -38,11 +38,11 @@ export class DataTable {
             // デフォルト + 上書き
             ...defaultModel,
             ...userModel,
-            // filters: {
-            //     ...defaultModel.filters,
-            //     ...(userModel.filters || {})
-            // }
-            filters: userModel.filters ?? defaultModel.filters
+            filters: {
+                ...defaultModel.filters,
+                ...(userModel.filters || {})
+            }
+            // filters: userModel.filters ?? defaultModel.filters
         });
         if(config.data){
             this.model.setOrigin(config.data);
@@ -152,6 +152,7 @@ export class DataTable {
                 onRowClick: this.onRowClick,
                 onDoubleClick: this.onDoubleClick,
                 totalCount: this.model.getTotalCount(),
+                filteredCount: this.model.getFilteredCount(),
                 pageTopButton: this.pageTopButton
             },
             this.model.getViewData()

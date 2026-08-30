@@ -50,7 +50,7 @@ export const recycleMakerPage = () =>
         components: {combo: true, input: true},
         afterSave: refreshMakerChildren,
         model: {
-            pageSize: 500
+            pageSize: 50
         },
         validateBusiness: async (payload, currentEntity) => {
             const code =
@@ -82,7 +82,7 @@ export const recycleManufacturerPage = () =>
         components: {combo: true, input: true},
         model: {
             filters: {code: filterFactory.equals("code")},
-            pageSize: 500
+            pageSize: 50
         },
         // validateBusiness: async (payload) => {
         //     if(!payload.recycleMakerId){
@@ -129,7 +129,7 @@ export const recyclePricePage = async () => {
         checkable: false,
         model: {
             filters: {code: filterFactory.equals("code")},
-            pageSize: 500
+            pageSize: 50
         },
         beforeSave: payload => {
             payload.details = [];

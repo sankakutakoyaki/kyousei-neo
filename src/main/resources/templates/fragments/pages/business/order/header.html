@@ -12,6 +12,35 @@
         </div>
         <div>
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                { 
+                    'text': '荷主',
+                    'id':'primeConstractor01',
+                    'name': 'prime-constractor-id', 
+                    'combo': 'clientComboList',
+                    'top': '-----',
+                    'key': 'prime-constractor-id',
+                    'resolveName':true,
+                    'link': 'primeConstractorOffice01',
+                    'action': 'filter'
+                }}
+            )}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'支店名', 
+                    'id':'primeConstractorOffice01',
+                    'name': 'prime-constractor-office-id',
+                    'combo': 'officeComboList',
+                    'action':'filter',
+                    'top': '-----',
+                    'key':'prime-constractor-office-id',
+                    'resolveName':true,
+                    'parent': 'primeConstractor01',
+                    'linkDefault': 'empty'
+                }}
+            )}"></th:block>
+        </div>
+        <div>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 {
                     'text':'分類', 
                     'id':'category01', 
@@ -89,6 +118,7 @@
                     'id':'primeConstractorOffice02',
                     'name': 'prime-constractor-office-id',
                     'combo': 'officeComboList',
+                    'action':'filter',
                     'top': '-----',
                     'key':'prime-constractor-office-id',
                     'resolveName':true,
@@ -106,7 +136,8 @@
                     'name':'jan-code',
                     'enterValidate':true,
                     'errorMessage':'JANコードは13桁です',
-                    'enterSubmit':true
+                    'enterSubmit':true,
+                    'format': 'num'
                 }}
             )}"></th:block>
             <div class="form-parts">

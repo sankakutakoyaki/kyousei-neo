@@ -59,7 +59,8 @@
                             'text':'受注番号',
                             'id':'request-number11',
                             'name':'request-number',
-                            'index': 2
+                            'index': 2,
+                            'format': 'code'
                         }}
                     )}"></th:block>
                 </div>
@@ -114,7 +115,8 @@
                             'name': 'postal-code', 
                             'resolveId': true, 
                             'type': 'postal', 
-                            'index': 7
+                            'index': 7,
+                            'format': 'num'
                         }
                     })}"></th:block>
                     <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -149,7 +151,8 @@
                             'id':'janCode11',
                             'name':'jan-code',
                             'resolveId': true,
-                            'index': 1
+                            'index': 1,
+                            'format': 'num'
                         }}
                     )}"></th:block>
                     <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -187,7 +190,8 @@
                             'text':'数量',
                             'id':'itemQuantity11',
                             'name':'item-quantity',
-                            'index': 5
+                            'index': 5,
+                            'format': 'num'
                         }}
                     )}"></th:block>
                     <div class="form-parts">
@@ -209,7 +213,8 @@
                             'id':'orderWorkCode11',
                             'name':'order-work-code',
                             'resolveId': true,
-                            'index': 1
+                            'index': 1,
+                            'format': 'code'
                         }}
                     )}"></th:block>
                 </div>
@@ -230,7 +235,8 @@
                             'text':'金額',
                             'id':'orderWorkPrice11',
                             'name':'order-work-price',
-                            'index': 3
+                            'index': 3,
+                            'format': 'num'
                         }}
                     )}"></th:block>
                     <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -238,7 +244,8 @@
                             'text':'数量',
                             'id':'orderWorkQuantity11',
                             'name':'order-work-quantity',
-                            'index': 4
+                            'index': 4,
+                            'format': 'num'
                         }}
                     )}"></th:block>
                     <div class="form-parts">
@@ -263,7 +270,8 @@
                     'text':'JANコード',
                     'id':'order-item-jan-code',
                     'name':'jan-code',
-                    'index': 1
+                    'index': 1,
+                    'format': 'num'
                 }
             })}"></th:block>
         </div>
@@ -308,7 +316,8 @@
                     'text':'数量',
                     'id':'order-item-quantity',
                     'name':'item-quantity',
-                    'index': 5
+                    'index': 5,
+                    'format': 'num'
                 }
             })}"></th:block>
         </div>

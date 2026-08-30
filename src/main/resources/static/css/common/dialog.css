@@ -55,7 +55,6 @@
     overflow: auto;
     padding: 2rem;
     justify-items: start;
-    /* height: fit-content; */
 }
 
 .dialog-footer {
@@ -72,23 +71,17 @@
 .dialog-footer>button {
     width: fit-content;
     min-width: 5rem;
-    /* padding: 0 1rem; */
 }
 
 /******************************************************************************************************* 入力フォーム */
 
 .msg-dialog,
 .form-dialog {
-    /* display: grid;
-    grid-template-rows: auto auto auto;
-    position: fixed; */
-    /* z-index: 100; */
     width: fit-content;
     height: fit-content;
     inset: 0;
     margin: auto;
     background-color: var(--bg);
-    /* max-height: 90%; */
     border-radius: .5rem;
     border: .5px solid var(--shadow);
     box-shadow: 0 0 8px var(--shadow);
@@ -107,14 +100,10 @@
 .form-dialog>.dialog-main {
     height: auto;
     display: grid;
-    /* grid-template-rows: auto auto auto; */
     grid-template-rows: auto 1fr auto;
 }
 
 .msg-dialog-content {
-    /* display: grid;
-    grid-template-rows: auto auto auto; */
-    /* max-height: 90%; */
     min-width: 15rem;
     min-height: 8rem;
     overflow: auto;
@@ -134,11 +123,9 @@
     position: fixed;
     inset: 0;
     z-index: 9999;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     background: rgba(0, 0, 0, 0.7);
 }
 
@@ -148,10 +135,8 @@
 
 .barcode-scan-content {
     position: relative;
-
     width: min(90vw, 720px);
     max-width: 720px;
-
     background: white;
     padding: 20px;
     box-sizing: border-box;
@@ -159,26 +144,19 @@
 
 #barcode-video {
     display: block;
-
     width: 100%;
     height: auto;
-
     background: black;
-
     object-fit: cover;
 }
 
 .barcode-scan-frame {
     position: absolute;
-
     left: 10%;
     right: 10%;
     top: 35%;
-
     height: 30%;
-
     border: 2px solid white;
-
     pointer-events: none;
 }
 
@@ -189,7 +167,6 @@
 
 #barcode-scan-cancel {
     display: block;
-
     margin: 15px auto 0;
     padding: 8px 24px;
 }

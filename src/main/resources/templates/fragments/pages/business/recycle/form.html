@@ -10,7 +10,8 @@
                     'validate':'recycle',
                     'enter-validate':true,
                     'error-message':'リサイクル券番号は13桁です',
-                    'index': 1
+                    'index': 1,
+                    'format': 'recycle'
                 }}
             )}"></th:block>
             <div class="form-parts">
@@ -57,7 +58,8 @@
                     'name':'item-code',
                     'resolveId':true,
                     'index':3,
-                    'submit':'none'
+                    'submit':'none',
+                    'format': 'num'
                 }}
             )}"></th:block>
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
@@ -90,7 +92,8 @@
                     'name':'maker-code',
                     'resolveId':true,
                     'submit':'none',
-                    'index':4
+                    'index':4,
+                    'format': 'num'
                 }}
             )}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -184,7 +187,8 @@
                     'name':'item-code',
                     'resolveId':true,
                     'index':12,
-                    'submit':'none'
+                    'submit':'none',
+                    'format': 'num'
                 }}
             )}"></th:block>
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
@@ -216,7 +220,8 @@
                     'name':'maker-code',
                     'resolveId':true,
                     'submit':'none',
-                    'index':13
+                    'index':13,
+                    'format': 'num'
                 }}
             )}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -229,13 +234,6 @@
                     'disabled':true
                 }}
             )}"></th:block>
-            <!-- <input
-                type="hidden"
-                data-role="hidden-id"
-                name="maker-id"
-                data-key="maker-id"
-                data-skip-if-null="true"
-                data-zero-to-null="true"> -->
             <input
                 type="hidden"
                 data-role="hidden-id"

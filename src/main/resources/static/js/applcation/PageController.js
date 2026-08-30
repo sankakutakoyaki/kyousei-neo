@@ -348,26 +348,7 @@ export class PageController {
         this.updateButtons();
         return data;
     }
-    // scrollToRow(id){
-    //     if(!id) return;
-
-    //     const row = document.querySelector(`[data-id="${id}"]`);
-    //     if(row){
-    //         row.scrollIntoView({block:"center"});
-    //     }
-    // }
-// scrollToRow(id){
-//     if(!id) return;
-
-//     const row = document.querySelector(`[data-id="${id}"]`);
-
-//     console.log("scroll target id =", id);
-//     console.log("scroll target row =", row);
-
-//     if(row){
-//         row.scrollIntoView({block:"center"});
-//     }
-// }
+    
     isBulkMode(){
         return !!this.state.bulkMode;
     }

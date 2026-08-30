@@ -139,7 +139,8 @@
                         'name':'item-code',
                         'resolveId':true,
                         'index':4,
-                        'submit':'none'
+                        'submit':'none',
+                        'format': 'num'
                     }}
                 )}"></th:block>
                 <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
@@ -172,7 +173,8 @@
                         'name':'maker-code',
                         'resolveId':true,
                         'submit':'none',
-                        'index':5
+                        'index':5,
+                        'format': 'num'
                     }}
                 )}"></th:block>
                 <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -185,13 +187,6 @@
                         'disabled':true
                     }}
                 )}"></th:block>
-                <!-- <input
-                    type="hidden"
-                    data-role="hidden-id"
-                    name="maker-id"
-                    data-key="maker-id"
-                    data-skip-if-null="true"
-                    data-zero-to-null="true"> -->
                 <input
                     type="hidden"
                     data-role="hidden-id"

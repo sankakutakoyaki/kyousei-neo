@@ -30,6 +30,8 @@ export async function init() {
     list.init();
     await list.executeAction("search");
 
+    // PDF取込
+    initOrderPdfDrop(list);
 
     // tab2
     const items = orderItemListPage();
@@ -37,12 +39,7 @@ export async function init() {
     items.init();
     await items.executeAction("search");
 
-    // const itemMaster = orderItemMasterPage();
-    // registerController("orderItemMaster", itemMaster);
-    // itemMaster.init();
-
     // JANスキャン
-    // initBarcodeScanner();
     initBarcodeSearch(items);
     initJanCodeInput(items);
     initItemMakerInput(items);
@@ -78,10 +75,14 @@ export const orderListPage = () =>
             const cate = document.getElementById("category01")?.value;
             const from = document.getElementById("date-from01")?.value;
             const to = document.getElementById("date-to01")?.value;
+            const primeConstractorId = document.getElementById("primeConstractor01")?.value;
+            const primeConstractorOfficeId = document.getElementById("primeConstractorOffice01")?.value;
             return {
                 state: APP.cache.common.state.INITIAL,
                 compState: APP.cache.common.state.COMPLETE,
                 category: cate,
+                primeConstractorId: primeConstractorId,
+                primeConstractorOfficeId: primeConstractorOfficeId,
                 dateFrom: from,
                 dateTo: toExclusiveDate(to)
             };
@@ -184,7 +185,6 @@ export const orderItemListPage = () =>
                     idKey: "itemMasterId",
                     repository: ItemMasterRepository,
                     saveHandler: ItemMasterRepository.save,
-                    // saveHandler: OrderItemRepository.save,
                     submitText: "保存",
                     cancelText: "キャンセル",
                     initialFocusSelector: '[name="item-model"]',
@@ -219,44 +219,16 @@ export const orderItemListPage = () =>
         },
     });
 
-// function initBarcodeSearch(controller) {
-//     const scanButton = document.getElementById("btn-barcode-scan");
-//     if(!scanButton){
-//         console.warn("JANスキャンボタンが見つかりません。");
-//         return;
-//     }
-
-//     scanButton.addEventListener("click", () => {
-//         BarcodeScanner.open({
-//             onScan: async (code) => {
-//                 // console.log("読み取ったJAN:", code);
-//                 await searchByJanCode(controller, code);
-//             }
-//         });
-//     });
-// }
 async function initBarcodeSearch(controller) {
-    document
-        .getElementById("btn-barcode-scan")
-        ?.addEventListener("click", async () => {
-            document
-                .getElementById("barcode-scan-dialog")
-                ?.classList.remove("none");
-            await BarcodeScanner.open({
-                onScan: async (code) => {
-
-                    await searchByJanCode(
-                        controller,
-                        code
-                    );
-                }
-            });
+    document.getElementById("btn-barcode-scan")?.addEventListener("click", async () => {
+        document.getElementById("barcode-scan-dialog")?.classList.remove("none");
+        await BarcodeScanner.open({
+            onScan: async (code) => {await searchByJanCode(controller, code);}
         });
-    document
-        .getElementById("barcode-scan-cancel")
-        ?.addEventListener("click", () => {
-            BarcodeScanner.close();
-        });
+    });
+    document.getElementById("barcode-scan-cancel")?.addEventListener("click", () => {
+        BarcodeScanner.close();
+    });
 }
 
 function initJanCodeInput(controller) {
@@ -269,31 +241,24 @@ function initJanCodeInput(controller) {
         if (e.key !== "Enter") {
             return;
         }
-
         e.preventDefault();
 
         const janCode = input.value.trim();
-
         if (!janCode) {
             const modelInput = document.getElementById("item-model01");
-
             if (modelInput) {
                 modelInput.value = "";
             }
-
             controller.setFilter("itemModel", null);
             controller.dataTable.setData([]);
             controller.dataTable.reload();
-
             return;
         }
-
         await searchByJanCode(controller, janCode);
     });
 }
 function initItemMakerInput(controller) {
     const input = document.getElementById("item-maker01");
-
     if (!input) {
         return;
     }
@@ -309,7 +274,6 @@ function initItemMakerInput(controller) {
 
 function initItemNameInput(controller) {
     const input = document.getElementById("item-name01");
-
     if (!input) {
         return;
     }
@@ -325,7 +289,6 @@ function initItemNameInput(controller) {
 
 function initItemModelInput(controller) {
     const input = document.getElementById("item-model01");
-
     if (!input) {
         return;
     }
@@ -342,21 +305,17 @@ function initItemModelInput(controller) {
 async function searchByJanCode(controller, janCode) {
     const janInput = document.getElementById("jan-code01");
     const modelInput = document.getElementById("item-model01");
-
     if(janInput){
         janInput.value = janCode;
     }
-
     // 前回の商品情報をクリア
     if(modelInput){
         modelInput.value = "";
     }
-
     const item = await ItemMasterRepository.findByJanCode({
         state: APP.cache.common.state.INITIAL,
         janCode
     });
-
     if(!item){
         if(modelInput){
             modelInput.value = "";
@@ -367,55 +326,34 @@ async function searchByJanCode(controller, janCode) {
 
         // 商品マスター登録フォームを開く
         await controller.openForm("itemMaster", null);
-
         // JANコードを登録フォームへセット
         const form = document.getElementById("form-03");
-
         if(form){
             const janInput = form.querySelector('[name="jan-code"]');
-
             if(janInput){
                 janInput.value = janCode;
             }
         }
-
         return;
     }
 
     const makerInput = document.getElementById("item-maker01");
     const nameInput = document.getElementById("item-name01");
-    // const modelInput = document.getElementById("item-model01");
-
     if(makerInput){
         makerInput.value = item.itemMaker ?? "";
     }
-
     if(nameInput){
         nameInput.value = item.itemName ?? "";
     }
-
     if(modelInput){
         modelInput.value = item.itemModel ?? "";
     }
-
-    // if(!item.itemModel){
-    //     controller.dataTable.setData([]);
-    //     controller.dataTable.reload();
-
-    //     openMsgDialog({
-    //         message: "商品マスターに型番が登録されていません。",
-    //         color: "red"
-    //     });
-    //     return;
-    // }
-
     controller.setFilter("janCode", janCode);
     controller.setFilter("itemMaker", null);
     controller.setFilter("itemName", null);
     controller.setFilter("itemModel", null);
 
     const data = await controller.refresh();
-
     if (data.length === 0) {
         openMsgDialog({
             message: `型番「${item.itemModel}」の受注はありません。`,
@@ -438,13 +376,58 @@ async function searchOrderItems(controller) {
     controller.setFilter("itemModel", itemModel || null);
 
     const data = await controller.refresh();
-
     if (data.length === 0) {
         openMsgDialog({
             message: "条件に一致する受注商品がありません。",
             color: "blue"
         });
     }
-
     return data;
+}
+
+function initOrderPdfDrop(controller) {
+    const dropArea = document.getElementById("order-pdf-drop-area");
+    if (!dropArea) {
+        return;
+    }
+    // ドラッグ中
+    dropArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropArea.classList.add("drag-over");
+    });
+    // ドラッグ終了
+    dropArea.addEventListener("dragleave", () => {
+        dropArea.classList.remove("drag-over");
+    });
+    // ドロップ
+    dropArea.addEventListener("drop", async (e) => {
+        e.preventDefault();
+        dropArea.classList.remove("drag-over");
+        const files = e.dataTransfer?.files;
+        if (!files || files.length === 0) {
+            return;
+        }
+        const file = files[0];
+        await importOrderPdf(controller, file);
+    });
+}
+
+async function importOrderPdf(controller, file) {
+    // 荷主
+    const primeConstractorId = document.getElementById("primeConstractor01")?.value?.trim();
+    // 荷主未選択
+    if (!primeConstractorId || primeConstractorId === "0") {
+        openMsgDialog({message: "荷主を選択してください。", color: "red"});
+        return;
+    }
+    // PDFチェック
+    if (file.type !== "application/pdf") {
+        openMsgDialog({message: "PDFファイルを選択してください。", color: "red"});
+        return;
+    }
+    console.log("PDF取込開始");
+    console.log("荷主ID:", primeConstractorId);
+    console.log("ファイル:", file.name);
+
+    // ここからサーバーへ送信
 }

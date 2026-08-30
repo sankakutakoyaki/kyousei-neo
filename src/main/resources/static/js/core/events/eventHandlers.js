@@ -4,6 +4,7 @@ import { handleEnterValidate } from "./actions/enterAction.js";
 import { domActions } from "./actions/domActions.js";
 import { resolveController } from "./controllerResolver.js";
 import { DialogService } from "../ui/dialog/DialogService.js";
+import { formatters } from "../behavior/formatters.js";
 
 let initialized = false;
 
@@ -19,14 +20,15 @@ export function initEvents(){
 }
 
 function handleEvent(e){
+    // 入力時の共通フォーマット
+    if(e.type === "input"){
+        handleInputFormat(e);
+    }
 
     const el = e.target.closest("[data-action]");
     if(!el) return;
 
-    // const controller = resolveController(el);
-    // const actions = el.dataset.action?.split(/\s+/).filter(Boolean) ?? [];
     const actions = el.dataset.action?.split(/\s+/).filter(Boolean) ?? [];
-
     // select-on-focus は focusin 専用なのでここでは処理しない
     const controllerActions = actions.filter(
         action => action !== "select-on-focus"
@@ -37,16 +39,12 @@ function handleEvent(e){
     }
 
     const controller = resolveController(el);
-    // // DOM actionsだけならcontrollerは不要
-    // const hasControllerAction = actions.some(action => !domActions[action]);
-    // const controller = hasControllerAction ? resolveController(el): null;
     const keydownActions = [
         "date-arrow",
         "search"
     ];
 
     controllerActions.forEach(action => {
-    // actions.forEach(action => {
         // keydown制限
         if(e.type === "keydown"){
             if(e.key !== "Enter") return;
@@ -102,4 +100,27 @@ export function handleValidationError(error){
         });
     }
     DialogService.error(error.message);
+}
+
+function handleInputFormat(e){
+    const el = e.target;
+    if(!(el instanceof HTMLInputElement)){
+        return;
+    }
+
+    const type = el.dataset.format;
+    if(!type){
+        return;
+    }
+
+    const formatter = formatters[type];
+    if(!formatter){
+        return;
+    }
+
+    const value = el.value;
+    const formatted = formatter(value);
+    if(value !== formatted){
+        el.value = formatted;
+    }
 }

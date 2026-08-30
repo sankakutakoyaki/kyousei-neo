@@ -3,12 +3,19 @@
 #header-01 {
     display: grid;
     grid-template-columns: 1fr;
+    row-gap: .5rem;
     &>div:nth-of-type(1) {
         display: grid;
         grid-template-columns: 1fr auto;
         column-gap: 3rem;
     }
     &>div:nth-of-type(2) {
+        display: grid;
+        grid-template-columns: auto minmax(auto, 1fr) 1fr;
+        column-gap: .5rem;
+        margin-left: 1rem;
+    }
+    &>div:nth-of-type(3) {
         display: grid;
         grid-template-columns: auto auto auto auto 1fr;
         column-gap: .5rem;
@@ -242,4 +249,26 @@
         grid-template-rows: 1fr;
         margin-top: 0;
     }
+}
+
+.order-pdf-drop-area {
+    position: relative;
+    min-height: 500px;
+}
+
+/* .order-pdf-drop-message {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 6px 12px;
+    border: 1px dashed #aaa;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0.6;
+    pointer-events: none;
+} */
+
+.order-pdf-drop-area.drag-over {
+    outline: 3px dashed #888;
+    background-color: rgba(0, 0, 0, 0.05);
 }
