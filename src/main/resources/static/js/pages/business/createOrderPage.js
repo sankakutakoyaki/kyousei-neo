@@ -2,7 +2,7 @@
 
 import { createCrudPage } from "../../core/page/createCrudPage.js";
 import { OrderRepository } from "../../repositories/business/order/OrderRepository.js";
-import { FormController } from "../../applcation/FormController.js";
+import { FormController } from "../../application/FormController.js";
 // import { convertKey } from "../../util/keyCaseConverter.js";
 // import { clearFormExceptSkipped } from "../../core/form/util/clearForm.js";
 // import { filterFactory } from "../../util/filterFactory.js";

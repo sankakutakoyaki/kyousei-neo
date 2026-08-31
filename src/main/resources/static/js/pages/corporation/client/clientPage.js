@@ -2,14 +2,14 @@
 
 import { initCommon } from "../../../bootstrap/initPage.js";
 import { createClientCompanyColumns, createOfficeColumns, createStaffColumns } from "./columns.js";
-import { registerController } from "../../../applcation/controllerRegistry.js";
+import { registerController } from "../../../application/controllerRegistry.js";
 import { filterFactory } from "../../../util/filterFactory.js";
 import { initPageCache } from "../../../bootstrap/initPageCache.js";
 import { initParentChildLink } from "../../../util/link.js";
 import { CompanyService } from "../../../services/corporation/company/CompanyService.js";
 import { OfficeRepository } from "../../../repositories/corporation/company/OfficeRepository.js";
 import { StaffRepository } from "../../../repositories/corporation/company/StaffRepository.js";
-import { getController } from "../../../applcation/controllerRegistry.js";
+import { getController } from "../../../application/controllerRegistry.js";
 import { ClientCompanyService } from "../../../services/corporation/company/ClientCompanyService.js";
 import { createMasterPage } from "../../../core/page/createMasterPage.js";
 

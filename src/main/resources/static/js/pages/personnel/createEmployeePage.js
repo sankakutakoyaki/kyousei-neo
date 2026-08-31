@@ -1,7 +1,7 @@
 "use strict";
 
 import { filterFactory } from "../../util/filterFactory.js";
-import { EmployeeRepository } from "../../repositories/prsonnel/employee/EmployeeRepository.js";
+import { EmployeeRepository } from "../../repositories/personnel/employee/EmployeeRepository.js";
 import { createMasterPage } from "../../core/page/createMasterPage.js";
 
 export function createEmployeePage(config){

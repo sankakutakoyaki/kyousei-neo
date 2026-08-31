@@ -7,18 +7,18 @@ import { createCrudPage } from "../../../core/page/createCrudPage.js";
 import { OrderRepository } from "../../../repositories/business/order/OrderRepository.js";
 import { OrderItemRepository } from "../../../repositories/business/order/OrderItemRepository.js";
 import { createOrderListColumns, createOrderItemListColumns } from "./columns.js";
-import { registerController } from "../../../applcation/controllerRegistry.js";
+import { registerController } from "../../../application/controllerRegistry.js";
 import { initParentChildLink } from "../../../util/link.js";
 import { getToday } from "../../../util/time.js";
 import { toExclusiveDate } from "../../../util/date.js";
 import { createOrderPage } from "../createOrderPage.js";
-import { getController } from "../../../applcation/controllerRegistry.js";
+import { getController } from "../../../application/controllerRegistry.js";
 import { filterFactory } from "../../../util/filterFactory.js";
 import { BarcodeScanner } from "../../../util/barcodeScanner.js";
 import { ItemMasterRepository } from "../../../repositories/master/item/itemMasterRepository.js";
 import { DataTable } from "../../../core/table/DataTable.js";
 import { openMsgDialog } from "../../../core/ui/dialog/dialogCore.js";
-import { FormController } from "../../../applcation/FormController.js";
+import { FormController } from "../../../application/FormController.js";
 import { initOrderPdfImport } from "./orderPdfImport.js";
 
 export async function init() {

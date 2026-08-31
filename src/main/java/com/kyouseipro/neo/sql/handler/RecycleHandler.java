@@ -9,7 +9,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import com.kyouseipro.neo.common.enums.system.QueryKind;
-import com.kyouseipro.neo.domain.business.api.recycle.RecycleRepository;
+import com.kyouseipro.neo.domain.business.recycle.repository.RecycleRepository;
 import com.kyouseipro.neo.interfaces.sql.QueryHandler;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;

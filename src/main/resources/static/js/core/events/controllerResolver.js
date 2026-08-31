@@ -1,6 +1,6 @@
 "use strict"
 
-import { getController } from "../../applcation/controllerRegistry.js";
+import { getController } from "../../application/controllerRegistry.js";
 
 export function resolveController(el){
     const name =

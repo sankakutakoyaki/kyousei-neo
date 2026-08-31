@@ -1,6 +1,6 @@
 "use strict"
 
-import { CompanyRepository } from "../../../repositories/corporation/company/CompanyRepository";
+import { CompanyRepository } from "../../../repositories/corporation/company/CompanyRepository.js";
 
 export const PartnerCompanyService = {
     async search(params = {}){

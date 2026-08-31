@@ -1,6 +1,6 @@
 "use strict"
 
-import { getController } from "../../../applcation/controllerRegistry.js";
+import { getController } from "../../../application/controllerRegistry.js";
 import { toggleScrollbar } from "../../table/tableRender.js";
 
 export function handleTab(event, el){

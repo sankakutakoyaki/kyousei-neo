@@ -7,13 +7,13 @@ import { createRecycleListColumns,
          createRecycleDeliveryColumns, 
          createRecycleShippingColumns, 
          createRecycleLossColumns } from "./columns.js";
-import { registerController } from "../../../applcation/controllerRegistry.js";
+import { registerController } from "../../../application/controllerRegistry.js";
 import { initParentChildLink } from "../../../util/link.js";
 import { getToday } from "../../../util/time.js";
 import { toExclusiveDate } from "../../../util/date.js";
 import { RecycleRepository } from "../../../repositories/business/recycle/RecycleRepository.js";
 import { createRecyclePage } from "../createRecyclePage.js";
-import { getController } from "../../../applcation/controllerRegistry.js";
+import { getController } from "../../../application/controllerRegistry.js";
 import { BarcodeScanner } from "../../../util/barcodeScanner.js";
 
 export async function init() {

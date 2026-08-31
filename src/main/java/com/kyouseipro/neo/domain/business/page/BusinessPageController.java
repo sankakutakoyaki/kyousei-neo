@@ -13,7 +13,7 @@ import com.kyouseipro.neo.common.enums.code.OrderCategory;
 import com.kyouseipro.neo.common.enums.code.RecycleCategory;
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.util.EnumUtil;
-import com.kyouseipro.neo.domain.business.api.recycle.RecycleService;
+import com.kyouseipro.neo.domain.business.recycle.application.RecycleService;
 import com.kyouseipro.neo.domain.corporation.api.company.CompanyService;
 import com.kyouseipro.neo.domain.corporation.api.office.OfficeService;
 import com.kyouseipro.neo.domain.corporation.api.staff.StaffService;

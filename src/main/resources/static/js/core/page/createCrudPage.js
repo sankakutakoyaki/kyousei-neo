@@ -1,7 +1,7 @@
 "use strict";
 
-import { PageController } from "../../applcation/PageController.js";
-import { FormController } from "../../applcation/FormController.js";
+import { PageController } from "../../application/PageController.js";
+import { FormController } from "../../application/FormController.js";
 import { DataTable } from "../table/DataTable.js";
 
 export function createCrudPage(config){

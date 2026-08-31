@@ -3,11 +3,11 @@
 import { initCommon } from "../../../bootstrap/initPage.js";
 import { initPageCache } from "../../../bootstrap/initPageCache.js";
 import { createPartnerCompanyColumns, createPartnerEmployeeColumns } from "./columns.js";
-import { registerController } from "../../../applcation/controllerRegistry.js";
+import { registerController } from "../../../application/controllerRegistry.js";
 import { filterFactory } from "../../../util/filterFactory.js";
 import { CompanyService } from "../../../services/corporation/company/CompanyService.js";
 import { createEmployeePage } from "../../personnel/createEmployeePage.js";
-import { getController } from "../../../applcation/controllerRegistry.js";
+import { getController } from "../../../application/controllerRegistry.js";
 import { createMasterPage } from "../../../core/page/createMasterPage.js";
 
 export async function init() {

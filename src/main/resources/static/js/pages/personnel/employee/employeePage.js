@@ -4,7 +4,7 @@ import { initCommon } from "../../../bootstrap/initPage.js";
 import { initPageCache } from "../../../bootstrap/initPageCache.js";
 import { createEmployeeColumns } from "./columns.js";
 import { createEmployeePage } from "../createEmployeePage.js";
-import { registerController } from "../../../applcation/controllerRegistry.js";
+import { registerController } from "../../../application/controllerRegistry.js";
 
 export async function init() {
     await initCommon();

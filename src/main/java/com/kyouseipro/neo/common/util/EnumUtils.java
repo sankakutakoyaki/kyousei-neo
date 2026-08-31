@@ -13,8 +13,7 @@ public class EnumUtils {
      * @param <E>    CodeInterfaceを実装したEnumクラス
      * @return
      */
-    @SuppressWarnings("rawtypes")
-    public static <E extends Enum & CodeEnum> E enumValueOf(Class<E> target, int num) {
+    public static <E extends Enum<E> & CodeEnum> E enumValueOf(Class<E> target, int num) {
         return Arrays.stream(target.getEnumConstants())
                 .filter(data -> data.getCode() == num)
                 .findFirst()
