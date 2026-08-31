@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +32,7 @@ public class OrderPdfImportService {
     private final OrderPdfImportRepository orderPdfImportRepository;
     private final LocalOcrService localOcrService;
     private final OrderOcrLayoutRepository orderOcrLayoutRepository;
+    private final ObjectMapper objectMapper;
 
     public OrderPdfImportResult save(String primeConstractorIdValue, MultipartFile file) {
         long primeConstractorId = parsePrimeConstractorId(primeConstractorIdValue);
@@ -105,13 +108,13 @@ public class OrderPdfImportService {
             .collect(java.util.stream.Collectors.toMap(OrderOcrLayout::fieldKey, layout -> new HeiwadoOcrLayout.OcrRegion(layout.x(), layout.y(), layout.width(), layout.height())));
         if (regions.isEmpty()) regions = HeiwadoOcrLayout.REGIONS;
         Map<String, String> result = localOcrService.extractRegions(file.path(), regions);
-        orderPdfImportRepository.saveOcrResult(orderImportId, result.toString());
+        orderPdfImportRepository.saveOcrResult(orderImportId, toJson(result));
         return result;
     }
 
     public void saveCandidate(long orderImportId, Map<String, String> candidate) {
         findFile(orderImportId);
-        orderPdfImportRepository.saveOcrResult(orderImportId, candidate.toString());
+        orderPdfImportRepository.saveOcrResult(orderImportId, toJson(candidate));
     }
 
     public byte[] preview(long orderImportId) {
@@ -157,6 +160,14 @@ public class OrderPdfImportService {
             Files.deleteIfExists(destination);
         } catch (IOException e) {
             // DB登録失敗時に元の例外を優先する。
+        }
+    }
+
+    private String toJson(Map<String, String> values) {
+        try {
+            return objectMapper.writeValueAsString(values);
+        } catch (JsonProcessingException e) {
+            throw new SystemException("OCR結果を保存形式に変換できませんでした。", e);
         }
     }
 }
