@@ -6,6 +6,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.http.MediaType;
@@ -25,6 +27,9 @@ public class OrderPdfImportService {
     private static final byte[] PDF_SIGNATURE = "%PDF-".getBytes(StandardCharsets.US_ASCII);
 
     private final UploadConfig uploadConfig;
+    private final OrderPdfImportRepository orderPdfImportRepository;
+    private final LocalOcrService localOcrService;
+    private final OrderOcrLayoutRepository orderOcrLayoutRepository;
 
     public OrderPdfImportResult save(String primeConstractorIdValue, MultipartFile file) {
         long primeConstractorId = parsePrimeConstractorId(primeConstractorIdValue);
@@ -32,6 +37,7 @@ public class OrderPdfImportService {
 
         String originalFileName = file.getOriginalFilename();
         String storedFileName = UUID.randomUUID() + ".pdf";
+        String relativePath = "order-pdf/" + primeConstractorId + "/" + storedFileName;
         Path directory = uploadConfig.getUploadDirectory()
             .resolve("order-pdf")
             .resolve(Long.toString(primeConstractorId));
@@ -46,11 +52,70 @@ public class OrderPdfImportService {
             throw new SystemException("受注伝票PDFの保存に失敗しました。", e);
         }
 
+        long orderImportId;
+        try {
+            orderImportId = orderPdfImportRepository.insert(
+                primeConstractorId,
+                originalFileName,
+                storedFileName,
+                relativePath,
+                file.getContentType(),
+                file.getSize()
+            );
+        } catch (RuntimeException e) {
+            deleteSavedFile(destination);
+            throw e;
+        }
+
         return new OrderPdfImportResult(
+            orderImportId,
             primeConstractorId,
             originalFileName,
             storedFileName
         );
+    }
+
+    public List<OrderPdfImportListItem> findByPrimeConstractorId(String primeConstractorIdValue) {
+        return orderPdfImportRepository.findByPrimeConstractorId(
+            parsePrimeConstractorId(primeConstractorIdValue)
+        );
+    }
+
+    public OrderPdfImportFile findFile(long orderImportId) {
+        if (orderImportId <= 0) {
+            throw new BusinessException("取込PDFの指定が不正です。");
+        }
+
+        OrderPdfImportFile file = orderPdfImportRepository.findFile(orderImportId);
+        if (file == null) {
+            throw new BusinessException("取込PDFが見つかりません。");
+        }
+
+        Path path = uploadConfig.getUploadDirectory().resolve(file.path()).normalize();
+        if (!path.startsWith(uploadConfig.getUploadDirectory()) || !Files.isRegularFile(path)) {
+            throw new BusinessException("取込PDFが見つかりません。");
+        }
+        return new OrderPdfImportFile(file.originalFileName(), path);
+    }
+
+    public Map<String, String> recognizeHeiwado(long orderImportId) {
+        OrderPdfImportFile file = findFile(orderImportId);
+        long primeConstractorId = orderPdfImportRepository.findPrimeConstractorId(orderImportId);
+        Map<String, HeiwadoOcrLayout.OcrRegion> regions = orderOcrLayoutRepository.find(primeConstractorId).stream()
+            .collect(java.util.stream.Collectors.toMap(OrderOcrLayout::fieldKey, layout -> new HeiwadoOcrLayout.OcrRegion(layout.x(), layout.y(), layout.width(), layout.height())));
+        if (regions.isEmpty()) regions = HeiwadoOcrLayout.REGIONS;
+        Map<String, String> result = localOcrService.extractRegions(file.path(), regions);
+        orderPdfImportRepository.saveOcrResult(orderImportId, result.toString());
+        return result;
+    }
+
+    public void saveCandidate(long orderImportId, Map<String, String> candidate) {
+        findFile(orderImportId);
+        orderPdfImportRepository.saveOcrResult(orderImportId, candidate.toString());
+    }
+
+    public byte[] preview(long orderImportId) {
+        return localOcrService.renderFirstPage(findFile(orderImportId).path());
     }
 
     private long parsePrimeConstractorId(String value) {
@@ -84,6 +149,14 @@ public class OrderPdfImportService {
             }
         } catch (IOException e) {
             throw new SystemException("PDFファイルを確認できませんでした。", e);
+        }
+    }
+
+    private void deleteSavedFile(Path destination) {
+        try {
+            Files.deleteIfExists(destination);
+        } catch (IOException e) {
+            // DB登録失敗時に元の例外を優先する。
         }
     }
 }

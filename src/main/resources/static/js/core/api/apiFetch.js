@@ -34,7 +34,7 @@ export async function apiFetch(url, {
 
         if (data instanceof FormData) {
             body = data;
-        } else if (data && data.constructor === Object) {
+        } else if (data && (data.constructor === Object || Array.isArray(data))) {
             headers["Content-Type"] = "application/json";
             body = JSON.stringify(data);
         } else {

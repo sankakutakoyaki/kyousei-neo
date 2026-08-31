@@ -274,3 +274,57 @@
     border: 2px dashed grey;
     background-color: rgba(0, 0, 0, 0.05);
 }
+
+.order-pdf-import-list {
+    margin: 1rem;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.order-pdf-import-list h2 {
+    margin: 0 0 .5rem;
+    font-size: 1rem;
+}
+
+.order-pdf-import-list p {
+    margin: 0;
+}
+
+.order-pdf-import-list ul {
+    margin: .5rem 0 0;
+    padding-left: 1.5rem;
+}
+
+.order-pdf-import-list li {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+
+.order-pdf-import-list li a {
+    flex: 1;
+}
+
+.order-pdf-import-drop-area {
+    display: grid;
+    place-items: center;
+    min-height: 12rem;
+    margin: 1rem 0;
+    border: 2px dashed #999;
+    color: #666;
+}
+
+#tab-02 { position: relative; }
+.order-pdf-drop-overlay { display: none; position: absolute; inset: 0; z-index: 10; place-items: center; border: 3px dashed #777; background: rgba(255,255,255,.86); color: #333; font-size: 1.5rem; pointer-events: none; }
+#tab-02.drag-over .order-pdf-drop-overlay { display: grid; }
+
+#order-ocr-layout-preview img {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+}
+
+#order-ocr-layout-preview { position: relative; max-height: 70vh; overflow: auto; }
+.ocr-layout-box { position: absolute; box-sizing: border-box; border: 2px solid #e53935; background: rgba(229,57,53,.12); color: #b71c1c; font-size: 12px; cursor: move; user-select: none; overflow: hidden; }
+.ocr-layout-resize-handle { position: absolute; right: 0; bottom: 0; width: 14px; height: 14px; background: #e53935; cursor: nwse-resize; }

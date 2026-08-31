@@ -3,6 +3,10 @@ package com.kyouseipro.neo.domain.business.api.order;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -23,7 +27,10 @@ class OrderPdfImportServiceTest {
     @Test
     void savesPdfUnderTheSelectedPrimeConstractorDirectory() throws Exception {
         OrderPdfImportService service = new OrderPdfImportService(
-            new UploadConfig(temporaryDirectory.toString())
+            new UploadConfig(temporaryDirectory.toString()),
+            repositoryReturning(1L),
+            mock(LocalOcrService.class),
+            mock(OrderOcrLayoutRepository.class)
         );
         MockMultipartFile file = new MockMultipartFile(
             "file",
@@ -39,6 +46,7 @@ class OrderPdfImportServiceTest {
             .resolve("123")
             .resolve(result.storedFileName());
         assertEquals(123L, result.primeConstractorId());
+        assertEquals(1L, result.orderImportId());
         assertEquals("order.pdf", result.originalFileName());
         assertTrue(Files.exists(savedFile));
         assertEquals("%PDF-1.7\nexample", Files.readString(savedFile));
@@ -47,7 +55,10 @@ class OrderPdfImportServiceTest {
     @Test
     void rejectsUnselectedPrimeConstractorValueZero() {
         OrderPdfImportService service = new OrderPdfImportService(
-            new UploadConfig(temporaryDirectory.toString())
+            new UploadConfig(temporaryDirectory.toString()),
+            repositoryReturning(1L),
+            mock(LocalOcrService.class),
+            mock(OrderOcrLayoutRepository.class)
         );
         MockMultipartFile file = new MockMultipartFile(
             "file",
@@ -57,5 +68,12 @@ class OrderPdfImportServiceTest {
         );
 
         assertThrows(BusinessException.class, () -> service.save("0", file));
+    }
+
+    private OrderPdfImportRepository repositoryReturning(long orderImportId) {
+        OrderPdfImportRepository repository = mock(OrderPdfImportRepository.class);
+        when(repository.insert(anyLong(), anyString(), anyString(), anyString(), anyString(), anyLong()))
+            .thenReturn(orderImportId);
+        return repository;
     }
 }
