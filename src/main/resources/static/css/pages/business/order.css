@@ -252,8 +252,9 @@
 }
 
 .order-pdf-drop-area {
-    position: relative;
-    min-height: 500px;
+    /* position: relative;
+    min-height: 500px; */
+    display: grid;
 }
 
 /* .order-pdf-drop-message {
@@ -269,6 +270,7 @@
 } */
 
 .order-pdf-drop-area.drag-over {
-    outline: 3px dashed #888;
+    /* outline: 3px dashed #888; */
+    border: 2px dashed grey;
     background-color: rgba(0, 0, 0, 0.05);
 }

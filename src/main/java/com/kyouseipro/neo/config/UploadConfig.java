@@ -1,19 +1,21 @@
 package com.kyouseipro.neo.config;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UploadConfig {
 
-    private static String uploadDir;
+    private final Path uploadDirectory;
 
-    @Value("${upload.path}")
-    public void setUploadPath(String path) {
-        UploadConfig.uploadDir = path;
+    public UploadConfig(@Value("${upload.path}") String uploadPath) {
+        this.uploadDirectory = Paths.get(uploadPath).toAbsolutePath().normalize();
     }
 
-    public static String getUploadDir() {
-        return uploadDir;
+    public Path getUploadDirectory() {
+        return uploadDirectory;
     }
 }

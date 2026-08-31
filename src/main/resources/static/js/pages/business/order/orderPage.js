@@ -19,6 +19,7 @@ import { ItemMasterRepository } from "../../../repositories/master/item/itemMast
 import { DataTable } from "../../../core/table/DataTable.js";
 import { openMsgDialog } from "../../../core/ui/dialog/dialogCore.js";
 import { FormController } from "../../../applcation/FormController.js";
+import { apiFetch } from "../../../core/api/apiFetch.js";
 
 export async function init() {
     await initCommon();
@@ -429,5 +430,24 @@ async function importOrderPdf(controller, file) {
     console.log("荷主ID:", primeConstractorId);
     console.log("ファイル:", file.name);
 
-    // ここからサーバーへ送信
+    const formData = new FormData();
+    formData.append("primeConstractorId", primeConstractorId);
+    formData.append("file", file);
+
+    try {
+        const result = await apiFetch("/api/order/import/pdf", {
+            method: "POST",
+            data: formData
+        });
+
+        openMsgDialog({
+            message: result.message || "PDFを保存しました。",
+            color: "blue"
+        });
+    } catch (error) {
+        openMsgDialog({
+            message: error.message || "PDFの保存に失敗しました。",
+            color: "red"
+        });
+    }
 }
