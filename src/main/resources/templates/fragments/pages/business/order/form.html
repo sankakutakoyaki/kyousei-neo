@@ -5,6 +5,7 @@
                 <li class="tab-menu-item is-active" data-action="tab" data-group="order-add-tabs" data-tab="tab-11">基本</li>
                 <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="tab-12">商品</li>
                 <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="tab-13">作業</li>
+                <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="tab-14">添付</li>
             </ul>
             <div class="tab-panel is-show" id="tab-11" data-tab-content="order-add-tabs">
                 <!-- 会社名 -->
@@ -256,6 +257,18 @@
                 <div class="table-area" data-controller="orderWorkFormList" data-sync-group="order-work-add">
                     <section th:replace="~{fragments/table/body :: normalFragment('table-header-12', 'table-12')}"></section>
                 </div>
+            </div>
+            <div class="tab-panel" id="tab-14" data-tab-content="order-add-tabs">
+                <section class="attachment-manager" data-attachment-manager>
+                    <div class="attachment-toolbar">
+                        <button type="button" class="normal-btn ok" data-attachment-action="create-group">＋ フォルダ</button>
+                        <span class="attachment-help">写真・図面・PDFを伝票ごとに整理できます。</span>
+                    </div>
+                    <p class="attachment-empty" data-attachment-empty>伝票を一度保存すると、添付ファイルを追加できます。</p>
+                    <div class="attachment-groups" data-attachment-groups></div>
+                    <input class="none" type="file" multiple accept="image/jpeg,image/png,image/gif,application/pdf" data-attachment-files>
+                    <input class="none" type="file" accept="image/*" capture="environment" data-attachment-camera>
+                </section>
             </div>
         </div>
     </div>

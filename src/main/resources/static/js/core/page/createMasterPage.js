@@ -28,6 +28,8 @@ export function createMasterPage(config){
         })),
         model: config.model,
         validateBusiness: config.validateBusiness,
+        onRowClick: config.onRowClick,
+        onDoubleClick: config.onDoubleClick,
         beforeSave: (payload, form) => {
             if(config.beforeSave){
                 config.beforeSave(payload, form);

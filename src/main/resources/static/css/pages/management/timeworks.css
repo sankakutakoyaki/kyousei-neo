@@ -1,0 +1,71 @@
+@charset "UTF-8";
+
+:is(#table-01, #table-header-01) tr {
+    grid-template-columns: minmax(10rem, 1.4fr) repeat(2, minmax(6rem, 1fr)) minmax(9rem, 1.2fr);
+}
+
+.tab-panel .table-area {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.timeworks-area {
+    display: grid;
+    grid-template-columns: minmax(18rem, 24rem) minmax(0, 1fr);
+    gap: 2rem;
+    align-items: start;
+    padding: 2rem;
+}
+
+.stamp-area {
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: .8rem;
+    background: var(--white);
+    box-shadow: 0 .3rem .8rem -.5rem var(--shadow);
+}
+
+.stamp-area h2 { margin: 0 0 1rem; }
+
+.stamp-clock {
+    display: grid;
+    justify-items: center;
+    gap: .25rem;
+    padding: 1rem;
+    border-radius: .6rem;
+    background: #f5f7fa;
+}
+
+#stamp-date { font-size: 1rem; }
+#stamp-time { font-size: 2.4rem; font-weight: 700; letter-spacing: .08em; }
+
+.stamp-user { margin: 1rem 0; }
+.stamp-user div { display: grid; grid-template-columns: 6rem 1fr; padding: .5rem 0; border-bottom: 1px solid var(--line); }
+.stamp-user dt { color: #666; }
+.stamp-user dd { margin: 0; font-weight: 600; }
+
+.stamp-results { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.stamp-results div { display: grid; justify-items: center; gap: .25rem; padding: .75rem; border-radius: .5rem; background: #f5f7fa; }
+.stamp-results strong { font-size: 1.4rem; }
+
+.stamp-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.25rem; }
+.stamp-button { min-height: 3.5rem; font-size: 1.1rem; font-weight: 700; }
+.stamp-button.start:not(:disabled) { background: #1677ff; color: white; }
+.stamp-button.end:not(:disabled) { background: #e05252; color: white; }
+.stamp-note { margin: 1rem 0 0; color: #666; font-size: .8rem; }
+
+.timeworks-search-area {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: .75rem;
+}
+
+.timeworks-search-item { display: grid; gap: .3rem; }
+.timeworks-search-item :is(input, select) { min-width: 10rem; min-height: 2.3rem; }
+
+@media (max-width: 64rem) {
+    .timeworks-area { grid-template-columns: 1fr; }
+}

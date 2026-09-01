@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/with-sidebar}">
+
+<body>
+    <div layout:fragment="sidebar-content">
+        <div th:replace="~{fragments/common/menu :: managementFragment}"></div>
+    </div>
+    <main layout:fragment="content">
+        <p>各種管理を行うページです。</p>
+        <div id="form-dialog-area"></div>
+        <div id="dialog-area"></div>
+    </main>
+</body>
+
+</html>

@@ -5,6 +5,9 @@
     <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/business" data-target="layout">
         <img class="sp-style" th:src="@{/icons/person.png}"><span>業務</span>
     </div>
+    <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/management" data-target="layout">
+        <img class="sp-style" th:src="@{/icons/management.png}"><span>管理</span>
+    </div>
 </div>
 
 <div th:fragment="registFragment" th:remove="tag">
@@ -37,5 +40,14 @@
     </div>
     <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/recycle" data-target="body">
         <img th:src="@{/icons/recycle_dust.png}"><span>リサイクル</span>
+    </div>
+</div>
+
+<div th:fragment="managementFragment" th:remove="tag">
+    <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item sp-style" data-path="/">
+        <img th:src="@{/icons/home.png}"><span>ホーム</span>
+    </div>
+    <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/timeworks" data-target="body">
+        <img th:src="@{/icons/clock2.png}"><span>勤怠</span>
     </div>
 </div>

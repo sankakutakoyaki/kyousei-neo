@@ -10,11 +10,17 @@ import { FormController } from "../../application/FormController.js";
 import { createOrderItemFormListController } from "./order/orderItemList.js";
 import { createOrderWorkFormListController } from "./order/orderWorkList.js";
 import { DialogService } from "../../core/ui/dialog/DialogService.js";
+import { AttachmentManager } from "../../components/attachment/AttachmentManager.js";
 
 export function createOrderPage(config){
     const defaultForms = {
         detail: {
-            create: (controller) => createOrderForm(controller, { formId: config.formId, afterSave: config.afterSave })
+            create: (controller) => createOrderForm(controller, {
+                formId: config.formId,
+                afterSave: config.afterSave,
+                submitText: config.submitText,
+                cancelText: config.cancelText
+            })
         }
     };
     return createCrudPage({
@@ -30,6 +36,8 @@ export function createOrderPage(config){
         idKey: "orderId",
         repository: OrderRepository,
         columns: config.columns,
+        submitText: config.submitText,
+        cancelText: config.cancelText,
         rowClass: config.rowClass,
         buildParams: config.buildParams,
         buildCsvParams: config.buildCsvParams,
@@ -63,12 +71,15 @@ const createOrderForm = (controller, options = {}) => {
 
     const itemList = createOrderItemFormListController();
     const workList = createOrderWorkFormListController();
+    let attachmentManager;
 
     const form = new FormController({
         controller,
         formId: options.formId,
-        // key: controller.key,
         key: "orderId",
+        idKey: "orderId",
+        submitText: options.submitText,
+        cancelText: options.cancelText,
 
         repository: OrderRepository,
 
@@ -106,6 +117,9 @@ const createOrderForm = (controller, options = {}) => {
             workList.init(works, form);
 
             const formEl = document.getElementById(form.formId);
+
+            attachmentManager ??= new AttachmentManager(formEl?.querySelector("[data-attachment-manager]"));
+            await attachmentManager.open(data?.orderId);
 
             initOrderItemInput(form, formEl, itemList);
             initOrderWorkInput(form, formEl, workList);

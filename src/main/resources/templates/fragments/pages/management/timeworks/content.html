@@ -1,0 +1,54 @@
+<main th:fragment="content"
+        class="normal-body"
+        data-page="/js/pages/management/timeworksPage.js"
+        data-css="/css/pages/management/timeworks.css">
+    <div class="tab-area">
+        <ul class="tab-menu">
+            <li class="tab-menu-item is-active" data-action="tab" data-group="timeworks-tabs" data-tab="tab-01">勤怠</li>
+        </ul>
+        <div class="tab-panel is-show" id="tab-01" data-tab-content="timeworks-tabs">
+            <div class="timeworks-area">
+                <section class="stamp-area" aria-labelledby="stamp-title">
+                    <h2 id="stamp-title">打刻</h2>
+                    <div class="stamp-clock">
+                        <time id="stamp-date"></time>
+                        <time id="stamp-time"></time>
+                    </div>
+                    <dl class="stamp-user">
+                        <div><dt>氏名</dt><dd id="stamp-user-name">-----</dd></div>
+                        <div><dt>営業所</dt><dd id="stamp-office-name">-----</dd></div>
+                        <div><dt>勤務状況</dt><dd id="stamp-status">確認中</dd></div>
+                    </dl>
+                    <div class="stamp-results" aria-label="本日の打刻時刻">
+                        <div><span>出勤</span><strong id="stamp-start-result">-----</strong></div>
+                        <div><span>退勤</span><strong id="stamp-end-result">-----</strong></div>
+                    </div>
+                    <div class="stamp-actions">
+                        <button type="button" class="normal-btn stamp-button start" data-stamp-type="START" disabled>出勤</button>
+                        <button type="button" class="normal-btn stamp-button end" data-stamp-type="END" disabled>退勤</button>
+                    </div>
+                    <p class="stamp-note">打刻時刻にはサーバーの現在時刻を使用します。</p>
+                </section>
+                <div class="table-area" data-controller="timeworks">
+                    <div class="timeworks-search-area">
+                        <label class="timeworks-search-item">対象日
+                            <input id="timeworks-work-date" type="date">
+                        </label>
+                        <label class="timeworks-search-item">営業所
+                            <select id="timeworks-office-filter"
+                                    data-combo="officeComboList"
+                                    data-empty-option
+                                    data-top="すべて"></select>
+                        </label>
+                        <button id="timeworks-search" type="button" class="normal-btn">検索</button>
+                    </div>
+                    <section th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01')}"></section>
+                    <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></footer>
+                </div>                
+            </div>
+        </div>
+    </div>
+    <div id="msg-dialog-area">
+        <div th:replace="~{fragments/dialog/content :: messageFragment}"></div>
+    </div>
+</main>
