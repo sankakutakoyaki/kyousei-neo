@@ -10,19 +10,25 @@ import { formatDate } from "../../util/time.js";
 import { openMsgDialog } from "../../core/ui/dialog/dialogCore.js";
 
 let selectedEmployee = null;
+let employeeComboRequest = 0;
+const mobileMedia = window.matchMedia("(max-width: 560px)");
+let rolePersonalMode = false;
+let isPersonalMode = mobileMedia.matches;
+let responsiveChangeHandler = null;
+let managementInitialized = false;
 
 export async function init() {
+    managementInitialized = false;
     await initCommon();
     await initPageCache("/api/timeworks/init/cache");
+    rolePersonalMode = APP.cache.page.personalMode === true;
 
     const timeworks = timeworksPage();
     registerController("timeworks", timeworks);
-    timeworks.init();
     initClock(timeworks);
     initEmployeeLookup();
     initStampActions(timeworks);
-    initManagement();
-    resetStampForm();
+    initResponsiveStampMode(timeworks);
 }
 
 export const timeworksPage = () =>
@@ -63,9 +69,10 @@ function initClock(controller) {
         if (nextDateKey === currentDateKey) return;
 
         currentDateKey = nextDateKey;
-        resetStampForm();
+        if (isPersonalMode) await loadSelfStatus();
+        else resetStampForm();
         try {
-            await controller.dataTable.refresh();
+            await controller.dataTable?.refresh();
         } catch (error) {
             openMsgDialog({message: error.message || "当日の一覧を更新できませんでした。", color: "red"});
         }
@@ -87,15 +94,54 @@ function initStampActions(controller) {
             if (!selectedEmployee) return;
             setStampButtonsDisabled(true);
             try {
-                await TimeworksRepository.stamp(selectedEmployee.employeeId, button.dataset.stampType);
-                await controller.dataTable.refresh();
-                resetStampForm();
+                if (isPersonalMode) await TimeworksRepository.stampSelf(button.dataset.stampType);
+                else await TimeworksRepository.stamp(selectedEmployee.employeeId, button.dataset.stampType);
+                await controller.dataTable?.refresh();
+                if (isPersonalMode) await loadSelfStatus();
+                else resetStampForm();
             } catch (error) {
                 openMsgDialog({message: error.message || "打刻に失敗しました。", color: "red"});
-                await lookupEmployee(document.getElementById("stamp-identifier")?.value);
+                if (isPersonalMode) await loadSelfStatus();
+                else await lookupEmployee(document.getElementById("stamp-identifier")?.value);
             }
         });
     });
+}
+
+function initResponsiveStampMode(controller) {
+    const applyMode = async event => {
+        isPersonalMode = rolePersonalMode || event.matches;
+        document.querySelector("main[data-page$='timeworksPage.js']")
+            ?.classList.toggle("personal-timeworks-mode", isPersonalMode);
+        if (isPersonalMode) await loadSelfStatus();
+        else {
+            ensureDesktopPage(controller);
+            resetStampForm();
+        }
+    };
+    if (responsiveChangeHandler) mobileMedia.removeEventListener("change", responsiveChangeHandler);
+    responsiveChangeHandler = applyMode;
+    mobileMedia.addEventListener("change", responsiveChangeHandler);
+    applyMode(mobileMedia);
+}
+
+function ensureDesktopPage(controller) {
+    if (!controller.dataTable) controller.init();
+    if (!managementInitialized) {
+        initManagement();
+        managementInitialized = true;
+    }
+}
+
+async function loadSelfStatus() {
+    setStampButtonsDisabled(true);
+    selectedEmployee = null;
+    try {
+        selectedEmployee = await TimeworksRepository.findSelf();
+        focusStampButton(selectedEmployee);
+    } catch (error) {
+        openMsgDialog({message: error.message || "本人の勤務状態を取得できませんでした。", color: "red"});
+    }
 }
 
 async function lookupEmployee(identifier) {
@@ -125,6 +171,7 @@ function focusStampButton(status) {
     if (status?.canStart) start?.focus();
     else if (status?.canEnd) end?.focus();
     else {
+        if (isPersonalMode) return;
         openMsgDialog({message: "本日の出勤・退勤打刻は完了しています。", color: "blue"});
         document.getElementById("stamp-identifier")?.focus();
     }
@@ -157,9 +204,11 @@ function initManagement() {
     const office = document.getElementById("management-office");
     month.value = formatDate(new Date(), "yyyy-MM");
     fillOfficeOptions(office, APP.cache.page.officeComboList ?? []);
+    loadManagementEmployees();
 
     document.getElementById("management-search")?.addEventListener("click", refreshManagement);
     document.getElementById("management-csv")?.addEventListener("click", downloadManagementCsv);
+    office.addEventListener("change", loadManagementEmployees);
     let loaded = false;
     document.querySelector('[data-tab="tab-02"]')?.addEventListener("click", () => {
         if (loaded) return;
@@ -178,11 +227,32 @@ function fillOfficeOptions(select, offices) {
     offices.forEach(item => select.add(new Option(item.label, item.value)));
 }
 
+async function loadManagementEmployees() {
+    const requestId = ++employeeComboRequest;
+    const employee = document.getElementById("management-employee");
+    const officeId = document.getElementById("management-office")?.value || null;
+    employee.replaceChildren(new Option("読み込み中", ""));
+    employee.disabled = true;
+    try {
+        const employees = await TimeworksRepository.findEmployeeCombo(officeId);
+        if (requestId !== employeeComboRequest) return;
+        employee.replaceChildren(new Option("すべて", ""));
+        employees.forEach(item => employee.add(new Option(item.label, item.value)));
+    } catch (error) {
+        if (requestId !== employeeComboRequest) return;
+        employee.replaceChildren(new Option("取得できませんでした", ""));
+        openMsgDialog({message: error.message || "従業員を取得できませんでした。", color: "red"});
+    } finally {
+        if (requestId === employeeComboRequest) employee.disabled = false;
+    }
+}
+
 function managementParams() {
     return {
         targetMonth: document.getElementById("management-month")?.value,
         closingType: document.getElementById("management-closing-type")?.value,
-        officeId: document.getElementById("management-office")?.value || null
+        officeId: document.getElementById("management-office")?.value || null,
+        employeeId: document.getElementById("management-employee")?.value || null
     };
 }
 
@@ -276,7 +346,10 @@ function downloadManagementCsv() {
         openMsgDialog({message: "CSVを出力する営業所を選択してください。", color: "red"});
         return;
     }
-    const query = new URLSearchParams(params);
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+        if (value !== null && value !== undefined && value !== "") query.set(key, value);
+    });
     const link = document.createElement("a");
     link.href = `/api/timeworks/admin/csv?${query}`;
     link.click();

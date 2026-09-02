@@ -16,6 +16,7 @@ import com.kyouseipro.neo.domain.management.model.TimeworkListItem;
 import com.kyouseipro.neo.domain.management.model.TimeworkStatus;
 import com.kyouseipro.neo.domain.management.model.TimeworkPeriod;
 import com.kyouseipro.neo.domain.management.model.TimeworkUpdateRequest;
+import com.kyouseipro.neo.common.combo.entity.ComboDto;
 import com.kyouseipro.neo.domain.management.repository.TimeworkRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -33,13 +34,25 @@ public class TimeworkService {
         return status;
     }
 
+    public TimeworkStatus findSelf(Authentication authentication) {
+        TimeworkStatus status = repository.findTodayByAccount(account(authentication), LocalDate.now());
+        if (status == null) throw new BusinessException("ログインユーザーに対応する社員が登録されていません。");
+        return status;
+    }
+
     public List<TimeworkListItem> findTodayList() {
         return repository.findList(LocalDate.now(), null, null);
     }
 
-    public List<TimeworkListItem> findManagementList(String targetMonth, String closingType, Long officeId) {
+    public List<TimeworkListItem> findManagementList(
+        String targetMonth, String closingType, Long officeId, Long employeeId
+    ) {
         TimeworkPeriod period = period(targetMonth, closingType);
-        return repository.findManagementList(period.from(), period.to(), officeId);
+        return repository.findManagementList(period.from(), period.to(), officeId, employeeId);
+    }
+
+    public List<ComboDto> findEmployeeCombo(Long officeId) {
+        return repository.findEmployeeCombo(officeId);
     }
 
     public TimeworkPeriod period(String targetMonth, String closingType) {
@@ -91,6 +104,12 @@ public class TimeworkService {
             repository.updateEnd(status.timeworkId(), now, account);
         }
         return repository.findTodayByEmployeeId(employeeId, now.toLocalDate());
+    }
+
+    @Transactional
+    public TimeworkStatus stampSelf(Authentication authentication, String stampType) {
+        TimeworkStatus self = findSelf(authentication);
+        return stamp(authentication, self.employeeId(), stampType);
     }
 
     private String account(Authentication authentication) {

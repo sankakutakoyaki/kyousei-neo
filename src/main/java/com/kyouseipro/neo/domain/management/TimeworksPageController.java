@@ -31,12 +31,16 @@ public class TimeworksPageController {
     public Map<String, Object> initTimeworks(Authentication authentication) {
         boolean canManage = authentication.getAuthorities().stream()
             .anyMatch(authority -> List.of(
-                "APPROLE_admin", "APPROLE_master", "APPROLE_leader", "APPROLE_staff"
+                "APPROLE_admin", "APPROLE_master", "APPROLE_leader"
             ).contains(authority.getAuthority()));
+        boolean personalMode = authentication.getAuthorities().stream()
+            .anyMatch(authority -> List.of("APPROLE_user", "APPROLE_staff")
+                .contains(authority.getAuthority()));
         return Map.of(
             "common", Map.of(),
             "page", Map.of(
                 "canManage", canManage,
+                "personalMode", personalMode,
                 "officeComboList", canManage
                     ? officeService.findComboByCategory(CompanyCategory.OWN.getCode())
                     : List.of()

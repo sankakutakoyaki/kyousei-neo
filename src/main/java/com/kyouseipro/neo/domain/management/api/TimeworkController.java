@@ -24,6 +24,8 @@ import com.kyouseipro.neo.domain.management.model.TimeworkListItem;
 import com.kyouseipro.neo.domain.management.model.TimeworkStatus;
 import com.kyouseipro.neo.domain.management.model.TimeworkPeriod;
 import com.kyouseipro.neo.domain.management.model.TimeworkUpdateRequest;
+import com.kyouseipro.neo.domain.management.model.SelfStampRequest;
+import com.kyouseipro.neo.common.combo.entity.ComboDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,16 +38,24 @@ public class TimeworkController {
     private final TimeworkService service;
 
     @GetMapping("/employee")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader')")
     public SimpleResponse<TimeworkStatus> employee(@RequestParam String identifier) {
         return SimpleResponse.ok(service.findEmployee(identifier));
     }
 
+    @GetMapping("/self")
+    public SimpleResponse<TimeworkStatus> self(Authentication authentication) {
+        return SimpleResponse.ok(service.findSelf(authentication));
+    }
+
     @GetMapping("/list")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader')")
     public SimpleResponse<List<TimeworkListItem>> list() {
         return SimpleResponse.ok(service.findTodayList());
     }
 
     @PostMapping("/stamp")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader')")
     public SimpleResponse<TimeworkStatus> stamp(Authentication authentication, @RequestBody StampRequest request) {
         TimeworkStatus status = service.stamp(authentication, request.employeeId(), request.stampType());
         String message = "START".equalsIgnoreCase(request.stampType())
@@ -53,18 +63,36 @@ public class TimeworkController {
         return SimpleResponse.ok(message, status);
     }
 
+    @PostMapping("/stamp/self")
+    public SimpleResponse<TimeworkStatus> stampSelf(
+        Authentication authentication,
+        @RequestBody SelfStampRequest request
+    ) {
+        TimeworkStatus status = service.stampSelf(authentication, request.stampType());
+        String message = "START".equalsIgnoreCase(request.stampType())
+            ? "出勤を打刻しました。" : "退勤を打刻しました。";
+        return SimpleResponse.ok(message, status);
+    }
+
     @GetMapping("/admin/list")
-    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff')")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader')")
     public SimpleResponse<List<TimeworkListItem>> managementList(
         @RequestParam String targetMonth,
         @RequestParam String closingType,
-        @RequestParam(required = false) Long officeId
+        @RequestParam(required = false) Long officeId,
+        @RequestParam(required = false) Long employeeId
     ) {
-        return SimpleResponse.ok(service.findManagementList(targetMonth, closingType, officeId));
+        return SimpleResponse.ok(service.findManagementList(targetMonth, closingType, officeId, employeeId));
+    }
+
+    @GetMapping("/admin/employees")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader')")
+    public SimpleResponse<List<ComboDto>> employees(@RequestParam(required = false) Long officeId) {
+        return SimpleResponse.ok(service.findEmployeeCombo(officeId));
     }
 
     @PostMapping("/admin/update")
-    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff')")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader')")
     public SimpleResponse<Void> update(
         Authentication authentication,
         @RequestBody TimeworkUpdateRequest request
@@ -74,14 +102,15 @@ public class TimeworkController {
     }
 
     @GetMapping(value = "/admin/csv", produces = "text/csv")
-    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff')")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader')")
     public ResponseEntity<byte[]> csv(
         @RequestParam String targetMonth,
         @RequestParam String closingType,
-        @RequestParam Long officeId
+        @RequestParam Long officeId,
+        @RequestParam(required = false) Long employeeId
     ) {
         TimeworkPeriod period = service.period(targetMonth, closingType);
-        List<TimeworkListItem> items = service.findManagementList(targetMonth, closingType, officeId);
+        List<TimeworkListItem> items = service.findManagementList(targetMonth, closingType, officeId, employeeId);
         StringBuilder csv = new StringBuilder("\uFEFF勤務日,社員ID,氏名,営業所,出勤,退勤\r\n");
         for (TimeworkListItem item : items) {
             csv.append(item.workDate()).append(',')

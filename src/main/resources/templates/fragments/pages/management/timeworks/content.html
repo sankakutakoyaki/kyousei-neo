@@ -5,7 +5,7 @@
     <div class="tab-area">
         <ul class="tab-menu">
             <li class="tab-menu-item is-active" data-action="tab" data-group="timeworks-tabs" data-tab="tab-01">勤怠</li>
-            <li class="tab-menu-item" sec:authorize="hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff')"
+            <li class="tab-menu-item" sec:authorize="hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader')"
                 data-action="tab" data-group="timeworks-tabs" data-tab="tab-02">出退勤管理</li>
         </ul>
         <div class="tab-panel is-show" id="tab-01" data-tab-content="timeworks-tabs">
@@ -16,7 +16,7 @@
                         <time id="stamp-date"></time>
                         <time id="stamp-time"></time>
                     </div>
-                    <div class="stamp-employee">
+                    <div class="stamp-employee stamp-desktop-fields">
                         <label for="stamp-identifier">社員ID／コード</label>
                         <input id="stamp-identifier" type="text" autocomplete="off">
                         <label for="stamp-user-name">氏名</label>
@@ -26,7 +26,7 @@
                         <button type="button" class="normal-btn stamp-button start" data-stamp-type="START" disabled>出勤</button>
                         <button type="button" class="normal-btn stamp-button end" data-stamp-type="END" disabled>退勤</button>
                     </div>
-                    <p class="stamp-note">ID／コードを入力してEnterキーを押してください。</p>
+                    <p class="stamp-note stamp-desktop-fields">ID／コードを入力してEnterキーを押してください。</p>
                 </section>
                 <div class="table-area" data-controller="timeworks">
                     <section th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01')}"></section>
@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="tab-panel" id="tab-02" data-tab-content="timeworks-tabs"
-             sec:authorize="hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff')">
+             sec:authorize="hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader')">
             <section class="timework-management" aria-labelledby="management-title">
                 <h2 id="management-title">出退勤管理</h2>
                 <div class="management-toolbar">
@@ -50,6 +50,9 @@
                     </label>
                     <label>営業所
                         <select id="management-office"></select>
+                    </label>
+                    <label>従業員
+                        <select id="management-employee"></select>
                     </label>
                     <button id="management-search" type="button" class="normal-btn">検索</button>
                     <button id="management-csv" type="button" class="normal-btn">CSVダウンロード</button>

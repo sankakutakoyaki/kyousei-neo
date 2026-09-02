@@ -1,21 +1,20 @@
 "use strict"
 
+let initialized = false;
+
 /**
  * ハンバーガーメニュー初期化
  */
 export function initHamburger() {
-    const menuOpen = document.querySelector("#menu-open");
-    const menuClose = document.querySelector("#menu-close");
-    const menuPanel = document.getElementById("hamburger-area");
-    if (!menuPanel) return;
-
-    menuOpen?.addEventListener("click", () => {
-        menuPanel.classList.add("hamburger-open");
-        menuPanel.classList.remove("hamburger-close");
-    });
-
-    menuClose?.addEventListener("click", () => {
-        closeHamburger();
+    if (initialized) return;
+    initialized = true;
+    document.addEventListener("click", event => {
+        if (event.target.closest("#menu-open")) {
+            const menuPanel = document.getElementById("hamburger-area");
+            menuPanel?.classList.add("hamburger-open");
+            menuPanel?.classList.remove("hamburger-close");
+        }
+        if (event.target.closest("#menu-close")) closeHamburger();
     });
 }
 

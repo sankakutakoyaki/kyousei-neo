@@ -6,7 +6,12 @@
     <!-- base の layout-content を埋める -->
     <div layout:fragment="layout-content" class="normal-main">
 
-        <aside class="normal-sidebar" layout:fragment="sidebar-content"></aside>
+        <aside id="hamburger-area" class="normal-sidebar hamburger-close">
+            <button id="menu-close" class="hamburger-btn-close" type="button">
+                <img th:src="@{/icons/close.png}" alt="閉じる">
+            </button>
+            <div class="hamburger-content" layout:fragment="sidebar-content"></div>
+        </aside>
         <main class="normal-body" layout:fragment="content"></main>
     </div>
 </body>

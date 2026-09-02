@@ -70,6 +70,24 @@
     .timeworks-area { grid-template-columns: 1fr; }
 }
 
+@media (max-width: 560px) {
+    .timeworks-area { display: block; padding: 1rem; }
+    .timeworks-area .table-area,
+    .stamp-desktop-fields,
+    .tab-menu [data-tab="tab-02"],
+    #tab-02 { display: none !important; }
+    .stamp-area { max-width: 28rem; margin: 0 auto; }
+    .stamp-actions { margin-top: 1.5rem; }
+    .stamp-button { min-height: 5rem; font-size: 1.35rem; }
+}
+
+.personal-timeworks-mode .timeworks-area { display: block; }
+.personal-timeworks-mode .timeworks-area .table-area,
+.personal-timeworks-mode .stamp-desktop-fields,
+.personal-timeworks-mode .tab-menu [data-tab="tab-02"],
+.personal-timeworks-mode #tab-02 { display: none !important; }
+.personal-timeworks-mode .stamp-area { max-width: 28rem; margin: 0 auto; }
+
 .timework-management { padding: 2rem; }
 .timework-management h2 { margin-top: 0; }
 

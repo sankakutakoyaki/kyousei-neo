@@ -17,7 +17,6 @@
     }
 
     /* ハンバーガー部分は消す */
-    #hamburger-area,
     .hamburger-btn-open,
     .hamburger-btn-close {
         display: none;

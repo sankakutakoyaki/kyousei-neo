@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Comparator;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,11 @@ import com.kyouseipro.neo.domain.business.order.ocr.HeiwadoOcrDefaultLayout.OcrR
 
 @Service
 public class LocalOcrService {
+
+    /** 帳票設定画面のプレビューと同じ解像度。 */
+    private static final int LAYOUT_DPI = 150;
+    /** OCR用の画像解像度。帳票設定の座標はこの解像度へ変換して利用する。 */
+    private static final int OCR_DPI = 300;
 
     private final String pdftoppmCommand;
     private final String tesseractCommand;
@@ -81,15 +87,20 @@ public class LocalOcrService {
         try {
             workDirectory = Files.createTempDirectory("order-ocr-");
             Path prefix = workDirectory.resolve("page");
-            execute(List.of(pdftoppmCommand, "-r", "300", "-f", "1", "-singlefile", "-png", pdfPath.toString(), prefix.toString()));
+            execute(List.of(pdftoppmCommand, "-r", Integer.toString(OCR_DPI), "-f", "1", "-singlefile", "-png", pdfPath.toString(), prefix.toString()));
             var page = ImageIO.read(prefix.resolveSibling("page.png").toFile());
             Map<String, String> result = new LinkedHashMap<>();
             for (var entry : regions.entrySet()) {
-                var r = entry.getValue();
+                var r = scaleForOcr(entry.getValue());
+                if (r.x() < 0 || r.y() < 0 || r.width() <= 0 || r.height() <= 0
+                        || r.x() + r.width() > page.getWidth()
+                        || r.y() + r.height() > page.getHeight()) {
+                    throw new SystemException("帳票設定の読取枠がPDFの範囲外です。帳票設定を開いて枠を保存し直してください。", null);
+                }
                 var image = page.getSubimage(r.x(), r.y(), r.width(), r.height());
                 Path cropped = workDirectory.resolve(entry.getKey() + ".png");
                 ImageIO.write(image, "png", cropped.toFile());
-                result.put(entry.getKey(), execute(List.of(tesseractCommand, cropped.toString(), "stdout", "-l", "jpn+eng", "--psm", "7")).trim());
+                result.put(entry.getKey(), execute(createTesseractCommand(entry.getKey(), cropped)).trim());
             }
             return result;
         } catch (IOException e) {
@@ -106,13 +117,42 @@ public class LocalOcrService {
         try {
             workDirectory = Files.createTempDirectory("order-preview-");
             Path prefix = workDirectory.resolve("page");
-            execute(List.of(pdftoppmCommand, "-r", "150", "-f", "1", "-singlefile", "-png", pdfPath.toString(), prefix.toString()));
+            execute(List.of(pdftoppmCommand, "-r", Integer.toString(LAYOUT_DPI), "-f", "1", "-singlefile", "-png", pdfPath.toString(), prefix.toString()));
             return Files.readAllBytes(workDirectory.resolve("page.png"));
         } catch (IOException e) {
             throw new SystemException("帳票プレビューの作成に失敗しました。", e);
         } finally {
             if (workDirectory != null) deleteRecursively(workDirectory);
         }
+    }
+
+    private List<String> createTesseractCommand(String fieldKey, Path image) {
+        String pageSegmentationMode = switch (fieldKey) {
+            case "address", "contactNote" -> "6";
+            default -> "7";
+        };
+        List<String> command = new ArrayList<>(List.of(
+            tesseractCommand,
+            image.toString(),
+            "stdout",
+            "-l", "jpn+eng",
+            "--psm", pageSegmentationMode
+        ));
+        if ("mobilePhone".equals(fieldKey)) {
+            command.add("-c");
+            command.add("tessedit_char_whitelist=0123456789-");
+        }
+        return command;
+    }
+
+    private OcrRegion scaleForOcr(OcrRegion layoutRegion) {
+        double scale = (double) OCR_DPI / LAYOUT_DPI;
+        return new OcrRegion(
+            (int) Math.round(layoutRegion.x() * scale),
+            (int) Math.round(layoutRegion.y() * scale),
+            (int) Math.round(layoutRegion.width() * scale),
+            (int) Math.round(layoutRegion.height() * scale)
+        );
     }
 
     private String execute(List<String> command) throws IOException {

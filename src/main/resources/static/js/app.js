@@ -23,6 +23,7 @@ let initialized = false;
 export function initApp() {
     if (initialized) return;
     initialized = true;
+    initHamburger();
     
     document.addEventListener("click", (e) => {
         const item = e.target.closest(".hamburger-item") || e.target.closest("[data-link]");
@@ -34,5 +35,6 @@ export function initApp() {
         const target = item.dataset.target || "body";
 
         loadPage(path, target);
+        closeHamburger();
     });
 }

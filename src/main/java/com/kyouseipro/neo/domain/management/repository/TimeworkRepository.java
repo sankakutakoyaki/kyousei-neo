@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.domain.management.model.TimeworkListItem;
 import com.kyouseipro.neo.domain.management.model.TimeworkStatus;
+import com.kyouseipro.neo.common.combo.entity.ComboDto;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -68,6 +69,29 @@ public class TimeworkRepository {
         return findTodayByIdentifier(Long.toString(employeeId), workDate);
     }
 
+    public TimeworkStatus findTodayByAccount(String account, LocalDate workDate) {
+        return sqlRepository.queryOneOrNull("""
+            SELECT TOP (1) e.employee_id, e.full_name, e.office_id,
+                   COALESCE(o.name, '') AS office_name,
+                   t.timework_id, t.start_time, t.end_time
+            FROM employees e
+            LEFT JOIN offices o ON o.office_id = e.office_id AND o.state = 0
+            LEFT JOIN timeworks t ON t.employee_id = e.employee_id
+                 AND t.state = 0
+                 AND (
+                     CAST(t.start_time AS DATE) = ?
+                     OR (t.end_time IS NULL AND t.start_time >= DATEADD(HOUR, -24, SYSDATETIME()))
+                 )
+            WHERE e.state = 0 AND e.account = ?
+            ORDER BY
+                CASE WHEN t.start_time IS NOT NULL AND t.end_time IS NULL THEN 0 ELSE 1 END,
+                t.start_time DESC
+            """, (ps, ignored) -> {
+                ps.setObject(1, workDate);
+                ps.setString(2, account);
+            }, rs -> toStatus(rs, workDate), null);
+    }
+
     public List<TimeworkListItem> findList(LocalDate workDate, Long officeId, Long employeeId) {
         StringBuilder sql = new StringBuilder("""
             SELECT t.timework_id, t.employee_id, e.full_name, e.office_id,
@@ -105,7 +129,7 @@ public class TimeworkRepository {
         }, null);
     }
 
-    public List<TimeworkListItem> findManagementList(LocalDate from, LocalDate to, Long officeId) {
+    public List<TimeworkListItem> findManagementList(LocalDate from, LocalDate to, Long officeId, Long employeeId) {
         StringBuilder sql = new StringBuilder("""
             SELECT t.timework_id, t.employee_id, e.full_name, e.office_id,
                    COALESCE(o.name, '') AS office_name,
@@ -116,11 +140,14 @@ public class TimeworkRepository {
             WHERE t.work_date BETWEEN ? AND ? AND t.state = 0
             """);
         if (officeId != null) sql.append(" AND e.office_id = ?");
+        if (employeeId != null) sql.append(" AND e.employee_id = ?");
         sql.append(" ORDER BY t.work_date, e.office_id, e.full_name");
         return sqlRepository.queryList(sql.toString(), (ps, ignored) -> {
             ps.setObject(1, from);
             ps.setObject(2, to);
-            if (officeId != null) ps.setLong(3, officeId);
+            int index = 3;
+            if (officeId != null) ps.setLong(index++, officeId);
+            if (employeeId != null) ps.setLong(index, employeeId);
         }, rs -> {
             Number officeValue = (Number) rs.getObject("office_id");
             return new TimeworkListItem(
@@ -129,6 +156,26 @@ public class TimeworkRepository {
                 rs.getObject("work_date", LocalDate.class),
                 toLocalDateTime(rs.getTimestamp("start_time")),
                 toLocalDateTime(rs.getTimestamp("end_time")), rs.getInt("version")
+            );
+        }, null);
+    }
+
+    public List<ComboDto> findEmployeeCombo(Long officeId) {
+        StringBuilder sql = new StringBuilder("""
+            SELECT employee_id, code, full_name, office_id
+            FROM employees
+            WHERE state = 0
+            """);
+        if (officeId != null) sql.append(" AND office_id = ?");
+        sql.append(" ORDER BY full_name, employee_id");
+        return sqlRepository.queryList(sql.toString(), (ps, ignored) -> {
+            if (officeId != null) ps.setLong(1, officeId);
+        }, rs -> {
+            Number officeValue = (Number) rs.getObject("office_id");
+            return new ComboDto(
+                rs.getLong("employee_id"),
+                rs.getString("code") + " " + rs.getString("full_name"),
+                officeValue == null ? null : officeValue.longValue()
             );
         }, null);
     }
@@ -171,5 +218,20 @@ public class TimeworkRepository {
 
     private static LocalDateTime toLocalDateTime(Timestamp value) {
         return value == null ? null : value.toLocalDateTime();
+    }
+
+    private static TimeworkStatus toStatus(java.sql.ResultSet rs, LocalDate workDate) throws java.sql.SQLException {
+        Number idValue = (Number) rs.getObject("timework_id");
+        Number officeValue = (Number) rs.getObject("office_id");
+        LocalDateTime startTime = toLocalDateTime(rs.getTimestamp("start_time"));
+        LocalDateTime endTime = toLocalDateTime(rs.getTimestamp("end_time"));
+        return new TimeworkStatus(
+            idValue == null ? null : idValue.longValue(), rs.getLong("employee_id"),
+            rs.getString("full_name"), officeValue == null ? null : officeValue.longValue(),
+            rs.getString("office_name"), workDate, startTime, endTime,
+            endTime != null ? "FINISHED" : startTime != null ? "WORKING" : "NOT_STARTED",
+            endTime != null ? "退勤済み" : startTime != null ? "勤務中" : "未出勤",
+            startTime == null, startTime != null && endTime == null
+        );
     }
 }
