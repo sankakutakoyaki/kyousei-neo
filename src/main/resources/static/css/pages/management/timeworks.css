@@ -41,14 +41,24 @@
 #stamp-date { font-size: 1rem; }
 #stamp-time { font-size: 2.4rem; font-weight: 700; letter-spacing: .08em; }
 
-.stamp-user { margin: 1rem 0; }
-.stamp-user div { display: grid; grid-template-columns: 6rem 1fr; padding: .5rem 0; border-bottom: 1px solid var(--line); }
-.stamp-user dt { color: #666; }
-.stamp-user dd { margin: 0; font-weight: 600; }
+.stamp-employee {
+    display: grid;
+    grid-template-columns: 8rem minmax(0, 1fr);
+    align-items: center;
+    gap: .75rem;
+    margin: 1.25rem 0;
+}
 
-.stamp-results { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
-.stamp-results div { display: grid; justify-items: center; gap: .25rem; padding: .75rem; border-radius: .5rem; background: #f5f7fa; }
-.stamp-results strong { font-size: 1.4rem; }
+.stamp-employee input {
+    min-width: 0;
+    height: 2.6rem;
+    padding: 0 .75rem;
+    border: 1px solid var(--line);
+    border-radius: .35rem;
+    font-size: 1rem;
+}
+
+.stamp-employee input[readonly] { background: #f5f7fa; font-weight: 600; }
 
 .stamp-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.25rem; }
 .stamp-button { min-height: 3.5rem; font-size: 1.1rem; font-weight: 700; }
@@ -56,16 +66,34 @@
 .stamp-button.end:not(:disabled) { background: #e05252; color: white; }
 .stamp-note { margin: 1rem 0 0; color: #666; font-size: .8rem; }
 
-.timeworks-search-area {
+@media (max-width: 64rem) {
+    .timeworks-area { grid-template-columns: 1fr; }
+}
+
+.timework-management { padding: 2rem; }
+.timework-management h2 { margin-top: 0; }
+
+.management-toolbar {
     display: flex;
     flex-wrap: wrap;
     align-items: end;
     gap: .75rem;
 }
 
-.timeworks-search-item { display: grid; gap: .3rem; }
-.timeworks-search-item :is(input, select) { min-width: 10rem; min-height: 2.3rem; }
-
-@media (max-width: 64rem) {
-    .timeworks-area { grid-template-columns: 1fr; }
+.management-toolbar label { display: grid; gap: .3rem; }
+.management-toolbar :is(input, select) {
+    min-width: 10rem;
+    min-height: 2.4rem;
+    padding: 0 .5rem;
+    border: 1px solid var(--line);
+    border-radius: .3rem;
+    background: var(--white);
 }
+
+.management-period { margin: 1rem 0; color: #555; }
+.management-table-wrapper { overflow: auto; max-height: calc(100vh - 21rem); }
+.management-table { width: 100%; border-collapse: collapse; background: var(--white); }
+.management-table th { position: sticky; top: 0; z-index: 1; background: #f5f7fa; }
+.management-table :is(th, td) { padding: .65rem; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+.management-table input[type="datetime-local"] { min-height: 2.3rem; padding: 0 .4rem; border: 1px solid var(--line); border-radius: .3rem; }
+.management-table .normal-btn { min-width: 4rem; }

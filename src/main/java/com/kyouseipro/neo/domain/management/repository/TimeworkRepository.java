@@ -18,19 +18,30 @@ import lombok.RequiredArgsConstructor;
 public class TimeworkRepository {
     private final SqlRepository sqlRepository;
 
-    public TimeworkStatus findTodayByAccount(String account, LocalDate workDate) {
+    public TimeworkStatus findTodayByIdentifier(String identifier, LocalDate workDate) {
         return sqlRepository.queryOneOrNull("""
-            SELECT e.employee_id, e.full_name, e.office_id,
+            SELECT TOP (1) e.employee_id, e.full_name, e.office_id,
                    COALESCE(o.name, '') AS office_name,
                    t.timework_id, t.start_time, t.end_time
             FROM employees e
             LEFT JOIN offices o ON o.office_id = e.office_id AND o.state = 0
             LEFT JOIN timeworks t ON t.employee_id = e.employee_id
-                 AND t.work_date = ? AND t.state = 0
-            WHERE e.account = ? AND e.state = 0
+                 AND t.state = 0
+                 AND (
+                     CAST(t.start_time AS DATE) = ?
+                     OR (t.end_time IS NULL AND t.start_time >= DATEADD(HOUR, -24, SYSDATETIME()))
+                 )
+            WHERE e.state = 0
+              AND (CONVERT(NVARCHAR(30), e.employee_id) = ? OR CONVERT(NVARCHAR(100), e.code) = ?)
+            ORDER BY
+                CASE WHEN CONVERT(NVARCHAR(30), e.employee_id) = ? THEN 0 ELSE 1 END,
+                CASE WHEN t.start_time IS NOT NULL AND t.end_time IS NULL THEN 0 ELSE 1 END,
+                t.start_time DESC
             """, (ps, ignored) -> {
                 ps.setObject(1, workDate);
-                ps.setString(2, account);
+                ps.setString(2, identifier);
+                ps.setString(3, identifier);
+                ps.setString(4, identifier);
             }, rs -> {
                 Number idValue = (Number) rs.getObject("timework_id");
                 Number officeValue = (Number) rs.getObject("office_id");
@@ -53,22 +64,32 @@ public class TimeworkRepository {
             }, null);
     }
 
+    public TimeworkStatus findTodayByEmployeeId(long employeeId, LocalDate workDate) {
+        return findTodayByIdentifier(Long.toString(employeeId), workDate);
+    }
+
     public List<TimeworkListItem> findList(LocalDate workDate, Long officeId, Long employeeId) {
         StringBuilder sql = new StringBuilder("""
-            SELECT t.timework_id, t.employee_id, e.full_name, t.office_id,
+            SELECT t.timework_id, t.employee_id, e.full_name, e.office_id,
                    COALESCE(o.name, '') AS office_name,
-                   t.work_date, t.start_time, t.end_time
+                   CAST(t.start_time AS DATE) AS work_date, t.start_time, t.end_time, t.version
             FROM timeworks t
             INNER JOIN employees e ON e.employee_id = t.employee_id AND e.state = 0
-            LEFT JOIN offices o ON o.office_id = t.office_id AND o.state = 0
-            WHERE t.work_date = ? AND t.state = 0
+            LEFT JOIN offices o ON o.office_id = e.office_id AND o.state = 0
+            WHERE t.state = 0
+              AND (
+                  CAST(t.start_time AS DATE) = ?
+                  OR CAST(t.end_time AS DATE) = ?
+                  OR (t.end_time IS NULL AND t.start_time >= DATEADD(HOUR, -24, SYSDATETIME()))
+              )
             """);
-        if (officeId != null) sql.append(" AND t.office_id = ?");
+        if (officeId != null) sql.append(" AND e.office_id = ?");
         if (employeeId != null) sql.append(" AND t.employee_id = ?");
         sql.append(" ORDER BY t.start_time, e.full_name");
 
         return sqlRepository.queryList(sql.toString(), (ps, ignored) -> {
             int index = 1;
+            ps.setObject(index++, workDate);
             ps.setObject(index++, workDate);
             if (officeId != null) ps.setLong(index++, officeId);
             if (employeeId != null) ps.setLong(index, employeeId);
@@ -79,23 +100,63 @@ public class TimeworkRepository {
                 officeValue == null ? null : officeValue.longValue(), rs.getString("office_name"),
                 rs.getObject("work_date", LocalDate.class),
                 toLocalDateTime(rs.getTimestamp("start_time")),
-                toLocalDateTime(rs.getTimestamp("end_time"))
+                toLocalDateTime(rs.getTimestamp("end_time")), rs.getInt("version")
             );
         }, null);
     }
 
-    public long insertStart(long employeeId, Long officeId, LocalDate workDate, LocalDateTime stampedAt, String editor) {
+    public List<TimeworkListItem> findManagementList(LocalDate from, LocalDate to, Long officeId) {
+        StringBuilder sql = new StringBuilder("""
+            SELECT t.timework_id, t.employee_id, e.full_name, e.office_id,
+                   COALESCE(o.name, '') AS office_name,
+                   t.work_date, t.start_time, t.end_time, t.version
+            FROM timeworks t
+            INNER JOIN employees e ON e.employee_id = t.employee_id AND e.state = 0
+            LEFT JOIN offices o ON o.office_id = e.office_id AND o.state = 0
+            WHERE t.work_date BETWEEN ? AND ? AND t.state = 0
+            """);
+        if (officeId != null) sql.append(" AND e.office_id = ?");
+        sql.append(" ORDER BY t.work_date, e.office_id, e.full_name");
+        return sqlRepository.queryList(sql.toString(), (ps, ignored) -> {
+            ps.setObject(1, from);
+            ps.setObject(2, to);
+            if (officeId != null) ps.setLong(3, officeId);
+        }, rs -> {
+            Number officeValue = (Number) rs.getObject("office_id");
+            return new TimeworkListItem(
+                rs.getLong("timework_id"), rs.getLong("employee_id"), rs.getString("full_name"),
+                officeValue == null ? null : officeValue.longValue(), rs.getString("office_name"),
+                rs.getObject("work_date", LocalDate.class),
+                toLocalDateTime(rs.getTimestamp("start_time")),
+                toLocalDateTime(rs.getTimestamp("end_time")), rs.getInt("version")
+            );
+        }, null);
+    }
+
+    public int updateTimes(long timeworkId, LocalDateTime startTime, LocalDateTime endTime, int version, String editor) {
+        return sqlRepository.updateRequired("""
+            UPDATE timeworks
+            SET work_date = CAST(? AS DATE), start_time = ?, end_time = ?, update_date = SYSDATETIME(),
+                update_user = ?, version = version + 1
+            WHERE timework_id = ? AND version = ? AND state = 0
+            """, java.util.Arrays.asList(
+                Timestamp.valueOf(startTime),
+                startTime == null ? null : Timestamp.valueOf(startTime),
+                endTime == null ? null : Timestamp.valueOf(endTime),
+                editor, timeworkId, version
+            ), "他のユーザーに更新されています。再検索してください。");
+    }
+
+    public long insertStart(long employeeId, LocalDate workDate, LocalDateTime stampedAt, String editor) {
         return sqlRepository.insert("""
-            INSERT INTO timeworks(employee_id, office_id, work_date, start_time, regist_user, update_user)
+            INSERT INTO timeworks(employee_id, start_time, regist_user, update_user)
             OUTPUT INSERTED.timework_id
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?)
             """, (ps, ignored) -> {
                 ps.setLong(1, employeeId);
-                if (officeId == null) ps.setNull(2, java.sql.Types.BIGINT); else ps.setLong(2, officeId);
-                ps.setObject(3, workDate);
-                ps.setTimestamp(4, Timestamp.valueOf(stampedAt));
-                ps.setString(5, editor);
-                ps.setString(6, editor);
+                ps.setTimestamp(2, Timestamp.valueOf(stampedAt));
+                ps.setString(3, editor);
+                ps.setString(4, editor);
             }, rs -> rs.getLong(1), null);
     }
 

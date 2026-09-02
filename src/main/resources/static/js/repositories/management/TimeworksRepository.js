@@ -1,28 +1,32 @@
 "use strict"
 
-import { api } from "../../../core/api/apiService.js";
-
-const query = (params = {}) => {
-    const search = new URLSearchParams();
-    Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== "") search.set(key, value);
-    });
-    const suffix = search.toString();
-    return suffix ? `?${suffix}` : "";
-};
+import { api } from "../../core/api/apiService.js";
 
 export const TimeworksRepository = {
-    async search(params = {}) {
-        const res = await api.get(`/api/timeworks/list${query(params)}`);
+    async search() {
+        const res = await api.get("/api/timeworks/list");
         return res.data ?? [];
     },
 
-    async findToday() {
-        const res = await api.get("/api/timeworks/today");
+    async findEmployee(identifier) {
+        const res = await api.get(`/api/timeworks/employee?identifier=${encodeURIComponent(identifier)}`);
         return res.data;
     },
 
-    async stamp(stampType) {
-        return api.post("/api/timeworks/stamp", {stampType});
+    async stamp(employeeId, stampType) {
+        return api.post("/api/timeworks/stamp", {employeeId, stampType});
+    },
+
+    async searchManagement(params) {
+        const query = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+            if (value !== null && value !== undefined && value !== "") query.set(key, value);
+        });
+        const res = await api.get(`/api/timeworks/admin/list?${query}`);
+        return res.data ?? [];
+    },
+
+    async updateTimes(params) {
+        return api.post("/api/timeworks/admin/update", params);
     }
 };

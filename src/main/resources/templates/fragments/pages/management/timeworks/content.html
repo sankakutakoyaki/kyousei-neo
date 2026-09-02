@@ -5,6 +5,8 @@
     <div class="tab-area">
         <ul class="tab-menu">
             <li class="tab-menu-item is-active" data-action="tab" data-group="timeworks-tabs" data-tab="tab-01">勤怠</li>
+            <li class="tab-menu-item" sec:authorize="hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff')"
+                data-action="tab" data-group="timeworks-tabs" data-tab="tab-02">出退勤管理</li>
         </ul>
         <div class="tab-panel is-show" id="tab-01" data-tab-content="timeworks-tabs">
             <div class="timeworks-area">
@@ -14,38 +16,54 @@
                         <time id="stamp-date"></time>
                         <time id="stamp-time"></time>
                     </div>
-                    <dl class="stamp-user">
-                        <div><dt>氏名</dt><dd id="stamp-user-name">-----</dd></div>
-                        <div><dt>営業所</dt><dd id="stamp-office-name">-----</dd></div>
-                        <div><dt>勤務状況</dt><dd id="stamp-status">確認中</dd></div>
-                    </dl>
-                    <div class="stamp-results" aria-label="本日の打刻時刻">
-                        <div><span>出勤</span><strong id="stamp-start-result">-----</strong></div>
-                        <div><span>退勤</span><strong id="stamp-end-result">-----</strong></div>
+                    <div class="stamp-employee">
+                        <label for="stamp-identifier">社員ID／コード</label>
+                        <input id="stamp-identifier" type="text" autocomplete="off">
+                        <label for="stamp-user-name">氏名</label>
+                        <input id="stamp-user-name" type="text" readonly tabindex="-1">
                     </div>
                     <div class="stamp-actions">
                         <button type="button" class="normal-btn stamp-button start" data-stamp-type="START" disabled>出勤</button>
                         <button type="button" class="normal-btn stamp-button end" data-stamp-type="END" disabled>退勤</button>
                     </div>
-                    <p class="stamp-note">打刻時刻にはサーバーの現在時刻を使用します。</p>
+                    <p class="stamp-note">ID／コードを入力してEnterキーを押してください。</p>
                 </section>
                 <div class="table-area" data-controller="timeworks">
-                    <div class="timeworks-search-area">
-                        <label class="timeworks-search-item">対象日
-                            <input id="timeworks-work-date" type="date">
-                        </label>
-                        <label class="timeworks-search-item">営業所
-                            <select id="timeworks-office-filter"
-                                    data-combo="officeComboList"
-                                    data-empty-option
-                                    data-top="すべて"></select>
-                        </label>
-                        <button id="timeworks-search" type="button" class="normal-btn">検索</button>
-                    </div>
                     <section th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01')}"></section>
                     <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></footer>
                 </div>                
             </div>
+        </div>
+        <div class="tab-panel" id="tab-02" data-tab-content="timeworks-tabs"
+             sec:authorize="hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff')">
+            <section class="timework-management" aria-labelledby="management-title">
+                <h2 id="management-title">出退勤管理</h2>
+                <div class="management-toolbar">
+                    <label>対象月
+                        <input id="management-month" type="month">
+                    </label>
+                    <label>締め日
+                        <select id="management-closing-type">
+                            <option value="FIFTEENTH">15日締め</option>
+                            <option value="MONTH_END">月末締め</option>
+                        </select>
+                    </label>
+                    <label>営業所
+                        <select id="management-office"></select>
+                    </label>
+                    <button id="management-search" type="button" class="normal-btn">検索</button>
+                    <button id="management-csv" type="button" class="normal-btn">CSVダウンロード</button>
+                </div>
+                <p id="management-period" class="management-period"></p>
+                <div class="management-table-wrapper">
+                    <table class="management-table">
+                        <thead>
+                            <tr><th>勤務日</th><th>社員ID</th><th>氏名</th><th>営業所</th><th>出勤</th><th>退勤</th><th>保存</th></tr>
+                        </thead>
+                        <tbody id="management-list"></tbody>
+                    </table>
+                </div>
+            </section>
         </div>
     </div>
     <div id="msg-dialog-area">
