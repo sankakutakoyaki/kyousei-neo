@@ -108,14 +108,13 @@ function renderOrderPdfImportList(imports, message, items) {
         link.target = "_blank";
         link.rel = "noopener";
         link.textContent = `${formatOrderPdfImportDate(imported.registDate)}  ${imported.originalFileName} (${formatFileSize(imported.fileSize)})`;
-        item.append(link);
-
         const ocrButton = document.createElement("button");
         ocrButton.type = "button";
         ocrButton.className = "normal-btn";
         ocrButton.textContent = "OCR実行";
         ocrButton.addEventListener("click", () => executeOrderPdfOcr(imported.orderImportId));
         item.append(ocrButton);
+        item.append(link);
         items.append(item);
     }
     items.classList.remove("none");

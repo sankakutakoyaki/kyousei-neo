@@ -21,6 +21,7 @@ import com.kyouseipro.neo.common.exception.SystemException;
 import com.kyouseipro.neo.config.UploadConfig;
 import com.kyouseipro.neo.domain.business.order.ocr.HeiwadoOcrDefaultLayout;
 import com.kyouseipro.neo.domain.business.order.ocr.LocalOcrService;
+import com.kyouseipro.neo.domain.business.order.ocr.ai.OrderAiExtractionClient;
 import com.kyouseipro.neo.domain.business.order.ocr.model.OrderOcrLayout;
 import com.kyouseipro.neo.domain.business.order.ocr.repository.OrderOcrLayoutRepository;
 import com.kyouseipro.neo.domain.business.order.pdf.model.OrderPdfImportFile;
@@ -39,6 +40,7 @@ public class OrderPdfImportService {
     private final UploadConfig uploadConfig;
     private final OrderPdfImportRepository orderPdfImportRepository;
     private final LocalOcrService localOcrService;
+    private final OrderAiExtractionClient orderAiExtractionClient;
     private final OrderOcrLayoutRepository orderOcrLayoutRepository;
     private final ObjectMapper objectMapper;
 
@@ -112,6 +114,11 @@ public class OrderPdfImportService {
     public Map<String, String> recognizeHeiwado(long orderImportId) {
         OrderPdfImportFile file = findFile(orderImportId);
         long primeConstractorId = orderPdfImportRepository.findPrimeConstractorId(orderImportId);
+        var aiResult = orderAiExtractionClient.extract(file.path(), primeConstractorId);
+        if (aiResult.isPresent()) {
+            orderPdfImportRepository.saveOcrResult(orderImportId, toJson(aiResult.get()));
+            return aiResult.get();
+        }
         Map<String, HeiwadoOcrDefaultLayout.OcrRegion> regions = orderOcrLayoutRepository.find(primeConstractorId).stream()
             .collect(java.util.stream.Collectors.toMap(OrderOcrLayout::fieldKey, layout -> new HeiwadoOcrDefaultLayout.OcrRegion(layout.x(), layout.y(), layout.width(), layout.height())));
         if (regions.isEmpty()) regions = HeiwadoOcrDefaultLayout.REGIONS;

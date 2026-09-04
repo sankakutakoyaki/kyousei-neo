@@ -1,0 +1,15 @@
+[Unit]
+Description=Kyousei Document AI Reader
+After=network.target ollama.service
+
+[Service]
+Type=simple
+User=kyousei
+WorkingDirectory=/opt/kyousei-neo/ai-reader
+Environment=AI_READER_OLLAMA_MODEL=qwen2.5vl:3b
+ExecStart=/opt/kyousei-neo/ai-reader/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 18080
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.config.UploadConfig;
 import com.kyouseipro.neo.domain.business.order.ocr.LocalOcrService;
+import com.kyouseipro.neo.domain.business.order.ocr.ai.OrderAiExtractionClient;
 import com.kyouseipro.neo.domain.business.order.ocr.repository.OrderOcrLayoutRepository;
 import com.kyouseipro.neo.domain.business.order.pdf.model.OrderPdfImportResult;
 import com.kyouseipro.neo.domain.business.order.pdf.repository.OrderPdfImportRepository;
@@ -35,6 +36,7 @@ class OrderPdfImportServiceTest {
             new UploadConfig(temporaryDirectory.toString()),
             repositoryReturning(1L),
             mock(LocalOcrService.class),
+            mock(OrderAiExtractionClient.class),
             mock(OrderOcrLayoutRepository.class),
             new ObjectMapper()
         );
@@ -64,6 +66,7 @@ class OrderPdfImportServiceTest {
             new UploadConfig(temporaryDirectory.toString()),
             repositoryReturning(1L),
             mock(LocalOcrService.class),
+            mock(OrderAiExtractionClient.class),
             mock(OrderOcrLayoutRepository.class),
             new ObjectMapper()
         );
