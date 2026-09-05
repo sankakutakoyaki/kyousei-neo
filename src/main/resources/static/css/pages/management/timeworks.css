@@ -1,30 +1,70 @@
 @charset "UTF-8";
 
 :is(#table-01, #table-header-01) tr {
-    grid-template-columns: minmax(10rem, 1.4fr) repeat(2, minmax(6rem, 1fr)) minmax(9rem, 1.2fr);
+    /* grid-template-columns: minmax(10rem, 1.4fr) repeat(2, minmax(6rem, 1fr)) minmax(9rem, 1.2fr); */
+    grid-template-columns: 12rem 6rem 6rem 12rem 1fr;
 }
 
-.tab-panel .table-area {
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
+#table-01 tr {
+    height: 2.5rem;
+}
+
+#tab-01 {
+    min-height: 0;
     overflow: hidden;
-    min-width: 0;
+    grid-template-rows: minmax(0, 1fr);
+}
+
+#tab-01 .table-area {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    overflow: hidden;
+    height: 100%;
+    min-height: 0;
 }
 
 .timeworks-area {
     display: grid;
     grid-template-columns: minmax(18rem, 24rem) minmax(0, 1fr);
     gap: 2rem;
-    align-items: start;
+    align-items: stretch;
     padding: 2rem;
+    height: 100%;
+    min-height: 0;
 }
 
 .stamp-area {
+    align-self: start;
     padding: 1.5rem;
     border: 1px solid var(--line);
     border-radius: .8rem;
     background: var(--white);
     box-shadow: 0 .3rem .8rem -.5rem var(--shadow);
+}
+
+/* テーブル本文だけをスクロール領域にする。 */
+.timeworks-area .table-area > section,
+.timeworks-area .table-wrapper,
+.timeworks-area .normal-table,
+.timeworks-area .normal-table .scroll-area {
+    height: 100%;
+    min-height: 0;
+}
+
+.timeworks-area .table-area > section,
+.timeworks-area .table-wrapper {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr);
+}
+
+.timeworks-area .table-wrapper {
+    overflow: hidden;
+}
+
+.timeworks-area .normal-table .scroll-area {
+    display: block;
+    overflow: auto;
+    scrollbar-gutter: stable;
 }
 
 .stamp-area h2 { margin: 0 0 1rem; }

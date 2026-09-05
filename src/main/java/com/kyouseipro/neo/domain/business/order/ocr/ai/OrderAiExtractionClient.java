@@ -24,15 +24,22 @@ public class OrderAiExtractionClient {
 
     private final boolean enabled;
     private final String extractionUrl;
+    private final String modelName;
     private final RestClient restClient;
 
     public OrderAiExtractionClient(
             @Value("${order.ai.enabled:false}") boolean enabled,
             @Value("${order.ai.extraction-url:http://127.0.0.1:18080/v1/document-extractions}") String extractionUrl,
+            @Value("${order.ai.model-name:qwen2.5vl:3b}") String modelName,
             RestClient.Builder restClientBuilder) {
         this.enabled = enabled;
         this.extractionUrl = extractionUrl;
+        this.modelName = modelName;
         this.restClient = restClientBuilder.build();
+    }
+
+    public String modelName() {
+        return modelName;
     }
 
     public Optional<Map<String, String>> extract(Path pdfPath, long primeConstractorId) {

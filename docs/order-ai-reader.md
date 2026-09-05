@@ -42,6 +42,7 @@ GPU導入後は、読取サービスを起動してから、外部設定ファ�
 ```properties
 order.ai.enabled=true
 order.ai.extraction-url=http://127.0.0.1:18080/v1/document-extractions
+order.ai.model-name=qwen2.5vl:3b
 ```
 
 追加先は開発時が `/Users/makoto/config/application-dev.properties`、本番時がUbuntuサーバーの `/etc/kyousei-neo/config/application-prod.properties` とする。既存の「OCR実行」操作でAI読取結果が受注候補画面に表示される。

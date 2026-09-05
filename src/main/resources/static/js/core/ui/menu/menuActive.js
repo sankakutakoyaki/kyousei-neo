@@ -1,9 +1,11 @@
 "use strict"
 
 export function menuActive(path, sw) {
-    const text = sw === "header" ? ".header-title": ".normal-sidebar";
+    const selector = sw === "header"
+        ? ".header-title > .hamburger-item"
+        : ".normal-sidebar .hamburger-item";
     
-    document.querySelectorAll(text + ">.hamburger-item")
+    document.querySelectorAll(selector)
         .forEach(item => {
             item.classList.remove("selected");
 

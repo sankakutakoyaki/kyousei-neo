@@ -7,6 +7,7 @@
 1. `order_imports.sql`
 2. `20260831_add_order_import_ocr.sql`
 3. `20260831_create_order_ocr_layouts.sql`
+4. `20260905_create_ai_document_reviews.sql`
 
 `order_imports` はPDFの保存先とOCR結果を管理します。実ファイルは `upload.path/order-pdf/` 配下に保存されます。ファイルだけを先に削除しないでください。履歴との対応が失われます。
 
@@ -16,6 +17,12 @@
 Orderでは `parent_type = 'ORDER'`、`parent_id = order_id` として利用します。実ファイルは
 `upload.path/attachments/{attachment_group_id}/` 配下にUUID名で保存されるため、DBレコードを残したまま
 ファイルやディレクトリだけを削除しないでください。
+
+## AI読取の確認・学習用データ
+
+`20260905_create_ai_document_reviews.sql` を実行すると、AIの元回答と人が確認して確定した値を、業務データとは分けて保存する `ai_document_reviews` を作成します。
+
+現在は受注FAXを `document_type = 'ORDER_FAX'` として保存します。将来のレシートは `EXPENSE_RECEIPT`、写真は `PHOTO` のように追加できます。追加学習や精度評価には、`review_status = 'CONFIRMED'` のデータだけを使用します。
 
 ## 勤怠打刻
 

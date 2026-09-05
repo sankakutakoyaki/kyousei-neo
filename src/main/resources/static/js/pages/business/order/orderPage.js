@@ -109,6 +109,9 @@ export const orderItemListPage = () =>
         columns: createOrderItemListColumns(),
         submitText: "保存",
         cancelText: "キャンセル",
+        // 未入荷商品の補足情報は、ダブルクリックで編集できる。
+        onDoubleClick: (item) => getController("orderItemList")
+            .openForm("orderItem", item.orderItemId),
         model: {
             filters: {
                 category: filterFactory.nullState("arrivalDate"),
@@ -207,11 +210,18 @@ export const orderItemListPage = () =>
                     key: "orderItemId",
                     idKey: "orderItemId",
                     repository: OrderItemRepository,
-                    saveHandler: OrderItemRepository.create,
+                    // 新規は単独商品として登録し、既存商品は同じレコードを更新する。
+                    saveHandler: (payload) => payload.orderItemId
+                        ? OrderItemRepository.save(payload)
+                        : OrderItemRepository.create(payload),
                     submitText: "保存",
                     cancelText: "キャンセル",
                     validInputSelector: '[name="item-model"]',
                     initialFocusSelector: '[name="item-model"]',
+                    buildParams: (orderItemId) => ({
+                        state: APP.cache.common.state.INITIAL,
+                        orderItemId
+                    }),
                     afterSave: async () => {
                         await controller.refresh();
                     }

@@ -19,6 +19,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.config.UploadConfig;
+import com.kyouseipro.neo.domain.ai.application.AiLearningDataService;
 import com.kyouseipro.neo.domain.business.order.ocr.LocalOcrService;
 import com.kyouseipro.neo.domain.business.order.ocr.ai.OrderAiExtractionClient;
 import com.kyouseipro.neo.domain.business.order.ocr.repository.OrderOcrLayoutRepository;
@@ -37,6 +38,7 @@ class OrderPdfImportServiceTest {
             repositoryReturning(1L),
             mock(LocalOcrService.class),
             mock(OrderAiExtractionClient.class),
+            mock(AiLearningDataService.class),
             mock(OrderOcrLayoutRepository.class),
             new ObjectMapper()
         );
@@ -67,6 +69,7 @@ class OrderPdfImportServiceTest {
             repositoryReturning(1L),
             mock(LocalOcrService.class),
             mock(OrderAiExtractionClient.class),
+            mock(AiLearningDataService.class),
             mock(OrderOcrLayoutRepository.class),
             new ObjectMapper()
         );

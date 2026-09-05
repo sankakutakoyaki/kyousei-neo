@@ -77,15 +77,7 @@
         <form id="order-ocr-candidate-form" class="form-dialog none">
             <div class="dialog-main">
                 <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': 'OCR受注候補'} })}"></header>
-                <section class="order-ocr-candidate-fields">
-                    <label>氏名<input id="ocr-customer-name" class="normal-input"></label>
-                    <label>携帯電話<input id="ocr-mobile-phone" class="normal-input"></label>
-                    <label>住所<textarea id="ocr-address" class="normal-textarea"></textarea></label>
-                    <label>商品型番1<input id="ocr-item-model-1" class="normal-input"></label>
-                    <label>商品型番2<input id="ocr-item-model-2" class="normal-input"></label>
-                    <label>希望日<input id="ocr-requested-date" class="normal-input"></label>
-                    <label>連絡事項<textarea id="ocr-contact-note" class="normal-textarea"></textarea></label>
-                </section>
+                <th:block th:replace="~{fragments/pages/business/order/ocrCandidate :: formFragment()}"></th:block>
                 <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'order-ocr-candidate-footer' } })}"></footer>
             </div>
         </form>

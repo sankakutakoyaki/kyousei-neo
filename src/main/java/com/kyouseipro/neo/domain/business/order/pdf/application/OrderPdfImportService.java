@@ -14,11 +14,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.exception.SystemException;
 import com.kyouseipro.neo.config.UploadConfig;
+import com.kyouseipro.neo.domain.ai.application.AiLearningDataService;
 import com.kyouseipro.neo.domain.business.order.ocr.HeiwadoOcrDefaultLayout;
 import com.kyouseipro.neo.domain.business.order.ocr.LocalOcrService;
 import com.kyouseipro.neo.domain.business.order.ocr.ai.OrderAiExtractionClient;
@@ -41,6 +43,7 @@ public class OrderPdfImportService {
     private final OrderPdfImportRepository orderPdfImportRepository;
     private final LocalOcrService localOcrService;
     private final OrderAiExtractionClient orderAiExtractionClient;
+    private final AiLearningDataService aiLearningDataService;
     private final OrderOcrLayoutRepository orderOcrLayoutRepository;
     private final ObjectMapper objectMapper;
 
@@ -111,12 +114,17 @@ public class OrderPdfImportService {
         return new OrderPdfImportFile(file.originalFileName(), path);
     }
 
+    @Transactional
     public Map<String, String> recognizeHeiwado(long orderImportId) {
         OrderPdfImportFile file = findFile(orderImportId);
         long primeConstractorId = orderPdfImportRepository.findPrimeConstractorId(orderImportId);
         var aiResult = orderAiExtractionClient.extract(file.path(), primeConstractorId);
         if (aiResult.isPresent()) {
             orderPdfImportRepository.saveOcrResult(orderImportId, toJson(aiResult.get()));
+            aiLearningDataService.recordCandidate(
+                "ORDER_FAX", "ORDER_IMPORT", orderImportId, primeConstractorId,
+                "OLLAMA", orderAiExtractionClient.modelName(), "order-fax-v1", aiResult.get()
+            );
             return aiResult.get();
         }
         Map<String, HeiwadoOcrDefaultLayout.OcrRegion> regions = orderOcrLayoutRepository.find(primeConstractorId).stream()
@@ -124,12 +132,18 @@ public class OrderPdfImportService {
         if (regions.isEmpty()) regions = HeiwadoOcrDefaultLayout.REGIONS;
         Map<String, String> result = localOcrService.extractRegions(file.path(), regions);
         orderPdfImportRepository.saveOcrResult(orderImportId, toJson(result));
+        aiLearningDataService.recordCandidate(
+            "ORDER_FAX", "ORDER_IMPORT", orderImportId, primeConstractorId,
+            "TESSERACT", null, "order-fax-v1", result
+        );
         return result;
     }
 
+    @Transactional
     public void saveCandidate(long orderImportId, Map<String, String> candidate) {
         findFile(orderImportId);
         orderPdfImportRepository.saveOcrResult(orderImportId, toJson(candidate));
+        aiLearningDataService.confirmLatest("ORDER_IMPORT", orderImportId, candidate);
     }
 
     public byte[] preview(long orderImportId) {
