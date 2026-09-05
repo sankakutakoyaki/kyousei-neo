@@ -111,7 +111,7 @@ public class TimeworkController {
     ) {
         TimeworkPeriod period = service.period(targetMonth, closingType);
         List<TimeworkListItem> items = service.findManagementList(targetMonth, closingType, officeId, employeeId);
-        StringBuilder csv = new StringBuilder("\uFEFF勤務日,社員ID,氏名,営業所,出勤,退勤\r\n");
+        StringBuilder csv = new StringBuilder("\uFEFF勤務日,社員ID,氏名,営業所,出勤（有効）,退勤（有効）\r\n");
         for (TimeworkListItem item : items) {
             csv.append(item.workDate()).append(',')
                 .append(item.employeeId()).append(',')

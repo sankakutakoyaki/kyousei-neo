@@ -17,6 +17,7 @@ import com.kyouseipro.neo.domain.management.model.TimeworkStatus;
 import com.kyouseipro.neo.domain.management.model.TimeworkPeriod;
 import com.kyouseipro.neo.domain.management.model.TimeworkUpdateRequest;
 import com.kyouseipro.neo.common.combo.entity.ComboDto;
+import com.kyouseipro.neo.domain.management.model.OriginalTimework;
 import com.kyouseipro.neo.domain.management.repository.TimeworkRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -77,12 +78,18 @@ public class TimeworkService {
     @Transactional
     public void updateTimes(Authentication authentication, TimeworkUpdateRequest request) {
         if (request.timeworkId() <= 0) throw new BusinessException("勤怠データの指定が不正です。");
-        if (request.startTime() == null) throw new BusinessException("出勤時刻を入力してください。");
-        if (request.endTime() != null && request.endTime().isBefore(request.startTime())) {
+        OriginalTimework original = repository.findOriginal(request.timeworkId());
+        if (original == null) throw new BusinessException("勤怠データが見つかりません。");
+        LocalDateTime effectiveStart = request.editStartTime() != null
+            ? request.editStartTime() : original.startTime();
+        LocalDateTime effectiveEnd = request.editEndTime() != null
+            ? request.editEndTime() : original.endTime();
+        if (effectiveStart == null) throw new BusinessException("有効な出勤時刻がありません。");
+        if (effectiveEnd != null && effectiveEnd.isBefore(effectiveStart)) {
             throw new BusinessException("退勤時刻は出勤時刻以降を入力してください。");
         }
-        repository.updateTimes(
-            request.timeworkId(), request.startTime(), request.endTime(), request.version(), account(authentication)
+        repository.saveEdit(
+            request.timeworkId(), request.editStartTime(), request.editEndTime(), account(authentication)
         );
     }
 

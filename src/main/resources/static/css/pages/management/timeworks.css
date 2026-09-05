@@ -9,6 +9,10 @@
     height: 2.5rem;
 }
 
+:is(#table-01, #table-header-01) tr > :is(th, td):is(:nth-child(2), :nth-child(3)) {
+    text-align: center;
+}
+
 #tab-01 {
     min-height: 0;
     overflow: hidden;
@@ -149,9 +153,64 @@
 }
 
 .management-period { margin: 1rem 0; color: #555; }
-.management-table-wrapper { overflow: auto; max-height: calc(100vh - 21rem); }
-.management-table { width: 100%; border-collapse: collapse; background: var(--white); }
-.management-table th { position: sticky; top: 0; z-index: 1; background: #f5f7fa; }
-.management-table :is(th, td) { padding: .65rem; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
-.management-table input[type="datetime-local"] { min-height: 2.3rem; padding: 0 .4rem; border: 1px solid var(--line); border-radius: .3rem; }
-.management-table .normal-btn { min-width: 4rem; }
+.management-table-wrapper {
+    height: calc(100vh - 21rem);
+    min-height: 18rem;
+    overflow: hidden;
+}
+
+.management-table :is(thead, tbody) tr {
+    grid-template-columns:
+        minmax(7rem, .8fr)
+        minmax(6rem, .6fr)
+        minmax(10rem, 1.2fr)
+        minmax(10rem, 1fr)
+        minmax(7rem, .7fr)
+        minmax(8rem, .8fr)
+        minmax(7rem, .7fr)
+        minmax(8rem, .8fr)
+        4rem;
+}
+
+.management-table tbody { display: block; min-height: 0; }
+.management-table tr[name="table-header"] { background: var(--white); }
+.management-table :is(th, td) { text-align: left; }
+.management-table tr > :is(th, td):is(
+    :nth-child(5),
+    :nth-child(6),
+    :nth-child(7),
+    :nth-child(8),
+    :nth-child(9)
+) {
+    text-align: center;
+}
+.management-time-input {
+    display: grid;
+    grid-template-columns: minmax(6.5rem, 1fr);
+    align-items: center;
+    gap: .5rem;
+    justify-content: center;
+}
+
+.management-table input[type="time"] {
+    min-width: 0;
+    min-height: 2.3rem;
+    padding: 0 .4rem;
+    border: 1px solid var(--line);
+    border-radius: .3rem;
+    text-align: center;
+}
+
+.next-day-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.next-day-cell input {
+    cursor: pointer;
+}
+
+.management-table tr[name="data-row"].is-saving { background: #fff8df; }
+.management-table tr[name="data-row"].is-saved { background: #eaf8ee; }
+.management-table tr[name="data-row"].is-save-error { background: #fff0f0; }

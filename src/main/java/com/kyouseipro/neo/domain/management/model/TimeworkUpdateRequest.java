@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 
 public record TimeworkUpdateRequest(
     long timeworkId,
-    LocalDateTime startTime,
-    LocalDateTime endTime,
-    int version
+    Long timeworkEditId,
+    LocalDateTime editStartTime,
+    LocalDateTime editEndTime
 ) {
 }

@@ -29,3 +29,7 @@ Orderでは `parent_type = 'ORDER'`、`parent_id = order_id` として利用し�
 `20260901_rebuild_timeworks.sql` は既存の `timeworks` と `timeworks_edit` を削除し、
 1社員・1勤務日につき1件の打刻データを保持する `timeworks` を作成します。
 既存の勤怠データが必要な環境では、実行前に必ず退避してください。
+
+既に `timeworks` を作成済みの環境では、原本を削除せずに
+`20260905_create_timework_edits.sql` のみを実行してください。修正値は履歴テーブルへ保存され、
+`timeworks.start_time` と `timeworks.end_time` は変更されません。

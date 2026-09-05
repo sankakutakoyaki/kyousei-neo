@@ -59,11 +59,11 @@
                 </div>
                 <p id="management-period" class="management-period"></p>
                 <div class="management-table-wrapper">
-                    <table class="management-table">
+                    <table class="management-table normal-table">
                         <thead>
-                            <tr><th>勤務日</th><th>社員ID</th><th>氏名</th><th>営業所</th><th>出勤</th><th>退勤</th><th>保存</th></tr>
+                            <tr name="table-header"><th>勤務日</th><th>社員ID</th><th>氏名</th><th>営業所</th><th>出勤（打刻）</th><th>出勤（修正）</th><th>退勤（打刻）</th><th>退勤（修正）</th><th>翌日</th></tr>
                         </thead>
-                        <tbody id="management-list"></tbody>
+                        <tbody id="management-list" class="scroll-area"></tbody>
                     </table>
                 </div>
             </section>

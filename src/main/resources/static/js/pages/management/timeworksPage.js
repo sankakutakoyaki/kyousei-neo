@@ -8,6 +8,7 @@ import { TimeworksRepository } from "../../repositories/management/TimeworksRepo
 import { createTimeworksListColumns } from "./columns.js";
 import { formatDate } from "../../util/time.js";
 import { openMsgDialog } from "../../core/ui/dialog/dialogCore.js";
+import { toggleScrollbar } from "../../core/table/tableRender.js";
 
 let selectedEmployee = null;
 let employeeComboRequest = 0;
@@ -16,6 +17,8 @@ let rolePersonalMode = false;
 let isPersonalMode = mobileMedia.matches;
 let responsiveChangeHandler = null;
 let managementInitialized = false;
+const rowSaveTimers = new WeakMap();
+const rowSaveChains = new WeakMap();
 
 export async function init() {
     managementInitialized = false;
@@ -215,10 +218,9 @@ function initManagement() {
         loaded = true;
         refreshManagement();
     });
-    list.addEventListener("click", async event => {
-        const button = event.target.closest("[data-save-timework]");
-        if (!button) return;
-        await saveManagementRow(button.closest("tr"));
+    list.addEventListener("change", event => {
+        if (!event.target.matches('[name="editStartTime"], [name="editEndTime"], [name="endNextDay"]')) return;
+        scheduleManagementSave(event.target.closest("tr"));
     });
 }
 
@@ -287,24 +289,23 @@ function renderManagementList(items) {
     body.replaceChildren();
     items.forEach(item => {
         const row = document.createElement("tr");
+        row.setAttribute("name", "data-row");
         row.dataset.timeworkId = item.timeworkId;
         row.dataset.version = item.version;
+        row.dataset.workDate = item.workDate;
+        row.dataset.timeworkEditId = item.timeworkEditId ?? "";
         appendTextCell(row, item.workDate);
         appendTextCell(row, item.employeeId);
         appendTextCell(row, item.fullName);
         appendTextCell(row, item.officeName || "-----");
-        appendDateTimeCell(row, "startTime", item.startTime);
-        appendDateTimeCell(row, "endTime", item.endTime);
-        const action = document.createElement("td");
-        const save = document.createElement("button");
-        save.type = "button";
-        save.className = "normal-btn";
-        save.dataset.saveTimework = "true";
-        save.textContent = "保存";
-        action.appendChild(save);
-        row.appendChild(action);
+        appendOriginalTimeCell(row, item.originalStartTime, item.workDate);
+        appendTimeCell(row, "editStartTime", item.editStartTime);
+        appendOriginalTimeCell(row, item.originalEndTime, item.workDate);
+        appendTimeCell(row, "editEndTime", item.editEndTime);
+        appendNextDayCell(row, item.editEndTime, item.workDate);
         body.appendChild(row);
     });
+    window.requestAnimationFrame(() => toggleScrollbar(body));
 }
 
 function appendTextCell(row, value) {
@@ -313,31 +314,90 @@ function appendTextCell(row, value) {
     row.appendChild(cell);
 }
 
-function appendDateTimeCell(row, name, value) {
+function appendOriginalTimeCell(row, value, workDate) {
+    if (!value) {
+        appendTextCell(row, "-----");
+        return;
+    }
+    const nextDay = value.slice(0, 10) > workDate;
+    appendTextCell(row, `${nextDay ? "翌日 " : ""}${value.slice(11, 16)}`);
+}
+
+function appendTimeCell(row, name, value) {
     const cell = document.createElement("td");
+    const area = document.createElement("div");
+    area.className = "management-time-input";
     const input = document.createElement("input");
-    input.type = "datetime-local";
+    input.type = "time";
     input.name = name;
-    input.value = value ? value.slice(0, 16) : "";
-    cell.appendChild(input);
+    input.value = value ? value.slice(11, 16) : "";
+    area.appendChild(input);
+    cell.appendChild(area);
     row.appendChild(cell);
 }
 
+function appendNextDayCell(row, value, workDate) {
+    const cell = document.createElement("td");
+    cell.className = "next-day-cell";
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.name = "endNextDay";
+    checkbox.checked = Boolean(value && workDate && value.slice(0, 10) > workDate);
+    checkbox.setAttribute("aria-label", "翌日退勤");
+    cell.appendChild(checkbox);
+    row.appendChild(cell);
+}
+
+function scheduleManagementSave(row) {
+    const currentTimer = rowSaveTimers.get(row);
+    if (currentTimer) window.clearTimeout(currentTimer);
+    row.classList.remove("is-saved", "is-save-error");
+    row.classList.add("is-saving");
+    const timer = window.setTimeout(() => {
+        const previous = rowSaveChains.get(row) ?? Promise.resolve();
+        const next = previous.then(() => saveManagementRow(row)).catch(() => {});
+        rowSaveChains.set(row, next);
+    }, 400);
+    rowSaveTimers.set(row, timer);
+}
+
 async function saveManagementRow(row) {
-    const startTime = row.querySelector('[name="startTime"]').value || null;
-    const endTime = row.querySelector('[name="endTime"]').value || null;
+    row.classList.remove("is-saved", "is-save-error");
+    row.classList.add("is-saving");
+    const workDate = row.dataset.workDate;
+    const startValue = row.querySelector('[name="editStartTime"]').value;
+    const endValue = row.querySelector('[name="editEndTime"]').value;
+    const endNextDay = row.querySelector('[name="endNextDay"]')?.checked === true;
+    const editStartTime = toDateTimeValue(workDate, startValue);
+    const editEndTime = toDateTimeValue(workDate, endValue, endNextDay);
     try {
-        const result = await TimeworksRepository.updateTimes({
+        await TimeworksRepository.updateTimes({
             timeworkId: Number(row.dataset.timeworkId),
-            startTime,
-            endTime,
-            version: Number(row.dataset.version)
+            timeworkEditId: row.dataset.timeworkEditId
+                ? Number(row.dataset.timeworkEditId) : null,
+            editStartTime,
+            editEndTime
         });
-        openMsgDialog({message: result.message || "保存しました。", color: "blue"});
-        await refreshManagement();
+        row.classList.remove("is-saving", "is-save-error");
+        row.classList.add("is-saved");
+        window.setTimeout(() => row.classList.remove("is-saved"), 1200);
     } catch (error) {
+        row.classList.remove("is-saving", "is-saved");
+        row.classList.add("is-save-error");
         openMsgDialog({message: error.message || "保存できませんでした。", color: "red"});
+        throw error;
     }
+}
+
+function toDateTimeValue(workDate, time, nextDay = false) {
+    if (!workDate || !time) return null;
+    let date = workDate;
+    if (nextDay) {
+        const next = new Date(`${workDate}T00:00:00`);
+        next.setDate(next.getDate() + 1);
+        date = formatDate(next, "yyyy-MM-dd");
+    }
+    return `${date}T${time}:00`;
 }
 
 function downloadManagementCsv() {
