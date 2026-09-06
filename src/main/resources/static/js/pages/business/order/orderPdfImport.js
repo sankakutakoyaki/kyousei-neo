@@ -3,121 +3,144 @@
 import { apiFetch } from "../../../core/api/apiFetch.js";
 import { closeFormDialog, openFormDialog, openMsgDialog } from "../../../core/ui/dialog/dialogCore.js";
 
+import { OrderPdfImportQueue } from "./OrderPdfImportQueue.js";
+
 let latestOrderPdfImportId = null;
+let importQueue = null;
 
 export function initOrderPdfImport() {
+    importQueue?.dispose();
+    latestOrderPdfImportId = null;
+    const panel = document.getElementById("tab-02");
+    const queue = new OrderPdfImportQueue({
+        upload: async (file, shipperId) => {
+            const data = new FormData();
+            data.append("primeConstractorId", shipperId);
+            data.append("file", file);
+            const result = await apiFetch("/api/order/import/pdf", {
+                method: "POST", data, timeout: 120000, showProcessing: true
+            });
+            return result.data;
+        },
+        recognize: async (id) => {
+            const result = await apiFetch(`/api/order/import/${encodeURIComponent(id)}/ocr/hei-wado`, {
+                method: "POST", timeout: 300000, showProcessing: true
+            });
+            return result.data;
+        },
+        review: entry => {
+            if (importQueue !== queue || !panel?.isConnected) { queue.dispose(); return; }
+            return openOcrCandidateForm(entry, true);
+        },
+        onChange: () => {
+            if (importQueue !== queue) return;
+            if (!panel?.isConnected) { queue.dispose(); return; }
+            renderOrderPdfImportList();
+        }
+    });
+    importQueue = queue;
     initOrderPdfDrop();
-    initOrderPdfImportList();
+    document.getElementById("primeConstractorImport")?.addEventListener("change", renderOrderPdfImportList);
+    const fileInput = document.getElementById("order-pdf-file-input");
+    document.getElementById("order-pdf-file-button")?.addEventListener("click", () => fileInput?.click());
+    fileInput?.addEventListener("change", () => {
+        const files = Array.from(fileInput.files ?? []);
+        fileInput.value = "";
+        enqueueOrderPdfs(files);
+    });
+    renderOrderPdfImportList();
     initOrderOcrLayoutEditor();
 }
 
 function initOrderPdfDrop() {
     const dropArea = document.getElementById("tab-02");
     if (!dropArea) return;
-
     let dragDepth = 0;
-    dropArea.addEventListener("dragenter", (event) => {
+    dropArea.addEventListener("dragenter", event => {
         event.preventDefault();
         dragDepth += 1;
         dropArea.classList.add("drag-over");
     });
-    dropArea.addEventListener("dragover", (event) => {
-        event.preventDefault();
-        dropArea.classList.add("drag-over");
-    });
+    dropArea.addEventListener("dragover", event => event.preventDefault());
     dropArea.addEventListener("dragleave", () => {
         dragDepth = Math.max(0, dragDepth - 1);
-        if (dragDepth === 0) dropArea.classList.remove("drag-over");
+        if (!dragDepth) dropArea.classList.remove("drag-over");
     });
-    dropArea.addEventListener("drop", async (event) => {
+    dropArea.addEventListener("drop", event => {
         event.preventDefault();
         dragDepth = 0;
         dropArea.classList.remove("drag-over");
-        const file = event.dataTransfer?.files?.[0];
-        if (file) await importOrderPdf(file);
+        enqueueOrderPdfs(Array.from(event.dataTransfer?.files ?? []));
     });
 }
 
-async function importOrderPdf(file) {
-    const primeConstractorId = document.getElementById("primeConstractorImport")?.value?.trim();
-    if (!primeConstractorId || primeConstractorId === "0") {
-        openMsgDialog({message: "荷主を選択してください。", color: "red"});
-        return;
-    }
-    if (file.type && file.type !== "application/pdf") {
-        openMsgDialog({message: "PDFファイルを選択してください。", color: "red"});
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append("primeConstractorId", primeConstractorId);
-    formData.append("file", file);
-
+function enqueueOrderPdfs(files) {
+    if (!files.length) return;
+    const select = document.getElementById("primeConstractorImport");
+    const shipperId = select?.value?.trim();
+    const shipperName = select?.selectedOptions?.[0]?.textContent?.trim() || shipperId;
     try {
-        const result = await apiFetch("/api/order/import/pdf", {method: "POST", data: formData});
-        openMsgDialog({message: result.message || "PDFを保存しました。", color: "blue"});
-        await refreshOrderPdfImportList();
+        // Freeze the shipper at submission, even if the selection changes later.
+        void importQueue.enqueue(files, shipperId, shipperName);
     } catch (error) {
-        openMsgDialog({message: error.message || "PDFの保存に失敗しました。", color: "red"});
+        openMsgDialog({message: error.message, color: "red"});
     }
 }
 
-function initOrderPdfImportList() {
-    document.getElementById("primeConstractorImport")?.addEventListener("change", refreshOrderPdfImportList);
-}
-
-async function refreshOrderPdfImportList() {
-    const primeConstractorId = document.getElementById("primeConstractorImport")?.value?.trim();
+function renderOrderPdfImportList() {
     const message = document.getElementById("order-pdf-import-message");
     const items = document.getElementById("order-pdf-import-items");
-    if (!message || !items) return;
-
-    if (!primeConstractorId || primeConstractorId === "0") {
-        message.textContent = "荷主を選択すると、取り込んだPDFを表示します。";
-        items.replaceChildren();
-        items.classList.add("none");
-        latestOrderPdfImportId = null;
-        return;
-    }
-
-    try {
-        const result = await apiFetch(`/api/order/import?primeConstractorId=${encodeURIComponent(primeConstractorId)}`, {method: "GET", showProcessing: false});
-        renderOrderPdfImportList(result.data ?? [], message, items);
-    } catch (error) {
-        message.textContent = error.message || "取込PDFの取得に失敗しました。";
-        items.replaceChildren();
-        items.classList.add("none");
-    }
-}
-
-function renderOrderPdfImportList(imports, message, items) {
+    if (!message || !items || !importQueue) return;
+    const queue = importQueue;
+    const shipperId = document.getElementById("primeConstractorImport")?.value?.trim();
+    latestOrderPdfImportId = [...queue.entries].reverse().find(entry => entry.shipperId === shipperId && entry.orderImportId)?.orderImportId ?? null;
+    const completed = queue.entries.filter(entry => entry.status === "completed").length;
+    const failed = queue.entries.filter(entry => entry.status === "failed").length;
+    const confirmed = queue.entries.filter(entry => entry.confirmed).length;
+    message.textContent = queue.active
+        ? `${queue.active.status === "reviewing" ? "確認・修正中" : "読取中"}：${queue.active.name} ／ 待機 ${queue.pending.length}件 ／ 読取完了 ${completed}件（確認済み ${confirmed}件）／ 失敗 ${failed}件`
+        : queue.entries.length
+            ? `読取完了 ${completed}件（確認済み ${confirmed}件）／ 失敗 ${failed}件`
+            : "今回の取込結果はまだありません。荷主を選択してPDFを追加してください。";
+    const layoutButton = document.getElementById("order-ocr-layout-button");
+    if (layoutButton) layoutButton.disabled = queue.running;
     items.replaceChildren();
-    if (imports.length === 0) {
-        message.textContent = "取込済みのPDFはありません。";
-        items.classList.add("none");
-        latestOrderPdfImportId = null;
-        return;
-    }
-
-    message.textContent = `${imports.length}件の取込PDFがあります。`;
-    latestOrderPdfImportId = imports[0].orderImportId;
-    for (const imported of imports) {
+    for (const entry of queue.entries) {
         const item = document.createElement("li");
-        const link = document.createElement("a");
-        link.href = `/api/order/import/${encodeURIComponent(imported.orderImportId)}/file`;
-        link.target = "_blank";
-        link.rel = "noopener";
-        link.textContent = `${formatOrderPdfImportDate(imported.registDate)}  ${imported.originalFileName} (${formatFileSize(imported.fileSize)})`;
-        const ocrButton = document.createElement("button");
-        ocrButton.type = "button";
-        ocrButton.className = "normal-btn";
-        ocrButton.textContent = "OCR実行";
-        ocrButton.addEventListener("click", () => executeOrderPdfOcr(imported.orderImportId));
-        item.append(ocrButton);
-        item.append(link);
+        item.className = `order-pdf-result ${entry.status}`;
+        const status = document.createElement("strong");
+        status.textContent = entry.status === "failed" ? "失敗" : entry.confirmed ? "受注登録済み" : "読取完了・要確認";
+        const detail = document.createElement("div");
+        detail.className = "order-pdf-result-detail";
+        const name = document.createElement(entry.orderImportId ? "a" : "span");
+        if (entry.orderImportId) {
+            name.href = `/api/order/import/${encodeURIComponent(entry.orderImportId)}/file`;
+            name.target = "_blank";
+            name.rel = "noopener";
+        }
+        name.textContent = `${entry.name} (${formatFileSize(entry.size)})`;
+        const metadata = document.createElement("small");
+        metadata.textContent = `${entry.shipperName} ／ ${formatOrderPdfImportDate(entry.completedAt)}${entry.orderId ? ` ／ 受注番号 ${entry.orderId}` : ""}`;
+        detail.append(name, metadata);
+        if (entry.error) {
+            const error = document.createElement("p");
+            error.textContent = entry.error;
+            detail.append(error);
+        }
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "normal-btn";
+        button.disabled = entry.confirmed || queue.running;
+        button.textContent = entry.status === "failed" ? "再試行" : entry.confirmed ? "受注登録済み" : "確認・修正";
+        button.addEventListener("click", () => {
+            if (queue.running) return;
+            if (entry.status === "failed") void queue.retry(entry);
+            else openOcrCandidateForm(entry);
+        });
+        item.append(status, detail, button);
         items.append(item);
     }
-    items.classList.remove("none");
+    items.classList.toggle("none", queue.entries.length === 0);
 }
 
 function initOrderOcrLayoutEditor() {
@@ -251,33 +274,98 @@ function renderOcrLayoutBoxes(preview, image, layouts) {
     }
 }
 
-async function executeOrderPdfOcr(orderImportId) {
-    try {
-        const result = await apiFetch(`/api/order/import/${encodeURIComponent(orderImportId)}/ocr/hei-wado`, {method: "POST", timeout: 60000});
-        openOcrCandidateForm(orderImportId, result.data ?? {});
-    } catch (error) {
-        openMsgDialog({message: error.message || "OCR処理に失敗しました。", color: "red"});
-    }
-}
-
-function openOcrCandidateForm(orderImportId, candidates) {
-    const fields = {customerName: "ocr-customer-name", mobilePhone: "ocr-mobile-phone", address: "ocr-address", itemModel1: "ocr-item-model-1", itemModel2: "ocr-item-model-2", requestedDate: "ocr-requested-date", contactNote: "ocr-contact-note"};
+function openOcrCandidateForm(entry, sequential = false) {
+    const fields = {customerName: "ocr-customer-name", mobilePhone: "ocr-mobile-phone", address: "ocr-address", requestedDate: "ocr-requested-date", contactNote: "ocr-contact-note"};
     for (const [key, id] of Object.entries(fields)) {
         const input = document.getElementById(id);
-        if (input) input.value = candidates[key] ?? "";
+        if (input) input.value = entry.candidates[key] ?? "";
     }
-    openFormDialog({
-        dialogId: "order-ocr-candidate-form",
-        submitText: "保存",
-        cancelText: "閉じる",
-        onSubmit: async () => {
-            const candidate = {};
-            for (const [key, id] of Object.entries(fields)) candidate[key] = document.getElementById(id)?.value?.trim() ?? "";
-            await apiFetch(`/api/order/import/${encodeURIComponent(orderImportId)}/candidate`, {method: "POST", data: candidate});
-            openMsgDialog({message: "受注候補を保存しました。", color: "blue"});
-            return true;
-        }
+    const parseRows = value => {
+        if (!value) return [];
+        try { const rows = typeof value === "string" ? JSON.parse(value) : value; if (!Array.isArray(rows)) throw new Error(); return rows; }
+        catch { throw new Error("商品・作業項目の読取形式が不正です。再試行してください。"); }
+    };
+    let itemRows = parseRows(entry.candidates.items);
+    if (!itemRows.length) itemRows = [entry.candidates.itemModel1, entry.candidates.itemModel2].filter(Boolean).map(itemModel => ({itemModel}));
+    const itemContainer = document.getElementById("ocr-item-rows");
+    const workContainer = document.getElementById("ocr-work-rows");
+    itemContainer.replaceChildren();
+    workContainer.replaceChildren();
+    const itemFields = {itemName: "商品名", itemModel: "型番", itemQuantity: "数量"};
+    const workFields = {orderWorkName: "作業名", orderWorkQuantity: "数量", orderWorkPrice: "単価"};
+    for (const item of itemRows) addCandidateRow(itemContainer, itemFields, item);
+    for (const work of parseRows(entry.candidates.works)) addCandidateRow(workContainer, workFields, work);
+    document.getElementById("ocr-add-item").onclick = () => addCandidateRow(itemContainer, itemFields, {});
+    document.getElementById("ocr-add-work").onclick = () => addCandidateRow(workContainer, workFields, {});
+    const title = document.getElementById("order-ocr-candidate-source");
+    if (title) title.textContent = `${entry.shipperName} ／ ${entry.name}：原本と照合し、必要な修正をして保存してください。`;
+    const sourceLink = document.getElementById("order-ocr-candidate-pdf");
+    if (sourceLink) sourceLink.href = `/api/order/import/${encodeURIComponent(entry.orderImportId)}/file`;
+    let saving = false;
+    return new Promise(resolve => {
+        openFormDialog({
+            dialogId: "order-ocr-candidate-form",
+            submitText: "確認して受注登録",
+            cancelText: sequential ? "未確認で次へ" : "閉じる",
+            onClose: () => {
+                if (saving) return;
+                closeFormDialog("order-ocr-candidate-form");
+                resolve();
+            },
+            onSubmit: async () => {
+                if (saving || entry.confirmed) return false;
+                saving = true;
+                try {
+                    const candidate = {};
+                    for (const [key, id] of Object.entries(fields)) candidate[key] = document.getElementById(id)?.value?.trim() ?? "";
+                    candidate.items = JSON.stringify(readCandidateRows(itemContainer));
+                    candidate.works = JSON.stringify(readCandidateRows(workContainer));
+                    const result = await apiFetch(`/api/order/import/${encodeURIComponent(entry.orderImportId)}/candidate`, {method: "POST", data: candidate, showProcessing: false});
+                    entry.orderId = result.data?.orderId;
+                    entry.candidates = candidate;
+                    entry.confirmed = true;
+                    closeFormDialog("order-ocr-candidate-form");
+                    renderOrderPdfImportList();
+                    if (!sequential) openMsgDialog({message: "受注・商品・作業項目を登録しました。", color: "blue"});
+                    resolve();
+                } catch (error) {
+                    openMsgDialog({message: error.message || "保存に失敗しました。入力内容を確認して再度保存してください。", color: "red"});
+                } finally {
+                    saving = false;
+                }
+                return false;
+            }
+        });
     });
+}
+
+function addCandidateRow(container, fields, values) {
+    const row = document.createElement("div");
+    row.className = "ocr-detail-row";
+    for (const [key, title] of Object.entries(fields)) {
+        const label = document.createElement("label");
+        label.textContent = title;
+        const input = document.createElement("input");
+        input.className = "normal-input";
+        input.dataset.field = key;
+        input.value = values?.[key] ?? "";
+        if (key.endsWith("Quantity") || key.endsWith("Price")) input.inputMode = "numeric";
+        label.append(input);
+        row.append(label);
+    }
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "normal-btn";
+    remove.textContent = "削除";
+    remove.onclick = () => row.remove();
+    row.append(remove);
+    container.append(row);
+}
+
+function readCandidateRows(container) {
+    return [...container.children].map(row => Object.fromEntries(
+        [...row.querySelectorAll("input[data-field]")].map(input => [input.dataset.field, input.value.trim()])
+    ));
 }
 
 function ocrFieldLabel(key) {

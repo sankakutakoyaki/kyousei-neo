@@ -26,7 +26,6 @@
             <div class="order-pdf-drop-overlay">PDFをここにドロップ</div>
             <section class="order-pdf-import-list" data-controller="orderList">
                 <h2>受注伝票の取込</h2>
-                <button type="button" id="order-ocr-layout-button" class="normal-btn">帳票設定</button>
                 <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                     {
                         'text': '荷主',
@@ -38,8 +37,15 @@
                         'resolveName':true
                     }
                 })}"></th:block>
-                <h2>取込PDF</h2>
-                <p id="order-pdf-import-message">荷主を選択すると、未処理のPDFを表示します。</p>
+                <div class="order-pdf-input-actions">
+                    <button type="button" id="order-pdf-file-button" class="normal-btn">PDFを選択（複数可）</button>
+                    <input type="file" id="order-pdf-file-input" accept="application/pdf,.pdf" multiple hidden>
+                </div>
+                <p>PDFをドロップ、またはファイル選択すると順番に保存・読取します（各PDFの先頭ページ）。</p>
+                <p>処理が終わるまでこの画面を開いたままにしてください。1件ごとに開く修正画面で原本と照合し、保存すると次のPDFへ進みます。</p>
+                <h2>今回の取込結果</h2>
+                <p>確認保存したもの・未確認で次へ進んだもの・失敗したものを表示します。画面を開き直すと一覧は空になります。保存したPDF・読取結果は残ります。</p>
+                <p id="order-pdf-import-message" role="status" aria-live="polite">荷主を選択してPDFを追加してください。</p>
                 <ul id="order-pdf-import-items" class="none"></ul>
             </section>
         </div>
@@ -77,6 +83,8 @@
         <form id="order-ocr-candidate-form" class="form-dialog none">
             <div class="dialog-main">
                 <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': 'OCR受注候補'} })}"></header>
+                <p id="order-ocr-candidate-source"></p>
+                <a id="order-ocr-candidate-pdf" target="_blank" rel="noopener">元PDFを開く</a>
                 <th:block th:replace="~{fragments/pages/business/order/ocrCandidate :: formFragment()}"></th:block>
                 <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'order-ocr-candidate-footer' } })}"></footer>
             </div>

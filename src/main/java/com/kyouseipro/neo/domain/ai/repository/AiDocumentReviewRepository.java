@@ -54,7 +54,7 @@ public class AiDocumentReviewRepository {
                     ORDER BY document_ai_review_id DESC
                 )
             """,
-            List.of(confirmedResult, reviewedBy, sourceType, sourceId),
+            java.util.Arrays.asList(confirmedResult, reviewedBy, sourceType, sourceId),
             "確認対象のAI読取結果が見つかりません。OCRを実行し直してください。"
         );
     }

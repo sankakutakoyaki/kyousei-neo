@@ -1,11 +1,21 @@
 <th:block th:fragment="formFragment()">
     <section class="order-ocr-candidate-fields">
         <label>氏名<input id="ocr-customer-name" class="normal-input"></label>
-        <label>携帯電話<input id="ocr-mobile-phone" class="normal-input"></label>
+        <label>連絡先<input id="ocr-mobile-phone" class="normal-input"></label>
         <label>住所<textarea id="ocr-address" class="normal-textarea"></textarea></label>
-        <label>商品型番1<input id="ocr-item-model-1" class="normal-input"></label>
-        <label>商品型番2<input id="ocr-item-model-2" class="normal-input"></label>
-        <label>希望日<input id="ocr-requested-date" class="normal-input"></label>
-        <label>連絡事項<textarea id="ocr-contact-note" class="normal-textarea"></textarea></label>
+
+
+        <label>配送工事日（YYYY-MM-DD）<input id="ocr-requested-date" class="normal-input" placeholder="2026-09-06"></label>
+        <label>備考<textarea id="ocr-contact-note" class="normal-textarea"></textarea></label>
+        <p>配送工事日は年を含めて確認してください。空欄は未定として登録します。</p>
+        <fieldset><legend>商品</legend>
+            <div id="ocr-item-rows"></div>
+            <button id="ocr-add-item" type="button" class="normal-btn">商品を追加</button>
+        </fieldset>
+        <fieldset><legend>作業項目（リサイクル運搬など）</legend>
+            <div id="ocr-work-rows"></div>
+            <button id="ocr-add-work" type="button" class="normal-btn">作業を追加</button>
+        </fieldset>
+        <p>商品・作業の数量を確認してください。作業単価が空欄の場合は0円で登録します。</p>
     </section>
 </th:block>

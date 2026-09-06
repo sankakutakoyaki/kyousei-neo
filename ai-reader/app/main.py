@@ -75,10 +75,24 @@ def render_first_page(pdf_path: Path) -> Path:
 
 def create_prompt(document_type: str, prime_constractor_id: str | None) -> str:
     if document_type == "ORDER_FAX":
-        return """これは日本語のFAX受注伝票です。手書きや印字を読み取り、次のJSONだけを返してください。
-キーは customerName, mobilePhone, address, itemModel1, itemModel2, requestedDate, contactNote です。
+        prompt = """これは日本語のFAX受注伝票です。手書きや印字を読み取り、次のJSONだけを返してください。
+キーは customerName, mobilePhone, address, itemModel1, itemModel2, requestedDate, contactNote, items, works です。
+items は商品の配列です。各要素のキーは itemName, itemModel, itemQuantity です。
+works はリサイクル運搬など、伝票に記載された作業項目の配列です。各要素のキーは orderWorkName, orderWorkQuantity, orderWorkPrice です。
+orderWorkPrice は作業の単価です。合計金額から計算しないでください。
+商品や作業がなければ空配列にしてください。名称・数量・単価を推測しないでください。不明な項目は空文字列にしてください。
+requestedDate に年が明記されていれば YYYY-MM-DD で返し、年が不明なら年を推測しないでください。
 不明または自信がない値は空文字列にしてください。値を推測・補完しないでください。
 説明文、Markdown、コードブロックは付けないでください。"""
+        if (prime_constractor_id or "").strip() == "1085":
+            prompt += """
+この伝票は平和堂の受注伝票です。
+requestedDate は、帳票の「工事希望日」欄に記載された日付だけを読み取ってください。
+「受付日」「発行日」「注文日」など、別の欄の日付を requestedDate に使わないでください。
+「工事希望日」の見出しに対応する欄を確認し、その欄の記載を読み取ってください。
+「工事希望日」欄が見つからない、空欄、または判読できない場合は、requestedDate を空文字列にしてください。
+他の日付から推測・補完しないでください。"""
+        return prompt
     return """これは日本語の領収書またはレシートです。次のJSONだけを返してください。
 キーは storeName, receiptDate, totalAmount, taxAmount, paymentMethod, description です。
 不明または自信がない値は空文字列にしてください。金額は数字だけにしてください。
@@ -90,6 +104,7 @@ def call_ollama(image_path: Path, prompt: str) -> dict[str, str]:
         "model": OLLAMA_MODEL,
         "stream": False,
         "format": "json",
+        "options": {"num_ctx": 8192},
         "messages": [{
             "role": "user",
             "content": prompt,
@@ -111,4 +126,4 @@ def call_ollama(image_path: Path, prompt: str) -> dict[str, str]:
         raise HTTPException(status_code=502, detail="ローカルAIモデルから読取結果を取得できませんでした。") from error
     if not isinstance(parsed, dict):
         raise HTTPException(status_code=502, detail="ローカルAIモデルの結果形式が不正です。")
-    return {str(key): "" if value is None else str(value) for key, value in parsed.items()}
+    return {str(key): "" if value is None else json.dumps(value, ensure_ascii=False) if isinstance(value, (list, dict)) else str(value) for key, value in parsed.items()}

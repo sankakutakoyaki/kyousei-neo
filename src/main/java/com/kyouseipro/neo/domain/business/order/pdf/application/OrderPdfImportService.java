@@ -139,13 +139,6 @@ public class OrderPdfImportService {
         return result;
     }
 
-    @Transactional
-    public void saveCandidate(long orderImportId, Map<String, String> candidate) {
-        findFile(orderImportId);
-        orderPdfImportRepository.saveOcrResult(orderImportId, toJson(candidate));
-        aiLearningDataService.confirmLatest("ORDER_IMPORT", orderImportId, candidate);
-    }
-
     public byte[] preview(long orderImportId) {
         return localOcrService.renderFirstPage(findFile(orderImportId).path());
     }
