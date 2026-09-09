@@ -16,13 +16,8 @@
     }
 
     /* サイドバーがある時の処理 */
-    .normal-content:has(.normal-sidebar) {
+    .normal-main:has(.normal-sidebar) {
         grid-template-columns: 1fr;
-    }
-
-    /* サイドバーは消す */
-    .normal-sidebar {
-        display: none;
     }
 
     .hamburger-btn-open {
@@ -33,6 +28,12 @@
     .hamburger-btn-close {
         top: 1.5rem;
         right: .8rem;
+    }
+
+    #hamburger-area .hamburger-item,
+    .hamburger-btn-open,
+    .hamburger-btn-close {
+        cursor: pointer;
     }
 
     .hamburger-btn-open:hover,
@@ -52,15 +53,28 @@
     }
 
     #hamburger-area {
+        display: block;
         position: fixed;
         top: 0;
         left: 0;
         transition: .4s;
         z-index: 200;
-        width: 100%;
+        width: 80%;
         height: 100%;
         padding-top: 4.5rem;
         background-color: var(--white);
+    }
+
+    /* メニュー表示中は背面へのクリック・タッチ操作を遮断する */
+    body:has(#hamburger-area.hamburger-open)::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 199;
+        background-color: rgba(0, 0, 0, .3);
+        pointer-events: auto;
+        touch-action: none;
+        cursor: pointer;
     }
 
     #hamburger-area.hamburger-close {
@@ -84,5 +98,11 @@
             width: 4rem;
             padding-right: 1rem;
         }
+    }
+}
+
+@media screen and (max-width:560px) and (hover: hover) {
+    #hamburger-area .hamburger-item:hover {
+        background-color: var(--sidebar-select-bg);
     }
 }

@@ -4,6 +4,12 @@
 
 <body>
     <div class="no-side-body" layout:fragment="layout-content">
+        <aside id="hamburger-area" class="sp-style hamburger-close">
+            <button id="menu-close" class="hamburger-btn-close" type="button">
+                <img th:src="@{/icons/close.png}" alt="閉じる">
+            </button>
+            <div class="hamburger-content" th:insert="~{fragments/common/menu :: homeFragment}"></div>
+        </aside>
         <main class="normal-body" layout:fragment="content"></main>
     </div>
 </body>

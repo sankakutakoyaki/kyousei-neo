@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
+import {formatters} from '../../main/resources/static/js/core/behavior/formatters.js';
 import {OrderPdfImportQueue} from '../../main/resources/static/js/pages/business/order/OrderPdfImportQueue.js';
 
 const code = readFileSync(new URL('../../main/resources/static/js/pages/business/order/orderPdfImport.js', import.meta.url), 'utf8')
@@ -25,7 +26,7 @@ function harness(candidates = {customerName: '読取候補'}) {
     const calls = [], messages = [];
     let form, closes = 0, failSave = false;
     const context = vm.createContext({
-        OrderPdfImportQueue, FormData, console,
+        OrderPdfImportQueue, FormData, console, formatters,
         document: {getElementById: get, createElement: () => new Element()},
         apiFetch: async (url, options) => {
             calls.push({url, options});
@@ -109,16 +110,16 @@ test('review blocks the next file; failed save keeps the dialog open without a s
 
 test('confirmed product and work rows are sent with corrected quantities', async () => {
     const h = harness({customerName: '氏名', items: JSON.stringify([{itemName: 'エアコン', itemModel: 'ABC', itemQuantity: '2'}]),
-        works: JSON.stringify([{orderWorkName: 'リサイクル運搬', orderWorkQuantity: '1', orderWorkPrice: ''}])});
+        works: JSON.stringify([{orderWorkName: 'リサイクル運搬', orderWorkQuantity: '1', orderWorkPrice: '１００００'}])});
     h.get('primeConstractorImport').value = '1085';
     h.get('order-pdf-file-input').files = [file()];
     h.get('order-pdf-file-input').emit('change');
     await settle();
     const inputs = h.get('ocr-item-rows').children[0].querySelectorAll();
-    inputs.find(input => input.dataset.field === 'itemQuantity').value = '3';
+    inputs.find(input => input.dataset.field === 'itemQuantity').value = '３';
     await h.form.onSubmit();
     const saved = h.calls.find(call => call.url.endsWith('/candidate')).options.data;
     assert.equal(JSON.parse(saved.items)[0].itemQuantity, '3');
     assert.equal(JSON.parse(saved.works)[0].orderWorkName, 'リサイクル運搬');
-    assert.equal(JSON.parse(saved.works)[0].orderWorkPrice, '');
+    assert.equal(JSON.parse(saved.works)[0].orderWorkPrice, '10000');
 });

@@ -11,7 +11,7 @@
 </div>
 
 <div th:fragment="registFragment" th:remove="tag">
-    <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item sp-style" data-path="/" >
+    <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item sp-style" data-path="/" data-target="layout">
         <img th:src="@{/icons/home.png}"><span>ホーム</span>
     </div>
     <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/employee" >
@@ -32,7 +32,7 @@
 </div>
 
 <div th:fragment="businessFragment" th:remove="tag">
-    <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item sp-style" data-path="/">
+    <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item sp-style" data-path="/" data-target="layout">
         <img th:src="@{/icons/home.png}"><span>ホーム</span>
     </div>
     <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/order" data-target="body">
@@ -44,7 +44,7 @@
 </div>
 
 <div th:fragment="managementFragment" th:remove="tag">
-    <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item sp-style" data-path="/">
+    <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item sp-style" data-path="/" data-target="layout">
         <img th:src="@{/icons/home.png}"><span>ホーム</span>
     </div>
     <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/timeworks" data-target="body">

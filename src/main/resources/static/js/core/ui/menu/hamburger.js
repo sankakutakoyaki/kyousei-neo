@@ -15,6 +15,12 @@ export function initHamburger() {
             menuPanel?.classList.remove("hamburger-close");
         }
         if (event.target.closest("#menu-close")) closeHamburger();
+
+        // 背面の body::after をクリックすると、イベントの対象は body になる。
+        if (event.target === document.body && window.matchMedia("(max-width: 560px)").matches) {
+            const menuPanel = document.getElementById("hamburger-area");
+            if (menuPanel?.classList.contains("hamburger-open")) closeHamburger();
+        }
     });
 }
 

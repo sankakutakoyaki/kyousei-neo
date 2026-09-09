@@ -137,12 +137,15 @@ function ensureDesktopPage(controller) {
 }
 
 async function loadSelfStatus() {
+    renderStampRecords(null, "読み込み中…");
     setStampButtonsDisabled(true);
     selectedEmployee = null;
     try {
         selectedEmployee = await TimeworksRepository.findSelf();
+        renderStampRecords(selectedEmployee);
         focusStampButton(selectedEmployee);
     } catch (error) {
+        renderStampRecords(null, "取得できませんでした");
         openMsgDialog({message: error.message || "本人の勤務状態を取得できませんでした。", color: "red"});
     }
 }
@@ -163,6 +166,19 @@ async function lookupEmployee(identifier) {
     } catch (error) {
         openMsgDialog({message: error.message || "社員を確認できませんでした。", color: "red"});
         document.getElementById("stamp-identifier")?.select();
+    }
+}
+
+function renderStampRecords(status, emptyText = "未打刻") {
+    for (const [id, value] of [
+        ["stamp-start-record", status?.startTime],
+        ["stamp-end-record", status?.endTime]
+    ]) {
+        const element = document.getElementById(id);
+        if (!element) continue;
+        element.textContent = value
+            ? `${value.slice(0, 10).replaceAll("-", "/")} ${value.slice(11, 16)}`
+            : emptyText;
     }
 }
 
@@ -221,6 +237,28 @@ function initManagement() {
     list.addEventListener("change", event => {
         if (!event.target.matches('[name="editStartTime"], [name="editEndTime"], [name="endNextDay"]')) return;
         scheduleManagementSave(event.target.closest("tr"));
+    });
+    list.addEventListener("keydown", event => {
+        const input = event.target;
+        if (!input.matches('[name="editStartTime"], [name="editEndTime"]')) return;
+        if (event.altKey || event.ctrlKey || event.metaKey || event.isComposing) return;
+        const delta = {ArrowLeft: -15, ArrowRight: 15, ArrowUp: 1, ArrowDown: -1}[event.key];
+        if (delta === undefined) return;
+        event.preventDefault();
+        event.stopPropagation();
+        if (!input.value) return;
+        const [hours, minutes] = input.value.split(":").map(Number);
+        const row = input.closest("tr");
+        const nextDay = row.querySelector('[name="endNextDay"]');
+        const isEnd = input.name === "editEndTime";
+        const total = hours * 60 + minutes + (isEnd && nextDay.checked ? 1440 : 0);
+        // 出勤は勤務日内、退勤は翌日まで。日付を誤って巻き戻さない。
+        const updated = Math.max(0, Math.min(isEnd ? 2879 : 1439, total + delta));
+        if (updated === total) return;
+        const clockMinutes = updated % 1440;
+        input.value = `${String(Math.floor(clockMinutes / 60)).padStart(2, "0")}:${String(clockMinutes % 60).padStart(2, "0")}`;
+        if (isEnd) nextDay.checked = updated >= 1440;
+        input.dispatchEvent(new Event("change", {bubbles: true}));
     });
 }
 
@@ -299,10 +337,10 @@ function renderManagementList(items) {
         appendTextCell(row, item.fullName);
         appendTextCell(row, item.officeName || "-----");
         appendOriginalTimeCell(row, item.originalStartTime, item.workDate);
-        appendTimeCell(row, "editStartTime", item.editStartTime);
+        appendTimeCell(row, "editStartTime", item.editStartTime || item.originalStartTime);
         appendOriginalTimeCell(row, item.originalEndTime, item.workDate);
-        appendTimeCell(row, "editEndTime", item.editEndTime);
-        appendNextDayCell(row, item.editEndTime, item.workDate);
+        appendTimeCell(row, "editEndTime", item.editEndTime || item.originalEndTime);
+        appendNextDayCell(row, item.editEndTime || item.originalEndTime, item.workDate);
         body.appendChild(row);
     });
     window.requestAnimationFrame(() => toggleScrollbar(body));
@@ -315,12 +353,15 @@ function appendTextCell(row, value) {
 }
 
 function appendOriginalTimeCell(row, value, workDate) {
+    const cell = document.createElement("td");
+    cell.className = "management-original-time";
     if (!value) {
-        appendTextCell(row, "-----");
-        return;
+        cell.textContent = "-----";
+    } else {
+        const nextDay = value.slice(0, 10) > workDate;
+        cell.textContent = `${nextDay ? "翌日 " : ""}${value.slice(11, 16)}`;
     }
-    const nextDay = value.slice(0, 10) > workDate;
-    appendTextCell(row, `${nextDay ? "翌日 " : ""}${value.slice(11, 16)}`);
+    row.appendChild(cell);
 }
 
 function appendTimeCell(row, name, value) {
@@ -329,6 +370,7 @@ function appendTimeCell(row, name, value) {
     area.className = "management-time-input";
     const input = document.createElement("input");
     input.type = "time";
+    input.title = "←／→：15分、↑／↓：1分ずつ変更";
     input.name = name;
     input.value = value ? value.slice(11, 16) : "";
     area.appendChild(input);

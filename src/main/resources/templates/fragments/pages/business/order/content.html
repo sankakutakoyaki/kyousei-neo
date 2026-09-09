@@ -58,7 +58,7 @@
         </div>
     </div>
     <div id="form-dialog-area">
-        <form id="order-ocr-layout-form" class="form-dialog none">
+        <!-- <form id="order-ocr-layout-form" class="form-dialog none">
             <div class="dialog-main">
                 <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '帳票OCR設定'} })}"></header>
                 <section class="order-ocr-layout-editor">
@@ -79,8 +79,8 @@
                 </section>
                 <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'order-ocr-layout-footer' } })}"></footer>
             </div>
-        </form>
-        <form id="order-ocr-candidate-form" class="form-dialog none">
+        </form> -->
+        <form id="order-ocr-candidate-form" class="form-dialog none" data-enterfocus="order-ocr-candidate-form">
             <div class="dialog-main">
                 <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': 'OCR受注候補'} })}"></header>
                 <p id="order-ocr-candidate-source"></p>

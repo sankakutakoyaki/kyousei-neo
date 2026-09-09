@@ -26,6 +26,10 @@
                         <button type="button" class="normal-btn stamp-button start" data-stamp-type="START" disabled>出勤</button>
                         <button type="button" class="normal-btn stamp-button end" data-stamp-type="END" disabled>退勤</button>
                     </div>
+                    <dl class="stamp-records" aria-live="polite" aria-label="出退勤時刻">
+                        <div><dt>出勤時刻</dt><dd id="stamp-start-record">—</dd></div>
+                        <div><dt>退勤時刻</dt><dd id="stamp-end-record">—</dd></div>
+                    </dl>
                     <p class="stamp-note stamp-desktop-fields">ID／コードを入力してEnterキーを押してください。</p>
                 </section>
                 <div class="table-area" data-controller="timeworks">

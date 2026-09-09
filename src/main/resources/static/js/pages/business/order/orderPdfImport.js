@@ -1,5 +1,6 @@
 "use strict"
 
+import { formatters } from "../../../core/behavior/formatters.js";
 import { apiFetch } from "../../../core/api/apiFetch.js";
 import { closeFormDialog, openFormDialog, openMsgDialog } from "../../../core/ui/dialog/dialogCore.js";
 
@@ -275,10 +276,23 @@ function renderOcrLayoutBoxes(preview, image, layouts) {
 }
 
 function openOcrCandidateForm(entry, sequential = false) {
-    const fields = {customerName: "ocr-customer-name", mobilePhone: "ocr-mobile-phone", address: "ocr-address", requestedDate: "ocr-requested-date", contactNote: "ocr-contact-note"};
+    const fields = {customerName: "ocr-customer-name", mobilePhone: "ocr-mobile-phone", postalCode: "ocr-postal-code", address: "ocr-address", requestedDate: "ocr-requested-date", contactNote: "ocr-contact-note"};
     for (const [key, id] of Object.entries(fields)) {
         const input = document.getElementById(id);
         if (input) input.value = entry.candidates[key] ?? "";
+    }
+    const dateInput = document.getElementById("ocr-requested-date");
+    const dateHint = document.getElementById("ocr-requested-date-hint");
+    const rawDate = String(entry.candidates.requestedDate ?? "").trim();
+    if (dateHint) {
+        const needsReview = rawDate !== "" && !dateInput?.value;
+        dateHint.hidden = !needsReview;
+        dateHint.textContent = needsReview ? `読取値：${rawDate}。年を含めて日付を選択してください。` : "";
+    }
+    const postalInput = document.getElementById("ocr-postal-code");
+    if (postalInput) {
+        // Avoid replacing a full OCR address with a town-only lookup on an unchanged value.
+        postalInput.dataset.lastId = postalInput.value.trim();
     }
     const parseRows = value => {
         if (!value) return [];
@@ -344,27 +358,57 @@ function addCandidateRow(container, fields, values) {
     row.className = "ocr-detail-row";
     for (const [key, title] of Object.entries(fields)) {
         const label = document.createElement("label");
-        label.textContent = title;
+
         const input = document.createElement("input");
         input.className = "normal-input";
         input.dataset.field = key;
+        input.setAttribute("aria-label", title);
         input.value = values?.[key] ?? "";
-        if (key.endsWith("Quantity") || key.endsWith("Price")) input.inputMode = "numeric";
+        if (key.endsWith("Quantity") || key.endsWith("Price")) {
+            input.inputMode = "numeric";
+            input.value = normalizeCandidateNumber(input.value);
+            input.addEventListener("input", event => {
+                if (!event.isComposing) input.value = normalizeCandidateNumber(input.value);
+            });
+            input.addEventListener("compositionend", () => { input.value = normalizeCandidateNumber(input.value); });
+            input.addEventListener("blur", () => { input.value = normalizeCandidateNumber(input.value); });
+            input.classList.add("ocr-numeric-input");
+        }
+        if (key.endsWith("Quantity")) label.classList.add("ocr-quantity-field");
+        if (key.endsWith("Price")) {
+            input.value = formatCandidatePrice(input.value);
+            input.addEventListener("focus", () => { input.value = input.value.replace(/,/g, ""); });
+            input.addEventListener("blur", () => { input.value = formatCandidatePrice(input.value); });
+        }
         label.append(input);
         row.append(label);
     }
     const remove = document.createElement("button");
     remove.type = "button";
-    remove.className = "normal-btn";
-    remove.textContent = "削除";
+    remove.className = "img-btn";
+    remove.title = "削除";
+    remove.setAttribute("aria-label", "削除");
+    const removeIcon = document.createElement("img");
+    removeIcon.src = "/icons/dust.png";
+    removeIcon.alt = "";
+    remove.append(removeIcon);
     remove.onclick = () => row.remove();
     row.append(remove);
     container.append(row);
 }
 
+function normalizeCandidateNumber(value) {
+    return formatters.code(value).replace(/[^0-9]/g, "");
+}
+
+function formatCandidatePrice(value) {
+    const digits = normalizeCandidateNumber(value);
+    return /^\d+$/.test(digits) ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : digits;
+}
+
 function readCandidateRows(container) {
     return [...container.children].map(row => Object.fromEntries(
-        [...row.querySelectorAll("input[data-field]")].map(input => [input.dataset.field, input.value.trim()])
+        [...row.querySelectorAll("input[data-field]")].map(input => [input.dataset.field, (input.dataset.field.endsWith("Price") || input.dataset.field.endsWith("Quantity")) ? normalizeCandidateNumber(input.value) : input.value.trim()])
     ));
 }
 

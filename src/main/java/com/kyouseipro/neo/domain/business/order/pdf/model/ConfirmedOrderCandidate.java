@@ -17,6 +17,9 @@ public record ConfirmedOrderCandidate(Map<String, Object> order, List<Map<String
         if (input == null) throw new BusinessException("確認内容を入力してください。");
         Map<String, Object> order = new LinkedHashMap<>();
         order.put("title", text(input.get("customerName"), "氏名", true));
+        String postal = text(input.get("postalCode"), "郵便番号", false).replace("-", "");
+        if (!postal.isEmpty() && !postal.matches("[0-9]{7}")) throw new BusinessException("郵便番号は7桁で入力してください。");
+        order.put("postalCode", postal.isEmpty() ? "" : postal.substring(0, 3) + "-" + postal.substring(3));
         order.put("fullAddress", text(input.get("address"), "住所", true));
         order.put("contactInformation", text(input.get("mobilePhone"), "連絡先", false));
         order.put("remarks", text(input.get("contactNote"), "備考", false));
