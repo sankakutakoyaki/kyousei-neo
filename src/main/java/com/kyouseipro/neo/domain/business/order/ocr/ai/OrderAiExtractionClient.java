@@ -42,7 +42,7 @@ public class OrderAiExtractionClient {
         return modelName;
     }
 
-    public Optional<Map<String, String>> extract(Path pdfPath, long primeConstractorId) {
+    public Optional<ExtractionResponse> extract(Path pdfPath, long primeConstractorId) {
         if (!enabled) {
             return Optional.empty();
         }
@@ -62,7 +62,7 @@ public class OrderAiExtractionClient {
             if (response == null || response.candidates() == null) {
                 throw new SystemException("AI読取サービスから結果を受け取れませんでした。", null);
             }
-            return Optional.of(response.candidates());
+            return Optional.of(response);
         } catch (SystemException e) {
             throw e;
         } catch (RuntimeException e) {
@@ -71,6 +71,6 @@ public class OrderAiExtractionClient {
     }
 
     /** AI読取サービスが返すJSON形式。 */
-    public record ExtractionResponse(Map<String, String> candidates) {
+    public record ExtractionResponse(Map<String, Object> candidates, String modelName, String promptVersion) {
     }
 }

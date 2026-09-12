@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import {formatters} from '../../main/resources/static/js/core/behavior/formatters.js';
+import {mapOcrCandidate} from '../../main/resources/static/js/pages/business/order/mapOcrCandidate.js';
 import {OrderPdfImportQueue} from '../../main/resources/static/js/pages/business/order/OrderPdfImportQueue.js';
 
 const code = readFileSync(new URL('../../main/resources/static/js/pages/business/order/orderPdfImport.js', import.meta.url), 'utf8')
@@ -25,13 +25,15 @@ function harness(candidates = {customerName: '読取候補'}) {
     const get = id => {if (!elements.has(id)) elements.set(id, new Element()); return elements.get(id);};
     const calls = [], messages = [];
     let form, closes = 0, failSave = false;
+    const sharedForm = {};
     const context = vm.createContext({
-        OrderPdfImportQueue, FormData, console, formatters,
+        OrderPdfImportQueue, FormData, console, mapOcrCandidate,
+        getController: () => ({openForm: async (name, data) => {form = data;}, getDefaultForm: () => sharedForm}),
         document: {getElementById: get, createElement: () => new Element()},
         apiFetch: async (url, options) => {
             calls.push({url, options});
             if (url.endsWith('/pdf')) return {data: {orderImportId: 12}};
-            if (url.endsWith('/hei-wado')) return {data: candidates};
+            if (url.endsWith('/hei-wado')) return {data: {ocrLogId: 7, candidates}};
             if (failSave) throw new Error('保存エラー');
             return {data: null};
         },
@@ -41,7 +43,7 @@ function harness(candidates = {customerName: '読取候補'}) {
     });
     vm.runInContext(code, context);
     context.initOrderPdfImport();
-    return {get, context, calls, messages, get form() {return form;}, get closes() {return closes;}, failSave: () => failSave = true};
+    return {get, context, calls, messages, sharedForm, get form() {return form;}, get closes() {return closes;}, failSave: () => failSave = true};
 }
 const settle = () => new Promise(resolve => setImmediate(resolve));
 const file = () => new File(['%PDF-1.7 test'], 'sample.pdf', {type: 'application/pdf'});
@@ -50,76 +52,65 @@ test('file selection and drop reject an unselected shipper without API calls', a
     const h = harness();
     h.get('order-pdf-file-input').files = [file()];
     h.get('order-pdf-file-input').emit('change');
-    h.get('tab-02').emit('drop', {preventDefault() {}, dataTransfer: {files: [file()]}});
+    h.get('order-pdf-drop-area').emit('drop', {preventDefault() {}, dataTransfer: {files: [file()]}});
     await settle();
     assert.equal(h.calls.length, 0);
     assert.equal(h.messages.length, 2);
 });
 
-test('file selection uploads and reads automatically; review remains manual and save closes only on success', async () => {
-    const h = harness();
-    h.get('primeConstractorImport').value = '1085';
-    h.get('primeConstractorImport').selectedOptions = [{textContent: '平和堂'}];
+
+test('OCR opens the shared form with log ID, and cancellation keeps the extraction unchanged', async () => {
+    const candidates = {customerName: '山田', requestedDate: '2026-09-05', items: '[{"itemModel":"A","itemQuantity":"1"}]'};
+    const h = harness(candidates);
+    h.get('primeConstractor01').value = '1085';
     h.get('order-pdf-file-input').files = [file()];
     h.get('order-pdf-file-input').emit('change');
     await settle();
-    assert.equal(h.calls.length, 2);
-    assert.ok(h.form);
-    assert.equal(h.get("order-pdf-import-items").children.length, 0);
-    assert.ok(h.calls.slice(0, 2).every(call => call.options.showProcessing === true));
-    assert.equal(h.get('order-pdf-file-input').value, '');
-
-    assert.equal(h.get('ocr-customer-name').value, '読取候補');
-    h.get('ocr-customer-name').value = '確認した氏名';
-    await h.form.onSubmit();
-    await settle();
-    assert.equal(h.calls[2].options.showProcessing, false);
-    assert.equal(h.calls[2].options.data.customerName, '確認した氏名');
-    assert.equal(h.closes, 1);
-    assert.equal(h.get('order-pdf-import-items').children[0].children[0].textContent, '受注登録済み');
-    assert.equal(h.messages.length, 0); // No completion modal obstructs the next PDF.
-    h.context.initOrderPdfImport();
-    assert.equal(h.get('order-pdf-import-items').children.length, 0);
-    assert.equal(h.calls.length, 3); // Reopening never fetches historical PDFs.
-});
-
-test('review blocks the next file; failed save keeps the dialog open without a spinner', async () => {
-    const h = harness();
-    h.get('primeConstractorImport').value = '1085';
-    h.get('tab-02').emit('drop', {preventDefault() {}, dataTransfer: {files: [file(), file()]}});
+    assert.equal(h.form.title, '山田');
+    assert.equal(h.form.visitDate, '2026-09-05');
+    assert.equal(h.form.ocrLogId, 7);
+    assert.equal(h.form.items[0].itemModel, 'A');
+    h.sharedForm.finishOcrReview();
     await settle();
     assert.equal(h.calls.length, 2);
-    assert.equal(h.get('order-pdf-import-items').children.length, 0);
-    h.failSave();
-    await h.form.onSubmit();
-    await settle();
-    assert.equal(h.calls.length, 3);
-    assert.equal(h.calls[2].options.showProcessing, false);
-    assert.equal(h.closes, 0);
-    assert.equal(h.get('order-pdf-import-items').children.length, 0);
-    assert.ok(h.messages.includes('保存エラー'));
-    h.form.onClose();
-    await settle();
-    assert.equal(h.calls.length, 5);
-    assert.equal(h.get('order-pdf-import-items').children.length, 1);
-    assert.equal(h.get('order-pdf-import-items').children[0].children[0].textContent, '読取完了・要確認');
-    h.form.onClose();
-    await settle();
-    assert.equal(h.get('order-pdf-import-items').children.length, 2);
+    assert.equal(candidates.customerName, '山田');
 });
 
-test('confirmed product and work rows are sent with corrected quantities', async () => {
-    const h = harness({customerName: '氏名', items: JSON.stringify([{itemName: 'エアコン', itemModel: 'ABC', itemQuantity: '2'}]),
-        works: JSON.stringify([{orderWorkName: 'リサイクル運搬', orderWorkQuantity: '1', orderWorkPrice: '１００００'}])});
-    h.get('primeConstractorImport').value = '1085';
-    h.get('order-pdf-file-input').files = [file()];
-    h.get('order-pdf-file-input').emit('change');
-    await settle();
-    const inputs = h.get('ocr-item-rows').children[0].querySelectorAll();
-    inputs.find(input => input.dataset.field === 'itemQuantity').value = '３';
-    await h.form.onSubmit();
-    const saved = h.calls.find(call => call.url.endsWith('/candidate')).options.data;
-    assert.equal(JSON.parse(saved.items)[0].itemQuantity, '3');
-    assert.equal(JSON.parse(saved.works)[0].orderWorkName, 'リサイクル運搬');
-    assert.equal(JSON.parse(saved.works)[0].orderWorkPrice, '10000');
+test('missing year is shown for review without guessing a year; fields are mapped independently', () => {
+    const raw = {customerName: 'A', requestedDate: '9月5日', address: '住所', items: [{itemModel: 'X', orderItemId: 99}]};
+    const mapped = mapOcrCandidate({candidates: raw, ocrLogId: 5, shipperId: '1085'});
+    assert.equal(mapped.visitDate, '');
+    assert.match(mapped.ocrDateWarning, /9月5日/);
+    assert.equal(mapped.fullAddress, '住所');
+    assert.equal(mapped.items[0].orderItemId, undefined);
+    mapped.items[0].itemModel = 'Y';
+    assert.equal(raw.items[0].itemModel, 'X');
+});
+
+test('invalid calendar date is never silently rolled forward', () => {
+    const result = mapOcrCandidate({candidates: {requestedDate: '2026-02-30'}});
+    assert.equal(result.visitDate, '');
+    assert.match(result.ocrDateWarning, /2026-02-30/);
+});
+
+test('normalizes full-width quantities and comma-separated prices without changing the raw extraction', () => {
+    const candidates = {works: [{orderWorkName: '作業', orderWorkQuantity: '２', orderWorkPrice: '１,２００'}]};
+    const result = mapOcrCandidate({candidates});
+    assert.equal(result.works[0].orderWorkQuantity, '2');
+    assert.equal(result.works[0].orderWorkPrice, '1200');
+    assert.equal(candidates.works[0].orderWorkPrice, '１,２００');
+});
+
+test('unchanged blank postal code keeps the OCR address; clearing a previously resolved code still clears it', async () => {
+    const source = readFileSync(new URL('../../main/resources/static/js/core/behavior/DataResolver.js', import.meta.url), 'utf8');
+    const method = source.slice(source.indexOf('    async resolve(group, type) {'), source.indexOf('    resolveSelect(select, id) {')).trim().replace(/,$/, '');
+    const resolver = vm.runInNewContext(`({${method}, clear(field) { field.value = ''; }})`);
+    const input = {value: '', dataset: {lastId: ''}};
+    const address = {value: 'OCRの住所'};
+    const group = {querySelector: selector => selector === '[data-resolve-id]' ? input : address};
+    await resolver.resolve(group, 'postal');
+    assert.equal(address.value, 'OCRの住所');
+    input.dataset.lastId = '1234567';
+    await resolver.resolve(group, 'postal');
+    assert.equal(address.value, '');
 });

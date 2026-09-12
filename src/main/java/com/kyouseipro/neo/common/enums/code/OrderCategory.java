@@ -6,7 +6,6 @@ public enum OrderCategory implements BaseEnum {
     VISIT(1, "訪問日", "visit_date"),
     REGIST(2,"登録日", "regist_date");
     
-
     private final int code;
     private final String label;
     private final String column;

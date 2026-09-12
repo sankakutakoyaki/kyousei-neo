@@ -73,7 +73,7 @@ export class AttachmentManager {
         menu.append(this.button("変更",()=>this.renameFile(file)),this.button("保存",()=>location.href=AttachmentRepository.contentUrl(file.attachmentId,true)),this.button("削除",()=>this.deleteFile(file)));
         card.append(preview,name,menu); return card;
     }
-    button(label,handler){ const b=document.createElement("button");b.type="button";b.className="attachment-small-btn";b.textContent=label;b.addEventListener("click",handler);return b; }
+    button(label,handler){ const b=document.createElement("button");b.type="button";b.className="attachment-small-btn";b.textContent=label;if (["ファイル追加","📷 撮影","変更","削除"].includes(label)) b.dataset.mobileWrite="true";b.addEventListener("click",handler);return b; }
     chooseFiles(id){this.activeGroupId=id;this.fileInput.value="";this.fileInput.click();}
     takePhoto(id){this.activeGroupId=id;this.cameraInput.value="";this.cameraInput.click();}
     setDragAndDrop(drop,groupId) {

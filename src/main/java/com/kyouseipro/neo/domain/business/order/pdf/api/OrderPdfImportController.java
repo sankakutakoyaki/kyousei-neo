@@ -34,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 public class OrderPdfImportController {
 
     private final OrderPdfImportService orderPdfImportService;
-    private final com.kyouseipro.neo.domain.business.order.pdf.application.OrderImportRegistrationService registrationService;
 
     @PostMapping(value = "/pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public SimpleResponse<OrderPdfImportResult> importPdf(
@@ -71,21 +70,8 @@ public class OrderPdfImportController {
     }
 
     @PostMapping("/{orderImportId}/ocr/hei-wado")
-    public SimpleResponse<Map<String, String>> recognizeHeiwado(@PathVariable long orderImportId) {
+    public SimpleResponse<Map<String, Object>> recognizeHeiwado(@PathVariable long orderImportId) {
         return SimpleResponse.ok("OCR候補を保存しました。", orderPdfImportService.recognizeHeiwado(orderImportId));
-    }
-
-    @PostMapping("/{orderImportId}/candidate")
-    public SimpleResponse<com.kyouseipro.neo.domain.business.order.pdf.application.OrderImportRegistrationService.Result> saveCandidate(
-            @PathVariable long orderImportId,
-            @RequestBody Map<String, String> candidate,
-            org.springframework.security.core.Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated()
-                || authentication instanceof org.springframework.security.authentication.AnonymousAuthenticationToken) {
-            throw new com.kyouseipro.neo.common.exception.BusinessException("ログインしてください。");
-        }
-        var result = registrationService.register(orderImportId, candidate, authentication.getName());
-        return SimpleResponse.ok(result.alreadyRegistered() ? "このPDFは受注登録済みです。" : "受注・商品・作業項目を登録しました。", result);
     }
 
     @GetMapping(value = "/{orderImportId}/preview", produces = MediaType.IMAGE_PNG_VALUE)

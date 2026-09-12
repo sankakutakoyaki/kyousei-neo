@@ -69,7 +69,11 @@
             </div>
             <div class="form-parts">
                 <label></label>
-                <button class="normal-btn ok" type="button" id="search-btn" data-action="search">検索</button>
+                <div class="order-search-actions">
+                    <button class="normal-btn ok" type="button" id="search-btn" data-action="search">検索</button>
+                    <button type="button" id="order-pdf-file-button" class="normal-btn">PDF</button>
+                    <input type="file" id="order-pdf-file-input" accept="application/pdf,.pdf" multiple hidden>
+                </div>
             </div>
         </div>
     </div>

@@ -64,7 +64,10 @@ export class OrderPdfImportQueue {
                         entry.orderImportId = saved.orderImportId;
                         entry.file = null;
                     }
-                    entry.candidates = await this.recognize(entry.orderImportId);
+                    const extracted = await this.recognize(entry.orderImportId);
+                    entry.ocrLogId = extracted?.ocrLogId;
+                    entry.candidates = extracted?.candidates;
+                    if (!entry.ocrLogId) throw new Error("OCRログの保存結果を取得できませんでした。");
                     if (!entry.candidates || typeof entry.candidates !== "object" || Array.isArray(entry.candidates)) {
                         throw new Error("読取結果の形式が不正です。");
                     }

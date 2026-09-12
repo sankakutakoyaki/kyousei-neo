@@ -18,16 +18,6 @@ import org.springframework.http.ResponseEntity;
 public class GlobalExceptionHandler {
     private final HistoryService historyService;
 
-    // @ExceptionHandler(Exception.class)
-    // @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    // public Map<String, Object> handleSystem(Exception e) {
-    //     return Map.of(
-    //         "success", false,
-    //         "message", "システムエラーが発生しました"
-    //     );
-    // }
-
-
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<SimpleResponse<Void>> handleBusiness(
             BusinessException e,
@@ -43,7 +33,6 @@ public class GlobalExceptionHandler {
             400,
             e.getMessage()
         );
-
         return ResponseEntity.badRequest()
                 .body(SimpleResponse.error(e.getMessage()));
     }

@@ -97,3 +97,12 @@ test('desktop clicks keep existing behavior; resizing updates keyboard access', 
     media.matches = false; changed();
     assert.equal(row.getAttribute('tabindex'), undefined);
 });
+
+test('recycle edit button stays visible and clicks reach the action handler without toggling the card', () => {
+    const row = setup()('/js/recyclePage.js','table-01',['recycleNumber','mobileAction']);
+    assert(!row.children[1].classList.contains('mobile-card-detail'));
+    let stopped = false;
+    row.events.click({target:{closest:()=>({})},stopPropagation:()=>{stopped=true;}});
+    assert.equal(stopped,false);
+    assert.equal(row.getAttribute('aria-expanded'),'false');
+});

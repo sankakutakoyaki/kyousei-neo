@@ -24,6 +24,8 @@ public class OrderHandler implements QueryHandler {
 
     private final BaseSqlRepository baseRepository;
     private final SqlRepository sqlRepository;
+    private final com.kyouseipro.neo.domain.business.order.ocr.repository.OrderOcrLogRepository orderOcrLogRepository;
+    private final com.kyouseipro.neo.domain.business.order.ocr.OrderOcrAttachmentService orderOcrAttachmentService;
 
     @Override
     public boolean supports(QueryKind kind) {
@@ -67,6 +69,17 @@ public class OrderHandler implements QueryHandler {
         boolean isNewOrder =
                 orderIdValue == null
                 || Long.valueOf(orderIdValue.toString()) == 0;
+
+        if (params.get("ocrLogId") != null && (!isNewOrder || !"orders".equals(def.getTableMeta().tableName()))) {
+            throw new com.kyouseipro.neo.common.exception.BusinessException("OCR候補は新規受注で保存してください。");
+        }
+
+        if (params.get("ocrLogId") != null) {
+            validateOcrDetails(items, "itemQuantity", null);
+            validateOcrDetails(works, "orderWorkQuantity", "orderWorkPrice");
+            orderOcrLogRepository.requireUnlinked(Long.parseLong(params.get("ocrLogId").toString()),
+                Long.parseLong(params.get("primeConstractorId").toString()));
+        }
 
         // Long orderId;
         Long orderId = null;
@@ -146,6 +159,7 @@ public class OrderHandler implements QueryHandler {
         // 明細はordersには入れない
         orderParams.remove("items");
         orderParams.remove("works");
+        orderParams.remove("ocrLogId");
 
         // 商品入力欄はordersには入れない
         for (String field : ORDER_ITEM_INPUT_FIELDS) {
@@ -298,10 +312,35 @@ public class OrderHandler implements QueryHandler {
         // 結果
         // =====================================================
 
+        if (params.get("ocrLogId") != null) {
+            if (!isNewOrder) throw new com.kyouseipro.neo.common.exception.BusinessException("OCR候補は新規受注で保存してください。");
+            orderOcrLogRepository.link(Long.parseLong(params.get("ocrLogId").toString()), orderId,
+                Long.parseLong(params.get("primeConstractorId").toString()));
+            orderOcrAttachmentService.attach(Long.parseLong(params.get("ocrLogId").toString()), orderId);
+        }
         return Map.of(
                 "data", orderId,
                 "count", 1
         );
+    }
+
+    private void validateOcrDetails(List<Map<String, Object>> rows, String quantity, String price) {
+        if (rows == null) return;
+        if (rows.size() > 100) throw new com.kyouseipro.neo.common.exception.BusinessException("明細は100行以内で確認してください。");
+        for (Map<String, Object> row : rows) {
+            validateOcrNumber(row.get(quantity), true);
+            if (price != null) validateOcrNumber(row.get(price), false);
+        }
+    }
+
+    private void validateOcrNumber(Object value, boolean quantity) {
+        String text = value == null ? "" : value.toString();
+        if (!quantity && text.isBlank()) return;
+        try {
+            if (!text.matches("[0-9]+") || Integer.parseInt(text) < (quantity ? 1 : 0)) throw new IllegalArgumentException();
+        } catch (IllegalArgumentException error) {
+            throw new com.kyouseipro.neo.common.exception.BusinessException("商品・作業の数量は1以上、金額は0以上の整数で確認してください。明細を削除して正しい内容を再登録できます。");
+        }
     }
 
     // =========================================================

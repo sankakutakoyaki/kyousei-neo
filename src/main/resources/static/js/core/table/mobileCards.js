@@ -43,7 +43,7 @@ export function attachMobileCard(table, row) {
             }
         } else if (field === "maker") {
             markDetail(cell.querySelector("span:last-of-type"), "mobile-card-secondary");
-        } else if (field !== "recycleNumber" && !(table.id === "table-05" && field === "date")) {
+        } else if (field !== "mobileAction" && field !== "recycleNumber" && !(table.id === "table-05" && field === "date")) {
             markDetail(cell, "mobile-card-detail");
         }
     }
@@ -56,9 +56,9 @@ export function attachMobileCard(table, row) {
     };
     row.addEventListener("click", event => {
         if (!mobileMedia.matches) return;
-        event.stopPropagation();
-        // 入力やリンクなどの固有操作は維持する。
+        // ボタンは共通の操作ハンドラーまで伝播させる。
         if (event.target.closest("button, a, input, select, textarea, [contenteditable]")) return;
+        event.stopPropagation();
         toggle();
     });
     row.addEventListener("keydown", event => {

@@ -12,6 +12,9 @@
             <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')" data-link="/order" data-target="body">
                 <img th:src="@{/icons/sales.png}" alt=""><span>受注</span>
             </button>
+            <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')" data-link="/products" data-target="body">
+                <img th:src="@{/icons/sales.png}" alt=""><span>商品</span>
+            </button>
             <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')" data-link="/recycle" data-target="body">
                 <img th:src="@{/icons/recycle_dust.png}" alt=""><span>リサイクル</span>
             </button>

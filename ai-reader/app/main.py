@@ -38,7 +38,7 @@ async def extract_document(
     file: UploadFile = File(...),
     document_type: str = Form(..., alias="documentType"),
     prime_constractor_id: str | None = Form(None, alias="primeConstractorId"),
-) -> dict[str, dict[str, str]]:
+) -> dict:
     if document_type not in {"ORDER_FAX", "EXPENSE_RECEIPT"}:
         raise HTTPException(status_code=400, detail="未対応の文書種別です。")
 
@@ -55,7 +55,8 @@ async def extract_document(
         source.write_bytes(content)
         image = render_first_page(source) if suffix == ".pdf" else source
         candidates = call_ollama(image, create_prompt(document_type, prime_constractor_id), document_type)
-    return {"candidates": candidates}
+    return {"candidates": candidates, "modelName": OLLAMA_MODEL,
+            "promptVersion": ("heiwado-" if document_type == "ORDER_FAX" and (prime_constractor_id or "").strip() == "1085" else "common-") + "20260912-01"}
 
 
 def render_first_page(pdf_path: Path) -> Path:
@@ -93,10 +94,9 @@ requestedDate に年が明記されていれば YYYY-MM-DD で返し、年が不
         if (prime_constractor_id or "").strip() == "1085":
             prompt += """
 この伝票は平和堂の受注伝票です。
-requestedDate は、帳票の「工事希望日」欄に記載された日付だけを読み取ってください。
+requestedDate は、帳票下部の連絡事項欄の直前に記載されている日付（据付工事御希望日）だけを読み取ってください。
 「受付日」「発行日」「注文日」など、別の欄の日付を requestedDate に使わないでください。
-「工事希望日」の見出しに対応する欄を確認し、その欄の記載を読み取ってください。
-「工事希望日」欄が見つからない、空欄、または判読できない場合は、requestedDate を空文字列にしてください。
+該当箇所が空欄、または判読できない場合は、requestedDate を空文字列にしてください。
 他の日付から推測・補完しないでください。"""
         return prompt
     return """これは日本語の領収書またはレシートです。次のJSONだけを返してください。

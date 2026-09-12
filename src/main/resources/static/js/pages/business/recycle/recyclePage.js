@@ -85,6 +85,9 @@ export const recycleListPage = () =>
             state: APP.cache.common.state.INITIAL
         }),
         actions: {
+            "mobile-recycle-edit": async (controller, button) => {
+                await controller.openForm("detail", Number(button.dataset.id), {bulkMode: false});
+            },
             search: async (controller) => {await controller.refresh();},
             recycleChanged: async (controller) => {await controller.refresh();}
         },

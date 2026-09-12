@@ -41,6 +41,8 @@ export const DataResolver = {
         const idInput = group.querySelector("[data-resolve-id]");
         const nameField = group.querySelector("[data-resolve-name]");
         const id = idInput.value.trim();
+        // 未変更の空欄では、OCRや手入力済みの住所を消さない。
+        if (idInput.dataset.lastId === id) return;
         // 空ならクリア
         if (!id) {
             delete idInput.dataset.lastId;
@@ -51,8 +53,6 @@ export const DataResolver = {
             return;
         }
 
-        // 同じIDなら処理しない
-        if (idInput.dataset.lastId === id) return;
         idInput.dataset.lastId = id;
 
         // SELECTはここで処理

@@ -112,10 +112,22 @@
     & >.dialog-main {
         overflow: hidden;
         height: 100%;
+        grid-template-rows: auto minmax(0, 1fr) auto;
         & >.dialog-content {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
             overflow: hidden;
-            /* height: 100%; */
+            & >[data-ocr-source] {
+                flex: 0 0 auto;
+                margin: .5rem 1rem;
+                overflow-wrap: anywhere;
+            }
             & >.tab-area {
+                flex: 1 1 0;
+                height: auto;
+                min-height: 0;
+                grid-template-rows: auto minmax(0, 1fr);
                 overflow: hidden;
             }
         }
@@ -289,7 +301,7 @@
     flex: 1;
 }
 
-#tab-02 {
+#order-pdf-drop-area {
     position: relative;
     min-height: 0;
     overflow: hidden;
@@ -309,95 +321,12 @@
     pointer-events: none;
 }
 
-#tab-02.drag-over .order-pdf-drop-overlay {
+#order-pdf-drop-area.drag-over .order-pdf-drop-overlay {
     display: grid;
 }
 
-#order-ocr-layout-preview img {
-    width: 100%;
-    max-height: 70vh;
-    object-fit: contain;
-}
-
-#order-ocr-layout-preview {
-    position: relative;
-    max-height: 70vh;
-    overflow: auto;
-}
-
-.ocr-layout-box {
-    position: absolute;
-    box-sizing: border-box;
-    border: 2px solid #e53935;
-    background: rgba(229, 57, 53, .12);
-    color: #b71c1c;
-    font-size: 12px;
-    cursor: move;
-    user-select: none;
-    overflow: hidden;
-}
-
-.ocr-layout-resize-handle {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 14px;
-    height: 14px;
-    background: #e53935;
-    cursor: nwse-resize;
-}
-
-/* 伝票添付ファイル */
-.attachment-group-toggle{display:flex;align-items:center;gap:7px;min-width:0;border:0;background:transparent;padding:5px 2px;font:inherit;text-align:left;cursor:pointer}.attachment-group-toggle:hover strong{text-decoration:underline}.attachment-group-chevron{font-size:25px;line-height:16px;transition:transform .18s ease}.attachment-group-toggle[aria-expanded="true"] .attachment-group-chevron{transform:rotate(90deg)}
 .attachment-manager{padding:12px;min-height:300px}.attachment-toolbar,.attachment-group-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.attachment-help,.attachment-empty{color:#666}.attachment-groups{display:grid;gap:14px;margin-top:12px}.attachment-group{border:1px solid #d5dbe3;border-radius:8px;background:#fff;overflow:hidden}.attachment-group-header{padding:10px 12px;background:#f5f7fa}.attachment-group-actions,.attachment-file-actions{display:flex;gap:6px;flex-wrap:wrap}.attachment-small-btn{border:1px solid #b8c1cc;background:#fff;border-radius:5px;padding:5px 9px;cursor:pointer}.attachment-small-btn:hover{background:#eef4fa}.attachment-drop-zone{margin:10px;border:2px dashed #b9c4d0;border-radius:7px;padding:13px;text-align:center;color:#657386}.attachment-drop-zone.is-dragover{border-color:#2878c8;background:#eaf4ff}.attachment-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px;padding:0 10px 12px}.attachment-card{min-width:0;border:1px solid #dde2e8;border-radius:7px;padding:7px;display:grid;gap:6px}.attachment-preview{height:115px;border:0;background:#eef1f4;border-radius:5px;padding:0;overflow:hidden;cursor:pointer}.attachment-preview img{width:100%;height:100%;display:block;object-fit:cover}.attachment-pdf{height:100%;display:grid;place-items:center;color:#c62828;font-size:28px;font-weight:bold}.attachment-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}.attachment-file-actions .attachment-small-btn{font-size:12px;padding:3px 6px}.attachment-viewer{position:fixed;z-index:10000;inset:0;background:rgba(0,0,0,.92);display:grid;place-items:center;outline:none}.attachment-viewer>img{max-width:92vw;max-height:86vh;object-fit:contain}.attachment-viewer-close,.attachment-viewer-prev,.attachment-viewer-next{position:absolute;border:0;background:rgba(255,255,255,.15);color:#fff;cursor:pointer;border-radius:50%}.attachment-viewer-close{right:18px;top:18px;width:44px;height:44px;font-size:28px}.attachment-viewer-prev,.attachment-viewer-next{top:48%;width:52px;height:52px;font-size:42px}.attachment-viewer-prev{left:18px}.attachment-viewer-next{right:18px}.attachment-viewer-caption{position:absolute;bottom:15px;left:10%;right:10%;text-align:center;color:#fff}.attachment-manager button:disabled{opacity:.45;cursor:not-allowed}@media(max-width:700px){.attachment-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.attachment-drop-zone{display:none}.attachment-group-actions{width:100%}.attachment-viewer-prev{left:5px}.attachment-viewer-next{right:5px}}
 
-#order-ocr-candidate-form {
-    & .dialog-content {
-        width: 50rem;
-        max-width: 95vw;
-        box-sizing: border-box;
-        justify-items: stretch;
-        & >.form-row {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr);
-            gap: .3rem;
-            width: 100%;
-        }
-        & >.form-row.ocr-contact-date {
-            /* grid-template-columns: repeat(2, minmax(0, 1fr)); */
-            grid-template-columns: auto 14rem 1fr;
-        }
-        & >.form-row.ocr-postal-address {
-            grid-template-columns: 8rem minmax(0, 1fr);
-        }
-        & label { min-width: 0; }
-        & input, & textarea { width: 100%; min-width: 0; box-sizing: border-box; }
-        & .ocr-detail-row, & .ocr-detail-header {
-            display: grid;
-            gap: .3rem;
-            align-items: end;
-            margin: .5rem 0;
-        }
-        & .ocr-item-table .ocr-detail-header, & #ocr-item-rows >.ocr-detail-row {
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 5rem 3.5rem;
-        }
-        & .ocr-work-table .ocr-detail-header, & #ocr-work-rows >.ocr-detail-row {
-            grid-template-columns: minmax(0, 1fr) 5rem 7rem 3.5rem;
-        }
-        & .ocr-detail-table { overflow-x: auto; }
-        & .ocr-detail-row, & .ocr-detail-header { min-width: 30rem; }
-        & .ocr-numeric-input { text-align: right; }
-    }
-    @media (max-width: 600px) {
-        & .dialog-content {
-            & >.form-row.ocr-contact-date,
-            & >.form-row.ocr-postal-address {
-                grid-template-columns: minmax(0, 1fr);
-            }
-        }
-    }
-}
-/* Results from the current visit, appended as each PDF finishes. */
 .order-pdf-input-actions { margin: .75rem 0; }
 .order-pdf-import-list h2:not(:first-child) { margin-top: 1rem; }
 .order-pdf-import-list .order-pdf-result { padding: .75rem 0; border-bottom: 1px solid #ddd; flex-wrap: wrap; }
@@ -405,15 +334,8 @@
 .order-pdf-result-detail small { display: block; color: #555; }
 .order-pdf-result.failed strong, .order-pdf-result.failed p { color: #a02323; }
 .order-pdf-result.completed strong { color: #24613a; }
-#order-ocr-candidate-source, #order-ocr-candidate-pdf { margin: .5rem 1rem; overflow-wrap: anywhere; }
 
-#ocr-contact-note { font: inherit; }
-.ocr-detail-group { min-width: 0; }
-.ocr-detail-group legend { padding-right: 0; }
-.ocr-detail-group .ocr-detail-add { position: static; display: inline-flex; align-items: center; gap: .3rem; margin: .5rem 0 0; width: auto; height: 2rem; padding: 0; white-space: nowrap; }
-.ocr-detail-group .ocr-detail-add img { width: 2rem; height: 2rem; }
 
-#ocr-requested-date-hint:not([hidden]) { display: block; }
 
 /* スマホの受注一覧は、既存の行・選択処理を保ったままカード表示にする。 */
 @media screen and (max-width: 560px) {
@@ -489,3 +411,17 @@
         height: auto;
     }
 }
+#order-pdf-drop-area { display: flex; flex-direction: column; min-height: 160px; }
+#order-pdf-drop-area > .table-wrapper { flex: 1; min-height: 0; }
+#order-pdf-file-button { align-self: flex-start; }
+
+.order-list-layout { grid-template-rows: minmax(24rem, 1fr) auto; }
+.order-main-table { display: grid; grid-template-rows: auto minmax(10rem, 1fr) auto; min-height: 0; max-width: 90rem; }
+.product-main-table { height: 100%; }
+.order-list-layout > .order-pdf-import-list { max-height: 14rem; overflow: auto; }
+
+.order-search-actions { display: flex; align-items: center; gap: .5rem; }
+.order-search-actions > button { height: 2.5rem; }
+.tab-panel .order-main-table { grid-template-rows: auto minmax(10rem, 1fr) auto; margin-top: 1rem; }
+
+#form-01 textarea[name="remarks"] { min-height: 10rem; resize: vertical; }

@@ -156,3 +156,34 @@
         content: "品目";
     }
 }
+
+/* カテゴリー画面の見出しとカードを中央へ配置する。 */
+.shortcut-page { text-align: center; }
+.shortcut-grid { justify-content: center; max-width: 64rem; margin-inline: auto; }
+
+.mobile-read-only :is([data-mobile-write], [data-action~="create"], [data-action~="delete"], [data-action~="save"], [data-action~="bulkEdit"], [data-action~="delete-order-item"], [data-action~="delete-order-work"], #order-pdf-file-button, #add-item-btn, #add-work-btn, [data-attachment-action="create-group"], [data-stamp-type]) { display: none !important; }
+.mobile-read-only #form-dialog-area [name="submitBtn"] { display: none !important; }
+.mobile-read-only #form-dialog-area :is(input, select, textarea):disabled { opacity: 1; color: inherit; -webkit-text-fill-color: currentColor; }
+.mobile-read-only .attachment-drop-zone { display: none !important; }
+
+.mobile-recycle-edit { display: none; }
+@media (max-width: 560px), (pointer: coarse) and (max-width: 960px) {
+    main[data-page$="/recyclePage.js"] .page-input-header .kebab-btns { display: flex !important; flex-wrap: wrap; gap: .75rem; }
+    main[data-page$="/recyclePage.js"] .kebab-btns .img-btn { min-height: 44px; min-width: 64px; }
+    main[data-page$="/recyclePage.js"] > .tab-area > .tab-menu { overflow-x: auto; gap: .25rem; flex-wrap: nowrap; }
+    main[data-page$="/recyclePage.js"] > .tab-area > .tab-menu > li { flex: 1 0 auto; min-height: 44px; padding: .75rem 1rem; }
+    main[data-page$="/recyclePage.js"] button[name="submitBtn"] { min-height: 48px; font-size: 1.1rem; }
+    main[data-page$="/recyclePage.js"] .mobile-recycle-edit { display: block; min-height: 44px; grid-column: 1 / -1; }
+    main[data-page$="/recyclePage.js"] .mobile-recycle-edit button { width: 100%; min-height: 44px; }
+    main[data-page$="/productPage.js"] #table-header-02 { display: none; }
+    main[data-page$="/productPage.js"] #table-02 tr[name="data-row"] { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); height: auto; gap: .75rem; padding: 1rem; margin-bottom: .75rem; border: 1px solid var(--line); border-radius: .75rem; }
+    main[data-page$="/productPage.js"] #table-02 td { white-space: normal; overflow-wrap: anywhere; padding: 0; }
+    main[data-page$="/productPage.js"] #table-02 td[name="chk-cell"] { display: none; }
+    main[data-page$="/productPage.js"] #table-02 td[data-field="action"] { grid-column: 1 / -1; width: 100%; }
+    main[data-page$="/productPage.js"] [data-action="arrival-item"] { display: block; width: 100%; min-height: 48px; font-size: 1.1rem; }
+}
+
+@media (max-width: 560px), (pointer: coarse) and (max-width: 960px) {
+    main[data-page$="/recyclePage.js"] #table-01 td[name="chk-cell"] { display: flex !important; }
+    main[data-page$="/recyclePage.js"] #table-01 input[name="chk-box"] { width: 24px; height: 24px; }
+}

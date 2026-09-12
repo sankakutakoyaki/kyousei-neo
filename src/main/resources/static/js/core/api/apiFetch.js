@@ -1,5 +1,7 @@
 "use strict"
 
+import { assertMobileWriteAllowed } from "../access/mobileReadOnly.js";
+
 import { startProcessing } from "../dom/loading.js";
 import { processingEnd } from "../dom/loading.js";
 import { DialogService } from "../ui/dialog/DialogService.js";
@@ -15,6 +17,8 @@ export async function apiFetch(url, {
     retry = 0,
     showProcessing = true
 } = {}) {
+
+    assertMobileWriteAllowed(url, method, data);
 
     if(showProcessing){
         startProcessing();

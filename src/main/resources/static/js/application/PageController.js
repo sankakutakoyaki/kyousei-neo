@@ -1,5 +1,7 @@
 "use strict"
 
+import { isMobileReadOnly, isWriteAction } from "../core/access/mobileReadOnly.js";
+
 import { initCombo } from "../bootstrap/initCombo.js";
 import { createInputComponent } from "../core/form/components/inputComponent.js";
 import { smartFilterHandler } from "../core/behavior/filterHandler.js";
@@ -359,6 +361,7 @@ export class PageController {
     }
 
     async executeAction(name, payload = null){
+        if (isMobileReadOnly(this.key) && isWriteAction(name)) return;
         const fn = this.pageActions?.[name];
         if(!fn){
             return;

@@ -1,4 +1,5 @@
-"use strict"
+"use strict";
+const escapeHtml = value => String(value ?? "-----").replace(/[&<>"']/g, char => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"}[char]));
 
 export const createOrderListColumns = (controller) => [
     {
@@ -7,7 +8,7 @@ export const createOrderListColumns = (controller) => [
         sortable: true,
         render: (item) => `
             <span>${String(item.orderId).padStart(6, "0") ?? "-----"}</span><br>
-            <span>${item.requestNumber ?? "-----"}</span>
+            <span>${escapeHtml(item.requestNumber)}</span>
         `
     },
     {
@@ -15,8 +16,8 @@ export const createOrderListColumns = (controller) => [
         label: "訪問日/時間",
         sortable: true,
         render: (item) => `
-            <span>${item.visitDate ?? "-----"}</span><br>
-            <span>${item.visitTime ?? "-----"}</span>
+            <span>${escapeHtml(item.visitDate)}</span><br>
+            <span>${escapeHtml(item.visitTime)}</span>
         `
     },
     {
@@ -24,8 +25,8 @@ export const createOrderListColumns = (controller) => [
         label: "小売業者",
         sortable: true,
         render: (item) => `
-            <span>${item.primeConstractorName ?? "-----"}</span><br>
-            <span>${item.primeConstractorOfficeName ?? "-----"}</span>
+            <span>${escapeHtml(item.primeConstractorName)}</span><br>
+            <span>${escapeHtml(item.primeConstractorOfficeName)}</span>
         `
     },
     {
@@ -33,8 +34,8 @@ export const createOrderListColumns = (controller) => [
         label: "住所/件名",
         sortable: true,
         render: (item) => `
-            <span>${item.fullAddress ?? "-----"}</span><br>
-            <span>${item.title ?? "-----"}</span>
+            <span>${escapeHtml(item.fullAddress)}</span><br>
+            <span>${escapeHtml(item.title)}</span>
         `
     }
 ];
@@ -44,23 +45,23 @@ export const createOrderItemFormListColumns = () => [
         field: "itemCode",
         label: "JANコード/商品名",
         render: (item) => `
-            <span>${item.janCode ?? "-----"}</span><br>
-            <span>${item.itemName ?? "-----"}</span>
+            <span>${escapeHtml(item.janCode)}</span><br>
+            <span>${escapeHtml(item.itemName)}</span>
         `
     },
     {
         field: "itemName",
         label: "メーカー/型番",
         render: (item) => `
-            <span>${item.itemMaker ?? "-----"}</span><br>
-            <span>${item.itemModel ?? "-----"}</span>
+            <span>${escapeHtml(item.itemMaker)}</span><br>
+            <span>${escapeHtml(item.itemModel)}</span>
         `
     },
     {
         field: "itemQuantity",
         label: "数量",
         render: (item) => `
-            <span>${item.itemQuantity ?? "-----"}</span>
+            <span>${escapeHtml(item.itemQuantity)}</span>
         `
         // render: (item) => `
         //     <input
@@ -90,21 +91,21 @@ export const createOrderWorkFormListColumns = () => [
         field: "orderWorkName",
         label: "作業名",
         render: (item) => `
-            <span>${item.orderWorkName ?? "-----"}</span>
+            <span>${escapeHtml(item.orderWorkName)}</span>
         `
     },
     {
         field: "orderWorkPrice",
         label: "金額",
         render: (item) => `
-            <span>${item.orderWorkPrice ?? "-----"}</span>
+            <span>${escapeHtml(item.orderWorkPrice)}</span>
         `
     },
     {
         field: "orderWorkQuantity",
         label: "数量",
         render: (item) => `
-            <span>${item.orderWorkQuantity ?? "-----"}</span>
+            <span>${escapeHtml(item.orderWorkQuantity)}</span>
         `
     },
     {    
@@ -129,7 +130,7 @@ export const createOrderItemListColumns = () => [
         sortable: true,
         render: (item) => `
             <span>${Number(item.orderId) > 0 ? String(item.orderId).padStart(6, "0") : "-----"}</span><br>
-            <span>${item.requestNumber ?? "-----"}</span>
+            <span>${escapeHtml(item.requestNumber)}</span>
         `
     },
     {
@@ -137,24 +138,24 @@ export const createOrderItemListColumns = () => [
         label: "小売業者",
         sortable: true,
         render: (item) => `
-            <span>${item.primeConstractorName ?? "-----"}</span><br>
-            <span>${item.primeConstractorOfficeName ?? "-----"}</span>
+            <span>${escapeHtml(item.primeConstractorName)}</span><br>
+            <span>${escapeHtml(item.primeConstractorOfficeName)}</span>
         `
     },
     {
         field: "janCode",
         label: "JANコード/商品名",
         render: (item) => `
-            <span>${item.janCode ?? "-----"}</span><br>
-            <span>${item.itemName ?? "-----"}</span>
+            <span>${escapeHtml(item.janCode)}</span><br>
+            <span>${escapeHtml(item.itemName)}</span>
         `
     },
     {
         field: "itemName",
         label: "メーカー/型番",
         render: (item) => `
-            <span>${item.itemMaker ?? "-----"}</span><br>
-            <span>${item.itemModel ?? "-----"}</span>
+            <span>${escapeHtml(item.itemMaker)}</span><br>
+            <span>${escapeHtml(item.itemModel)}</span>
         `
     },
     {
@@ -162,7 +163,7 @@ export const createOrderItemListColumns = () => [
         label: "数量",
         class: "text-right",
         render: (item) => `
-            <span>${item.itemQuantity ?? "-----"}</span>
+            <span>${escapeHtml(item.itemQuantity)}</span>
         `
     },
     {
@@ -170,7 +171,7 @@ export const createOrderItemListColumns = () => [
         label: "入荷日",
         sortable: true,
         render: (item) => `
-            <span>${item.arrivalDate ?? "-----"}</span>
+            <span>${escapeHtml(item.arrivalDate)}</span>
         `
     },
     {    
@@ -186,7 +187,7 @@ export const createOrderItemListColumns = () => [
                     type="button"
                     class="normal-btn"
                     data-action="arrival-item"
-                    data-id="${item.orderItemId}">入荷
+                    data-id="${item.orderItemId}">入荷登録
                 </button>
             `;
         }

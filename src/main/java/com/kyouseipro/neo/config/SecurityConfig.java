@@ -18,7 +18,7 @@ public class SecurityConfig {
         http
             .headers(headers ->
                 headers.frameOptions(frame ->
-                    frame.sameOrigin()   // ← これを追加
+                    frame.sameOrigin()
                 )
             )
             .authorizeHttpRequests(auth -> auth

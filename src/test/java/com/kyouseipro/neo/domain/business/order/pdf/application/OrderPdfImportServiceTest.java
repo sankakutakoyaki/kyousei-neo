@@ -38,7 +38,7 @@ class OrderPdfImportServiceTest {
             repositoryReturning(1L),
             mock(LocalOcrService.class),
             mock(OrderAiExtractionClient.class),
-            mock(AiLearningDataService.class),
+            mock(com.kyouseipro.neo.domain.business.order.ocr.repository.OrderOcrLogRepository.class),
             mock(OrderOcrLayoutRepository.class),
             new ObjectMapper()
         );
@@ -69,7 +69,7 @@ class OrderPdfImportServiceTest {
             repositoryReturning(1L),
             mock(LocalOcrService.class),
             mock(OrderAiExtractionClient.class),
-            mock(AiLearningDataService.class),
+            mock(com.kyouseipro.neo.domain.business.order.ocr.repository.OrderOcrLogRepository.class),
             mock(OrderOcrLayoutRepository.class),
             new ObjectMapper()
         );
@@ -81,6 +81,43 @@ class OrderPdfImportServiceTest {
         );
 
         assertThrows(BusinessException.class, () -> service.save("0", file));
+    }
+
+    @Test
+    void savesInitialExtractionAndReturnsItsActualMetadata() throws Exception {
+        var repository = repositoryReturning(12L);
+        var logs = mock(com.kyouseipro.neo.domain.business.order.ocr.repository.OrderOcrLogRepository.class);
+        var client = mock(OrderAiExtractionClient.class);
+        Path pdf = temporaryDirectory.resolve("original.pdf");
+        Files.writeString(pdf, "%PDF-1.7");
+        when(repository.findFile(12L)).thenReturn(new com.kyouseipro.neo.domain.business.order.pdf.model.OrderPdfImportFile("original.pdf", Path.of("original.pdf")));
+        when(repository.findPrimeConstractorId(12L)).thenReturn(1085L);
+        java.util.Map<String, Object> candidates = java.util.Map.of("customerName", "山田", "items", java.util.List.of(java.util.Map.of("itemModel", "A")));
+        when(client.extract(pdf, 1085L)).thenReturn(java.util.Optional.of(new OrderAiExtractionClient.ExtractionResponse(candidates, "actual-model", "heiwado-20260912-01")));
+        when(logs.find(12L)).thenReturn(null);
+        when(logs.insert(org.mockito.ArgumentMatchers.eq(12L), anyString(), anyString(), anyString())).thenReturn(7L);
+        var service = new OrderPdfImportService(new UploadConfig(temporaryDirectory.toString()), repository,
+            mock(LocalOcrService.class), client, logs, mock(OrderOcrLayoutRepository.class), new ObjectMapper());
+        var result = service.recognizeHeiwado(12L);
+        assertEquals(7L, result.get("ocrLogId"));
+        assertEquals("actual-model", result.get("modelName"));
+        org.mockito.Mockito.verify(logs).insert(12L, new ObjectMapper().writeValueAsString(candidates), "actual-model", "heiwado-20260912-01");
+        org.mockito.Mockito.verify(repository, org.mockito.Mockito.never()).saveOcrResult(anyLong(), anyString());
+    }
+
+    @Test
+    void retryReusesInitialLogWithoutCallingAi() throws Exception {
+        var repository = repositoryReturning(12L);
+        var logs = mock(com.kyouseipro.neo.domain.business.order.ocr.repository.OrderOcrLogRepository.class);
+        var client = mock(OrderAiExtractionClient.class);
+        Files.writeString(temporaryDirectory.resolve("original.pdf"), "%PDF-1.7");
+        when(repository.findFile(12L)).thenReturn(new com.kyouseipro.neo.domain.business.order.pdf.model.OrderPdfImportFile("original.pdf", Path.of("original.pdf")));
+        java.util.Map<String, Object> original = java.util.Map.of("ocrLogId", 7L, "candidates", java.util.Map.of("customerName", "初回"));
+        when(logs.find(12L)).thenReturn(original);
+        var service = new OrderPdfImportService(new UploadConfig(temporaryDirectory.toString()), repository,
+            mock(LocalOcrService.class), client, logs, mock(OrderOcrLayoutRepository.class), new ObjectMapper());
+        assertEquals(original, service.recognizeHeiwado(12L));
+        org.mockito.Mockito.verifyNoInteractions(client);
     }
 
     private OrderPdfImportRepository repositoryReturning(long orderImportId) {

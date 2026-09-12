@@ -1,5 +1,7 @@
 "use strict"
 
+import { isMobileReadOnly, refreshMobileReadOnly } from "../core/access/mobileReadOnly.js";
+
 import { FormModel } from "../core/form/FormModel.js";
 import { convertKey } from "../util/keyCaseConverter.js";
 import { openFormDialog } from "../core/ui/dialog/dialogCore.js";
@@ -109,7 +111,8 @@ export class FormController {
         }
 
         const isCreate = !data?.[this.idKey];
-        if (isCreate) {
+        if (isCreate && isMobileReadOnly(this.controller?.key)) return;
+        if (isCreate && (this.config.inheritFilters?.(data) ?? true)) {
             const filters = this.controller.state?.filters || {};
             Object.entries(filters).forEach(([key, value]) => {
                 if (value == null || value === "") return;
@@ -180,11 +183,17 @@ export class FormController {
             onSubmit: async (form) => {
                 await this.save(form);
             },
+            onClose: () => {
+                if (this._saving) return;
+                DialogService.close(this.formId);
+                this.config.onClose?.(this);
+            },
             onReset: () => {
                 this.resetForm();
             }
         });
 
+        refreshMobileReadOnly();
         // 動的に開いたフォームにもEnterフォーカスを設定
         setEnterFocus();
         // this.setSubmitEnabled(false);
@@ -198,6 +207,7 @@ export class FormController {
     }
 
     async save(form){
+        if (isMobileReadOnly(this.controller?.key)) return;
         if(this._saving) return;
         this._saving = true;
 
@@ -356,6 +366,7 @@ export class FormController {
     }
 
     canSubmit(){
+        if (isMobileReadOnly(this.controller?.key)) return false;
         const formChanged = this.hasChanges();
         const additionalChanged = this.hasAdditionalChanges?.() ?? false;
 

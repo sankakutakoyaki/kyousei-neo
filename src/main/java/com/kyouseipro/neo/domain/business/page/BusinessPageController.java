@@ -34,6 +34,12 @@ public class BusinessPageController {
         return "fragments/pages/business/order/content :: content";
     }
 
+    @GetMapping("/products")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
+    public String getProducts() {
+        return "fragments/pages/business/order/products :: content";
+    }
+
     @GetMapping("/api/order/init/cache")
     @ResponseBody
     public Map<String, Object> initOrder() {

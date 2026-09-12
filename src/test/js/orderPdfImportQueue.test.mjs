@@ -17,7 +17,7 @@ test('uploads and reads serially, including batches added during reading; comple
     const calls = [];
     const queue = new OrderPdfImportQueue({
         upload: async (file, id) => { calls.push(`upload:${file.name}:${id}`); return {orderImportId: file.name}; },
-        recognize: async id => { calls.push(`read:${id}`); if (id === 'a.pdf') await gate.promise; return {customerName: id}; }
+        recognize: async id => { calls.push(`read:${id}`); if (id === 'a.pdf') await gate.promise; return {ocrLogId: id, candidates: {customerName: id}}; }
     });
     const run = queue.enqueue([pdf('a.pdf'), pdf('b.pdf')], '1085', '平和堂');
     await Promise.resolve();
@@ -35,7 +35,7 @@ test('failed OCR does not stop following files; retry reuses saved PDF', async (
     let uploads = 0, attempts = 0;
     const queue = new OrderPdfImportQueue({
         upload: async () => ({orderImportId: ++uploads}),
-        recognize: async id => { if (id === 1 && attempts++ === 0) throw new Error('読取失敗'); return {}; }
+        recognize: async id => { if (id === 1 && attempts++ === 0) throw new Error('読取失敗'); return {ocrLogId: id, candidates: {}}; }
     });
     await queue.enqueue([pdf('a.pdf'), pdf('b.pdf')], '1085', '平和堂');
     const failed = queue.entries[0];
@@ -50,7 +50,7 @@ test('invalid files and upload failures are listed, while valid files continue',
     let calls = 0;
     const queue = new OrderPdfImportQueue({
         upload: async file => { calls++; if (file.name === 'bad.pdf') throw new Error('保存失敗'); return {orderImportId: 1}; },
-        recognize: async () => ({})
+        recognize: async () => ({ocrLogId: 1, candidates: {}})
     });
     await queue.enqueue([{...pdf('empty.pdf'), size: 0}, pdf('wrong.txt'), pdf('bad.pdf'), pdf('ok.pdf')], '1085', '平和堂');
     assert.deepEqual(queue.entries.map(e => e.status), ['failed', 'failed', 'failed', 'completed']);
@@ -60,7 +60,7 @@ test('invalid files and upload failures are listed, while valid files continue',
 test('new page gets an empty queue; disposing old page cancels waiting files', async () => {
     const gate = deferred();
     let uploads = 0;
-    const old = new OrderPdfImportQueue({upload: async () => ({orderImportId: ++uploads}), recognize: async () => {await gate.promise; return {};}});
+    const old = new OrderPdfImportQueue({upload: async () => ({orderImportId: ++uploads}), recognize: async () => {await gate.promise; return {ocrLogId: 1, candidates: {}};}});
     const run = old.enqueue([pdf('a.pdf'), pdf('b.pdf')], '1085', '平和堂');
     old.dispose();
     const fresh = new OrderPdfImportQueue({});
@@ -75,7 +75,7 @@ test('review must finish before a result is listed or the next upload starts', a
     let uploads = 0;
     const queue = new OrderPdfImportQueue({
         upload: async () => ({orderImportId: ++uploads}),
-        recognize: async () => ({}),
+        recognize: async () => ({ocrLogId: 1, candidates: {}}),
         review: async entry => {if (entry.orderImportId === 1) await gate.promise; entry.confirmed = true;}
     });
     const run = queue.enqueue([pdf('a.pdf'), pdf('b.pdf')], '1085', '平和堂');

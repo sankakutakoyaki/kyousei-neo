@@ -22,7 +22,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<SimpleResponse<Void>> handleSystem(SystemException e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                // .body(SimpleResponse.error("システムエラーが発生しました。"));
                 .body(SimpleResponse.error(e.getCause().getMessage()));
     }
 
@@ -30,7 +29,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<SimpleResponse<Void>> handleOther(Exception e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                // .body(SimpleResponse.error("予期しないエラーが発生しました。"));
                 .body(SimpleResponse.error("予期しないエラーが発生しました。" + e.getMessage()));
     }
 }

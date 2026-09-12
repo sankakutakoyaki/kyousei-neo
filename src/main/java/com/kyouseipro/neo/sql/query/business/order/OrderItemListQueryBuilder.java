@@ -39,14 +39,16 @@ public class OrderItemListQueryBuilder implements QueryBuilder {
                 cf.name as prime_constractor_office_name
 
             FROM order_items oi
-            LEFT OUTER JOIN orders o ON o.order_id = oi.order_id AND o.state = ?
+            LEFT OUTER JOIN orders o ON o.order_id = oi.order_id AND o.state IN (0, 2)
             LEFT OUTER JOIN companies c ON c.company_id = o.prime_constractor_id AND c.state = ?
             LEFT OUTER JOIN offices cf ON cf.office_id = o.prime_constractor_office_id AND cf.state = ?
             WHERE oi.state = ?
+              AND (oi.arrival_date IS NULL
+                   OR o.order_id IS NULL
+                   OR (o.complete_date IS NULL AND o.state <> 2))
             """);
 
         List<String> paramOrder = new ArrayList<>();
-        paramOrder.add("state");
         paramOrder.add("state");
         paramOrder.add("state");
         paramOrder.add("state");

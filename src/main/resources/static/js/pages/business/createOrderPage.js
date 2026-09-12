@@ -82,6 +82,7 @@ const createOrderForm = (controller, options = {}) => {
         cancelText: options.cancelText,
 
         repository: OrderRepository,
+        inheritFilters: data => !data?.ocrLogId,
 
         changeTargetSelector: "#tab-11",
         validInputSelector: "#tab-11",
@@ -98,8 +99,8 @@ const createOrderForm = (controller, options = {}) => {
         //     initOrderItemInput(form, formEl, itemList);
         // },
         onOpen: async (data) => {
-            let items = [];
-            let works = [];
+            let items = data?.items ?? [];
+            let works = data?.works ?? [];
 
             if (data?.orderId) {
                 items = await OrderRepository.findItems({
@@ -117,6 +118,14 @@ const createOrderForm = (controller, options = {}) => {
             workList.init(works, form);
 
             const formEl = document.getElementById(form.formId);
+            const source = formEl.querySelector("[data-ocr-source]");
+            if (source) {
+                source.hidden = !data?.ocrLogId;
+                source.querySelector("a").href = data?.orderImportId ? `/api/order/import/${encodeURIComponent(data.orderImportId)}/file` : "#";
+                source.querySelector("span").textContent = data?.ocrDateWarning || "原本と照合して保存してください。";
+            }
+            const postal = formEl.querySelector('[name="postal-code"]');
+            if (postal) postal.dataset.lastId = postal.value.trim();
 
             attachmentManager ??= new AttachmentManager(formEl?.querySelector("[data-attachment-manager]"));
             await attachmentManager.open(data?.orderId);
@@ -126,6 +135,7 @@ const createOrderForm = (controller, options = {}) => {
         },
 
         buildAdditionalPayload: () => ({
+            ...(form.currentEntity?.ocrLogId ? {ocrLogId: form.currentEntity.ocrLogId} : {}),
             items: itemList.getItems(),
             works: workList.getItems()
         }),
@@ -142,7 +152,9 @@ const createOrderForm = (controller, options = {}) => {
             workList.reset();
         },
 
+        onClose: () => form.finishOcrReview?.(),
         afterSave: async (id) => {
+            form.finishOcrReview?.(id);
             await controller.refresh(id);
         }
     });

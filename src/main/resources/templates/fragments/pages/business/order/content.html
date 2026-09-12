@@ -1,113 +1,30 @@
-<main th:fragment="content"
-        class="normal-body"
-        data-page="/js/pages/business/order/orderPage.js"
-        data-css="/css/pages/business/order.css">
+<main th:fragment="content" class="normal-body" data-page="/js/pages/business/order/orderPage.js" data-css="/css/pages/business/order.css">
     <div class="tab-area">
         <ul class="tab-menu">
             <li class="tab-menu-item is-active" data-action="tab" data-group="order-tabs" data-tab="tab-01">一覧</li>
-            <li class="tab-menu-item" data-action="tab" data-group="order-tabs" data-tab="tab-02">取込</li>
-            <li class="tab-menu-item" data-action="tab" data-group="order-tabs" data-tab="tab-03">商品</li>
         </ul>
-        <div class="tab-panel is-show" id="tab-01" data-tab-content="order-tabs">
-            <!-- <div id="order-pdf-drop-area" class="table-area order-pdf-drop-area" data-controller="orderList" data-sync-group="order">
+        <div class="tab-panel is-show order-list-layout" id="tab-01" data-tab-content="order-tabs">
+            <div class="table-area order-main-table" data-controller="orderList" data-sync-group="order">
                 <header th:replace="~{fragments/pages/business/order/header :: header01Fragment()}"></header>
-                <section th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01')}"></section>
-                <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></footer>
-            </div> -->
-            <!-- <div class="order-list-area"> -->
-                <div class="table-area" data-controller="orderList" data-sync-group="order">
-                    <header th:replace="~{fragments/pages/business/order/header :: header01Fragment()}"></header>
+                <div id="order-pdf-drop-area">
+                    <div class="order-pdf-drop-overlay">PDFをここにドロップ</div>
+                    <p>荷主を選択し、一覧へPDFをドロップしてください（各PDFの先頭ページを読み取ります。確認・保存またはキャンセルすると次のPDFへ進みます）。</p>
                     <section th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01')}"></section>
-                    <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></footer>
-                <!-- </div> -->
-            </div>
-        </div>
-        <div class="tab-panel" id="tab-02" data-tab-content="order-tabs">
-            <div class="order-pdf-drop-overlay">PDFをここにドロップ</div>
-            <section class="order-pdf-import-list" data-controller="orderList">
-                <h2>受注伝票の取込</h2>
-                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                    {
-                        'text': '荷主',
-                        'id':'primeConstractorImport',
-                        'name': 'prime-constractor-import-id',
-                        'combo': 'clientComboList',
-                        'top': '-----',
-                        'key': 'prime-constractor-import-id',
-                        'resolveName':true
-                    }
-                })}"></th:block>
-                <div class="order-pdf-input-actions">
-                    <button type="button" id="order-pdf-file-button" class="normal-btn">PDFを選択（複数可）</button>
-                    <input type="file" id="order-pdf-file-input" accept="application/pdf,.pdf" multiple hidden>
                 </div>
-                <p>PDFをドロップ、またはファイル選択すると順番に保存・読取します（各PDFの先頭ページ）。</p>
-                <p>処理が終わるまでこの画面を開いたままにしてください。1件ごとに開く修正画面で原本と照合し、保存すると次のPDFへ進みます。</p>
-                <h2>今回の取込結果</h2>
-                <p>確認保存したもの・未確認で次へ進んだもの・失敗したものを表示します。画面を開き直すと一覧は空になります。保存したPDF・読取結果は残ります。</p>
-                <p id="order-pdf-import-message" role="status" aria-live="polite">荷主を選択してPDFを追加してください。</p>
+                <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></footer>
+            </div>
+            <section class="order-pdf-import-list">
+                <p id="order-pdf-import-message" role="status" aria-live="polite"></p>
                 <ul id="order-pdf-import-items" class="none"></ul>
             </section>
         </div>
-        <div class="tab-panel" id="tab-03" data-tab-content="order-tabs">
-            <div class="table-area" data-controller="orderItemList" data-sync-group="order">
-                <header th:replace="~{fragments/pages/business/order/header :: header02Fragment()}"></header>
-                <section th:replace="~{fragments/table/body :: normalFragment('table-header-02', 'table-02')}"></section>
-                <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-02')}"></footer>
-            </div>
-        </div>
     </div>
     <div id="form-dialog-area">
-        <!-- <form id="order-ocr-layout-form" class="form-dialog none">
-            <div class="dialog-main">
-                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '帳票OCR設定'} })}"></header>
-                <section class="order-ocr-layout-editor">
-                    <p>PDF上の項目を選び、読取枠を調整します。</p>
-                    <div class="order-ocr-layout-controls">
-                        <select id="order-ocr-layout-field">
-                            <option value="customerName">氏名</option>
-                            <option value="mobilePhone">携帯電話</option>
-                            <option value="address">住所</option>
-                            <option value="itemModel1">商品型番1</option>
-                            <option value="itemModel2">商品型番2</option>
-                            <option value="requestedDate">希望日</option>
-                            <option value="contactNote">連絡事項</option>
-                        </select>
-                        <button type="button" id="order-ocr-layout-add" class="normal-btn">枠を追加</button>
-                    </div>
-                    <div id="order-ocr-layout-preview"></div>
-                </section>
-                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'order-ocr-layout-footer' } })}"></footer>
-            </div>
-        </form> -->
-        <form id="order-ocr-candidate-form" class="form-dialog none" data-enterfocus="order-ocr-candidate-form">
-            <div class="dialog-main">
-                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': 'OCR受注候補'} })}"></header>
-                <p id="order-ocr-candidate-source"></p>
-                <a id="order-ocr-candidate-pdf" target="_blank" rel="noopener">元PDFを開く</a>
-                <th:block th:replace="~{fragments/pages/business/order/ocrCandidate :: formFragment()}"></th:block>
-                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'order-ocr-candidate-footer' } })}"></footer>
-            </div>
-        </form>
         <form id="form-01" class="form-dialog none" data-controller="orderList" data-sync-group="order" data-key="order-id" data-enterfocus="formー01">
             <div class="dialog-main">
                 <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '編集'} })}"></header>
                 <section th:replace="~{fragments/pages/business/order/form :: form01Fragment()}"></section>
                 <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></footer>
-            </div>
-        </form>
-        <form id="form-03" class="form-dialog none" data-controller="orderItemMaster" data-key="item-master-id" data-enterfocus="formー03">
-            <div class="dialog-main">
-                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '商品マスター登録'} })}"></header>
-                <section th:replace="~{fragments/pages/master/form :: form01Fragment('form-03')}"></section>
-                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId':'form-footer-03'} })}"></footer>
-            </div>
-        </form>
-        <form id="form-04" class="form-dialog none" data-controller="orderItem" data-key="order-item-id" data-enterfocus="formー04">
-            <div class="dialog-main">
-                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '受注商品登録'} })}"></header>
-                <section th:replace="~{fragments/pages/business/order/form :: orderItemFormFragment('form-04')}"></section>
-                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId':'form-footer-04'} })}"></footer>
             </div>
         </form>
     </div>

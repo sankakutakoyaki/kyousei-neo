@@ -40,8 +40,13 @@ public class AttachmentService {
         return repository.insertGroup(normalizeParentType(parentType), positive(parentId, "親データ"), requiredName(name, "フォルダ名", 100));
     }
 
-    public void renameGroup(long id, String name) { repository.renameGroup(positive(id,"フォルダ"), requiredName(name,"フォルダ名",100)); }
-    public void renameFile(long id, String name) { repository.renameFile(positive(id,"ファイル"), requiredName(name,"ファイル名",255)); }
+    public void renameGroup(long id, String name) { 
+        repository.renameGroup(positive(id,"フォルダ"), requiredName(name,"フォルダ名",100)); 
+    }
+
+    public void renameFile(long id, String name) { 
+        repository.renameFile(positive(id,"ファイル"), requiredName(name,"ファイル名",255));
+    }
 
     public List<Long> upload(String parentType, long parentId, long groupId, List<MultipartFile> files) {
         String type = normalizeParentType(parentType);
@@ -126,6 +131,8 @@ public class AttachmentService {
         String name=value==null?"file":Path.of(value).getFileName().toString().trim();
         return requiredName(name,"ファイル名",255);
     }
-    private String extensionFor(String mime) { return switch(mime){case "image/jpeg"->".jpg";case "image/png"->".png";case "image/gif"->".gif";default->".pdf";}; }
+    private String extensionFor(String mime) {
+        return switch(mime){case "image/jpeg"->".jpg";case "image/png"->".png";case "image/gif"->".gif";default->".pdf";}; 
+    }
     private void deleteQuietly(Path path) { try { Files.deleteIfExists(path); } catch(IOException ignored) {} }
 }

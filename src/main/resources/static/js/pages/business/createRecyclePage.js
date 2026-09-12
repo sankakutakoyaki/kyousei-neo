@@ -64,7 +64,8 @@ const createRecycleForm = (controller, options = {}) =>
     new FormController({
         controller,
         formId: options.formId,
-        key: controller.key,
+        key: "recycleId",
+        idKey: "recycleId",
         afterSave: async (id) => {
             await controller.refresh(id);
         },
@@ -97,7 +98,8 @@ const createInlineRecycleForm = ({
 }) => new FormController({
         controller,
         formId,
-        key: controller.key,
+        key: "recycleId",
+        idKey: "recycleId",
         saveHandler,
         closeOnSave: false,
         showSuccessDialog: false,

@@ -11,7 +11,6 @@ public final class SqlExceptionUtil {
         while (cause != null) {
             if (cause instanceof SQLException sqlEx) {
                 int code = sqlEx.getErrorCode();
-                // SQL Server: 2601 = UNIQUE INDEX, 2627 = PK
                 return code == 2601 || code == 2627;
             }
             cause = cause.getCause();

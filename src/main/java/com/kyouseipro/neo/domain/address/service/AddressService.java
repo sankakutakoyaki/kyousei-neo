@@ -18,14 +18,11 @@ public class AddressService {
 
         // ① 数字だけにする
         String digits = postalCode.replaceAll("[^0-9]", "");
-
         // ② ハイフン形式にする
         String formatted = formatPostalCode(digits);
-
-        // ★ 検索はどっちでもOK（DBに合わせる）
-        AddressEntity e = addressRepository.findByPostalCode(formatted);
+        // 検索はどっちでもOK（DBに合わせる）
         // もしDBがハイフン付きなら formatted を使う
-
+        AddressEntity e = addressRepository.findByPostalCode(formatted);        
         if (e == null) return null;
 
         return new AddressDto(

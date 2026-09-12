@@ -43,7 +43,7 @@ public class OrderPdfImportService {
     private final OrderPdfImportRepository orderPdfImportRepository;
     private final LocalOcrService localOcrService;
     private final OrderAiExtractionClient orderAiExtractionClient;
-    private final AiLearningDataService aiLearningDataService;
+    private final com.kyouseipro.neo.domain.business.order.ocr.repository.OrderOcrLogRepository orderOcrLogRepository;
     private final OrderOcrLayoutRepository orderOcrLayoutRepository;
     private final ObjectMapper objectMapper;
 
@@ -115,27 +115,22 @@ public class OrderPdfImportService {
     }
 
     @Transactional
-    public Map<String, String> recognizeHeiwado(long orderImportId) {
+    public Map<String, Object> recognizeHeiwado(long orderImportId) {
         OrderPdfImportFile file = findFile(orderImportId);
-        long primeConstractorId = orderPdfImportRepository.findPrimeConstractorId(orderImportId);
-        var aiResult = orderAiExtractionClient.extract(file.path(), primeConstractorId);
-        if (aiResult.isPresent()) {
-            orderPdfImportRepository.saveOcrResult(orderImportId, toJson(aiResult.get()));
-            aiLearningDataService.recordCandidate(
-                "ORDER_FAX", "ORDER_IMPORT", orderImportId, primeConstractorId,
-                "OLLAMA", orderAiExtractionClient.modelName(), "order-fax-v1", aiResult.get()
-            );
-            return aiResult.get();
-        }
-        Map<String, HeiwadoOcrDefaultLayout.OcrRegion> regions = orderOcrLayoutRepository.find(primeConstractorId).stream()
-            .collect(java.util.stream.Collectors.toMap(OrderOcrLayout::fieldKey, layout -> new HeiwadoOcrDefaultLayout.OcrRegion(layout.x(), layout.y(), layout.width(), layout.height())));
-        if (regions.isEmpty()) regions = HeiwadoOcrDefaultLayout.REGIONS;
-        Map<String, String> result = localOcrService.extractRegions(file.path(), regions);
-        orderPdfImportRepository.saveOcrResult(orderImportId, toJson(result));
-        aiLearningDataService.recordCandidate(
-            "ORDER_FAX", "ORDER_IMPORT", orderImportId, primeConstractorId,
-            "TESSERACT", null, "order-fax-v1", result
-        );
+        // Serialize retries for the same PDF; the initial extraction is immutable.
+        orderOcrLogRepository.lockImport(orderImportId);
+        var existing = orderOcrLogRepository.find(orderImportId);
+        if (existing != null) return existing;
+        long shipperId = orderPdfImportRepository.findPrimeConstractorId(orderImportId);
+        var response = orderAiExtractionClient.extract(file.path(), shipperId)
+            .orElseThrow(() -> new BusinessException("AI読取サービスを有効にしてください。"));
+        long logId = orderOcrLogRepository.insert(orderImportId,
+            toJson(response.candidates()), response.modelName(), response.promptVersion());
+        Map<String, Object> result = new java.util.LinkedHashMap<>();
+        result.put("candidates", response.candidates());
+        result.put("ocrLogId", logId);
+        result.put("modelName", response.modelName());
+        result.put("promptVersion", response.promptVersion());
         return result;
     }
 
@@ -185,7 +180,7 @@ public class OrderPdfImportService {
         }
     }
 
-    private String toJson(Map<String, String> values) {
+    private String toJson(Map<String, Object> values) {
         try {
             return objectMapper.writeValueAsString(values);
         } catch (JsonProcessingException e) {

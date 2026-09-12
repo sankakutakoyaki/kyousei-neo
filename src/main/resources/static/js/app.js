@@ -1,5 +1,7 @@
 "use strict"
 
+import { initMobileReadOnly } from "./core/access/mobileReadOnly.js";
+
 import { loadPage } from "./core/dom/loadPage.js";
 import { initHamburger } from "./core/ui/menu/hamburger.js";
 import { closeHamburger } from "./core/ui/menu/hamburger.js";
@@ -23,6 +25,7 @@ let initialized = false;
 export function initApp() {
     if (initialized) return;
     initialized = true;
+    initMobileReadOnly();
     initHamburger();
     
     document.addEventListener("click", (e) => {

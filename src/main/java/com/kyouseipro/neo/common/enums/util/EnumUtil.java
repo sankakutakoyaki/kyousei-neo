@@ -11,7 +11,6 @@ import com.kyouseipro.neo.interfaces.enums.BaseEnum;
 public class EnumUtil {
 
     public static <E extends Enum<E> & BaseEnum> E of(Class<E> enumClass, int code) {
-
         return Arrays.stream(enumClass.getEnumConstants())
             .filter(e -> e.getCode() == code)
             .findFirst()
@@ -21,7 +20,6 @@ public class EnumUtil {
     }
 
     public static <E extends Enum<E> & BaseEnum> List<ComboDto> toCombo(Class<E> enumClass) {
-
         return Arrays.stream(enumClass.getEnumConstants())
             .map(e -> new ComboDto(
                 (long) e.getCode(),
@@ -31,7 +29,6 @@ public class EnumUtil {
     }
 
     public static <E extends Enum<E> & BaseEnum> Map<String, Integer> toMap(Class<E> enumClass) {
-
         return Arrays.stream(enumClass.getEnumConstants())
             .collect(Collectors.toMap(
                 Enum::name,
