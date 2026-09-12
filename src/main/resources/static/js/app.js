@@ -29,9 +29,8 @@ export function initApp() {
         const item = e.target.closest(".hamburger-item") || e.target.closest("[data-link]");
         if (!item) return;
 
-        if (item.classList.contains("selected")) return;
-
         const path = item.dataset.path || item.dataset.link;
+        if (APP.currentPage === path) return;
         const target = item.dataset.target || "body";
 
         loadPage(path, target);

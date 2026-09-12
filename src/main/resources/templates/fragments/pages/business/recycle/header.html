@@ -1,5 +1,5 @@
 <th:block th:fragment="header01Fragment()">
-    <div id="header-01" class="flex-area pc-style">
+    <div id="header-01" class="flex-area page-input-header">
         <div>
             <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-03')}"></th:block>
             <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${
@@ -47,7 +47,7 @@
 </th:block>
 
 <th:block th:fragment="header02Fragment()">
-    <form id="header-02" class="flex-area pc-style" data-enterfocus="header-02">
+    <form id="header-02" class="flex-area page-input-header" data-enterfocus="header-02">
         <div>
             <!-- お問合せ管理票番号 -->
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -202,7 +202,7 @@
 </th:block>
 
 <th:block th:fragment="header03Fragment()">
-    <form id="header-03" class="flex-area pc-style" data-enterfocus="header-03">
+    <form id="header-03" class="flex-area page-input-header" data-enterfocus="header-03">
         <div>
             <!-- 引渡日 -->
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -278,7 +278,7 @@
 </th:block>
 
 <th:block th:fragment="header04Fragment()">
-    <form id="header-04" class="flex-area pc-style" data-enterfocus="header-04">
+    <form id="header-04" class="flex-area page-input-header" data-enterfocus="header-04">
         <div>
             <!-- 発送日 -->
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -354,7 +354,7 @@
 </th:block>
 
 <th:block th:fragment="header05Fragment()">
-    <form id="header-05" class="flex-area pc-style" data-enterfocus="header-05">
+    <form id="header-05" class="flex-area page-input-header" data-enterfocus="header-05">
         <div>
             <!-- ロス処理日 -->
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${

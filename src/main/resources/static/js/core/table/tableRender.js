@@ -1,5 +1,6 @@
 "use strict"
 
+import { attachMobileCard } from "./mobileCards.js";
 import { clearElement } from "../dom/clearElement.js";
 import { setPageTopButton, hidePageTopButton } from "../ui/pageTopButton.js";
 import { formatDate } from "../../util/time.js";
@@ -19,6 +20,7 @@ export function renderTable(table, config, list){
         tr.setAttribute("name", "data-row");
 
         createRow(tr, item, config);
+        attachMobileCard(table, tr);
 
         table.appendChild(tr);
     });

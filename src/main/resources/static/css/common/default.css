@@ -11,6 +11,7 @@
 @import url("/css/common/table.css");
 @import url("/css/common/list.css");
 @import url("/css/common/file.css");
+@import url("/css/common/mobile-pages.css");
 
 :root {
     font-size: 12px;

@@ -51,9 +51,7 @@ export async function loadPage(url, target = "body") {
     // 共通処理
     const cssPath = base.dataset.css;
     const modulePath = base.dataset.page;
-    if (cssPath) {
-        await replaceCss(cssPath);
-    }
+    await replaceCss(cssPath);
     if (modulePath) {
         const module = await import(modulePath);
         await module.init?.();
@@ -64,6 +62,7 @@ export async function loadPage(url, target = "body") {
 async function replaceCss(href) {
     // ① 前のページCSS削除
     document.querySelectorAll('link[data-page-css]').forEach(el => el.remove());
+    if (!href) return;
     // ② 新しいCSS追加
     const link = document.createElement("link");
     link.rel = "stylesheet";

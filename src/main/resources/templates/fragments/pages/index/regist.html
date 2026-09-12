@@ -6,8 +6,25 @@
     <div layout:fragment="sidebar-content">
         <div th:replace="~{fragments/common/menu :: registFragment}"></div>
     </div>
-    <main layout:fragment="content">
-        <p>各種登録を行うページです。</p>
+    <main class="normal-body shortcut-page" layout:fragment="content">
+        <h1>登録</h1>
+        <nav class="shortcut-grid" aria-label="登録メニュー">
+            <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')" data-link="/employee" data-target="body">
+                <img th:src="@{/icons/person.png}" alt=""><span>従業員</span>
+            </button>
+            <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')" data-link="/partner" data-target="body">
+                <img th:src="@{/icons/partner.png}" alt=""><span>パートナー</span>
+            </button>
+            <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')" data-link="/client" data-target="body">
+                <img th:src="@{/icons/buillding.png}" alt=""><span>取引先</span>
+            </button>
+            <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')" data-link="/recyclemaker" data-target="body">
+                <img th:src="@{/icons/recycle.png}" alt=""><span>製造業者</span>
+            </button>
+            <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')" data-link="/master" data-target="body">
+                <img th:src="@{/icons/master.png}" alt=""><span>マスター</span>
+            </button>
+        </nav>
         <div id="form-dialog-area"></div>
         <div id="dialog-area"></div>
     </main>

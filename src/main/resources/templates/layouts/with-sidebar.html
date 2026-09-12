@@ -10,7 +10,15 @@
             <button id="menu-close" class="hamburger-btn-close" type="button">
                 <img th:src="@{/icons/close.png}" alt="閉じる">
             </button>
-            <div class="hamburger-content" layout:fragment="sidebar-content"></div>
+            <div class="category-top-menu">
+                <button type="button" class="hamburger-item category-home-link" data-link="/" data-target="layout">
+                    <img th:src="@{/icons/home.png}" alt=""><span>ホーム</span>
+                </button>
+                <div th:replace="~{fragments/common/menu :: homeFragment}"></div>
+            </div>
+            <div class="category-detail-menu">
+                <div class="hamburger-content" layout:fragment="sidebar-content"></div>
+            </div>
         </aside>
         <main class="normal-body" layout:fragment="content"></main>
     </div>

@@ -414,3 +414,78 @@
 .ocr-detail-group .ocr-detail-add img { width: 2rem; height: 2rem; }
 
 #ocr-requested-date-hint:not([hidden]) { display: block; }
+
+/* スマホの受注一覧は、既存の行・選択処理を保ったままカード表示にする。 */
+@media screen and (max-width: 560px) {
+    #table-01 { padding: .25rem; min-width: 0; }
+    #table-01 tr[name="data-row"] {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: .8rem;
+        height: auto;
+        min-width: 0;
+        margin: 0 0 1rem;
+        padding: 1rem;
+        border: 1px solid var(--line);
+        border-radius: .8rem;
+        background-color: var(--white);
+        box-shadow: 0 .15rem .5rem rgba(0, 0, 0, .06);
+    }
+    #table-01 tr[name="data-row"].selected {
+        background-color: var(--row-selected);
+        border-color: var(--theme-blue);
+    }
+    #table-01 tr[name="data-row"] > td[data-field] {
+        display: flex;
+        flex-direction: column;
+        gap: .15rem;
+        min-width: 0;
+        padding: 0;
+        white-space: normal;
+        overflow: visible;
+        overflow-wrap: anywhere;
+        text-align: left;
+        line-height: 1.5;
+    }
+    #table-01 td[data-field] > br { display: none; }
+    #table-01 td[data-field]::before {
+        color: #666;
+        font-size: .85rem;
+        font-weight: normal;
+    }
+    #table-01 td[data-field="date"] { order: 1; font-size: 1.2rem; font-weight: 700; }
+    #table-01 td[data-field="date"]::before { content: "訪問日時"; }
+    #table-01 td[data-field="title"] { order: 2; }
+    #table-01 td[data-field="title"] > span:last-of-type { order: 1; font-size: 1.15rem; font-weight: 700; }
+    #table-01 td[data-field="title"] > span:first-of-type { order: 2; }
+    #table-01 td[data-field="title"]::before { content: "件名・住所"; }
+    #table-01 td[data-field="shipper"] { order: 3; }
+    #table-01 td[data-field="shipper"]::before { content: "小売業者・支店"; }
+    #table-01 tr[name="data-row"] > td[data-field="orderId"] {
+        order: 4;
+        border-top: 1px solid var(--line);
+        padding-top: .6rem;
+        font-size: .9rem;
+        color: #555;
+    }
+    #table-01 td[data-field="orderId"] > span:first-of-type::before { content: "受注ID："; }
+    #table-01 td[data-field="orderId"] > span:last-of-type::before { content: "発注番号："; }
+}
+
+@media screen and (max-width: 560px) {
+    #table-01 tr[name="data-row"] > td[data-field="date"] {
+        flex-direction: row;
+        flex-wrap: wrap;
+        column-gap: .75rem;
+        align-items: baseline;
+    }
+    #table-01 td[data-field="date"]::before {
+        flex-basis: 100%;
+    }
+}
+
+@media screen and (max-width: 560px) {
+    #search-btn {
+        height: auto;
+    }
+}

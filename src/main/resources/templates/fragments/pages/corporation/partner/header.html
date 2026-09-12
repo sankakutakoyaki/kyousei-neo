@@ -1,5 +1,5 @@
 <th:block th:fragment="header01Fragment()">
-    <div id="header-01" class="flex-area pc-style">
+    <div id="header-01" class="flex-area page-input-header">
         <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-01')}"></th:block>
         <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${
             {
@@ -14,7 +14,7 @@
 </th:block>
 
 <th:block th:fragment="header02Fragment()">
-    <div id="header-02" class="flex-area pc-style">
+    <div id="header-02" class="flex-area page-input-header">
         <div>
             <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-01')}"></th:block>
             <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${

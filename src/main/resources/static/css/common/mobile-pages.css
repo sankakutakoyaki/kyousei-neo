@@ -1,0 +1,158 @@
+@charset "UTF-8";
+
+/* 個別画面は従来のサイドバー、カテゴリートップはショートカットを使う。 */
+.category-top-menu { display: none; }
+.normal-main:has(.shortcut-page) { grid-template-columns: minmax(0, 1fr); }
+.normal-main:has(.shortcut-page) .category-detail-menu { display: none; }
+.normal-main:has(.shortcut-page) .category-top-menu { display: block; }
+.shortcut-page h1 { margin: 0 0 1.5rem; font-size: 1.6rem; }
+.shortcut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 12rem));
+    gap: 1rem;
+}
+.shortcut-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    min-height: 9rem;
+    padding: 1rem;
+    border: 1px solid var(--line);
+    border-radius: .8rem;
+    background: var(--white);
+    color: var(--black);
+    font: inherit;
+    cursor: pointer;
+}
+.shortcut-card img { width: 3rem; height: 3rem; object-fit: contain; }
+.shortcut-card:focus-visible { outline: 2px solid var(--theme-blue); outline-offset: 3px; }
+@media (hover: hover) {
+    .shortcut-card:hover { background: var(--sidebar-select-bg); }
+}
+@media screen and (min-width: 561px) {
+    .normal-main:has(.shortcut-page) > .normal-sidebar { display: none; }
+}
+@media screen and (max-width: 560px) {
+    .shortcut-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .shortcut-page { padding: 1rem; }
+    .shortcut-card { min-width: 0; }
+
+    /* ページ固有の横並び指定より優先し、入力欄を縦に並べる。 */
+    .page-input-header,
+    .page-input-header > div,
+    .page-input-header > div > div {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: .6rem !important;
+        min-width: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    .page-input-header { padding: .5rem 0; }
+    .page-input-header :is(input, select, textarea) {
+        min-width: 0 !important;
+        max-width: 100%;
+        width: 100%;
+    }
+    .page-input-header input:is([type="checkbox"], [type="radio"]) { width: auto; }
+    .page-input-header .date-range { grid-template-columns: minmax(0, 1fr); }
+    /* スマホでは検索欄の下の新規・削除などの操作列を表示しない。 */
+    .page-input-header .kebab-btns {
+        display: none !important;
+    }
+    .tab-panel.is-show:has(.page-input-header) { overflow: auto; min-height: 0; }
+}
+
+.category-home-link { width: 100%; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; }
+
+@media screen and (max-width: 560px) {
+    /* 入力行の幅に合わせてカメラ画像が拡大しないようにする。 */
+    .page-input-header button[data-action="barcode-scan"] {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 3rem;
+        min-width: 3rem;
+        height: 3rem;
+        justify-self: start;
+    }
+    .page-input-header button[data-action="barcode-scan"] > img {
+        width: 2rem !important;
+        height: 2rem;
+        object-fit: contain;
+        padding: 0;
+    }
+    :is(main[data-page$="/orderPage.js"], main[data-page$="/recyclePage.js"]) #header-01 .date-range > .form-parts:has(> .range-separator) {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 560px) {
+    /* コード入力と直後のカメラだけを同じ行に置く。 */
+    .page-input-header > div:has(> .form-parts > button[data-action="barcode-scan"]) {
+        grid-template-columns: minmax(0, 1fr) 3rem !important;
+        align-items: end;
+    }
+    .page-input-header > div:has(> .form-parts > button[data-action="barcode-scan"]) > * {
+        grid-column: 1 / -1;
+    }
+    .page-input-header > div > .form-parts:has(+ .form-parts > button[data-action="barcode-scan"]) {
+        grid-column: 1;
+    }
+    .page-input-header > div > .form-parts:has(> button[data-action="barcode-scan"]) {
+        grid-column: 2;
+        align-self: end;
+    }
+    .page-input-header .form-parts:has(> button[data-action="barcode-scan"]) > label {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 560px) {
+    /* 日付は開始日・終了日から指定し、日・週・月の移動ボタンは隠す。 */
+    .page-input-header .form-parts:has(> div > .date-move) {
+        display: none !important;
+    }
+}
+
+
+@media screen and (max-width: 560px) {
+    :is(main[data-page$="/orderPage.js"], main[data-page$="/recyclePage.js"]) #header-01 { container-type: inline-size; }
+    :is(main[data-page$="/orderPage.js"], main[data-page$="/recyclePage.js"]) #header-01 > div:has(> .date-range) {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: .5rem !important;
+    }
+    :is(main[data-page$="/orderPage.js"], main[data-page$="/recyclePage.js"]) #header-01 > div > .date-range { display: contents !important; }
+    :is(main[data-page$="/orderPage.js"], main[data-page$="/recyclePage.js"]) #header-01 > div:has(> .date-range) > .form-parts { grid-column: 1 / -1; }
+    :is(main[data-page$="/orderPage.js"], main[data-page$="/recyclePage.js"]) #header-01 .date-range > .form-parts { min-width: 0; }
+    :is(main[data-page$="/orderPage.js"], main[data-page$="/recyclePage.js"]) #header-01 .date-range input {
+        box-sizing: border-box;
+        font-size: 16px;
+        padding-left: .2rem;
+        padding-right: .2rem;
+    }
+    @container (min-width: 340px) {
+        :is(main[data-page$="/orderPage.js"], main[data-page$="/recyclePage.js"]) #header-01 > div:has(> .date-range) {
+            grid-template-columns: minmax(0, .8fr) repeat(2, minmax(0, 1.2fr)) !important;
+        }
+        :is(main[data-page$="/orderPage.js"], main[data-page$="/recyclePage.js"]) #header-01 > div:has(> .date-range) > .form-parts:has(select) { grid-column: auto; }
+    }
+}
+
+/* 折りたたみはスマホだけ。PCではすべての既存セルを表示する。 */
+@media screen and (max-width: 560px) {
+    .mobile-collapsible-card:not(.mobile-card-expanded) .mobile-card-detail,
+    .mobile-collapsible-card:not(.mobile-card-expanded) .mobile-card-secondary {
+        display: none !important;
+    }
+    .mobile-collapsible-card { cursor: pointer; }
+    .mobile-collapsible-card:focus-visible { outline: 2px solid var(--theme-blue); outline-offset: -2px; }
+    main[data-page$="/orderPage.js"] #table-01 .mobile-collapsible-card:not(.mobile-card-expanded) td[data-field="title"]::before {
+        content: "件名";
+    }
+    main[data-page$="/recyclePage.js"] .mobile-collapsible-card:not(.mobile-card-expanded) td[data-field="maker"]::before {
+        content: "品目";
+    }
+}

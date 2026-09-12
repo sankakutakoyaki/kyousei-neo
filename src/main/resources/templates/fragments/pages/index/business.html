@@ -6,8 +6,16 @@
     <div layout:fragment="sidebar-content">
         <div th:replace="~{fragments/common/menu :: businessFragment}"></div>
     </div>
-    <main layout:fragment="content">
-        <p>業務に関するページです。</p>
+    <main class="normal-body shortcut-page" layout:fragment="content">
+        <h1>業務</h1>
+        <nav class="shortcut-grid" aria-label="業務メニュー">
+            <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')" data-link="/order" data-target="body">
+                <img th:src="@{/icons/sales.png}" alt=""><span>受注</span>
+            </button>
+            <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')" data-link="/recycle" data-target="body">
+                <img th:src="@{/icons/recycle_dust.png}" alt=""><span>リサイクル</span>
+            </button>
+        </nav>
         <div id="form-dialog-area"></div>
         <div id="dialog-area"></div>
     </main>
