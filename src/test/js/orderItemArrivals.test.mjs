@@ -27,3 +27,17 @@ test('request IDs can be generated without secure-context randomUUID', () => {
     const make = vm.runInNewContext(source+'\nnewRequestId;', {crypto:{getRandomValues: bytes => { bytes.fill(17); return bytes; }}});
     assert.match(make(), /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
 });
+
+test('system confirmation returns the choice and restores its original location', async () => {
+    for (const choice of [true, false]) {
+        let moved=false, restored=false;
+        const area={before(){}};
+        const marker={replaceWith(value){assert.equal(value,area);restored=true;}};
+        const confirm=vm.runInNewContext(source+'\nconfirmArrivalCancellation;', {
+            document:{getElementById:()=>area,createComment:()=>marker},
+            DialogService:{confirm:async()=>{assert.equal(moved,true);return choice;}}
+        });
+        assert.equal(await confirm({append(value){assert.equal(value,area);moved=true;}},'取消確認'),choice);
+        assert.equal(restored,true);
+    }
+});

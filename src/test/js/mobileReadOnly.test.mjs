@@ -10,7 +10,7 @@ test('mobile permits searches/details/downloads and rejects all existing write q
     for (const queryId of ['orderSave', 'companyDeleteByIds', 'orderItemCreate', 'unknown']) {
         assert.throws(() => assertMobileWriteAllowed('/api/query', 'POST', {queryId}), /閲覧/);
     }
-    for (const [url, method] of [['/api/order/import/pdf','POST'], ['/api/attachments/files/1','DELETE'], ['/api/attachments/groups/1','PATCH'], ['/api/timeworks/admin/update','POST'], ['/api/timeworks/stamp/self','POST']]) {
+    for (const [url, method] of [['/api/order/import/pdf','POST'], ['/api/attachments/files/1','DELETE'], ['/api/attachments/groups/1','PATCH'], ['/api/timeworks/admin/update','POST']]) {
         assert.throws(() => assertMobileWriteAllowed(url, method), /閲覧/);
     }
     assert.equal(isWriteRequest('/api/attachments/ORDER/1/groups', 'GET'), false);
@@ -64,4 +64,13 @@ test('mobile rejects editing existing recycle records but permits new registrati
     assert.doesNotThrow(() => assertMobileWriteAllowed('/api/query', 'POST', {queryId:'recycleSave', params:{recycleId:0}}));
     const listField = {closest: selector => selector.startsWith('main') ? {} : null};
     assert.equal(isMobileReadOnly(listField), true);
+});
+
+test('mobile allows own start/end stamps but protects administrative attendance writes', () => {
+    globalThis.window = {matchMedia: () => ({matches: true})};
+    for (const stampType of ['START', 'END'])
+        assert.doesNotThrow(() => assertMobileWriteAllowed('/api/timeworks/stamp/self','POST',{stampType}));
+    for (const path of ['/api/timeworks/stamp', '/api/timeworks/admin/update'])
+        assert.throws(() => assertMobileWriteAllowed(path,'POST',{stampType:'START'}));
+    assert.throws(() => assertMobileWriteAllowed('/api/timeworks/stamp/self','DELETE',{stampType:'START'}));
 });

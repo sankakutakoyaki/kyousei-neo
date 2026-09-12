@@ -1,3 +1,4 @@
+import {mobileQuery} from "../../core/access/mobileReadOnly.js";
 "use strict"
 
 import { initCommon } from "../../bootstrap/initPage.js";
@@ -12,7 +13,7 @@ import { toggleScrollbar } from "../../core/table/tableRender.js";
 
 let selectedEmployee = null;
 let employeeComboRequest = 0;
-const mobileMedia = window.matchMedia("(max-width: 560px)");
+const mobileMedia = window.matchMedia(mobileQuery);
 let rolePersonalMode = false;
 let isPersonalMode = mobileMedia.matches;
 let responsiveChangeHandler = null;

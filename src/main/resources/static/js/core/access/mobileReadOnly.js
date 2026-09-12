@@ -16,9 +16,11 @@ export function isWriteRequest(url, method, data) {
     return /^\/api\/(attachments|order|timeworks)(\/|$)/.test(path);
 }
 export function assertMobileWriteAllowed(url, method, data) {
-    if (isMobileDevice() && isWriteRequest(url, method, data) && !(String(url).split("?")[0] === "/api/query" && mobileWriteQueries.has(data?.queryId) && !(data?.queryId === "recycleSave" && Number(data?.params?.recycleId ?? 0) !== 0))) throw new Error("スマホでは入荷登録・リサイクルの登録以外は閲覧のみ利用できます。");
+    if (String(url).split("?")[0] === "/api/timeworks/stamp/self" && method.toUpperCase() === "POST"
+            && ["START", "END"].includes(data?.stampType)) return;
+    if (isMobileDevice() && isWriteRequest(url, method, data) && !(String(url).split("?")[0] === "/api/query" && mobileWriteQueries.has(data?.queryId) && !(data?.queryId === "recycleSave" && Number(data?.params?.recycleId ?? 0) !== 0))) throw new Error("スマホでは出退勤打刻・入荷登録・リサイクルの登録以外は閲覧のみ利用できます。");
 }
-const writeSelector = '[data-mobile-write], [data-action~="create"], [data-action~="delete"], [data-action~="save"], [data-action~="bulkEdit"], [data-action~="delete-order-item"], [data-action~="delete-order-work"], #order-pdf-file-button, #add-item-btn, #add-work-btn, [data-attachment-action="create-group"], [data-stamp-type]';
+const writeSelector = '[data-mobile-write], [data-action~="create"], [data-action~="delete"], [data-action~="save"], [data-action~="bulkEdit"], [data-action~="delete-order-item"], [data-action~="delete-order-work"], #order-pdf-file-button, #add-item-btn, #add-work-btn, [data-attachment-action="create-group"]';
 let initialized = false;
 const previousDisabled = new WeakMap();
 export function refreshMobileReadOnly() {

@@ -241,6 +241,7 @@ function setFooterButtons(
         cancelBtn.onclick = onClose;
         cancelBtn.style.display = "";
         cancelBtn.textContent = cancelText;
+        cancelBtn.classList.add("frameless");
     } else {
         submitBtn.onclick = onClose;
         cancelBtn.style.display = "none";

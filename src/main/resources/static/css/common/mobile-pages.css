@@ -161,7 +161,7 @@
 .shortcut-page { text-align: center; }
 .shortcut-grid { justify-content: center; max-width: 64rem; margin-inline: auto; }
 
-.mobile-read-only :is([data-mobile-write], [data-action~="create"], [data-action~="delete"], [data-action~="save"], [data-action~="bulkEdit"], [data-action~="delete-order-item"], [data-action~="delete-order-work"], #order-pdf-file-button, #add-item-btn, #add-work-btn, [data-attachment-action="create-group"], [data-stamp-type]) { display: none !important; }
+.mobile-read-only :is([data-mobile-write], [data-action~="create"], [data-action~="delete"], [data-action~="save"], [data-action~="bulkEdit"], [data-action~="delete-order-item"], [data-action~="delete-order-work"], #order-pdf-file-button, #add-item-btn, #add-work-btn, [data-attachment-action="create-group"]) { display: none !important; }
 .mobile-read-only #form-dialog-area [name="submitBtn"] { display: none !important; }
 .mobile-read-only #form-dialog-area :is(input, select, textarea):disabled { opacity: 1; color: inherit; -webkit-text-fill-color: currentColor; }
 .mobile-read-only .attachment-drop-zone { display: none !important; }

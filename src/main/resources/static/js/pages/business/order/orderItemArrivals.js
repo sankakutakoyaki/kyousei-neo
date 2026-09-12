@@ -2,6 +2,7 @@
 import {RequestClient} from '../../../core/api/RequestClient.js';
 import {isMobileDevice} from '../../../core/access/mobileReadOnly.js';
 import {openMsgDialog} from '../../../core/ui/dialog/dialogCore.js';
+import {DialogService} from '../../../core/ui/dialog/DialogService.js';
 
 export const remainingQuantity = (item, entries) => Math.max(0, Number(item.itemQuantity) - entries.filter(r => !r.cancelledAt).reduce((n, r) => n + Number(r.quantity), 0));
 // 社内LANのHTTP接続でも使えるよう、randomUUIDに依存しない。
@@ -19,16 +20,34 @@ async function request(queryId, params) {
     return response.data;
 }
 
+// 共通の確認画面をネイティブdialogの前面に置き、終了後は元の場所へ戻す。
+export async function confirmArrivalCancellation(dialog, message) {
+    const area = document.getElementById('msg-dialog-area');
+    if (!area) throw new Error('確認画面が見つかりません。画面を再読み込みしてください。');
+    const marker = document.createComment('arrival-confirm');
+    const focused = document.activeElement;
+    area.before(marker);
+    dialog.append(area);
+    try {
+        return await DialogService.confirm(message);
+    } finally {
+        marker.replaceWith(area);
+        if (focused?.isConnected) focused.focus();
+    }
+}
+
 export async function openArrivalHistory(controller, id) {
     const initial = await request('orderItemArrivalDetail', {orderItemId:id});
-    const dialog = document.createElement('dialog');
-    dialog.className = 'arrival-dialog';
-    dialog.setAttribute('aria-label', '入荷登録・履歴');
-    dialog.innerHTML = `<h2>入荷登録・履歴</h2><p class="arrival-product"></p><p class="arrival-summary"></p>
-        <form class="arrival-entry"><label>入荷日<input name="arrivalDate" type="date" required></label>
-        <label>今回の入荷数<input name="quantity" type="number" inputmode="numeric" min="1" step="1" required></label>
-        <button type="submit" class="normal-btn">入荷登録</button><button type="button" class="arrival-reset normal-btn" hidden>訂正をやめる</button></form>
-        <p class="arrival-error" role="alert"></p><div class="arrival-history"></div><button type="button" class="arrival-close normal-btn">閉じる</button>`;
+    const template = document.getElementById('arrival-dialog-template');
+    if (!template) throw new Error('入荷画面が見つかりません。画面を再読み込みしてください。');
+    const dialog = template.content.querySelector('dialog').cloneNode(true);
+    const footer = dialog.querySelector('.dialog-footer');
+    footer.classList.add('arrival-history-actions');
+    const actionTemplates = {
+        '訂正': footer.querySelector('[name="submitBtn"]'),
+        '取消': footer.querySelector('[name="cancelBtn"]')
+    };
+    footer.querySelector('[name="footerCloseBtn"]').classList.add('arrival-close');
     document.body.append(dialog);
     const form = dialog.querySelector('form');
     const error = dialog.querySelector('.arrival-error');
@@ -68,7 +87,11 @@ export async function openArrivalHistory(controller, id) {
     };
     const render = () => {
         const left = remainingQuantity(data.item, data.entries);
-        dialog.querySelector('.arrival-product').textContent = `${data.item.itemName ?? ''} ${data.item.itemModel ?? ''}`;
+        dialog.querySelector('.arrival-product').textContent = data.item.itemName ?? '';
+        dialog.querySelector('.arrival-model').textContent = data.item.itemModel ?? '';
+        const footer = dialog.querySelector('.arrival-history-actions');
+        const close = dialog.querySelector('.arrival-close');
+        footer.replaceChildren(close);
         dialog.querySelector('.arrival-summary').textContent = `入荷済み ${Number(data.item.itemQuantity)-left} / ${data.item.itemQuantity}　残り ${left}`;
         const history = dialog.querySelector('.arrival-history'); history.replaceChildren();
         if (!data.entries.length) history.textContent = '入荷履歴はありません。';
@@ -89,18 +112,41 @@ export async function openArrivalHistory(controller, id) {
                     form.querySelector('[type="submit"]').textContent = '訂正を保存';
                     form.querySelector('.arrival-reset').hidden = false;
                     form.elements.quantity.focus();
-                }], ['取消', () => {
-                    if (isMobileDevice() || uncertain) return;
-                    if (window.confirm(`${row.arrivalDate} の ${row.quantity}個の入荷を取り消しますか？`)) {
+                }], ['取消', async () => {
+                    if (isMobileDevice() || uncertain || busy) return;
+                    busy = true;
+                    let confirmed = false;
+                    try {
+                        confirmed = await confirmArrivalCancellation(dialog, `${row.arrivalDate} の ${row.quantity}個の入荷を取り消しますか？`);
+                    } catch (e) {
+                        error.textContent = e.message;
+                    } finally { busy = false; }
+                    if (confirmed) {
                         requestId = newRequestId();
                         perform('orderItemArrivalCancel', {arrivalId:row.arrivalId});
                     }
                 }]]) {
-                    const button = document.createElement('button'); button.type = 'button'; button.textContent = label;
-                    button.className = 'normal-btn arrival-maintenance'; button.addEventListener('click', action); actions.append(button);
+                    const button = actionTemplates[label].cloneNode(true);
+                    button.classList.add('arrival-maintenance'); button.addEventListener('click', action); actions.append(button);
                 }
             }
-            if (actions.childElementCount) card.append(actions);
+            if (actions.childElementCount) {
+                const buttons = Array.from(actions.children);
+                const label = document.createElement('label');
+                label.className = 'arrival-history-selection';
+                const radio = document.createElement('input');
+                radio.type = 'radio'; radio.name = 'arrival-history-selection';
+                radio.setAttribute('aria-label', `${row.arrivalDate}の${row.quantity}個の履歴を選択`);
+                label.append(radio, document.createTextNode('この履歴を操作'));
+                card.prepend(label);
+                radio.addEventListener('change', () => {
+                    if (busy) return;
+                    reset();
+                    footer.replaceChildren(...buttons, close);
+                });
+                radio.checked = true;
+                footer.replaceChildren(...buttons, close);
+            }
             history.append(card);
         }
         reset();
@@ -114,7 +160,9 @@ export async function openArrivalHistory(controller, id) {
         });
     });
     form.querySelector('.arrival-reset').addEventListener('click', reset);
-    dialog.querySelector('.arrival-close').addEventListener('click', () => dialog.close());
+    const closeHistory = () => { if (!busy) dialog.close(); };
+    dialog.querySelector('.arrival-close').addEventListener('click', closeHistory);
+    dialog.querySelector('.dialog-header [name="closeBtn"]').addEventListener('click', closeHistory);
     dialog.addEventListener('cancel', event => { if (busy) event.preventDefault(); });
     dialog.addEventListener('close', () => dialog.remove(), {once:true});
     const mobileMedia = window.matchMedia('(max-width: 560px), (pointer: coarse) and (max-width: 960px)');

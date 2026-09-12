@@ -11,6 +11,24 @@
             </div>
         </div>
     </div>
+    <template id="arrival-dialog-template">
+        <dialog class="form-dialog arrival-dialog" aria-label="入荷登録・履歴">
+            <div class="dialog-main">
+                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title':'入荷登録・履歴'} })}"></header>
+                <section class="dialog-content">
+                    <p class="arrival-product"></p><p class="arrival-model"></p><p class="arrival-summary"></p>
+                    <form class="arrival-entry">
+                        <label>入荷日<input class="normal-input" name="arrivalDate" type="date" required></label>
+                        <label>今回の入荷数<input class="normal-input" name="quantity" type="number" inputmode="numeric" min="1" step="1" required></label>
+                        <button type="submit" class="normal-btn">入荷登録</button>
+                        <button type="button" class="arrival-reset normal-btn" hidden>訂正をやめる</button>
+                    </form>
+                    <p class="arrival-error" role="alert"></p><div class="arrival-history"></div>
+                </section>
+                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId':'arrival-footer', 'submitText':'訂正', 'cancelText':'取消', 'closeText':'閉じる'} })}"></footer>
+            </div>
+        </dialog>
+    </template>
     <div id="form-dialog-area">
         <form id="form-03" class="form-dialog none" data-controller="orderItemMaster" data-key="item-master-id" data-enterfocus="formー03">
             <div class="dialog-main">
