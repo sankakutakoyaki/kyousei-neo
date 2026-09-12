@@ -95,6 +95,9 @@ public enum QueryId {
     ORDER_ITEM_DELETE_BY_IDS("orderItemDeleteByIds"),
     ORDER_ITEM_SAVE("orderItemSave"),
     ORDER_ITEM_ARRIVAL("orderItemArrival"),
+    ORDER_ITEM_ARRIVAL_DETAIL("orderItemArrivalDetail"),
+    ORDER_ITEM_ARRIVAL_CORRECT("orderItemArrivalCorrect"),
+    ORDER_ITEM_ARRIVAL_CANCEL("orderItemArrivalCancel"),
     ORDER_ITEM_CREATE("orderItemCreate"),
 
     // ===== OrderWork =====

@@ -1,5 +1,7 @@
 "use strict";
 
+import { isMobileReadOnly } from "../../core/access/mobileReadOnly.js";
+
 import { createCrudPage } from "../../core/page/createCrudPage.js";
 import { OrderRepository } from "../../repositories/business/order/OrderRepository.js";
 import { FormController } from "../../application/FormController.js";
@@ -118,6 +120,8 @@ const createOrderForm = (controller, options = {}) => {
             workList.init(works, form);
 
             const formEl = document.getElementById(form.formId);
+            const title = formEl.querySelector(".dialog-header > span");
+            if (title) title.textContent = isMobileReadOnly(controller.key) ? "受注詳細（閲覧）" : "受注編集";
             const source = formEl.querySelector("[data-ocr-source]");
             if (source) {
                 source.hidden = !data?.ocrLogId;

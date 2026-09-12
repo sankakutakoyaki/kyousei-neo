@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class OrderHandler implements QueryHandler {
 
     private final BaseSqlRepository baseRepository;
+    private final com.kyouseipro.neo.domain.business.order.arrival.OrderItemArrivalService arrivalService;
     private final SqlRepository sqlRepository;
     private final com.kyouseipro.neo.domain.business.order.ocr.repository.OrderOcrLogRepository orderOcrLogRepository;
     private final com.kyouseipro.neo.domain.business.order.ocr.OrderOcrAttachmentService orderOcrAttachmentService;
@@ -222,6 +223,7 @@ public class OrderHandler implements QueryHandler {
                 if (isNewItem) {
 
                     // 商品新規
+                    itemParams.put("arrivalDate", null);
                     baseRepository.insert(
                             Tables.ORDER_ITEM_BY_IDS,
                             itemParams,
@@ -231,11 +233,7 @@ public class OrderHandler implements QueryHandler {
                 } else {
 
                     // 商品更新
-                    baseRepository.update(
-                            Tables.ORDER_ITEM_BY_IDS,
-                            itemParams,
-                            editor
-                    );
+                    arrivalService.save(itemParams);
                 }
             }
         }

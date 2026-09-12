@@ -68,6 +68,9 @@ export const orderListPage = () =>
             state: APP.cache.common.state.INITIAL
         }),
         actions: {
+            "view-order": async (controller, button) => {
+                await controller.openForm("detail", Number(button.dataset.id), {bulkMode: false});
+            },
             search: async (controller) => {await controller.refresh();},
             orderChanged: async (controller) => {await controller.refresh();}
         },

@@ -45,12 +45,6 @@ export const createRecycleListColumns = (controller) => [
             <span>${item.companyName ?? "-----"}</span><br>
             <span>${item.officeName ?? "-----"}</span>
         `
-    },
-    {
-        field: "mobileAction",
-        label: "",
-        class: "mobile-recycle-edit",
-        render: item => `<button type="button" class="normal-btn" data-action="mobile-recycle-edit" data-id="${Number(item.recycleId)}">編集</button>`
     }
 ];
 

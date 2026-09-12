@@ -37,14 +37,14 @@ test('switching to mobile disables detail fields and restores original disabled 
 
 test('mobile permits arrival and operational recycle writes but not product edits or recycle master maintenance', () => {
     globalThis.window = {matchMedia: () => ({matches: true})};
-    for (const queryId of ['orderItemArrival', 'recycleSave', 'recycleDeliverySave', 'recycleShippingSave', 'recycleLossSave', 'recycleDeleteByIds'])
+    for (const queryId of ['orderItemArrival', 'recycleSave', 'recycleDeliverySave', 'recycleShippingSave', 'recycleLossSave'])
         assert.doesNotThrow(() => assertMobileWriteAllowed('/api/query','POST',{queryId}));
-    for (const queryId of ['orderItemSave', 'orderItemCreate', 'orderItemDeleteByIds', 'recycleMakerSave', 'recyclePriceSave', 'orderSave'])
+    for (const queryId of ['recycleDeleteByIds', 'orderItemSave', 'orderItemCreate', 'orderItemDeleteByIds', 'recycleMakerSave', 'recyclePriceSave', 'orderSave'])
         assert.throws(() => assertMobileWriteAllowed('/api/query','POST',{queryId}), /閲覧/);
     assert.equal(isWriteAction('arrival-item'), false);
-    for (const key of ['recycleList','recycleUse','recycleDelivery','recycleShipping','recycleLoss'])
+    for (const key of ['recycleUse','recycleDelivery','recycleShipping','recycleLoss'])
         assert.equal(isMobileReadOnly(key), false);
-    for (const key of ['orderItemList','orderList','recycleMaker','employeeList'])
+    for (const key of ['recycleList','orderItemList','orderList','recycleMaker','employeeList'])
         assert.equal(isMobileReadOnly(key), true);
 });
 
@@ -56,4 +56,12 @@ test('recycle form fields stay editable while unrelated fields remain protected'
     refreshMobileReadOnly();
     assert.equal(recycleField.disabled, false);
     assert.equal(orderField.disabled, true);
+});
+
+test('mobile rejects editing existing recycle records but permits new registration', () => {
+    globalThis.window = {matchMedia: () => ({matches: true})};
+    assert.throws(() => assertMobileWriteAllowed('/api/query', 'POST', {queryId:'recycleSave', params:{recycleId:123}}), /閲覧/);
+    assert.doesNotThrow(() => assertMobileWriteAllowed('/api/query', 'POST', {queryId:'recycleSave', params:{recycleId:0}}));
+    const listField = {closest: selector => selector.startsWith('main') ? {} : null};
+    assert.equal(isMobileReadOnly(listField), true);
 });

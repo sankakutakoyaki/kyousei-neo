@@ -17,7 +17,7 @@ class OrderOcrSaveTest {
         var base = mock(BaseSqlRepository.class);
         var logs = mock(OrderOcrLogRepository.class);
         when(base.insert(eq(Tables.ORDER_BY_IDS), anyMap(), anyString())).thenReturn(1001L);
-        var handler = new OrderHandler(base, mock(SqlRepository.class), logs, mock(com.kyouseipro.neo.domain.business.order.ocr.OrderOcrAttachmentService.class));
+        var handler = new OrderHandler(base, mock(com.kyouseipro.neo.domain.business.order.arrival.OrderItemArrivalService.class), mock(SqlRepository.class), logs, mock(com.kyouseipro.neo.domain.business.order.ocr.OrderOcrAttachmentService.class));
         var req = new SelectRequest();
         req.setParams(new LinkedHashMap<>(Map.of("ocrLogId", 7, "primeConstractorId", 1085, "title", "修正後")));
         var def = new QueryDefinition(QueryType.UPDATE, QueryKind.ORDER_SAVE, Tables.ORDER_BY_IDS);
@@ -33,7 +33,7 @@ class OrderOcrSaveTest {
         var logs = mock(OrderOcrLogRepository.class);
         when(base.insert(eq(Tables.ORDER_BY_IDS), anyMap(), anyString())).thenReturn(1001L);
         doThrow(new IllegalStateException("already linked")).when(logs).link(7, 1001, 1085);
-        var handler = new OrderHandler(base, mock(SqlRepository.class), logs, mock(com.kyouseipro.neo.domain.business.order.ocr.OrderOcrAttachmentService.class));
+        var handler = new OrderHandler(base, mock(com.kyouseipro.neo.domain.business.order.arrival.OrderItemArrivalService.class), mock(SqlRepository.class), logs, mock(com.kyouseipro.neo.domain.business.order.ocr.OrderOcrAttachmentService.class));
         var req = new SelectRequest();
         req.setParams(new LinkedHashMap<>(Map.of("ocrLogId", 7, "primeConstractorId", 1085)));
         assertThrows(IllegalStateException.class, () -> handler.execute(new QueryDefinition(QueryType.UPDATE, QueryKind.ORDER_SAVE, Tables.ORDER_BY_IDS), req));
@@ -41,7 +41,7 @@ class OrderOcrSaveTest {
     @Test
     void unknownOcrQuantityIsRejectedBeforeAnyInsert() {
         var base = mock(BaseSqlRepository.class);
-        var handler = new OrderHandler(base, mock(SqlRepository.class), mock(OrderOcrLogRepository.class), mock(com.kyouseipro.neo.domain.business.order.ocr.OrderOcrAttachmentService.class));
+        var handler = new OrderHandler(base, mock(com.kyouseipro.neo.domain.business.order.arrival.OrderItemArrivalService.class), mock(SqlRepository.class), mock(OrderOcrLogRepository.class), mock(com.kyouseipro.neo.domain.business.order.ocr.OrderOcrAttachmentService.class));
         var req = new SelectRequest();
         req.setParams(new LinkedHashMap<>(Map.of("ocrLogId", 7, "primeConstractorId", 1085,
             "items", List.of(Map.of("itemModel", "A", "itemQuantity", "")))));

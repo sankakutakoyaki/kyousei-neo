@@ -24,7 +24,7 @@ function harness(candidates = {customerName: '読取候補'}) {
     const elements = new Map();
     const get = id => {if (!elements.has(id)) elements.set(id, new Element()); return elements.get(id);};
     const calls = [], messages = [];
-    let form, closes = 0, failSave = false;
+    let form, closes = 0, failSave = false, messageDialog;
     const sharedForm = {};
     const context = vm.createContext({
         OrderPdfImportQueue, FormData, console, mapOcrCandidate,
@@ -39,11 +39,12 @@ function harness(candidates = {customerName: '読取候補'}) {
         },
         openFormDialog: options => {form = options;},
         closeFormDialog: () => closes++,
-        openMsgDialog: options => messages.push(options.message)
+        closeMsgDialog: () => closes++,
+        openMsgDialog: options => { messageDialog = options; messages.push(options.message); }
     });
     vm.runInContext(code, context);
     context.initOrderPdfImport();
-    return {get, context, calls, messages, sharedForm, get form() {return form;}, get closes() {return closes;}, failSave: () => failSave = true};
+    return {get, context, calls, messages, sharedForm, dismissError: () => messageDialog.onClose(), get form() {return form;}, get closes() {return closes;}, failSave: () => failSave = true};
 }
 const settle = () => new Promise(resolve => setImmediate(resolve));
 const file = () => new File(['%PDF-1.7 test'], 'sample.pdf', {type: 'application/pdf'});
@@ -113,4 +114,23 @@ test('unchanged blank postal code keeps the OCR address; clearing a previously r
     input.dataset.lastId = '1234567';
     await resolver.resolve(group, 'postal');
     assert.equal(address.value, '');
+});
+
+test('failed file is reported in a dialog; next PDF waits until it is dismissed', async () => {
+    const h = harness();
+    h.get('primeConstractor01').value = '1085';
+    h.get('order-pdf-file-input').files = [new File(['bad'], 'wrong.txt', {type:'text/plain'}), file()];
+    h.get('order-pdf-file-input').emit('change');
+    await settle();
+    assert.equal(h.messages.length, 1);
+    assert.match(h.messages[0], /wrong\.txt/);
+    assert.match(h.messages[0], /PDFファイルを選択/);
+    assert.equal(h.calls.length, 0);
+    h.dismissError();
+    await settle();
+    assert.equal(h.calls.length, 2);
+    assert.equal(h.form.ocrLogId, 7);
+    h.sharedForm.finishOcrReview();
+    await settle();
+    assert.equal(h.messages.length, 1);
 });

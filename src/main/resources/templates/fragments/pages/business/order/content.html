@@ -8,15 +8,11 @@
                 <header th:replace="~{fragments/pages/business/order/header :: header01Fragment()}"></header>
                 <div id="order-pdf-drop-area">
                     <div class="order-pdf-drop-overlay">PDFをここにドロップ</div>
-                    <p>荷主を選択し、一覧へPDFをドロップしてください（各PDFの先頭ページを読み取ります。確認・保存またはキャンセルすると次のPDFへ進みます）。</p>
+                    <!-- <p>荷主を選択し、一覧へPDFをドロップしてください（各PDFの先頭ページを読み取ります。確認・保存またはキャンセルすると次のPDFへ進みます）。</p> -->
                     <section th:replace="~{fragments/table/body :: normalFragment('table-header-01', 'table-01')}"></section>
                 </div>
                 <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></footer>
             </div>
-            <section class="order-pdf-import-list">
-                <p id="order-pdf-import-message" role="status" aria-live="polite"></p>
-                <ul id="order-pdf-import-items" class="none"></ul>
-            </section>
         </div>
     </div>
     <div id="form-dialog-area">

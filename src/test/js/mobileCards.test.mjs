@@ -106,3 +106,21 @@ test('recycle edit button stays visible and clicks reach the action handler with
     assert.equal(stopped,false);
     assert.equal(row.getAttribute('aria-expanded'),'false');
 });
+
+test('registration cards retain names, phones and affiliations without collapse controls', () => {
+    const make = setup();
+    for (const page of ['employee','partner','client','recycleMaker','master']) {
+        const row = make(`/js/${page}Page.js`,'table-01',['employeeId','nameKana','phoneNumber','companyName','officeName','email']);
+        assert(row.classList.contains('mobile-registration-card'));
+        assert(!row.classList.contains('mobile-collapsible-card'));
+        assert(row.children[0].classList.contains('mobile-registration-extra'));
+        assert(row.children[5].classList.contains('mobile-registration-extra'));
+        for (const index of [1,2,3,4]) assert(!row.children[index].classList.contains('mobile-registration-extra'));
+    }
+});
+
+test('order detail button is visible even while the card is collapsed', () => {
+    const row = setup()('/js/orderPage.js','table-01',['date','title','mobileAction']);
+    assert(!row.children[2].classList.contains('mobile-card-detail'));
+    assert.equal(row.getAttribute('aria-expanded'),'false');
+});

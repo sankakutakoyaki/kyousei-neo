@@ -23,6 +23,15 @@ export function attachMobileCard(table, row) {
     const page = table.closest("main[data-page]")?.dataset.page || "";
     const isOrder = page.endsWith("/orderPage.js") && table.id === "table-01";
     const isRecycle = page.endsWith("/recyclePage.js") && /^table-0[1-5]$/.test(table.id);
+    const isRegistration = /\/(employee|partner|client|recycleMaker|master)Page\.js$/.test(page);
+    if (isRegistration) {
+        row.classList.add("mobile-registration-card");
+        const visible = new Set(["nameKana", "fullNameKana", "name", "fullName", "phoneNumber", "telNumber", "officeName", "companyName", "groupName", "itemName", "itemMaker", "itemModel", "workName", "workPrice"]);
+        for (const cell of row.querySelectorAll("td[data-field]")) {
+            if (!visible.has(cell.dataset.field)) cell.classList.add("mobile-registration-extra");
+        }
+        return;
+    }
     if (!isOrder && !isRecycle) return;
 
     row.classList.add("mobile-collapsible-card");
@@ -38,7 +47,7 @@ export function attachMobileCard(table, row) {
         if (isOrder) {
             if (field === "title") {
                 markDetail(cell.querySelector("span:first-of-type"), "mobile-card-secondary");
-            } else if (field !== "date") {
+            } else if (field !== "date" && field !== "mobileAction") {
                 markDetail(cell, "mobile-card-detail");
             }
         } else if (field === "maker") {

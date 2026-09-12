@@ -40,7 +40,7 @@
     }
     &>div:nth-of-type(2) {
         display: grid;
-        grid-template-columns: auto auto minmax(auto, 1fr) 1fr;
+        grid-template-columns: 8rem minmax(0, 1fr) minmax(0, 1fr);
         column-gap: .3rem;
     }
     &>div:nth-of-type(3) {
@@ -63,7 +63,7 @@
 }
 
 :is(#table-02, #table-header-02) tr {
-    grid-template-columns: 3rem 10rem 1fr 1fr 1fr 6rem 7rem 5rem 2rem;
+    grid-template-columns: 3rem 10rem 1fr 1fr 1fr 6rem 16rem 2rem;
     & .img-btn {
         padding: 0;
     }
@@ -263,44 +263,6 @@
     }
 }
 
-.order-pdf-import-list {
-    margin: 1rem;
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-}
-
-.order-pdf-import-list h2 {
-    margin: 0 0 .5rem;
-    font-size: 1rem;
-}
-
-.order-pdf-import-list p {
-    margin: 0;
-}
-
-.order-pdf-import-list ul {
-    margin: .5rem 0 0;
-    padding-left: 1.5rem;
-    min-height: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    flex: 1 1 auto;
-}
-
-.order-pdf-import-list li {
-    display: flex;
-    align-items: center;
-    gap: .75rem;
-}
-
-.order-pdf-import-list li a {
-    flex: 1;
-}
-
 #order-pdf-drop-area {
     position: relative;
     min-height: 0;
@@ -327,13 +289,6 @@
 
 .attachment-manager{padding:12px;min-height:300px}.attachment-toolbar,.attachment-group-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.attachment-help,.attachment-empty{color:#666}.attachment-groups{display:grid;gap:14px;margin-top:12px}.attachment-group{border:1px solid #d5dbe3;border-radius:8px;background:#fff;overflow:hidden}.attachment-group-header{padding:10px 12px;background:#f5f7fa}.attachment-group-actions,.attachment-file-actions{display:flex;gap:6px;flex-wrap:wrap}.attachment-small-btn{border:1px solid #b8c1cc;background:#fff;border-radius:5px;padding:5px 9px;cursor:pointer}.attachment-small-btn:hover{background:#eef4fa}.attachment-drop-zone{margin:10px;border:2px dashed #b9c4d0;border-radius:7px;padding:13px;text-align:center;color:#657386}.attachment-drop-zone.is-dragover{border-color:#2878c8;background:#eaf4ff}.attachment-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px;padding:0 10px 12px}.attachment-card{min-width:0;border:1px solid #dde2e8;border-radius:7px;padding:7px;display:grid;gap:6px}.attachment-preview{height:115px;border:0;background:#eef1f4;border-radius:5px;padding:0;overflow:hidden;cursor:pointer}.attachment-preview img{width:100%;height:100%;display:block;object-fit:cover}.attachment-pdf{height:100%;display:grid;place-items:center;color:#c62828;font-size:28px;font-weight:bold}.attachment-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}.attachment-file-actions .attachment-small-btn{font-size:12px;padding:3px 6px}.attachment-viewer{position:fixed;z-index:10000;inset:0;background:rgba(0,0,0,.92);display:grid;place-items:center;outline:none}.attachment-viewer>img{max-width:92vw;max-height:86vh;object-fit:contain}.attachment-viewer-close,.attachment-viewer-prev,.attachment-viewer-next{position:absolute;border:0;background:rgba(255,255,255,.15);color:#fff;cursor:pointer;border-radius:50%}.attachment-viewer-close{right:18px;top:18px;width:44px;height:44px;font-size:28px}.attachment-viewer-prev,.attachment-viewer-next{top:48%;width:52px;height:52px;font-size:42px}.attachment-viewer-prev{left:18px}.attachment-viewer-next{right:18px}.attachment-viewer-caption{position:absolute;bottom:15px;left:10%;right:10%;text-align:center;color:#fff}.attachment-manager button:disabled{opacity:.45;cursor:not-allowed}@media(max-width:700px){.attachment-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.attachment-drop-zone{display:none}.attachment-group-actions{width:100%}.attachment-viewer-prev{left:5px}.attachment-viewer-next{right:5px}}
 
-.order-pdf-input-actions { margin: .75rem 0; }
-.order-pdf-import-list h2:not(:first-child) { margin-top: 1rem; }
-.order-pdf-import-list .order-pdf-result { padding: .75rem 0; border-bottom: 1px solid #ddd; flex-wrap: wrap; }
-.order-pdf-result-detail { flex: 1; min-width: 12rem; overflow-wrap: anywhere; }
-.order-pdf-result-detail small { display: block; color: #555; }
-.order-pdf-result.failed strong, .order-pdf-result.failed p { color: #a02323; }
-.order-pdf-result.completed strong { color: #24613a; }
 
 
 
@@ -415,13 +370,46 @@
 #order-pdf-drop-area > .table-wrapper { flex: 1; min-height: 0; }
 #order-pdf-file-button { align-self: flex-start; }
 
-.order-list-layout { grid-template-rows: minmax(24rem, 1fr) auto; }
+.order-list-layout { grid-template-rows: minmax(0, 1fr); min-height: 0; }
 .order-main-table { display: grid; grid-template-rows: auto minmax(10rem, 1fr) auto; min-height: 0; max-width: 90rem; }
-.product-main-table { height: 100%; }
-.order-list-layout > .order-pdf-import-list { max-height: 14rem; overflow: auto; }
+/* タブ内の余白を含めて一覧を収め、100% 高さによるはみ出しを防ぐ。 */
+.product-main-table { height: auto; min-width: 0; }
+main[data-page$="/productPage.js"] > .tab-area {
+    min-height: 0;
+    grid-template-rows: auto minmax(0, 1fr);
+}
+main[data-page$="/productPage.js"] #header-02 .form-parts:has(> #category02) {
+    width: 10rem;
+    max-width: 100%;
+    justify-self: start;
+}
+main[data-page$="/productPage.js"] #category02 { min-width: 0; width: 100%; }
 
 .order-search-actions { display: flex; align-items: center; gap: .5rem; }
 .order-search-actions > button { height: 2.5rem; }
 .tab-panel .order-main-table { grid-template-rows: auto minmax(10rem, 1fr) auto; margin-top: 1rem; }
 
 #form-01 textarea[name="remarks"] { min-height: 10rem; resize: vertical; }
+
+.arrival-dialog { width: min(38rem, calc(100vw - 2rem)); max-height: 85dvh; overflow: auto; padding: 1.25rem; border: 1px solid #bbb; border-radius: .75rem; }
+.arrival-dialog::backdrop { background: rgb(0 0 0 / .45); }
+.arrival-entry { display: flex; flex-wrap: wrap; align-items: end; gap: .75rem; }
+.arrival-entry[hidden] { display: none; }
+.arrival-entry label { display: grid; gap: .25rem; }
+.arrival-entry input { width: 10rem; max-width: 100%; min-height: 44px; font-size: 16px; }
+.arrival-dialog button { min-height: 44px; margin: .25rem; }
+.arrival-history section { border-top: 1px solid #ddd; padding-block: .5rem; }
+.arrival-error { color: #a02323; }
+@media (max-width: 560px), (pointer: coarse) and (max-width: 960px) {
+    .arrival-maintenance { display: none !important; }
+}
+
+main[data-page$="/productPage.js"] #table-02 tr[name="data-row"] { height: auto; min-height: 6.5rem; }
+main[data-page$="/productPage.js"] #table-02 td[data-field="date"] { white-space: normal; padding-block: .5rem; }
+.arrival-dialog button[hidden] { display: none; }
+
+.arrival-status-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .75rem; }
+.arrival-status-row > div { min-width: 0; overflow-wrap: anywhere; }
+main[data-page$="/productPage.js"] .arrival-status-row > [data-action="arrival-item"] { width: auto; }
+.arrival-history-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.arrival-history-actions > button { margin: 0; }

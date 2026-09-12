@@ -42,9 +42,12 @@ public class OrderSqlProvider implements SqlProviderPart {
         map.put(QueryId.ORDER_ITEM_DELETE_BY_IDS,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.ORDER_ITEM_BY_IDS));
         map.put(QueryId.ORDER_ITEM_SAVE,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.ORDER_SAVE, Tables.ORDER_ITEM_BY_IDS));
-        map.put(QueryId.ORDER_ITEM_ARRIVAL, OrderItemQuery.orderItemArrival());
-        map.put(QueryId.ORDER_ITEM_CREATE, new QueryDefinition(QueryType.UPDATE, QueryKind.ORDER_ITEM_CREATE, Tables.ORDER_ITEM_BY_IDS));
+            new QueryDefinition(QueryType.UPDATE, QueryKind.ORDER_ITEM_SAVE, Tables.ORDER_ITEM_BY_IDS));
+        for (QueryId id : new QueryId[]{QueryId.ORDER_ITEM_ARRIVAL, QueryId.ORDER_ITEM_ARRIVAL_DETAIL,
+                QueryId.ORDER_ITEM_ARRIVAL_CORRECT, QueryId.ORDER_ITEM_ARRIVAL_CANCEL}) {
+            map.put(id, new QueryDefinition(QueryType.UPDATE, QueryKind.ORDER_ITEM_ARRIVAL, Tables.ORDER_ITEM_BY_IDS));
+        }
+        map.put(QueryId.ORDER_ITEM_CREATE, new QueryDefinition(QueryType.UPDATE, QueryKind.ORDER_ITEM_SAVE, Tables.ORDER_ITEM_BY_IDS));
     
         // ===== OrderWork =====
         map.put(QueryId.ORDER_WORK_DETAIL, OrderWorkQuery.orderWorkDetail());

@@ -3,11 +3,11 @@
 export const mobileQuery = "(max-width: 560px), (pointer: coarse) and (max-width: 960px)";
 export const isMobileDevice = () => typeof window !== "undefined" && window.matchMedia(mobileQuery).matches;
 export function isRecycleScope(scope) {
-    if (typeof scope === "string") return /^recycle(List|Use|Delivery|Shipping|Loss)$/.test(scope);
-    return !!scope?.closest?.('main[data-page$="/recyclePage.js"]');
+    if (typeof scope === "string") return /^recycle(Use|Delivery|Shipping|Loss)$/.test(scope);
+    return !!scope?.closest?.('main[data-page$="/recyclePage.js"]') && !!scope?.closest?.('#header-02, #header-03, #header-04, #header-05');
 }
 export const isMobileReadOnly = scope => isMobileDevice() && !isRecycleScope(scope);
-export const mobileWriteQueries = new Set(["orderItemArrival", "recycleSave", "recycleDeliverySave", "recycleShippingSave", "recycleLossSave", "recycleDeleteByIds"]);
+export const mobileWriteQueries = new Set(["orderItemArrival", "recycleSave", "recycleDeliverySave", "recycleShippingSave", "recycleLossSave"]);
 export const isWriteAction = action => /^(create|delete|save|bulkEdit|delete-order-item|delete-order-work)$/i.test(action);
 export function isWriteRequest(url, method, data) {
     if (/^(GET|HEAD|OPTIONS)$/i.test(method)) return false;
@@ -16,14 +16,14 @@ export function isWriteRequest(url, method, data) {
     return /^\/api\/(attachments|order|timeworks)(\/|$)/.test(path);
 }
 export function assertMobileWriteAllowed(url, method, data) {
-    if (isMobileDevice() && isWriteRequest(url, method, data) && !(String(url).split("?")[0] === "/api/query" && mobileWriteQueries.has(data?.queryId))) throw new Error("スマホでは入荷登録・リサイクル以外は閲覧のみ利用できます。");
+    if (isMobileDevice() && isWriteRequest(url, method, data) && !(String(url).split("?")[0] === "/api/query" && mobileWriteQueries.has(data?.queryId) && !(data?.queryId === "recycleSave" && Number(data?.params?.recycleId ?? 0) !== 0))) throw new Error("スマホでは入荷登録・リサイクルの登録以外は閲覧のみ利用できます。");
 }
 const writeSelector = '[data-mobile-write], [data-action~="create"], [data-action~="delete"], [data-action~="save"], [data-action~="bulkEdit"], [data-action~="delete-order-item"], [data-action~="delete-order-work"], #order-pdf-file-button, #add-item-btn, #add-work-btn, [data-attachment-action="create-group"], [data-stamp-type]';
 let initialized = false;
 const previousDisabled = new WeakMap();
 export function refreshMobileReadOnly() {
     const mobile = isMobileDevice();
-    document.documentElement.classList.toggle("mobile-read-only", mobile && !isRecycleScope(document.querySelector?.("main[data-page]")));
+    document.documentElement.classList.toggle("mobile-read-only", mobile && !document.querySelector?.('main[data-page$="/recyclePage.js"]'));
     document.querySelectorAll('#form-dialog-area input, #form-dialog-area select, #form-dialog-area textarea, .normal-table input:not([type="checkbox"]), .normal-table select, .normal-table textarea, [name="editStartTime"], [name="editEndTime"], [name="endNextDay"]').forEach(el => {
         if (mobile && !isRecycleScope(el)) {
             if (!previousDisabled.has(el)) previousDisabled.set(el, el.disabled);

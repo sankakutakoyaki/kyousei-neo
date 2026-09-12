@@ -5,7 +5,8 @@ import com.kyouseipro.neo.interfaces.enums.BaseEnum;
 public enum ArrivalState implements BaseEnum {
 
     NOT(1, "未入荷"),
-    COMPLETE(2, "入荷済み");
+    COMPLETE(2, "入荷済み"),
+    PARTIAL(3, "一部入荷");
     
 
     private final int code;

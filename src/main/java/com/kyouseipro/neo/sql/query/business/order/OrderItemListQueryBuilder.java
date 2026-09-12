@@ -23,6 +23,8 @@ public class OrderItemListQueryBuilder implements QueryBuilder {
                 oi.order_item_id,
                 oi.order_id,
                 oi.arrival_date,
+                oi.expected_arrival_date,
+                COALESCE(a.received_quantity, 0) AS received_quantity,
                 oi.jan_code,
                 oi.item_maker,
                 oi.item_name,
@@ -39,6 +41,8 @@ public class OrderItemListQueryBuilder implements QueryBuilder {
                 cf.name as prime_constractor_office_name
 
             FROM order_items oi
+            OUTER APPLY (SELECT SUM(quantity) AS received_quantity FROM order_item_arrivals a
+                         WHERE a.order_item_id = oi.order_item_id AND a.cancelled_at IS NULL) a
             LEFT OUTER JOIN orders o ON o.order_id = oi.order_id AND o.state IN (0, 2)
             LEFT OUTER JOIN companies c ON c.company_id = o.prime_constractor_id AND c.state = ?
             LEFT OUTER JOIN offices cf ON cf.office_id = o.prime_constractor_office_id AND cf.state = ?

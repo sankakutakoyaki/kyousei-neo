@@ -33,3 +33,9 @@ Orderでは `parent_type = 'ORDER'`、`parent_id = order_id` として利用し�
 既に `timeworks` を作成済みの環境では、原本を削除せずに
 `20260905_create_timework_edits.sql` のみを実行してください。修正値は履歴テーブルへ保存され、
 `timeworks.start_time` と `timeworks.end_time` は変更されません。
+
+## 商品入荷履歴
+
+`20260912_create_order_item_arrivals.sql` は入荷履歴と入荷予定日の列を追加し、
+既存の入荷済み商品を初期履歴へ移行します。新版アプリの起動前に、書込みを停止した状態で適用してください。
+詳細は [入荷履歴の手順](../../docs/order-item-arrivals.md) を参照してください。

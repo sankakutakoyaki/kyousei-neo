@@ -37,6 +37,12 @@ export const createOrderListColumns = (controller) => [
             <span>${escapeHtml(item.fullAddress)}</span><br>
             <span>${escapeHtml(item.title)}</span>
         `
+    },
+    {
+        field: "mobileAction",
+        label: "",
+        class: "mobile-order-detail",
+        render: item => `<button type="button" class="normal-btn" data-action="view-order" data-id="${Number(item.orderId)}">詳細</button>`
     }
 ];
 
@@ -168,28 +174,16 @@ export const createOrderItemListColumns = () => [
     },
     {
         field: "date",
-        label: "入荷日",
+        label: "入荷状況 / 予定日",
         sortable: true,
-        render: (item) => `
-            <span>${escapeHtml(item.arrivalDate)}</span>
-        `
-    },
-    {    
-        field: "action",
-        label: "",
-        class: "img-btn",
         render: (item) => {
-            if (item.arrivalDate != null) {
-                return "";
-            }
-            return `
-                <button
-                    type="button"
-                    class="normal-btn"
-                    data-action="arrival-item"
-                    data-id="${item.orderItemId}">入荷登録
-                </button>
-            `;
+            const received = Number(item.receivedQuantity ?? 0);
+            const total = Number(item.itemQuantity);
+            const complete = total > 0 && received >= total;
+            const status = complete ? escapeHtml(item.arrivalDate) : received > 0 ? `一部入荷 ${received} / ${total}` : "未入荷";
+            return `<div class="arrival-status-row"><div><span>${status}</span><br>
+                <small>予定：${escapeHtml(item.expectedArrivalDate)}</small></div>
+                <button type="button" class="normal-btn" data-action="arrival-item" data-id="${Number(item.orderItemId)}">${complete ? "履歴" : "入荷"}</button></div>`;
         }
     }
 ];

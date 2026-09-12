@@ -9,7 +9,7 @@ public class OrderItemFormQuery {
     public static QueryDefinition orderItemFormList() {
         return QueryDefinition.select(
             """
-            SELECT o.order_item_id, o.order_id, o.arrival_date, o.jan_code,
+            SELECT o.order_item_id, o.order_id, o.arrival_date, o.expected_arrival_date, o.jan_code,
                 o.item_maker, o.item_name, o.item_model, o.item_quantity, o.item_payment, o.remarks,
                 o.version, o.state
             FROM order_items o
@@ -22,7 +22,7 @@ public class OrderItemFormQuery {
     public static QueryDefinition orderItemFormDetail() {
         return QueryDefinition.select(
             """
-            SELECT o.order_item_id, o.order_id, o.arrival_date, o.jan_code,
+            SELECT o.order_item_id, o.order_id, o.arrival_date, o.expected_arrival_date, o.jan_code,
                 o.item_maker, o.item_name, o.item_model, o.item_quantity, o.item_payment, o.remarks,
                 o.version, o.state
             FROM order_items o
@@ -36,7 +36,7 @@ public class OrderItemFormQuery {
         String sql = """
             SELECT
                 o.order_item_id,
-                o.arrival_date,
+                o.arrival_date, o.expected_arrival_date,
                 o.jan_code,
                 o.item_maker,
                 o.item_name,

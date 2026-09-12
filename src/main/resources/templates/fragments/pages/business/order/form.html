@@ -277,6 +277,7 @@
 
 <th:block th:fragment="orderItemFormFragment(formId)">
     <div class="dialog-content">
+        <p>入荷実績の登録・訂正は、一覧の「入荷」「履歴」から行えます。</p>
         <div class="form-row">
             <!-- JANコード -->
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
@@ -336,13 +337,16 @@
             })}"></th:block>
         </div>
         <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${ {'text':'入荷予定日', 'id':'order-item-expected-arrival-date', 'name':'expected-arrival-date', 'type':'date', 'index':6} })}"></th:block>
+        </div>
+        <div class="form-row">
             <!-- 備考（任意） -->
             <th:block th:replace="~{fragments/components/box :: textareaFragment(${
                 {
                     'text':'備考',
                     'id':'order-item-remarks',
                     'name':'remarks',
-                    'index': 6
+                    'index': 7
                 }
             })}"></th:block>
         </div>

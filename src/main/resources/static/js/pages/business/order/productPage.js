@@ -1,5 +1,7 @@
 "use strict"
 
+import {openArrivalHistory} from "./orderItemArrivals.js";
+
 import { initCommon } from "../../../bootstrap/initPage.js";
 import { initPageCache } from "../../../bootstrap/initPageCache.js";
 import { createMasterPage } from "../../../core/page/createMasterPage.js";
@@ -53,7 +55,9 @@ export const orderItemListPage = () =>
             .openForm("orderItem", item.orderItemId),
         model: {
             filters: {
-                category: filterFactory.nullState("arrivalDate"),
+                category: (item, value) => Number(value) === 3
+                    ? Number(item.receivedQuantity) > 0 && Number(item.receivedQuantity) < Number(item.itemQuantity)
+                    : filterFactory.nullState("arrivalDate")(item, value),
                 primeConstractorId: filterFactory.equals("primeConstractorId"),
                 primeConstractorOfficeId: filterFactory.equals("primeConstractorOfficeId")
             }
@@ -62,19 +66,8 @@ export const orderItemListPage = () =>
             "arrival-item": async (c, el) => {
                 if (el.disabled) return;
                 el.disabled = true;
-                let registered = false;
-                try {
-                    await OrderItemRepository.arrival({
-                        orderItemId: el.dataset.id,
-                        state: APP.cache.common.state.INITIAL
-                    });
-                    registered = true;
-                    el.textContent = "入荷済み";
-                    await c.refresh();
-                } catch (error) {
-                    if (!registered) el.disabled = false;
-                    openMsgDialog({message: registered ? "入荷登録は完了しました。一覧を再読み込みしてください。" : error.message || "入荷登録に失敗しました。", color: "red"});
-                }
+                try { await openArrivalHistory(c, Number(el.dataset.id)); }
+                finally { el.disabled = false; }
             },
             "create": async (c) => {
                 // まずフォームを開く
@@ -160,8 +153,7 @@ export const orderItemListPage = () =>
                     repository: OrderItemRepository,
                     // 新規は単独商品として登録し、既存商品は同じレコードを更新する。
                     saveHandler: (payload) => payload.orderItemId
-                        ? OrderItemRepository.save(payload)
-                        : OrderItemRepository.create(payload),
+                        ? OrderItemRepository.save(payload) : OrderItemRepository.create(payload),
                     submitText: "保存",
                     cancelText: "キャンセル",
                     validInputSelector: '[name="item-model"]',

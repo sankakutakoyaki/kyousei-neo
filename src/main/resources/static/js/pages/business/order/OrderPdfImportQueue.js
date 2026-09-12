@@ -2,11 +2,12 @@
 
 // One queue belongs to one visit to the order page. It never confirms reviews.
 export class OrderPdfImportQueue {
-    constructor({upload, recognize, review = async () => {}, onChange = () => {}}) {
+    constructor({upload, recognize, review = async () => {}, onChange = () => {}, onError = async () => {}}) {
         this.upload = upload;
         this.recognize = recognize;
         this.review = review;
         this.onChange = onChange;
+        this.onError = onError;
         this.entries = [];
         this.pending = [];
         this.active = null;
@@ -79,6 +80,7 @@ export class OrderPdfImportQueue {
                 } catch (error) {
                     entry.status = "failed";
                     entry.error = error.message || "PDFの取込・読取に失敗しました。";
+                    if (!this.disposed) await this.onError(entry);
                 }
                 entry.completedAt = new Date().toISOString();
                 this.entries.push(entry);

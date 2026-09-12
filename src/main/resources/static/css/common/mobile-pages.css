@@ -166,24 +166,56 @@
 .mobile-read-only #form-dialog-area :is(input, select, textarea):disabled { opacity: 1; color: inherit; -webkit-text-fill-color: currentColor; }
 .mobile-read-only .attachment-drop-zone { display: none !important; }
 
-.mobile-recycle-edit { display: none; }
 @media (max-width: 560px), (pointer: coarse) and (max-width: 960px) {
-    main[data-page$="/recyclePage.js"] .page-input-header .kebab-btns { display: flex !important; flex-wrap: wrap; gap: .75rem; }
-    main[data-page$="/recyclePage.js"] .kebab-btns .img-btn { min-height: 44px; min-width: 64px; }
     main[data-page$="/recyclePage.js"] > .tab-area > .tab-menu { overflow-x: auto; gap: .25rem; flex-wrap: nowrap; }
     main[data-page$="/recyclePage.js"] > .tab-area > .tab-menu > li { flex: 1 0 auto; min-height: 44px; padding: .75rem 1rem; }
     main[data-page$="/recyclePage.js"] button[name="submitBtn"] { min-height: 48px; font-size: 1.1rem; }
-    main[data-page$="/recyclePage.js"] .mobile-recycle-edit { display: block; min-height: 44px; grid-column: 1 / -1; }
-    main[data-page$="/recyclePage.js"] .mobile-recycle-edit button { width: 100%; min-height: 44px; }
     main[data-page$="/productPage.js"] #table-header-02 { display: none; }
     main[data-page$="/productPage.js"] #table-02 tr[name="data-row"] { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); height: auto; gap: .75rem; padding: 1rem; margin-bottom: .75rem; border: 1px solid var(--line); border-radius: .75rem; }
     main[data-page$="/productPage.js"] #table-02 td { white-space: normal; overflow-wrap: anywhere; padding: 0; }
     main[data-page$="/productPage.js"] #table-02 td[name="chk-cell"] { display: none; }
-    main[data-page$="/productPage.js"] #table-02 td[data-field="action"] { grid-column: 1 / -1; width: 100%; }
+    main[data-page$="/productPage.js"] #table-02 td[data-field="date"] { grid-column: 1 / -1; width: 100%; }
     main[data-page$="/productPage.js"] [data-action="arrival-item"] { display: block; width: 100%; min-height: 48px; font-size: 1.1rem; }
 }
 
 @media (max-width: 560px), (pointer: coarse) and (max-width: 960px) {
-    main[data-page$="/recyclePage.js"] #table-01 td[name="chk-cell"] { display: flex !important; }
-    main[data-page$="/recyclePage.js"] #table-01 input[name="chk-box"] { width: 24px; height: 24px; }
+    main[data-page$="/recyclePage.js"] #table-01 td[name="chk-cell"] { display: none !important; }
+}
+
+.mobile-order-detail { display: none; }
+@media (max-width: 560px), (pointer: coarse) and (max-width: 960px) {
+    /* 操作列は原則検索ボックスだけ。許可済みのリサイクル操作は残す。 */
+    main[data-page$="/orderPage.js"] td.mobile-order-detail { display: block; grid-column: 1 / -1; }
+    main[data-page$="/orderPage.js"] .mobile-order-detail button { width: 100%; min-height: 44px; }
+    main[data-page$="/orderPage.js"] #form-01 { width: min(50rem, calc(100vw - 1rem)); height: 90dvh; }
+    main[data-page$="/orderPage.js"] #form-01 .tab-menu { overflow-x: auto; flex-wrap: nowrap; }
+    main[data-page$="/orderPage.js"] #form-01 .tab-menu-item { flex: 1 0 auto; min-height: 44px; padding: .75rem; }
+    #form-01 #tab-11 > .form-row,
+    #form-01 #tab-11 > .form-row > div:not(.form-parts) { grid-template-columns: minmax(0, 1fr); }
+    main[data-page$="/orderPage.js"] #form-01 :is(input, select, textarea) { min-width: 0; max-width: 100%; }
+
+    .normal-table:has(.mobile-registration-card) { height: auto; }
+    .normal-table:has(.mobile-registration-card) thead { display: none; }
+    .normal-table:has(.mobile-registration-card) tbody { min-width: 0; }
+    .normal-table tr.mobile-registration-card { display: grid; grid-template-columns: minmax(0, 1fr); height: auto; min-width: 0; padding: 1rem; margin: 0 0 .75rem; gap: .5rem; border: 1px solid var(--line); border-radius: .75rem; }
+    .mobile-registration-card > td { display: block; white-space: normal; overflow-wrap: anywhere; padding: 0; }
+    .mobile-registration-card > :is(.mobile-registration-extra, [name="chk-cell"]),
+    .mobile-registration-card .kana, .mobile-registration-card br { display: none !important; }
+    .mobile-registration-card > :is([data-field="nameKana"], [data-field="fullNameKana"], [data-field="name"], [data-field="itemName"], [data-field="workName"]) { font-weight: bold; font-size: 1.1rem; }
+    .mobile-registration-card > :is([data-field="phoneNumber"], [data-field="telNumber"])::before { content: "電話："; }
+    .mobile-registration-card > [data-field="companyName"]::before { content: "会社："; }
+    .mobile-registration-card > [data-field="officeName"]::before { content: "所属："; }
+
+    main[data-page$="/recyclePage.js"] #header-02 > div > :is([data-resolve="item-code"], [data-query-id="recycleMakerList"]) {
+        display: grid !important; grid-template-columns: 5rem minmax(0, 1fr) !important; gap: .5rem !important; align-items: end;
+    }
+    main[data-page$="/recyclePage.js"] #header-02 .form-parts:has(> #use-date02) { width: 11rem; max-width: 100%; justify-self: start; }
+    main[data-page$="/recyclePage.js"] #header-02 .skip-area { display: flex !important; flex-wrap: wrap; gap: .5rem 1rem !important; }
+    main[data-page$="/recyclePage.js"] #header-02 .skip-item { display: inline-flex !important; align-items: center; gap: .35rem; min-height: 36px; white-space: nowrap; }
+    main[data-page$="/recyclePage.js"] #header-02 .skip-item input { width: auto !important; margin: 0; }
+}
+
+@media (max-width: 560px), (pointer: coarse) and (max-width: 960px) {
+    main[data-page$="/recyclePage.js"] #header-01 .kebab-btns,
+    main[data-page$="/recyclePage.js"] #form-dialog-area [name="submitBtn"] { display: none !important; }
 }

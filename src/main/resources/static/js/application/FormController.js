@@ -179,7 +179,7 @@ export class FormController {
             dialogId: this.formId,
             controller: this.controller,
             submitText: this.submitText,
-            cancelText: this.cancelText,
+            cancelText: isMobileReadOnly(this.controller?.key) ? "閉じる" : this.cancelText,
             onSubmit: async (form) => {
                 await this.save(form);
             },
