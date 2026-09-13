@@ -1,5 +1,5 @@
 <main th:fragment="content" class="normal-body operations-page" data-page="/js/pages/operations/dispatchPage.js" data-css="/css/pages/operations.css" th:attr="data-operations-editor=${opMobileEditor},data-order-id=${opOrderId}">
- <div class="tab-area"><ul class="tab-menu"><li class="tab-menu-item is-active">配車</li><li class="tab-menu-item" data-link="/daily-crews" data-target="body">日別編成</li></ul>
+ <div class="tab-area"><ul class="tab-menu"><li class="tab-menu-item is-active">伝票への割当</li><li class="tab-menu-item" data-link="/daily-crews" data-target="body">日別編成</li></ul>
  <div class="tab-panel is-show"><div class="table-area operation-table">
   <form id="plan-search" class="operation-search page-input-header">
    <th:block th:replace="~{fragments/components/box :: dateRangeFragment(${ {'fromText':'訪問日（開始）','fromId':'plan-from','fromName':'dateFrom','toText':'訪問日（終了）','toId':'plan-to','toName':'dateTo'} })}"></th:block>

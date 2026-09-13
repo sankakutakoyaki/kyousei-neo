@@ -55,15 +55,12 @@
     <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/timeworks" data-target="body">
         <img th:src="@{/icons/clock2.png}"><span>勤怠</span>
     </div>
-    <div class="hamburger-item" data-path="/qualifications" data-target="body"><img th:src="@{/icons/person.png}"><span>資格管理</span></div>
-    <div sec:authorize="hasAnyAuthority('APPROLE_admin','APPROLE_master')" class="hamburger-item" data-path="/labor" data-target="body"><img th:src="@{/icons/person.png}"><span>労務情報</span></div>
-    <div sec:authorize="hasAnyAuthority('APPROLE_admin','APPROLE_master')" class="hamburger-item" data-path="/health-checks" data-target="body"><img th:src="@{/icons/person.png}"><span>健康診断</span></div>
+    <div class="hamburger-item" data-path="/qualifications" data-target="body"><img th:src="@{/icons/person.png}"><span>資格</span></div>
+    <div sec:authorize="hasAnyAuthority('APPROLE_admin','APPROLE_master')" class="hamburger-item" data-path="/labor" data-target="body"><img th:src="@{/icons/person.png}"><span>労務</span></div>
 </div>
 
 <div th:fragment="operationsFragment" th:remove="tag">
-    <div class="hamburger-item" data-path="/vehicles" data-target="body"><img th:src="@{/icons/sales.png}"><span>車両管理</span></div>
-    <div class="hamburger-item" data-path="/vehicle-maintenance" data-target="body"><img th:src="@{/icons/sales.png}"><span>点検予定・実施履歴</span></div>
-    <div class="hamburger-item" data-path="/daily-crews" data-target="body"><img th:src="@{/icons/sales.png}"><span>日別編成</span></div>
+    <div class="hamburger-item" data-path="/vehicles" data-target="body"><img th:src="@{/icons/sales.png}"><span>車両</span></div>
     <div class="hamburger-item" data-path="/dispatch" data-target="body"><img th:src="@{/icons/sales.png}"><span>配車</span></div>
     <div class="hamburger-item" data-path="/driving-records" data-target="body"><img th:src="@{/icons/sales.png}"><span>運転記録</span></div>
 </div>

@@ -3,6 +3,7 @@ import { FormController } from '../../application/FormController.js';
 import { DialogService } from '../../core/ui/dialog/DialogService.js';
 import { isMobileDevice, isMobileReadOnly, refreshMobileReadOnly } from '../../core/access/mobileReadOnly.js';
 import { AttachmentRepository } from '../../repositories/attachment/AttachmentRepository.js';
+import { qualificationInView } from './qualificationViews.js';
 import { query,text,localDay,datePart,drawTable,historyView } from './operationUi.js';
 
 export async function init() {
@@ -120,7 +121,7 @@ export async function init() {
         HEALTH:[['employeeCode','担当者コード'],['employeeName','氏名'],['examDate','診断日'],['examType','種類'],['nextDate','次回予定']]
     }[entity];
     const render=()=>{
-        const term=search.elements.keyword.value.trim().toLowerCase();const filtered=rows.filter(r=>Object.values(r).join(' ').toLowerCase().includes(term));
+        const term=search.elements.keyword.value.trim().toLowerCase();const filtered=rows.filter(r=>(entity!=='QUALIFICATION'||qualificationInView(r,page.dataset.opView,localDay()))).filter(r=>Object.values(r).join(' ').toLowerCase().includes(term));
         drawTable(document.getElementById('operation-heading'),document.getElementById('operation-rows'),columns.map(c=>c[1]),filtered.map(data=>({data,values:columns.map(([key])=>key==='score'&&data[key]==null?'未入力':data[key])})),safe(async row=>{
             if(entity==='QUALIFICATION'&&!privateAccess){DialogService.info(`${row.qualificationName}：${row.expiryDate?`有効期限 ${datePart(row.expiryDate)}`:'有効期限の設定なし'}`);return;}
             await form.open(await query('operationDetail',{entity,id:row.id}));refreshMobileReadOnly();
@@ -132,6 +133,7 @@ export async function init() {
         catch(e){if(token===generation){status.textContent='読み込みに失敗しました。';DialogService.error(e.message);}}
     };
     document.getElementById('operation-guide').textContent={CREW:'日付ごとに車両と乗車メンバーを登録します。配車は「運行 → 配車」で登録します。',SCORE:'得点は手入力です。未入力は0点と区別します。運転者は乗車メンバーからコードで指定してください。',INSPECTION:'未実施の予定と実施済みの履歴を管理します。使用不可期間は編成登録時にも確認されます。',LABOR:'保険・年金の適用期間を管理します。番号は提出用の末尾4桁以内です。',HEALTH:'健康診断の記録は管理担当者のみ参照できます。',QUALIFICATION:'資格・免許・講習・教育の履歴です。更新時は前の記録を残して新規登録してください。'}[entity]??'コードを指定して登録・検索できます。';
+    if(entity==='QUALIFICATION' && page.dataset.opView==='renewal')document.getElementById('operation-guide').textContent='有効期限が本日から90日以内、または更新予定日が90日以内（予定超過を含む）の資格を表示します。期限切れは別タブで確認できます。';
     search.addEventListener('submit',e=>{e.preventDefault();load();});search.elements.keyword.addEventListener('input',render);
     if(search.elements.workDate)search.elements.workDate.value=localDay();
     await load();

@@ -18,6 +18,8 @@ public class OperationPageController {
         String route=request.getServletPath().substring(1);
         var spec=Arrays.stream(OperationSpec.values()).filter(s->s.route.equals(route)).findFirst().orElseThrow();
         access.read(spec);
+        String view=Objects.toString(request.getParameter("view"),"all");
+        model.addAttribute("opView",Set.of("all","renewal","expired").contains(view)?view:"all");
         model.addAttribute("opEntity",spec.name()); model.addAttribute("opTitle",spec.title);
         model.addAttribute("opSection",spec.section);
         model.addAttribute("opCanWrite",access.canWrite(spec)); model.addAttribute("opPrivate",access.privateAccess());

@@ -1,12 +1,25 @@
 <main th:fragment="content" class="normal-body operations-page" data-page="/js/pages/operations/operationPage.js" data-css="/css/pages/operations.css"
- th:attr="data-op-entity=${opEntity},data-op-write=${opCanWrite},data-op-private=${opPrivate},data-operations-editor=${opMobileEditor}">
+ th:attr="data-op-view=${opView},data-op-entity=${opEntity},data-op-write=${opCanWrite},data-op-private=${opPrivate},data-operations-editor=${opMobileEditor}">
  <div class="tab-area">
-  <ul class="tab-menu"><li class="tab-menu-item is-active" th:text="${opTitle}"></li>
-   <li th:if="${opSection=='運行'}" class="tab-menu-item" data-link="/vehicles" data-target="body">車両</li>
-   <li th:if="${opSection=='運行'}" class="tab-menu-item" data-link="/vehicle-maintenance" data-target="body">点検</li>
-   <li th:if="${opSection=='管理'}" class="tab-menu-item" data-link="/qualifications" data-target="body">資格管理</li>
-   <li th:if="${opSection=='管理' and opPrivate}" class="tab-menu-item" data-link="/labor" data-target="body">労務情報</li>
-   <li th:if="${opSection=='管理' and opPrivate}" class="tab-menu-item" data-link="/health-checks" data-target="body">健康診断</li>
+  <ul class="tab-menu">
+   <th:block th:if="${opEntity=='VEHICLE' or opEntity=='INSPECTION'}">
+    <li class="tab-menu-item" th:classappend="${opEntity=='VEHICLE'} ? 'is-active'" data-link="/vehicles" data-target="body">車両一覧</li>
+    <li class="tab-menu-item" th:classappend="${opEntity=='INSPECTION'} ? 'is-active'" data-link="/vehicle-maintenance" data-target="body">点検予定・実施履歴</li>
+   </th:block>
+   <th:block th:if="${opEntity=='CREW'}">
+    <li class="tab-menu-item" data-link="/dispatch" data-target="body">伝票への割当</li>
+    <li class="tab-menu-item is-active" data-link="/daily-crews" data-target="body">日別編成</li>
+   </th:block>
+   <th:block th:if="${opEntity=='QUALIFICATION'}">
+    <li class="tab-menu-item" th:classappend="${opView=='all'} ? 'is-active'" data-link="/qualifications" data-target="body">保有資格</li>
+    <li class="tab-menu-item" th:classappend="${opView=='renewal'} ? 'is-active'" data-link="/qualifications?view=renewal" data-target="body">更新予定</li>
+    <li class="tab-menu-item" th:classappend="${opView=='expired'} ? 'is-active'" data-link="/qualifications?view=expired" data-target="body">期限切れ</li>
+   </th:block>
+   <th:block th:if="${opEntity=='LABOR' or opEntity=='HEALTH'}">
+    <li class="tab-menu-item" th:classappend="${opEntity=='LABOR'} ? 'is-active'" data-link="/labor" data-target="body">保険・年金</li>
+    <li class="tab-menu-item" th:classappend="${opEntity=='HEALTH'} ? 'is-active'" data-link="/health-checks" data-target="body">健康診断</li>
+   </th:block>
+   <li th:if="${opEntity=='SCORE' or opEntity=='QUALIFICATION_TYPE'}" class="tab-menu-item is-active" th:text="${opTitle}"></li>
   </ul>
   <div class="tab-panel is-show"><div class="table-area operation-table">
    <header th:replace="~{fragments/pages/operations/header :: headerFragment}"></header>
