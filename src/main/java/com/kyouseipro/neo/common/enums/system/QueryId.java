@@ -4,6 +4,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public enum QueryId {
+    DISPATCH_LIST("dispatchList"),
+    DISPATCH_DETAIL("dispatchDetail"),
+    DISPATCH_EMPLOYEE_LIST("dispatchEmployeeList"),
+    DISPATCH_SAVE("dispatchSave"),
 
     // ===== Company =====
     COMPANY_DETAIL("companyDetail"),

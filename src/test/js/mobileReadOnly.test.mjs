@@ -74,3 +74,18 @@ test('mobile allows own start/end stamps but protects administrative attendance 
         assert.throws(() => assertMobileWriteAllowed(path,'POST',{stampType:'START'}));
     assert.throws(() => assertMobileWriteAllowed('/api/timeworks/stamp/self','DELETE',{stampType:'START'}));
 });
+
+test('dispatch mobile edit is scoped to management users and does not enable order edits', () => {
+    globalThis.window = {matchMedia: () => ({matches: true})};
+    globalThis.document = {querySelector: () => null};
+    assert.equal(isMobileReadOnly('dispatch'), true);
+    assert.throws(() => assertMobileWriteAllowed('/api/query','POST',{queryId:'dispatchSave'}));
+    for (const queryId of ['dispatchList','dispatchDetail','dispatchEmployeeList'])
+        assert.doesNotThrow(() => assertMobileWriteAllowed('/api/query','POST',{queryId}));
+    globalThis.document = {querySelector: selector => selector.includes('data-dispatch-manager') ? {} : null};
+    assert.equal(isMobileReadOnly('dispatch'), false);
+    assert.equal(isMobileReadOnly('orderList'), true);
+    assert.doesNotThrow(() => assertMobileWriteAllowed('/api/query','POST',{queryId:'dispatchSave'}));
+    assert.throws(() => assertMobileWriteAllowed('/api/query','POST',{queryId:'orderSave'}));
+    delete globalThis.document;
+});

@@ -39,3 +39,10 @@ Orderでは `parent_type = 'ORDER'`、`parent_id = order_id` として利用し�
 `20260912_create_order_item_arrivals.sql` は入荷履歴と入荷予定日の列を追加し、
 既存の入荷済み商品を初期履歴へ移行します。新版アプリの起動前に、書込みを停止した状態で適用してください。
 詳細は [入荷履歴の手順](../../docs/order-item-arrivals.md) を参照してください。
+
+## 配車
+
+1. `20260913_create_order_dispatch.sql` で配車本体を作成。
+2. `20260913_add_order_dispatch_log.sql` で変更ログを追加。
+
+本体を適用済みの場合は2だけ実行してください。両方ともアプリ停止・バックアップ後に適用します。ログ追加前のデータはMIGRATEとして初期記録を残します。詳細は [配車の手順](../../docs/order-dispatch.md) を参照してください。

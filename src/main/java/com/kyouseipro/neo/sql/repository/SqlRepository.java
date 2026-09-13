@@ -179,13 +179,15 @@ public class SqlRepository {
     }
 
     public int update(String sql, List<Object> params) {
-        try (Connection conn = dataSource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+        Connection conn = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             setParams(ps, params);
             return ps.executeUpdate();
         } catch (SQLException e) {
             // throw new RuntimeException(e);
             throw SqlExceptionMapper.map(e);
+        } finally {
+            DataSourceUtils.releaseConnection(conn, dataSource);
         }
     }
 
