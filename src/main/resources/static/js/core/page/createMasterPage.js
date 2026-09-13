@@ -48,6 +48,7 @@ export function createMasterPage(config){
             }
         },
         onDeleted: config.onDeleted,
+        onOpen: config.onOpen,
         buildDetailParams: (id) => ({
             state: APP.cache.common.state.INITIAL,
             [config.idKey]: id

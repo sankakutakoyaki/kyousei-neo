@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/with-sidebar}"><body>
+<div layout:fragment="sidebar-content"><div th:replace="~{fragments/common/menu :: operationsFragment}"></div></div>
+<main class="normal-body shortcut-page" layout:fragment="content"><h1>運行</h1><nav class="shortcut-grid" aria-label="運行メニュー">
+<button type="button" class="shortcut-card" data-link="/vehicles" data-target="body"><img th:src="@{/icons/sales.png}" alt=""><span>車両管理</span></button>
+<button type="button" class="shortcut-card" data-link="/vehicle-maintenance" data-target="body"><img th:src="@{/icons/sales.png}" alt=""><span>点検予定・実施履歴</span></button>
+<button type="button" class="shortcut-card" data-link="/daily-crews" data-target="body"><img th:src="@{/icons/sales.png}" alt=""><span>日別編成</span></button>
+<button type="button" class="shortcut-card" data-link="/dispatch" data-target="body"><img th:src="@{/icons/sales.png}" alt=""><span>配車</span></button>
+<button type="button" class="shortcut-card" data-link="/driving-records" data-target="body"><img th:src="@{/icons/sales.png}" alt=""><span>運転記録</span></button>
+</nav><div id="form-dialog-area"></div><div id="dialog-area"></div></main></body></html>

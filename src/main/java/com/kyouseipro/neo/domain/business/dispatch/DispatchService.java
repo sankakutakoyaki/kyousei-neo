@@ -87,56 +87,7 @@ public class DispatchService {
     }
     @Transactional
     public void save(Map<String,Object> p) {
-        // 端末申告が欠落した要求は拒否。スマホ側も共通APIガードで管理者だけに制限する。
-        if (!(p.get("mobile") instanceof Boolean)) throw new BusinessException("配車画面を開き直してください。");
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) throw new AccessDeniedException("認証が必要です。");
-        String userAgent = Objects.toString(request.getHeader("User-Agent"), "").toLowerCase(Locale.ROOT);
-        boolean mobile = Boolean.TRUE.equals(p.get("mobile")) || "?1".equals(request.getHeader("Sec-CH-UA-Mobile"))
-            || userAgent.matches(".*(android|iphone|ipad|ipod|mobile).*");
-        if (mobile && auth.getAuthorities().stream().noneMatch(a ->
-                Set.of("APPROLE_admin", "APPROLE_master", "APPROLE_leader").contains(a.getAuthority())))
-            throw new AccessDeniedException("スマホでの配車編集には管理権限が必要です。");
-        long id = positiveId(p.get("orderId"));
-        Set<Assignment> desired = validateAssignments(p.get("assignments"));
-        var order = lock(id);
-        if (((Number)order.get("state")).intValue() != 0) throw new BusinessException("完了済みの受注は配車を変更できません。");
-        sameVersion(order.get("version"), p.get("version"));
-        var versions = sql.selectMap("SELECT version FROM order_dispatch_versions WITH (UPDLOCK,HOLDLOCK) WHERE order_id=?", List.of(id));
-        Object version = versions.isEmpty() ? 0 : versions.get(0).get("version");
-        sameVersion(version, p.get("dispatchVersion"));
-        Map<Long,String> eligible = new HashMap<>();
-        for (var e : employees()) eligible.put(((Number)e.get("employeeId")).longValue(), String.valueOf(e.get("fullName")));
-        Set<Assignment> old = new HashSet<>();
-        for (var a : assignments(id)) old.add(new Assignment(((Number)a.get("employeeId")).longValue(), a.get("role").toString()));
-        // 無効になった担当者は既存割り当ての維持・解除のみ許可する。
-        for (var a : desired) if (!old.contains(a) && !eligible.containsKey(a.employeeId()))
-            throw new BusinessException("選択した担当者が削除・無効化されています。開き直してください。");
-        if (old.equals(desired)) return;
-        int nextVersion = ((Number) version).intValue() + 1;
-        for (var a : old) if (!desired.contains(a)) updateWithLog("""
-            UPDATE order_dispatch_assignments SET cancelled_at=SYSDATETIME(), cancelled_by=?
-            %s WHERE order_id=? AND role=? AND employee_id=? AND cancelled_at IS NULL;
-            """, List.of(auth.getName(), id, a.role(), a.employeeId()), "UPDATE", auth.getName(), nextVersion);
-        for (var a : desired) if (!old.contains(a)) updateWithLog("""
-            INSERT order_dispatch_assignments(order_id, employee_id, role, employee_name, assigned_by)
-            %s VALUES (?,?,?,?,?);
-            """, List.of(id, a.employeeId(), a.role(), eligible.get(a.employeeId()), auth.getName()), "INSERT", auth.getName(), nextVersion);
-        if (versions.isEmpty()) sql.update("INSERT order_dispatch_versions(order_id,version) VALUES (?,1)", List.of(id));
-        else sql.update("UPDATE order_dispatch_versions SET version=version+1 WHERE order_id=?", List.of(id));
-    }
-    private void updateWithLog(String statement, List<Object> params, String action, String editor, int version) {
-        String tableVar = "@DispatchRows";
-        String batch = logProvider.buildLogTable(tableVar)
-            + statement.formatted(logProvider.buildOutput() + " INTO " + tableVar)
-            + logProvider.buildInsertLog(tableVar, action);
-        var values = new ArrayList<Object>(params);
-        values.addAll(logProvider.buildLogParams(Map.of("editor", editor, "dispatchVersion", version), action));
-        sql.update(batch, values);
-    }
-    private static void sameVersion(Object actual, Object expected) {
-        if (expected == null || !String.valueOf(actual).equals(expected.toString()))
-            throw new BusinessException("受注または配車が更新されています。開き直して確認してください。");
+        throw new BusinessException("配車は運行メニューの新しい画面で登録してください。");
     }
     private static long positiveId(Object value) {
         try { long id = Long.parseLong(String.valueOf(value)); if (id > 0) return id; }

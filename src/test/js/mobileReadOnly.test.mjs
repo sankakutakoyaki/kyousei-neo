@@ -89,3 +89,16 @@ test('dispatch mobile edit is scoped to management users and does not enable ord
     assert.throws(() => assertMobileWriteAllowed('/api/query','POST',{queryId:'orderSave'}));
     delete globalThis.document;
 });
+
+test('operations mobile editing requires management flag and stays scoped to operations', () => {
+    globalThis.window = {matchMedia: () => ({matches: true})};
+    globalThis.document = {querySelector: () => null};
+    for (const queryId of ['operationSave', 'operationDispatchSave'])
+        assert.throws(() => assertMobileWriteAllowed('/api/query', 'POST', {queryId}), /閲覧/);
+    globalThis.document = {querySelector: selector => selector.includes('data-operations-editor') ? {} : null};
+    assert.equal(isMobileReadOnly('operations'), false);
+    for (const queryId of ['operationSave', 'operationDispatchSave'])
+        assert.doesNotThrow(() => assertMobileWriteAllowed('/api/query', 'POST', {queryId}));
+    assert.throws(() => assertMobileWriteAllowed('/api/query', 'POST', {queryId:'orderSave'}), /閲覧/);
+    delete globalThis.document;
+});

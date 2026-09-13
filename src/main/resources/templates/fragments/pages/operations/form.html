@@ -1,0 +1,19 @@
+<th:block th:fragment="formFragment">
+ <section class="dialog-content">
+  <div id="operation-fields" class="operation-fields">
+   <th:block th:each="field:${opFields}"><th:block th:replace="~{fragments/components/box :: inputBoxFragment(${field})}"></th:block></th:block>
+  </div>
+  <div th:if="${opEntity=='CREW'}" id="operation-crew-editor">
+   <p>担当者コードを入力してEnterで追加します。ドライバーを1名指定してください。</p>
+   <div class="operation-search"><label>担当者コード<input type="text" id="crew-employee-code" class="normal-input" autocomplete="off"></label><button type="button" id="crew-add" data-mobile-write class="normal-btn">追加</button><button type="button" id="crew-copy" data-mobile-write class="normal-btn">前日の編成をコピー</button></div>
+   <div id="crew-members"></div><p id="crew-impacts"></p>
+  </div>
+  <details><summary>変更履歴</summary><div id="operation-history"></div></details>
+  <section th:if="${(opEntity=='QUALIFICATION' and opPrivate) or opEntity=='INSPECTION'}" id="operation-attachments">
+   <h3>証明書・整備書類</h3><p>保存済みの記録にPDF・画像を追加できます。訂正前の書類も保管します。</p>
+   <input type="file" id="operation-file" accept="application/pdf,image/jpeg,image/png,image/gif" multiple data-mobile-write>
+   <button type="button" id="operation-upload" class="normal-btn" data-mobile-write>書類を追加</button><div id="operation-files"></div>
+  </section>
+  <button id="operation-delete" type="button" class="normal-btn" data-mobile-write>この登録を無効にする</button>
+ </section>
+</th:block>

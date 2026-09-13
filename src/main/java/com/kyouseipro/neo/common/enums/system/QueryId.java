@@ -4,6 +4,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public enum QueryId {
+    OPERATION_EMPLOYEE_QUALIFICATIONS_LIST("operationEmployeeQualificationsList"),
+    OPERATION_LIST("operationList"),
+    OPERATION_DETAIL("operationDetail"),
+    OPERATION_CODE_DETAIL("operationCodeDetail"),
+    OPERATION_SAVE("operationSave"),
+    OPERATION_DISPATCH_LIST("operationDispatchList"),
+    OPERATION_DISPATCH_DETAIL("operationDispatchDetail"),
+    OPERATION_DISPATCH_SAVE("operationDispatchSave"),
+    OPERATION_CREW_DETAIL("operationCrewDetail"),
+
     DISPATCH_LIST("dispatchList"),
     DISPATCH_DETAIL("dispatchDetail"),
     DISPATCH_EMPLOYEE_LIST("dispatchEmployeeList"),

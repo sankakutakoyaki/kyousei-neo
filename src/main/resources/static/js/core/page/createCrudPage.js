@@ -21,6 +21,7 @@ export function createCrudPage(config){
                     if(config.afterSave){await config.afterSave(controller, id);}
                 },
                 validateBusiness: config.validateBusiness,
+                onOpen: config.onOpen,
                 buildParams: config.buildDetailParams
             })
         }

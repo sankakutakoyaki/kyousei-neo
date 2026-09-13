@@ -1,0 +1,28 @@
+<main th:fragment="content" class="normal-body operations-page" data-page="/js/pages/operations/dispatchPage.js" data-css="/css/pages/operations.css" th:attr="data-operations-editor=${opMobileEditor},data-order-id=${opOrderId}">
+ <div class="tab-area"><ul class="tab-menu"><li class="tab-menu-item is-active">配車</li><li class="tab-menu-item" data-link="/daily-crews" data-target="body">日別編成</li></ul>
+ <div class="tab-panel is-show"><div class="table-area operation-table">
+  <form id="plan-search" class="operation-search page-input-header">
+   <th:block th:replace="~{fragments/components/box :: dateRangeFragment(${ {'fromText':'訪問日（開始）','fromId':'plan-from','fromName':'dateFrom','toText':'訪問日（終了）','toId':'plan-to','toName':'dateTo'} })}"></th:block>
+   <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${ {'text':'検索','id':'plan-keyword','name':'keyword','type':'search'} })}"></th:block>
+   <label><input type="checkbox" name="includeUndated">日程未定も表示</label><label><input type="checkbox" name="unassigned">未配車のみ</label>
+   <button class="normal-btn ok" type="submit">検索</button>
+  </form>
+  <p class="operation-guide">訪問日の日別編成を、車両コードで追加してください。1伝票に複数台を登録できます。</p>
+  <section th:replace="~{fragments/table/body :: normalFragment('plan-heading','plan-rows')}"></section>
+  <footer th:replace="~{fragments/table/footer :: datetimeFragment('plan-status')}"></footer>
+ </div></div></div>
+ <div id="form-dialog-area"><form id="operation-dispatch-form" class="form-dialog none" data-controller="operations" data-key="id"><div class="dialog-main">
+  <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title':'車両の配車・現場責任者'} })}"></header>
+  <section class="dialog-content">
+   <p id="plan-summary"></p><p id="plan-readonly"></p>
+   <div id="plan-fields"><div class="operation-search"><label>車両コード<input type="text" class="normal-input" id="plan-vehicle-code" autocomplete="off"></label><button type="button" class="normal-btn" id="plan-add">車両を追加</button></div>
+    <div id="plan-vehicles"></div>
+    <label>現場責任者の担当者コード<input id="plan-leader-code" class="normal-input" type="text" autocomplete="off"></label><p id="plan-leader-name"></p>
+   </div>
+   <details><summary>変更履歴</summary><div id="plan-history"></div></details>
+   <details><summary>旧方式の担当者記録（参照）</summary><div id="plan-legacy"></div></details>
+  </section>
+  <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId':'plan-footer','submitText':'保存','cancelText':'閉じる'} })}"></footer>
+ </div></form></div>
+ <div id="msg-dialog-area"><div th:replace="~{fragments/dialog/content :: messageFragment}"></div></div>
+</main>

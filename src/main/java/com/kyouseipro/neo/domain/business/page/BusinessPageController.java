@@ -23,13 +23,6 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class BusinessPageController {
-    @GetMapping("/dispatch")
-    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
-    public String getDispatch(org.springframework.ui.Model model, org.springframework.security.core.Authentication authentication) {
-        model.addAttribute("dispatchManager", authentication.getAuthorities().stream().anyMatch(a ->
-            java.util.Set.of("APPROLE_admin", "APPROLE_master", "APPROLE_leader").contains(a.getAuthority())));
-        return "fragments/pages/business/dispatch/content :: content";
-    }
     private final RecycleService recycleService;
     private final CompanyService companyService;
     private final OfficeService officeService;

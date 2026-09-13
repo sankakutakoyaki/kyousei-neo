@@ -12,6 +12,7 @@ import { FormController } from "../../application/FormController.js";
 import { createOrderItemFormListController } from "./order/orderItemList.js";
 import { createOrderWorkFormListController } from "./order/orderWorkList.js";
 import { DialogService } from "../../core/ui/dialog/DialogService.js";
+import { loadPage } from "../../core/dom/loadPage.js";
 import { AttachmentManager } from "../../components/attachment/AttachmentManager.js";
 
 export function createOrderPage(config){
@@ -128,6 +129,13 @@ const createOrderForm = (controller, options = {}) => {
                 source.querySelector("a").href = data?.orderImportId ? `/api/order/import/${encodeURIComponent(data.orderImportId)}/file` : "#";
                 source.querySelector("span").textContent = data?.ocrDateWarning || "原本と照合して保存してください。";
             }
+            let dispatchButton=formEl.querySelector('[data-open-order-dispatch]');
+            if(!dispatchButton){dispatchButton=document.createElement('button');dispatchButton.type='button';dispatchButton.className='normal-btn';dispatchButton.dataset.openOrderDispatch='';dispatchButton.textContent='この伝票の配車を開く';formEl.querySelector('.dialog-content')?.prepend(dispatchButton);}
+            dispatchButton.hidden=!data?.orderId;
+            dispatchButton.onclick=async()=>{
+                if((form.hasChanges() || itemList.hasChanges() || workList.hasChanges()) && !await DialogService.confirm('受注の未保存の変更を破棄して配車を開きますか？'))return;
+                DialogService.close(form.formId);await loadPage('/dispatch?orderId='+encodeURIComponent(data.orderId));
+            };
             const postal = formEl.querySelector('[name="postal-code"]');
             if (postal) postal.dataset.lastId = postal.value.trim();
 

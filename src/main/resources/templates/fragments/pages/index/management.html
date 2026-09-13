@@ -12,6 +12,9 @@
             <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')" data-link="/timeworks" data-target="body">
                 <img th:src="@{/icons/clock2.png}" alt=""><span>勤怠</span>
             </button>
+<button type="button" class="shortcut-card"  data-link="/qualifications" data-target="body"><img th:src="@{/icons/person.png}" alt=""><span>資格管理</span></button>
+<button type="button" class="shortcut-card" sec:authorize="hasAnyAuthority('APPROLE_admin','APPROLE_master')" data-link="/labor" data-target="body"><img th:src="@{/icons/person.png}" alt=""><span>労務情報</span></button>
+<button type="button" class="shortcut-card" sec:authorize="hasAnyAuthority('APPROLE_admin','APPROLE_master')" data-link="/health-checks" data-target="body"><img th:src="@{/icons/person.png}" alt=""><span>健康診断</span></button>
         </nav>
         <div id="form-dialog-area"></div>
         <div id="dialog-area"></div>
