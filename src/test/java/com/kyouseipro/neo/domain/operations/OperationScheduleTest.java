@@ -73,4 +73,10 @@ class OperationScheduleTest {
   verify(sql,times(2)).update(startsWith("INSERT operation_order_members("),anyList());
   verify(sql).update(contains("INSERT operation_order_plans_log"),eq(List.of("editor","UPDATE",1L)));
  }
+ @Test void dispatchListFiltersOwnOfficeWithoutConfusingShipperOffice(){
+  service.dispatchList(Map.of("dateFrom","2026-09-15","dateTo","2026-09-15","ownOfficeId","2"));
+  verify(sql).selectMap(contains("AND o.own_office_id=?"),eq(List.of(Date.valueOf("2026-09-15"),Date.valueOf("2026-09-15"),2L)));
+  service.dispatchList(Map.of("dateFrom","2026-09-15","dateTo","2026-09-15","ownOfficeId","0"));
+  verify(sql).selectMap(contains("AND o.own_office_id IS NULL"),anyList());
+ }
 }

@@ -9,6 +9,7 @@
                 <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="tab-14">添付</li>
             </ul>
             <div class="tab-panel is-show" id="tab-11" data-tab-content="order-add-tabs">
+                <div class="form-row"><label class="form-parts">担当営業所<select id="order-own-office-edit" name="own-office-id" data-key="own-office-id" class="normal-select"></select></label></div>
                 <!-- 会社名 -->
                 <div class="form-row" data-resolve="client" >
                     <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${

@@ -102,15 +102,23 @@ public class OperationScheduleService {
         access.read(OperationSpec.CREW);
         Date from=date(p.get("dateFrom"),true),to=date(p.get("dateTo"),true);
         if(to.before(from) || to.toLocalDate().isAfter(from.toLocalDate().plusDays(92))) throw new BusinessException("検索期間は93日以内にしてください。");
+        String office=Objects.toString(p.get("ownOfficeId"),"");
+        var args=new ArrayList<Object>(List.of(from,to));
+        String officeWhere="";
+        if(!office.isBlank()) {
+            if(office.equals("0"))officeWhere=" AND o.own_office_id IS NULL";
+            else {officeWhere=" AND o.own_office_id=?";args.add(id(office));}
+        }
         return sql.selectMap("""
             SELECT o.order_id,o.request_number,o.title,o.visit_date,o.visit_time,o.full_address,o.version,o.state,
+            (SELECT STRING_AGG(CAST(v.crew_id AS NVARCHAR(MAX)),N',') FROM operation_order_vehicles v WHERE v.order_id=o.order_id) AS crew_ids,
             p.version AS plan_version,p.leader_name,
             CAST(CASE WHEN EXISTS(SELECT 1 FROM operation_order_vehicles v WHERE v.order_id=o.order_id AND (v.work_date<>o.visit_date OR o.visit_date IS NULL)) THEN 1 ELSE 0 END AS BIT) AS schedule_mismatch,
             (SELECT STRING_AGG(CAST(v.vehicle_code+N' '+v.vehicle_name AS NVARCHAR(MAX)),N'、') FROM operation_order_vehicles v WHERE v.order_id=o.order_id) AS vehicle_names,
             (SELECT COUNT(*) FROM order_dispatch_assignments a WHERE a.order_id=o.order_id AND a.cancelled_at IS NULL) AS legacy_count
             FROM orders o LEFT JOIN operation_order_plans p ON p.order_id=o.order_id
             WHERE o.state IN(0,2) AND ((o.visit_date>=? AND o.visit_date<=?)
-            """+(Boolean.TRUE.equals(p.get("includeUndated"))?" OR o.visit_date IS NULL":"")+") ORDER BY o.visit_date,o.visit_time,o.order_id",List.of(from,to));
+            """+(Boolean.TRUE.equals(p.get("includeUndated"))?" OR o.visit_date IS NULL":"")+")"+officeWhere+" ORDER BY o.visit_date,o.visit_time,o.order_id",args);
     }
     @Transactional
     public Map<String,Object> dispatchDetail(Map<String,Object> p) {

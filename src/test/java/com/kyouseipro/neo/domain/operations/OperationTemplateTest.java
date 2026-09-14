@@ -25,6 +25,10 @@ class OperationTemplateTest {
    if(spec==OperationSpec.LABOR) assertFalse(html.contains("certificate-number"));
    preview(spec.route,html,"operationPage.js");
   }
+  String order=engine.process("fragments/pages/business/order/content",new Context(Locale.JAPAN));
+  assertTrue(order.contains("order-own-office-edit"));assertTrue(order.contains("order-own-office"));
+  preview("order",order,"../business/order/orderPage.js");
+  preview("timeworks",engine.process("fragments/pages/management/timeworks/content",new Context(Locale.JAPAN)),"../management/timeworksPage.js");
   var model=new ExtendedModelMap();controller.dispatch(model,0);
   String html=engine.process("fragments/pages/operations/dispatch",new Context(Locale.JAPAN,model));
   assertTrue(html.contains("plan-leader-code"));assertTrue(html.contains("plan-legacy"));preview("dispatch",html,"dispatchPage.js");
@@ -33,6 +37,6 @@ class OperationTemplateTest {
   // Opt-in local browser fixture. No production data or real API connections.
   String dir=System.getProperty("operation.preview.dir");if(dir==null)return;
   Files.createDirectories(Path.of(dir));
-  Files.writeString(Path.of(dir,name+".html"),"<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><link rel='stylesheet' href='/css/common/default.css'><link rel='stylesheet' href='/css/pages/operations.css'></head><body>"+html+"<script>window.APP={security:{}};</script><script type='module'>import {initMobileReadOnly} from '/js/core/access/mobileReadOnly.js';import {init} from '/js/pages/operations/"+module+"';initMobileReadOnly();await init();</script></body></html>");
+  Files.writeString(Path.of(dir,name+".html"),"<!doctype html><html><head><meta charset='utf-8'><meta name='_csrf' content='fixture'><meta name='_csrf_header' content='X-CSRF-TOKEN'><meta name='viewport' content='width=device-width,initial-scale=1'><link rel='stylesheet' href='/css/common/default.css'><link rel='stylesheet' href='/css/pages/operations.css'></head><body>"+html+"<script>window.APP={security:{},cache:{}};</script><script type='module'>import {initMobileReadOnly} from '/js/core/access/mobileReadOnly.js';import {init} from '/js/pages/operations/"+module+"';initMobileReadOnly();await init();</script></body></html>");
  }
 }

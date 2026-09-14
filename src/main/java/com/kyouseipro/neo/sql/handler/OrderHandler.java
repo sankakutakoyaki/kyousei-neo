@@ -172,6 +172,19 @@ public class OrderHandler implements QueryHandler {
             orderParams.remove(field);
         }
 
+        if ("orders".equals(def.getTableMeta().tableName()) && orderParams.containsKey("ownOfficeId")) {
+            Object value=orderParams.get("ownOfficeId");
+            String office=value==null?"":value.toString();
+            if(office.isBlank() || office.equals("0"))orderParams.put("ownOfficeId",null);
+            else {
+                int officeId;
+                try {officeId=Integer.parseInt(office);}catch(NumberFormatException e){throw new com.kyouseipro.neo.common.exception.BusinessException("担当営業所を選択してください。");}
+                if(sqlRepository.selectMap("SELECT o.office_id FROM offices o JOIN companies c ON c.company_id=o.company_id WHERE o.office_id=? AND o.state=0 AND c.state=0 AND c.category=0",List.of(officeId)).isEmpty())
+                    throw new com.kyouseipro.neo.common.exception.BusinessException("有効な自社営業所を選択してください。");
+                orderParams.put("ownOfficeId",officeId);
+            }
+        }
+
         if (isNewOrder) {
 
             // =========================

@@ -1,3 +1,4 @@
+import {loadOwnOffices,fillOwnOffices} from '../operations/ownOffice.js';
 "use strict";
 
 import { isMobileReadOnly } from "../../core/access/mobileReadOnly.js";
@@ -121,6 +122,12 @@ const createOrderForm = (controller, options = {}) => {
             workList.init(works, form);
 
             const formEl = document.getElementById(form.formId);
+            const officeSelect=formEl.querySelector('#order-own-office-edit');
+            if(officeSelect) {
+                const context=APP.cache.page.ownOfficeContext ?? await loadOwnOffices();
+                const value=data?.orderId ? (data.ownOfficeId??'0') : (data.ownOfficeId??document.getElementById('order-own-office')?.value??context.defaultOfficeId);
+                fillOwnOffices(officeSelect,context,{unassigned:true,all:false,value:value||context.defaultOfficeId||'0'});
+            }
             const title = formEl.querySelector(".dialog-header > span");
             if (title) title.textContent = isMobileReadOnly(controller.key) ? "受注詳細（閲覧）" : "受注編集";
             const source = formEl.querySelector("[data-ocr-source]");

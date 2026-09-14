@@ -1,3 +1,4 @@
+import {loadOwnOffices,fillOwnOffices} from '../../operations/ownOffice.js';
 "use strict"
 
 import { initCommon } from "../../../bootstrap/initPage.js";
@@ -14,11 +15,15 @@ export async function init() {
     await initCommon();
     await initPageCache("/api/order/init/cache");
 
+    APP.cache.page.ownOfficeContext=await loadOwnOffices();
+    fillOwnOffices(document.getElementById("order-own-office"),APP.cache.page.ownOfficeContext,{unassigned:true});
+
     // tab1
     const list = orderListPage();
     registerController("orderList", list);
     list.init();
     await list.executeAction("search");
+    document.getElementById("order-own-office").addEventListener("change",()=>list.executeAction("search"));
 
     // PDF取込
     initOrderPdfImport();
@@ -57,6 +62,7 @@ export const orderListPage = () =>
             return {
                 state: APP.cache.common.state.INITIAL,
                 compState: APP.cache.common.state.COMPLETE,
+                ownOfficeId: document.getElementById("order-own-office")?.value || null,
                 category: cate,
                 primeConstractorId: primeConstractorId,
                 primeConstractorOfficeId: primeConstractorOfficeId,

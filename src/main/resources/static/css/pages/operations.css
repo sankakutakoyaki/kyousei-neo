@@ -16,3 +16,15 @@
  .operation-fields { grid-template-columns:minmax(0,1fr); }
  .operation-member button { min-height:44px; }
 }
+.dispatch-board-columns {display:grid;grid-template-columns:minmax(240px,1fr) minmax(320px,1.5fr);gap:20px;padding:12px;align-items:start;}
+.dispatch-card {border:1px solid #ccc;border-radius:6px;padding:12px;margin-bottom:12px;background:white;overflow-wrap:anywhere;}
+.dispatch-card h3 {margin:0 0 8px;font-size:1rem;}
+.dispatch-card p {margin:8px 0;}
+.dispatch-card[draggable="true"] {cursor:grab;}
+.dispatch-card.is-drop-target {outline:3px solid #1682f5;background:#edf6ff;}
+.dispatch-card button {margin:4px;}
+.dispatch-card button[aria-pressed="true"] {background:#d7eaff;outline:2px solid #1682f5;}
+.dispatch-assigned {display:block;max-width:100%;white-space:normal;text-align:left;}
+@media(max-width:700px){.dispatch-board-columns {grid-template-columns:1fr;}}
+#dispatch-board {overflow:auto;min-height:0;}
+@media(min-width:961px){main[data-op-entity="QUALIFICATION"] .normal-table tr {grid-template-columns:repeat(6,minmax(0,1fr)) 8rem;}}

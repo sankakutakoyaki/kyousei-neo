@@ -12,17 +12,17 @@ public class OrderQuery {
         String sql = """
             SELECT o.order_id, o.request_number, o.visit_date, o.visit_time, o.title, o.full_address, o.remarks,
                 c.name as prime_constractor_name, co.name as prime_constractor_office_name, s.full_name as staff_name,
-                o.version, o.state
+                o.own_office_id, o.version, o.state
             FROM orders o
             LEFT OUTER JOIN companies c ON c.company_id = o.prime_constractor_id AND c.state = ?
             LEFT OUTER JOIN offices co ON co.office_id = o.prime_constractor_office_id AND co.state = ?
             LEFT OUTER JOIN staffs s ON s.staff_id = o.staff_id AND s.state = ?
-            WHERE (o.state = ? OR o.state = ?) AND ((o.%s >= ? AND o.%s < ?) OR o.%s IS NULL)
+            WHERE (o.state = ? OR o.state = ?) AND ((o.%s >= ? AND o.%s < ?) OR o.%s IS NULL) AND (? IS NULL OR o.own_office_id=? OR (?=0 AND o.own_office_id IS NULL))
             """.formatted(column, column, column);
 
         return QueryDefinition.select(
             sql,
-            List.of("state", "state", "state", "state", "compState", "dateFrom", "dateTo")
+            List.of("state", "state", "state", "state", "compState", "dateFrom", "dateTo", "ownOfficeId", "ownOfficeId", "ownOfficeId")
         );
     }
 
@@ -31,7 +31,7 @@ public class OrderQuery {
             """
             SELECT o.order_id, o.request_number, o.visit_date, o.visit_time, o.title, o.postal_code, o.full_address, o.contact_information, o.remarks,
                 o.prime_constractor_id, o.prime_constractor_office_id, o.staff_id,
-                o.version, o.state
+                o.own_office_id, o.version, o.state
             FROM orders o
             WHERE o.state = ? AND order_id = ?;
             """,

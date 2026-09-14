@@ -1,3 +1,4 @@
+import {loadOwnOffices,fillOwnOffices} from '../operations/ownOffice.js';
 import {mobileQuery} from "../../core/access/mobileReadOnly.js";
 "use strict"
 
@@ -25,6 +26,7 @@ export async function init() {
     managementInitialized = false;
     await initCommon();
     await initPageCache("/api/timeworks/init/cache");
+    APP.cache.page.ownOfficeContext=await loadOwnOffices();
     rolePersonalMode = APP.cache.page.personalMode === true;
 
     const timeworks = timeworksPage();
@@ -223,7 +225,7 @@ function initManagement() {
     const month = document.getElementById("management-month");
     const office = document.getElementById("management-office");
     month.value = formatDate(new Date(), "yyyy-MM");
-    fillOfficeOptions(office, APP.cache.page.officeComboList ?? []);
+    fillOwnOffices(office,APP.cache.page.ownOfficeContext);
     loadManagementEmployees();
 
     document.getElementById("management-search")?.addEventListener("click", refreshManagement);

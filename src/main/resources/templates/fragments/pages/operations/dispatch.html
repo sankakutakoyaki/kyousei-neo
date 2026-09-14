@@ -2,13 +2,14 @@
  <div class="tab-area"><ul class="tab-menu"><li class="tab-menu-item is-active">伝票への割当</li><li class="tab-menu-item" data-link="/daily-crews" data-target="body">日別編成</li></ul>
  <div class="tab-panel is-show"><div class="table-area operation-table">
   <form id="plan-search" class="operation-search page-input-header">
-   <th:block th:replace="~{fragments/components/box :: dateRangeFragment(${ {'fromText':'訪問日（開始）','fromId':'plan-from','fromName':'dateFrom','toText':'訪問日（終了）','toId':'plan-to','toName':'dateTo'} })}"></th:block>
+   <label class="form-parts">運行日<input type="date" class="normal-input" id="plan-day" name="workDate" required></label>
+   <label class="form-parts">担当営業所<select id="plan-office" name="ownOfficeId" class="normal-select"></select></label>
    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${ {'text':'検索','id':'plan-keyword','name':'keyword','type':'search'} })}"></th:block>
-   <label><input type="checkbox" name="includeUndated">日程未定も表示</label><label><input type="checkbox" name="unassigned">未配車のみ</label>
+   <label><input type="checkbox" name="unassigned">未配車のみ</label>
    <button class="normal-btn ok" type="submit">検索</button>
   </form>
-  <p class="operation-guide">訪問日の日別編成を、車両コードで追加してください。1伝票に複数台を登録できます。</p>
-  <section th:replace="~{fragments/table/body :: normalFragment('plan-heading','plan-rows')}"></section>
+  <p class="operation-guide">日別編成の登録後、車両と伝票を結び付けます。1伝票に複数台を追加できます。</p>
+  <section id="dispatch-board" aria-label="車両と伝票の配車"></section>
   <footer th:replace="~{fragments/table/footer :: datetimeFragment('plan-status')}"></footer>
  </div></div></div>
  <div id="form-dialog-area"><form id="operation-dispatch-form" class="form-dialog none" data-controller="operations" data-key="id"><div class="dialog-main">

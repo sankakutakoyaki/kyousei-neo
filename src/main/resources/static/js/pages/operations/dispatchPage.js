@@ -1,13 +1,15 @@
+import {createDispatchBoard} from './dispatchBoard.js';
+import {loadOwnOffices,fillOwnOffices} from './ownOffice.js';
 import { initCommon } from '../../bootstrap/initPage.js';
 import { FormController } from '../../application/FormController.js';
 import { DialogService } from '../../core/ui/dialog/DialogService.js';
 import { isMobileDevice,isMobileReadOnly,refreshMobileReadOnly } from '../../core/access/mobileReadOnly.js';
-import { query,text,localDay,datePart,drawTable,historyView } from './operationUi.js';
+import { query,text,localDay,datePart,historyView } from './operationUi.js';
 export async function init() {
     await initCommon();
     const search=document.getElementById('plan-search'),formEl=document.getElementById('operation-dispatch-form');
     const status=document.getElementById('plan-status'),code=document.getElementById('plan-vehicle-code'),leader=document.getElementById('plan-leader-code');
-    status.setAttribute('role','status');let current={},vehicles=[],original='',rows=[],generation=0;
+    status.setAttribute('role','status');let current={},vehicles=[],original='',rows=[],generation=0,allVehicles=[],crews=[];
     const editable=()=>Number(current.state)===0&&!isMobileReadOnly('operations');
     const selectedLeader=()=>vehicles.flatMap(v=>v.members??[]).find(m=>String(m.employeeCode)===leader.value.trim());
     const data=()=>({vehicles:vehicles.map(v=>({crewId:v.crewId,version:v.version})),leaderId:selectedLeader()?.employeeId??null});
@@ -52,12 +54,43 @@ export async function init() {
     }
     document.getElementById('plan-add').addEventListener('click',safe(add));code.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();safe(add)();}});
     formEl.addEventListener('submit',e=>{e.preventDefault();form.save(formEl);});
+    const openOrder=safe(async row=>{await form.open(await query('operationDispatchDetail',{orderId:row.orderId}));refreshMobileReadOnly();});
+    const board=createDispatchBoard(document.getElementById('dispatch-board'),{
+        canEdit:()=>!isMobileReadOnly('operations'),onOpen:openOrder,
+        onAssign:safe(async ({orderId,vehicleCode})=>{
+            if(isMobileReadOnly('operations'))return;
+            const detail=await query('operationDispatchDetail',{orderId});
+            if(Number(detail.state)!==0 || datePart(detail.visitDate)!==search.elements.workDate.value)throw new Error('伝票の日付・状態が変更されました。再検索してください。');
+            await form.open(detail);refreshMobileReadOnly();
+            code.value=vehicleCode;await add();
+        })
+    });
     const render=()=>{
-        const term=search.elements.keyword.value.trim().toLowerCase();const result=rows.filter(r=>(!search.elements.unassigned.checked||!r.vehicleNames)&&Object.values(r).join(' ').toLowerCase().includes(term));
-        drawTable(document.getElementById('plan-heading'),document.getElementById('plan-rows'),['受注番号・件名','訪問日','住所','車両','現場責任者'],result.map(data=>({data,values:[`${data.requestNumber??''} ${data.title??''}`,`${datePart(data.visitDate)} ${data.visitTime??''}${data.scheduleMismatch?'（日程変更・再配車が必要）':''}`,data.fullAddress,data.vehicleNames??(data.legacyCount?'未配車（旧担当者記録あり）':'未配車'),data.leaderName]})),safe(async row=>{await form.open(await query('operationDispatchDetail',{orderId:row.orderId}));refreshMobileReadOnly();}));status.textContent=`${result.length}件`;
+        const term=search.elements.keyword.value.trim().toLowerCase();
+        const result=rows.filter(r=>(!search.elements.unassigned.checked||!r.vehicleNames)&&Object.values(r).join(' ').toLowerCase().includes(term));
+        board.render({vehicles:allVehicles,crews,orders:result,allOrders:rows,day:search.elements.workDate.value});
+        status.textContent=`${result.length}件`;
     };
-    const load=async()=>{const request=++generation;status.textContent='読み込み中…';try{const result=await query('operationDispatchList',{dateFrom:search.elements.dateFrom.value,dateTo:search.elements.dateTo.value,includeUndated:search.elements.includeUndated.checked});if(request!==generation||!search.isConnected)return;rows=result;render();}catch(e){status.textContent='読み込みに失敗しました。';DialogService.error(e.message);}};
-    search.elements.dateFrom.value=search.elements.dateTo.value=localDay();search.addEventListener('submit',e=>{e.preventDefault();load();});search.elements.keyword.addEventListener('input',render);search.elements.unassigned.addEventListener('change',render);await load();
+    const load=async()=>{
+        const request=++generation;status.textContent='読み込み中…';
+        // 古い日付のカードを操作できないよう検索開始時に外す。
+        rows=[];allVehicles=[];crews=[];
+        document.getElementById('dispatch-board').replaceChildren(text('p','読み込み中…'));
+        try {
+            const day=search.elements.workDate.value;
+            const [result,vehicleRows,crewRows]=await Promise.all([
+                query('operationDispatchList',{dateFrom:day,dateTo:day,ownOfficeId:search.elements.ownOfficeId.value}),
+                query('operationList',{entity:'VEHICLE'}),query('operationList',{entity:'CREW',workDate:day})
+            ]);
+            if(request!==generation||!search.isConnected)return;
+            rows=result;allVehicles=vehicleRows;crews=crewRows;render();
+        }catch(e){if(request===generation){rows=[];allVehicles=[];crews=[];status.textContent='読み込みに失敗しました。';DialogService.error(e.message);}}
+    };
+    fillOwnOffices(search.elements.ownOfficeId,await loadOwnOffices(),{unassigned:true});
+    search.elements.workDate.value=localDay();
+    search.addEventListener('submit',e=>{e.preventDefault();load();});
+    search.elements.workDate.addEventListener('change',load);search.elements.ownOfficeId.addEventListener('change',load);
+    search.elements.keyword.addEventListener('input',render);search.elements.unassigned.addEventListener('change',render);await load();
     const initialId=document.querySelector('main[data-order-id]')?.dataset.orderId;
     if(Number(initialId)>0)await safe(async()=>{await form.open(await query('operationDispatchDetail',{orderId:Number(initialId)}));refreshMobileReadOnly();})();
 }

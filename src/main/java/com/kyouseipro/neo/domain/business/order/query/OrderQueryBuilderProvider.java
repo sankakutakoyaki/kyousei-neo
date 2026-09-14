@@ -20,6 +20,7 @@ public class OrderQueryBuilderProvider implements QueryBuilderPart {
         Map<QueryId, QueryBuilder> map = new HashMap<>();
 
         map.put(QueryId.ORDER_LIST, req -> {
+            req.getParams().put("ownOfficeId",toInteger(req.getParams().get("ownOfficeId")));
             Integer categoryInt = toInteger(req.getParams().get("category"));
             OrderCategory category = categoryInt == null ? null: EnumUtil.of(OrderCategory.class, categoryInt);
             return OrderQuery.orderList(category);
