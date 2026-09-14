@@ -1,10 +1,7 @@
 @charset "UTF-8";
 
-/* 個別画面は従来のサイドバー、カテゴリートップはショートカットを使う。 */
+/* PCは分野別サイドバー、スマホのカテゴリートップはアイコンとハンバーガーを使う。 */
 .category-top-menu { display: none; }
-.normal-main:has(.shortcut-page) { grid-template-columns: minmax(0, 1fr); }
-.normal-main:has(.shortcut-page) .category-detail-menu { display: none; }
-.normal-main:has(.shortcut-page) .category-top-menu { display: block; }
 .shortcut-page h1 { margin: 0 0 1.5rem; font-size: 1.6rem; }
 .shortcut-grid {
     display: grid;
@@ -32,9 +29,12 @@
     .shortcut-card:hover { background: var(--sidebar-select-bg); }
 }
 @media screen and (min-width: 561px) {
-    .normal-main:has(.shortcut-page) > .normal-sidebar { display: none; }
+    .shortcut-page .shortcut-grid { display: none; }
 }
 @media screen and (max-width: 560px) {
+    .normal-main:has(.shortcut-page) { grid-template-columns: minmax(0, 1fr); }
+    .normal-main:has(.shortcut-page) .category-detail-menu { display: none; }
+    .normal-main:has(.shortcut-page) .category-top-menu { display: block; }
     .shortcut-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .shortcut-page { padding: 1rem; }
     .shortcut-card { min-width: 0; }
