@@ -79,4 +79,13 @@ class OperationServiceTest {
   role("APPROLE_user");when(request.getHeader("User-Agent")).thenReturn("Mozilla iPhone");
   assertThrows(AccessDeniedException.class,()->service.save(base("CREW")));
  }
+ @Test void vehicleOfficeFilterAndInvalidOfficeAreChecked(){
+  service.list(Map.of("entity","VEHICLE","ownOfficeId","2"));
+  verify(sql).selectMap(contains("own_office_id=?"),eq(List.of(2)));
+  var p=base("VEHICLE");p.putAll(Map.of("code","V01","name","トラック","plateNumber","1234","vehicleType","トラック","capacity","3","ownOfficeId","2"));
+  assertThrows(BusinessException.class,()->service.save(p));
+  when(sql.selectMap(contains("c.category=0"),eq(List.of(2)))).thenReturn(List.of(Map.of("officeId",2)));
+  service.save(p);
+  verify(repo).save(eq(OperationSpec.VEHICLE),eq(0L),argThat(v->Integer.valueOf(2).equals(v.get("own_office_id"))),eq("real-editor"));
+ }
 }

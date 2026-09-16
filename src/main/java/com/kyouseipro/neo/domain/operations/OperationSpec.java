@@ -5,6 +5,7 @@ import com.kyouseipro.neo.common.exception.BusinessException;
 
 public enum OperationSpec {
     VEHICLE("vehicles", "車両管理", "運行", List.of(
+            new Field("ownOfficeId", "営業所", "office", false),
             new Field("code", "車両コード", "text", true),
             new Field("name", "車両名", "text", true),
             new Field("plateNumber", "ナンバー", "text", true),

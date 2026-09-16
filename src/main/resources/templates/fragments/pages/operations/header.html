@@ -1,8 +1,12 @@
 <th:block th:fragment="headerFragment">
  <form id="operation-search" class="page-input-header operation-search">
-  <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${ {'text':'検索（コード・氏名など）','id':'operation-keyword','name':'keyword','type':'search'} })}"></th:block>
+  <th:block th:if="${opEntity!='VEHICLE'}"><th:block th:replace="~{fragments/components/box :: inputBoxFragment(${ {'text':'検索（コード・氏名など）','id':'operation-keyword','name':'keyword','type':'search'} })}"></th:block></th:block>
   <th:block th:if="${opEntity=='CREW' or opEntity=='SCORE'}"><th:block th:replace="~{fragments/components/box :: inputBoxFragment(${ {'text':'運行日','id':'operation-day','name':'workDate','type':'date'} })}"></th:block></th:block>
-  <div class="form-parts"><label></label><button class="normal-btn ok" type="submit">検索</button></div>
-  <div class="form-parts" th:if="${opCanWrite}"><label></label><button class="normal-btn" type="button" id="operation-create" data-mobile-write>新規登録</button></div>
+  <div class="form-parts" th:if="${opEntity!='VEHICLE'}"><label></label><button class="normal-btn ok" type="submit">検索</button></div>
+  <div class="form-parts" th:if="${opCanWrite and opEntity!='VEHICLE'}"><label></label><button class="normal-btn" type="button" id="operation-create" data-mobile-write>新規登録</button></div>
+  <th:block th:if="${opEntity=='VEHICLE'}">
+   <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${ {'text':'営業所','id':'vehicle-office','name':'ownOfficeId'} })}"></th:block>
+   <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${ {'add':opCanWrite?'operation-create':null,'delete':opCanWrite?'vehicle-delete':null,'download':'vehicle-download','reload':'vehicle-reload'} })}"></th:block>
+  </th:block>
  </form>
 </th:block>

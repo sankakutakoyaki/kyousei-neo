@@ -28,3 +28,4 @@
 @media(max-width:700px){.dispatch-board-columns {grid-template-columns:1fr;}}
 #dispatch-board {overflow:auto;min-height:0;}
 @media(min-width:961px){main[data-op-entity="QUALIFICATION"] .normal-table tr {grid-template-columns:repeat(6,minmax(0,1fr)) 8rem;}}
+@media (min-width:561px) {main[data-op-entity="VEHICLE"] .normal-table tr {grid-template-columns:3rem repeat(6,minmax(0,1fr)) 8rem;}}

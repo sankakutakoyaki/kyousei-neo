@@ -1,7 +1,8 @@
 <th:block th:fragment="formFragment">
  <section class="dialog-content">
   <div id="operation-fields" class="operation-fields">
-   <th:block th:each="field:${opFields}"><th:block th:replace="~{fragments/components/box :: inputBoxFragment(${field})}"></th:block></th:block>
+   <th:block th:each="field:${opFields}"><th:block th:if="${field.type!='office'}"><th:block th:replace="~{fragments/components/box :: inputBoxFragment(${field})}"></th:block></th:block></th:block>
+   <th:block th:if="${opEntity=='VEHICLE'}"><th:block th:replace="~{fragments/components/box :: selectBoxFragment(${ {'text':'営業所','id':'op-ownOfficeId','name':'own-office-id','key':'ownOfficeId'} })}"></th:block></th:block>
   </div>
   <div th:if="${opEntity=='CREW'}" id="operation-crew-editor">
    <p>担当者コードを入力してEnterで追加します。ドライバーを1名指定してください。</p>

@@ -18,4 +18,11 @@ class OwnOfficeContextTest {
   when(sql.selectMap(contains("FROM employees"),anyList())).thenReturn(List.of(Map.of("officeId",9)));
   assertEquals("",controller.context(auth).get("defaultOfficeId"));
  }
+ @Test void headquartersIsIdentifiedByOfficeId1000(){
+  var sql=mock(SqlRepository.class);var controller=new OwnOfficeContextController(sql);
+  when(sql.selectMap(contains("FROM offices"),anyList())).thenReturn(List.of(Map.of("value",1000,"label","本社")));
+  when(sql.selectMap(contains("FROM employees"),anyList())).thenReturn(List.of(Map.of("officeId",1000)));
+  var result=controller.context(new UsernamePasswordAuthenticationToken("test","unused"));
+  assertEquals(true,result.get("isHeadOffice"));assertEquals(1000,result.get("defaultOfficeId"));
+ }
 }

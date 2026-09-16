@@ -25,6 +25,7 @@ public class OwnOfficeContextController {
         Object own=self.size()==1?self.get(0).get("officeId"):null;
         Object chosen=own;
         if(own==null || offices.stream().noneMatch(o->Objects.toString(o.get("value"),"").equals(chosen.toString())))own="";
-        return Map.of("offices",offices,"defaultOfficeId",own);
+        boolean headOffice="1000".equals(own.toString());
+        return Map.of("offices",offices,"defaultOfficeId",own,"isHeadOffice",headOffice);
     }
 }

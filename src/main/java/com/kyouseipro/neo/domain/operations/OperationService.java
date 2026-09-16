@@ -36,6 +36,9 @@ public class OperationService {
         }
         String where=" WHERE state=0";
         var args=new ArrayList<Object>();
+        if(spec==OperationSpec.VEHICLE && p.get("ownOfficeId")!=null && !p.get("ownOfficeId").toString().isBlank()) {
+            where+=" AND own_office_id=?";args.add(positiveInteger(p.get("ownOfficeId"),"営業所"));
+        }
         if(spec==OperationSpec.CREW || spec==OperationSpec.SCORE) {
             where+=" AND work_date=?"; args.add(date(p.get("workDate"),true));
         }
@@ -87,6 +90,14 @@ public class OperationService {
     public long save(Map<String,Object> p) {
         var spec=OperationSpec.from(p.get("entity")); access.write(spec,p);
         repo.schedulingLock();
+        if(spec==OperationSpec.VEHICLE && p.get("deleteRows") instanceof List<?> rows) {
+            if(rows.isEmpty() || rows.size()>200)throw new BusinessException("削除対象は1〜200件で選択してください。");
+            for(Object item:rows) {
+                if(!(item instanceof Map<?,?> row))throw new BusinessException("削除対象を選び直してください。");
+                save(Map.of("entity","VEHICLE","id",id(row.get("id")),"version",row.get("version"),"delete",true,"mobile",p.get("mobile")));
+            }
+            return 0;
+        }
         long key=p.get("id")==null?0:Long.parseLong(p.get("id").toString());
         Map<String,Object> old=key==0?Map.of():repo.get(spec,key,true);
         if(key!=0) OperationRepository.version(old,p.get("version"));
@@ -111,6 +122,12 @@ public class OperationService {
             values.put("employee_id",employee.get("id")); values.put("employee_name",employee.get("name"));
         }
         if(spec==OperationSpec.VEHICLE) {
+            Object office=values.get("own_office_id");
+            if(office!=null) {
+                int officeId=positiveInteger(office,"営業所");
+                if(sql.selectMap("SELECT o.office_id FROM offices o JOIN companies c ON c.company_id=o.company_id WHERE o.office_id=? AND o.state=0 AND c.state=0 AND c.category=0",List.of(officeId)).isEmpty())throw new BusinessException("有効な自社営業所を選択してください。");
+                values.put("own_office_id",officeId);
+            }
             positiveInteger(values.get("capacity"),"乗車定員");
             if(key!=0) {
                 immutable(old.get("code"),values.get("code"),"登録済みの車両コード");
