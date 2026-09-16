@@ -97,6 +97,7 @@ test('operations mobile editing requires management flag and stays scoped to ope
         assert.throws(() => assertMobileWriteAllowed('/api/query', 'POST', {queryId}), /閲覧/);
     globalThis.document = {querySelector: selector => selector.includes('data-operations-editor') ? {} : null};
     assert.equal(isMobileReadOnly('operations'), false);
+    assert.equal(isMobileReadOnly('operationDispatch'), false);
     for (const queryId of ['operationSave', 'operationDispatchSave'])
         assert.doesNotThrow(() => assertMobileWriteAllowed('/api/query', 'POST', {queryId}));
     assert.throws(() => assertMobileWriteAllowed('/api/query', 'POST', {queryId:'orderSave'}), /閲覧/);

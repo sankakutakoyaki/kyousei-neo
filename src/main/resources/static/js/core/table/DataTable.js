@@ -20,6 +20,8 @@ export class DataTable {
         this.controller = config.controller;
         this.checkable = config.checkable;
         this.rowClass = config.rowClass;
+        this.onRendered = config.onRendered;
+        this.fetchRevision = 0;
         this.onRowClick = config.onRowClick;
         this.onDoubleClick = config.onDoubleClick;
         this.currentRowId = null;
@@ -62,7 +64,7 @@ export class DataTable {
 
     // 初期表示
     async initData(){
-        await this.fetch();
+        if(await this.fetch() === false)return;
         this.reload();
     }
 
@@ -76,11 +78,16 @@ export class DataTable {
     async fetch(){
         if(!this.repository) return;
 
+        const revision=++this.fetchRevision;
         const params = this.buildParams
             ? this.buildParams(this.controller)
             : {};
-        const data = await this.repository.search(params);
+        let data;
+        try {data = await this.repository.search(params);}
+        catch(error){if(revision!==this.fetchRevision)return false;throw error;}
+        if(revision!==this.fetchRevision)return false;
         this.model.setOrigin(data ?? []);
+        return true;
     }
 
     async deleteByIds(ids){
@@ -115,7 +122,7 @@ export class DataTable {
     //     }
     // }
     async refresh(id = null){
-        await this.fetch();
+        if(await this.fetch() === false)return this.model.originData;
 
         if(id){
             const index = this.model.originData.findIndex(
@@ -158,6 +165,7 @@ export class DataTable {
             this.model.getViewData()
         );
 
+        this.onRendered?.(this.tableEl,this.model.getViewData(),this);
         if(this.controller){
             this.controller.updateButtons();
         }

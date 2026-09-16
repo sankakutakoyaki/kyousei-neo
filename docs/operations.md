@@ -75,3 +75,12 @@ SQL Serverを対象とします。実際のDBへの適用・接続検証はこ�
 新規車両では営業所を登録できます。既存車両は未設定のまま保持し、「全て」から詳細を開いて営業所を設定してください。
 ボタンは既存の共通部品を使用します。削除はチェックした車両をまとめて無効化し、配車等により削除できないものが含まれる場合は全件ロールバックします。取得は選択行（選択がなければ表示中の全件）のCSVです。
 起動前に `database/schema/20260916_add_vehicle_own_office.sql` を適用してください。車両本体と変更ログに営業所を追加します。実DBには未適用です。
+
+## 配車画面の共通構成
+
+配車の左右一覧は `createCrudPage` → `PageController` → `DataTable` / `TableModel` で管理します。
+`pages/operations/dispatch/columns.js` が表示項目を定義し、`repositories/operations/DispatchRepository.js` が通信を担当します。
+左右の検索は同一の取得結果を共有し、キーワード・未配車の絞り込み、並び替え、50件超の追加表示には共通テーブル処理を使用します。
+フォームは `dispatch/dispatchForm.js` の `FormController` をページへ登録し、保存後は共通の検索アクションで両一覧を更新します。
+`dispatchBoard.js` は描画済みの行へのドラッグ・選択操作の追加だけを担当します。
+共通側の追加は初期取得を待機できる `autoLoad`、描画後の `onRendered`、古い検索応答の破棄です。未指定の画面は従来どおり初期取得・描画します。この構成変更にDB変更はありません。

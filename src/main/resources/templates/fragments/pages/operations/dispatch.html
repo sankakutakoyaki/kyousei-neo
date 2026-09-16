@@ -9,10 +9,22 @@
    <button class="normal-btn ok" type="submit">検索</button>
   </form>
   <p class="operation-guide">日別編成の登録後、車両と伝票を結び付けます。1伝票に複数台を追加できます。</p>
-  <section id="dispatch-board" aria-label="車両と伝票の配車"></section>
-  <footer th:replace="~{fragments/table/footer :: datetimeFragment('plan-status')}"></footer>
+  <section id="dispatch-board" aria-label="車両と伝票の配車">
+   <p id="plan-instructions" class="operation-guide" role="status">伝票と車両をドラッグ＆ドロップ、または両方の「選択」ボタンで指定してください。最後に確認画面で保存します。</p>
+   <div class="dispatch-board-columns">
+    <section class="dispatch-pane" data-controller="dispatchVehicles"><h2>車両一覧</h2>
+     <section th:replace="~{fragments/table/body :: normalFragment('plan-vehicle-heading','plan-vehicle-rows')}"></section>
+     <footer th:replace="~{fragments/table/footer :: datetimeFragment('plan-vehicle-count')}"></footer>
+    </section>
+    <section class="dispatch-pane" data-controller="operationDispatch"><h2>当日の伝票一覧</h2>
+     <section th:replace="~{fragments/table/body :: normalFragment('plan-order-heading','plan-order-rows')}"></section>
+     <footer th:replace="~{fragments/table/footer :: datetimeFragment('plan-order-count')}"></footer>
+    </section>
+   </div>
+  </section>
+  <p id="plan-status" role="status" class="operation-guide"></p>
  </div></div></div>
- <div id="form-dialog-area"><form id="operation-dispatch-form" class="form-dialog none" data-controller="operations" data-key="id"><div class="dialog-main">
+ <div id="form-dialog-area"><form id="operation-dispatch-form" class="form-dialog none" data-controller="operationDispatch" data-key="id"><div class="dialog-main">
   <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title':'車両の配車・現場責任者'} })}"></header>
   <section class="dialog-content">
    <p id="plan-summary"></p><p id="plan-readonly"></p>

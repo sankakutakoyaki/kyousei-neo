@@ -114,7 +114,7 @@ export class PageController {
             if(data){
                 this.dataTable.model.setOrigin(data);
                 this.dataTable.reload();
-            } else {
+            } else if(this.config.autoLoad !== false) {
                 this.dataTable.initData(); // API
             }
         }

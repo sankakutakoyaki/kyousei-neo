@@ -11,7 +11,7 @@ export function isDispatchScope(scope) {
     return scope === "dispatch" || !!scope?.closest?.('main[data-page$="/dispatchPage.js"]');
 }
 export const isOperationsEditor = () => typeof document !== "undefined" && document.querySelector?.('main[data-operations-editor="true"]') != null;
-export const isOperationsScope = scope => scope === "operations" || !!scope?.closest?.('main.operations-page');
+export const isOperationsScope = scope => ["operations", "operationDispatch"].includes(scope) || !!scope?.closest?.('main.operations-page');
 export const isMobileReadOnly = scope => isMobileDevice() && !isRecycleScope(scope) && !(isDispatchScope(scope) && isDispatchManager()) && !(isOperationsScope(scope) && isOperationsEditor());
 export const mobileWriteQueries = new Set(["orderItemArrival", "recycleSave", "recycleDeliverySave", "recycleShippingSave", "recycleLossSave"]);
 export const isWriteAction = action => /^(create|delete|save|bulkEdit|delete-order-item|delete-order-work)$/i.test(action);
