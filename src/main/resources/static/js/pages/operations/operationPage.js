@@ -17,7 +17,6 @@ export async function init() {
     if(entity==='VEHICLE') {
         document.getElementById('operation-keyword').name='keyword';
         getField('vehicleType').dataset.required='車種を選択してください。';
-        getField('vehicleType').replaceChildren(document.getElementById('vehicle-type-options').content.cloneNode(true));
         getField('code').placeholder='保存時に自動採番';
         getField('code').readOnly=true;
     }

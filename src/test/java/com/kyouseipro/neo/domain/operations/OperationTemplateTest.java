@@ -24,7 +24,8 @@ class OperationTemplateTest {
    assertEquals(spec==OperationSpec.CREW||spec==OperationSpec.SCORE,html.contains("id=\"operation-day\""));
    if(spec==OperationSpec.VEHICLE) {
     assertTrue(html.contains("<textarea"));assertTrue(html.contains("id=\"op-remarks\""));
-    assertTrue(html.contains("vehicle-type-options"));assertTrue(html.contains("軽バン"));
+    assertTrue(html.contains("<select id=\"op-vehicleType\""));assertFalse(html.contains("<input id=\"op-vehicleType\""));
+    for(String type:OperationSpec.VEHICLE_TYPES)assertTrue(html.contains("value=\""+type+"\""));
     assertTrue(html.indexOf("id=\"op-code\"")<html.indexOf("id=\"op-name\""));
    }
    if(spec==OperationSpec.LABOR) assertFalse(html.contains("certificate-number"));
