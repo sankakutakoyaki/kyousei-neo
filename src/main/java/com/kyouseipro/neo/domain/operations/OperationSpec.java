@@ -5,14 +5,14 @@ import com.kyouseipro.neo.common.exception.BusinessException;
 
 public enum OperationSpec {
     VEHICLE("vehicles", "車両管理", "運行", List.of(
+            new Field("code", "車両ID", "text", false),
             new Field("ownOfficeId", "営業所", "office", false),
-            new Field("code", "車両コード", "text", true),
             new Field("name", "車両名", "text", true),
             new Field("plateNumber", "ナンバー", "text", true),
-            new Field("vehicleType", "車種（トラック・軽バン等）", "text", true),
+            new Field("vehicleType", "車種", "vehicleType", true),
             new Field("capacity", "乗車定員", "number", true),
             new Field("recorderId", "ドラレコ車両ID", "text", false),
-            new Field("remarks", "備考", "text", false))),
+            new Field("remarks", "備考", "textarea", false))),
     INSPECTION("vehicle-maintenance", "点検予定・実施履歴", "運行", List.of(
             new Field("vehicleCode", "車両コード", "text", true),
             new Field("kind", "点検種別（車検・年次点検等）", "text", true),
@@ -70,6 +70,7 @@ public enum OperationSpec {
             new Field("systolic", "血圧（最高）", "number", false),
             new Field("diastolic", "血圧（最低）", "number", false),
             new Field("remarks", "特殊健診の種類・備考", "text", false)));
+    public static final List<String> VEHICLE_TYPES=List.of("トラック","軽バン","軽トラック","バン","乗用車","その他");
     public record Field(String name, String label, String type, boolean required) {}
     public final String route, title, section;
     public final List<Field> fields;

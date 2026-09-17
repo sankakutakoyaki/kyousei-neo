@@ -24,9 +24,10 @@ public class OperationPageController {
         model.addAttribute("opSection",spec.section);
         model.addAttribute("opCanWrite",access.canWrite(spec)); model.addAttribute("opPrivate",access.privateAccess());
         model.addAttribute("opMobileEditor",access.manager() && access.canWrite(spec));
+        model.addAttribute("opVehicleTypes",OperationSpec.VEHICLE_TYPES);
         model.addAttribute("opFields",spec.fields.stream().map(f->{
             var m=new HashMap<String,Object>();m.put("text",f.label());m.put("name",OperationSpec.snake(f.name()).replace('_','-'));m.put("id","op-"+f.name());
-            m.put("type",f.type());if(f.required())m.put("required",f.label()+"を入力してください。");m.put("key",f.name());return m;
+            m.put("type",f.type());if(f.required())m.put("required",f.label()+"を入力してください。");m.put("key",f.name());if(f.type().equals("textarea"))m.put("rows",4);return m;
         }).toList());
         return "fragments/pages/operations/content :: content";
     }

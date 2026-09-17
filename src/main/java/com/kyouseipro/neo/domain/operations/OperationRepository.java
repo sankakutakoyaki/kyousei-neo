@@ -41,6 +41,11 @@ public class OperationRepository {
         if(expected==null || !String.valueOf(row.get("version")).equals(String.valueOf(expected)))
             throw new BusinessException("他の画面で更新されています。開き直して確認してください。");
     }
+    // saveの配車ロック内で採番する。無効化した車両も含め、番号を再利用しない。
+    public String nextVehicleCode() {
+        var rows=sql.selectMap("SELECT COALESCE(MAX(TRY_CONVERT(BIGINT,code)),999)+1 AS next_code FROM operation_vehicle WHERE TRY_CONVERT(BIGINT,code)>=1000",List.of());
+        return rows.get(0).get("nextCode").toString();
+    }
     public void schedulingLock() {
         sql.update("""
             DECLARE @result INT;

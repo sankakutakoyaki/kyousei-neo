@@ -110,6 +110,7 @@ public class OperationService {
         var values=new LinkedHashMap<String,Object>();
         for(var f:spec.fields) {
             Object raw=p.containsKey(f.name())?p.get(f.name()):old.get(f.name());
+            if(spec==OperationSpec.VEHICLE && f.name().equals("code") && key==0)raw=repo.nextVehicleCode();
             Object v=normalize(f,raw);
             values.put(OperationSpec.snake(f.name()),v);
         }
@@ -122,6 +123,7 @@ public class OperationService {
             values.put("employee_id",employee.get("id")); values.put("employee_name",employee.get("name"));
         }
         if(spec==OperationSpec.VEHICLE) {
+            if(!OperationSpec.VEHICLE_TYPES.contains(values.get("vehicle_type")) && !Objects.equals(old.get("vehicleType"),values.get("vehicle_type")))throw new BusinessException("車種を一覧から選択してください。");
             Object office=values.get("own_office_id");
             if(office!=null) {
                 int officeId=positiveInteger(office,"営業所");

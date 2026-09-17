@@ -20,7 +20,7 @@ class OperationServiceTest {
  final HttpServletRequest request=mock(HttpServletRequest.class);
  final OperationAccess access=new OperationAccess(request);
  final OperationService service=new OperationService(sql,repo,access,schedule);
- @BeforeEach void setup(){role("APPROLE_admin");}
+ @BeforeEach void setup(){role("APPROLE_admin");when(repo.nextVehicleCode()).thenReturn("1000");}
  @AfterEach void cleanup(){SecurityContextHolder.clearContext();}
  void role(String role){SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("real-editor","",List.of(new SimpleGrantedAuthority(role))));}
  Map<String,Object> base(String kind){return new HashMap<>(Map.of("entity",kind,"mobile",false));}
@@ -38,7 +38,7 @@ class OperationServiceTest {
  @Test void vehicleSaveWhitelistsFieldsAndChecksCapacity(){
   var p=base("VEHICLE");p.putAll(Map.of("code","V01","name","トラック","plateNumber","1234","vehicleType","トラック","capacity","3","editor","spoofed","state",9));
   service.save(p);
-  verify(repo).save(eq(OperationSpec.VEHICLE),eq(0L),argThat(v->!v.containsKey("editor")&&!v.containsKey("state")&&v.get("capacity").toString().equals("3")),eq("real-editor"));
+  verify(repo).save(eq(OperationSpec.VEHICLE),eq(0L),argThat(v->"1000".equals(v.get("code"))&&!v.containsKey("editor")&&!v.containsKey("state")&&v.get("capacity").toString().equals("3")),eq("real-editor"));
   p.put("capacity","2.5");assertThrows(BusinessException.class,()->service.save(p));
  }
  @Test void staleUpdatesCannotWrite(){
@@ -87,5 +87,14 @@ class OperationServiceTest {
   when(sql.selectMap(contains("c.category=0"),eq(List.of(2)))).thenReturn(List.of(Map.of("officeId",2)));
   service.save(p);
   verify(repo).save(eq(OperationSpec.VEHICLE),eq(0L),argThat(v->Integer.valueOf(2).equals(v.get("own_office_id"))),eq("real-editor"));
+ }
+ @Test void existingVehicleIdCannotBeChangedAndUnknownNewTypeIsRejected(){
+  var original=Map.<String,Object>of("code","1000","version",1,"name","トラック","plateNumber","1234","vehicleType","トラック","capacity",3);
+  when(repo.get(OperationSpec.VEHICLE,1,true)).thenReturn(original);
+  var p=base("VEHICLE");p.putAll(Map.of("id",1,"version",1,"code","1001"));
+  assertThrows(BusinessException.class,()->service.save(p));
+  var newVehicle=base("VEHICLE");newVehicle.putAll(original);newVehicle.put("vehicleType","自由入力");
+  assertThrows(BusinessException.class,()->service.save(newVehicle));
+  verify(repo,never()).save(any(),anyLong(),anyMap(),anyString());
  }
 }

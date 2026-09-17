@@ -11,9 +11,15 @@ export async function init() {
     await initCommon();
     const page=document.querySelector('main[data-op-entity]'),entity=page.dataset.opEntity;
     const canWrite=page.dataset.opWrite==='true',privateAccess=page.dataset.opPrivate==='true';
-    const formEl=document.getElementById('operation-form'),fields=[...document.querySelectorAll('#operation-fields input, #operation-fields select')];
+    const formEl=document.getElementById('operation-form'),fields=[...document.querySelectorAll('#operation-fields input, #operation-fields select, #operation-fields textarea')];
     const search=document.getElementById('operation-search'),status=document.getElementById('operation-status');status.setAttribute('role','status');
     const getField=key=>fields.find(f=>f.dataset.key===key);
+    if(entity==='VEHICLE') {
+        getField('vehicleType').dataset.required='車種を選択してください。';
+        getField('vehicleType').replaceChildren(document.getElementById('vehicle-type-options').content.cloneNode(true));
+        getField('code').placeholder='保存時に自動採番';
+        getField('code').readOnly=true;
+    }
     const selected=new Set();
     const officeContext=entity==='VEHICLE'?await loadOwnOffices():null;
     if(officeContext){fillOwnOffices(search.elements.ownOfficeId,officeContext,{value:officeContext.isHeadOffice?'':officeContext.defaultOfficeId});search.elements.ownOfficeId.options[0].textContent='全て';}
@@ -52,9 +58,16 @@ export async function init() {
             current=data;members=structuredClone(data.members??[]);original=JSON.stringify(payloadMembers());
             fields.forEach(f=>{
                 f.disabled=!canWrite;
-                f.readOnly=Boolean(data.id) && ((['VEHICLE','QUALIFICATION_TYPE'].includes(entity) && f.dataset.key==='code') || (entity==='CREW' && ['workDate','vehicleCode'].includes(f.dataset.key)) || (entity==='SCORE' && ['workDate','vehicleCode','employeeCode'].includes(f.dataset.key)));
+                f.readOnly=(entity==='VEHICLE' && f.dataset.key==='code') || Boolean(data.id) && ((['VEHICLE','QUALIFICATION_TYPE'].includes(entity) && f.dataset.key==='code') || (entity==='CREW' && ['workDate','vehicleCode'].includes(f.dataset.key)) || (entity==='SCORE' && ['workDate','vehicleCode','employeeCode'].includes(f.dataset.key)));
                 if(f.type==='date')f.value=datePart(data[f.dataset.key]);
             });
+            if(entity==='VEHICLE') {
+                const type=getField('vehicleType');type.querySelectorAll('[data-legacy]').forEach(option=>option.remove());
+                if(data.vehicleType && ![...type.options].some(option=>option.value===data.vehicleType)) {
+                    const option=new Option(data.vehicleType+'（既存登録）',data.vehicleType);option.dataset.legacy='';type.add(option);
+                }
+                type.value=data.vehicleType??'';
+            }
             if(officeContext)fillOwnOffices(getField('ownOfficeId'),officeContext,{all:false,unassigned:true,value:data.id?(data.ownOfficeId??'0'):(search.elements.ownOfficeId.value||officeContext.defaultOfficeId||'0')});
             showMembers();
             const impact=document.getElementById('crew-impacts');if(impact)impact.textContent=(data.impacts??[]).length?`変更が反映される未完了伝票：${data.impacts.map(x=>x.requestNumber||x.orderId).join('、')}`:'未完了伝票への影響はありません。';
@@ -116,7 +129,7 @@ export async function init() {
         try{for(const file of input.files){const result=await AttachmentRepository.upload(parentType,current.id,group.attachmentGroupId,[file]);if(result.ok===false)throw new Error("書類の保存に失敗しました。");}input.value='';await refreshFiles();}finally{button.disabled=false;}
     }));
     const columns={
-        VEHICLE:[['officeName','営業所'],['code','車両コード'],['name','車両名'],['plateNumber','ナンバー'],['vehicleType','車種'],['capacity','定員']],
+        VEHICLE:[['officeName','営業所'],['code','車両ID'],['name','車両名'],['plateNumber','ナンバー'],['vehicleType','車種'],['capacity','定員']],
         INSPECTION:[['vehicleCode','車両コード'],['kind','点検種別'],['dueDate','期限'],['scheduledDate','予定日'],['performedDate','実施日']],
         CREW:[['workDate','運行日'],['vehicleCode','車両コード'],['driverName','ドライバー'],['memberNames','乗車メンバー'],['remarks','備考']],
         SCORE:[['workDate','運行日'],['vehicleCode','車両コード'],['employeeName','ドライバー'],['score','得点'],['remarks','備考']],

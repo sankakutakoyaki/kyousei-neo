@@ -22,6 +22,11 @@ class OperationTemplateTest {
    String html=engine.process("fragments/pages/operations/content",new Context(Locale.JAPAN,model));
    assertFalse(html.contains("data-required=\"false\""));assertFalse(html.contains("data-required=\"true\""));assertTrue(html.contains("class=\"normal-table\""));assertTrue(html.contains("id=\"operation-form\""));assertTrue(html.contains("id=\"operation-footer\""));
    assertEquals(spec==OperationSpec.CREW||spec==OperationSpec.SCORE,html.contains("id=\"operation-day\""));
+   if(spec==OperationSpec.VEHICLE) {
+    assertTrue(html.contains("<textarea"));assertTrue(html.contains("id=\"op-remarks\""));
+    assertTrue(html.contains("vehicle-type-options"));assertTrue(html.contains("軽バン"));
+    assertTrue(html.indexOf("id=\"op-code\"")<html.indexOf("id=\"op-name\""));
+   }
    if(spec==OperationSpec.LABOR) assertFalse(html.contains("certificate-number"));
    preview(spec.route,html,"operationPage.js");
   }
