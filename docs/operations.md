@@ -87,6 +87,27 @@ SQL Serverを対象とします。実際のDBへの適用・接続検証はこ�
 
 車両ID（code）は新規保存時に1000から自動採番します。1000以降の番号が既にあれば、その最大値の次を使います。無効化した車両も採番対象に含めて再利用を避け、登録時のロックで同時登録を直列化します。既存コードは変更せず、登録後はAPIでも書換えを拒否します。フォームの先頭に変更不可で表示し、車種はコンボ、備考は複数行入力です。この変更にDB構造の追加はありません。
 
-車両の新規・編集フォームは `templates/fragments/pages/operations/vehicle-form.html` に項目を記述しています。各 `form-parts` または共通部品を呼ぶ `th:block` を丸ごと移動すると表示順を変更できます。保存処理が参照する `id`・`name`・`data-key`（共通部品の `key`）は変更しないでください。車種はこのHTMLに直接定義したselectです。選択肢を追加する際はサーバーの `OperationSpec.VEHICLE_TYPES` も合わせて変更してください。
+車両の新規・編集フォームは `templates/fragments/pages/operations/vehicles/form.html` に項目を記述しています。各 `form-row` を丸ごと移動すると表示順を変更できます。保存処理が参照する `id`・`name`・`data-key`（共通部品の `key`）は変更しないでください。車種はこのHTMLに直接定義したselectです。選択肢を追加する際はサーバーの `OperationSpec.VEHICLE_TYPES` も合わせて変更してください。
 
 車両フォームの無効化ボタンと変更履歴表示は省略し、削除は一覧の共通ボタンに統一しています。本体と変更ログの同時保存は継続します。将来の設定メニューで履歴一覧を集約する想定ですが、集約画面はまだ実装していません。他の画面の無効化操作・履歴表示は現状維持です。
+
+
+## 画面別HTMLの編集場所
+
+追加した9画面は `src/main/resources/templates/fragments/pages/operations/` 配下の画面別フォルダーに整理しました。
+
+| フォルダー | 画面 |
+| --- | --- |
+| `vehicles` | 車両 |
+| `vehicle-maintenance` | 点検予定・実施履歴 |
+| `daily-crews` | 日別編成 |
+| `driving-records` | 運転記録 |
+| `dispatch` | 配車 |
+| `qualification-types` | 資格種類 |
+| `qualifications` | 保有資格 |
+| `labor` | 保険・年金 |
+| `health-checks` | 健康診断 |
+
+各フォルダーの `content.html` がタブ・一覧・ダイアログの構成、`header.html` の `header01Fragment()` が検索・ボタン、`form.html` の `form01Fragment()` が入力項目です。既存のbox・table・dialogの共通部品を呼び出し、各項目の設定はHTML内に直接記述しています。共通の動的フォームと `vehicle-form.html` は廃止しました。
+
+Javaの `OperationSpec` は保存項目・入力検証等に引き続き使用しますが、フォームの表示順は生成しません。表示名や並び順の修正は各HTMLで行えます。項目自体の追加・削除、保存形式や選択肢の変更にはJava側との整合確認も必要です。フォームの `id`・`name`・`key`、資格番号・添付書類の `opPrivate` 条件は維持してください。今回の整理にDB変更はありません。

@@ -1,0 +1,103 @@
+<th:block th:fragment="form01Fragment()">
+    <div class="dialog-content">
+        <!-- 項目の移動はform-row単位で行い、id・name・keyは維持してください。 -->
+        <div id="operation-fields" class="operation-fields">
+            <!-- 車両ID -->
+            <div class="form-row">
+                <div class="form-parts">
+                    <label for="op-code">車両ID</label>
+                    <input id="op-code" name="code" data-key="code" class="normal-input" type="text" readonly placeholder="保存時に自動採番">
+                </div>
+            </div>
+            <!-- 営業所 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                    {
+                        'text': '営業所',
+                        'id': 'op-ownOfficeId',
+                        'name': 'own-office-id',
+                        'key': 'ownOfficeId'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 車両名 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '車両名',
+                        'id': 'op-name',
+                        'name': 'name',
+                        'key': 'name',
+                        'type': 'text',
+                        'required': '車両名を入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- ナンバー -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': 'ナンバー',
+                        'id': 'op-plateNumber',
+                        'name': 'plate-number',
+                        'key': 'plateNumber',
+                        'type': 'text',
+                        'required': 'ナンバーを入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 車種 -->
+            <div class="form-row">
+                <div class="form-parts">
+                    <label for="op-vehicleType">車種</label>
+                    <select id="op-vehicleType" name="vehicle-type" data-key="vehicleType" class="normal-select" data-required="車種を選択してください。">
+                        <option value="">選択してください</option>
+                        <option value="トラック">トラック</option>
+                        <option value="軽バン">軽バン</option>
+                        <option value="軽トラック">軽トラック</option>
+                        <option value="バン">バン</option>
+                        <option value="乗用車">乗用車</option>
+                        <option value="その他">その他</option>
+                    </select>
+                </div>
+            </div>
+            <!-- 乗車定員 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '乗車定員',
+                        'id': 'op-capacity',
+                        'name': 'capacity',
+                        'key': 'capacity',
+                        'type': 'number',
+                        'required': '乗車定員を入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- ドラレコ車両ID -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': 'ドラレコ車両ID',
+                        'id': 'op-recorderId',
+                        'name': 'recorder-id',
+                        'key': 'recorderId',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 備考 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: textareaFragment(${
+                    {
+                        'text': '備考',
+                        'id': 'op-remarks',
+                        'name': 'remarks',
+                        'key': 'remarks',
+                        'rows': 4
+                    }
+                })}"></th:block>
+            </div>
+        </div>
+    </div>
+</th:block>

@@ -1,0 +1,31 @@
+<main th:fragment="content"
+      class="normal-body operations-page"
+      data-page="/js/pages/operations/operationPage.js"
+      data-css="/css/pages/operations.css"
+      th:attr="data-op-view=${opView},data-op-entity=${opEntity},data-op-write=${opCanWrite},data-op-private=${opPrivate},data-operations-editor=${opMobileEditor}">
+    <div class="tab-area">
+        <ul class="tab-menu">
+            <li class="tab-menu-item is-active" data-link="/qualification-types" data-target="body">資格種類</li>
+        </ul>
+        <div class="tab-panel is-show">
+            <div class="table-area operation-table">
+                <header th:replace="~{fragments/pages/operations/qualification-types/header :: header01Fragment()}"></header>
+                <p id="operation-guide" class="operation-guide"></p>
+                <section th:replace="~{fragments/table/body :: normalFragment('operation-heading', 'operation-rows')}"></section>
+                <footer th:replace="~{fragments/table/footer :: datetimeFragment('operation-status')}"></footer>
+            </div>
+        </div>
+    </div>
+    <div id="form-dialog-area">
+        <form id="operation-form" class="form-dialog none" data-controller="operations" data-key="id">
+            <div class="dialog-main">
+                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '資格種類'} })}"></header>
+                <section th:replace="~{fragments/pages/operations/qualification-types/form :: form01Fragment()}"></section>
+                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId': 'operation-footer', 'submitText': '保存', 'cancelText': '閉じる'} })}"></footer>
+            </div>
+        </form>
+    </div>
+    <div id="msg-dialog-area">
+        <div th:replace="~{fragments/dialog/content :: messageFragment}"></div>
+    </div>
+</main>

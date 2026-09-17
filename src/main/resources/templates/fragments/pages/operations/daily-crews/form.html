@@ -1,0 +1,60 @@
+<th:block th:fragment="form01Fragment()">
+    <div class="dialog-content">
+        <!-- 項目の移動はform-row単位で行い、id・name・keyは維持してください。 -->
+        <div id="operation-fields" class="operation-fields">
+            <!-- 運行日 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '運行日',
+                        'id': 'op-workDate',
+                        'name': 'work-date',
+                        'key': 'workDate',
+                        'type': 'date',
+                        'required': '運行日を入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 車両コード -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '車両コード',
+                        'id': 'op-vehicleCode',
+                        'name': 'vehicle-code',
+                        'key': 'vehicleCode',
+                        'type': 'text',
+                        'required': '車両コードを入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 備考 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '備考',
+                        'id': 'op-remarks',
+                        'name': 'remarks',
+                        'key': 'remarks',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+            </div>
+        </div>
+        <div id="operation-crew-editor">
+            <p>担当者コードを入力してEnterで追加します。ドライバーを1名指定してください。</p>
+            <div class="operation-search">
+                <label>担当者コード<input type="text" id="crew-employee-code" class="normal-input" autocomplete="off"></label>
+                <button type="button" id="crew-add" data-mobile-write class="normal-btn">追加</button>
+                <button type="button" id="crew-copy" data-mobile-write class="normal-btn">前日の編成をコピー</button>
+            </div>
+            <div id="crew-members"></div>
+            <p id="crew-impacts"></p>
+        </div>
+        <details>
+            <summary>変更履歴</summary>
+            <div id="operation-history"></div>
+        </details>
+        <button id="operation-delete" type="button" class="normal-btn" data-mobile-write>この登録を無効にする</button>
+    </div>
+</th:block>

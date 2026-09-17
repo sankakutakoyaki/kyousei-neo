@@ -1,0 +1,39 @@
+<th:block th:fragment="form01Fragment()">
+    <div class="dialog-content">
+        <p id="plan-summary"></p>
+        <p id="plan-readonly"></p>
+        <div id="plan-fields">
+            <!-- 車両コード -->
+            <div class="operation-search form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '車両コード',
+                        'id': 'plan-vehicle-code',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+                <button type="button" class="normal-btn" id="plan-add">車両を追加</button>
+            </div>
+            <div id="plan-vehicles"></div>
+            <!-- 現場責任者 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '現場責任者の担当者コード',
+                        'id': 'plan-leader-code',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+                <p id="plan-leader-name"></p>
+            </div>
+        </div>
+        <details>
+            <summary>変更履歴</summary>
+            <div id="plan-history"></div>
+        </details>
+        <details>
+            <summary>旧方式の担当者記録（参照）</summary>
+            <div id="plan-legacy"></div>
+        </details>
+    </div>
+</th:block>

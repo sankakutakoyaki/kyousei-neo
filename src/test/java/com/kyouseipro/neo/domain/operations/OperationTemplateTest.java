@@ -18,10 +18,11 @@ class OperationTemplateTest {
   var controller=new OperationPageController(access);
   for(var spec:OperationSpec.values()) {
    var request=mock(HttpServletRequest.class);when(request.getServletPath()).thenReturn("/"+spec.route);
-   var model=new ExtendedModelMap();controller.page(request,model);
-   String html=engine.process("fragments/pages/operations/content",new Context(Locale.JAPAN,model));
+   var model=new ExtendedModelMap();String view=controller.page(request,model);
+   String html=engine.process(view.split(" :: ")[0],new Context(Locale.JAPAN,model));
    assertFalse(html.contains("data-required=\"false\""));assertFalse(html.contains("data-required=\"true\""));assertTrue(html.contains("class=\"normal-table\""));assertTrue(html.contains("id=\"operation-form\""));assertTrue(html.contains("id=\"operation-footer\""));
    assertEquals(spec==OperationSpec.CREW||spec==OperationSpec.SCORE,html.contains("id=\"operation-day\""));
+   for(var field:spec.fields)assertTrue(html.contains("data-key=\""+field.name()+"\""),spec+" missing field "+field.name());
    if(spec==OperationSpec.VEHICLE) {
     assertTrue(html.contains("<textarea"));assertTrue(html.contains("id=\"op-remarks\""));
     assertTrue(html.contains("<select id=\"op-vehicleType\""));assertFalse(html.contains("<input id=\"op-vehicleType\""));
@@ -30,13 +31,19 @@ class OperationTemplateTest {
    }
    if(spec==OperationSpec.LABOR) assertFalse(html.contains("certificate-number"));
    preview(spec.route,html,"operationPage.js");
+   if(spec==OperationSpec.QUALIFICATION) {
+    model.addAttribute("opPrivate",false);model.addAttribute("opCanWrite",false);
+    String publicHtml=engine.process(view.split(" :: ")[0],new Context(Locale.JAPAN,model));
+    assertFalse(publicHtml.contains("op-certificateNumber"));assertFalse(publicHtml.contains("operation-attachments"));
+    assertTrue(publicHtml.contains("op-qualificationCode"));
+   }
   }
   String order=engine.process("fragments/pages/business/order/content",new Context(Locale.JAPAN));
   assertTrue(order.contains("order-own-office-edit"));assertTrue(order.contains("order-own-office"));
   preview("order",order,"../business/order/orderPage.js");
   preview("timeworks",engine.process("fragments/pages/management/timeworks/content",new Context(Locale.JAPAN)),"../management/timeworksPage.js");
   var model=new ExtendedModelMap();controller.dispatch(model,0);
-  String html=engine.process("fragments/pages/operations/dispatch",new Context(Locale.JAPAN,model));
+  String html=engine.process("fragments/pages/operations/dispatch/content",new Context(Locale.JAPAN,model));
   assertTrue(html.contains("plan-leader-code"));assertTrue(html.contains("plan-legacy"));preview("dispatch",html,"dispatchPage.js");
  }
  private void preview(String name,String html,String module) throws Exception {

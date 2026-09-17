@@ -1,0 +1,75 @@
+<th:block th:fragment="form01Fragment()">
+    <div class="dialog-content">
+        <!-- 項目の移動はform-row単位で行い、id・name・keyは維持してください。 -->
+        <div id="operation-fields" class="operation-fields">
+            <!-- 運行日 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '運行日',
+                        'id': 'op-workDate',
+                        'name': 'work-date',
+                        'key': 'workDate',
+                        'type': 'date',
+                        'required': '運行日を入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 車両コード -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '車両コード',
+                        'id': 'op-vehicleCode',
+                        'name': 'vehicle-code',
+                        'key': 'vehicleCode',
+                        'type': 'text',
+                        'required': '車両コードを入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- ドライバーコード -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': 'ドライバーコード',
+                        'id': 'op-employeeCode',
+                        'name': 'employee-code',
+                        'key': 'employeeCode',
+                        'type': 'text',
+                        'required': 'ドライバーコードを入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 運転得点（未入力可） -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '運転得点（未入力可）',
+                        'id': 'op-score',
+                        'name': 'score',
+                        'key': 'score',
+                        'type': 'number'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 備考・運転交代の補足 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '備考・運転交代の補足',
+                        'id': 'op-remarks',
+                        'name': 'remarks',
+                        'key': 'remarks',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+            </div>
+        </div>
+        <details>
+            <summary>変更履歴</summary>
+            <div id="operation-history"></div>
+        </details>
+        <button id="operation-delete" type="button" class="normal-btn" data-mobile-write>この登録を無効にする</button>
+    </div>
+</th:block>

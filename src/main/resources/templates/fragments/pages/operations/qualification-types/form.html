@@ -1,0 +1,99 @@
+<th:block th:fragment="form01Fragment()">
+    <div class="dialog-content">
+        <!-- 項目の移動はform-row単位で行い、id・name・keyは維持してください。 -->
+        <div id="operation-fields" class="operation-fields">
+            <!-- 資格コード -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '資格コード',
+                        'id': 'op-code',
+                        'name': 'code',
+                        'key': 'code',
+                        'type': 'text',
+                        'required': '資格コードを入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 資格・教育・免許の名称 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '資格・教育・免許の名称',
+                        'id': 'op-name',
+                        'name': 'name',
+                        'key': 'name',
+                        'type': 'text',
+                        'required': '資格・教育・免許の名称を入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 区分（免許・資格・講習・教育） -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '区分（免許・資格・講習・教育）',
+                        'id': 'op-category',
+                        'name': 'category',
+                        'key': 'category',
+                        'type': 'text',
+                        'required': '区分（免許・資格・講習・教育）を入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 等級・種別 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '等級・種別',
+                        'id': 'op-grade',
+                        'name': 'grade',
+                        'key': 'grade',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 有効期限あり -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '有効期限あり',
+                        'id': 'op-expiryRequired',
+                        'name': 'expiry-required',
+                        'key': 'expiryRequired',
+                        'type': 'checkbox'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 運転免許に該当 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '運転免許に該当',
+                        'id': 'op-driverLicense',
+                        'name': 'driver-license',
+                        'key': 'driverLicense',
+                        'type': 'checkbox'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 備考 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '備考',
+                        'id': 'op-remarks',
+                        'name': 'remarks',
+                        'key': 'remarks',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+            </div>
+        </div>
+        <details>
+            <summary>変更履歴</summary>
+            <div id="operation-history"></div>
+        </details>
+        <button id="operation-delete" type="button" class="normal-btn" data-mobile-write>この登録を無効にする</button>
+    </div>
+</th:block>

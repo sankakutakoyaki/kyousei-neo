@@ -1,0 +1,141 @@
+<th:block th:fragment="form01Fragment()">
+    <div class="dialog-content">
+        <!-- 項目の移動はform-row単位で行い、id・name・keyは維持してください。 -->
+        <div id="operation-fields" class="operation-fields">
+            <!-- 車両コード -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '車両コード',
+                        'id': 'op-vehicleCode',
+                        'name': 'vehicle-code',
+                        'key': 'vehicleCode',
+                        'type': 'text',
+                        'required': '車両コードを入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 点検種別（車検・年次点検等） -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '点検種別（車検・年次点検等）',
+                        'id': 'op-kind',
+                        'name': 'kind',
+                        'key': 'kind',
+                        'type': 'text',
+                        'required': '点検種別（車検・年次点検等）を入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 期限 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '期限',
+                        'id': 'op-dueDate',
+                        'name': 'due-date',
+                        'key': 'dueDate',
+                        'type': 'date'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 実施予定日 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '実施予定日',
+                        'id': 'op-scheduledDate',
+                        'name': 'scheduled-date',
+                        'key': 'scheduledDate',
+                        'type': 'date'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 実施日 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '実施日',
+                        'id': 'op-performedDate',
+                        'name': 'performed-date',
+                        'key': 'performedDate',
+                        'type': 'date'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 使用不可（開始日） -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '使用不可（開始日）',
+                        'id': 'op-unavailableFrom',
+                        'name': 'unavailable-from',
+                        'key': 'unavailableFrom',
+                        'type': 'date'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 使用不可（終了日） -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '使用不可（終了日）',
+                        'id': 'op-unavailableTo',
+                        'name': 'unavailable-to',
+                        'key': 'unavailableTo',
+                        'type': 'date'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 走行距離（km） -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '走行距離（km）',
+                        'id': 'op-odometer',
+                        'name': 'odometer',
+                        'key': 'odometer',
+                        'type': 'number'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 整備費用（円） -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '整備費用（円）',
+                        'id': 'op-cost',
+                        'name': 'cost',
+                        'key': 'cost',
+                        'type': 'number'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 整備内容・備考 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '整備内容・備考',
+                        'id': 'op-remarks',
+                        'name': 'remarks',
+                        'key': 'remarks',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+            </div>
+        </div>
+        <details>
+            <summary>変更履歴</summary>
+            <div id="operation-history"></div>
+        </details>
+        <section id="operation-attachments">
+            <h3>証明書・整備書類</h3>
+            <p>保存済みの記録にPDF・画像を追加できます。訂正前の書類も保管します。</p>
+            <input type="file" id="operation-file" accept="application/pdf,image/jpeg,image/png,image/gif" multiple data-mobile-write>
+            <button type="button" id="operation-upload" class="normal-btn" data-mobile-write>書類を追加</button>
+            <div id="operation-files"></div>
+        </section>
+        <button id="operation-delete" type="button" class="normal-btn" data-mobile-write>この登録を無効にする</button>
+    </div>
+</th:block>

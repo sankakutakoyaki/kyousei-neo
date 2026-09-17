@@ -36,7 +36,9 @@
 .dispatch-pane .normal-table tbody {min-height:0;}
 .dispatch-pane .normal-table tr.dispatch-card {border-radius:6px;margin-bottom:12px;}
 @media(max-width:700px){.dispatch-pane {height:45vh;}}
-main[data-op-entity="VEHICLE"] #operation-fields > .form-parts:has(textarea) {grid-column:1 / -1;}
+main[data-op-entity="VEHICLE"] #operation-fields > .form-row:has(textarea) {grid-column:1 / -1;}
 .operation-search.vehicle-search-header {flex-direction:column;align-items:stretch;}
 .vehicle-search-actions {display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;}
 .vehicle-office-filter {display:flex;align-items:center;}
+
+.operation-fields > .form-row { min-width:0; margin:0; }

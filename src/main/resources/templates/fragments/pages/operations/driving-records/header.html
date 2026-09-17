@@ -1,0 +1,28 @@
+<th:block th:fragment="header01Fragment()">
+    <form id="operation-search" class="page-input-header operation-search">
+        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+            {
+                'text': '検索（コード・氏名など）',
+                'id': 'operation-keyword',
+                'name': 'keyword',
+                'type': 'search'
+            }
+        })}"></th:block>
+        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+            {
+                'text': '運行日',
+                'id': 'operation-day',
+                'name': 'workDate',
+                'type': 'date'
+            }
+        })}"></th:block>
+        <div class="form-parts">
+            <label></label>
+            <button class="normal-btn ok" type="submit">検索</button>
+        </div>
+        <div class="form-parts" th:if="${opCanWrite}">
+            <label></label>
+            <button class="normal-btn" type="button" id="operation-create" data-mobile-write>新規登録</button>
+        </div>
+    </form>
+</th:block>

@@ -1,0 +1,99 @@
+<th:block th:fragment="form01Fragment()">
+    <div class="dialog-content">
+        <!-- 項目の移動はform-row単位で行い、id・name・keyは維持してください。 -->
+        <div id="operation-fields" class="operation-fields">
+            <!-- 担当者コード -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '担当者コード',
+                        'id': 'op-employeeCode',
+                        'name': 'employee-code',
+                        'key': 'employeeCode',
+                        'type': 'text',
+                        'required': '担当者コードを入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 健康診断日 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '健康診断日',
+                        'id': 'op-examDate',
+                        'name': 'exam-date',
+                        'key': 'examDate',
+                        'type': 'date',
+                        'required': '健康診断日を入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 診断種別（一般・特殊） -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '診断種別（一般・特殊）',
+                        'id': 'op-examType',
+                        'name': 'exam-type',
+                        'key': 'examType',
+                        'type': 'text',
+                        'required': '診断種別（一般・特殊）を入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 次回予定日 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '次回予定日',
+                        'id': 'op-nextDate',
+                        'name': 'next-date',
+                        'key': 'nextDate',
+                        'type': 'date'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 血圧（最高） -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '血圧（最高）',
+                        'id': 'op-systolic',
+                        'name': 'systolic',
+                        'key': 'systolic',
+                        'type': 'number'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 血圧（最低） -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '血圧（最低）',
+                        'id': 'op-diastolic',
+                        'name': 'diastolic',
+                        'key': 'diastolic',
+                        'type': 'number'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 特殊健診の種類・備考 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '特殊健診の種類・備考',
+                        'id': 'op-remarks',
+                        'name': 'remarks',
+                        'key': 'remarks',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+            </div>
+        </div>
+        <details>
+            <summary>変更履歴</summary>
+            <div id="operation-history"></div>
+        </details>
+        <button id="operation-delete" type="button" class="normal-btn" data-mobile-write>この登録を無効にする</button>
+    </div>
+</th:block>

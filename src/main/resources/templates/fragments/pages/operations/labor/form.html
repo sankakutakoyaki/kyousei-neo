@@ -1,0 +1,146 @@
+<th:block th:fragment="form01Fragment()">
+    <div class="dialog-content">
+        <!-- 項目の移動はform-row単位で行い、id・name・keyは維持してください。 -->
+        <div id="operation-fields" class="operation-fields">
+            <!-- 担当者コード -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '担当者コード',
+                        'id': 'op-employeeCode',
+                        'name': 'employee-code',
+                        'key': 'employeeCode',
+                        'type': 'text',
+                        'required': '担当者コードを入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 適用開始日 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '適用開始日',
+                        'id': 'op-effectiveFrom',
+                        'name': 'effective-from',
+                        'key': 'effectiveFrom',
+                        'type': 'date',
+                        'required': '適用開始日を入力してください。'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 適用終了日 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '適用終了日',
+                        'id': 'op-effectiveTo',
+                        'name': 'effective-to',
+                        'key': 'effectiveTo',
+                        'type': 'date'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 健康保険の加入区分・名称 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '健康保険の加入区分・名称',
+                        'id': 'op-healthInsurance',
+                        'name': 'health-insurance',
+                        'key': 'healthInsurance',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 健康保険番号（末尾4桁以内） -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '健康保険番号（末尾4桁以内）',
+                        'id': 'op-healthLastFour',
+                        'name': 'health-last-four',
+                        'key': 'healthLastFour',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 年金の加入区分 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '年金の加入区分',
+                        'id': 'op-pension',
+                        'name': 'pension',
+                        'key': 'pension',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 雇用保険の加入区分 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '雇用保険の加入区分',
+                        'id': 'op-employmentInsurance',
+                        'name': 'employment-insurance',
+                        'key': 'employmentInsurance',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 雇用保険番号（末尾4桁以内） -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '雇用保険番号（末尾4桁以内）',
+                        'id': 'op-employmentLastFour',
+                        'name': 'employment-last-four',
+                        'key': 'employmentLastFour',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 建退共手帳（有・無・未確認） -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '建退共手帳（有・無・未確認）',
+                        'id': 'op-retirementBook',
+                        'name': 'retirement-book',
+                        'key': 'retirementBook',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 情報確認日 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '情報確認日',
+                        'id': 'op-confirmedDate',
+                        'name': 'confirmed-date',
+                        'key': 'confirmedDate',
+                        'type': 'date'
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 備考 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'text': '備考',
+                        'id': 'op-remarks',
+                        'name': 'remarks',
+                        'key': 'remarks',
+                        'type': 'text'
+                    }
+                })}"></th:block>
+            </div>
+        </div>
+        <details>
+            <summary>変更履歴</summary>
+            <div id="operation-history"></div>
+        </details>
+        <button id="operation-delete" type="button" class="normal-btn" data-mobile-write>この登録を無効にする</button>
+    </div>
+</th:block>

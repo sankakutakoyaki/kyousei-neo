@@ -1,0 +1,25 @@
+<th:block th:fragment="header01Fragment()">
+    <form id="plan-search" class="operation-search page-input-header">
+        <div class="form-parts">
+            <label for="plan-day">運行日</label>
+            <input type="date" class="normal-input" id="plan-day" name="workDate" required>
+        </div>
+        <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+            {
+                'text': '担当営業所',
+                'id': 'plan-office',
+                'name': 'ownOfficeId'
+            }
+        })}"></th:block>
+        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+            {
+                'text': '検索',
+                'id': 'plan-keyword',
+                'name': 'keyword',
+                'type': 'search'
+            }
+        })}"></th:block>
+        <label><input type="checkbox" name="unassigned">未配車のみ</label>
+        <button class="normal-btn ok" type="submit">検索</button>
+    </form>
+</th:block>
