@@ -15,6 +15,7 @@ export async function init() {
     const search=document.getElementById('operation-search'),status=document.getElementById('operation-status');status.setAttribute('role','status');
     const getField=key=>fields.find(f=>f.dataset.key===key);
     if(entity==='VEHICLE') {
+        document.getElementById('operation-keyword').name='keyword';
         getField('vehicleType').dataset.required='車種を選択してください。';
         getField('vehicleType').replaceChildren(document.getElementById('vehicle-type-options').content.cloneNode(true));
         getField('code').placeholder='保存時に自動採番';
@@ -138,8 +139,11 @@ export async function init() {
         LABOR:[['employeeCode','担当者コード'],['employeeName','氏名'],['effectiveFrom','適用開始'],['effectiveTo','適用終了'],['confirmedDate','確認日']],
         HEALTH:[['employeeCode','担当者コード'],['employeeName','氏名'],['examDate','診断日'],['examType','種類'],['nextDate','次回予定']]
     }[entity];
+    const visibleRows=()=>{
+        const term=(search.elements.keyword?.value??'').trim().toLowerCase();return rows.filter(r=>[...Object.values(r),entity==='QUALIFICATION'?qualificationStatus(r,localDay()):''].join(' ').toLowerCase().includes(term));
+    };
     const render=()=>{
-        const term=(search.elements.keyword?.value??'').trim().toLowerCase();const filtered=rows.filter(r=>[...Object.values(r),entity==='QUALIFICATION'?qualificationStatus(r,localDay()):''].join(' ').toLowerCase().includes(term));
+        const filtered=visibleRows();
         drawTable(document.getElementById('operation-heading'),document.getElementById('operation-rows'),columns.map(c=>c[1]),filtered.map(data=>({data,values:columns.map(([key])=>key==='qualificationStatus'?qualificationStatus(data,localDay()):key==='score'&&data[key]==null?'未入力':data[key])})),safe(async row=>{
             if(entity==='QUALIFICATION'&&!privateAccess){DialogService.info(`${row.qualificationName}：${row.expiryDate?`有効期限 ${datePart(row.expiryDate)}`:'有効期限の設定なし'}`);return;}
             await form.open(await query('operationDetail',{entity,id:row.id}));refreshMobileReadOnly();
@@ -174,7 +178,7 @@ export async function init() {
                 await query('operationSave',{entity,mobile:isMobileDevice(),deleteRows:chosen.map(r=>({id:r.id,version:r.version}))});await load();
             }),
             'vehicle-download':()=>{
-                const chosen=selected.size?rows.filter(r=>selected.has(r.id)):rows;
+                const chosen=selected.size?rows.filter(r=>selected.has(r.id)):visibleRows();
                 const quote=value=>'"'+String(value??'').replace(/^[\s]*[=+@-]/,"'$&").replaceAll('"','""')+'"';
                 const csv='\uFEFF'+[columns.map(c=>c[1]),...chosen.map(r=>columns.map(c=>r[c[0]]))].map(row=>row.map(quote).join(',')).join('\r\n');
                 const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const link=document.createElement('a');link.href=url;link.download='車両一覧.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
