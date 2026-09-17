@@ -71,8 +71,9 @@ export async function init() {
             if(officeContext)fillOwnOffices(getField('ownOfficeId'),officeContext,{all:false,unassigned:true,value:data.id?(data.ownOfficeId??'0'):(search.elements.ownOfficeId.value||officeContext.defaultOfficeId||'0')});
             showMembers();
             const impact=document.getElementById('crew-impacts');if(impact)impact.textContent=(data.impacts??[]).length?`変更が反映される未完了伝票：${data.impacts.map(x=>x.requestNumber||x.orderId).join('、')}`:'未完了伝票への影響はありません。';
-            historyView(document.getElementById('operation-history'),[...(data.history??[]),...(data.memberHistory??[])]);
-            const del=document.getElementById('operation-delete');del.hidden=!data.id||!canWrite;del.disabled=!editable();
+            const history=document.getElementById('operation-history');
+            if(history)historyView(history,[...(data.history??[]),...(data.memberHistory??[])]);
+            const del=document.getElementById('operation-delete');if(del){del.hidden=!data.id||!canWrite;del.disabled=!editable();}
             await refreshFiles();
         },
         resetAdditional:()=>{members=structuredClone(current.members??[]);showMembers();},
@@ -82,7 +83,7 @@ export async function init() {
     const baseCanSubmit=form.canSubmit.bind(form);form.canSubmit=()=>editable() && baseCanSubmit();
     form.confirmSave=()=>DialogService.confirm(entity==='CREW' && current.impacts?.length ? `${current.impacts.map(x=>x.requestNumber||x.orderId).join('、')} の乗車メンバーも更新します。保存しますか？`:'保存しますか？');
     formEl.addEventListener('submit',e=>{e.preventDefault();form.save(formEl);});
-    document.getElementById('operation-delete').addEventListener('click',safe(async()=>{
+    document.getElementById('operation-delete')?.addEventListener('click',safe(async()=>{
         if(!editable() || !current.id)return;
         if(!await DialogService.confirm('この登録を無効にしますか？変更履歴は残ります。'))return;
         await query('operationSave',{entity,id:current.id,version:current.version,delete:true,mobile:isMobileDevice()});
