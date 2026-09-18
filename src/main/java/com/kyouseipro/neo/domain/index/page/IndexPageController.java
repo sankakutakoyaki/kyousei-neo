@@ -33,4 +33,13 @@ public class IndexPageController {
 	public String getManagement() {
 		return "fragments/pages/index/management";
 	}
+
+	/**
+	 * 運行
+	 */
+	@GetMapping("/operations")
+	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
+	public String getOperations() {
+		return "fragments/pages/index/operations";
+	}
 }

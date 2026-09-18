@@ -1,0 +1,58 @@
+@charset "UTF-8";
+
+#header-01 {
+    display: grid;
+    row-gap: .7rem;
+
+    & > div:first-of-type {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        column-gap: 2rem;
+        align-items: center;
+    }
+
+    & > div:nth-of-type(2) {
+        display: grid;
+        grid-template-columns: auto 1fr;
+    }
+}
+
+.table-area {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    overflow: hidden;
+}
+
+/*
+ * チェック欄
+ * ID
+ * 営業所
+ * 車番
+ * 車種
+ * メーカー
+ * 型式
+ * 初年度登録
+ * 車検期限
+ * 前輪タイヤ
+ * 後輪タイヤ
+ * 車高
+ * 最大積載量
+ * 右端操作欄
+ */
+:is(#table-01, #table-header-01) tr {
+    grid-template-columns:
+        3rem
+        5rem
+        8rem
+        14rem
+        10rem
+        8rem
+        8rem
+        8rem
+        9rem
+        10rem
+        10rem
+        7rem
+        9rem
+        2rem;
+}

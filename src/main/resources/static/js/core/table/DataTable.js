@@ -68,13 +68,6 @@ export class DataTable {
         this.reload();
     }
 
-    // async fetch(){
-    //     if(!this.repository) return;
-
-    //     const params = this.buildParams ? this.buildParams(): {};
-    //     const data = await this.repository.search(params);
-    //     this.model.setOrigin(data ?? []);
-    // }
     async fetch(){
         if(!this.repository) return;
 
@@ -112,15 +105,6 @@ export class DataTable {
         this.render();
     }
 
-    // async refresh(id){
-    //     await this.fetch();
-    //     this.reload();
-    //     if(id){
-    //         requestAnimationFrame(() => {
-    //             this.scrollToRow(id);
-    //         });
-    //     }
-    // }
     async refresh(id = null){
         if(await this.fetch() === false)return this.model.originData;
 
@@ -226,6 +210,7 @@ export class DataTable {
             if(chk){
                 const id = Number(chk.dataset.id);
                 this.model.toggleSelect(id);
+                this.updateAllCheckState();
                 this.controller?.updateButtons();
                 return;
             }
@@ -290,12 +275,6 @@ export class DataTable {
         });
     }
 
-    // scrollToRow(id){
-    //     const row = this.tableEl.querySelector(`[data-id="${id}"]`);
-    //     if(!row) return;
-
-    //     row.scrollIntoView({behavior: "smooth", block: "center"});
-    // }
     scrollToRow(id, behavior = "smooth"){
         const row = this.tableEl.querySelector(`[data-id="${id}"]`);
         if(!row) return;
@@ -314,5 +293,22 @@ export class DataTable {
         this.currentRowId = null;
         this.tableEl.querySelectorAll(".selected").forEach(r => r.classList.remove("selected"));
         this.controller?.updateButtons();
+    }
+
+    updateAllCheckState(){
+        const table = this.tableEl.closest(".normal-table");
+        if(!table) return;
+
+        const allChk = table.querySelector('input[name="all-chk-btn"]');
+        if(!allChk) return;
+
+        const checks = [
+            ...this.tableEl.querySelectorAll('input[name="chk-box"]')
+        ];
+
+        const checkedCount = checks.filter(chk => chk.checked).length;
+
+        allChk.checked = checks.length > 0 && checkedCount === checks.length;
+        allChk.indeterminate = checkedCount > 0 && checkedCount < checks.length;
     }
 }

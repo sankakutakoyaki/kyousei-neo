@@ -30,31 +30,25 @@ public class AttachmentService {
     private static final Set<String> IMAGE_TYPES = Set.of("image/jpeg", "image/png", "image/gif");
     private static final byte[] PDF_SIGNATURE = "%PDF-".getBytes(StandardCharsets.US_ASCII);
     private final UploadConfig uploadConfig;
-    private final com.kyouseipro.neo.domain.operations.OperationAttachmentAccess operationAccess;
     private final AttachmentRepository repository;
 
     public List<AttachmentGroup> findGroups(String parentType, long parentId) {
-        operationAccess.parent(parentType,parentId,false);
         return repository.findGroups(normalizeParentType(parentType), positive(parentId, "親データ"));
     }
 
     public long createGroup(String parentType, long parentId, String name) {
-        operationAccess.parent(parentType,parentId,true);
         return repository.insertGroup(normalizeParentType(parentType), positive(parentId, "親データ"), requiredName(name, "フォルダ名", 100));
     }
 
     public void renameGroup(long id, String name) { 
-        operationAccess.group(id,true);
         repository.renameGroup(positive(id,"フォルダ"), requiredName(name,"フォルダ名",100)); 
     }
 
     public void renameFile(long id, String name) { 
-        operationAccess.file(id,true);
         repository.renameFile(positive(id,"ファイル"), requiredName(name,"ファイル名",255));
     }
 
     public List<Long> upload(String parentType, long parentId, long groupId, List<MultipartFile> files) {
-        operationAccess.parent(parentType,parentId,true);
         String type = normalizeParentType(parentType);
         positive(parentId,"親データ"); positive(groupId,"フォルダ");
         if (!repository.groupBelongsTo(groupId,type,parentId)) throw new BusinessException("添付先フォルダが見つかりません。");
@@ -63,7 +57,6 @@ public class AttachmentService {
     }
 
     public AttachmentFile findFile(long id) {
-        operationAccess.file(id,false);
         AttachmentFile file = repository.findFile(positive(id,"ファイル"));
         if (file == null) throw new BusinessException("ファイルが見つかりません。");
         Path root = attachmentRoot();
@@ -74,7 +67,6 @@ public class AttachmentService {
 
     @Transactional
     public void deleteFile(long id) {
-        if(operationAccess.file(id,true)) throw new BusinessException("運行・資格の添付書類は履歴として保管します。訂正版を追加してください。");
         AttachmentFile file = findFile(id);
         repository.deleteFile(id);
         deleteQuietly(file.path());
@@ -82,12 +74,13 @@ public class AttachmentService {
 
     @Transactional
     public void deleteGroup(long id) {
-        if(operationAccess.group(id,true)) throw new BusinessException("運行・資格の添付書類は削除できません。");
         positive(id,"フォルダ");
         List<AttachmentFile> files = repository.findFilesInGroup(id);
         repository.deleteGroup(id);
         files.forEach(file -> deleteQuietly(attachmentRoot().resolve(file.path()).normalize()));
-        try { Files.deleteIfExists(attachmentRoot().resolve(Long.toString(id))); } catch (IOException ignored) {}
+        try {
+            Files.deleteIfExists(attachmentRoot().resolve(Long.toString(id)));
+        } catch (IOException ignored) {}
     }
 
     private long saveOne(long groupId, MultipartFile file) {

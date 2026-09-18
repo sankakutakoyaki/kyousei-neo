@@ -26,7 +26,8 @@ public class CsvBuilder {
 
             for (CsvColumn col : columns) {
                 Object val = row.get(col.getKey());
-                values.add(escape(val));
+                // values.add(escape(val));
+                values.add(escape(col.format(val)));
             }
 
             sb.append(String.join(",", values)).append("\n");

@@ -1,0 +1,167 @@
+<th:block th:fragment="form01Fragment()">
+    <div class="dialog-content" data-enterfocus="form-01">
+        <!-- 営業所 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text': '営業所',
+                    'combo': 'officeComboList',
+                    'top': '-----',
+                    'key': 'office-id',
+                    'name': 'office-id',
+                    'index': 1
+                }
+            })}"></th:block>
+        </div>
+        <!-- 車種・メーカー・型式 -->
+        <div class="flex-area form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '車種',
+                    'name': 'vehicle-name',
+                    'placeholder': '例）ハイエース',
+                    'index': 2
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': 'メーカー',
+                    'name': 'manufacturer',
+                    'placeholder': '例）トヨタ',
+                    'index': 3
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '型式',
+                    'name': 'model-code',
+                    'index': 4
+                }
+            })}"></th:block>
+        </div>
+        <!-- 車番 -->
+        <div class="form-parts form-row">
+            <label>車番</label>
+            <div class="flex-area">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'name': 'registration-area',
+                        'placeholder': '大阪',
+                        'index': 5
+                    }
+                })}"></th:block>
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'name': 'registration-class',
+                        'placeholder': '100',
+                        'index': 6
+                    }
+                })}"></th:block>
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'name': 'registration-kana',
+                        'placeholder': 'あ',
+                        'index': 7
+                    }
+                })}"></th:block>
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'name': 'registration-number',
+                        'placeholder': '1234',
+                        'index': 8
+                    }
+                })}"></th:block>
+            </div>
+        </div>
+
+        <!-- 初年度登録 -->
+        <div class="form-parts form-row">
+            <label>初年度登録</label>
+            <div class="flex-area">
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'name': 'first-registration-year',
+                        'placeholder': '2024',
+                        'inputmode': 'numeric',
+                        'index': 9
+                    }
+                })}"></th:block>
+                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                    {
+                        'name': 'first-registration-month',
+                        'placeholder': '1',
+                        'inputmode': 'numeric',
+                        'index': 10
+                    }
+                })}"></th:block>
+            </div>
+        </div>
+        <!-- 車検期限・ミッション -->
+        <div class="flex-area form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '車検期限',
+                    'name': 'inspection-expiration-date',
+                    'type': 'date',
+                    'index': 11
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text': 'ミッション',
+                    'name': 'transmission',
+                    'combo': 'transmissionComboList',
+                    'index': 12
+                }
+            })}"></th:block>
+        </div>
+        <!-- タイヤ -->
+        <div class="flex-area form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '前輪タイヤ',
+                    'name': 'front-tire-size',
+                    'placeholder': '例）195/80R15',
+                    'index': 13
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '後輪タイヤ',
+                    'name': 'rear-tire-size',
+                    'placeholder': '例）195/80R15',
+                    'index': 14
+                }
+            })}"></th:block>
+        </div>
+        <!-- 車高・最大積載量 -->
+        <div class="flex-area form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '車高(mm)',
+                    'name': 'vehicle-height',
+                    'inputmode': 'numeric',
+                    'index': 15
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '最大積載量(kg)',
+                    'name': 'maximum-load',
+                    'inputmode': 'numeric',
+                    'index': 16
+                }
+            })}"></th:block>
+        </div>
+        <!-- 備考 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '備考',
+                    'name': 'remarks',
+                    'index': 17
+                }
+            })}"></th:block>
+        </div>
+    </div>
+</th:block>

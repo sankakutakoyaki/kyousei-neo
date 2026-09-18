@@ -18,7 +18,6 @@ export const createEmployeeColumns = (controller) => [
             if(v == null || v === "" || v === 0) return "";
             return String(v).padStart(3, "0");
         }
-        // format: (v) => String(v).padStart(3, "0")
     },
     {
         field: "nameKana",

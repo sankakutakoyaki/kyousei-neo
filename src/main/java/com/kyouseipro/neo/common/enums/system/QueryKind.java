@@ -3,7 +3,6 @@ package com.kyouseipro.neo.common.enums.system;
 public enum QueryKind {
     SQL,
     OPERATIONS,
-    DISPATCH,
     DELETE_BY_IDS,
     INSERT,
     UPDATE,
@@ -14,10 +13,12 @@ public enum QueryKind {
     ORDER_ITEM_ARRIVAL,
     ORDER_ITEM_SAVE,
 
+    DAILY_CREW_BULK_CREATE,
+
     RECYCLE_DELIVERY_SAVE,
     RECYCLE_SHIPPING_SAVE,
     RECYCLE_LOSS_SAVE,
     RECYCLE_PRICE_LIST,
     RECYCLE_PRICE_SAVE,
-    RECYCLE_PRICE_DETAIL    
+    RECYCLE_PRICE_DETAIL
 }

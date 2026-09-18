@@ -36,21 +36,6 @@ export class TableModel {
         }
     }
 
-    // 計算
-    // compute(state){
-    //     for(const key of this.requiredFilters){
-    //         if(state[key] == null){
-    //             this.result = [];
-    //             return;
-    //         }
-    //     }
-    //     let list = [...this.originData];
-    //     list = this.applyFilter(list, state);
-    //     list = this.applySort(list);
-    //     list = this.applyPage(list);
-
-    //     this.result = list;
-    // }
     compute(state){
         for(const key of this.requiredFilters){
             if(state[key] == null){

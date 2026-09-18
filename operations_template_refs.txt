@@ -1,0 +1,218 @@
+src/main/resources/templates/fragments/common/menu.html:2:    <div sec:authorize="!hasAuthority('APPROLE_office')" class="hamburger-item" data-path="/operations" data-target="layout"><img class="sp-style" th:src="@{/icons/sales.png}"><span>運行</span></div>
+src/main/resources/templates/fragments/common/menu.html:57:    <div class="hamburger-item" data-path="/qualifications" data-target="body">
+src/main/resources/templates/fragments/common/menu.html:60:    <div sec:authorize="hasAnyAuthority('APPROLE_admin','APPROLE_master')" class="hamburger-item" data-path="/labor" data-target="body">
+src/main/resources/templates/fragments/common/menu.html:65:<div th:fragment="operationsFragment" th:remove="tag">
+src/main/resources/templates/fragments/common/menu.html:72:    <div class="hamburger-item" data-path="/dispatch" data-target="body">
+src/main/resources/templates/fragments/common/menu.html:73:        <img th:src="@{/icons/dispatch.png}"><span>配車</span>
+src/main/resources/templates/fragments/pages/business/dispatch/form.html:3:                    <p id="dispatch-order-summary"></p>
+src/main/resources/templates/fragments/pages/business/dispatch/form.html:4:                    <p id="dispatch-readonly" hidden>この端末または受注の状態では閲覧のみ利用できます。</p>
+src/main/resources/templates/fragments/pages/business/dispatch/form.html:6:                    <div id="dispatch-members" class="dispatch-members"></div>
+src/main/resources/templates/fragments/pages/business/dispatch/form.html:7:                    <details><summary>割り当て履歴</summary><div id="dispatch-history"></div></details>
+src/main/resources/templates/fragments/pages/business/dispatch/header.html:2:    <form id="dispatch-search" class="flex-area page-input-header" data-enterfocus="dispatch-search">
+src/main/resources/templates/fragments/pages/business/dispatch/header.html:4:            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${ {'text':'検索', 'id':'dispatch-keyword', 'name':'keyword', 'type':'search', 'placeholder':'受注番号・件名・住所・担当者'} })}"></th:block>
+src/main/resources/templates/fragments/pages/business/dispatch/header.html:5:            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${ {'text':'割り当て', 'id':'dispatch-assignment-filter', 'name':'assignmentFilter'} })}"></th:block>
+src/main/resources/templates/fragments/pages/business/dispatch/header.html:8:            <th:block th:replace="~{fragments/components/box :: dateRangeFragment(${ {'fromText':'訪問日（開始）', 'fromId':'dispatch-date-from', 'fromName':'dateFrom', 'toText':'訪問日（終了）', 'toId':'dispatch-date-to', 'toName':'dateTo'} })}"></th:block>
+src/main/resources/templates/fragments/pages/business/dispatch/header.html:9:            <div class="form-parts"><label for="dispatch-undated">日程未定</label><label><input id="dispatch-undated" type="checkbox" name="includeUndated">日程未定も表示</label></div>
+src/main/resources/templates/fragments/pages/business/dispatch/content.html:1:<main th:fragment="content" class="normal-body dispatch-page" data-page="/js/pages/business/dispatch/dispatchPage.js" data-css="/css/pages/business/dispatch.css"
+src/main/resources/templates/fragments/pages/business/dispatch/content.html:2:    th:attr="data-dispatch-manager=${dispatchManager}">
+src/main/resources/templates/fragments/pages/business/dispatch/content.html:4:        <ul class="tab-menu"><li class="tab-menu-item is-active" data-action="tab" data-group="dispatch-tabs" data-tab="dispatch-list-panel">一覧</li></ul>
+src/main/resources/templates/fragments/pages/business/dispatch/content.html:5:        <div class="tab-panel is-show" id="dispatch-list-panel" data-tab-content="dispatch-tabs">
+src/main/resources/templates/fragments/pages/business/dispatch/content.html:6:            <div class="table-area dispatch-main-table">
+src/main/resources/templates/fragments/pages/business/dispatch/content.html:7:                <header th:replace="~{fragments/pages/business/dispatch/header :: headerFragment}"></header>
+src/main/resources/templates/fragments/pages/business/dispatch/content.html:8:                <p class="dispatch-guide">配送・工事は受注の訪問日・時間を共用します。スマホでの編集は管理権限を持つ方のみ利用できます。</p>
+src/main/resources/templates/fragments/pages/business/dispatch/content.html:9:                <section th:replace="~{fragments/table/body :: normalFragment('dispatch-table-header', 'dispatch-results')}"></section>
+src/main/resources/templates/fragments/pages/business/dispatch/content.html:10:                <footer th:replace="~{fragments/table/footer :: datetimeFragment('dispatch-status')}"></footer>
+src/main/resources/templates/fragments/pages/business/dispatch/content.html:15:        <form id="dispatch-form" class="form-dialog none" data-controller="dispatch" data-key="order-id">
+src/main/resources/templates/fragments/pages/business/dispatch/content.html:18:                <section th:replace="~{fragments/pages/business/dispatch/form :: formFragment}"></section>
+src/main/resources/templates/fragments/pages/business/dispatch/content.html:19:                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId':'dispatch-footer', 'submitText':'保存', 'cancelText':'閉じる'} })}"></footer>
+src/main/resources/templates/fragments/pages/operations/vehicle/form.html:4:        <div id="operation-fields" class="operation-fields">
+src/main/resources/templates/fragments/pages/operations/vehicle/header.html:2:    <form id="operation-search" class="page-input-header operation-search vehicle-search-header">
+src/main/resources/templates/fragments/pages/operations/vehicle/header.html:4:            <th:block th:replace="~{fragments/table/header :: searchBoxFragment('operation-keyword')}"></th:block>
+src/main/resources/templates/fragments/pages/operations/vehicle/content.html:2:      class="normal-body operations-page"
+src/main/resources/templates/fragments/pages/operations/vehicle/content.html:3:      data-page="/js/pages/operations/vehicle/vehiclePage.js"
+src/main/resources/templates/fragments/pages/operations/vehicle/content.html:5:      data-css="/css/pages/operations.css"
+src/main/resources/templates/fragments/pages/operations/vehicle/content.html:6:      th:attr="data-op-view=${opView},data-op-entity=${opEntity},data-op-write=${opCanWrite},data-op-private=${opPrivate},data-operations-editor=${opMobileEditor}">
+src/main/resources/templates/fragments/pages/operations/vehicle/content.html:13:            <div class="table-area operation-table">
+src/main/resources/templates/fragments/pages/operations/vehicle/content.html:14:                <header th:replace="~{fragments/pages/operations/vehicle/header :: header01Fragment()}"></header>
+src/main/resources/templates/fragments/pages/operations/vehicle/content.html:15:                <!-- <p id="operation-guide" class="operation-guide"></p> -->
+src/main/resources/templates/fragments/pages/operations/vehicle/content.html:16:                <section th:replace="~{fragments/table/body :: normalFragment('operation-heading', 'operation-rows')}"></section>
+src/main/resources/templates/fragments/pages/operations/vehicle/content.html:17:                <footer th:replace="~{fragments/table/footer :: datetimeFragment('operation-status')}"></footer>
+src/main/resources/templates/fragments/pages/operations/vehicle/content.html:22:        <form id="operation-form" class="form-dialog none" data-controller="vehicle" data-key="id">
+src/main/resources/templates/fragments/pages/operations/vehicle/content.html:25:                <section th:replace="~{fragments/pages/operations/vehicle/form :: form01Fragment()}"></section>
+src/main/resources/templates/fragments/pages/operations/vehicle/content.html:26:                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId': 'operation-footer', 'submitText': '保存', 'cancelText': '閉じる'} })}"></footer>
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/form.html:4:        <div id="operation-fields" class="operation-fields">
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/form.html:130:            <div id="operation-history"></div>
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/form.html:132:        <section id="operation-attachments">
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/form.html:135:            <input type="file" id="operation-file" accept="application/pdf,image/jpeg,image/png,image/gif" multiple data-mobile-write>
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/form.html:136:            <button type="button" id="operation-upload" class="normal-btn" data-mobile-write>書類を追加</button>
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/form.html:137:            <div id="operation-files"></div>
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/form.html:139:        <button id="operation-delete" type="button" class="normal-btn" data-mobile-write>この登録を無効にする</button>
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/header.html:2:    <form id="operation-search" class="page-input-header operation-search">
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/header.html:6:                'id': 'operation-keyword',
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/header.html:17:            <button class="normal-btn" type="button" id="operation-create" data-mobile-write>新規登録</button>
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/content.html:2:      class="normal-body operations-page"
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/content.html:3:      data-page="/js/pages/operations/operationPage.js"
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/content.html:4:      data-css="/css/pages/operations.css"
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/content.html:5:      th:attr="data-op-view=${opView},data-op-entity=${opEntity},data-op-write=${opCanWrite},data-op-private=${opPrivate},data-operations-editor=${opMobileEditor}">
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/content.html:12:            <div class="table-area operation-table">
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/content.html:13:                <header th:replace="~{fragments/pages/operations/vehicle-maintenance/header :: header01Fragment()}"></header>
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/content.html:14:                <p id="operation-guide" class="operation-guide"></p>
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/content.html:15:                <section th:replace="~{fragments/table/body :: normalFragment('operation-heading', 'operation-rows')}"></section>
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/content.html:16:                <footer th:replace="~{fragments/table/footer :: datetimeFragment('operation-status')}"></footer>
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/content.html:21:        <form id="operation-form" class="form-dialog none" data-controller="operations" data-key="id">
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/content.html:24:                <section th:replace="~{fragments/pages/operations/vehicle-maintenance/form :: form01Fragment()}"></section>
+src/main/resources/templates/fragments/pages/operations/vehicle-maintenance/content.html:25:                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId': 'operation-footer', 'submitText': '保存', 'cancelText': '閉じる'} })}"></footer>
+src/main/resources/templates/fragments/pages/operations/health-checks/form.html:4:        <div id="operation-fields" class="operation-fields">
+src/main/resources/templates/fragments/pages/operations/health-checks/form.html:95:            <div id="operation-history"></div>
+src/main/resources/templates/fragments/pages/operations/health-checks/form.html:97:        <button id="operation-delete" type="button" class="normal-btn" data-mobile-write>この登録を無効にする</button>
+src/main/resources/templates/fragments/pages/operations/health-checks/header.html:2:    <form id="operation-search" class="page-input-header operation-search">
+src/main/resources/templates/fragments/pages/operations/health-checks/header.html:6:                'id': 'operation-keyword',
+src/main/resources/templates/fragments/pages/operations/health-checks/header.html:17:            <button class="normal-btn" type="button" id="operation-create" data-mobile-write>新規登録</button>
+src/main/resources/templates/fragments/pages/operations/health-checks/content.html:2:      class="normal-body operations-page"
+src/main/resources/templates/fragments/pages/operations/health-checks/content.html:3:      data-page="/js/pages/operations/operationPage.js"
+src/main/resources/templates/fragments/pages/operations/health-checks/content.html:4:      data-css="/css/pages/operations.css"
+src/main/resources/templates/fragments/pages/operations/health-checks/content.html:5:      th:attr="data-op-view=${opView},data-op-entity=${opEntity},data-op-write=${opCanWrite},data-op-private=${opPrivate},data-operations-editor=${opMobileEditor}">
+src/main/resources/templates/fragments/pages/operations/health-checks/content.html:8:            <li class="tab-menu-item" data-link="/labor" data-target="body">保険・年金</li>
+src/main/resources/templates/fragments/pages/operations/health-checks/content.html:9:            <li class="tab-menu-item is-active" data-link="/health-checks" data-target="body">健康診断</li>
+src/main/resources/templates/fragments/pages/operations/health-checks/content.html:12:            <div class="table-area operation-table">
+src/main/resources/templates/fragments/pages/operations/health-checks/content.html:13:                <header th:replace="~{fragments/pages/operations/health-checks/header :: header01Fragment()}"></header>
+src/main/resources/templates/fragments/pages/operations/health-checks/content.html:14:                <p id="operation-guide" class="operation-guide"></p>
+src/main/resources/templates/fragments/pages/operations/health-checks/content.html:15:                <section th:replace="~{fragments/table/body :: normalFragment('operation-heading', 'operation-rows')}"></section>
+src/main/resources/templates/fragments/pages/operations/health-checks/content.html:16:                <footer th:replace="~{fragments/table/footer :: datetimeFragment('operation-status')}"></footer>
+src/main/resources/templates/fragments/pages/operations/health-checks/content.html:21:        <form id="operation-form" class="form-dialog none" data-controller="operations" data-key="id">
+src/main/resources/templates/fragments/pages/operations/health-checks/content.html:24:                <section th:replace="~{fragments/pages/operations/health-checks/form :: form01Fragment()}"></section>
+src/main/resources/templates/fragments/pages/operations/health-checks/content.html:25:                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId': 'operation-footer', 'submitText': '保存', 'cancelText': '閉じる'} })}"></footer>
+src/main/resources/templates/fragments/pages/operations/dispatch/form.html:7:            <div class="operation-search form-row">
+src/main/resources/templates/fragments/pages/operations/dispatch/header.html:2:    <form id="plan-search" class="operation-search page-input-header">
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:2:      class="normal-body operations-page"
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:3:      data-page="/js/pages/operations/dispatchPage.js"
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:4:      data-css="/css/pages/operations.css"
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:5:      th:attr="data-operations-editor=${opMobileEditor},data-order-id=${opOrderId}">
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:12:            <div class="table-area operation-table">
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:13:                <header th:replace="~{fragments/pages/operations/dispatch/header :: header01Fragment()}"></header>
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:14:                <p class="operation-guide">日別編成の登録後、車両と伝票を結び付けます。1伝票に複数台を追加できます。</p>
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:15:                <section id="dispatch-board" aria-label="車両と伝票の配車">
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:16:                    <p id="plan-instructions" class="operation-guide" role="status">伝票と車両をドラッグ＆ドロップ、または両方の「選択」ボタンで指定してください。最後に確認画面で保存します。</p>
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:17:                    <div class="dispatch-board-columns">
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:18:                        <section class="dispatch-pane" data-controller="dispatchVehicles">
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:23:                        <section class="dispatch-pane" data-controller="operationDispatch">
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:30:                <p id="plan-status" role="status" class="operation-guide"></p>
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:35:        <form id="operation-dispatch-form" class="form-dialog none" data-controller="operationDispatch" data-key="id">
+src/main/resources/templates/fragments/pages/operations/dispatch/content.html:38:                <section th:replace="~{fragments/pages/operations/dispatch/form :: form01Fragment()}"></section>
+src/main/resources/templates/fragments/pages/operations/qualification-types/form.html:4:        <div id="operation-fields" class="operation-fields">
+src/main/resources/templates/fragments/pages/operations/qualification-types/form.html:95:            <div id="operation-history"></div>
+src/main/resources/templates/fragments/pages/operations/qualification-types/form.html:97:        <button id="operation-delete" type="button" class="normal-btn" data-mobile-write>この登録を無効にする</button>
+src/main/resources/templates/fragments/pages/operations/qualification-types/header.html:2:    <form id="operation-search" class="page-input-header operation-search">
+src/main/resources/templates/fragments/pages/operations/qualification-types/header.html:6:                'id': 'operation-keyword',
+src/main/resources/templates/fragments/pages/operations/qualification-types/header.html:17:            <button class="normal-btn" type="button" id="operation-create" data-mobile-write>新規登録</button>
+src/main/resources/templates/fragments/pages/operations/qualification-types/content.html:2:      class="normal-body operations-page"
+src/main/resources/templates/fragments/pages/operations/qualification-types/content.html:3:      data-page="/js/pages/operations/operationPage.js"
+src/main/resources/templates/fragments/pages/operations/qualification-types/content.html:4:      data-css="/css/pages/operations.css"
+src/main/resources/templates/fragments/pages/operations/qualification-types/content.html:5:      th:attr="data-op-view=${opView},data-op-entity=${opEntity},data-op-write=${opCanWrite},data-op-private=${opPrivate},data-operations-editor=${opMobileEditor}">
+src/main/resources/templates/fragments/pages/operations/qualification-types/content.html:8:            <li class="tab-menu-item is-active" data-link="/qualification-types" data-target="body">資格種類</li>
+src/main/resources/templates/fragments/pages/operations/qualification-types/content.html:11:            <div class="table-area operation-table">
+src/main/resources/templates/fragments/pages/operations/qualification-types/content.html:12:                <header th:replace="~{fragments/pages/operations/qualification-types/header :: header01Fragment()}"></header>
+src/main/resources/templates/fragments/pages/operations/qualification-types/content.html:13:                <p id="operation-guide" class="operation-guide"></p>
+src/main/resources/templates/fragments/pages/operations/qualification-types/content.html:14:                <section th:replace="~{fragments/table/body :: normalFragment('operation-heading', 'operation-rows')}"></section>
+src/main/resources/templates/fragments/pages/operations/qualification-types/content.html:15:                <footer th:replace="~{fragments/table/footer :: datetimeFragment('operation-status')}"></footer>
+src/main/resources/templates/fragments/pages/operations/qualification-types/content.html:20:        <form id="operation-form" class="form-dialog none" data-controller="operations" data-key="id">
+src/main/resources/templates/fragments/pages/operations/qualification-types/content.html:23:                <section th:replace="~{fragments/pages/operations/qualification-types/form :: form01Fragment()}"></section>
+src/main/resources/templates/fragments/pages/operations/qualification-types/content.html:24:                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId': 'operation-footer', 'submitText': '保存', 'cancelText': '閉じる'} })}"></footer>
+src/main/resources/templates/fragments/pages/operations/driving-records/form.html:4:        <div id="operation-fields" class="operation-fields">
+src/main/resources/templates/fragments/pages/operations/driving-records/form.html:71:            <div id="operation-history"></div>
+src/main/resources/templates/fragments/pages/operations/driving-records/form.html:73:        <button id="operation-delete" type="button" class="normal-btn" data-mobile-write>この登録を無効にする</button>
+src/main/resources/templates/fragments/pages/operations/driving-records/header.html:2:    <form id="operation-search" class="page-input-header operation-search">
+src/main/resources/templates/fragments/pages/operations/driving-records/header.html:6:                'id': 'operation-keyword',
+src/main/resources/templates/fragments/pages/operations/driving-records/header.html:14:                'id': 'operation-day',
+src/main/resources/templates/fragments/pages/operations/driving-records/header.html:25:            <button class="normal-btn" type="button" id="operation-create" data-mobile-write>新規登録</button>
+src/main/resources/templates/fragments/pages/operations/driving-records/content.html:2:      class="normal-body operations-page"
+src/main/resources/templates/fragments/pages/operations/driving-records/content.html:3:      data-page="/js/pages/operations/operationPage.js"
+src/main/resources/templates/fragments/pages/operations/driving-records/content.html:4:      data-css="/css/pages/operations.css"
+src/main/resources/templates/fragments/pages/operations/driving-records/content.html:5:      th:attr="data-op-view=${opView},data-op-entity=${opEntity},data-op-write=${opCanWrite},data-op-private=${opPrivate},data-operations-editor=${opMobileEditor}">
+src/main/resources/templates/fragments/pages/operations/driving-records/content.html:11:            <div class="table-area operation-table">
+src/main/resources/templates/fragments/pages/operations/driving-records/content.html:12:                <header th:replace="~{fragments/pages/operations/driving-records/header :: header01Fragment()}"></header>
+src/main/resources/templates/fragments/pages/operations/driving-records/content.html:13:                <p id="operation-guide" class="operation-guide"></p>
+src/main/resources/templates/fragments/pages/operations/driving-records/content.html:14:                <section th:replace="~{fragments/table/body :: normalFragment('operation-heading', 'operation-rows')}"></section>
+src/main/resources/templates/fragments/pages/operations/driving-records/content.html:15:                <footer th:replace="~{fragments/table/footer :: datetimeFragment('operation-status')}"></footer>
+src/main/resources/templates/fragments/pages/operations/driving-records/content.html:20:        <form id="operation-form" class="form-dialog none" data-controller="operations" data-key="id">
+src/main/resources/templates/fragments/pages/operations/driving-records/content.html:23:                <section th:replace="~{fragments/pages/operations/driving-records/form :: form01Fragment()}"></section>
+src/main/resources/templates/fragments/pages/operations/driving-records/content.html:24:                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId': 'operation-footer', 'submitText': '保存', 'cancelText': '閉じる'} })}"></footer>
+src/main/resources/templates/fragments/pages/operations/daily-crews/form.html:4:        <div id="operation-fields" class="operation-fields">
+src/main/resources/templates/fragments/pages/operations/daily-crews/form.html:44:        <div id="operation-crew-editor">
+src/main/resources/templates/fragments/pages/operations/daily-crews/form.html:46:            <div class="operation-search">
+src/main/resources/templates/fragments/pages/operations/daily-crews/form.html:56:            <div id="operation-history"></div>
+src/main/resources/templates/fragments/pages/operations/daily-crews/form.html:58:        <button id="operation-delete" type="button" class="normal-btn" data-mobile-write>この登録を無効にする</button>
+src/main/resources/templates/fragments/pages/operations/daily-crews/header.html:2:    <form id="operation-search" class="page-input-header operation-search">
+src/main/resources/templates/fragments/pages/operations/daily-crews/header.html:6:                'id': 'operation-keyword',
+src/main/resources/templates/fragments/pages/operations/daily-crews/header.html:14:                'id': 'operation-day',
+src/main/resources/templates/fragments/pages/operations/daily-crews/header.html:25:            <button class="normal-btn" type="button" id="operation-create" data-mobile-write>新規登録</button>
+src/main/resources/templates/fragments/pages/operations/daily-crews/content.html:2:      class="normal-body operations-page"
+src/main/resources/templates/fragments/pages/operations/daily-crews/content.html:3:      data-page="/js/pages/operations/operationPage.js"
+src/main/resources/templates/fragments/pages/operations/daily-crews/content.html:4:      data-css="/css/pages/operations.css"
+src/main/resources/templates/fragments/pages/operations/daily-crews/content.html:5:      th:attr="data-op-view=${opView},data-op-entity=${opEntity},data-op-write=${opCanWrite},data-op-private=${opPrivate},data-operations-editor=${opMobileEditor}">
+src/main/resources/templates/fragments/pages/operations/daily-crews/content.html:8:            <li class="tab-menu-item" data-link="/dispatch" data-target="body">伝票への割当</li>
+src/main/resources/templates/fragments/pages/operations/daily-crews/content.html:12:            <div class="table-area operation-table">
+src/main/resources/templates/fragments/pages/operations/daily-crews/content.html:13:                <header th:replace="~{fragments/pages/operations/daily-crews/header :: header01Fragment()}"></header>
+src/main/resources/templates/fragments/pages/operations/daily-crews/content.html:14:                <p id="operation-guide" class="operation-guide"></p>
+src/main/resources/templates/fragments/pages/operations/daily-crews/content.html:15:                <section th:replace="~{fragments/table/body :: normalFragment('operation-heading', 'operation-rows')}"></section>
+src/main/resources/templates/fragments/pages/operations/daily-crews/content.html:16:                <footer th:replace="~{fragments/table/footer :: datetimeFragment('operation-status')}"></footer>
+src/main/resources/templates/fragments/pages/operations/daily-crews/content.html:21:        <form id="operation-form" class="form-dialog none" data-controller="operations" data-key="id">
+src/main/resources/templates/fragments/pages/operations/daily-crews/content.html:24:                <section th:replace="~{fragments/pages/operations/daily-crews/form :: form01Fragment()}"></section>
+src/main/resources/templates/fragments/pages/operations/daily-crews/content.html:25:                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId': 'operation-footer', 'submitText': '保存', 'cancelText': '閉じる'} })}"></footer>
+src/main/resources/templates/fragments/pages/operations/qualifications/form.html:4:        <div id="operation-fields" class="operation-fields">
+src/main/resources/templates/fragments/pages/operations/qualifications/form.html:23:                        'id': 'op-qualificationCode',
+src/main/resources/templates/fragments/pages/operations/qualifications/form.html:24:                        'name': 'qualification-code',
+src/main/resources/templates/fragments/pages/operations/qualifications/form.html:25:                        'key': 'qualificationCode',
+src/main/resources/templates/fragments/pages/operations/qualifications/form.html:95:            <div id="operation-history"></div>
+src/main/resources/templates/fragments/pages/operations/qualifications/form.html:97:        <section th:if="${opPrivate}" id="operation-attachments">
+src/main/resources/templates/fragments/pages/operations/qualifications/form.html:100:            <input type="file" id="operation-file" accept="application/pdf,image/jpeg,image/png,image/gif" multiple data-mobile-write>
+src/main/resources/templates/fragments/pages/operations/qualifications/form.html:101:            <button type="button" id="operation-upload" class="normal-btn" data-mobile-write>書類を追加</button>
+src/main/resources/templates/fragments/pages/operations/qualifications/form.html:102:            <div id="operation-files"></div>
+src/main/resources/templates/fragments/pages/operations/qualifications/form.html:104:        <button id="operation-delete" type="button" class="normal-btn" data-mobile-write>この登録を無効にする</button>
+src/main/resources/templates/fragments/pages/operations/qualifications/header.html:2:    <form id="operation-search" class="page-input-header operation-search">
+src/main/resources/templates/fragments/pages/operations/qualifications/header.html:6:                'id': 'operation-keyword',
+src/main/resources/templates/fragments/pages/operations/qualifications/header.html:17:            <button class="normal-btn" type="button" id="operation-create" data-mobile-write>新規登録</button>
+src/main/resources/templates/fragments/pages/operations/qualifications/content.html:2:      class="normal-body operations-page"
+src/main/resources/templates/fragments/pages/operations/qualifications/content.html:3:      data-page="/js/pages/operations/operationPage.js"
+src/main/resources/templates/fragments/pages/operations/qualifications/content.html:4:      data-css="/css/pages/operations.css"
+src/main/resources/templates/fragments/pages/operations/qualifications/content.html:5:      th:attr="data-op-view=${opView},data-op-entity=${opEntity},data-op-write=${opCanWrite},data-op-private=${opPrivate},data-operations-editor=${opMobileEditor}">
+src/main/resources/templates/fragments/pages/operations/qualifications/content.html:8:            <li class="tab-menu-item is-active" data-link="/qualifications" data-target="body">保有資格一覧</li>
+src/main/resources/templates/fragments/pages/operations/qualifications/content.html:11:            <div class="table-area operation-table">
+src/main/resources/templates/fragments/pages/operations/qualifications/content.html:12:                <header th:replace="~{fragments/pages/operations/qualifications/header :: header01Fragment()}"></header>
+src/main/resources/templates/fragments/pages/operations/qualifications/content.html:13:                <p id="operation-guide" class="operation-guide"></p>
+src/main/resources/templates/fragments/pages/operations/qualifications/content.html:14:                <section th:replace="~{fragments/table/body :: normalFragment('operation-heading', 'operation-rows')}"></section>
+src/main/resources/templates/fragments/pages/operations/qualifications/content.html:15:                <footer th:replace="~{fragments/table/footer :: datetimeFragment('operation-status')}"></footer>
+src/main/resources/templates/fragments/pages/operations/qualifications/content.html:20:        <form id="operation-form" class="form-dialog none" data-controller="operations" data-key="id">
+src/main/resources/templates/fragments/pages/operations/qualifications/content.html:23:                <section th:replace="~{fragments/pages/operations/qualifications/form :: form01Fragment()}"></section>
+src/main/resources/templates/fragments/pages/operations/qualifications/content.html:24:                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId': 'operation-footer', 'submitText': '保存', 'cancelText': '閉じる'} })}"></footer>
+src/main/resources/templates/fragments/pages/operations/labor/form.html:4:        <div id="operation-fields" class="operation-fields">
+src/main/resources/templates/fragments/pages/operations/labor/form.html:48:                        'id': 'op-healthInsurance',
+src/main/resources/templates/fragments/pages/operations/labor/form.html:49:                        'name': 'health-insurance',
+src/main/resources/templates/fragments/pages/operations/labor/form.html:50:                        'key': 'healthInsurance',
+src/main/resources/templates/fragments/pages/operations/labor/form.html:60:                        'id': 'op-healthLastFour',
+src/main/resources/templates/fragments/pages/operations/labor/form.html:61:                        'name': 'health-last-four',
+src/main/resources/templates/fragments/pages/operations/labor/form.html:62:                        'key': 'healthLastFour',
+src/main/resources/templates/fragments/pages/operations/labor/form.html:142:            <div id="operation-history"></div>
+src/main/resources/templates/fragments/pages/operations/labor/form.html:144:        <button id="operation-delete" type="button" class="normal-btn" data-mobile-write>この登録を無効にする</button>
+src/main/resources/templates/fragments/pages/operations/labor/header.html:2:    <form id="operation-search" class="page-input-header operation-search">
+src/main/resources/templates/fragments/pages/operations/labor/header.html:6:                'id': 'operation-keyword',
+src/main/resources/templates/fragments/pages/operations/labor/header.html:17:            <button class="normal-btn" type="button" id="operation-create" data-mobile-write>新規登録</button>
+src/main/resources/templates/fragments/pages/operations/labor/content.html:2:      class="normal-body operations-page"
+src/main/resources/templates/fragments/pages/operations/labor/content.html:3:      data-page="/js/pages/operations/operationPage.js"
+src/main/resources/templates/fragments/pages/operations/labor/content.html:4:      data-css="/css/pages/operations.css"
+src/main/resources/templates/fragments/pages/operations/labor/content.html:5:      th:attr="data-op-view=${opView},data-op-entity=${opEntity},data-op-write=${opCanWrite},data-op-private=${opPrivate},data-operations-editor=${opMobileEditor}">
+src/main/resources/templates/fragments/pages/operations/labor/content.html:8:            <li class="tab-menu-item is-active" data-link="/labor" data-target="body">保険・年金</li>
+src/main/resources/templates/fragments/pages/operations/labor/content.html:9:            <li class="tab-menu-item" data-link="/health-checks" data-target="body">健康診断</li>
+src/main/resources/templates/fragments/pages/operations/labor/content.html:12:            <div class="table-area operation-table">
+src/main/resources/templates/fragments/pages/operations/labor/content.html:13:                <header th:replace="~{fragments/pages/operations/labor/header :: header01Fragment()}"></header>
+src/main/resources/templates/fragments/pages/operations/labor/content.html:14:                <p id="operation-guide" class="operation-guide"></p>
+src/main/resources/templates/fragments/pages/operations/labor/content.html:15:                <section th:replace="~{fragments/table/body :: normalFragment('operation-heading', 'operation-rows')}"></section>
+src/main/resources/templates/fragments/pages/operations/labor/content.html:16:                <footer th:replace="~{fragments/table/footer :: datetimeFragment('operation-status')}"></footer>
+src/main/resources/templates/fragments/pages/operations/labor/content.html:21:        <form id="operation-form" class="form-dialog none" data-controller="operations" data-key="id">
+src/main/resources/templates/fragments/pages/operations/labor/content.html:24:                <section th:replace="~{fragments/pages/operations/labor/form :: form01Fragment()}"></section>
+src/main/resources/templates/fragments/pages/operations/labor/content.html:25:                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId': 'operation-footer', 'submitText': '保存', 'cancelText': '閉じる'} })}"></footer>
+src/main/resources/templates/fragments/pages/master/content.html:7:            <li class="tab-menu-item" data-link="/qualification-types" data-target="body">資格種類</li>
+src/main/resources/templates/fragments/pages/index/operations.html:6:        <div th:replace="~{fragments/common/menu :: operationsFragment}"></div>
+src/main/resources/templates/fragments/pages/index/operations.html:14:            <button type="button" class="shortcut-card" data-link="/dispatch" data-target="body">
+src/main/resources/templates/fragments/pages/index/management.html:15:            <button type="button" class="shortcut-card" data-link="/qualifications" data-target="body">
+src/main/resources/templates/fragments/pages/index/management.html:18:            <button type="button" class="shortcut-card" sec:authorize="hasAnyAuthority('APPROLE_admin','APPROLE_master')" data-link="/labor" data-target="body">

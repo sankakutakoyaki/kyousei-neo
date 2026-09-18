@@ -83,6 +83,31 @@ input.normal-chk[type="checkbox"]:checked:before {
     content: '';
 }
 
+/*　一部選択 */
+input.normal-chk[type="checkbox"]:indeterminate {
+    opacity: 1;
+    visibility: visible;
+    background-color: var(--chk-bg);
+    border: 0;
+}
+
+/*　一部選択 */
+input.normal-chk[type="checkbox"]:indeterminate::before {
+    position: absolute;
+    top: 50%;
+    left: 25%;
+    transform: translateY(-50%);
+    width: 50%;
+    height: 3px;
+    background-color: var(--white);
+    content: "";
+}
+
+/*　一部選択 */
+input.normal-chk[type="checkbox"]:indeterminate {
+    display: block;
+}
+
 .checkbox-label {
     display: inline-flex;
     align-items: center;   /* ← 縦中央揃え */

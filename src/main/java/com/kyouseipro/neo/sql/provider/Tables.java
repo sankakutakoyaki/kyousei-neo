@@ -10,6 +10,18 @@ public class Tables {
         public static final TableMeta EMPLOYEE_BY_IDS =
             new TableMeta("employees", "employeeId", "state", "version");
 
+        public static final TableMeta VEHICLE_BY_IDS =
+            new TableMeta("vehicles", "vehicleId", "state", "version");
+
+        public static final TableMeta DAILY_CREW_BY_IDS =
+            new TableMeta("daily_crews", "dailyCrewId", "state", "version");
+
+        public static final TableMeta DAILY_CREW_MEMBER_BY_IDS =
+            new TableMeta("daily_crew_members", "dailyCrewMemberId", "state", "version");
+
+        public static final TableMeta DISPATCH_ASSIGNMENT_BY_IDS =
+            new TableMeta("dispatch_assignments", "dispatchAssignmentId", "state", "version");
+
         public static final TableMeta OFFICE_BY_IDS =
             new TableMeta("offices", "officeId", "state", "version");
 

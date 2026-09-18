@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/with-sidebar}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/with-sidebar}">
 
 <body>
     <div layout:fragment="sidebar-content">
@@ -9,11 +8,10 @@
     <main class="normal-body shortcut-page" layout:fragment="content">
         <h1>管理</h1>
         <nav class="shortcut-grid" aria-label="管理メニュー">
-            <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')" data-link="/timeworks" data-target="body">
+            <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')"
+                data-link="/timeworks" data-target="body">
                 <img th:src="@{/icons/clock2.png}" alt=""><span>勤怠</span>
             </button>
-<button type="button" class="shortcut-card"  data-link="/qualifications" data-target="body"><img th:src="@{/icons/person.png}" alt=""><span>資格</span></button>
-<button type="button" class="shortcut-card" sec:authorize="hasAnyAuthority('APPROLE_admin','APPROLE_master')" data-link="/labor" data-target="body"><img th:src="@{/icons/person.png}" alt=""><span>労務</span></button>
         </nav>
         <div id="form-dialog-area"></div>
         <div id="dialog-area"></div>

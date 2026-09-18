@@ -130,9 +130,13 @@ export function renderHeader(tableEl,config,list){
         chk.setAttribute('name', 'all-chk-btn');
         chk.className = "normal-chk";
 
+        // const total = list.length;
+        // const selected = list.filter(v => v._selected).length;
+        // chk.checked = total > 0 && selected === total;
         const total = list.length;
         const selected = list.filter(v => v._selected).length;
         chk.checked = total > 0 && selected === total;
+        chk.indeterminate = selected > 0 && selected < total;
 
         th.appendChild(chk);
         tr.appendChild(th);
@@ -152,23 +156,6 @@ export function renderHeader(tableEl,config,list){
     thead.appendChild(tr);
 }
 
-// フッターの件数項目を更新する
-// export function createTableFooter(footerId, list, totalCount) {
-//     clearElement(footerId);
-//     const footer = document.getElementById(footerId);
-//     if (!footer) return;
-//     // const viewCount = list?.length ?? 0;
-//     // footer.insertAdjacentHTML('beforeend', `<span>
-//     //     ${viewCount}/${totalCount}件 :
-//     //     ${formatDate(new Date(), "yyyy-MM-dd HH:mm")}
-//     //     現在
-//     // </span>`);
-//     footer.insertAdjacentHTML('beforeend', `<span>
-//         ${totalCount}件 :
-//         ${formatDate(new Date(), "yyyy-MM-dd HH:mm")}
-//         現在
-//     </span>`);
-// }
 export function createTableFooter(footerId, list, totalCount, filteredCount) {
     clearElement(footerId);
 

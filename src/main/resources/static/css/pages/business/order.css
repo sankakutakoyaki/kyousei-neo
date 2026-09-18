@@ -387,7 +387,7 @@ main[data-page$="/productPage.js"] #category02 { min-width: 0; width: 100%; }
 
 .order-search-actions { display: flex; align-items: center; gap: .5rem; }
 .order-search-actions > button { height: 2.5rem; }
-.tab-panel .order-main-table { grid-template-rows: auto minmax(10rem, 1fr) auto; margin-top: 1rem; }
+.tab-panel .order-main-table { grid-template-rows: auto minmax(10rem, 1fr) auto; }
 
 #form-01 textarea[name="remarks"] { min-height: 10rem; resize: vertical; }
 

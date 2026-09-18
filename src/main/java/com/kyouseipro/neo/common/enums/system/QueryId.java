@@ -4,21 +4,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public enum QueryId {
-    OPERATION_EMPLOYEE_QUALIFICATIONS_LIST("operationEmployeeQualificationsList"),
-    OPERATION_LIST("operationList"),
-    OPERATION_DETAIL("operationDetail"),
-    OPERATION_CODE_DETAIL("operationCodeDetail"),
-    OPERATION_SAVE("operationSave"),
-    OPERATION_DISPATCH_LIST("operationDispatchList"),
-    OPERATION_DISPATCH_DETAIL("operationDispatchDetail"),
-    OPERATION_DISPATCH_SAVE("operationDispatchSave"),
-    OPERATION_CREW_DETAIL("operationCrewDetail"),
-
-    DISPATCH_LIST("dispatchList"),
-    DISPATCH_DETAIL("dispatchDetail"),
-    DISPATCH_EMPLOYEE_LIST("dispatchEmployeeList"),
-    DISPATCH_SAVE("dispatchSave"),
-
     // ===== Company =====
     COMPANY_DETAIL("companyDetail"),
     COMPANY_LIST("companyList"),
@@ -39,6 +24,28 @@ public enum QueryId {
     OFFICE_CSV("officeCsv"),
     OFFICE_DELETE_BY_IDS("officeDeleteByIds"),
     OFFICE_SAVE("officeSave"),
+
+    // ===== Vehicle =====
+    VEHICLE_DETAIL("vehicleDetail"),
+    VEHICLE_LIST("vehicleList"),
+    VEHICLE_CSV("vehicleCsv"),
+    VEHICLE_DELETE_BY_IDS("vehicleDeleteByIds"),
+    VEHICLE_SAVE("vehicleSave"),
+
+    // ===== crew =====
+    DAILY_CREW_DETAIL("dailyCrewDetail"),
+    DAILY_CREW_LIST("dailyCrewList"),
+    DAILY_CREW_DELETE_BY_IDS("dailyCrewDeleteByIds"),
+    DAILY_CREW_SAVE("dailyCrewSave"),
+    DAILY_CREW_BULK_CREATE("dailyCrewBulkCreate"),
+
+    DAILY_CREW_MEMBER_LIST("dailyCrewMemberList"),
+    DAILY_CREW_MEMBER_DELETE_BY_IDS("dailyCrewMemberDeleteByIds"),
+    DAILY_CREW_MEMBER_SAVE("dailyCrewMemberSave"),
+
+    DISPATCH_ASSIGNMENT_LIST("dispatchAssignmentList"),
+    DISPATCH_ASSIGNMENT_DELETE_BY_IDS("dispatchAssignmentDeleteByIds"),
+    DISPATCH_ASSIGNMENT_SAVE("dispatchAssignmentSave"),
 
     // ===== Client =====
     CLIENT_LIST("clientList"),

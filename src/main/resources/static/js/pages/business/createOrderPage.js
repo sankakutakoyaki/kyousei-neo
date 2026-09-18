@@ -1,15 +1,11 @@
-import {loadOwnOffices,fillOwnOffices} from '../operations/ownOffice.js';
 "use strict";
 
+import {loadOwnOffices,fillOwnOffices} from '../operations/ownOffice.js';
 import { isMobileReadOnly } from "../../core/access/mobileReadOnly.js";
 
 import { createCrudPage } from "../../core/page/createCrudPage.js";
 import { OrderRepository } from "../../repositories/business/order/OrderRepository.js";
 import { FormController } from "../../application/FormController.js";
-// import { convertKey } from "../../util/keyCaseConverter.js";
-// import { clearFormExceptSkipped } from "../../core/form/util/clearForm.js";
-// import { filterFactory } from "../../util/filterFactory.js";
-// import { createMasterPage } from "../../core/page/createMasterPage.js";
 import { createOrderItemFormListController } from "./order/orderItemList.js";
 import { createOrderWorkFormListController } from "./order/orderWorkList.js";
 import { DialogService } from "../../core/ui/dialog/DialogService.js";
@@ -56,21 +52,6 @@ export function createOrderPage(config){
     });
 }
 
-// const createOrderForm = (controller, options = {}) =>
-//     new FormController({
-//         controller,
-//         formId: options.formId,
-//         key: controller.key,
-//         afterSave: async (id) => {
-//             await controller.refresh(id);
-//         },
-//         buildParams: (id) => ({
-//             state:APP.cache.common.state.INITIAL,
-//             orderId: id
-//         }),
-//         repository: OrderRepository,
-//     });
-
 const createOrderForm = (controller, options = {}) => {
 
     const itemList = createOrderItemFormListController();
@@ -96,12 +77,6 @@ const createOrderForm = (controller, options = {}) => {
             orderId: id
         }),
 
-        // onOpen: async (data) => {
-        //     itemList.init(data?.items ?? []);
-
-        //     const formEl = document.getElementById(form.formId);
-        //     initOrderItemInput(form, formEl, itemList);
-        // },
         onOpen: async (data) => {
             let items = data?.items ?? [];
             let works = data?.works ?? [];
@@ -136,13 +111,6 @@ const createOrderForm = (controller, options = {}) => {
                 source.querySelector("a").href = data?.orderImportId ? `/api/order/import/${encodeURIComponent(data.orderImportId)}/file` : "#";
                 source.querySelector("span").textContent = data?.ocrDateWarning || "原本と照合して保存してください。";
             }
-            let dispatchButton=formEl.querySelector('[data-open-order-dispatch]');
-            if(!dispatchButton){dispatchButton=document.createElement('button');dispatchButton.type='button';dispatchButton.className='normal-btn';dispatchButton.dataset.openOrderDispatch='';dispatchButton.textContent='この伝票の配車を開く';formEl.querySelector('.dialog-content')?.prepend(dispatchButton);}
-            dispatchButton.hidden=!data?.orderId;
-            dispatchButton.onclick=async()=>{
-                if((form.hasChanges() || itemList.hasChanges() || workList.hasChanges()) && !await DialogService.confirm('受注の未保存の変更を破棄して配車を開きますか？'))return;
-                DialogService.close(form.formId);await loadPage('/dispatch?orderId='+encodeURIComponent(data.orderId));
-            };
             const postal = formEl.querySelector('[name="postal-code"]');
             if (postal) postal.dataset.lastId = postal.value.trim();
 
@@ -226,10 +194,6 @@ function initOrderItemInput(formController, formEl, itemList) {
             DialogService.error("型番を入力してください");
             return;
         }
-        // if (!item.itemQuantity || item.itemQuantity <= 0) {
-        //     DialogService.error("数量を入力してください");
-        //     return;
-        // }
 
         itemList.add(item);
         clearOrderItemInput(formEl);
@@ -283,16 +247,6 @@ function initOrderWorkInput(formController, formEl, workList) {
             DialogService.error("作業名を入力してください");
             return;
         }
-        // // 単価
-        // if (work.orderWorkPrice < 0) {
-        //     DialogService.error("単価を入力してください");
-        //     return;
-        // }
-        // // 数量 必須
-        // if (!work.orderWorkQuantity || work.orderWorkQuantity <= 0) {
-        //     DialogService.error("数量を入力してください");
-        //     return;
-        // }
 
         workList.add(work);
         clearOrderWorkInput(formEl);
