@@ -22,6 +22,15 @@ public class Tables {
         public static final TableMeta DISPATCH_ASSIGNMENT_BY_IDS =
             new TableMeta("dispatch_assignments", "dispatchAssignmentId", "state", "version");
 
+        public static final TableMeta EMPLOYEE_SHIFT_BY_IDS =
+            new TableMeta("employee_shifts", "employeeShiftId", "state", "version");
+
+        public static final TableMeta VEHICLE_DEFAULT_MEMBER_BY_IDS =
+            new TableMeta("vehicle_default_members", "vehicleDefaultMemberId", "state", "version");
+
+        public static final TableMeta VEHICLE_DISPATCH_CATEGORY_BY_IDS =
+            new TableMeta("vehicle_dispatch_categories", "vehicleDispatchCategoryId", "state", "version");
+
         public static final TableMeta OFFICE_BY_IDS =
             new TableMeta("offices", "officeId", "state", "version");
 

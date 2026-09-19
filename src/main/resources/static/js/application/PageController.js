@@ -1,7 +1,6 @@
 "use strict"
 
 import { isMobileReadOnly, isWriteAction } from "../core/access/mobileReadOnly.js";
-
 import { initCombo } from "../bootstrap/initCombo.js";
 import { createInputComponent } from "../core/form/components/inputComponent.js";
 import { smartFilterHandler } from "../core/behavior/filterHandler.js";
@@ -56,19 +55,6 @@ const defaultActions = {
         await c.openForm("detail", id, { bulkMode:false });
     }
 };
-
-const formAction = (name, options={}) =>
-    async (c) => {
-        const id = c.getSelectedId();
-        if(!id){
-            openMsgDialog({
-                message:"選択してください",
-                color:"red"
-            });
-            return;
-        }
-        await c.openForm(name, id, options);
-    };
 
 export class PageController {
     constructor(config){
@@ -275,13 +261,22 @@ export class PageController {
 
         const controller = resolveController(dialog);
         if(!controller) return;
-        
+
         const submitBtn = dialog.querySelector('[name="submitBtn"]');
         if(!submitBtn) return;
 
-        const enabled = controller.getActiveForm()?.canSubmit();
+        const form = controller.getActiveForm?.();
 
-        // ボタン制御
+        // FormController管理ではないダイアログは
+        // PageController側ではボタン制御しない
+        if(!form){
+            submitBtn.disabled = false;
+            submitBtn.classList.remove("disabled");
+            return;
+        }
+
+        const enabled = form.canSubmit?.() ?? true;
+
         submitBtn.disabled = !enabled;
         submitBtn.classList.toggle("disabled", !enabled);
     }
@@ -325,23 +320,6 @@ export class PageController {
         this.state.keyword = value;
     }
 
-    // async refresh(targetId = null){
-    //     if(!this.dataTable){
-    //         return;
-    //     }
-    //     await this.dataTable.refresh();
-    //     if(targetId){
-    //         this.scrollToRow(targetId);
-    //     }
-    //     this.updateButtons();
-    // }
-    // async refresh(targetId = null){
-    //     if(!this.dataTable){
-    //         return;
-    //     }
-    //     await this.dataTable.refresh(targetId);
-    //     this.updateButtons();
-    // }
     async refresh(targetId = null){
         if(!this.dataTable){
             return [];

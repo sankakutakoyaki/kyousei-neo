@@ -1,10 +1,7 @@
 <th:block th:fragment="header01Fragment()">
-
     <div id="header-01" class="flex-area page-input-header">
-
         <div>
             <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-01')}"></th:block>
-
             <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${
                 {
                     'add': 'add-btn-01',
@@ -15,7 +12,6 @@
                 }}
             )}"></th:block>
         </div>
-
         <div class="flex-area">
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 {
@@ -29,7 +25,5 @@
                 }}
             )}"></th:block>
         </div>
-
     </div>
-
 </th:block>

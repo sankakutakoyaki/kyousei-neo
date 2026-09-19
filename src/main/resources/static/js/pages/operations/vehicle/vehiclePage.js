@@ -13,9 +13,7 @@ export async function init() {
     await initPageCache("/api/vehicle/init/cache");
 
     const vehicle = vehiclePage();
-
     registerController("vehicle", vehicle);
-
     vehicle.init();
     await vehicle.refresh();
 }
@@ -28,18 +26,14 @@ export const vehiclePage = () =>
         formId: "form-01",
         idKey: "vehicleId",
         repository: VehicleRepository,
-
         columns: createVehicleColumns(),
-
         components: {
             combo: true
         },
-
         buildDetailParams: (id) => ({
             state: APP.cache.common.state.INITIAL,
             vehicleId: id
         }),
-
         model: {
             filters: {
                 officeId: filterFactory.equals("officeId")

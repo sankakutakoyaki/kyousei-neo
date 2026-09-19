@@ -89,6 +89,7 @@ export function openMsgDialog(options = {}) {
         isConfirm: false,
     });
 }
+
 /**
  * コンフィルムダイアログ表示
  * @param {*} msg 
@@ -182,16 +183,27 @@ export function closeMsgDialog(dialogId = "msg-dialog") {
  */
 export function setInertState(state) {
     const header = document.querySelector('.normal-header');
-    if (header != null) header.inert = state;
+    if (header != null) {
+        header.inert = state;
+    }
 
     const aside = document.querySelector('.normal-sidebar');
-    if (aside != null) aside.inert = state;
+    if (aside != null) {
+        aside.inert = state;
+    }
 
     const tab = document.querySelector('.tab-area');
-    if (tab != null) tab.inert = state;
+    if (tab != null) {
+        tab.inert = state;
+    }
 
-    const table = document.querySelector('.table-area');
-    if (table != null) table.inert = state;
+    document.querySelectorAll('.table-area').forEach(table => {
+        // ダイアログ内のテーブルは操作可能にする
+        if (table.closest('#form-dialog-area') || table.closest('#msg-dialog-area')) {
+            return;
+        }
+        table.inert = state;
+    });
 }
 
 /**

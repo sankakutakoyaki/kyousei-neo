@@ -11,8 +11,9 @@ import com.kyouseipro.neo.interfaces.sql.QueryHandler;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.Tables;
-import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
 import com.kyouseipro.neo.sql.query.operations.dispatch.DailyCrewQuery;
+import com.kyouseipro.neo.sql.query.operations.vehicle.VehicleDefaultMemberQuery;
+import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
 import com.kyouseipro.neo.sql.service.QueryExecutor;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DispatchHandler implements QueryHandler {
 
-    private final BaseSqlRepository baseRepository; 
+    private final BaseSqlRepository baseRepository;
     private final QueryExecutor queryExecutor;
 
     @Override
@@ -43,36 +44,79 @@ public class DispatchHandler implements QueryHandler {
         Map<String, Object> params = req.getParams();
 
         String editor =
-            (String) params.getOrDefault("editor", "system");
+            (String) params.getOrDefault(
+                "editor",
+                "system"
+            );
 
         String workDate =
-            String.valueOf(params.get("workDate"));
+            String.valueOf(
+                params.get("workDate")
+            );
 
         int officeId =
-            ((Number) params.get("officeId")).intValue();
+            ((Number) params.get("officeId"))
+                .intValue();
 
         int dispatchCategory =
-            ((Number) params.get("dispatchCategory")).intValue();
+            ((Number) params.get("dispatchCategory"))
+                .intValue();
 
         List<Number> vehicleIds =
             (List<Number>) params.get("vehicleIds");
 
         int count = 0;
         int skipped = 0;
+        int memberCount = 0;
         int displayOrder = 1;
 
-        for (Number vehicleId : vehicleIds) {
 
-            Map<String, Object> checkParams = new HashMap<>();
+        for (Number vehicleIdValue : vehicleIds) {
 
-            checkParams.put("workDate", workDate);
-            checkParams.put("officeId", officeId);
-            checkParams.put("dispatchCategory", dispatchCategory);
-            checkParams.put("vehicleId", vehicleId.intValue());
-            checkParams.put("state", 0);
+            int vehicleId =
+                vehicleIdValue.intValue();
 
-            SelectRequest checkReq = new SelectRequest();
-            checkReq.setParams(checkParams);
+
+            // -----------------------------
+            // 既存の当日班を確認
+            // -----------------------------
+
+            Map<String, Object> checkParams =
+                new HashMap<>();
+
+            checkParams.put(
+                "workDate",
+                workDate
+            );
+
+            checkParams.put(
+                "officeId",
+                officeId
+            );
+
+            checkParams.put(
+                "dispatchCategory",
+                dispatchCategory
+            );
+
+            checkParams.put(
+                "vehicleId",
+                vehicleId
+            );
+
+            checkParams.put(
+                "state",
+                0
+            );
+
+
+            SelectRequest checkReq =
+                new SelectRequest();
+
+            checkReq.setParams(
+                checkParams
+            );
+
 
             List<Map<String, Object>> exists =
                 queryExecutor.select(
@@ -80,19 +124,51 @@ public class DispatchHandler implements QueryHandler {
                     checkReq
                 );
 
+
+            // 既に作られている班は触らない
             if (!exists.isEmpty()) {
                 skipped++;
                 continue;
             }
 
-            Map<String, Object> row = new HashMap<>();
 
-            row.put("workDate", workDate);
-            row.put("officeId", officeId);
-            row.put("dispatchCategory", dispatchCategory);
-            row.put("vehicleId", vehicleId.intValue());
-            row.put("displayOrder", displayOrder++);
-            row.put("state", 0);
+            // -----------------------------
+            // daily_crews 作成
+            // -----------------------------
+
+            Map<String, Object> row =
+                new HashMap<>();
+
+            row.put(
+                "workDate",
+                workDate
+            );
+
+            row.put(
+                "officeId",
+                officeId
+            );
+
+            row.put(
+                "dispatchCategory",
+                dispatchCategory
+            );
+
+            row.put(
+                "vehicleId",
+                vehicleId
+            );
+
+            row.put(
+                "displayOrder",
+                displayOrder++
+            );
+
+            row.put(
+                "state",
+                0
+            );
+
 
             baseRepository.insert(
                 Tables.DAILY_CREW_BY_IDS,
@@ -101,10 +177,123 @@ public class DispatchHandler implements QueryHandler {
             );
 
             count++;
+
+
+            // -----------------------------
+            // 作成した dailyCrewId を取得
+            // -----------------------------
+
+            List<Map<String, Object>> created =
+                queryExecutor.select(
+                    DailyCrewQuery.dailyCrewExists(),
+                    checkReq
+                );
+
+            if (created.isEmpty()) {
+                throw new IllegalStateException(
+                    "作成した配車班を取得できません。"
+                );
+            }
+
+
+            int dailyCrewId =
+                ((Number) created
+                    .get(0)
+                    .get("dailyCrewId"))
+                    .intValue();
+
+
+            // -----------------------------
+            // 車両の基本乗務員を取得
+            // -----------------------------
+
+            Map<String, Object> memberParams =
+                new HashMap<>();
+
+            memberParams.put(
+                "vehicleId",
+                vehicleId
+            );
+
+            memberParams.put(
+                "dispatchCategory",
+                dispatchCategory
+            );
+
+            memberParams.put(
+                "state",
+                0
+            );
+
+
+            SelectRequest memberReq =
+                new SelectRequest();
+
+            memberReq.setParams(
+                memberParams
+            );
+
+
+            List<Map<String, Object>> defaultMembers =
+                queryExecutor.select(
+                    VehicleDefaultMemberQuery
+                        .vehicleDefaultMemberList(),
+                    memberReq
+                );
+
+
+            // -----------------------------
+            // daily_crew_members 作成
+            // -----------------------------
+
+            for (
+                Map<String, Object> source
+                    : defaultMembers
+            ) {
+
+                Map<String, Object> member =
+                    new HashMap<>();
+
+                member.put(
+                    "dailyCrewId",
+                    dailyCrewId
+                );
+
+                member.put(
+                    "employeeId",
+                    source.get("employeeId")
+                );
+
+                member.put(
+                    "role",
+                    source.get("role")
+                );
+
+                member.put(
+                    "displayOrder",
+                    source.get("displayOrder")
+                );
+
+                member.put(
+                    "state",
+                    0
+                );
+
+
+                baseRepository.insert(
+                    Tables.DAILY_CREW_MEMBER_BY_IDS,
+                    member,
+                    editor
+                );
+
+                memberCount++;
+            }
         }
+
 
         return Map.of(
             "count", count,
+            "memberCount", memberCount,
             "skipped", skipped
         );
     }

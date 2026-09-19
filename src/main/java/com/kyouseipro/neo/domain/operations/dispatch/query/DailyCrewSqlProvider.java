@@ -22,7 +22,8 @@ public class DailyCrewSqlProvider implements SqlProviderPart {
 
         map.put(QueryId.DAILY_CREW_DETAIL, DailyCrewQuery.dailyCrewDetail());
         map.put(QueryId.DAILY_CREW_LIST, DailyCrewQuery.dailyCrewList());
-
+        map.put(QueryId.DAILY_CREW_BOARD_LIST, DailyCrewQuery.dailyCrewBoardList());
+        
         map.put(
             QueryId.DAILY_CREW_DELETE_BY_IDS,
             new QueryDefinition(

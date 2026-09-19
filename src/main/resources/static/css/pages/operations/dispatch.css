@@ -1,0 +1,209 @@
+@charset "UTF-8";
+
+.dispatch-page {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+    min-height: 0;
+}
+
+/* ヘッダー */
+.dispatch-header-grid {
+    display: grid;
+    grid-template-columns: auto auto auto 1fr 4rem;
+    gap: .5rem;
+    align-items: end;
+    padding: .5rem;
+}
+
+/* 稼働班選択ボタン */
+.dispatch-header-action {
+    width: 4rem;
+}
+
+.dispatch-header-action .img-btn {
+    width: 100%;
+}
+
+/* 配車ボード */
+.dispatch-board {
+    min-height: 0;
+    overflow: auto;
+    padding: .5rem;
+}
+
+.dispatch-empty {
+    padding: 2rem;
+    text-align: center;
+}
+
+/* 稼働車両選択ダイアログ */
+.dispatch-vehicle-dialog-main {
+    width: min(70rem, 90vw);
+    height: min(45rem, 85vh);
+}
+
+.dispatch-vehicle-select-area {
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* 車両一覧 */
+:is(
+    #table-dispatch-vehicle,
+    #table-header-dispatch-vehicle
+) tr {
+    grid-template-columns:
+        3rem
+        8rem
+        12rem
+        14rem
+        10rem
+        10rem
+        2rem;
+}
+
+.dispatch-board {
+    display: grid;
+    grid-template-columns:
+        minmax(25rem, 40%)
+        minmax(30rem, 60%);
+    gap: .5rem;
+    min-height: 0;
+    overflow: hidden;
+    padding: .5rem;
+}
+
+.dispatch-crew-area,
+.dispatch-order-area {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 0;
+    border: 1px solid var(--br);
+}
+
+.dispatch-board-header {
+    padding: .5rem 1rem;
+    border-bottom: 1px solid var(--br);
+}
+
+.dispatch-crew-list,
+.dispatch-order-list {
+    min-height: 0;
+    overflow: auto;
+    padding: .5rem;
+}
+
+.dispatch-crew-card {
+    margin-bottom: .5rem;
+    border: 1px solid var(--br);
+    border-radius: .3rem;
+}
+
+.dispatch-crew-card-header {
+    display: grid;
+    grid-template-columns:
+        1fr auto;
+    gap: .5rem;
+    padding: .5rem;
+    border-bottom: 1px solid var(--br);
+}
+
+.dispatch-crew-members {
+    display: grid;
+    gap: .25rem;
+    padding: .5rem;
+}
+
+.dispatch-crew-member {
+    display: grid;
+    grid-template-columns:
+        4rem 1fr auto;
+    gap: .5rem;
+    align-items: center;
+}
+
+.dispatch-member-warning,
+.dispatch-member-unassigned {
+    color: var(--red);
+}
+
+.dispatch-assignment-list {
+    min-height: 4rem;
+    padding: .5rem;
+    border-top: 1px solid var(--br);
+}
+
+.dispatch-order-header {
+    display: grid;
+    grid-template-columns: 1fr 8rem;
+    gap: .5rem;
+    align-items: center;
+}
+
+.dispatch-order-card {
+    display: grid;
+    gap: .3rem;
+    margin-bottom: .5rem;
+    padding: .75rem;
+    border: 1px solid var(--br);
+    border-radius: .3rem;
+    cursor: grab;
+}
+
+.dispatch-order-card-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: .5rem;
+}
+
+.dispatch-order-address {
+    font-size: .9rem;
+}
+
+.dispatch-order-assigned {
+    font-size: .8rem;
+}
+
+.dispatch-order-card.dragging {
+    opacity: .5;
+}
+
+.dispatch-crew-card.drag-over {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+}
+
+.dispatch-assignment-list {
+    display: grid;
+    gap: .3rem;
+    margin-top: .5rem;
+}
+
+.dispatch-assignment-item {
+    display: grid;
+    gap: .15rem;
+    padding: .5rem;
+    border-top: 1px solid var(--br);
+}
+
+.dispatch-assignment-item span {
+    font-size: .85rem;
+}
+
+.dispatch-assignment-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    margin-top: .5rem;
+}
+
+.dispatch-assignment-toggle {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.dispatch-assignment-list.collapsed {
+    display: none;
+}

@@ -1,0 +1,23 @@
+<header th:fragment="header01Fragment()"
+        id="header-01"
+        class="page-input-header dispatch-header-grid">
+    <div class="form-parts">
+        <label for="dispatch-work-date">日付</label>
+        <input id="dispatch-work-date" type="date" class="normal-input">
+    </div>
+    <div class="form-parts">
+        <label for="dispatch-office">営業所</label>
+        <select id="dispatch-office" class="normal-select" data-combo="officeComboList" data-top="-----"></select>
+    </div>
+    <div class="form-parts">
+        <label for="dispatch-category">区分</label>
+        <select id="dispatch-category" class="normal-select" data-combo="dispatchCategoryComboList"></select>
+    </div>
+    <div></div>
+    <div class="dispatch-header-action">
+        <div class="img-btn" data-action="select-active-crews">
+            <img src="/icons/truck.png">
+            <span>稼働班を選択</span>
+        </div>
+    </div>
+</header>
