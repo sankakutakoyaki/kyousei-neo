@@ -1,31 +1,71 @@
 package com.kyouseipro.neo.domain.corporation.api.office;
 
-import java.util.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import com.kyouseipro.neo.sql.repository.SqlRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.kyouseipro.neo.common.combo.entity.ComboDto;
+import com.kyouseipro.neo.common.enums.code.CompanyCategory;
+
 import lombok.RequiredArgsConstructor;
 
-@RestController @RequiredArgsConstructor
+@RestController
+@RequiredArgsConstructor
 public class OwnOfficeContextController {
-    private final SqlRepository sql;
+
+    private final OfficeService officeService;
+    private final OwnOfficeContextService ownOfficeContextService;
+
+
     @GetMapping("/api/own-offices/context")
     @PreAuthorize("hasAnyAuthority('APPROLE_admin','APPROLE_master','APPROLE_leader','APPROLE_staff','APPROLE_user')")
-    public Map<String,Object> context(Authentication authentication) {
-        String account=authentication.getName();
-        if(authentication.getPrincipal() instanceof OidcUser user) {
-            String preferred=user.getAttribute("preferred_username");
-            if(preferred!=null && !preferred.isBlank())account=preferred;
-            else if(user.getEmail()!=null && !user.getEmail().isBlank())account=user.getEmail();
-        }
-        var offices=sql.selectMap("SELECT o.office_id AS value,o.name AS label FROM offices o JOIN companies c ON c.company_id=o.company_id WHERE o.state=0 AND c.state=0 AND c.category=0 ORDER BY o.office_id",List.of());
-        var self=sql.selectMap("SELECT DISTINCT office_id FROM employees WHERE state=0 AND account=?",List.of(account));
-        Object own=self.size()==1?self.get(0).get("officeId"):null;
-        Object chosen=own;
-        if(own==null || offices.stream().noneMatch(o->Objects.toString(o.get("value"),"").equals(chosen.toString())))own="";
-        boolean headOffice="1000".equals(own.toString());
-        return Map.of("offices",offices,"defaultOfficeId",own,"isHeadOffice",headOffice);
+    public Map<String, Object> context(
+        Authentication authentication
+    ) {
+
+        List<ComboDto> offices =
+            officeService.findComboByCategory(
+                CompanyCategory.OWN.getCode()
+            );
+
+        Integer officeId =
+            ownOfficeContextService
+                .getOfficeId(authentication);
+
+        boolean exists =
+            offices.stream().anyMatch(
+                office ->
+                    Objects.equals(
+                        office.getValue(),
+                        officeId == null
+                            ? null
+                            : officeId.longValue()
+                    )
+            );
+
+        Object defaultOfficeId =
+            officeId != null && exists
+                ? officeId
+                : "";
+
+        boolean headOffice =
+            Objects.equals(
+                officeId,
+                1000
+            );
+
+        return Map.of(
+            "offices",
+            offices,
+            "defaultOfficeId",
+            defaultOfficeId,
+            "isHeadOffice",
+            headOffice
+        );
     }
 }

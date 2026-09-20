@@ -15,17 +15,34 @@ import { DispatchOrderRepository } from "../../../repositories/operations/dispat
 import { VehicleDefaultMemberRepository } from "../../../repositories/operations/vehicle/VehicleDefaultMemberRepository.js";
 import { DispatchAssignmentRepository } from "../../../repositories/operations/dispatch/DispatchAssignmentRepository.js";
 
+import { groupDispatchCrews, renderDispatchCrews } from "./dispatchCrewView.js";
+import { renderDispatchOrders } from "./dispatchOrderView.js";
+import { initCrewDrop } from "./dispatchDragDrop.js";
+
 let vehicleTable;
 let dispatchOrders = [];
 let dispatchLoadPromise = Promise.resolve();
+const expandedCrewIds = new Set();
 
 export async function init() {
-    await initCommon();
-    await initPageCache("/api/dispatch/init/cache");
 
-    const dispatch = dispatchPage();
-    registerController("dispatch", dispatch);
+    await initCommon();
+
+    await initPageCache(
+        "/api/dispatch/init/cache"
+    );
+
+    const dispatch =
+        dispatchPage();
+
+    registerController(
+        "dispatch",
+        dispatch
+    );
+
     dispatch.init();
+
+    setInitialOffice();
 }
 
 function dispatchPage() {
@@ -38,7 +55,7 @@ function dispatchPage() {
                 await openActiveCrewDialog(controller);
             },
             "change-order-status": async () => {
-                renderDispatchOrders();
+                renderOrderList();
             }
         },
         onInit: (controller) => {
@@ -52,6 +69,27 @@ function dispatchPage() {
     });
 }
 
+function setInitialOffice(){
+
+    const office =
+        document.getElementById(
+            "dispatch-office"
+        );
+
+    if(!office) return;
+
+
+    const loginOfficeId =
+        APP.cache.page
+            ?.loginOfficeId;
+
+    if(!loginOfficeId) return;
+
+
+    office.value =
+        String(loginOfficeId);
+}
+
 /**
  * 初期条件
  */
@@ -62,8 +100,12 @@ function initConditions() {
             "dispatch-work-date"
         );
 
-    if(workDate && !workDate.value){
-        workDate.value = getToday();
+    if(
+        workDate &&
+        !workDate.value
+    ){
+        workDate.value =
+            getToday();
     }
 
 
@@ -197,7 +239,7 @@ async function executeLoadDispatchBoard() {
         renderDispatchCrews([]);
 
         dispatchOrders = [];
-        renderDispatchOrders();
+        renderOrderList();
 
         return;
     }
@@ -270,12 +312,50 @@ async function executeLoadDispatchBoard() {
         crews
     );
 
+    crews.forEach(crew => {
+
+        if(
+            (crew.assignments?.length ?? 0) === 0
+        ){
+            expandedCrewIds.delete(
+                crew.dailyCrewId
+            );
+        }
+    });
 
     // 左側描画
     renderDispatchCrews(
-        crews
-    );
+        crews,
+        {
+            expandedCrewIds,
 
+            initCrewDrop: card => {
+                initCrewDrop(
+                    card,
+                    {
+                        onAssigned:
+                            async ({ dailyCrewId }) => {
+
+                                expandedCrewIds.add(
+                                    dailyCrewId
+                                );
+
+                                await loadDispatchBoard();
+                            }
+                    }
+                );
+            },
+
+            onUnassign: async assignment => {
+                await DispatchAssignmentRepository
+                    .deleteByIds([
+                        assignment.dispatchAssignmentId
+                    ]);
+
+                await loadDispatchBoard();
+            }
+        }
+    );
 
     // ==============================
     // 右：伝票
@@ -294,584 +374,7 @@ async function executeLoadDispatchBoard() {
     dispatchOrders =
         orderResult.data ?? [];
 
-    renderDispatchOrders();
-}
-
-function groupDispatchCrews(rows){
-
-    const map =
-        new Map();
-
-    rows.forEach(row => {
-
-        const dailyCrewId =
-            row.dailyCrewId;
-
-        if(!map.has(dailyCrewId)){
-
-            map.set(
-                dailyCrewId,
-                {
-                    dailyCrewId,
-                    vehicleId:
-                        row.vehicleId,
-
-                    vehicleName:
-                        row.vehicleName,
-
-                    registrationArea:
-                        row.registrationArea,
-
-                    registrationClass:
-                        row.registrationClass,
-
-                    registrationKana:
-                        row.registrationKana,
-
-                    registrationNumber:
-                        row.registrationNumber,
-
-                    members: []
-                }
-            );
-        }
-
-
-        if(row.employeeId){
-
-            map.get(dailyCrewId)
-                .members
-                .push({
-                    dailyCrewMemberId:
-                        row.dailyCrewMemberId,
-
-                    employeeId:
-                        row.employeeId,
-
-                    employeeName:
-                        row.employeeName,
-
-                    role:
-                        row.role,
-
-                    shiftType:
-                        row.shiftType,
-
-                    startTime:
-                        row.startTime,
-
-                    endTime:
-                        row.endTime
-                });
-        }
-    });
-
-    return [
-        ...map.values()
-    ];
-}
-
-function renderDispatchCrews(crews){
-
-    const area =
-        document.getElementById(
-            "dispatch-crew-list"
-        );
-
-    if(!area) return;
-
-    area.replaceChildren();
-
-    crews.forEach(crew => {
-
-        area.appendChild(
-            createCrewCard(crew)
-        );
-    });
-}
-
-function createCrewCard(crew){
-
-    const card =
-        document.createElement("div");
-
-    card.className =
-        "dispatch-crew-card";
-
-    card.dataset.dailyCrewId =
-        crew.dailyCrewId;
-
-    const header =
-        document.createElement("div");
-
-    header.className =
-        "dispatch-crew-card-header";
-
-
-    const name =
-        document.createElement("strong");
-
-    name.textContent =
-        crew.vehicleName;
-
-
-    const number =
-        document.createElement("span");
-
-    number.textContent =
-        [
-            crew.registrationArea,
-            crew.registrationClass,
-            crew.registrationKana,
-            crew.registrationNumber
-        ]
-        .filter(Boolean)
-        .join(" ");
-
-
-    header.append(
-        name,
-        number
-    );
-
-
-    const members =
-        document.createElement("div");
-
-    members.className =
-        "dispatch-crew-members";
-
-
-    if(crew.members.length === 0){
-
-        const empty =
-            document.createElement("div");
-
-        empty.className =
-            "dispatch-member-unassigned";
-
-        empty.textContent =
-            "乗務員未設定";
-
-        members.appendChild(empty);
-
-    } else {
-
-        crew.members.forEach(member => {
-
-            members.appendChild(
-                createCrewMember(member)
-            );
-        });
-    }
-
-    const assignmentHeader =
-        document.createElement("div");
-
-    assignmentHeader.className =
-        "dispatch-assignment-header";
-
-
-    const assignmentTitle =
-        document.createElement("span");
-
-    assignmentTitle.textContent =
-        `伝票 ${crew.assignments?.length ?? 0}件`;
-
-
-    const toggle =
-        document.createElement("button");
-
-    toggle.type = "button";
-    toggle.className =
-        "dispatch-assignment-toggle";
-
-    toggle.textContent = "▼";
-
-
-    assignmentHeader.append(
-        assignmentTitle,
-        toggle
-    );
-
-    const orders =
-        document.createElement("div");
-
-    orders.className =
-        "dispatch-assignment-list collapsed";
-
-    renderCrewAssignments(
-        orders,
-        crew.assignments ?? []
-    );
-
-    toggle.addEventListener(
-        "click",
-        event => {
-
-            event.stopPropagation();
-
-            const collapsed =
-                orders.classList.toggle(
-                    "collapsed"
-                );
-
-            toggle.textContent =
-                collapsed
-                    ? "▶"
-                    : "▼";
-        }
-    );
-
-    card.append(
-        header,
-        members,
-        assignmentHeader,
-        orders
-    );
-
-    initCrewDrop(card);
-
-    return card;
-}
-
-function createCrewMember(member){
-
-    const row =
-        document.createElement("div");
-
-    row.className =
-        "dispatch-crew-member";
-
-
-    const role =
-        member.role === 1
-            ? "担当"
-            : "助手";
-
-
-    const roleSpan =
-        document.createElement("span");
-
-    roleSpan.className =
-        "dispatch-member-role";
-
-    roleSpan.textContent =
-        role;
-
-
-    const name =
-        document.createElement("span");
-
-    name.textContent =
-        member.employeeName;
-
-
-    row.append(
-        roleSpan,
-        name
-    );
-
-
-    if(member.shiftType !== 1){
-
-        const status =
-            document.createElement("span");
-
-        status.className =
-            "dispatch-member-warning";
-
-        status.textContent =
-            getShiftStatusText(
-                member.shiftType
-            );
-
-        row.appendChild(status);
-    }
-
-    return row;
-}
-
-function getShiftStatusText(shiftType){
-
-    switch(shiftType){
-
-        case 2:
-            return "休み";
-
-        case 3:
-            return "有休";
-
-        case 4:
-            return "午前休";
-
-        case 5:
-            return "午後休";
-
-        default:
-            return "シフト未登録";
-    }
-}
-
-function renderDispatchOrders(){
-
-    const area =
-        document.getElementById(
-            "dispatch-order-list"
-        );
-
-    if(!area) return;
-
-    area.replaceChildren();
-
-
-    const status =
-        document.getElementById(
-            "dispatch-order-status"
-        )?.value ?? "unassigned";
-
-
-    const list =
-        dispatchOrders.filter(order => {
-
-            if(status === "unassigned"){
-                return order.assignmentCount === 0;
-            }
-
-            if(status === "assigned"){
-                return order.assignmentCount > 0;
-            }
-
-            return true;
-        });
-
-
-    if(list.length === 0){
-
-        const empty =
-            document.createElement("div");
-
-        empty.className =
-            "dispatch-empty";
-
-        if(status === "assigned"){
-            empty.textContent =
-                "配車済み伝票はありません";
-        } else if(status === "all"){
-            empty.textContent =
-                "伝票はありません";
-        } else {
-            empty.textContent =
-                "未配車伝票はありません";
-        }
-
-        area.appendChild(empty);
-
-        return;
-    }
-
-
-    list.forEach(order => {
-
-        area.appendChild(
-            createDispatchOrderCard(order)
-        );
-    });
-}
-
-function createDispatchOrderCard(order){
-
-    const card =
-        document.createElement("div");
-
-    card.className =
-        "dispatch-order-card";
-
-    card.dataset.orderId =
-        order.orderId;
-
-    card.draggable = true;
-    card.addEventListener(
-        "dragstart",
-        event => {
-
-            event.dataTransfer.effectAllowed =
-                "move";
-
-            event.dataTransfer.setData(
-                "text/plain",
-                String(order.orderId)
-            );
-
-            card.classList.add(
-                "dragging"
-            );
-        }
-    );
-
-    card.addEventListener(
-        "dragend",
-        () => {
-
-            card.classList.remove(
-                "dragging"
-            );
-        }
-    );
-
-    const header =
-        document.createElement("div");
-
-    header.className =
-        "dispatch-order-card-header";
-
-
-    const title =
-        document.createElement("strong");
-
-    title.textContent =
-        order.title || "名称未設定";
-
-
-    const time =
-        document.createElement("span");
-
-    time.textContent =
-        order.visitTime || "";
-
-
-    header.append(
-        title,
-        time
-    );
-
-
-    const address =
-        document.createElement("div");
-
-    address.className =
-        "dispatch-order-address";
-
-    address.textContent =
-        order.fullAddress || "";
-
-
-    card.append(
-        header,
-        address
-    );
-
-
-    if(order.assignmentCount > 0){
-
-        const assigned =
-            document.createElement("div");
-
-        assigned.className =
-            "dispatch-order-assigned";
-
-        assigned.textContent =
-            `配車済み ${order.assignmentCount}班`;
-
-        card.appendChild(assigned);
-    }
-
-
-    return card;
-}
-
-function initCrewDrop(card){
-
-    card.addEventListener(
-        "dragover",
-        event => {
-
-            event.preventDefault();
-
-            event.dataTransfer.dropEffect =
-                "move";
-
-            card.classList.add(
-                "drag-over"
-            );
-        }
-    );
-
-
-    card.addEventListener(
-        "dragleave",
-        event => {
-
-            if(
-                card.contains(
-                    event.relatedTarget
-                )
-            ){
-                return;
-            }
-
-            card.classList.remove(
-                "drag-over"
-            );
-        }
-    );
-
-
-    card.addEventListener(
-        "drop",
-        async event => {
-
-            event.preventDefault();
-
-            card.classList.remove(
-                "drag-over"
-            );
-
-
-            const orderId =
-                Number(
-                    event.dataTransfer.getData(
-                        "text/plain"
-                    )
-                );
-
-            const dailyCrewId =
-                Number(
-                    card.dataset.dailyCrewId
-                );
-
-
-            if(
-                !orderId ||
-                !dailyCrewId
-            ){
-                return;
-            }
-
-
-            await assignOrderToCrew(
-                orderId,
-                dailyCrewId
-            );
-        }
-    );
-}
-
-async function assignOrderToCrew(
-    orderId,
-    dailyCrewId
-){
-
-    await DispatchAssignmentRepository.save({
-        orderId,
-        dailyCrewId,
-        visitOrder: 0,
-        remarks: "",
-        state:
-            APP.cache.common.state.INITIAL
-    });
-
-    await loadDispatchBoard();
+    renderOrderList();
 }
 
 async function loadCrewAssignments(crews){
@@ -893,55 +396,15 @@ async function loadCrewAssignments(crews){
     }
 }
 
-function renderCrewAssignments(
-    area,
-    assignments
-){
+function renderOrderList(){
 
-    area.replaceChildren();
+    const status =
+        document.getElementById(
+            "dispatch-order-status"
+        )?.value ?? "unassigned";
 
-    assignments.forEach(
-        assignment => {
-
-            const item =
-                document.createElement("div");
-
-            item.className =
-                "dispatch-assignment-item";
-
-            item.dataset
-                .dispatchAssignmentId =
-                    assignment
-                        .dispatchAssignmentId;
-
-            item.dataset.orderId =
-                assignment.orderId;
-
-
-            const title =
-                document.createElement("strong");
-
-            title.textContent =
-                assignment.title
-                || "名称未設定";
-
-
-            const address =
-                document.createElement("span");
-
-            address.textContent =
-                assignment.fullAddress
-                || "";
-
-
-            item.append(
-                title,
-                address
-            );
-
-            area.appendChild(
-                item
-            );
-        }
+    renderDispatchOrders(
+        dispatchOrders,
+        status
     );
 }

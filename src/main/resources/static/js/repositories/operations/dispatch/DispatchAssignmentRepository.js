@@ -10,5 +10,9 @@ export const DispatchAssignmentRepository = {
 
     async save(params) {
         return await RequestClient.request({ queryId: "dispatchAssignmentSave", params });
+    },
+
+    async deleteByIds(ids) {
+        return await RequestClient.request({ queryId: "dispatchAssignmentDeleteByIds", params: { ids }});
     }
 };
