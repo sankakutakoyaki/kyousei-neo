@@ -168,15 +168,46 @@
 
 <th:block th:fragment="dispatchSettingFragment()">
     <div class="dialog-content" data-enterfocus="dispatch-setting-dialog">
-        <!-- 配車区分 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'車両名',
+                    'id':'dispatch-setting-vehicle-name',
+                    'name':'vehicle-name',
+                    'readonly':true
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'車番',
+                    'id':'dispatch-setting-plate-number',
+                    'name':'plate-number',
+                    'readonly':true
+                }
+            })}"></th:block>
+        </div>
+        <!-- 車両の基本配車区分 -->
         <div class="form-row">
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 {
-                    'text':'配車区分',
+                    'text':'基本配車区分',
                     'id':'dispatch-setting-category',
                     'name':'dispatch-category',
                     'combo':'dispatchCategoryComboList',
                     'index':1
+                }
+            })}"></th:block>
+        </div>
+
+        <!-- 基本乗務員の対象区分 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'基本乗務員の対象区分',
+                    'id':'dispatch-member-category',
+                    'name':'member-dispatch-category',
+                    'combo':'dispatchCategoryComboList',
+                    'index':2
                 }
             })}"></th:block>
         </div>
@@ -190,20 +221,23 @@
             data-result-first="true"
             data-name-key="fullName"
             data-value-key="employeeId">
+
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'社員ID / コード',
                     'id':'dispatch-member-code',
                     'name':'employee-code',
                     'resolveId':true,
-                    'index':2
+                    'index':3
                 }
             })}"></th:block>
+
             <input
                 type="hidden"
                 id="dispatch-member-employee-id"
                 name="employee-id"
                 data-role="hidden-id">
+
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'社員名',
@@ -211,10 +245,10 @@
                     'name':'employee-name',
                     'resolveName':true,
                     'readonly':true,
-                    'index':3
+                    'index':4
                 }
             })}"></th:block>
-            <!-- 役割 -->
+
             <div class="form-row">
                 <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                     {
@@ -223,11 +257,11 @@
                         'name':'role',
                         'combo':'crewRoleComboList',
                         'top':'-----',
-                        'index':4
+                        'index':5
                     }
                 })}"></th:block>
             </div>
-            <!-- 追加 -->
+
             <div class="form-row">
                 <button
                     type="button"
@@ -236,10 +270,11 @@
                 </button>
             </div>
         </div>
-        <!-- 登録済み基本乗務員 -->
+
         <div
             id="vehicle-default-member-area"
             class="form-row">
         </div>
+
     </div>
 </th:block>

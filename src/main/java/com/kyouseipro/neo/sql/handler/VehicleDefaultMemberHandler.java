@@ -3,17 +3,20 @@ package com.kyouseipro.neo.sql.handler;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.system.QueryKind;
+import com.kyouseipro.neo.common.util.ValueUtil;
 import com.kyouseipro.neo.interfaces.sql.QueryHandler;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.Tables;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class VehicleDefaultMemberHandler implements QueryHandler {
 
     private final BaseSqlRepository baseRepository;
+    private final SqlRepository sqlRepository;
 
     @Override
     public boolean supports(QueryKind kind) {
@@ -44,17 +48,16 @@ public class VehicleDefaultMemberHandler implements QueryHandler {
 
         int count = 0;
 
-        // =========================
-        // 削除
-        // =========================
+        count += saveDispatchCategory(
+            params,
+            editor
+        );
+
         count += deleteMembers(
             params,
             editor
         );
 
-        // =========================
-        // 追加・更新
-        // =========================
         count += saveMembers(
             params,
             editor
@@ -86,7 +89,7 @@ public class VehicleDefaultMemberHandler implements QueryHandler {
             }
 
             Long id =
-                toLong(
+                ValueUtil.toLong(
                     source.get(
                         "vehicleDefaultMemberId"
                     )
@@ -145,7 +148,7 @@ public class VehicleDefaultMemberHandler implements QueryHandler {
             }
 
             Long id =
-                toLong(
+                ValueUtil.toLong(
                     source.get(
                         "vehicleDefaultMemberId"
                     )
@@ -218,7 +221,11 @@ public class VehicleDefaultMemberHandler implements QueryHandler {
                 "version",
                 source.get("version")
             );
-
+System.out.println(
+    "vehicleDefaultMember update: " +
+    "id=" + id +
+    ", version=" + source.get("version")
+);
             count +=
                 baseRepository.update(
                     Tables.VEHICLE_DEFAULT_MEMBER_BY_IDS,
@@ -230,24 +237,144 @@ public class VehicleDefaultMemberHandler implements QueryHandler {
         return count;
     }
 
-    private static Long toLong(
-            Object value) {
+    // private static Long toLong(
+    //         Object value) {
 
-        if (value == null) {
-            return null;
+    //     if (value == null) {
+    //         return null;
+    //     }
+
+    //     if (value instanceof Number number) {
+    //         return number.longValue();
+    //     }
+
+    //     String text =
+    //         value.toString().trim();
+
+    //     if (text.isEmpty()) {
+    //         return null;
+    //     }
+
+    //     return Long.valueOf(text);
+    // }
+
+    private int saveDispatchCategory(
+            Map<String, Object> params,
+            String editor) {
+
+        Long vehicleId =
+            ValueUtil.toLong(
+                params.get("vehicleId")
+            );
+
+        Integer dispatchCategory =
+            ValueUtil.toInt(
+                params.get("dispatchCategory")
+            );
+
+        if (
+            vehicleId == null ||
+            dispatchCategory == null ||
+            dispatchCategory == 0
+        ) {
+            throw new IllegalArgumentException(
+                "配車区分を選択してください"
+            );
         }
 
-        if (value instanceof Number number) {
-            return number.longValue();
+        List<Map<String, Object>> rows =
+            sqlRepository.selectMap(
+                """
+                SELECT
+                    vehicle_dispatch_category_id,
+                    vehicle_id,
+                    dispatch_category,
+                    version
+                FROM vehicle_dispatch_categories
+                WHERE vehicle_id = ?
+                AND state = 0
+                """,
+                List.of(vehicleId)
+            );
+
+        // 未登録
+        if (rows.isEmpty()) {
+
+            Map<String, Object> row =
+                new LinkedHashMap<>();
+
+            row.put(
+                "vehicleId",
+                vehicleId
+            );
+
+            row.put(
+                "dispatchCategory",
+                dispatchCategory
+            );
+
+            row.put(
+                "state",
+                0
+            );
+
+            baseRepository.insert(
+                Tables.VEHICLE_DISPATCH_CATEGORY_BY_IDS,
+                row,
+                editor
+            );
+
+            return 1;
         }
 
-        String text =
-            value.toString().trim();
+        Map<String, Object> current =
+            rows.get(0);
+System.out.println("current = " + current);
+        Integer currentCategory =
+            ValueUtil.toInt(
+                current.get("dispatchCategory")
+            );
 
-        if (text.isEmpty()) {
-            return null;
+        // 同じ区分なら何もしない
+        if (
+            Objects.equals(
+                currentCategory,
+                dispatchCategory
+            )
+        ) {
+            return 0;
         }
 
-        return Long.valueOf(text);
+        // 区分変更
+        Map<String, Object> row =
+            new LinkedHashMap<>();
+
+        row.put(
+            "vehicleDispatchCategoryId",
+            current.get(
+                "vehicleDispatchCategoryId"
+            )
+        );
+
+        row.put(
+            "dispatchCategory",
+            dispatchCategory
+        );
+
+        row.put(
+            "version",
+            current.get("version")
+        );
+System.out.println(
+    "vehicleDispatchCategory update: " +
+    "id=" + current.get("vehicleDispatchCategoryId") +
+    ", category=" + dispatchCategory +
+    ", version=" + current.get("version")
+);
+        return baseRepository.update(
+            Tables.VEHICLE_DISPATCH_CATEGORY_BY_IDS,
+            row,
+            editor
+        );
     }
 }

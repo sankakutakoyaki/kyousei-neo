@@ -13,5 +13,9 @@ export const VehicleDefaultMemberRepository = {
 
     async saveSettings(params) {
         return await RequestClient.request({ queryId: "vehicleDefaultMemberSave", params });
-    }
+    },
+
+    async findDispatchCategory(params) {
+        return await RequestClient.request({ queryId: "vehicleDispatchCategoryList", params });
+    },
 };

@@ -9,6 +9,7 @@ import { filterFactory } from "../../../util/filterFactory.js";
 import { registerController, getController } from "../../../application/controllerRegistry.js";
 import { FormController } from "../../../application/FormController.js";
 import { VehicleDefaultMemberRepository } from "../../../repositories/operations/vehicle/VehicleDefaultMemberRepository.js";
+import { DialogService } from "../../../core/ui/dialog/DialogService.js";
 
 let deletedDefaultMembers = [];
 
@@ -52,60 +53,137 @@ export const vehiclePage = () =>
                             vehicleId:
                                 id
                         }),
+                        onOpen: async (data, formController) => {
+                            const vehicleId =
+                                data.vehicleId;
 
-                        onOpen:
-                            async (data, formController) => {
+                            const vehicleName =
+                                document.getElementById(
+                                    "dispatch-setting-vehicle-name"
+                                );
 
-                                deletedDefaultMembers = [];
+                            const plateNumber =
+                                document.getElementById(
+                                    "dispatch-setting-plate-number"
+                                );
 
-                                const category =
-                                    document.getElementById(
-                                        "dispatch-setting-category"
-                                    );
+                            if(vehicleName){
+                                vehicleName.value =
+                                    data.vehicleName ?? "";
+                            }
 
-                                const addButton =
-                                    document.getElementById(
-                                        "dispatch-member-add-btn"
-                                    );
+                            if(plateNumber){
+                                plateNumber.value =
+                                    [
+                                        data.registrationArea,
+                                        data.registrationClass,
+                                        data.registrationKana,
+                                        data.registrationNumber
+                                    ]
+                                    .filter(Boolean)
+                                    .join(" ");
+                            }
 
-                                if(category){
+                            const dispatchCategory =
+                                document.getElementById(
+                                    "dispatch-setting-category"
+                                );
 
-                                    category.onchange =
-                                        async () => {
+                            const memberCategory =
+                                document.getElementById(
+                                    "dispatch-member-category"
+                                );
 
-                                            deletedDefaultMembers = [];
+                            if(
+                                !dispatchCategory ||
+                                !memberCategory
+                            ){
+                                return;
+                            }
 
-                                            await loadDefaultMembers(
-                                                data.vehicleId,
-                                                Number(category.value)
-                                            );
+                            const result =
+                                await VehicleDefaultMemberRepository
+                                    .findDispatchCategory({
+                                        vehicleId: data.vehicleId,
+                                        state:
+                                            APP.cache.common.state.INITIAL
+                                    });
 
-                                            formController.updateSubmitState();
-                                        };
+                            const rows =
+                                result.data ?? [];
+
+                            const currentCategory =
+                                rows.length > 0
+                                    ? Number(
+                                        rows[0].dispatchCategory
+                                    )
+                                    : 0;
+
+                            dispatchCategory.value =
+                                currentCategory
+                                    ? String(currentCategory)
+                                    : "";
+
+                            // 基本乗務員も最初は車両の基本区分を表示
+                            memberCategory.value =
+                                currentCategory
+                                    ? String(currentCategory)
+                                    : "";
+
+                            deletedDefaultMembers = [];
+
+                            await loadDefaultMembers(
+                                data.vehicleId,
+                                currentCategory
+                            );
+
+                            let currentMemberCategory =
+                                Number(memberCategory.value || 0);
+
+                            memberCategory.onchange =
+                                async () => {
+
+                                    const nextCategory =
+                                        Number(
+                                            memberCategory.value || 0
+                                        );
+
+                                    if(hasDefaultMemberChanges()){
+
+                                        memberCategory.value =
+                                            currentMemberCategory
+                                                ? String(currentMemberCategory)
+                                                : "";
+
+                                        DialogService.error(
+                                            "基本乗務員の変更が未保存です。保存してから対象区分を切り替えてください。"
+                                        );
+
+                                        return;
+                                    }
+
+                                    currentMemberCategory =
+                                        nextCategory;
+
+                                    deletedDefaultMembers = [];
 
                                     await loadDefaultMembers(
                                         data.vehicleId,
-                                        Number(category.value)
+                                        nextCategory
                                     );
-                                }
 
-                                if(addButton){
+                                    formController
+                                        .updateSubmitState();
+                                };
 
-                                    addButton.onclick =
-                                        () => {
-
-                                            addDefaultMemberDraft();
-
-                                            formController.updateSubmitState();
-                                        };
-                                }
-                            },
-
+                            formController
+                                .updateSubmitState();
+                        },
                         buildAdditionalPayload:
                             () =>
                                 buildDefaultMemberPayload(
                                     controller
-                                        .getSelectedId()
+                                        .getCurrentRowId()
                                 ),
 
                         hasAdditionalChanges:
@@ -143,13 +221,33 @@ export const vehiclePage = () =>
         actions: {
             "open-dispatch-setting":
                 async (c) => {
-                    const vehicleId = c.getSelectedId();
-                    if(!vehicleId){return;}
-                    await c.openForm("dispatchSetting", vehicleId, {bulkMode: false});
+
+                    const vehicleId =
+                        c.getCurrentRowId();
+
+                    if(!vehicleId){
+                        return;
+                    }
+
+                    const vehicle =
+                        c.dataTable.findOriginById(
+                            vehicleId
+                        );
+
+                    if(!vehicle){
+                        return;
+                    }
+
+                    await c.openForm(
+                        "dispatchSetting",
+                        vehicle,
+                        { bulkMode: false }
+                    );
                 }
         },
         conditions: {
-            "open-dispatch-setting": c => c.getSelectedIds().length === 1
+            "open-dispatch-setting":
+                c => c.hasCurrentRow()
         },
         buildDetailParams: (id) => ({
             state: APP.cache.common.state.INITIAL,
@@ -439,10 +537,17 @@ function createDefaultMemberItem({
 
 function buildDefaultMemberPayload(vehicleId){
 
-    const category =
+    const dispatchCategory =
         Number(
             document.getElementById(
                 "dispatch-setting-category"
+            )?.value
+        );
+
+    const memberDispatchCategory =
+        Number(
+            document.getElementById(
+                "dispatch-member-category"
             )?.value
         );
 
@@ -453,15 +558,18 @@ function buildDefaultMemberPayload(vehicleId){
 
     if(
         !vehicleId ||
-        !category ||
+        !dispatchCategory ||
+        !memberDispatchCategory ||
         !area
     ){
         return {
+            vehicleId,
+            dispatchCategory,
+            memberDispatchCategory,
             members: [],
             deletedMembers: []
         };
     }
-
 
     const members =
         [
@@ -470,43 +578,42 @@ function buildDefaultMemberPayload(vehicleId){
             )
         ]
         .map((item, index) => ({
-
             vehicleDefaultMemberId:
                 item.dataset.vehicleDefaultMemberId
-                    ? Number(
-                        item.dataset.vehicleDefaultMemberId
-                    )
+                    ? Number(item.dataset.vehicleDefaultMemberId)
                     : null,
 
             vehicleId,
 
+            // ★ 基本乗務員はこちら
             dispatchCategory:
-                category,
+                memberDispatchCategory,
 
             employeeId:
-                Number(
-                    item.dataset.employeeId
-                ),
+                Number(item.dataset.employeeId),
 
             role:
-                Number(
-                    item.dataset.role
-                ),
+                Number(item.dataset.role),
 
             displayOrder:
                 index + 1,
 
             version:
-                Number(
-                    item.dataset.version ?? 0
-                ),
+                Number(item.dataset.version ?? 0),
 
             state:
                 APP.cache.common.state.INITIAL
         }));
 
-
     return {
+        vehicleId,
+
+        // ★ vehicle_dispatch_categories 用
+        dispatchCategory,
+
+        // ★ どの乗務員区分を編集しているか
+        memberDispatchCategory,
+
         members,
         deletedMembers:
             [...deletedDefaultMembers]
