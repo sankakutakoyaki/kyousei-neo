@@ -8,14 +8,18 @@
         <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></footer>
     </div>
     <div id="form-dialog-area">
-        <form id="form-01"
-            class="form-dialog none"
-            data-controller="vehicle"
-            data-key="vehicle-id">
+        <form id="form-01" class="form-dialog none" data-controller="vehicle" data-key="vehicle-id">
             <div class="dialog-main">
                 <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '車両登録'} })}"></header>
                 <section th:replace="~{fragments/pages/operations/vehicle/form :: form01Fragment()}"></section>
-                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></footer>
+                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId':'form-footer-01'} })}"></footer>
+            </div>
+        </form>
+        <form id="dispatch-setting-dialog" class="form-dialog none" data-controller="vehicle">
+            <div class="dialog-main">
+                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '配車設定'} })}"></header>
+                <section th:replace="~{fragments/pages/operations/vehicle/form :: dispatchSettingFragment()}"></section>
+                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId':'dispatch-setting-footer'} })}"></footer>
             </div>
         </form>
     </div>

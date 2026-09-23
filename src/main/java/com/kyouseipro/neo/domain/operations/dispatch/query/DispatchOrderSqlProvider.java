@@ -18,10 +18,7 @@ public class DispatchOrderSqlProvider implements SqlProviderPart {
 
         Map<QueryId, QueryDefinition> map = new HashMap<>();
 
-        map.put(
-            QueryId.DISPATCH_ORDER_LIST,
-            DispatchOrderQuery.dispatchOrderList()
-        );
+        map.put(QueryId.DISPATCH_ORDER_LIST, DispatchOrderQuery.dispatchOrderList());
 
         return map;
     }

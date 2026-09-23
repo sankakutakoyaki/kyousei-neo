@@ -16,60 +16,31 @@ public class OwnOfficeContextService {
 
     private final SqlRepository sql;
 
-
     /**
      * ログインユーザーのアカウントを取得
      */
-    public String getAccount(
-        Authentication authentication
-    ) {
-
-        String account =
-            authentication.getName();
-
-        if(
-            authentication.getPrincipal()
-                instanceof OidcUser user
-        ){
-
-            String preferred =
-                user.getAttribute(
-                    "preferred_username"
-                );
-
-            if(
-                preferred != null &&
-                !preferred.isBlank()
-            ){
+    public String getAccount(Authentication authentication) {
+        String account = authentication.getName();
+        if(authentication.getPrincipal() instanceof OidcUser user){
+            String preferred = user.getAttribute("preferred_username");
+            if(preferred != null && !preferred.isBlank()){
                 return preferred;
             }
-
-            if(
-                user.getEmail() != null &&
-                !user.getEmail().isBlank()
-            ){
+            if(user.getEmail() != null && !user.getEmail().isBlank()){
                 return user.getEmail();
             }
         }
-
         return account;
     }
-
 
     /**
      * ログインユーザーの所属営業所IDを取得
      *
      * 複数または未登録の場合は null
      */
-    public Integer getOfficeId(
-        Authentication authentication
-    ) {
-
-        String account =
-            getAccount(authentication);
-
-        var rows =
-            sql.selectMap(
+    public Integer getOfficeId(Authentication authentication) {
+        String account = getAccount(authentication);
+        var rows = sql.selectMap(
                 """
                 SELECT DISTINCT
                     office_id
@@ -84,14 +55,11 @@ public class OwnOfficeContextService {
             return null;
         }
 
-        Object value =
-            rows.get(0).get("officeId");
-
+        Object value = rows.get(0).get("officeId");
         if(value == null){
             return null;
         }
 
-        return ((Number) value)
-            .intValue();
+        return ((Number) value).intValue();
     }
 }

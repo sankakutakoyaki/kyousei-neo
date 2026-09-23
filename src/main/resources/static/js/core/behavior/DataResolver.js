@@ -8,6 +8,10 @@ import { parsers } from "./parsers.js";
 const paramBuilders = {
     makerParams: () => ({
         state: APP.cache.common.state.INITIAL
+    }),
+    employeeParams: (id) => ({
+        state: APP.cache.common.state.INITIAL,
+        identifier: id
     })
 };
 
@@ -184,7 +188,7 @@ const queryResolver = {
     async resolve({ group, id, idInput, nameField, clear }) {
         const queryId = group.dataset.queryId;
         const builderName = group.dataset.paramBuilder;
-        const params = builderName && paramBuilders[builderName] ? paramBuilders[builderName](): {};
+        const params = builderName && paramBuilders[builderName] ? paramBuilders[builderName](id): {};
         const cacheKey = queryId + ":" + JSON.stringify(params);
         try {
             if (!this.cacheMap[cacheKey]) {
@@ -199,9 +203,9 @@ const queryResolver = {
             const list = this.cacheMap[cacheKey];
             const idKey = group.dataset.idKey || "id";
             const nameKey = group.dataset.nameKey || "name";
-            const found = list.find(x =>
-                String(x[idKey]) === String(id)
-            );
+            const found = group.dataset.resultFirst === "true"
+                    ? list[0]
+                    : list.find(x => String(x[idKey]) === String(id));
 
             if (!found) {
                 clear(nameField);

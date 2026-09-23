@@ -57,6 +57,10 @@ export function createCrudPage(config){
                 )
             })
         },
-        forms: config.forms ?? defaultForms 
+        // forms: config.forms ?? defaultForms
+        forms: {
+            ...defaultForms,
+            ...(config.forms ?? {})
+        }
     });
 }

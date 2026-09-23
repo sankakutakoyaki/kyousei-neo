@@ -28,20 +28,12 @@ public class VehicleDispatchCategorySqlProvider implements SqlProviderPart {
 
         map.put(
             QueryId.VEHICLE_DISPATCH_CATEGORY_DELETE_BY_IDS,
-            new QueryDefinition(
-                QueryType.UPDATE,
-                QueryKind.DELETE_BY_IDS,
-                Tables.VEHICLE_DISPATCH_CATEGORY_BY_IDS
-            )
+            new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.VEHICLE_DISPATCH_CATEGORY_BY_IDS)
         );
 
         map.put(
             QueryId.VEHICLE_DISPATCH_CATEGORY_SAVE,
-            new QueryDefinition(
-                QueryType.UPDATE,
-                QueryKind.SAVE,
-                Tables.VEHICLE_DISPATCH_CATEGORY_BY_IDS
-            )
+            new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.VEHICLE_DISPATCH_CATEGORY_BY_IDS)
         );
 
         return map;

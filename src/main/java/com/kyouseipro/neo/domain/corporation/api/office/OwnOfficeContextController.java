@@ -24,48 +24,21 @@ public class OwnOfficeContextController {
 
     @GetMapping("/api/own-offices/context")
     @PreAuthorize("hasAnyAuthority('APPROLE_admin','APPROLE_master','APPROLE_leader','APPROLE_staff','APPROLE_user')")
-    public Map<String, Object> context(
-        Authentication authentication
-    ) {
+    public Map<String, Object> context(Authentication authentication) {
+        List<ComboDto> offices = officeService.findComboByCategory(CompanyCategory.OWN.getCode());
+        Integer officeId = ownOfficeContextService.getOfficeId(authentication);
 
-        List<ComboDto> offices =
-            officeService.findComboByCategory(
-                CompanyCategory.OWN.getCode()
-            );
+        boolean exists = offices.stream().anyMatch(office ->
+            Objects.equals(office.getValue(), officeId == null ? null: officeId.longValue())
+        );
 
-        Integer officeId =
-            ownOfficeContextService
-                .getOfficeId(authentication);
-
-        boolean exists =
-            offices.stream().anyMatch(
-                office ->
-                    Objects.equals(
-                        office.getValue(),
-                        officeId == null
-                            ? null
-                            : officeId.longValue()
-                    )
-            );
-
-        Object defaultOfficeId =
-            officeId != null && exists
-                ? officeId
-                : "";
-
-        boolean headOffice =
-            Objects.equals(
-                officeId,
-                1000
-            );
+        Object defaultOfficeId = officeId != null && exists ? officeId: "";
+        boolean headOffice = Objects.equals(officeId, 1000);
 
         return Map.of(
-            "offices",
-            offices,
-            "defaultOfficeId",
-            defaultOfficeId,
-            "isHeadOffice",
-            headOffice
+            "offices", offices,
+            "defaultOfficeId", defaultOfficeId,
+            "isHeadOffice", headOffice
         );
     }
 }

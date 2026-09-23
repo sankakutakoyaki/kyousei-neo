@@ -38,20 +38,12 @@ public class VehicleDefaultMemberSqlProvider implements SqlProviderPart {
 
         map.put(
             QueryId.VEHICLE_DEFAULT_MEMBER_DELETE_BY_IDS,
-            new QueryDefinition(
-                QueryType.UPDATE,
-                QueryKind.DELETE_BY_IDS,
-                Tables.VEHICLE_DEFAULT_MEMBER_BY_IDS
-            )
+            new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.VEHICLE_DEFAULT_MEMBER_BY_IDS)
         );
 
         map.put(
             QueryId.VEHICLE_DEFAULT_MEMBER_SAVE,
-            new QueryDefinition(
-                QueryType.UPDATE,
-                QueryKind.SAVE,
-                Tables.VEHICLE_DEFAULT_MEMBER_BY_IDS
-            )
+            new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.VEHICLE_DEFAULT_MEMBER_BY_IDS)
         );
 
         return map;

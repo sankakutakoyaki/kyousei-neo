@@ -165,3 +165,81 @@
         </div>
     </div>
 </th:block>
+
+<th:block th:fragment="dispatchSettingFragment()">
+    <div class="dialog-content" data-enterfocus="dispatch-setting-dialog">
+        <!-- 配車区分 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'配車区分',
+                    'id':'dispatch-setting-category',
+                    'name':'dispatch-category',
+                    'combo':'dispatchCategoryComboList',
+                    'index':1
+                }
+            })}"></th:block>
+        </div>
+
+        <!-- 担当者 -->
+        <div
+            class="flex-area form-row"
+            data-resolve="query"
+            data-query-id="employeeResolve"
+            data-param-builder="employeeParams"
+            data-result-first="true"
+            data-name-key="fullName"
+            data-value-key="employeeId">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'社員ID / コード',
+                    'id':'dispatch-member-code',
+                    'name':'employee-code',
+                    'resolveId':true,
+                    'index':2
+                }
+            })}"></th:block>
+            <input
+                type="hidden"
+                id="dispatch-member-employee-id"
+                name="employee-id"
+                data-role="hidden-id">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text':'社員名',
+                    'id':'dispatch-member-name',
+                    'name':'employee-name',
+                    'resolveName':true,
+                    'readonly':true,
+                    'index':3
+                }
+            })}"></th:block>
+            <!-- 役割 -->
+            <div class="form-row">
+                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                    {
+                        'text':'役割',
+                        'id':'dispatch-member-role',
+                        'name':'role',
+                        'combo':'crewRoleComboList',
+                        'top':'-----',
+                        'index':4
+                    }
+                })}"></th:block>
+            </div>
+            <!-- 追加 -->
+            <div class="form-row">
+                <button
+                    type="button"
+                    id="dispatch-member-add-btn">
+                    追加
+                </button>
+            </div>
+        </div>
+        <!-- 登録済み基本乗務員 -->
+        <div
+            id="vehicle-default-member-area"
+            class="form-row">
+        </div>
+    </div>
+</th:block>

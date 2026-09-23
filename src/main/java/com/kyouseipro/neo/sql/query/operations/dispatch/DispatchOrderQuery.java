@@ -10,7 +10,6 @@ public class DispatchOrderQuery {
     }
 
     public static QueryDefinition dispatchOrderList() {
-
         return QueryDefinition.select(
             """
             SELECT

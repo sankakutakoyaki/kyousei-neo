@@ -28,7 +28,8 @@ public class EmployeeSqlProvider implements SqlProviderPart {
             new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.EMPLOYEE_BY_IDS));
         map.put(QueryId.EMPLOYEE_SAVE,
             new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.EMPLOYEE_BY_IDS));
-
+        map.put(QueryId.EMPLOYEE_RESOLVE, EmployeeQuery.employeeResolve());
+        
         return map;
     }
 }

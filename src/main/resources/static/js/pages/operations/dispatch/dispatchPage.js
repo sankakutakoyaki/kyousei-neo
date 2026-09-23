@@ -14,7 +14,6 @@ import { DailyCrewRepository } from "../../../repositories/operations/dispatch/D
 import { DispatchOrderRepository } from "../../../repositories/operations/dispatch/DispatchOrderRepository.js";
 import { VehicleDefaultMemberRepository } from "../../../repositories/operations/vehicle/VehicleDefaultMemberRepository.js";
 import { DispatchAssignmentRepository } from "../../../repositories/operations/dispatch/DispatchAssignmentRepository.js";
-
 import { groupDispatchCrews, renderDispatchCrews } from "./dispatchCrewView.js";
 import { renderDispatchOrders } from "./dispatchOrderView.js";
 import { initCrewDrop } from "./dispatchDragDrop.js";
@@ -25,21 +24,11 @@ let dispatchLoadPromise = Promise.resolve();
 const expandedCrewIds = new Set();
 
 export async function init() {
-
     await initCommon();
+    await initPageCache("/api/dispatch/init/cache");
 
-    await initPageCache(
-        "/api/dispatch/init/cache"
-    );
-
-    const dispatch =
-        dispatchPage();
-
-    registerController(
-        "dispatch",
-        dispatch
-    );
-
+    const dispatch = dispatchPage();
+    registerController("dispatch", dispatch);
     dispatch.init();
 
     setInitialOffice();
@@ -70,60 +59,34 @@ function dispatchPage() {
 }
 
 function setInitialOffice(){
-
-    const office =
-        document.getElementById(
-            "dispatch-office"
-        );
-
+    const office = document.getElementById("dispatch-office");
     if(!office) return;
 
-
-    const loginOfficeId =
-        APP.cache.page
-            ?.loginOfficeId;
-
+    const loginOfficeId = APP.cache.page?.loginOfficeId;
     if(!loginOfficeId) return;
 
-
-    office.value =
-        String(loginOfficeId);
+    office.value = String(loginOfficeId);
 }
 
 /**
  * 初期条件
  */
 function initConditions() {
-
-    const workDate =
-        document.getElementById(
-            "dispatch-work-date"
-        );
-
-    if(
-        workDate &&
-        !workDate.value
-    ){
-        workDate.value =
-            getToday();
+    const workDate = document.getElementById("dispatch-work-date");
+    if(workDate && !workDate.value){
+        workDate.value = getToday();
     }
-
 
     const targets = [
         "dispatch-work-date",
         "dispatch-office",
         "dispatch-category"
     ];
-
     targets.forEach(id => {
-
-        const element =
-            document.getElementById(id);
-
+        const element = document.getElementById(id);
         if(!element) return;
 
-        element.addEventListener(
-            "change",
+        element.addEventListener("change",
             async () => {
                 await loadDispatchBoard();
             }
@@ -196,59 +159,24 @@ function updateSelectedCount() {
 }
 
 function loadDispatchBoard() {
-
-    dispatchLoadPromise =
-        dispatchLoadPromise
-            .catch(() => {
-                // 前回失敗していても次は実行する
-            })
-            .then(() =>
-                executeLoadDispatchBoard()
-            );
-
+    // 前回失敗していても次は実行する
+    dispatchLoadPromise = dispatchLoadPromise.catch(() => {}).then(() => executeLoadDispatchBoard());
     return dispatchLoadPromise;
 }
 
 async function executeLoadDispatchBoard() {
+    const workDate = document.getElementById("dispatch-work-date")?.value ?? "";
+    const officeId = Number(document.getElementById("dispatch-office")?.value || 0);
+    const dispatchCategory = Number(document.getElementById("dispatch-category")?.value || 0);
 
-    const workDate =
-        document.getElementById(
-            "dispatch-work-date"
-        )?.value ?? "";
-
-    const officeId =
-        Number(
-            document.getElementById(
-                "dispatch-office"
-            )?.value || 0
-        );
-
-    const dispatchCategory =
-        Number(
-            document.getElementById(
-                "dispatch-category"
-            )?.value || 0
-        );
-
-
-    if(
-        !workDate ||
-        !officeId ||
-        !dispatchCategory
-    ){
+    if(!workDate || !officeId || !dispatchCategory){
         renderDispatchCrews([]);
-
         dispatchOrders = [];
         renderOrderList();
-
         return;
     }
 
-
-    // ==============================
     // 左：配車班
-    // ==============================
-
     // 基本設定から対象車両を取得
     const defaultResult =
         await VehicleDefaultMemberRepository
@@ -256,27 +184,19 @@ async function executeLoadDispatchBoard() {
                 workDate,
                 officeId,
                 dispatchCategory,
-                state:
-                    APP.cache.common.state.INITIAL
+                state: APP.cache.common.state.INITIAL
             });
-
-    const defaultRows =
-        defaultResult.data ?? [];
-
+    const defaultRows = defaultResult.data ?? [];
 
     // 車両IDを重複除去
     const vehicleIds = [
         ...new Set(
-            defaultRows
-                .map(row => row.vehicleId)
-                .filter(id => id != null)
+            defaultRows.map(row => row.vehicleId).filter(id => id != null)
         )
     ];
 
-
     // 当日班を初期生成
     if(vehicleIds.length > 0){
-
         await DailyCrewRepository.bulkCreate({
             workDate,
             officeId,
@@ -285,41 +205,25 @@ async function executeLoadDispatchBoard() {
         });
     }
 
-
     // 実際の当日班を取得
     const crewResult =
         await DailyCrewRepository.findBoardList({
             workDate,
             officeId,
             dispatchCategory,
-            state:
-                APP.cache.common.state.INITIAL
+            state: APP.cache.common.state.INITIAL
         });
-
-    const crewRows =
-        crewResult.data ?? [];
-
+    const crewRows = crewResult.data ?? [];
 
     // Query結果を班単位にまとめる
-    const crews =
-        groupDispatchCrews(
-            crewRows
-        );
-
+    const crews = groupDispatchCrews(crewRows);
 
     // 班ごとの配車済み伝票を取得
-    await loadCrewAssignments(
-        crews
-    );
+    await loadCrewAssignments(crews);
 
     crews.forEach(crew => {
-
-        if(
-            (crew.assignments?.length ?? 0) === 0
-        ){
-            expandedCrewIds.delete(
-                crew.dailyCrewId
-            );
+        if((crew.assignments?.length ?? 0) === 0){
+            expandedCrewIds.delete(crew.dailyCrewId);
         }
     });
 
@@ -328,83 +232,50 @@ async function executeLoadDispatchBoard() {
         crews,
         {
             expandedCrewIds,
-
             initCrewDrop: card => {
                 initCrewDrop(
                     card,
                     {
-                        onAssigned:
-                            async ({ dailyCrewId }) => {
-
-                                expandedCrewIds.add(
-                                    dailyCrewId
-                                );
-
-                                await loadDispatchBoard();
-                            }
+                        onAssigned: async ({ dailyCrewId }) => {
+                            expandedCrewIds.add(dailyCrewId);
+                            await loadDispatchBoard();
+                        }
                     }
-                );
-            },
-
+                );},
             onUnassign: async assignment => {
-                await DispatchAssignmentRepository
-                    .deleteByIds([
-                        assignment.dispatchAssignmentId
-                    ]);
-
-                await loadDispatchBoard();
-            }
+                    await DispatchAssignmentRepository.deleteByIds([assignment.dispatchAssignmentId]);
+                    await loadDispatchBoard();
+                },
+            onReorder:
+                async items => {
+                    await DispatchAssignmentRepository.reorder(items);
+                    await loadDispatchBoard();
+                },
         }
     );
 
-    // ==============================
     // 右：伝票
-    // ==============================
-
-    const orderResult =
-        await DispatchOrderRepository
-            .findList({
-                workDate,
-                officeId,
-                dispatchCategory,
-                state:
-                    APP.cache.common.state.INITIAL
-            });
-
-    dispatchOrders =
-        orderResult.data ?? [];
-
+    const orderResult = await DispatchOrderRepository.findList({
+        workDate,
+        officeId,
+        dispatchCategory,
+        state: APP.cache.common.state.INITIAL
+    });
+    dispatchOrders = orderResult.data ?? [];
     renderOrderList();
 }
 
 async function loadCrewAssignments(crews){
-
     for(const crew of crews){
-
-        const result =
-            await DispatchAssignmentRepository
-                .findList({
-                    dailyCrewId:
-                        crew.dailyCrewId,
-
-                    state:
-                        APP.cache.common.state.INITIAL
-                });
-
-        crew.assignments =
-            result.data ?? [];
+        const result = await DispatchAssignmentRepository.findList({
+            dailyCrewId: crew.dailyCrewId,
+            state: APP.cache.common.state.INITIAL
+        });
+        crew.assignments = result.data ?? [];
     }
 }
 
 function renderOrderList(){
-
-    const status =
-        document.getElementById(
-            "dispatch-order-status"
-        )?.value ?? "unassigned";
-
-    renderDispatchOrders(
-        dispatchOrders,
-        status
-    );
+    const status = document.getElementById("dispatch-order-status")?.value ?? "unassigned";
+    renderDispatchOrders(dispatchOrders, status);
 }

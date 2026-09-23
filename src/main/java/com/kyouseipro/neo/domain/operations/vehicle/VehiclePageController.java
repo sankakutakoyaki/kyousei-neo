@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.common.enums.code.CompanyCategory;
+import com.kyouseipro.neo.common.enums.code.CrewMemberRole;
+import com.kyouseipro.neo.common.enums.code.DispatchCategory;
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.code.Transmission;
 import com.kyouseipro.neo.common.enums.util.EnumUtil;
@@ -38,7 +40,11 @@ public class VehiclePageController {
                 "officeComboList",
                     officeService.findComboByCategory(CompanyCategory.OWN.getCode()),
                 "transmissionComboList",
-                    EnumUtil.toCombo(Transmission.class)
+                    EnumUtil.toCombo(Transmission.class),
+                "dispatchCategoryComboList",
+                    EnumUtil.toCombo(DispatchCategory.class),
+                "crewRoleComboList",
+                    EnumUtil.toCombo(CrewMemberRole.class)
             )
         );
     }

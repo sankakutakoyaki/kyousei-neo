@@ -38,20 +38,12 @@ public class EmployeeShiftSqlProvider implements SqlProviderPart {
 
         map.put(
             QueryId.EMPLOYEE_SHIFT_DELETE_BY_IDS,
-            new QueryDefinition(
-                QueryType.UPDATE,
-                QueryKind.DELETE_BY_IDS,
-                Tables.EMPLOYEE_SHIFT_BY_IDS
-            )
+            new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.EMPLOYEE_SHIFT_BY_IDS)
         );
 
         map.put(
             QueryId.EMPLOYEE_SHIFT_SAVE,
-            new QueryDefinition(
-                QueryType.UPDATE,
-                QueryKind.SAVE,
-                Tables.EMPLOYEE_SHIFT_BY_IDS
-            )
+            new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.EMPLOYEE_SHIFT_BY_IDS)
         );
 
         return map;

@@ -23,5 +23,9 @@ export const EmployeeRepository = {
 
     async download(params){
         return await RequestClient.request({queryId: "employeeCsv", params});
+    },
+
+    async resolve(identifier) {
+        return await RequestClient.request({queryId: "employeeResolve", params: {state: APP.cache.common.state.INITIAL, identifier}});
     }
 };

@@ -11,9 +11,16 @@
                     'reload': 'reload-btn-01'
                 }}
             )}"></th:block>
+            <div class="kebab-btns" data-area="kebabBtns">
+                <div class="img-btn" id="dispatch-setting-btn" data-action="open-dispatch-setting">
+                    <img src="/icons/add.png">
+                    <span>配車設定</span>
+                </div>
+            </div>
         </div>
+
         <div class="flex-area">
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${ 
                 {
                     'text':'営業所',
                     'id':'office01',

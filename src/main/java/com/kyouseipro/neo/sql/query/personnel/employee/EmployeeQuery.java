@@ -65,4 +65,38 @@ public class EmployeeQuery {
 
         return QueryDefinition.csv(sql, params, columns);
     }
+
+    public static QueryDefinition employeeResolve() {
+        return QueryDefinition.select(
+            """
+            SELECT TOP (1)
+                e.employee_id,
+                e.code,
+                e.full_name,
+                e.office_id
+
+            FROM employees e
+
+            WHERE e.state = ?
+            AND (
+                    CONVERT(NVARCHAR(30), e.employee_id) = ?
+                    OR CONVERT(NVARCHAR(100), e.code) = ?
+                )
+
+            ORDER BY
+                CASE
+                    WHEN CONVERT(NVARCHAR(30), e.employee_id) = ?
+                    THEN 0
+                    ELSE 1
+                END,
+                e.employee_id
+            """,
+            List.of(
+                "state",
+                "identifier",
+                "identifier",
+                "identifier"
+            )
+        );
+    }
 }

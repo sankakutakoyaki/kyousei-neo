@@ -17,6 +17,7 @@ public enum QueryId {
     EMPLOYEE_CSV("employeeCsv"),
     EMPLOYEE_DELETE_BY_IDS("employeeDeleteByIds"),
     EMPLOYEE_SAVE("employeeSave"),
+    EMPLOYEE_RESOLVE("employeeResolve"),
 
     // ===== office =====
     OFFICE_DETAIL("officeDetail"),
@@ -45,9 +46,11 @@ public enum QueryId {
 
     // ===== Dispatch =====
     DISPATCH_ASSIGNMENT_LIST("dispatchAssignmentList"),
+    DISPATCH_ASSIGNMENT_NEXT_VISIT_ORDER("dispatchAssignmentNextVisitOrder"),
+    DISPATCH_ASSIGNMENT_REORDER("dispatchAssignmentReorder"),
     DISPATCH_ASSIGNMENT_DELETE_BY_IDS("dispatchAssignmentDeleteByIds"),
     DISPATCH_ASSIGNMENT_SAVE("dispatchAssignmentSave"),
-    DISPATCH_ORDER_LIST("dispatchOrderList"),
+    DISPATCH_ORDER_LIST("dispatchOrderList"),    
 
     // ===== Shift =====
     EMPLOYEE_SHIFT_DETAIL("employeeShiftDetail"),

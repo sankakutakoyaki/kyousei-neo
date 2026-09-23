@@ -265,3 +265,8 @@
 .dispatch-crew-card-header {
     padding-right: 3rem;
 }
+
+.dispatch-assignment-item.drag-over-order {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+}

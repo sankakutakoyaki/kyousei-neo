@@ -47,4 +47,23 @@ public class DispatchAssignmentQuery {
             )
         );
     }
+
+    public static QueryDefinition dispatchAssignmentNextVisitOrder() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                COALESCE(
+                    MAX(visit_order),
+                    0
+                ) + 1 AS next_visit_order
+            FROM dispatch_assignments
+            WHERE daily_crew_id = ?
+            AND state = ?
+            """,
+            List.of(
+                "dailyCrewId",
+                "state"
+            )
+        );
+    }
 }

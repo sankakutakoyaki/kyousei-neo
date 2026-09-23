@@ -32,32 +32,16 @@ public class DispatchPageController {
 
     @GetMapping("/api/dispatch/init/cache")
     @ResponseBody
-    public Map<String, Object> initDispatch(
-        Authentication authentication
-    ) {
-
-        Integer loginOfficeId =
-            ownOfficeContextService
-                .getOfficeId(authentication);
-
+    public Map<String, Object> initDispatch(Authentication authentication) {
+        Integer loginOfficeId = ownOfficeContextService.getOfficeId(authentication);
         return Map.of(
             "common", Map.of(
-                "state",
-                EnumUtil.toMap(State.class)
+                "state", EnumUtil.toMap(State.class)
             ),
             "page", Map.of(
-                "officeComboList",
-                officeService.findComboByCategory(
-                    CompanyCategory.OWN.getCode()
-                ),
-                "dispatchCategoryComboList",
-                EnumUtil.toCombo(
-                    DispatchCategory.class
-                ),
-                "loginOfficeId",
-                loginOfficeId != null
-                    ? loginOfficeId
-                    : ""
+                "officeComboList", officeService.findComboByCategory(CompanyCategory.OWN.getCode()),
+                "dispatchCategoryComboList", EnumUtil.toCombo(DispatchCategory.class),
+                "loginOfficeId", loginOfficeId != null ? loginOfficeId: ""
             )
         );
     }
