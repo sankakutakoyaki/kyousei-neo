@@ -32,6 +32,14 @@ public enum QueryId {
     VEHICLE_CSV("vehicleCsv"),
     VEHICLE_DELETE_BY_IDS("vehicleDeleteByIds"),
     VEHICLE_SAVE("vehicleSave"),
+    VEHICLE_DEFAULT_MEMBER_LIST("vehicleDefaultMemberList"),
+    VEHICLE_DEFAULT_MEMBER_SAVE("vehicleDefaultMemberSave"),
+    VEHICLE_DEFAULT_MEMBER_DELETE_BY_IDS("vehicleDefaultMemberDeleteByIds"),
+    VEHICLE_DEFAULT_MEMBER_WORKING_LIST("vehicleDefaultMemberWorkingList"),
+    VEHICLE_DISPATCH_DEFAULT_LIST("vehicleDispatchDefaultList"),
+    VEHICLE_DISPATCH_CATEGORY_LIST("vehicleDispatchCategoryList"),
+    VEHICLE_DISPATCH_CATEGORY_DELETE_BY_IDS("vehicleDispatchCategoryDeleteByIds"),
+    VEHICLE_DISPATCH_CATEGORY_SAVE("vehicleDispatchCategorySave"),
 
     // ===== crew =====
     DAILY_CREW_DETAIL("dailyCrewDetail"),
@@ -58,16 +66,6 @@ public enum QueryId {
     EMPLOYEE_SHIFT_WORKING_LIST("employeeShiftWorkingList"),
     EMPLOYEE_SHIFT_DELETE_BY_IDS("employeeShiftDeleteByIds"),
     EMPLOYEE_SHIFT_SAVE("employeeShiftSave"),
-
-    // ===== Member =====
-    VEHICLE_DEFAULT_MEMBER_LIST("vehicleDefaultMemberList"),
-    VEHICLE_DEFAULT_MEMBER_DELETE_BY_IDS("vehicleDefaultMemberDeleteByIds"),
-    VEHICLE_DEFAULT_MEMBER_SAVE("vehicleDefaultMemberSave"),
-    VEHICLE_DEFAULT_MEMBER_WORKING_LIST("vehicleDefaultMemberWorkingList"),
-    VEHICLE_DISPATCH_DEFAULT_LIST("vehicleDispatchDefaultList"),
-    VEHICLE_DISPATCH_CATEGORY_LIST("vehicleDispatchCategoryList"),
-    VEHICLE_DISPATCH_CATEGORY_DELETE_BY_IDS("vehicleDispatchCategoryDeleteByIds"),
-    VEHICLE_DISPATCH_CATEGORY_SAVE("vehicleDispatchCategorySave"),
 
     // ===== Client =====
     CLIENT_LIST("clientList"),

@@ -6,7 +6,7 @@ import { createVehicleColumns } from "./columns.js";
 import { VehicleRepository } from "../../../repositories/operations/vehicle/VehicleRepository.js";
 import { createMasterPage } from "../../../core/page/createMasterPage.js";
 import { filterFactory } from "../../../util/filterFactory.js";
-import { registerController } from "../../../application/controllerRegistry.js";
+import { registerController, getController } from "../../../application/controllerRegistry.js";
 import { FormController } from "../../../application/FormController.js";
 import { VehicleDefaultMemberRepository } from "../../../repositories/operations/vehicle/VehicleDefaultMemberRepository.js";
 
@@ -35,60 +35,109 @@ export const vehiclePage = () =>
             combo: true
         },
         forms: {
-            dispatchSetting: { create: (controller) =>
-                new FormController({
-                    controller,
-                    formId: "dispatch-setting-dialog",
-                    key: "vehicle-id",
-                    idKey: "vehicleId",
-                    repository: VehicleRepository,
-                    buildParams: (id) => ({
-                        state: APP.cache.common.state.INITIAL,
-                        vehicleId: id
-                    }),
-                    onOpen:
-                        async (data) => {
+            dispatchSetting: { 
+                create: (controller) =>
+                    new FormController({
+                        controller,
+                        formId: "dispatch-setting-dialog",
+                        key: "vehicle-id",
+                        idKey: "vehicleId",
 
-                            deletedDefaultMembers = [];
+                        repository:
+                            VehicleRepository,
+
+                        buildParams: (id) => ({
+                            state:
+                                APP.cache.common.state.INITIAL,
+                            vehicleId:
+                                id
+                        }),
+
+                        onOpen:
+                            async (data, formController) => {
+
+                                deletedDefaultMembers = [];
+
+                                const category =
+                                    document.getElementById(
+                                        "dispatch-setting-category"
+                                    );
+
+                                const addButton =
+                                    document.getElementById(
+                                        "dispatch-member-add-btn"
+                                    );
+
+                                if(category){
+
+                                    category.onchange =
+                                        async () => {
+
+                                            deletedDefaultMembers = [];
+
+                                            await loadDefaultMembers(
+                                                data.vehicleId,
+                                                Number(category.value)
+                                            );
+
+                                            formController.updateSubmitState();
+                                        };
+
+                                    await loadDefaultMembers(
+                                        data.vehicleId,
+                                        Number(category.value)
+                                    );
+                                }
+
+                                if(addButton){
+
+                                    addButton.onclick =
+                                        () => {
+
+                                            addDefaultMemberDraft();
+
+                                            formController.updateSubmitState();
+                                        };
+                                }
+                            },
+
+                        buildAdditionalPayload:
+                            () =>
+                                buildDefaultMemberPayload(
+                                    controller
+                                        .getSelectedId()
+                                ),
+
+                        hasAdditionalChanges:
+                            () =>
+                                hasDefaultMemberChanges(),
+
+                        resetAdditional:
+                            () => {
+                                deletedDefaultMembers = [];
+                            },
+
+                        saveHandler:
+                            async (payload) =>
+                                VehicleDefaultMemberRepository
+                                    .saveSettings(payload),
+                                    
+                        validateBusiness: async () => {
 
                             const category =
-                                document.getElementById(
-                                    "dispatch-setting-category"
+                                Number(
+                                    document.getElementById(
+                                        "dispatch-setting-category"
+                                    )?.value
                                 );
 
-                            const addButton =
-                                document.getElementById(
-                                    "dispatch-member-add-btn"
-                                );
-
-                            if(category){
-
-                                category.onchange =
-                                    async () => {
-
-                                        await loadDefaultMembers(
-                                            data.vehicleId,
-                                            Number(category.value)
-                                        );
-                                    };
-
-                                await loadDefaultMembers(
-                                    data.vehicleId,
-                                    Number(category.value)
+                            if(!category){
+                                throw new Error(
+                                    "配車区分を選択してください。"
                                 );
                             }
-
-
-                            if(addButton){
-
-                                addButton.onclick =
-                                    () => {
-
-                                        addDefaultMemberDraft();
-                                    };
-                            }
-                        }
-                })
+                        },
+                    })
             }
         },
         actions: {
@@ -354,17 +403,16 @@ function createDefaultMemberItem({
     removeButton.onclick =
         () => {
 
-            // DB登録済みなら削除対象として保持
             if(
                 item.dataset.vehicleDefaultMemberId &&
                 item.dataset.new !== "true"
             ){
-
                 deletedDefaultMembers.push({
                     vehicleDefaultMemberId:
                         Number(
                             item.dataset.vehicleDefaultMemberId
                         ),
+
                     version:
                         Number(
                             item.dataset.version
@@ -373,6 +421,13 @@ function createDefaultMemberItem({
             }
 
             item.remove();
+
+            const controller =
+                getController("vehicle");
+
+            controller
+                ?.getActiveForm()
+                ?.updateSubmitState();
         };
 
 
@@ -456,4 +511,26 @@ function buildDefaultMemberPayload(vehicleId){
         deletedMembers:
             [...deletedDefaultMembers]
     };
+}
+
+function hasDefaultMemberChanges(){
+
+    const area =
+        document.getElementById(
+            "vehicle-default-member-area"
+        );
+
+    if(!area){
+        return false;
+    }
+
+    const hasNew =
+        area.querySelector(
+            '.vehicle-default-member-item[data-new="true"]'
+        ) != null;
+
+    const hasDeleted =
+        deletedDefaultMembers.length > 0;
+
+    return hasNew || hasDeleted;
 }

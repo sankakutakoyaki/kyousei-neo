@@ -1,28 +1,127 @@
 package com.kyouseipro.neo.domain.corporation.api.office;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.ArgumentMatchers.*;
-import java.util.*;
+
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import com.kyouseipro.neo.sql.repository.SqlRepository;
+
+import com.kyouseipro.neo.common.combo.entity.ComboDto;
+
 class OwnOfficeContextTest {
- @Test void selectsOnlyUnambiguousActiveOwnOffice(){
-  var sql=mock(SqlRepository.class);var controller=new OwnOfficeContextController(sql);
-  var auth=new UsernamePasswordAuthenticationToken("employee@example.test","unused");
-  when(sql.selectMap(contains("FROM offices"),anyList())).thenReturn(List.of(Map.of("value",2,"label","大阪")));
-  when(sql.selectMap(contains("FROM employees"),eq(List.of("employee@example.test")))).thenReturn(List.of(Map.of("officeId",2)));
-  assertEquals(2,controller.context(auth).get("defaultOfficeId"));
-  when(sql.selectMap(contains("FROM employees"),anyList())).thenReturn(List.of(Map.of("officeId",2),Map.of("officeId",3)));
-  assertEquals("",controller.context(auth).get("defaultOfficeId"));
-  when(sql.selectMap(contains("FROM employees"),anyList())).thenReturn(List.of(Map.of("officeId",9)));
-  assertEquals("",controller.context(auth).get("defaultOfficeId"));
- }
- @Test void headquartersIsIdentifiedByOfficeId1000(){
-  var sql=mock(SqlRepository.class);var controller=new OwnOfficeContextController(sql);
-  when(sql.selectMap(contains("FROM offices"),anyList())).thenReturn(List.of(Map.of("value",1000,"label","本社")));
-  when(sql.selectMap(contains("FROM employees"),anyList())).thenReturn(List.of(Map.of("officeId",1000)));
-  var result=controller.context(new UsernamePasswordAuthenticationToken("test","unused"));
-  assertEquals(true,result.get("isHeadOffice"));assertEquals(1000,result.get("defaultOfficeId"));
- }
+
+    @Test
+    void selectsOnlyUnambiguousActiveOwnOffice() {
+
+        var officeService =
+            mock(OfficeService.class);
+
+        var ownOfficeContextService =
+            mock(OwnOfficeContextService.class);
+
+        var controller =
+            new OwnOfficeContextController(
+                officeService,
+                ownOfficeContextService
+            );
+
+        var auth =
+            new UsernamePasswordAuthenticationToken(
+                "employee@example.test",
+                "unused"
+            );
+
+        when(
+            officeService.findComboByCategory(anyInt())
+        ).thenReturn(
+            List.of(
+                new ComboDto(
+                    2L,
+                    "大阪"
+                )
+            )
+        );
+
+        when(
+            ownOfficeContextService.getOfficeId(auth)
+        ).thenReturn(2);
+
+        assertEquals(
+            2,
+            controller.context(auth)
+                .get("defaultOfficeId")
+        );
+
+        when(
+            ownOfficeContextService.getOfficeId(auth)
+        ).thenReturn(null);
+
+        assertEquals(
+            "",
+            controller.context(auth)
+                .get("defaultOfficeId")
+        );
+
+        when(
+            ownOfficeContextService.getOfficeId(auth)
+        ).thenReturn(9);
+
+        assertEquals(
+            "",
+            controller.context(auth)
+                .get("defaultOfficeId")
+        );
+    }
+
+    @Test
+    void headquartersIsIdentifiedByOfficeId1000() {
+
+        var officeService =
+            mock(OfficeService.class);
+
+        var ownOfficeContextService =
+            mock(OwnOfficeContextService.class);
+
+        var controller =
+            new OwnOfficeContextController(
+                officeService,
+                ownOfficeContextService
+            );
+
+        var auth =
+            new UsernamePasswordAuthenticationToken(
+                "test",
+                "unused"
+            );
+
+        when(
+            officeService.findComboByCategory(anyInt())
+        ).thenReturn(
+            List.of(
+                new ComboDto(
+                    1000L,
+                    "本社"
+                )
+            )
+        );
+
+        when(
+            ownOfficeContextService.getOfficeId(auth)
+        ).thenReturn(1000);
+
+        var result =
+            controller.context(auth);
+
+        assertEquals(
+            true,
+            result.get("isHeadOffice")
+        );
+
+        assertEquals(
+            1000,
+            result.get("defaultOfficeId")
+        );
+    }
 }

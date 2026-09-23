@@ -9,5 +9,9 @@ export const VehicleDefaultMemberRepository = {
 
     async findList(params) {
         return await RequestClient.request({ queryId: "vehicleDefaultMemberList", params });
+    },
+
+    async saveSettings(params) {
+        return await RequestClient.request({ queryId: "vehicleDefaultMemberSave", params });
     }
 };
