@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.domain.management.model;
+package com.kyouseipro.neo.domain.management.timeworks.model;
 
 import java.time.LocalDateTime;
 

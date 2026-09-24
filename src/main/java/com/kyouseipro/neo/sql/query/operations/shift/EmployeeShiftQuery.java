@@ -148,4 +148,68 @@ public class EmployeeShiftQuery {
             )
         );
     }
+
+    /**
+     * シフト入力対象の従業員一覧
+     */
+    public static QueryDefinition employeeShiftEmployeeList() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                e.employee_id,
+                e.code,
+                e.full_name,
+                e.office_id
+            FROM employees e
+            WHERE e.state = ?
+            AND e.office_id = ?
+            ORDER BY
+                e.full_name,
+                e.employee_id
+            """,
+            List.of(
+                "state",
+                "officeId"
+            )
+        );
+    }
+
+    /**
+     * 月間シフト一覧
+     */
+    public static QueryDefinition employeeShiftMonthList() {
+
+        return QueryDefinition.select(
+            """
+            SELECT
+                es.employee_shift_id,
+                es.work_date,
+                es.employee_id,
+                es.office_id,
+                es.shift_type,
+                es.start_time,
+                es.end_time,
+                es.remarks,
+                es.version,
+                es.state
+
+            FROM employee_shifts es
+
+            WHERE es.work_date >= ?
+            AND es.work_date < ?
+            AND es.office_id = ?
+            AND es.state = ?
+
+            ORDER BY
+                es.employee_id,
+                es.work_date
+            """,
+            List.of(
+                "fromDate",
+                "toDate",
+                "officeId",
+                "state"
+            )
+        );
+    }
 }

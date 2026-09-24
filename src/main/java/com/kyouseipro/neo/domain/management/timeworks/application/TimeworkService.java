@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.domain.management.application;
+package com.kyouseipro.neo.domain.management.timeworks.application;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kyouseipro.neo.common.exception.BusinessException;
-import com.kyouseipro.neo.domain.management.model.TimeworkListItem;
-import com.kyouseipro.neo.domain.management.model.TimeworkStatus;
-import com.kyouseipro.neo.domain.management.model.TimeworkPeriod;
-import com.kyouseipro.neo.domain.management.model.TimeworkUpdateRequest;
 import com.kyouseipro.neo.common.combo.entity.ComboDto;
-import com.kyouseipro.neo.domain.management.model.OriginalTimework;
-import com.kyouseipro.neo.domain.management.repository.TimeworkRepository;
+import com.kyouseipro.neo.domain.management.timeworks.model.OriginalTimework;
+import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkListItem;
+import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkPeriod;
+import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkStatus;
+import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkUpdateRequest;
+import com.kyouseipro.neo.domain.management.timeworks.repository.TimeworkRepository;
 
 import lombok.RequiredArgsConstructor;
 

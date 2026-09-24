@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.domain.management.api;
+package com.kyouseipro.neo.domain.management.timeworks.api;
 
 import java.util.List;
 import java.nio.charset.StandardCharsets;
@@ -18,13 +18,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import com.kyouseipro.neo.common.response.SimpleResponse;
-import com.kyouseipro.neo.domain.management.application.TimeworkService;
-import com.kyouseipro.neo.domain.management.model.StampRequest;
-import com.kyouseipro.neo.domain.management.model.TimeworkListItem;
-import com.kyouseipro.neo.domain.management.model.TimeworkStatus;
-import com.kyouseipro.neo.domain.management.model.TimeworkPeriod;
-import com.kyouseipro.neo.domain.management.model.TimeworkUpdateRequest;
-import com.kyouseipro.neo.domain.management.model.SelfStampRequest;
+import com.kyouseipro.neo.domain.management.timeworks.application.TimeworkService;
+import com.kyouseipro.neo.domain.management.timeworks.model.SelfStampRequest;
+import com.kyouseipro.neo.domain.management.timeworks.model.StampRequest;
+import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkListItem;
+import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkPeriod;
+import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkStatus;
+import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkUpdateRequest;
 import com.kyouseipro.neo.common.combo.entity.ComboDto;
 
 import lombok.RequiredArgsConstructor;

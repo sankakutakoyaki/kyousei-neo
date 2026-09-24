@@ -1,0 +1,61 @@
+<main
+    th:fragment="content"
+    class="normal-body"
+    data-page="/js/pages/operations/employeeshift/employeeShiftPage.js"
+    data-css="/css/pages/operations/employeeshift.css">
+
+    <div
+        id="employee-shift-page"
+        class="table-area"
+        data-controller="employeeShift">
+
+        <header class="page-input-header">
+
+            <div class="flex-area">
+
+                <input
+                    id="shift-month"
+                    name="shift-month"
+                    type="month">
+
+                <th:block
+                    th:replace="~{fragments/components/box :: selectBoxFragment(${
+                        {
+                            'text':'営業所',
+                            'id':'shift-office',
+                            'name':'office-id',
+                            'combo':'officeComboList',
+                            'top':'-----'
+                        }
+                    })}">
+                </th:block>
+                <button
+                    type="button"
+                    class="normal-btn"
+                    id="shift-save-btn"
+                    disabled>
+                    保存
+                </button>
+            </div>
+
+        </header>
+
+        <div class="table-wrapper">
+
+            <table class="normal-table shift-month-table">
+
+                <thead id="shift-table-header">
+                </thead>
+
+                <tbody
+                    id="shift-table-body"
+                    class="scroll-area">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</main>

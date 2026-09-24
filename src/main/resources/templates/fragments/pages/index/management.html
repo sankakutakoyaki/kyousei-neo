@@ -12,6 +12,10 @@
                 data-link="/timeworks" data-target="body">
                 <img th:src="@{/icons/clock2.png}" alt=""><span>勤怠</span>
             </button>
+            <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')"
+                data-link="/employeeshifts" data-target="body">
+                <img th:src="@{/icons/clock2.png}" alt=""><span>シフト</span>
+            </button>
         </nav>
         <div id="form-dialog-area"></div>
         <div id="dialog-area"></div>

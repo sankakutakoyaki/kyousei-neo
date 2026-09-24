@@ -34,252 +34,81 @@ public class VehicleDefaultMemberHandler implements QueryHandler {
 
     @Override
     @Transactional
-    public Object execute(
-            QueryDefinition def,
-            SelectRequest req) {
-
-        Map<String, Object> params =
-            req.getParams();
-
-        String editor =
-            String.valueOf(
-                params.get("editor")
-            );
+    public Object execute(QueryDefinition def, SelectRequest req) {
+        Map<String, Object> params = req.getParams();
+        String editor = String.valueOf(params.get("editor"));
 
         int count = 0;
-
-        count += saveDispatchCategory(
-            params,
-            editor
-        );
-
-        count += deleteMembers(
-            params,
-            editor
-        );
-
-        count += saveMembers(
-            params,
-            editor
-        );
-
-        return Map.of(
-            "count",
-            count
-        );
+        count += saveDispatchCategory(params, editor);
+        count += deleteMembers(params, editor);
+        count += saveMembers(params, editor);
+        return Map.of("count", count);
     }
 
-    private int deleteMembers(
-            Map<String, Object> params,
-            String editor) {
-
-        Object value =
-            params.get("deletedMembers");
-
+    private int deleteMembers(Map<String, Object> params, String editor) {
+        Object value = params.get("deletedMembers");
         if (!(value instanceof List<?> list)) {
             return 0;
         }
 
         int count = 0;
-
         for (Object item : list) {
-
             if (!(item instanceof Map<?, ?> source)) {
                 continue;
             }
-
-            Long id =
-                ValueUtil.toLong(
-                    source.get(
-                        "vehicleDefaultMemberId"
-                    )
-                );
-
+            Long id = ValueUtil.toLong(source.get("vehicleDefaultMemberId"));
             if (id == null) {
                 continue;
             }
-
-            Map<String, Object> row =
-                new LinkedHashMap<>();
-
-            row.put(
-                "vehicleDefaultMemberId",
-                id
-            );
-
-            row.put(
-                "version",
-                source.get("version")
-            );
-
-            row.put(
-                "state",
-                State.DELETE.getCode()
-            );
-
-            count +=
-                baseRepository.update(
-                    Tables.VEHICLE_DEFAULT_MEMBER_BY_IDS,
-                    row,
-                    editor
-                );
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("vehicleDefaultMemberId", id);
+            row.put("version", source.get("version"));
+            row.put("state", State.DELETE.getCode());
+            count += baseRepository.update(Tables.VEHICLE_DEFAULT_MEMBER_BY_IDS, row, editor);
         }
-
         return count;
     }
 
-    private int saveMembers(
-            Map<String, Object> params,
-            String editor) {
-
-        Object value =
-            params.get("members");
-
+    private int saveMembers(Map<String, Object> params, String editor) {
+        Object value = params.get("members");
         if (!(value instanceof List<?> list)) {
             return 0;
         }
 
         int count = 0;
-
         for (Object item : list) {
-
             if (!(item instanceof Map<?, ?> source)) {
                 continue;
             }
+            Long id = ValueUtil.toLong(source.get("vehicleDefaultMemberId"));
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("vehicleId", source.get("vehicleId"));
+            row.put("dispatchCategory", source.get("dispatchCategory"));
+            row.put("employeeId", source.get("employeeId"));
+            row.put("role", source.get("role"));
+            row.put("displayOrder", source.get("displayOrder"));
+            row.put("state", source.get("state"));
 
-            Long id =
-                ValueUtil.toLong(
-                    source.get(
-                        "vehicleDefaultMemberId"
-                    )
-                );
-
-            Map<String, Object> row =
-                new LinkedHashMap<>();
-
-            row.put(
-                "vehicleId",
-                source.get("vehicleId")
-            );
-
-            row.put(
-                "dispatchCategory",
-                source.get(
-                    "dispatchCategory"
-                )
-            );
-
-            row.put(
-                "employeeId",
-                source.get("employeeId")
-            );
-
-            row.put(
-                "role",
-                source.get("role")
-            );
-
-            row.put(
-                "displayOrder",
-                source.get(
-                    "displayOrder"
-                )
-            );
-
-            row.put(
-                "state",
-                source.get("state")
-            );
-
-
-            // =========================
             // 新規
-            // =========================
             if (id == null) {
-
-                baseRepository.insert(
-                    Tables.VEHICLE_DEFAULT_MEMBER_BY_IDS,
-                    row,
-                    editor
-                );
-
+                baseRepository.insert(Tables.VEHICLE_DEFAULT_MEMBER_BY_IDS, row, editor);
                 count++;
-
                 continue;
             }
 
-
-            // =========================
             // 更新
-            // =========================
-            row.put(
-                "vehicleDefaultMemberId",
-                id
-            );
-
-            row.put(
-                "version",
-                source.get("version")
-            );
-System.out.println(
-    "vehicleDefaultMember update: " +
-    "id=" + id +
-    ", version=" + source.get("version")
-);
-            count +=
-                baseRepository.update(
-                    Tables.VEHICLE_DEFAULT_MEMBER_BY_IDS,
-                    row,
-                    editor
-                );
+            row.put("vehicleDefaultMemberId", id);
+            row.put("version", source.get("version"));
+            count += baseRepository.update(Tables.VEHICLE_DEFAULT_MEMBER_BY_IDS, row, editor);
         }
-
         return count;
     }
 
-    // private static Long toLong(
-    //         Object value) {
-
-    //     if (value == null) {
-    //         return null;
-    //     }
-
-    //     if (value instanceof Number number) {
-    //         return number.longValue();
-    //     }
-
-    //     String text =
-    //         value.toString().trim();
-
-    //     if (text.isEmpty()) {
-    //         return null;
-    //     }
-
-    //     return Long.valueOf(text);
-    // }
-
-    private int saveDispatchCategory(
-            Map<String, Object> params,
-            String editor) {
-
-        Long vehicleId =
-            ValueUtil.toLong(
-                params.get("vehicleId")
-            );
-
-        Integer dispatchCategory =
-            ValueUtil.toInt(
-                params.get("dispatchCategory")
-            );
-
-        if (
-            vehicleId == null ||
-            dispatchCategory == null ||
-            dispatchCategory == 0
-        ) {
-            throw new IllegalArgumentException(
-                "配車区分を選択してください"
-            );
+    private int saveDispatchCategory(Map<String, Object> params, String editor) {
+        Long vehicleId = ValueUtil.toLong(params.get("vehicleId"));
+        Integer dispatchCategory = ValueUtil.toInt(params.get("dispatchCategory"));
+        if (vehicleId == null || dispatchCategory == null || dispatchCategory == 0) {
+            throw new IllegalArgumentException("配車区分を選択してください");
         }
 
         List<Map<String, Object>> rows =
@@ -299,82 +128,25 @@ System.out.println(
 
         // 未登録
         if (rows.isEmpty()) {
-
-            Map<String, Object> row =
-                new LinkedHashMap<>();
-
-            row.put(
-                "vehicleId",
-                vehicleId
-            );
-
-            row.put(
-                "dispatchCategory",
-                dispatchCategory
-            );
-
-            row.put(
-                "state",
-                0
-            );
-
-            baseRepository.insert(
-                Tables.VEHICLE_DISPATCH_CATEGORY_BY_IDS,
-                row,
-                editor
-            );
-
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("vehicleId", vehicleId);
+            row.put("dispatchCategory", dispatchCategory);
+            row.put("state", 0);
+            baseRepository.insert(Tables.VEHICLE_DISPATCH_CATEGORY_BY_IDS, row, editor);
             return 1;
         }
 
-        Map<String, Object> current =
-            rows.get(0);
-System.out.println("current = " + current);
-        Integer currentCategory =
-            ValueUtil.toInt(
-                current.get("dispatchCategory")
-            );
-
+        Map<String, Object> current = rows.get(0);
+        Integer currentCategory = ValueUtil.toInt(current.get("dispatchCategory"));
         // 同じ区分なら何もしない
-        if (
-            Objects.equals(
-                currentCategory,
-                dispatchCategory
-            )
-        ) {
+        if (Objects.equals(currentCategory, dispatchCategory)) {
             return 0;
         }
-
         // 区分変更
-        Map<String, Object> row =
-            new LinkedHashMap<>();
-
-        row.put(
-            "vehicleDispatchCategoryId",
-            current.get(
-                "vehicleDispatchCategoryId"
-            )
-        );
-
-        row.put(
-            "dispatchCategory",
-            dispatchCategory
-        );
-
-        row.put(
-            "version",
-            current.get("version")
-        );
-System.out.println(
-    "vehicleDispatchCategory update: " +
-    "id=" + current.get("vehicleDispatchCategoryId") +
-    ", category=" + dispatchCategory +
-    ", version=" + current.get("version")
-);
-        return baseRepository.update(
-            Tables.VEHICLE_DISPATCH_CATEGORY_BY_IDS,
-            row,
-            editor
-        );
+        Map<String, Object> row = new LinkedHashMap<>();
+        row.put("vehicleDispatchCategoryId", current.get("vehicleDispatchCategoryId"));
+        row.put("dispatchCategory", dispatchCategory);
+        row.put("version", current.get("version"));
+        return baseRepository.update(Tables.VEHICLE_DISPATCH_CATEGORY_BY_IDS, row, editor);
     }
 }

@@ -54,6 +54,9 @@
     <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/timeworks" data-target="body">
         <img th:src="@{/icons/clock2.png}"><span>勤怠</span>
     </div>
+    <div sec:authorize="!hasAnyAuthority('APPROLE_office')" class="hamburger-item" data-path="/employeeshifts" data-target="body">
+        <img th:src="@{/icons/clock2.png}"><span>シフト</span>
+    </div>
 </div>
 
 <div th:fragment="operationsFragment" th:remove="tag">

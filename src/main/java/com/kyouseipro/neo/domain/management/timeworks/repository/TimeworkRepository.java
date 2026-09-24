@@ -1,4 +1,4 @@
-package com.kyouseipro.neo.domain.management.repository;
+package com.kyouseipro.neo.domain.management.timeworks.repository;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -8,10 +8,10 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.enums.code.EmployeeCategory;
-import com.kyouseipro.neo.domain.management.model.TimeworkListItem;
-import com.kyouseipro.neo.domain.management.model.TimeworkStatus;
+import com.kyouseipro.neo.domain.management.timeworks.model.OriginalTimework;
+import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkListItem;
+import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkStatus;
 import com.kyouseipro.neo.common.combo.entity.ComboDto;
-import com.kyouseipro.neo.domain.management.model.OriginalTimework;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;

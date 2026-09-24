@@ -25,10 +25,20 @@ public class EmployeeShiftSqlProvider implements SqlProviderPart {
             QueryId.EMPLOYEE_SHIFT_DETAIL,
             EmployeeShiftQuery.employeeShiftDetail()
         );
-
+        
         map.put(
             QueryId.EMPLOYEE_SHIFT_LIST,
             EmployeeShiftQuery.employeeShiftList()
+        );
+
+        map.put(
+            QueryId.EMPLOYEE_SHIFT_MONTH_LIST,
+            EmployeeShiftQuery.employeeShiftMonthList()
+        );
+
+        map.put(
+            QueryId.EMPLOYEE_SHIFT_EMPLOYEE_LIST,
+            EmployeeShiftQuery.employeeShiftEmployeeList()
         );
 
         map.put(

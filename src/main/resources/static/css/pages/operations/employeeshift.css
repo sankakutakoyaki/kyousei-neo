@@ -1,0 +1,116 @@
+@charset "UTF-8";
+
+.shift-month-table {
+    width: max-content;
+    min-width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.shift-month-table tr {
+    display: table-row;
+}
+
+.shift-month-table th,
+.shift-month-table td {
+    display: table-cell;
+    box-sizing: border-box;
+}
+
+.shift-month-table .shift-employee-column {
+    width: 160px;
+    min-width: 160px;
+    max-width: 160px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.shift-month-table tr :is(th, td) {
+    padding: 0;
+}
+
+.shift-month-table th:not(.shift-employee-column),
+.shift-month-table td {
+    width: 32px;
+    min-width: 32px;
+    max-width: 32px;
+    padding: 1px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.shift-month-table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.shift-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 28px;
+    margin: 0 auto;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    cursor: pointer;
+    text-align: center;
+}
+
+.shift-row-btn {
+    /* width: 22px;
+    height: 22px;
+    margin-left: 3px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1rem; */
+    line-height: 1;
+    border-radius: 1rem;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+    height: 2rem;
+    font-weight: bold;
+}
+
+.shift-row-btn:hover {
+    background-color: var(--btn-br);
+}
+
+.shift-employee-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 1rem;
+}
+
+.shift-month-table th.sunday,
+.shift-month-table td.sunday {
+    background-color: #fff0f0;
+}
+
+.shift-month-table th.saturday,
+.shift-month-table td.saturday {
+    background-color: #f0f5ff;
+}
+
+.shift-month-table th.sunday {
+    color: red;
+}
+
+.shift-month-table th.saturday {
+    color: blue;
+}
+
+.shift-cell[data-shift-type="2"],
+.shift-cell[data-shift-type="3"] {
+    color: red;
+    font-weight: bold;
+}

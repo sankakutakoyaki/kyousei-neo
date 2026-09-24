@@ -1,16 +1,16 @@
-import {loadOwnOffices,fillOwnOffices} from '../operations/ownOffice.js';
-import {mobileQuery} from "../../core/access/mobileReadOnly.js";
 "use strict"
 
-import { initCommon } from "../../bootstrap/initPage.js";
-import { initPageCache } from "../../bootstrap/initPageCache.js";
-import { registerController } from "../../application/controllerRegistry.js";
-import { createMasterPage } from "../../core/page/createMasterPage.js";
-import { TimeworksRepository } from "../../repositories/management/TimeworksRepository.js";
+import { loadOwnOffices,fillOwnOffices } from '../../operations/ownOffice.js';
+import { mobileQuery } from "../../../core/access/mobileReadOnly.js";
+import { initCommon } from "../../../bootstrap/initPage.js";
+import { initPageCache } from "../../../bootstrap/initPageCache.js";
+import { registerController } from "../../../application/controllerRegistry.js";
+import { createMasterPage } from "../../../core/page/createMasterPage.js";
+import { TimeworksRepository } from "../../../repositories/management/TimeworksRepository.js";
 import { createTimeworksListColumns } from "./columns.js";
-import { formatDate } from "../../util/time.js";
-import { openMsgDialog } from "../../core/ui/dialog/dialogCore.js";
-import { toggleScrollbar } from "../../core/table/tableRender.js";
+import { formatDate } from "../../../util/time.js";
+import { openMsgDialog } from "../../../core/ui/dialog/dialogCore.js";
+import { toggleScrollbar } from "../../../core/table/tableRender.js";
 
 let selectedEmployee = null;
 let employeeComboRequest = 0;
@@ -265,10 +265,10 @@ function initManagement() {
     });
 }
 
-function fillOfficeOptions(select, offices) {
-    select.replaceChildren(new Option("すべて", ""));
-    offices.forEach(item => select.add(new Option(item.label, item.value)));
-}
+// function fillOfficeOptions(select, offices) {
+//     select.replaceChildren(new Option("すべて", ""));
+//     offices.forEach(item => select.add(new Option(item.label, item.value)));
+// }
 
 async function loadManagementEmployees() {
     const requestId = ++employeeComboRequest;
