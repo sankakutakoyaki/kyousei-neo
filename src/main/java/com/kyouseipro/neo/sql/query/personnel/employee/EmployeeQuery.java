@@ -40,7 +40,6 @@ public class EmployeeQuery {
     }
 
     public static QueryDefinition employeeCsv() {
-
         String sql = """
             SELECT
                 employee_id,
@@ -96,6 +95,46 @@ public class EmployeeQuery {
                 "identifier",
                 "identifier",
                 "identifier"
+            )
+        );
+    }
+
+    public static QueryDefinition employeeWorkCategoryList() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                employee_work_category_id,
+                code,
+                name,
+                display_order
+            FROM employee_work_categories
+            WHERE state = ?
+            ORDER BY
+                display_order,
+                employee_work_category_id
+            """,
+            List.of(
+                "state"
+            )
+        );
+    }
+
+    public static QueryDefinition employeeWorkCategoryMemberList() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                m.employee_work_category_member_id,
+                m.employee_id,
+                m.employee_work_category_id,
+                m.version,
+                m.state
+            FROM employee_work_category_members m
+            WHERE m.employee_id = ?
+            ORDER BY
+                m.employee_work_category_id
+            """,
+            List.of(
+                "employeeId"
             )
         );
     }

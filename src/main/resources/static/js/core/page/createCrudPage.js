@@ -5,9 +5,9 @@ import { FormController } from "../../application/FormController.js";
 import { DataTable } from "../table/DataTable.js";
 
 export function createCrudPage(config){
-    const defaultForms = {
+    const defaultForms = config.formId ? {
         detail: {
-            create: (controller) =>  new FormController({
+            create: (controller) => new FormController({
                 controller,
                 formId: config.formId,
                 key: config.idKey,
@@ -17,20 +17,26 @@ export function createCrudPage(config){
                 submitText: config.submitText,
                 cancelText: config.cancelText,
                 beforeSave: config.beforeSave,
+                buildAdditionalPayload: config.buildAdditionalPayload,
+                hasAdditionalChanges: config.hasAdditionalChanges,
+                resetAdditional: config.resetAdditional,
                 afterSave: async (id) => {
-                    if(config.afterSave){await config.afterSave(controller, id);}
+                    if(config.afterSave){
+                        await config.afterSave(controller, id);
+                    }
                 },
                 validateBusiness: config.validateBusiness,
                 onOpen: config.onOpen,
                 buildParams: config.buildDetailParams
             })
         }
-    };
+    } : {};
+
     return new PageController({
         key: config.key,
         autoLoad: config.autoLoad,
         defaultFormName: config.defaultFormName,
-        components: config.components,        
+        components: config.components,
         onInit: config.onInit,
         onDeleted: config.onDeleted,
         actions: config.actions,
@@ -52,12 +58,11 @@ export function createCrudPage(config){
                 model: config.model,
                 canSave: config.canSave,
                 onRowClick: config.onRowClick,
-                onDoubleClick: config.onDoubleClick ?? ((item) =>
-                    controller.openForm("detail", item[config.idKey], { bulkMode:false })
+                onDoubleClick: config.onDoubleClick ?? (
+                    config.formId ? (item => controller.openForm("detail", item[config.idKey], {bulkMode: false})): null
                 )
             })
         },
-        // forms: config.forms ?? defaultForms
         forms: {
             ...defaultForms,
             ...(config.forms ?? {})

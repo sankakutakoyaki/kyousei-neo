@@ -55,6 +55,11 @@ public class EmployeeShiftSqlProvider implements SqlProviderPart {
             QueryId.EMPLOYEE_SHIFT_SAVE,
             new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.EMPLOYEE_SHIFT_BY_IDS)
         );
+    
+        map.put(
+            QueryId.EMPLOYEE_SHIFT_BATCH_SAVE,
+            new QueryDefinition(QueryType.UPDATE, QueryKind.EMPLOYEE_SHIFT_BATCH_SAVE, Tables.EMPLOYEE_SHIFT_BY_IDS)
+        );
 
         return map;
     }

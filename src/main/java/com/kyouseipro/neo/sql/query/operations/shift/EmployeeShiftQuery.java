@@ -178,7 +178,6 @@ public class EmployeeShiftQuery {
      * 月間シフト一覧
      */
     public static QueryDefinition employeeShiftMonthList() {
-
         return QueryDefinition.select(
             """
             SELECT

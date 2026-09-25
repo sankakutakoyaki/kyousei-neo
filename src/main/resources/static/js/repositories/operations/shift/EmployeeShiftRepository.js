@@ -18,5 +18,9 @@ export const EmployeeShiftRepository = {
 
     async save(params) {
         return await RequestClient.request({ queryId: "employeeShiftSave", params });
-    }
+    },
+
+    async batchSave(params) {
+        return await RequestClient.request({ queryId: "employeeShiftBatchSave", params });
+    },
 };

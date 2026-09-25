@@ -30,6 +30,9 @@ export function createMasterPage(config){
         validateBusiness: config.validateBusiness,
         onRowClick: config.onRowClick,
         onDoubleClick: config.onDoubleClick,
+        buildAdditionalPayload: config.buildAdditionalPayload,
+        hasAdditionalChanges: config.hasAdditionalChanges,
+        resetAdditional: config.resetAdditional,
         beforeSave: (payload, form) => {
             if(config.beforeSave){
                 config.beforeSave(payload, form);

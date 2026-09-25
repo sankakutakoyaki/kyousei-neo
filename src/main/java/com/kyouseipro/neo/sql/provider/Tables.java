@@ -63,4 +63,11 @@ public class Tables {
 
         public static final TableMeta WORK_MASTER_BY_IDS =
             new TableMeta("work_masters", "workMasterId", "state", "version");
+
+        public static final TableMeta EMPLOYEE_WORK_CATEGORY_BY_IDS =
+            new TableMeta("employee_work_categories", "employeeWorkCategoryId", "state", "version");
+
+        public static final TableMeta EMPLOYEE_WORK_CATEGORY_MEMBER_BY_IDS =
+            new TableMeta(
+                "employee_work_category_members", "employeeWorkCategoryMemberId", "state", "version");
 }

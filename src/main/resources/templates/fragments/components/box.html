@@ -5,7 +5,8 @@
             (data['type'] == 'recycle' ? '[0-9]{4}-[0-9]{8}-[0-9]{1}' :
             (data['type'] == 'phone' ? '[0-9]{4}-[0-9]{4}-[0-9]{4}' :
             (data['type'] == 'postal' ? '[0-9]{3}-?[0-9]{4}' :
-            (data['type'] == 'date' ? '[0-9]{4}-[0-9]{2}-[0-9]{2}' : null))))},
+            (data['type'] == 'date' ? '[0-9]{4}-[0-9]{2}-[0-9]{2}' :
+            (data['type'] == 'month' ? '[0-9]{4}-[0-9]{2}' : null)))))},
 
             inputmodeVal=${data['inputmode'] != null ? data['inputmode'] :
                 (data['type'] == 'recycle' || data['type'] == 'phone' || data['type'] == 'postal' || data['type'] == 'date'
@@ -43,7 +44,7 @@
                     data-skip-if-null=${data['skipIfNull'] != null ? 'true' : null},
                     data-zero-to-null=${data['zeroToNull'] != null ? 'true' : null},
                     data-zero-as-blank=${data['zeroAsBlank'] != null ? 'true' : null},
-                    data-format=${data['format'] != null ? data['format'] : (data['type'] == 'date' ? 'yyyy-MM-dd' : null)}
+                    data-format=${data['format'] != null ? data['format'] : (data['type'] == 'date' ? 'yyyy-MM-dd' : (data['type'] == 'month' ? 'yyyy-MM' : null))}
                 ">
         </div>
     </th:block>

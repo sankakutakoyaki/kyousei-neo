@@ -1,9 +1,10 @@
 "use strict";
 
-import { RequestClient } from "../../core/api/RequestClient.js";
 import { filterFactory } from "../../util/filterFactory.js";
 import { EmployeeRepository } from "../../repositories/personnel/employee/EmployeeRepository.js";
 import { createMasterPage } from "../../core/page/createMasterPage.js";
+
+let originalWorkCategoryIds = [];
 
 export function createEmployeePage(config){
     return createMasterPage({
@@ -19,35 +20,65 @@ export function createEmployeePage(config){
             filters: { officeId: filterFactory.equals("officeId")}
         },
         onOpen: async (data, form) => {
-            const root=document.getElementById(form.formId)?.querySelector('.dialog-content');
-            if (!root) return;
-            let summary=root.querySelector('[data-employee-qualifications]');
-            if(!summary){summary=document.createElement('details');summary.dataset.employeeQualifications='';root.append(summary);}
-            summary.replaceChildren();const title=document.createElement('summary');title.textContent='保有資格・免許・教育';summary.append(title);
-            if(data.employeeId) {
-                try {
-                    const result=await RequestClient.request({queryId:'operationEmployeeQualificationsList',params:{employeeId:data.employeeId}});
-                    for(const q of result.data??[]){const line=document.createElement('p');line.textContent=`${q.qualificationName} ／ 取得 ${q.acquiredDate??''} ／ 有効期限 ${q.expiryDate??'設定なし'}`;summary.append(line);}
-                    if(!result.data?.length){const line=document.createElement('p');line.textContent='登録されている資格はありません。';summary.append(line);}
-                } catch {const line=document.createElement('p');line.textContent='資格情報を読み込めませんでした。';summary.append(line);}
-            }
+            await loadWorkCategories(data.employeeId);
             if(config.onOpen) await config.onOpen(data,form);
         },
         beforeSave: (payload) => {
-            const isInsert =
-                !payload.employeeId ||
-                Number(payload.employeeId) === 0;
-
+            const isInsert = !payload.employeeId || Number(payload.employeeId) === 0;
             if(isInsert){
                 payload.category = config.category;
                 if(payload.code == null || payload.code === ""){
                     payload.code = 0;
                 }
             }
-
             if(config.beforeSave){
                 config.beforeSave(payload);
             }
-        }
+        },
+        buildAdditionalPayload: () => ({
+            workCategoryIds: getSelectedWorkCategoryIds()
+        }),
+        hasAdditionalChanges: () => {
+            const current = getSelectedWorkCategoryIds();
+            return JSON.stringify(current) !== JSON.stringify(originalWorkCategoryIds);
+        },
     });
+}
+
+async function loadWorkCategories(employeeId){
+    const area = document.getElementById("employee-work-category-area");
+    if(!area){
+        return;
+    }
+
+    area.replaceChildren();
+    const [categoryResult, memberResult] =
+        await Promise.all([
+            EmployeeRepository.findWorkCategories({state:APP.cache.common.state.INITIAL}),
+            employeeId ? EmployeeRepository.findWorkCategoryMembers({employeeId, state:APP.cache.common.state.INITIAL}): Promise.resolve({data: []})
+        ]);
+    const categories = categoryResult.data ?? [];
+    const members = memberResult.data ?? [];
+    const selectedIds = new Set(members.filter(row => Number(row.state) === APP.cache.common.state.INITIAL).map(row => Number(row.employeeWorkCategoryId)));
+    categories.forEach(category => {
+            const label = document.createElement("label");
+            const input = document.createElement("input");
+            input.type = "checkbox";
+            input.name = "employee-work-category";
+            input.dataset.submit = "none";
+            input.value = String(category.employeeWorkCategoryId);
+            input.checked = selectedIds.has(Number(category.employeeWorkCategoryId));
+            const text = document.createElement("span");
+            text.textContent = category.name;
+            label.append(input, text);
+            area.append(label);
+        }
+    );
+    originalWorkCategoryIds = getSelectedWorkCategoryIds();
+}
+
+function getSelectedWorkCategoryIds(){
+    return [
+        ...document.querySelectorAll('#employee-work-category-area input[name="employee-work-category"]:checked')
+    ].map(input => Number(input.value)).sort((a, b) => a - b);
 }

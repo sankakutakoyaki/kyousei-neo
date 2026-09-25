@@ -10,6 +10,7 @@ export const FormStateBehavior = {
 
         const elements = target.querySelectorAll("[name]");
         for(const el of elements){
+            if(el.dataset.submit === "none"){continue;}
             const name = el.name;
             const key = el.dataset.key || convertKey(name, "kebab", "camel");
 
@@ -48,6 +49,7 @@ export const FormStateBehavior = {
 
         const elements = form.querySelectorAll("[name]");
         for(const el of elements){
+            if(el.dataset.submit === "none"){continue;}
             if(el.disabled) continue;
 
             if(el.type === "checkbox" || el.type === "radio"){

@@ -100,7 +100,7 @@ export function openMsgDialog(options = {}) {
 export function openConfirmDialog(options = {}) {
     const {
         message,
-        color,
+        color = "blue",
         onSubmit,
         onClose = () => closeMsgDialog()
     } = options;

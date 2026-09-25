@@ -11,13 +11,15 @@ public enum QueryId {
     COMPANY_DELETE_BY_IDS("companyDeleteByIds"),
     COMPANY_SAVE("companySave"),
 
-    // ===== Partner Employee =====
+    // ===== Employee =====
     EMPLOYEE_DETAIL("employeeDetail"),
     EMPLOYEE_LIST("employeeList"),
     EMPLOYEE_CSV("employeeCsv"),
     EMPLOYEE_DELETE_BY_IDS("employeeDeleteByIds"),
     EMPLOYEE_SAVE("employeeSave"),
     EMPLOYEE_RESOLVE("employeeResolve"),
+    EMPLOYEE_WORK_CATEGORY_LIST("employeeWorkCategoryList"),
+    EMPLOYEE_WORK_CATEGORY_MEMBER_LIST("employeeWorkCategoryMemberList"),
 
     // ===== office =====
     OFFICE_DETAIL("officeDetail"),
@@ -68,6 +70,7 @@ public enum QueryId {
     EMPLOYEE_SHIFT_SAVE("employeeShiftSave"),
     EMPLOYEE_SHIFT_EMPLOYEE_LIST("employeeShiftEmployeeList"),
     EMPLOYEE_SHIFT_MONTH_LIST("employeeShiftMonthList"),
+    EMPLOYEE_SHIFT_BATCH_SAVE("employeeShiftBatchSave"),
 
     // ===== Client =====
     CLIENT_LIST("clientList"),

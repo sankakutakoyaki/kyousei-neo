@@ -13,6 +13,10 @@ export const EmployeeRepository = {
         return res.data?.[0] ?? null;
     },
 
+    async findWorkCategories(params) {
+        return await RequestClient.request({queryId: "employeeWorkCategoryList", params});
+    },
+
     async save(params){
         return await RequestClient.request({queryId: "employeeSave", params});
     },
@@ -27,5 +31,9 @@ export const EmployeeRepository = {
 
     async resolve(identifier) {
         return await RequestClient.request({queryId: "employeeResolve", params: {state: APP.cache.common.state.INITIAL, identifier}});
-    }
+    },
+
+    async findWorkCategoryMembers(params) {
+        return await RequestClient.request({queryId: "employeeWorkCategoryMemberList", params});
+    },
 };
