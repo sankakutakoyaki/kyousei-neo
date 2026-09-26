@@ -32,18 +32,11 @@ public class EmployeeWorkCategoryRepository {
         return sqlRepository.queryList(
             sql,
             (ps, p) -> {
-                ps.setInt(
-                    1,
-                    State.INITIAL.getCode()
-                );
+                ps.setInt(1, State.INITIAL.getCode());
             },
             rs -> new ComboDto(
-                rs.getLong(
-                    "employee_work_category_id"
-                ),
-                rs.getString(
-                    "name"
-                )
+                rs.getLong("employee_work_category_id"),
+                rs.getString("name")
             )
         );
     }
