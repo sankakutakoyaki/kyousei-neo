@@ -153,6 +153,7 @@ public class EmployeeShiftQuery {
      * シフト入力対象の従業員一覧
      */
     public static QueryDefinition employeeShiftEmployeeList() {
+
         return QueryDefinition.select(
             """
             SELECT
@@ -160,29 +161,61 @@ public class EmployeeShiftQuery {
                 e.code,
                 e.full_name,
                 e.office_id,
+                e.category AS employee_category,
+
+                c.company_id,
+                c.name AS company_name,
+                c.category AS company_category,
+
                 STRING_AGG(
-                    CAST(m.employee_work_category_id AS varchar(20)),
+                    CAST(
+                        m.employee_work_category_id
+                        AS varchar(20)
+                    ),
                     ','
                 ) AS work_category_ids
+
             FROM employees e
+
+            LEFT JOIN companies c
+                ON c.company_id = e.company_id
+            AND c.state = ?
+
             LEFT JOIN employee_work_category_members m
                 ON m.employee_id = e.employee_id
             AND m.state = ?
+
             WHERE e.state = ?
             AND e.office_id = ?
+
             GROUP BY
                 e.employee_id,
                 e.code,
                 e.full_name,
-                e.office_id
+                e.office_id,
+                e.category,
+
+                c.company_id,
+                c.name,
+                c.category
+
             ORDER BY
+                CASE
+                    WHEN c.category = ? THEN 0
+                    ELSE 1
+                END,
+
+                c.name,
+                e.category,
                 e.full_name,
                 e.employee_id
             """,
             List.of(
                 "state",
                 "state",
-                "officeId"
+                "state",
+                "officeId",
+                "ownCompanyCategory"
             )
         );
     }

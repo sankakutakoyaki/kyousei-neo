@@ -146,19 +146,20 @@ public class VehicleDefaultMemberQuery {
                 AND vdc.dispatch_category = ?
                 AND vdc.state = ?
 
-            LEFT JOIN vehicle_default_members vdm
+            INNER JOIN vehicle_default_members vdm
                 ON vdm.vehicle_id = v.vehicle_id
                 AND vdm.dispatch_category = ?
                 AND vdm.state = ?
 
-            LEFT JOIN employees e
+            INNER JOIN employees e
                 ON e.employee_id = vdm.employee_id
                 AND e.state = ?
 
-            LEFT JOIN employee_shifts es
+            INNER JOIN employee_shifts es
                 ON es.employee_id = vdm.employee_id
                 AND es.work_date = ?
                 AND es.office_id = ?
+                AND es.shift_type = ?
                 AND es.state = ?
 
             WHERE v.office_id = ?
@@ -181,6 +182,7 @@ public class VehicleDefaultMemberQuery {
 
                 "workDate",
                 "officeId",
+                "shiftType",
                 "state",
 
                 "officeId",

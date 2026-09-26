@@ -40,7 +40,8 @@ public class EmployeeShiftPageController {
     public Map<String, Object> initEmployeeShift() {
         return Map.of(
             "common", Map.of(
-                "state", EnumUtil.toMap(State.class)
+                "state", EnumUtil.toMap(State.class),
+                "companyCategory", EnumUtil.toMap(CompanyCategory.class)
             ),
             "page", Map.of(
                 "officeComboList", officeService.findComboByCategory(CompanyCategory.OWN.getCode()),

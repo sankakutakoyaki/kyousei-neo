@@ -84,8 +84,17 @@ async function loadEmployees(officeId){
     }
 
     const [employeeResult, shiftResult] = await Promise.all([
-            EmployeeShiftRepository.findEmployees({state: APP.cache.common.state.INITIAL, officeId}),
-            EmployeeShiftRepository.findMonthList({fromDate: range.fromDate, toDate: range.toDate, officeId, state: APP.cache.common.state.INITIAL})
+            EmployeeShiftRepository.findEmployees({
+                state: APP.cache.common.state.INITIAL,
+                officeId,
+                ownCompanyCategory: APP.cache.common.companyCategory.OWN
+            }),
+            EmployeeShiftRepository.findMonthList({
+                fromDate: range.fromDate,
+                toDate: range.toDate,
+                officeId,
+                state: APP.cache.common.state.INITIAL
+            })
         ]);
     const employees = employeeResult.data ?? [];
     const shifts = shiftResult.data ?? [];
@@ -263,7 +272,13 @@ function renderEmployees(){
             return ids.includes(workCategoryId);
         });
 
+    let previousCompanyId = undefined;
+
     employees.forEach(employee => {
+        if(previousCompanyId !== employee.companyId){
+            appendCompanyHeader(body, employee.companyCategory, employee.companyName);
+            previousCompanyId = employee.companyId;
+        }
         appendEmployeeRow({
             body,
             employee,
@@ -273,4 +288,14 @@ function renderEmployees(){
             onRowToggle: toggleRowShift
         });
     });
+}
+
+function appendCompanyHeader(body, companyCategory, companyName){
+    const tr = document.createElement("tr");
+    tr.className = "shift-company-row";
+    const th = document.createElement("th");
+    th.textContent =
+        Number(companyCategory) === Number(APP.cache.common.companyCategory.OWN) ? "社員": companyName || "会社未設定";
+    tr.appendChild(th);
+    body.appendChild(tr);
 }

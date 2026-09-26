@@ -60,7 +60,8 @@ public enum QueryId {
     DISPATCH_ASSIGNMENT_REORDER("dispatchAssignmentReorder"),
     DISPATCH_ASSIGNMENT_DELETE_BY_IDS("dispatchAssignmentDeleteByIds"),
     DISPATCH_ASSIGNMENT_SAVE("dispatchAssignmentSave"),
-    DISPATCH_ORDER_LIST("dispatchOrderList"),    
+    DISPATCH_ORDER_LIST("dispatchOrderList"),
+    DISPATCH_EMPLOYEE_CANDIDATE_LIST("dispatchEmployeeCandidateList"),
 
     // ===== Shift =====
     EMPLOYEE_SHIFT_DETAIL("employeeShiftDetail"),

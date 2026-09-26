@@ -17,6 +17,7 @@ import { DispatchAssignmentRepository } from "../../../repositories/operations/d
 import { groupDispatchCrews, renderDispatchCrews } from "./dispatchCrewView.js";
 import { renderDispatchOrders } from "./dispatchOrderView.js";
 import { initCrewDrop } from "./dispatchDragDrop.js";
+import { DispatchEmployeeRepository } from "../../../repositories/operations/dispatch/DispatchEmployeeRepository.js";
 
 let vehicleTable;
 let dispatchOrders = [];
@@ -168,7 +169,14 @@ async function executeLoadDispatchBoard() {
     const workDate = document.getElementById("dispatch-work-date")?.value ?? "";
     const officeId = Number(document.getElementById("dispatch-office")?.value || 0);
     const dispatchCategory = Number(document.getElementById("dispatch-category")?.value || 0);
+    const employeeResult = await DispatchEmployeeRepository.findCandidateList({
+        workDate, officeId, state: APP.cache.common.state.INITIAL
+    });
 
+console.log(
+    "dispatch employees",
+    employeeResult.data
+);
     if(!workDate || !officeId || !dispatchCategory){
         renderDispatchCrews([]);
         dispatchOrders = [];
@@ -184,6 +192,7 @@ async function executeLoadDispatchBoard() {
                 workDate,
                 officeId,
                 dispatchCategory,
+                shiftType: 1,
                 state: APP.cache.common.state.INITIAL
             });
     const defaultRows = defaultResult.data ?? [];
