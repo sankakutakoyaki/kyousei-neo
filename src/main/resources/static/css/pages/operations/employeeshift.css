@@ -141,3 +141,17 @@
     background-color: #fff7e6;
     color: #b06000;
 }
+
+#employee-shift-page {
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 0;
+    padding-bottom: 2rem;
+}
+
+#employee-shift-page > .table-wrapper {
+    min-height: 0;
+    height: 100%;
+    overflow: auto;
+}

@@ -159,15 +159,28 @@ public class EmployeeShiftQuery {
                 e.employee_id,
                 e.code,
                 e.full_name,
-                e.office_id
+                e.office_id,
+                STRING_AGG(
+                    CAST(m.employee_work_category_id AS varchar(20)),
+                    ','
+                ) AS work_category_ids
             FROM employees e
+            LEFT JOIN employee_work_category_members m
+                ON m.employee_id = e.employee_id
+            AND m.state = ?
             WHERE e.state = ?
             AND e.office_id = ?
+            GROUP BY
+                e.employee_id,
+                e.code,
+                e.full_name,
+                e.office_id
             ORDER BY
                 e.full_name,
                 e.employee_id
             """,
             List.of(
+                "state",
                 "state",
                 "officeId"
             )

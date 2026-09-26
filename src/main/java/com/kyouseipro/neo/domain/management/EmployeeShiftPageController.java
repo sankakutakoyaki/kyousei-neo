@@ -12,6 +12,7 @@ import com.kyouseipro.neo.common.enums.code.ShiftType;
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.util.EnumUtil;
 import com.kyouseipro.neo.domain.corporation.api.office.OfficeService;
+import com.kyouseipro.neo.domain.personnel.employee.EmployeeWorkCategoryService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class EmployeeShiftPageController {
 
     private final OfficeService officeService;
+    private final EmployeeWorkCategoryService employeeWorkCategoryService;
 
     /**
      * 従業員シフト
@@ -42,8 +44,8 @@ public class EmployeeShiftPageController {
             ),
             "page", Map.of(
                 "officeComboList", officeService.findComboByCategory(CompanyCategory.OWN.getCode()),
-                "shiftTypeComboList", EnumUtil.toCombo(ShiftType.class)
-            )
+                "shiftTypeComboList", EnumUtil.toCombo(ShiftType.class),
+                "employeeWorkCategoryComboList", employeeWorkCategoryService.findCombo())
         );
     }
 }

@@ -17,13 +17,11 @@ public class OfficeRepository {
     private final SqlRepository sqlRepository;
     
     public List<ComboDto> findComboClientAll() {
-
         String sql = """
             SELECT o.* FROM offices o
             INNER JOIN companies c ON c.company_id = o.company_id AND c.state = ? 
             WHERE o.state = ? AND NOT (c.category = ? OR c.category = ?)
         """;
-
         return sqlRepository.queryList(
             sql,
             (ps, p) -> {
@@ -43,14 +41,12 @@ public class OfficeRepository {
     }
 
     public List<ComboDto> findComboByCategory(int categoryCode) {
-
         String sql = """
             SELECT o.*
             FROM offices o
             INNER JOIN companies c ON c.company_id = o.company_id AND c.state = ? 
             WHERE o.state = ? AND c.category = ?
         """;
-
         return sqlRepository.queryList(
             sql,
             (ps, p) -> {

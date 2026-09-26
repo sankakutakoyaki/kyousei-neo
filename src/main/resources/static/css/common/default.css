@@ -89,10 +89,6 @@ body {
     width: 100%;
     height: 100%;
     overflow: auto;
-
-    /* 画面を中央よせ */
-    /* display: flex;
-    justify-content: center; */
 }
 
 .normal-sidebar {

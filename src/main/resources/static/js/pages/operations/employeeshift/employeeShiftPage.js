@@ -9,6 +9,9 @@ import { getMonthRange, getShiftMark } from "./employeeShiftUtil.js";
 import { appendEmployeeRow, renderMonthHeader, updateRowSummary } from "./employeeShiftTable.js";
 
 const changedShifts = new Map();
+let loadedEmployees = [];
+let loadedShiftMap = new Map();
+let loadedMonthValue = "";
 
 export async function init(){
     await initCommon();
@@ -45,6 +48,18 @@ export async function init(){
         await loadEmployees(Number(nextOfficeId));
     });
 
+    const workCategoryInput = document.getElementById("shift-work-category");
+    let previousWorkCategoryId = workCategoryInput?.value ?? "";
+    workCategoryInput?.addEventListener("change", async event => {
+        const nextWorkCategoryId = event.target.value;
+        if(!await confirmDiscardChanges()){
+            event.target.value = previousWorkCategoryId;
+            return;
+        }
+        previousWorkCategoryId = nextWorkCategoryId;
+        renderEmployees();
+    });
+
     document.getElementById("shift-save-btn")?.addEventListener("click", async () => {
         await saveShifts();
     });
@@ -74,10 +89,10 @@ async function loadEmployees(officeId){
         ]);
     const employees = employeeResult.data ?? [];
     const shifts = shiftResult.data ?? [];
-    const shiftMap = createShiftMap(shifts);
-    employees.forEach(employee => {
-        appendEmployeeRow({body, employee, shiftMap, monthValue, onShiftChange: changeShiftType, onRowToggle: toggleRowShift});
-    });
+    loadedEmployees = employees;
+    loadedShiftMap = createShiftMap(shifts);
+    loadedMonthValue = monthValue;
+    renderEmployees();
 }
 
 function createShiftMap(shifts){
@@ -229,4 +244,33 @@ async function confirmDiscardChanges(){
     return await DialogService.confirm(
         "保存していない変更があります。\n変更を破棄して移動しますか？"
     );
+}
+
+function renderEmployees(){
+    const body = document.getElementById("shift-table-body");
+    if(!body){
+        return;
+    }
+
+    body.replaceChildren();
+    const workCategoryId = Number(document.getElementById("shift-work-category")?.value || 0);
+    const employees =
+        loadedEmployees.filter(employee => {
+            if(!workCategoryId){
+                return true;
+            }
+            const ids = String(employee.workCategoryIds ?? "").split(",").map(Number);
+            return ids.includes(workCategoryId);
+        });
+
+    employees.forEach(employee => {
+        appendEmployeeRow({
+            body,
+            employee,
+            shiftMap: loadedShiftMap,
+            monthValue: loadedMonthValue,
+            onShiftChange: changeShiftType,
+            onRowToggle: toggleRowShift
+        });
+    });
 }

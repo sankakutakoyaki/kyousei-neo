@@ -30,6 +30,17 @@
                         }
                     })}">
                 </th:block>
+                <th:block
+                    th:replace="~{fragments/components/box :: selectBoxFragment(${
+                        {
+                            'text':'業務区分',
+                            'id':'shift-work-category',
+                            'name':'work-category-id',
+                            'combo':'employeeWorkCategoryComboList',
+                            'top':'-----'
+                        }
+                    })}">
+                </th:block>
                 <div class="form-parts">
                     <label></label>
                     <button type="button" class="normal-btn" id="shift-save-btn" disabled>保存</button>
