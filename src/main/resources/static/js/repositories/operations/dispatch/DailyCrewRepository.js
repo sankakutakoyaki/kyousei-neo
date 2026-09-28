@@ -9,5 +9,9 @@ export const DailyCrewRepository = {
 
     async bulkCreate(params) {
         return await RequestClient.request({ queryId: "dailyCrewBulkCreate", params });
-    }
+    },
+
+    async reinitialize(params) {
+        return await RequestClient.request({ queryId: "dailyCrewReinitialize", params });
+    },
 };

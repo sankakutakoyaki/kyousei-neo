@@ -138,4 +138,24 @@ public class EmployeeQuery {
             )
         );
     }
+
+    public static QueryDefinition employeeOfficeMemberList() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                employee_office_member_id,
+                employee_id,
+                office_id,
+                version,
+                state
+            FROM employee_office_members
+            WHERE employee_id = ?
+            ORDER BY
+                office_id
+            """,
+            List.of(
+                "employeeId"
+            )
+        );
+    }
 }

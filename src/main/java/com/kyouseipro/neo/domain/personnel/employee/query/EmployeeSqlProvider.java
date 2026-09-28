@@ -31,6 +31,7 @@ public class EmployeeSqlProvider implements SqlProviderPart {
         map.put(QueryId.EMPLOYEE_RESOLVE, EmployeeQuery.employeeResolve());
         map.put(QueryId.EMPLOYEE_WORK_CATEGORY_LIST, EmployeeQuery.employeeWorkCategoryList());
         map.put(QueryId.EMPLOYEE_WORK_CATEGORY_MEMBER_LIST, EmployeeQuery.employeeWorkCategoryMemberList());
+        map.put(QueryId.EMPLOYEE_OFFICE_MEMBER_LIST, EmployeeQuery.employeeOfficeMemberList());
 
         return map;
     }

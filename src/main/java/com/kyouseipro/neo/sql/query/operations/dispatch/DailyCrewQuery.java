@@ -125,6 +125,7 @@ public class DailyCrewQuery {
                 dc.vehicle_id,
                 dc.display_order,
                 dc.remarks,
+                dc.version AS daily_crew_version,
 
                 v.vehicle_name,
                 v.registration_area,
@@ -138,6 +139,7 @@ public class DailyCrewQuery {
                 dcm.employee_id,
                 dcm.role,
                 dcm.display_order AS member_display_order,
+                dcm.version AS member_version,
 
                 COALESCE(e.full_name, '') AS employee_name,
                 e.category AS employee_category,
@@ -167,7 +169,6 @@ public class DailyCrewQuery {
             LEFT JOIN employee_shifts es
                 ON es.employee_id = dcm.employee_id
                 AND es.work_date = dc.work_date
-                AND es.office_id = dc.office_id
                 AND es.state = ?
 
             WHERE dc.work_date = ?
@@ -186,6 +187,33 @@ public class DailyCrewQuery {
                 "state",
                 "state",
                 "state",
+                "state",
+                "workDate",
+                "officeId",
+                "dispatchCategory",
+                "state"
+            )
+        );
+    }
+
+    public static QueryDefinition dailyCrewAssignmentCount() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                COUNT(*) AS assignment_count
+
+            FROM dispatch_assignments da
+
+            INNER JOIN daily_crews dc
+                ON dc.daily_crew_id = da.daily_crew_id
+                AND dc.state = ?
+
+            WHERE dc.work_date = ?
+            AND dc.office_id = ?
+            AND dc.dispatch_category = ?
+            AND da.state = ?
+            """,
+            List.of(
                 "state",
                 "workDate",
                 "officeId",

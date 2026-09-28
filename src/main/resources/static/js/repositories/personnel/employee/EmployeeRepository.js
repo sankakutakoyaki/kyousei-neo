@@ -36,4 +36,8 @@ export const EmployeeRepository = {
     async findWorkCategoryMembers(params) {
         return await RequestClient.request({queryId: "employeeWorkCategoryMemberList", params});
     },
+
+    async findOfficeMembers(params) {
+        return await RequestClient.request({queryId: "employeeOfficeMemberList", params});
+    },
 };

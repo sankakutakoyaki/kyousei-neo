@@ -21,11 +21,7 @@ public class BaseSqlRepository {
     protected final SqlRepository sqlRepository;
     private final LogSqlProviderResolver resolver;
 
-    public Long insert(
-            TableMeta meta,
-            Map<String,Object> req,
-            String editor
-    ){
+    public Long insert(TableMeta meta, Map<String,Object> req, String editor){
         req.put("editor", editor);
         SqlResult result = buildSql(
             meta,
@@ -39,21 +35,8 @@ public class BaseSqlRepository {
         );
     }
 
-    public int update(
-            TableMeta meta,
-            Map<String,Object> req,
-            String editor
-    ){
+    public int update(TableMeta meta, Map<String,Object> req, String editor){
         req.put("editor", editor);
-        // LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-        // SqlResult result = SqlBuilder.buildSqlWithLog(
-        //     meta.tableName(),
-        //     req,
-        //     SqlMode.UPDATE,
-        //     meta.idColumn(),
-        //     meta.versionColumn(),
-        //     logProvider
-        // );
         SqlResult result = buildSql(
             meta,
             req,
@@ -66,21 +49,9 @@ public class BaseSqlRepository {
         );
     }
 
-    public int updateByIds(
-            TableMeta meta,
-            List<?> ids,
-            Map<String,Object> req,
-            String editor
-    ){
+    public int updateByIds(TableMeta meta, List<?> ids, Map<String,Object> req, String editor){
         req.put("editor", editor);
         LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-        // SqlResult result = SqlBuilder.buildUpdateByIds(
-        //     meta,
-        //     ids,
-        //     req,
-        //     editor,
-        //     logProvider
-        // );
         SqlResult result;
         if (logProvider != null) {
             result = SqlBuilder.buildUpdateByIds(meta, ids, req, editor, logProvider);
@@ -94,21 +65,8 @@ public class BaseSqlRepository {
         );
     }
 
-    public int delete(
-            TableMeta meta,
-            Map<String,Object> req,
-            String editor
-    ){
+    public int delete(TableMeta meta, Map<String,Object> req, String editor){
         req.put("editor", editor);
-        // LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-        // SqlResult result = SqlBuilder.buildSqlWithLog(
-        //     meta.tableName(),
-        //     req,
-        //     SqlMode.DELETE,
-        //     meta.idColumn(),
-        //     meta.versionColumn(),
-        //     logProvider
-        // );
         SqlResult result = buildSql(
             meta,
             req,
@@ -121,18 +79,8 @@ public class BaseSqlRepository {
         );
     }
 
-    public int deleteByIds(
-            TableMeta meta,
-            List<?> ids,
-            String editor
-    ){
+    public int deleteByIds(TableMeta meta, List<?> ids, String editor){
         LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-        // SqlResult result = SqlBuilder.buildDeleteByIds(
-        //     meta,
-        //     ids,
-        //     editor,
-        //     logProvider
-        // );
         SqlResult result;
         if (logProvider != null) {
             result = SqlBuilder.buildDeleteByIds(meta, ids, editor, logProvider);
@@ -150,14 +98,8 @@ public class BaseSqlRepository {
         return camel.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
     }
 
-    private SqlResult buildSql(
-            TableMeta meta,
-            Map<String,Object> req,
-            SqlMode mode
-    ){
-        LogSqlProvider logProvider =
-            resolver.resolve(meta.tableName());
-
+    private SqlResult buildSql(TableMeta meta, Map<String,Object> req, SqlMode mode){
+        LogSqlProvider logProvider = resolver.resolve(meta.tableName());
         if (logProvider != null) {
             return SqlBuilder.buildSqlWithLog(
                 meta.tableName(),
@@ -168,13 +110,28 @@ public class BaseSqlRepository {
                 logProvider
             );
         }
-
         return SqlBuilder.buildSqlNoLog(
             meta.tableName(),
             req,
             mode,
             meta.idColumn(),
             meta.versionColumn()
+        );
+    }
+
+    public Long reactivate(TableMeta meta, Object id, Object version, String editor) {
+        LogSqlProvider logProvider = resolver.resolve(meta.tableName());
+        SqlResult result = SqlBuilder.buildReactivate(
+            meta,
+            id,
+            version,
+            editor,
+            logProvider
+        );
+        return sqlRepository.insert(
+            result.getSql(),
+            result.getParams(),
+            rs -> rs.getLong(1)
         );
     }
 }

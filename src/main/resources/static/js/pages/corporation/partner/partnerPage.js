@@ -66,11 +66,9 @@ export const partnerEmployeePage = () =>
             filters: {companyId: filterFactory.equals("companyId")}
         },
         validateBusiness: async (payload) => {
-            if(!payload.companyId){
-                throw {
-                    message: "会社を選択してください",
-                    fields: ["companyId"]
-                };
+            const companyId = payload.companyId ?? document.querySelector('#form-02 [name="company-id"]')?.value;
+            if(!companyId || Number(companyId) === 0){
+                throw {message: "会社を選択してください", fields: ["companyId"]};
             }
         }
     });

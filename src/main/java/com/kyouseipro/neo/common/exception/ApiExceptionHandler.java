@@ -32,4 +32,3 @@ public class ApiExceptionHandler {
                 .body(SimpleResponse.error("予期しないエラーが発生しました。" + e.getMessage()));
     }
 }
-

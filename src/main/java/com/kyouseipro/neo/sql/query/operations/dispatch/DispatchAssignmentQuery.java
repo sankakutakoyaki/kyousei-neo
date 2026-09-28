@@ -66,4 +66,35 @@ public class DispatchAssignmentQuery {
             )
         );
     }
+
+    public static QueryDefinition dispatchAssignmentResetList() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                da.dispatch_assignment_id,
+                da.version
+
+            FROM dispatch_assignments da
+
+            INNER JOIN daily_crews dc
+                ON dc.daily_crew_id = da.daily_crew_id
+            AND dc.state = ?
+
+            WHERE dc.work_date = ?
+            AND dc.office_id = ?
+            AND dc.dispatch_category = ?
+            AND da.state = ?
+
+            ORDER BY
+                da.dispatch_assignment_id
+            """,
+            List.of(
+                "state",
+                "workDate",
+                "officeId",
+                "dispatchCategory",
+                "state"
+            )
+        );
+    }
 }

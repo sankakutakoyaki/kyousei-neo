@@ -45,6 +45,11 @@ public class DispatchAssignmentSqlProvider implements SqlProviderPart {
             new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.DISPATCH_ASSIGNMENT_BY_IDS)
         );
 
+        map.put(
+            QueryId.DISPATCH_ASSIGNMENT_RESET,
+            new QueryDefinition(QueryType.UPDATE, QueryKind.DISPATCH_ASSIGNMENT_RESET, Tables.DISPATCH_ASSIGNMENT_BY_IDS)
+        );
+
         return map;
     }
 }

@@ -120,18 +120,6 @@ export async function apiFetch(url, {
  * HTTPエラー共通処理
  * @param {*} status 
  */
-// export async function handleHttpError(status, json) {
-//     const message = json?.message;
-
-//     if (window.ApiErrorHandler) {
-//         return window.ApiErrorHandler(status, message);
-//     }
-//     if(status >= 500){
-//         DialogService.error("システムエラーが発生しました");
-//     } else {
-//         DialogService.error(message);
-//     }
-// }
 export async function handleHttpError(status, json) {
     const message =
         json?.message ||

@@ -87,6 +87,7 @@ public class CorporationPageController {
             ),
             "page", Map.of(
                 "companyComboList", companyService.findComboByCategory(CompanyCategory.PARTNER.getCode()),
+                "officeComboList", officeService.findComboByCategory(CompanyCategory.OWN.getCode()),
                 "genderComboList", EnumUtil.toCombo(Gender.class),
                 "bloodTypeComboList", EnumUtil.toCombo(BloodType.class)
             )

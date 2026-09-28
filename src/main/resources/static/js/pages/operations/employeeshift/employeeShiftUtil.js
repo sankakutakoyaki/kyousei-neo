@@ -6,7 +6,7 @@
 export function getShiftMark(shiftType){
     switch(Number(shiftType)){
         case 1:
-            return "出";
+            return "⚪︎";
         case 2:
             return "休";
         case 3:

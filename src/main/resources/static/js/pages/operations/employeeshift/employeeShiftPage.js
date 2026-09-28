@@ -294,8 +294,8 @@ function appendCompanyHeader(body, companyCategory, companyName){
     const tr = document.createElement("tr");
     tr.className = "shift-company-row";
     const th = document.createElement("th");
-    th.textContent =
-        Number(companyCategory) === Number(APP.cache.common.companyCategory.OWN) ? "社員": companyName || "会社未設定";
+    th.className = "shift-company-header";
+    // th.textContent = Number(companyCategory) === Number(APP.cache.common.companyCategory.OWN) ? "社員": companyName || "会社未設定";
     tr.appendChild(th);
     body.appendChild(tr);
 }

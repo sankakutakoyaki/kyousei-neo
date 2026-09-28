@@ -177,6 +177,11 @@ public class EmployeeShiftQuery {
 
             FROM employees e
 
+            INNER JOIN employee_office_members eom
+                ON eom.employee_id = e.employee_id
+            AND eom.office_id = ?
+            AND eom.state = ?
+
             LEFT JOIN companies c
                 ON c.company_id = e.company_id
             AND c.state = ?
@@ -186,7 +191,6 @@ public class EmployeeShiftQuery {
             AND m.state = ?
 
             WHERE e.state = ?
-            AND e.office_id = ?
 
             GROUP BY
                 e.employee_id,
@@ -194,7 +198,6 @@ public class EmployeeShiftQuery {
                 e.full_name,
                 e.office_id,
                 e.category,
-
                 c.company_id,
                 c.name,
                 c.category
@@ -204,17 +207,17 @@ public class EmployeeShiftQuery {
                     WHEN c.category = ? THEN 0
                     ELSE 1
                 END,
-
                 c.name,
                 e.category,
                 e.full_name,
                 e.employee_id
             """,
             List.of(
-                "state",
-                "state",
-                "state",
                 "officeId",
+                "state",
+                "state",
+                "state",
+                "state",
                 "ownCompanyCategory"
             )
         );
@@ -240,9 +243,13 @@ public class EmployeeShiftQuery {
 
             FROM employee_shifts es
 
+            INNER JOIN employee_office_members eom
+                ON eom.employee_id = es.employee_id
+            AND eom.office_id = ?
+            AND eom.state = ?
+
             WHERE es.work_date >= ?
             AND es.work_date < ?
-            AND es.office_id = ?
             AND es.state = ?
 
             ORDER BY
@@ -250,9 +257,10 @@ public class EmployeeShiftQuery {
                 es.work_date
             """,
             List.of(
+                "officeId",
+                "state",
                 "fromDate",
                 "toDate",
-                "officeId",
                 "state"
             )
         );

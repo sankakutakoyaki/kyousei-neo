@@ -20,6 +20,7 @@ public enum QueryId {
     EMPLOYEE_RESOLVE("employeeResolve"),
     EMPLOYEE_WORK_CATEGORY_LIST("employeeWorkCategoryList"),
     EMPLOYEE_WORK_CATEGORY_MEMBER_LIST("employeeWorkCategoryMemberList"),
+    EMPLOYEE_OFFICE_MEMBER_LIST("employeeOfficeMemberList"),
 
     // ===== office =====
     OFFICE_DETAIL("officeDetail"),
@@ -53,6 +54,7 @@ public enum QueryId {
     DAILY_CREW_MEMBER_DELETE_BY_IDS("dailyCrewMemberDeleteByIds"),
     DAILY_CREW_MEMBER_SAVE("dailyCrewMemberSave"),
     DAILY_CREW_BOARD_LIST("dailyCrewBoardList"),
+    DAILY_CREW_REINITIALIZE("dailyCrewReinitialize"),
 
     // ===== Dispatch =====
     DISPATCH_ASSIGNMENT_LIST("dispatchAssignmentList"),
@@ -62,6 +64,7 @@ public enum QueryId {
     DISPATCH_ASSIGNMENT_SAVE("dispatchAssignmentSave"),
     DISPATCH_ORDER_LIST("dispatchOrderList"),
     DISPATCH_EMPLOYEE_CANDIDATE_LIST("dispatchEmployeeCandidateList"),
+    DISPATCH_ASSIGNMENT_RESET("dispatchAssignmentReset"),
 
     // ===== Shift =====
     EMPLOYEE_SHIFT_DETAIL("employeeShiftDetail"),

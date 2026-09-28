@@ -9,8 +9,11 @@
         <section class="dispatch-board">
             <!-- 左：車両・担当班 -->
             <section class="dispatch-crew-area">
-                <header class="dispatch-board-header">
-                    <span>配車班</span>
+                <header class="dispatch-board-header dispatch-crew-header">
+                    <span>車両リスト</span>
+                    <div class="img-btn" data-action="reinitialize-crews">
+                        <img src="/icons/reload.png">
+                    </div>
                 </header>
                 <div id="dispatch-crew-list" class="dispatch-crew-list">
                     <div class="dispatch-empty">
@@ -21,29 +24,18 @@
             <!-- 右：未配車伝票 -->
             <section class="dispatch-order-area">
                 <header class="dispatch-board-header dispatch-order-header">
-                    <span>伝票</span>
+                    <span>伝票リスト</span>
+                    <div class="img-btn" data-action="reset-assignments">
+                        <img src="/icons/reload.png">
+                    </div>
                     <select id="dispatch-order-status" class="normal-select" data-action="change-order-status">
                         <option value="unassigned" selected>未配車</option>
                         <option value="assigned">配車済み</option>
                         <option value="all">すべて</option>
                     </select>
                 </header>
-                <div id="dispatch-order-list" class="dispatch-order-list">
-                </div>
+                <div id="dispatch-order-list" class="dispatch-order-list"></div>
             </section>
         </section>
-    </div>
-    <div id="form-dialog-area">
-        <form id="dispatch-vehicle-dialog" class="form-dialog none">
-            <div class="dialog-main dispatch-vehicle-dialog-main">
-                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '稼働班を選択'} })}"></header>
-                <section class="dispatch-vehicle-select-area">
-                    <div class="table-area">
-                        <section th:replace="~{fragments/table/body :: normalFragment('table-header-dispatch-vehicle', 'table-dispatch-vehicle')}"></section>
-                    </div>
-                </section>
-                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'dispatch-vehicle-footer' } })}"></footer>
-            </div>
-        </form>
     </div>
 </main>

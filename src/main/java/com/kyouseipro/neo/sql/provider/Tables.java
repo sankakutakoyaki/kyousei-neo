@@ -70,4 +70,8 @@ public class Tables {
         public static final TableMeta EMPLOYEE_WORK_CATEGORY_MEMBER_BY_IDS =
             new TableMeta(
                 "employee_work_category_members", "employeeWorkCategoryMemberId", "state", "version");
+
+        public static final TableMeta EMPLOYEE_OFFICE_MEMBER_BY_IDS =
+            new TableMeta("employee_office_members", "employeeOfficeMemberId", "state", "version");
+
 }

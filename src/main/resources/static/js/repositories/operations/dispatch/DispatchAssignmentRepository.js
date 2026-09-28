@@ -22,5 +22,9 @@ export const DispatchAssignmentRepository = {
 
     async reorder(items) {
         return await RequestClient.request({ queryId: "dispatchAssignmentReorder", params: { items }});
-    }
+    },
+
+    async reset(params) {
+        return await RequestClient.request({ queryId: "dispatchAssignmentReset", params });
+    },
 };

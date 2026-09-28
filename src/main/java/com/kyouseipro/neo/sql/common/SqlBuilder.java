@@ -215,13 +215,6 @@ public class SqlBuilder {
                 throw new IllegalArgumentException("登録項目がありません");
             }
 
-            // sql.append("INSERT INTO ")
-            // .append(table)
-            // .append(" (")
-            // .append(String.join(", ", columns))
-            // .append(") VALUES (")
-            // .append(String.join(", ", values))
-            // .append(");");
             sql.append("INSERT INTO ")
                 .append(table)
                 .append(" (")
@@ -406,9 +399,65 @@ public class SqlBuilder {
 
         params.add(State.DELETE.getCode());
 
-        return new SqlResult(
-            sql.toString(),
-            params
+        return new SqlResult(sql.toString(), params);
+    }
+
+    public static SqlResult buildReactivate(TableMeta meta, Object id, Object version, String editor, LogSqlProvider logProvider) {
+        String tableVar = "@UpdatedRows";
+        StringBuilder sql = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+        /*
+        * OUTPUT受け取り用
+        */
+        sql.append(logProvider.buildLogTable(tableVar));
+        /*
+        * state=9 → state=0
+        */
+        sql.append("UPDATE ")
+        .append(meta.tableName())
+        .append(" SET ")
+        .append(meta.stateColumn())
+        .append(" = ?, ")
+        .append(meta.versionColumn())
+        .append(" = ")
+        .append(meta.versionColumn())
+        .append(" + 1, ")
+        .append("update_date = SYSDATETIME() ");
+        sql.append(logProvider.buildOutput())
+        .append(" INTO ")
+        .append(tableVar)
+        .append(" ");
+        sql.append("WHERE ")
+        .append(toSnake(meta.idColumn()))
+        .append(" = ? ")
+        .append("AND ")
+        .append(toSnake(meta.versionColumn()))
+        .append(" = ? ")
+        .append("AND ")
+        .append(meta.stateColumn())
+        .append(" = ?; ");
+        params.add(State.INITIAL.getCode());
+        params.add(id);
+        params.add(version);
+        params.add(State.DELETE.getCode());
+        /*
+        * ログ
+        */
+        String action = "UPDATE";
+        sql.append(logProvider.buildInsertLog(tableVar, action));
+        Map<String,Object> context = new HashMap<>();
+        context.put("editor", editor);
+        params.addAll(logProvider.buildLogParams(context, action));
+        /*
+        * 更新されたIDを返す
+        */
+        sql.append(
+            """
+            SELECT %s
+            FROM %s;
+            """.formatted(toSnake(meta.idColumn()), tableVar)
         );
+
+        return new SqlResult(sql.toString(), params);
     }
 }

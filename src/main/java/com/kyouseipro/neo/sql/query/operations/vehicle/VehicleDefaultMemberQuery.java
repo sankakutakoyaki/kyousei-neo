@@ -155,10 +155,14 @@ public class VehicleDefaultMemberQuery {
                 ON e.employee_id = vdm.employee_id
                 AND e.state = ?
 
+            INNER JOIN employee_office_members eom
+                ON eom.employee_id = e.employee_id
+                AND eom.office_id = ?
+                AND eom.state = ?
+
             INNER JOIN employee_shifts es
                 ON es.employee_id = vdm.employee_id
                 AND es.work_date = ?
-                AND es.office_id = ?
                 AND es.shift_type = ?
                 AND es.state = ?
 
@@ -180,8 +184,10 @@ public class VehicleDefaultMemberQuery {
 
                 "state",
 
-                "workDate",
                 "officeId",
+                "state",
+
+                "workDate",
                 "shiftType",
                 "state",
 

@@ -29,7 +29,7 @@ export function renderMonthHeader(monthValue){
 
     // 従業員
     const employeeTh = document.createElement("th");
-    employeeTh.textContent = "従業員";
+    // employeeTh.textContent = "従業員";
     employeeTh.className = "shift-employee-column";
     tr.appendChild(employeeTh);
 
