@@ -20,27 +20,12 @@ public class DailyCrewMemberSqlProvider implements SqlProviderPart {
     public Map<QueryId, QueryDefinition> provide() {
         Map<QueryId, QueryDefinition> map = new HashMap<>();
 
-        map.put(
-            QueryId.DAILY_CREW_MEMBER_LIST,
-            DailyCrewMemberQuery.dailyCrewMemberList()
+        map.put(QueryId.DAILY_CREW_MEMBER_LIST, DailyCrewMemberQuery.dailyCrewMemberList());
+        map.put(QueryId.DAILY_CREW_MEMBER_DELETE_BY_IDS,
+            new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.DAILY_CREW_MEMBER_BY_IDS)
         );
-
-        map.put(
-            QueryId.DAILY_CREW_MEMBER_DELETE_BY_IDS,
-            new QueryDefinition(
-                QueryType.UPDATE,
-                QueryKind.DELETE_BY_IDS,
-                Tables.DAILY_CREW_MEMBER_BY_IDS
-            )
-        );
-
-        map.put(
-            QueryId.DAILY_CREW_MEMBER_SAVE,
-            new QueryDefinition(
-                QueryType.UPDATE,
-                QueryKind.SAVE,
-                Tables.DAILY_CREW_MEMBER_BY_IDS
-            )
+        map.put(QueryId.DAILY_CREW_MEMBER_SAVE,
+            new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.DAILY_CREW_MEMBER_BY_IDS)
         );
 
         return map;

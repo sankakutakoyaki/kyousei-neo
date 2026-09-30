@@ -102,7 +102,6 @@ class OrderPdfImportServiceTest {
         assertEquals(7L, result.get("ocrLogId"));
         assertEquals("actual-model", result.get("modelName"));
         org.mockito.Mockito.verify(logs).insert(12L, new ObjectMapper().writeValueAsString(candidates), "actual-model", "heiwado-20260912-01");
-        org.mockito.Mockito.verify(repository, org.mockito.Mockito.never()).saveOcrResult(anyLong(), anyString());
     }
 
     @Test

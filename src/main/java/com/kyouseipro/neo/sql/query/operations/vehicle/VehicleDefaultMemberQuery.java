@@ -196,4 +196,54 @@ public class VehicleDefaultMemberQuery {
             )
         );
     }
+
+    public static QueryDefinition vehicleDispatchCandidateList() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                v.vehicle_id,
+                v.vehicle_name,
+                v.registration_area,
+                v.registration_class,
+                v.registration_kana,
+                v.registration_number,
+                v.manufacturer,
+                v.model_code
+
+            FROM vehicles v
+
+            INNER JOIN vehicle_dispatch_categories vdc
+                ON vdc.vehicle_id = v.vehicle_id
+            AND vdc.dispatch_category = ?
+            AND vdc.state = ?
+
+            WHERE v.office_id = ?
+            AND v.state = ?
+
+            AND NOT EXISTS (
+                SELECT 1
+                FROM daily_crews dc
+                WHERE dc.vehicle_id = v.vehicle_id
+                    AND dc.work_date = ?
+                    AND dc.office_id = ?
+                    AND dc.dispatch_category = ?
+                    AND dc.state = ?
+            )
+
+            ORDER BY
+                v.vehicle_name,
+                v.vehicle_id
+            """,
+            List.of(
+                "dispatchCategory",
+                "state",
+                "officeId",
+                "state",
+                "workDate",
+                "officeId",
+                "dispatchCategory",
+                "state"
+            )
+        );
+    }
 }

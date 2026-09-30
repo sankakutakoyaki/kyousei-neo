@@ -12,11 +12,9 @@ export function renderDispatchOrders(orders, status, {onDragStart, onDragEnd} = 
         if(status === "unassigned"){
             return order.assignmentCount === 0;
         }
-
         if(status === "assigned"){
             return order.assignmentCount > 0;
         }
-
         return true;
     });
 

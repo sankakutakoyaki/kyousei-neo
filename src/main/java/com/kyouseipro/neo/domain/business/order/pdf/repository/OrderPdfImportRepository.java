@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.domain.business.order.pdf.model.OrderPdfImportFile;
 import com.kyouseipro.neo.domain.business.order.pdf.model.OrderPdfImportListItem;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
@@ -37,7 +38,7 @@ public class OrderPdfImportRepository {
                 state
             )
             OUTPUT INSERTED.order_import_id
-            VALUES (?, ?, ?, ?, ?, ?, SYSDATETIME(), SYSDATETIME(), 1, 0)
+            VALUES (?, ?, ?, ?, ?, ?, SYSDATETIME(), SYSDATETIME(), 1, ?)
         """;
 
         return sqlRepository.insert(
@@ -49,6 +50,7 @@ public class OrderPdfImportRepository {
                 ps.setString(4, filePath);
                 ps.setString(5, mimeType);
                 ps.setLong(6, fileSize);
+                ps.setInt(7, State.INITIAL.getCode());
             },
             rs -> rs.getLong("order_import_id"),
             null
@@ -64,13 +66,16 @@ public class OrderPdfImportRepository {
                 regist_date
             FROM order_imports
             WHERE prime_constractor_id = ?
-              AND state = 0
+              AND state = ?
             ORDER BY regist_date DESC, order_import_id DESC
         """;
 
         return sqlRepository.queryList(
             sql,
-            (ps, ignored) -> ps.setLong(1, primeConstractorId),
+            (ps, ignored) -> {
+                ps.setLong(1, primeConstractorId);
+                ps.setInt(2, State.INITIAL.getCode());
+            },
             rs -> new OrderPdfImportListItem(
                 rs.getLong("order_import_id"),
                 rs.getString("original_file_name"),
@@ -86,12 +91,15 @@ public class OrderPdfImportRepository {
             SELECT original_file_name, file_path
             FROM order_imports
             WHERE order_import_id = ?
-              AND state = 0
+              AND state = ?
         """;
 
         return sqlRepository.queryOneOrNull(
             sql,
-            (ps, ignored) -> ps.setLong(1, orderImportId),
+            (ps, ignored) -> {
+                ps.setLong(1, orderImportId);
+                ps.setInt(2, State.INITIAL.getCode());
+            },
             rs -> new OrderPdfImportFile(
                 rs.getString("original_file_name"),
                 java.nio.file.Path.of(rs.getString("file_path"))
@@ -99,16 +107,12 @@ public class OrderPdfImportRepository {
             null
         );
     }
-
-    public void saveOcrResult(long orderImportId, String result) {
-        sqlRepository.updateRequired(
-            "UPDATE order_imports SET ocr_status = 'COMPLETE', ocr_result = ?, ocr_error = NULL, ocr_finished_date = SYSDATETIME(), update_date = SYSDATETIME() WHERE order_import_id = ? AND state = 0",
-            java.util.List.of(result, orderImportId),
-            "OCR結果の保存に失敗しました。"
-        );
-    }
-
+    
     public long findPrimeConstractorId(long orderImportId) {
-        return sqlRepository.queryOne("SELECT prime_constractor_id FROM order_imports WHERE order_import_id = ? AND state = 0", (ps, ignored) -> ps.setLong(1, orderImportId), rs -> rs.getLong(1), null);
+        return sqlRepository.queryOne("SELECT prime_constractor_id FROM order_imports WHERE order_import_id = ? AND state = ?", 
+        (ps, ignored) -> {
+            ps.setLong(1, orderImportId);
+            ps.setInt(2, State.INITIAL.getCode());
+        }, rs -> rs.getLong(1), null);
     }
 }

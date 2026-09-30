@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kyouseipro.neo.common.enums.code.CompanyCategory;
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.system.QueryKind;
 import com.kyouseipro.neo.interfaces.sql.QueryHandler;
@@ -35,128 +36,71 @@ public class OrderHandler implements QueryHandler {
 
     @Override
     @Transactional
-    public Object execute(
-            QueryDefinition def,
-            SelectRequest req
-    ) {
-
+    public Object execute(QueryDefinition def, SelectRequest req) {
         Map<String, Object> params = req.getParams();
+        String editor = (String) params.getOrDefault("editor", "system");
 
-        String editor =
-                (String) params.getOrDefault("editor", "system");
-
-        // =========================
         // 商品明細
-        // =========================
-
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> items =
-                (List<Map<String, Object>>) params.get("items");
+        List<Map<String, Object>> items = (List<Map<String, Object>>) params.get("items");
 
-        // =========================
         // 作業明細
-        // =========================
-
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> works =
-                (List<Map<String, Object>>) params.get("works");
+        List<Map<String, Object>> works = (List<Map<String, Object>>) params.get("works");
 
-        // =========================
         // 受注ID判定
-        // =========================
-
         Object orderIdValue = params.get("orderId");
-
-        boolean isNewOrder =
-                orderIdValue == null
-                || Long.valueOf(orderIdValue.toString()) == 0;
-
+        boolean isNewOrder = orderIdValue == null || Long.valueOf(orderIdValue.toString()) == 0;
         if (params.get("ocrLogId") != null && (!isNewOrder || !"orders".equals(def.getTableMeta().tableName()))) {
             throw new com.kyouseipro.neo.common.exception.BusinessException("OCR候補は新規受注で保存してください。");
         }
-
         if (params.get("ocrLogId") != null) {
             validateOcrDetails(items, "itemQuantity", null);
             validateOcrDetails(works, "orderWorkQuantity", "orderWorkPrice");
-            orderOcrLogRepository.requireUnlinked(Long.parseLong(params.get("ocrLogId").toString()),
-                Long.parseLong(params.get("primeConstractorId").toString()));
+            orderOcrLogRepository.requireUnlinked(Long.parseLong(params.get("ocrLogId").toString()), Long.parseLong(params.get("primeConstractorId").toString()));
         }
 
         // Long orderId;
         Long orderId = null;
 
-        // =====================================================
         // 編集の場合
         // 保存前に既存明細IDを取得しておく
-        // =====================================================
-
         List<Long> existingItemIds = List.of();
         List<Long> existingWorkIds = List.of();
 
         if (!isNewOrder) {
-
             orderId = Long.valueOf(orderIdValue.toString());
-
             // 保存前のDB状態を取得
             existingItemIds = findOrderItemIds(orderId);
             existingWorkIds = findOrderWorkIds(orderId);
         }
 
-        // =====================================================
         // 削除対象を「保存前の状態」で確定
-        // =====================================================
-
         List<Long> deleteItemIds = List.of();
         List<Long> deleteWorkIds = List.of();
 
         if (!isNewOrder) {
-
-            // -------------------------
             // 商品
-            // -------------------------
-
             if (items != null) {
-
-                List<Long> requestItemIds =
-                        items.stream()
-                                .map(item -> item.get("orderItemId"))
-                                .filter(id -> id != null)
-                                .map(id -> Long.valueOf(id.toString()))
-                                .toList();
-
-                deleteItemIds =
-                        existingItemIds.stream()
-                                .filter(id -> !requestItemIds.contains(id))
-                                .toList();
+                List<Long> requestItemIds = items.stream().map(item -> 
+                    item.get("orderItemId")).filter(id -> 
+                        id != null).map(id -> Long.valueOf(id.toString())).toList();
+                deleteItemIds = existingItemIds.stream().filter(id -> 
+                    !requestItemIds.contains(id)).toList();
             }
 
-            // -------------------------
             // 作業
-            // -------------------------
-
             if (works != null) {
-
-                List<Long> requestWorkIds =
-                        works.stream()
-                                .map(work -> work.get("orderWorkId"))
-                                .filter(id -> id != null)
-                                .map(id -> Long.valueOf(id.toString()))
-                                .toList();
-
-                deleteWorkIds =
-                        existingWorkIds.stream()
-                                .filter(id -> !requestWorkIds.contains(id))
-                                .toList();
+                List<Long> requestWorkIds = works.stream().map(work -> 
+                    work.get("orderWorkId")).filter(id -> 
+                        id != null).map(id -> Long.valueOf(id.toString())).toList();
+                deleteWorkIds = existingWorkIds.stream().filter(id -> 
+                    !requestWorkIds.contains(id)).toList();
             }
         }
 
-        // =====================================================
         // 受注
-        // =====================================================
-
-        Map<String, Object> orderParams =
-                new LinkedHashMap<>(params);
-
+        Map<String, Object> orderParams = new LinkedHashMap<>(params);
         // 明細はordersには入れない
         orderParams.remove("items");
         orderParams.remove("works");
@@ -179,160 +123,80 @@ public class OrderHandler implements QueryHandler {
             else {
                 int officeId;
                 try {officeId=Integer.parseInt(office);}catch(NumberFormatException e){throw new com.kyouseipro.neo.common.exception.BusinessException("担当営業所を選択してください。");}
-                if(sqlRepository.selectMap("SELECT o.office_id FROM offices o JOIN companies c ON c.company_id=o.company_id WHERE o.office_id=? AND o.state=0 AND c.state=0 AND c.category=0",List.of(officeId)).isEmpty())
+                if(sqlRepository.selectMap(
+                    "SELECT o.office_id FROM offices o JOIN companies c ON c.company_id=o.company_id WHERE o.office_id=? AND o.state=? AND c.state=? AND c.category=?",
+                    List.of(officeId,State.INITIAL.getCode(), State.INITIAL.getCode(), CompanyCategory.OWN.getCode())).isEmpty())
+                {
                     throw new com.kyouseipro.neo.common.exception.BusinessException("有効な自社営業所を選択してください。");
+                }
                 orderParams.put("ownOfficeId",officeId);
             }
         }
 
         if (isNewOrder) {
-
-            // =========================
             // 新規受注
-            // =========================
-
-            orderId = baseRepository.insert(
-                    def.getTableMeta(),
-                    orderParams,
-                    editor
-            );
-
+            orderId = baseRepository.insert(def.getTableMeta(), orderParams, editor);
         } else {
-
-            // =========================
             // 既存受注
-            // =========================
-
-            baseRepository.update(
-                    def.getTableMeta(),
-                    orderParams,
-                    editor
-            );
+            baseRepository.update(def.getTableMeta(), orderParams, editor);
         }
 
-        // =====================================================
         // 商品明細 INSERT / UPDATE
-        // =====================================================
-
         if (items != null) {
-
             for (Map<String, Object> item : items) {
-
-                Map<String, Object> itemParams =
-                        new LinkedHashMap<>(item);
-
+                Map<String, Object> itemParams = new LinkedHashMap<>(item);
                 itemParams.put("orderId", orderId);
-
                 // フロント専用
                 itemParams.remove("_tempId");
-
-                Object itemIdValue =
-                        itemParams.get("orderItemId");
-
-                boolean isNewItem =
-                        itemIdValue == null
-                        || Long.valueOf(itemIdValue.toString()) == 0;
-
+                Object itemIdValue = itemParams.get("orderItemId");
+                boolean isNewItem = itemIdValue == null || Long.valueOf(itemIdValue.toString()) == 0;
                 if (isNewItem) {
-
                     // 商品新規
                     itemParams.put("arrivalDate", null);
-                    baseRepository.insert(
-                            Tables.ORDER_ITEM_BY_IDS,
-                            itemParams,
-                            editor
-                    );
-
+                    baseRepository.insert(Tables.ORDER_ITEM_BY_IDS, itemParams, editor);
                 } else {
-
                     // 商品更新
                     arrivalService.save(itemParams);
                 }
             }
         }
 
-        // =====================================================
         // 作業明細 INSERT / UPDATE
-        // =====================================================
-
         if (works != null) {
-
             for (Map<String, Object> work : works) {
-
-                Map<String, Object> workParams =
-                        new LinkedHashMap<>(work);
-
+                Map<String, Object> workParams = new LinkedHashMap<>(work);
                 workParams.put("orderId", orderId);
-
                 // フロント専用
                 workParams.remove("_tempId");
-
-                Object workIdValue =
-                        workParams.get("orderWorkId");
-
-                boolean isNewWork =
-                        workIdValue == null
-                        || Long.valueOf(workIdValue.toString()) == 0;
-
+                Object workIdValue = workParams.get("orderWorkId");
+                boolean isNewWork = workIdValue == null || Long.valueOf(workIdValue.toString()) == 0;
                 if (isNewWork) {
-
                     // 作業新規
-                    baseRepository.insert(
-                            Tables.ORDER_WORK_BY_IDS,
-                            workParams,
-                            editor
-                    );
-
+                    baseRepository.insert(Tables.ORDER_WORK_BY_IDS, workParams, editor);
                 } else {
-
                     // 作業更新
-                    baseRepository.update(
-                            Tables.ORDER_WORK_BY_IDS,
-                            workParams,
-                            editor
-                    );
+                    baseRepository.update(Tables.ORDER_WORK_BY_IDS, workParams, editor);
                 }
             }
         }
 
-        // =====================================================
         // 商品削除
-        // =====================================================
-
         if (!deleteItemIds.isEmpty()) {
-            baseRepository.deleteByIds(
-                    Tables.ORDER_ITEM_BY_IDS,
-                    deleteItemIds,
-                    editor
-            );
+            baseRepository.deleteByIds(Tables.ORDER_ITEM_BY_IDS, deleteItemIds, editor);
         }
 
-        // =====================================================
         // 作業削除
-        // =====================================================
-
         if (!deleteWorkIds.isEmpty()) {
-            baseRepository.deleteByIds(
-                    Tables.ORDER_WORK_BY_IDS,
-                    deleteWorkIds,
-                    editor
-            );
+            baseRepository.deleteByIds(Tables.ORDER_WORK_BY_IDS, deleteWorkIds, editor);
         }
 
-        // =====================================================
         // 結果
-        // =====================================================
-
         if (params.get("ocrLogId") != null) {
             if (!isNewOrder) throw new com.kyouseipro.neo.common.exception.BusinessException("OCR候補は新規受注で保存してください。");
-            orderOcrLogRepository.link(Long.parseLong(params.get("ocrLogId").toString()), orderId,
-                Long.parseLong(params.get("primeConstractorId").toString()));
+            orderOcrLogRepository.link(Long.parseLong(params.get("ocrLogId").toString()), orderId, Long.parseLong(params.get("primeConstractorId").toString()));
             orderOcrAttachmentService.attach(Long.parseLong(params.get("ocrLogId").toString()), orderId);
         }
-        return Map.of(
-                "data", orderId,
-                "count", 1
-        );
+        return Map.of("data", orderId, "count", 1);
     }
 
     private void validateOcrDetails(List<Map<String, Object>> rows, String quantity, String price) {
@@ -354,76 +218,60 @@ public class OrderHandler implements QueryHandler {
         }
     }
 
-    // =========================================================
     // 商品ID取得
-    // =========================================================
-
     private List<Long> findOrderItemIds(Long orderId) {
-
         String sql = """
             SELECT order_item_id
             FROM order_items
             WHERE order_id = ?
             AND state = ?
             """;
-
         return sqlRepository.queryList(
-                sql,
-                (ps, id) -> {
-                    ps.setLong(1, id);
-                    ps.setInt(2, State.INITIAL.getCode());
-                },
-                rs -> rs.getLong("order_item_id"),
-                orderId
+            sql,
+            (ps, id) -> {
+                ps.setLong(1, id);
+                ps.setInt(2, State.INITIAL.getCode());
+            },
+            rs -> rs.getLong("order_item_id"),
+            orderId
         );
     }
 
-    // =========================================================
     // 作業ID取得
-    // =========================================================
-
     private List<Long> findOrderWorkIds(Long orderId) {
-
         String sql = """
             SELECT order_work_id
             FROM order_works
             WHERE order_id = ?
             AND state = ?
             """;
-
         return sqlRepository.queryList(
-                sql,
-                (ps, id) -> {
-                    ps.setLong(1, id);
-                    ps.setInt(2, State.INITIAL.getCode());
-                },
-                rs -> rs.getLong("order_work_id"),
-                orderId
+            sql,
+            (ps, id) -> {
+                ps.setLong(1, id);
+                ps.setInt(2, State.INITIAL.getCode());
+            },
+            rs -> rs.getLong("order_work_id"),
+            orderId
         );
     }
 
-    // =========================================================
     // 受注から除外する商品入力項目
-    // =========================================================
-
     private static final List<String> ORDER_ITEM_INPUT_FIELDS =
-            List.of(
-                    "janCode",
-                    "itemName",
-                    "itemMaker",
-                    "itemModel",
-                    "itemQuantity"
-            );
+        List.of(
+                "janCode",
+                "itemName",
+                "itemMaker",
+                "itemModel",
+                "itemQuantity"
+        );
 
-    // =========================================================
     // 受注から除外する作業入力項目
-    // =========================================================
-
     private static final List<String> ORDER_WORK_INPUT_FIELDS =
-            List.of(
-                    "orderWorkCode",
-                    "orderWorkName",
-                    "orderWorkPrice",
-                    "orderWorkQuantity"
-            );
+        List.of(
+                "orderWorkCode",
+                "orderWorkName",
+                "orderWorkPrice",
+                "orderWorkQuantity"
+        );
 }

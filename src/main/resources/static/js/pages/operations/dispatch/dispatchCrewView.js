@@ -52,6 +52,7 @@ export function renderDispatchCrews(
         initCrewDrop,
         onUnassign,
         onReorder,
+        onAddMember,
         expandedCrewIds
     } = {}
 ){
@@ -66,6 +67,7 @@ export function renderDispatchCrews(
                 initCrewDrop,
                 onUnassign,
                 onReorder,
+                onAddMember,
                 expandedCrewIds
             }
         ));
@@ -81,6 +83,7 @@ function createCrewCard(
         initCrewDrop,
         onUnassign,
         onReorder,
+        onAddMember,
         expandedCrewIds
     } = {}
 ){
@@ -121,6 +124,15 @@ function createCrewCard(
             members.appendChild(createCrewMember(member));
         });
     }
+    const addMemberButton = document.createElement("button");
+    addMemberButton.type = "button";
+    addMemberButton.className = "dispatch-member-add";
+    addMemberButton.textContent = "＋ 乗務員";
+    addMemberButton.addEventListener("click", async event => {
+        event.stopPropagation();
+        await onAddMember?.(crew);
+    });
+    members.appendChild(addMemberButton);
 
     const assignmentCount = crew.assignments?.length ?? 0;
     const orders = document.createElement("div");

@@ -43,6 +43,7 @@ public enum QueryId {
     VEHICLE_DISPATCH_CATEGORY_LIST("vehicleDispatchCategoryList"),
     VEHICLE_DISPATCH_CATEGORY_DELETE_BY_IDS("vehicleDispatchCategoryDeleteByIds"),
     VEHICLE_DISPATCH_CATEGORY_SAVE("vehicleDispatchCategorySave"),
+    VEHICLE_DISPATCH_CANDIDATE_LIST("vehicleDispatchCandidateList"),
 
     // ===== crew =====
     DAILY_CREW_DETAIL("dailyCrewDetail"),
@@ -55,6 +56,8 @@ public enum QueryId {
     DAILY_CREW_MEMBER_SAVE("dailyCrewMemberSave"),
     DAILY_CREW_BOARD_LIST("dailyCrewBoardList"),
     DAILY_CREW_REINITIALIZE("dailyCrewReinitialize"),
+    DAILY_CREW_MEMBER_CANDIDATE_LIST("dailyCrewMemberCandidateList"),
+    DAILY_CREW_MEMBER_ADD("dailyCrewMemberAdd"),
 
     // ===== Dispatch =====
     DISPATCH_ASSIGNMENT_LIST("dispatchAssignmentList"),

@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.kyouseipro.neo.common.enums.code.EmployeeCategory;
+import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.domain.management.timeworks.model.OriginalTimework;
 import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkListItem;
 import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkStatus;
@@ -29,9 +30,9 @@ public class TimeworkRepository {
                    COALESCE(te.edit_start_time, t.start_time) AS start_time,
                    COALESCE(te.edit_end_time, t.end_time) AS end_time
             FROM employees e
-            LEFT JOIN offices o ON o.office_id = e.office_id AND o.state = 0
+            LEFT JOIN offices o ON o.office_id = e.office_id AND o.state = ?
             LEFT JOIN timeworks t ON t.employee_id = e.employee_id
-                 AND t.state = 0
+                 AND t.state = ?
                  AND (
                      CAST(t.start_time AS DATE) = ?
                      OR (t.end_time IS NULL AND t.start_time >= DATEADD(HOUR, -24, SYSDATETIME()))
@@ -39,20 +40,24 @@ public class TimeworkRepository {
             OUTER APPLY (
                 SELECT TOP (1) edit_start_time, edit_end_time
                 FROM timework_edits
-                WHERE timework_id = t.timework_id AND state = 0
+                WHERE timework_id = t.timework_id AND state = ?
                 ORDER BY timework_edit_id DESC
             ) te
-            WHERE e.state = 0
+            WHERE e.state = ?
               AND (CONVERT(NVARCHAR(30), e.employee_id) = ? OR CONVERT(NVARCHAR(100), e.code) = ?)
             ORDER BY
                 CASE WHEN CONVERT(NVARCHAR(30), e.employee_id) = ? THEN 0 ELSE 1 END,
                 CASE WHEN t.start_time IS NOT NULL AND t.end_time IS NULL THEN 0 ELSE 1 END,
                 t.start_time DESC
             """, (ps, ignored) -> {
-                ps.setObject(1, workDate);
-                ps.setString(2, identifier);
-                ps.setString(3, identifier);
-                ps.setString(4, identifier);
+                ps.setInt(1, State.INITIAL.getCode());
+                ps.setInt(2, State.INITIAL.getCode());
+                ps.setObject(3, workDate);
+                ps.setInt(4, State.INITIAL.getCode());
+                ps.setInt(5, State.INITIAL.getCode());
+                ps.setString(6, identifier);
+                ps.setString(7, identifier);
+                ps.setString(8, identifier);
             }, rs -> {
                 Number idValue = (Number) rs.getObject("timework_id");
                 Number officeValue = (Number) rs.getObject("office_id");
@@ -87,9 +92,9 @@ public class TimeworkRepository {
                    COALESCE(te.edit_start_time, t.start_time) AS start_time,
                    COALESCE(te.edit_end_time, t.end_time) AS end_time
             FROM employees e
-            LEFT JOIN offices o ON o.office_id = e.office_id AND o.state = 0
+            LEFT JOIN offices o ON o.office_id = e.office_id AND o.state = ?
             LEFT JOIN timeworks t ON t.employee_id = e.employee_id
-                 AND t.state = 0
+                 AND t.state = ?
                  AND (
                      CAST(t.start_time AS DATE) = ?
                      OR (t.end_time IS NULL AND t.start_time >= DATEADD(HOUR, -24, SYSDATETIME()))
@@ -97,16 +102,20 @@ public class TimeworkRepository {
             OUTER APPLY (
                 SELECT TOP (1) edit_start_time, edit_end_time
                 FROM timework_edits
-                WHERE timework_id = t.timework_id AND state = 0
+                WHERE timework_id = t.timework_id AND state = ?
                 ORDER BY timework_edit_id DESC
             ) te
-            WHERE e.state = 0 AND e.account = ?
+            WHERE e.state = ? AND e.account = ?
             ORDER BY
                 CASE WHEN t.start_time IS NOT NULL AND t.end_time IS NULL THEN 0 ELSE 1 END,
                 t.start_time DESC
             """, (ps, ignored) -> {
-                ps.setObject(1, workDate);
-                ps.setString(2, account);
+                ps.setInt(1, State.INITIAL.getCode());
+                ps.setInt(2, State.INITIAL.getCode());
+                ps.setObject(3, workDate);
+                ps.setInt(4, State.INITIAL.getCode());
+                ps.setInt(5, State.INITIAL.getCode());
+                ps.setString(6, account);
             }, rs -> toStatus(rs, workDate), null);
     }
 
@@ -119,15 +128,15 @@ public class TimeworkRepository {
                    COALESCE(te.edit_end_time, t.end_time) AS end_time,
                    t.version
             FROM timeworks t
-            INNER JOIN employees e ON e.employee_id = t.employee_id AND e.state = 0
-            LEFT JOIN offices o ON o.office_id = e.office_id AND o.state = 0
+            INNER JOIN employees e ON e.employee_id = t.employee_id AND e.state = ?
+            LEFT JOIN offices o ON o.office_id = e.office_id AND o.state = ?
             OUTER APPLY (
                 SELECT TOP (1) edit_start_time, edit_end_time
                 FROM timework_edits
-                WHERE timework_id = t.timework_id AND state = 0
+                WHERE timework_id = t.timework_id AND state = ?
                 ORDER BY timework_edit_id DESC
             ) te
-            WHERE t.state = 0
+            WHERE t.state = ?
               AND (
                   CAST(t.start_time AS DATE) = ?
                   OR CAST(t.end_time AS DATE) = ?
@@ -140,6 +149,10 @@ public class TimeworkRepository {
 
         return sqlRepository.queryList(sql.toString(), (ps, ignored) -> {
             int index = 1;
+            ps.setInt(index++, State.INITIAL.getCode());
+            ps.setInt(index++, State.INITIAL.getCode());
+            ps.setInt(index++, State.INITIAL.getCode());
+            ps.setInt(index++, State.INITIAL.getCode());
             ps.setObject(index++, workDate);
             ps.setObject(index++, workDate);
             if (officeId != null) ps.setLong(index++, officeId);
@@ -172,23 +185,27 @@ public class TimeworkRepository {
                    te.timework_edit_id, te.edit_start_time, te.edit_end_time,
                    t.version
             FROM timeworks t
-            INNER JOIN employees e ON e.employee_id = t.employee_id AND e.state = 0
-            LEFT JOIN offices o ON o.office_id = e.office_id AND o.state = 0
+            INNER JOIN employees e ON e.employee_id = t.employee_id AND e.state = ?
+            LEFT JOIN offices o ON o.office_id = e.office_id AND o.state = ?
             OUTER APPLY (
                 SELECT TOP (1) timework_edit_id, edit_start_time, edit_end_time
                 FROM timework_edits
-                WHERE timework_id = t.timework_id AND state = 0
+                WHERE timework_id = t.timework_id AND state = ?
                 ORDER BY timework_edit_id DESC
             ) te
-            WHERE t.work_date BETWEEN ? AND ? AND t.state = 0
+            WHERE t.work_date BETWEEN ? AND ? AND t.state = ?
             """);
         if (officeId != null) sql.append(" AND e.office_id = ?");
         if (employeeId != null) sql.append(" AND e.employee_id = ?");
         sql.append(" ORDER BY t.work_date, e.office_id, e.full_name");
         return sqlRepository.queryList(sql.toString(), (ps, ignored) -> {
-            ps.setObject(1, from);
-            ps.setObject(2, to);
-            int index = 3;
+            ps.setInt(1, State.INITIAL.getCode());
+            ps.setInt(2, State.INITIAL.getCode());
+            ps.setInt(3, State.INITIAL.getCode());
+            ps.setObject(4, from);
+            ps.setObject(5, to);
+            ps.setInt(6, State.INITIAL.getCode());
+            int index = 7;
             if (officeId != null) ps.setLong(index++, officeId);
             if (employeeId != null) ps.setLong(index, employeeId);
         }, rs -> {
@@ -212,15 +229,16 @@ public class TimeworkRepository {
         StringBuilder sql = new StringBuilder("""
             SELECT employee_id, code, full_name, office_id
             FROM employees
-            WHERE state = 0
+            WHERE state = ?
               AND category IN (?, ?)
             """);
         if (officeId != null) sql.append(" AND office_id = ?");
         sql.append(" ORDER BY employee_id");
         return sqlRepository.queryList(sql.toString(), (ps, ignored) -> {
-            ps.setInt(1, EmployeeCategory.FULLTIME.getCode());
-            ps.setInt(2, EmployeeCategory.PARTTIME.getCode());
-            if (officeId != null) ps.setLong(3, officeId);
+            ps.setInt(1, State.INITIAL.getCode());
+            ps.setInt(2, EmployeeCategory.FULLTIME.getCode());
+            ps.setInt(3, EmployeeCategory.PARTTIME.getCode());
+            if (officeId != null) ps.setLong(4, officeId);
         }, rs -> {
             Number officeValue = (Number) rs.getObject("office_id");
             return new ComboDto(
@@ -234,8 +252,11 @@ public class TimeworkRepository {
     public OriginalTimework findOriginal(long timeworkId) {
         return sqlRepository.queryOneOrNull("""
             SELECT start_time, end_time FROM timeworks
-            WHERE timework_id = ? AND state = 0
-            """, (ps, ignored) -> ps.setLong(1, timeworkId), rs -> new OriginalTimework(
+            WHERE timework_id = ? AND state = ?
+            """, (ps, ignored) -> {
+                ps.setLong(1, timeworkId);
+                ps.setInt(2, State.INITIAL.getCode());
+            }, rs -> new OriginalTimework(
                 toLocalDateTime(rs.getTimestamp("start_time")),
                 toLocalDateTime(rs.getTimestamp("end_time"))
             ), null);
@@ -250,11 +271,11 @@ public class TimeworkRepository {
                 DECLARE @locked_edit_id BIGINT;
                 SELECT @locked_edit_id = timework_edit_id
                 FROM timework_edits WITH (UPDLOCK, HOLDLOCK)
-                WHERE timework_id = ? AND state = 0;
+                WHERE timework_id = ? AND state = ?;
 
                 UPDATE timework_edits
-                SET state = 1, update_date = SYSDATETIME(), update_user = ?, version = version + 1
-                WHERE timework_id = ? AND state = 0;
+                SET state = ?, update_date = SYSDATETIME(), update_user = ?, version = version + 1
+                WHERE timework_id = ? AND state = ?;
 
                 IF (? IS NOT NULL OR ? IS NOT NULL)
                 BEGIN
@@ -268,7 +289,7 @@ public class TimeworkRepository {
                 SELECT (
                     SELECT TOP (1) timework_edit_id
                     FROM timework_edits
-                    WHERE timework_id = ? AND state = 0
+                    WHERE timework_id = ? AND state = ?
                     ORDER BY timework_edit_id DESC
                 ) AS timework_edit_id;
             END TRY
@@ -279,8 +300,11 @@ public class TimeworkRepository {
             """, (ps, ignored) -> {
                 int index = 1;
                 ps.setLong(index++, timeworkId);
+                ps.setInt(index++, State.INITIAL.getCode());
+                ps.setInt(index++, State.UPDATE.getCode());
                 ps.setString(index++, editor);
                 ps.setLong(index++, timeworkId);
+                ps.setInt(index++, State.INITIAL.getCode());
                 setTimestamp(ps, index++, editStartTime);
                 setTimestamp(ps, index++, editEndTime);
                 ps.setLong(index++, timeworkId);
@@ -288,7 +312,8 @@ public class TimeworkRepository {
                 setTimestamp(ps, index++, editEndTime);
                 ps.setString(index++, editor);
                 ps.setString(index++, editor);
-                ps.setLong(index, timeworkId);
+                ps.setLong(index++, timeworkId);
+                ps.setInt(index++, State.INITIAL.getCode());
             }, rs -> nullableLong(rs.getObject("timework_edit_id")), null);
     }
 
@@ -309,8 +334,8 @@ public class TimeworkRepository {
         return sqlRepository.updateRequired("""
             UPDATE timeworks
             SET end_time = ?, update_date = SYSDATETIME(), update_user = ?, version = version + 1
-            WHERE timework_id = ? AND state = 0 AND start_time IS NOT NULL AND end_time IS NULL
-            """, List.of(Timestamp.valueOf(stampedAt), editor, timeworkId),
+            WHERE timework_id = ? AND state = ? AND start_time IS NOT NULL AND end_time IS NULL
+            """, List.of(Timestamp.valueOf(stampedAt), editor, timeworkId, State.INITIAL.getCode()),
             "すでに退勤済みです。画面を再読み込みしてください。");
     }
 

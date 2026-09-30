@@ -74,4 +74,9 @@ public class Tables {
         public static final TableMeta EMPLOYEE_OFFICE_MEMBER_BY_IDS =
             new TableMeta("employee_office_members", "employeeOfficeMemberId", "state", "version");
 
+        public static final TableMeta ORDER_IMPORT_BY_IDS =
+            new TableMeta("order_imports", "orderImportId", "state", "version");
+
+        public static final TableMeta AI_DOCUMENT_REVIEW_BY_IDS =
+            new TableMeta("ai_document_reviews", "documentAiReviewId", "state", "version");
 }

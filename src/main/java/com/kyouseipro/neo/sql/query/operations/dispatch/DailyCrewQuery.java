@@ -222,4 +222,96 @@ public class DailyCrewQuery {
             )
         );
     }
+
+    public static QueryDefinition dailyCrewMemberCandidateList() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                e.employee_id,
+                e.full_name,
+                e.category AS employee_category,
+                e.company_id,
+                es.shift_type
+
+            FROM employees e
+
+            INNER JOIN employee_office_members eom
+                ON eom.employee_id = e.employee_id
+            AND eom.office_id = ?
+            AND eom.state = ?
+
+            INNER JOIN employee_shifts es
+                ON es.employee_id = e.employee_id
+            AND es.work_date = ?
+            AND es.shift_type = ?
+            AND es.state = ?
+
+            WHERE e.state = ?
+
+            AND NOT EXISTS (
+                SELECT 1
+                FROM daily_crew_members dcm
+                WHERE dcm.daily_crew_id = ?
+                    AND dcm.employee_id = e.employee_id
+                    AND dcm.state = ?
+            )
+
+            ORDER BY
+                e.full_name,
+                e.employee_id
+            """,
+            List.of(
+                "officeId",
+                "state",
+                "workDate",
+                "shiftType",
+                "state",
+                "state",
+                "dailyCrewId",
+                "state"
+            )
+        );
+    }
+
+    public static QueryDefinition dailyCrewMemberExists() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                daily_crew_member_id,
+                daily_crew_id,
+                employee_id,
+                role,
+                display_order,
+                version,
+                state
+
+            FROM daily_crew_members
+
+            WHERE daily_crew_id = ?
+            AND employee_id = ?
+            """,
+            List.of(
+                "dailyCrewId",
+                "employeeId"
+            )
+        );
+    }
+
+    public static QueryDefinition dailyCrewMemberMaxDisplayOrder() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                MAX(display_order) AS max_display_order
+
+            FROM daily_crew_members
+
+            WHERE daily_crew_id = ?
+            AND state = ?
+            """,
+            List.of(
+                "dailyCrewId",
+                "state"
+            )
+        );
+    }
 }

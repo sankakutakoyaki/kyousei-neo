@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.system.QueryKind;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.interfaces.sql.QueryHandler;
@@ -31,7 +32,8 @@ public class DailyCrewHandler implements QueryHandler {
     @Override
     public boolean supports(QueryKind kind) {
         return kind == QueryKind.DAILY_CREW_BULK_CREATE
-            || kind == QueryKind.DAILY_CREW_REINITIALIZE;
+            || kind == QueryKind.DAILY_CREW_REINITIALIZE
+            || kind == QueryKind.DAILY_CREW_MEMBER_ADD;
     }
 
     @Override
@@ -40,6 +42,7 @@ public class DailyCrewHandler implements QueryHandler {
         return switch (def.getKind()) {
             case DAILY_CREW_BULK_CREATE -> executeBulkCreate(req);
             case DAILY_CREW_REINITIALIZE -> executeReinitialize(req);
+            case DAILY_CREW_MEMBER_ADD -> executeMemberAdd(req);
             default -> throw new IllegalStateException();
         };
     }
@@ -143,7 +146,7 @@ public class DailyCrewHandler implements QueryHandler {
         String workDate = String.valueOf(params.get("workDate"));
         int officeId = ((Number) params.get("officeId")).intValue();
         int dispatchCategory = ((Number) params.get("dispatchCategory")).intValue();
-        int state = 0;
+        int state = State.INITIAL.getCode();
 
         // 1. 配車済みチェック
         Map<String, Object> countParams = new HashMap<>();
@@ -243,5 +246,65 @@ public class DailyCrewHandler implements QueryHandler {
             "memberCount", 0,
             "skipped", 0
         );
+    }
+
+    private Object executeMemberAdd(SelectRequest req) {
+        Map<String, Object> params = req.getParams();
+        String editor = (String) params.getOrDefault("editor", "system");
+        int dailyCrewId = ((Number) params.get("dailyCrewId")).intValue();
+        int employeeId = ((Number) params.get("employeeId")).intValue();
+        int role = ((Number) params.getOrDefault("role", 2)).intValue();
+
+        // 既存チェック
+        Map<String, Object> checkParams = new HashMap<>();
+        checkParams.put("dailyCrewId", dailyCrewId);
+        checkParams.put("employeeId", employeeId);
+        SelectRequest checkReq = new SelectRequest();
+        checkReq.setParams(
+            checkParams
+        );
+
+        List<Map<String, Object>> exists = queryExecutor.select(DailyCrewQuery.dailyCrewMemberExists(), checkReq);
+
+        if (!exists.isEmpty()) {
+            Map<String, Object> existing =  exists.get(0);
+            int state = ((Number) existing.get("state")).intValue();
+            // 論理削除済みなら再有効化
+            if (state == 9) {
+                Long id = 
+                    baseRepository.reactivate(Tables.DAILY_CREW_MEMBER_BY_IDS, existing.get("dailyCrewMemberId"), existing.get("version"), editor
+                );
+                return Map.of( "id", id);
+            }
+            throw new BusinessException("この乗務員はすでに班に追加されています。");
+        }
+
+        // displayOrder
+        Map<String, Object> orderParams = new HashMap<>();
+        orderParams.put("dailyCrewId", dailyCrewId);
+        orderParams.put("state", 0);
+
+        SelectRequest orderReq = new SelectRequest();
+        orderReq.setParams(orderParams);
+
+        List<Map<String, Object>> orderRows = queryExecutor.select(DailyCrewQuery.dailyCrewMemberMaxDisplayOrder(), orderReq);
+        int displayOrder = 1;
+        if (!orderRows.isEmpty()) {
+            Object value = orderRows.get(0).get("maxDisplayOrder");
+            if (value != null) {
+                displayOrder = ((Number) value).intValue() + 1;
+            }
+        }
+
+        // INSERT
+        Map<String, Object> row = new HashMap<>();
+        row.put("dailyCrewId", dailyCrewId);
+        row.put("employeeId", employeeId);
+        row.put("role", role);
+        row.put("displayOrder", displayOrder);
+        row.put("state", 0);
+
+        Long id = baseRepository.insert(Tables.DAILY_CREW_MEMBER_BY_IDS, row, editor);
+        return Map.of("id", id);
     }
 }

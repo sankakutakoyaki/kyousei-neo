@@ -1,7 +1,6 @@
 package com.kyouseipro.neo.domain.business.order.pdf.application;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.ArgumentMatchers.*;
 import java.util.Map;
 import java.sql.Connection;
 import javax.sql.DataSource;
@@ -23,8 +22,8 @@ class OrderImportRegistrationServiceTest {
         "items","[{\"itemModel\":\"ABC\",\"itemQuantity\":\"1\"}]",
         "works","[{\"orderWorkName\":\"リサイクル運搬\",\"orderWorkQuantity\":\"1\"}]");}
     void ready() {
-        when(imports.lock(12)).thenReturn(new OrderImportRegistrationRepository.ImportLock(1085,null));
-        when(imports.reviewId(12)).thenReturn(20L);
+        when(imports.lock(12)).thenReturn(new OrderImportRegistrationRepository.ImportLock(1085, null, 0));
+        when(imports.lockReview(12)).thenReturn(new OrderImportRegistrationRepository.ReviewLock(20L, 0));
         when(base.insert(eq(Tables.ORDER_BY_IDS),anyMap(),eq("editor"))).thenReturn(1001L);
         when(base.insert(eq(Tables.ORDER_ITEM_BY_IDS),anyMap(),eq("editor"))).thenReturn(1L);
         when(base.insert(eq(Tables.ORDER_WORK_BY_IDS),anyMap(),eq("editor"))).thenReturn(2L);
@@ -34,12 +33,16 @@ class OrderImportRegistrationServiceTest {
         assertEquals(1001,result.orderId());assertFalse(result.alreadyRegistered());
         verify(base).insert(eq(Tables.ORDER_ITEM_BY_IDS),argThat(p->p.get("orderId").equals(1001L)),eq("editor"));
         verify(base).insert(eq(Tables.ORDER_WORK_BY_IDS),argThat(p->p.get("orderId").equals(1001L)),eq("editor"));
-        verify(imports).finish(eq(12L),eq(1001L),eq(20L),contains("確認済み氏名"),eq("editor"));
+        verify(imports).finish(eq(12L),eq(1001L), 
+            any(OrderImportRegistrationRepository.ImportLock.class), 
+            any(OrderImportRegistrationRepository.ReviewLock.class),contains("確認済み氏名"), eq("editor"));
     }
     @Test void retryReturnsExistingOrderWithoutInsertingOrOverwriting() {
-        when(imports.lock(12)).thenReturn(new OrderImportRegistrationRepository.ImportLock(1085,1001L));
+        when(imports.lock(12)).thenReturn(new OrderImportRegistrationRepository.ImportLock(1085,1001L,0));
         assertTrue(service.register(12,values(),"editor").alreadyRegistered());
-        verifyNoInteractions(base);verify(imports,never()).finish(anyLong(),anyLong(),anyLong(),anyString(),anyString());
+        verifyNoInteractions(base);verify(imports,never()).finish(anyLong(), anyLong(),
+            any(OrderImportRegistrationRepository.ImportLock.class),
+            any(OrderImportRegistrationRepository.ReviewLock.class),anyString(),anyString());
     }
     @Test void childFailureRollsBackSpringTransaction() throws Exception {
         ready(); when(base.insert(eq(Tables.ORDER_WORK_BY_IDS),anyMap(),anyString())).thenThrow(new IllegalStateException("write failed"));
@@ -50,6 +53,8 @@ class OrderImportRegistrationServiceTest {
         var proxy=(OrderImportRegistrationService)factory.getProxy();
         assertThrows(IllegalStateException.class,()->proxy.register(12,values(),"editor"));
         verify(connection).rollback();verify(connection,never()).commit();
-        verify(imports,never()).finish(anyLong(),anyLong(),anyLong(),anyString(),anyString());
+        verify(imports,never()).finish(anyLong(), anyLong(),
+            any(OrderImportRegistrationRepository.ImportLock.class),
+            any(OrderImportRegistrationRepository.ReviewLock.class),anyString(),anyString());
     }
 }

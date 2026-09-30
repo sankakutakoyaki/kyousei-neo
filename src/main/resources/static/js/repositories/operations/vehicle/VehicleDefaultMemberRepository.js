@@ -7,6 +7,10 @@ export const VehicleDefaultMemberRepository = {
         return await RequestClient.request({ queryId: "vehicleDispatchDefaultList", params });
     },
 
+    async findDispatchCandidateList(params) {
+        return await RequestClient.request({ queryId: "vehicleDispatchCandidateList", params });
+    },
+
     async findList(params) {
         return await RequestClient.request({ queryId: "vehicleDefaultMemberList", params });
     },

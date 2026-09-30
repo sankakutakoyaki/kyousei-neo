@@ -14,4 +14,12 @@ export const DailyCrewRepository = {
     async reinitialize(params) {
         return await RequestClient.request({ queryId: "dailyCrewReinitialize", params });
     },
+
+    async findMemberCandidates(params) {
+        return await RequestClient.request({ queryId: "dailyCrewMemberCandidateList", params });
+    },
+
+    async addMember(params) {
+        return await RequestClient.request({ queryId: "dailyCrewMemberAdd", params });
+    },
 };

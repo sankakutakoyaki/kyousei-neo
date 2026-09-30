@@ -6,6 +6,8 @@ import java.util.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
@@ -23,7 +25,7 @@ public class OrderItemArrivalService {
         return auth == null ? "system" : auth.getName();
     }
     private Map<String,Object> lock(long id) {
-        var rows = sql.selectMap("SELECT * FROM order_items WITH (UPDLOCK, HOLDLOCK) WHERE order_item_id = ? AND state = 0", List.of(id));
+        var rows = sql.selectMap("SELECT * FROM order_items WITH (UPDLOCK, HOLDLOCK) WHERE order_item_id = ? AND state = ?", List.of(id, State.INITIAL.getCode()));
         if (rows.isEmpty()) throw new BusinessException("商品が存在しないか削除されています。");
         return rows.get(0);
     }

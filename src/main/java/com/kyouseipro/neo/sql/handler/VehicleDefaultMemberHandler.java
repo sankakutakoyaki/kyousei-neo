@@ -121,9 +121,9 @@ public class VehicleDefaultMemberHandler implements QueryHandler {
                     version
                 FROM vehicle_dispatch_categories
                 WHERE vehicle_id = ?
-                AND state = 0
+                AND state = ?
                 """,
-                List.of(vehicleId)
+                List.of(vehicleId, State.INITIAL.getCode())
             );
 
         // 未登録

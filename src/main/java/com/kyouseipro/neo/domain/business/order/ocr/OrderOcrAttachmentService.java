@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
+
+import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.exception.SystemException;
 import com.kyouseipro.neo.config.UploadConfig;
@@ -33,8 +35,13 @@ public class OrderOcrAttachmentService {
             FROM order_ocr_logs l JOIN order_imports i
               ON i.stored_file_name = l.stored_file_name
               AND i.prime_constractor_id = l.prime_constractor_id
-            WHERE l.ocr_log_id = ? AND l.order_id = ? AND l.state = 0 AND i.state = 0
-            """, (ps, unused) -> { ps.setLong(1, logId); ps.setLong(2, orderId); },
+            WHERE l.ocr_log_id = ? AND l.order_id = ? AND l.state = ? AND i.state = ?
+            """, (ps, unused) -> { 
+                ps.setLong(1, logId); 
+                ps.setLong(2, orderId); 
+                ps.setInt(3, State.INITIAL.getCode()); 
+                ps.setInt(4, State.INITIAL.getCode()); 
+            },
             rs -> new Source(rs.getString(1), rs.getString(2)), null);
         Path root = uploadConfig.getUploadDirectory().toAbsolutePath().normalize();
         Path original = root.resolve(source.path()).normalize();

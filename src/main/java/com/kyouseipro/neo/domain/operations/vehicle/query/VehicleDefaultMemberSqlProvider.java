@@ -18,31 +18,16 @@ public class VehicleDefaultMemberSqlProvider implements SqlProviderPart {
 
     @Override
     public Map<QueryId, QueryDefinition> provide() {
-
         Map<QueryId, QueryDefinition> map = new HashMap<>();
 
-        map.put(
-            QueryId.VEHICLE_DEFAULT_MEMBER_LIST,
-            VehicleDefaultMemberQuery.vehicleDefaultMemberList()
-        );
-
-        map.put(
-            QueryId.VEHICLE_DEFAULT_MEMBER_WORKING_LIST,
-            VehicleDefaultMemberQuery.vehicleDefaultMemberWorkingList()
-        );
-
-        map.put(
-            QueryId.VEHICLE_DISPATCH_DEFAULT_LIST,
-            VehicleDefaultMemberQuery.vehicleDispatchDefaultList()
-        );
-
-        map.put(
-            QueryId.VEHICLE_DEFAULT_MEMBER_DELETE_BY_IDS,
+        map.put(QueryId.VEHICLE_DEFAULT_MEMBER_LIST, VehicleDefaultMemberQuery.vehicleDefaultMemberList());
+        map.put(QueryId.VEHICLE_DEFAULT_MEMBER_WORKING_LIST, VehicleDefaultMemberQuery.vehicleDefaultMemberWorkingList());
+        map.put(QueryId.VEHICLE_DISPATCH_DEFAULT_LIST, VehicleDefaultMemberQuery.vehicleDispatchDefaultList());
+        map.put(QueryId.VEHICLE_DISPATCH_CANDIDATE_LIST, VehicleDefaultMemberQuery.vehicleDispatchCandidateList());
+        map.put(QueryId.VEHICLE_DEFAULT_MEMBER_DELETE_BY_IDS,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.VEHICLE_DEFAULT_MEMBER_BY_IDS)
         );
-
-        map.put(
-            QueryId.VEHICLE_DEFAULT_MEMBER_SAVE,
+        map.put(QueryId.VEHICLE_DEFAULT_MEMBER_SAVE,
             new QueryDefinition(QueryType.UPDATE, QueryKind.VEHICLE_DEFAULT_MEMBER_SAVE, Tables.VEHICLE_DEFAULT_MEMBER_BY_IDS)
         );
 

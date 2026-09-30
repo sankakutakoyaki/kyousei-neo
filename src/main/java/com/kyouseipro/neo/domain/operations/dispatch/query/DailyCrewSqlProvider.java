@@ -23,6 +23,7 @@ public class DailyCrewSqlProvider implements SqlProviderPart {
         map.put(QueryId.DAILY_CREW_DETAIL, DailyCrewQuery.dailyCrewDetail());
         map.put(QueryId.DAILY_CREW_LIST, DailyCrewQuery.dailyCrewList());
         map.put(QueryId.DAILY_CREW_BOARD_LIST, DailyCrewQuery.dailyCrewBoardList());
+        map.put(QueryId.DAILY_CREW_MEMBER_CANDIDATE_LIST, DailyCrewQuery.dailyCrewMemberCandidateList());
         map.put(QueryId.DAILY_CREW_DELETE_BY_IDS,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.DAILY_CREW_BY_IDS)
         );
@@ -35,6 +36,10 @@ public class DailyCrewSqlProvider implements SqlProviderPart {
         map.put(QueryId.DAILY_CREW_REINITIALIZE,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DAILY_CREW_REINITIALIZE, Tables.DAILY_CREW_BY_IDS)
         );
+        map.put(QueryId.DAILY_CREW_MEMBER_ADD,
+            new QueryDefinition(QueryType.UPDATE, QueryKind.DAILY_CREW_MEMBER_ADD, Tables.DAILY_CREW_MEMBER_BY_IDS)
+        );
+
         return map;
     }
 }

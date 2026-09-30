@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 
+import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -45,10 +46,10 @@ public class OwnOfficeContextService {
                 SELECT DISTINCT
                     office_id
                 FROM employees
-                WHERE state = 0
+                WHERE state = ?
                   AND account = ?
                 """,
-                List.of(account)
+                List.of(State.INITIAL.getCode(), account)
             );
 
         if(rows.size() != 1){

@@ -47,12 +47,12 @@ function dispatchPage() {
             "reset-assignments": async () => {
                 await resetAssignments();
             },
+            "add-daily-crew": async () => {
+                await addDailyCrew();
+            },
         },
         onInit: (controller) => {
-            controller.state.filters = {
-                officeId: "",
-                dispatchCategory: ""
-            };
+            controller.state.filters = {officeId: "", dispatchCategory: ""};
             initConditions();
         }
     });
@@ -180,6 +180,7 @@ async function executeLoadDispatchBoard() {
                 await DispatchAssignmentRepository.reorder(items);
                 await loadDispatchBoard();
             },
+            onAddMember: openAddMember
         }
     );
 
@@ -192,6 +193,7 @@ async function executeLoadDispatchBoard() {
     });
     dispatchOrders = orderResult.data ?? [];
     renderOrderList();
+    await loadVehicleCandidates();
 }
 
 async function loadCrewAssignments(crews){
@@ -256,5 +258,131 @@ async function resetAssignments() {
         await loadDispatchBoard();        
     } catch(error) {
         DialogService.error(error.message ?? "再初期化に失敗しました。");
+    }
+}
+
+async function loadVehicleCandidates() {
+    const select = document.getElementById("dispatch-add-vehicle");
+    if(!select){
+        return;
+    }
+
+    select.replaceChildren();
+    const emptyOption = document.createElement("option");
+    emptyOption.value = "";
+    emptyOption.textContent = "車両を選択";
+    select.appendChild(
+        emptyOption
+    );
+    const workDate = document.getElementById("dispatch-work-date")?.value ?? "";
+    const officeId = Number(document.getElementById("dispatch-office")?.value || 0);
+    const dispatchCategory = Number(document.getElementById("dispatch-category")?.value || 0);
+    if(!workDate || !officeId || !dispatchCategory){
+        return;
+    }
+    const result = await VehicleDefaultMemberRepository.findDispatchCandidateList({
+        workDate,
+        officeId,
+        dispatchCategory,
+        state: APP.cache.common.state.INITIAL
+    });
+    const rows = result.data ?? [];
+    rows.forEach(vehicle => {
+        const option = document.createElement("option");
+        option.value = vehicle.vehicleId;
+        option.textContent = [
+            vehicle.vehicleName,
+            vehicle.registrationArea,
+            vehicle.registrationClass,
+            vehicle.registrationKana,
+            vehicle.registrationNumber
+        ].filter(Boolean).join(" ");
+        select.appendChild(option);
+    });
+    select.disabled = rows.length === 0;
+}
+
+async function addDailyCrew() {
+    const workDate = document.getElementById("dispatch-work-date")?.value ?? "";
+    const officeId = Number(document.getElementById("dispatch-office")?.value || 0);
+    const dispatchCategory = Number(document.getElementById("dispatch-category")?.value || 0);
+    const vehicleId = Number(document.getElementById("dispatch-add-vehicle")?.value || 0);
+    if(!workDate || !officeId || !dispatchCategory || !vehicleId){
+        return;
+    }
+    
+    try {
+        await DailyCrewRepository.bulkCreate({
+            workDate,
+            officeId,
+            dispatchCategory,
+            vehicleIds: [vehicleId],
+            // 手動追加なので
+            // 基本乗務員はコピーしない
+            copyDefaultMembers: false
+        });
+        await loadDispatchBoard();
+    } catch(error) {
+        DialogService.error(error.message ?? "車両の追加に失敗しました。");
+    }
+}
+
+
+async function openAddMember(crew) {
+
+    const workDate =
+        document.getElementById(
+            "dispatch-work-date"
+        )?.value ?? "";
+
+    const officeId =
+        Number(
+            document.getElementById(
+                "dispatch-office"
+            )?.value || 0
+        );
+
+    if(
+        !crew?.dailyCrewId ||
+        !workDate ||
+        !officeId
+    ){
+        return;
+    }
+
+    try {
+
+        const result =
+            await DailyCrewRepository
+                .findMemberCandidates({
+                    dailyCrewId:
+                        crew.dailyCrewId,
+
+                    workDate,
+
+                    officeId,
+
+                    shiftType: 1,
+
+                    state:
+                        APP.cache.common.state.INITIAL
+                });
+
+        const candidates =
+            result.data ?? [];
+
+        console.log(
+            "member candidates:",
+            candidates
+        );
+
+    } catch(error) {
+
+        console.error(error);
+
+        DialogService.error(
+            error.message
+            ?? "乗務員候補の取得に失敗しました。"
+        );
     }
 }

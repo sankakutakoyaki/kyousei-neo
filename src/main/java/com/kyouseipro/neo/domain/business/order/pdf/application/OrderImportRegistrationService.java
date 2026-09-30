@@ -30,7 +30,7 @@ public class OrderImportRegistrationService {
         if (source.orderId() != null) return new Result(source.orderId(), true);
         if (source.shipperId() <= 0) throw new BusinessException("荷主が未設定です。");
         var candidate = ConfirmedOrderCandidate.parse(values, mapper);
-        long reviewId = imports.reviewId(importId);
+        var review = imports.lockReview(importId);
         String confirmed;
         try { confirmed = mapper.writeValueAsString(values); }
         catch (JsonProcessingException e) { throw new BusinessException("確認結果の保存形式が不正です。"); }
@@ -47,7 +47,7 @@ public class OrderImportRegistrationService {
             row.put("orderId", orderId);
             base.insert(Tables.ORDER_WORK_BY_IDS, row, editor);
         }
-        imports.finish(importId, orderId, reviewId, confirmed, editor);
+        imports.finish(importId, orderId, source, review, confirmed, editor);
         return new Result(orderId, false);
     }
 }

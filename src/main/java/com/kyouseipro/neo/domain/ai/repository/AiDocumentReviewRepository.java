@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.domain.ai.model.AiDocumentReview;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 
@@ -50,11 +51,11 @@ public class AiDocumentReviewRepository {
                     SELECT TOP 1 document_ai_review_id
                     FROM ai_document_reviews
                     WHERE source_type = ? AND source_id = ?
-                      AND review_status = 'PENDING_REVIEW' AND state = 0
+                      AND review_status = 'PENDING_REVIEW' AND state = ?
                     ORDER BY document_ai_review_id DESC
                 )
             """,
-            java.util.Arrays.asList(confirmedResult, reviewedBy, sourceType, sourceId),
+            java.util.Arrays.asList(confirmedResult, reviewedBy, sourceType, sourceId, State.INITIAL.getCode()),
             "確認対象のAI読取結果が見つかりません。OCRを実行し直してください。"
         );
     }
@@ -66,10 +67,13 @@ public class AiDocumentReviewRepository {
                        prime_constractor_id, ai_engine, ai_model, prompt_version,
                        ai_result, confirmed_result, review_status, reviewed_date
                 FROM ai_document_reviews
-                WHERE document_type = ? AND review_status = 'CONFIRMED' AND state = 0
+                WHERE document_type = ? AND review_status = 'CONFIRMED' AND state = ?
                 ORDER BY document_ai_review_id
             """,
-            (ps, ignored) -> ps.setString(1, documentType),
+            (ps, ignored) -> {
+                ps.setString(1, documentType);
+                ps.setInt(2, State.INITIAL.getCode());
+            },
             rs -> {
                 Timestamp reviewedDate = rs.getTimestamp("reviewed_date");
                 return new AiDocumentReview(

@@ -20,33 +20,18 @@ public class DispatchAssignmentSqlProvider implements SqlProviderPart {
     public Map<QueryId, QueryDefinition> provide() {
         Map<QueryId, QueryDefinition> map = new HashMap<>();
 
-        map.put(
-            QueryId.DISPATCH_ASSIGNMENT_LIST,
-            DispatchAssignmentQuery.dispatchAssignmentList()
-        );
-
-        map.put(
-            QueryId.DISPATCH_ASSIGNMENT_NEXT_VISIT_ORDER,
-            DispatchAssignmentQuery.dispatchAssignmentNextVisitOrder()
-        );
-
-        map.put(
-            QueryId.DISPATCH_ASSIGNMENT_REORDER,
+        map.put(QueryId.DISPATCH_ASSIGNMENT_LIST, DispatchAssignmentQuery.dispatchAssignmentList());
+        map.put(QueryId.DISPATCH_ASSIGNMENT_NEXT_VISIT_ORDER, DispatchAssignmentQuery.dispatchAssignmentNextVisitOrder());
+        map.put(QueryId.DISPATCH_ASSIGNMENT_REORDER,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DISPATCH_ASSIGNMENT_REORDER, Tables.DISPATCH_ASSIGNMENT_BY_IDS)
         );
-
-        map.put(
-            QueryId.DISPATCH_ASSIGNMENT_DELETE_BY_IDS,
+        map.put(QueryId.DISPATCH_ASSIGNMENT_DELETE_BY_IDS,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.DISPATCH_ASSIGNMENT_BY_IDS)
         );
-
-        map.put(
-            QueryId.DISPATCH_ASSIGNMENT_SAVE,
+        map.put(QueryId.DISPATCH_ASSIGNMENT_SAVE,
             new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.DISPATCH_ASSIGNMENT_BY_IDS)
         );
-
-        map.put(
-            QueryId.DISPATCH_ASSIGNMENT_RESET,
+        map.put(QueryId.DISPATCH_ASSIGNMENT_RESET,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DISPATCH_ASSIGNMENT_RESET, Tables.DISPATCH_ASSIGNMENT_BY_IDS)
         );
 

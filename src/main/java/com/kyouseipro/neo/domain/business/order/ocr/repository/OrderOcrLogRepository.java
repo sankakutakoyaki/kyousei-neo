@@ -2,6 +2,7 @@ package com.kyouseipro.neo.domain.business.order.ocr.repository;
 
 import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +15,12 @@ public class OrderOcrLogRepository {
     private final ObjectMapper mapper;
 
     public void lockImport(long id) {
-        sql.queryOne("SELECT order_import_id FROM order_imports WITH (UPDLOCK, HOLDLOCK) WHERE order_import_id = ? AND state = 0",
-            (ps, unused) -> ps.setLong(1, id), rs -> rs.getLong(1), null);
+        sql.queryOne("SELECT order_import_id FROM order_imports WITH (UPDLOCK, HOLDLOCK) WHERE order_import_id = ? AND state = ?",
+            (ps, unused) -> {
+                ps.setLong(1, id);
+                ps.setInt(2, State.INITIAL.getCode());
+            },
+            rs -> rs.getLong(1), null);
     }
 
     public Map<String, Object> find(long importId) {
@@ -23,8 +28,12 @@ public class OrderOcrLogRepository {
             SELECT l.ocr_log_id, l.ai_result_json, l.model_name, l.prompt_version, l.order_id
             FROM dbo.order_ocr_logs l JOIN order_imports i
               ON l.stored_file_name = i.stored_file_name AND l.prime_constractor_id = i.prime_constractor_id
-            WHERE i.order_import_id = ? AND l.state = 0
-            """, (ps, unused) -> ps.setLong(1, importId), rs -> {
+            WHERE i.order_import_id = ? AND l.state = ?
+            """, (ps, unused) -> {
+                ps.setLong(1, importId);
+                ps.setInt(2, State.INITIAL.getCode());
+            }, 
+            rs -> {
                 if (rs.getObject("order_id") != null) throw new BusinessException("このPDFは受注登録済みです。");
                 try {
                     Map<String, Object> result = new java.util.LinkedHashMap<>();
@@ -43,17 +52,26 @@ public class OrderOcrLogRepository {
                 (order_id, prime_constractor_id, original_file_name, stored_file_name, ai_result_json, model_name, prompt_version)
             OUTPUT INSERTED.ocr_log_id
             SELECT NULL, prime_constractor_id, original_file_name, stored_file_name, ?, ?, ?
-            FROM order_imports WHERE order_import_id = ? AND state = 0
+            FROM order_imports WHERE order_import_id = ? AND state = ?
             """, (ps, unused) -> {
-                ps.setString(1, json); ps.setString(2, model); ps.setString(3, prompt); ps.setLong(4, importId);
+                ps.setString(1, json); 
+                ps.setString(2, model); 
+                ps.setString(3, prompt); 
+                ps.setLong(4, importId);
+                ps.setInt(5, State.INITIAL.getCode());
             }, rs -> rs.getLong(1), null);
     }
 
     public void requireUnlinked(long logId, long shipperId) {
         Long id = sql.queryOneOrNull("""
             SELECT ocr_log_id FROM dbo.order_ocr_logs WITH (UPDLOCK, HOLDLOCK)
-            WHERE ocr_log_id = ? AND order_id IS NULL AND prime_constractor_id = ? AND state = 0
-            """, (ps, unused) -> { ps.setLong(1, logId); ps.setLong(2, shipperId); }, rs -> rs.getLong(1), null);
+            WHERE ocr_log_id = ? AND order_id IS NULL AND prime_constractor_id = ? AND state = ?
+            """, (ps, unused) -> { 
+                ps.setLong(1, logId); 
+                ps.setLong(2, shipperId); 
+                ps.setInt(3, State.INITIAL.getCode()); 
+            }, 
+            rs -> rs.getLong(1), null);
         if (id == null) throw new BusinessException("OCRログが登録済み、または荷主が一致しません。再読み込みしてください。");
     }
 
@@ -62,9 +80,12 @@ public class OrderOcrLogRepository {
         sql.queryOne("""
             UPDATE dbo.order_ocr_logs SET order_id = ?
             OUTPUT INSERTED.ocr_log_id
-            WHERE ocr_log_id = ? AND order_id IS NULL AND prime_constractor_id = ? AND state = 0;
+            WHERE ocr_log_id = ? AND order_id IS NULL AND prime_constractor_id = ? AND state = ?;
             """, (ps, unused) -> {
-                ps.setLong(1, orderId); ps.setLong(2, logId); ps.setLong(3, shipperId);
+                ps.setLong(1, orderId); 
+                ps.setLong(2, logId); 
+                ps.setLong(3, shipperId);
+                ps.setInt(4, State.INITIAL.getCode());
             }, rs -> rs.getLong(1), null);
     }
 }
