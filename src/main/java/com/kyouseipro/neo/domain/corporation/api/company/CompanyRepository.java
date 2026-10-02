@@ -1,6 +1,7 @@
 package com.kyouseipro.neo.domain.corporation.api.company;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
@@ -49,8 +50,8 @@ public class CompanyRepository {
             sql,
             (ps, p) -> {
                 ps.setInt(1, State.INITIAL.getCode());
-                ps.setInt(2,CompanyCategory.PARTNER.getCode());
-                ps.setInt(3, 0);
+                ps.setInt(2, CompanyCategory.PARTNER.getCode());
+                ps.setInt(3, CompanyCategory.OWN.getCode());
             },
             rs -> {
                 ComboDto c = new ComboDto(
@@ -82,6 +83,25 @@ public class CompanyRepository {
                 return c;
             },
             categoryCode
+        );
+    }
+
+    public Long findOwnCompanyId() {
+        String sql = """
+            SELECT TOP 1
+                company_id
+            FROM companies
+            WHERE state = ?
+            AND category = ?
+            ORDER BY company_id
+        """;
+        return sqlRepository.queryOneOrNull(
+            sql,
+            (ps, ignored) -> {
+                ps.setInt(1, State.INITIAL.getCode());
+                ps.setInt(2, CompanyCategory.OWN.getCode());
+            },
+            rs -> rs.getLong("company_id"), null
         );
     }
 }

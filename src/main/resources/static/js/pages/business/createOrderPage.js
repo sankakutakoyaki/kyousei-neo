@@ -65,37 +65,29 @@ const createOrderForm = (controller, options = {}) => {
         idKey: "orderId",
         submitText: options.submitText,
         cancelText: options.cancelText,
-
         repository: OrderRepository,
         inheritFilters: data => !data?.ocrLogId,
-
         changeTargetSelector: "#tab-11",
         validInputSelector: "#tab-11",
-
         buildParams: (id) => ({
             state: APP.cache.common.state.INITIAL,
             orderId: id
         }),
-
         onOpen: async (data) => {
             let items = data?.items ?? [];
             let works = data?.works ?? [];
-
             if (data?.orderId) {
                 items = await OrderRepository.findItems({
                     state: APP.cache.common.state.INITIAL,
                     orderId: data.orderId
                 });
-
                 works = await OrderRepository.findWorks({
                     state: APP.cache.common.state.INITIAL,
                     orderId: data.orderId
                 });
             }
-
             itemList.init(items, form);
             workList.init(works, form);
-
             const formEl = document.getElementById(form.formId);
             const officeSelect=formEl.querySelector('#order-own-office-edit');
             if(officeSelect) {
@@ -120,34 +112,28 @@ const createOrderForm = (controller, options = {}) => {
             initOrderItemInput(form, formEl, itemList);
             initOrderWorkInput(form, formEl, workList);
         },
-
         buildAdditionalPayload: () => ({
             ...(form.currentEntity?.ocrLogId ? {ocrLogId: form.currentEntity.ocrLogId} : {}),
             items: itemList.getItems(),
             works: workList.getItems()
         }),
-
         hasAdditionalChanges: () => {
             return (
                 itemList.hasChanges() ||
                 workList.hasChanges()
             );
         },
-
         resetAdditional: () => {
             itemList.reset();
             workList.reset();
         },
-
         onClose: () => form.finishOcrReview?.(),
         afterSave: async (id) => {
             form.finishOcrReview?.(id);
             await controller.refresh(id);
         }
     });
-
     form.itemList = itemList;
-
     return form;
 };
 
@@ -159,26 +145,19 @@ function initOrderItemInput(formController, formEl, itemList) {
 
     // JANコード入力
     const janInput = formEl.querySelector('[name="jan-code"]');
-
     if (janInput && janInput.dataset.initialized !== "true") {
         janInput.dataset.initialized = "true";
 
         janInput.addEventListener("input", () => {
             janInput.value = janInput.value
-                .replace(/[０-９]/g, s =>
-                    String.fromCharCode(
-                        s.charCodeAt(0) - 0xfee0
-                    )
-                )
+                .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
                 .replace(/[^0-9]/g, "");
         });
     }
-
     // 登録ボタン
     if (addButton.dataset.initialized === "true") {
         return;
     }
-
     addButton.dataset.initialized = "true";
     addButton.addEventListener("click", () => {
         const quantity = formEl.querySelector('[name="item-quantity"]')?.value?.trim();
@@ -189,19 +168,14 @@ function initOrderItemInput(formController, formEl, itemList) {
             itemModel: formEl.querySelector('[name="item-model"]')?.value?.trim() ?? "",
             itemQuantity: quantity ? Number(quantity) : 1
         };
-
         if (!item.itemModel) {
             DialogService.error("型番を入力してください");
             return;
         }
-
         itemList.add(item);
         clearOrderItemInput(formEl);
-
         // 保存ボタン状態を更新
-        formController.setSubmitEnabled(
-            formController.canSubmit()
-        );
+        formController.setSubmitEnabled(formController.canSubmit());
     });
 }
 
@@ -227,11 +201,9 @@ function initOrderWorkInput(formController, formEl, workList) {
 
     const addButton = formEl.querySelector("#add-work-btn");
     if (!addButton) return;
-
     if (addButton.dataset.initialized === "true") {
         return;
     }
-
     addButton.dataset.initialized = "true";
     addButton.addEventListener("click", () => {
         const price = formEl.querySelector('[name="order-work-price"]')?.value?.trim();
@@ -247,10 +219,8 @@ function initOrderWorkInput(formController, formEl, workList) {
             DialogService.error("作業名を入力してください");
             return;
         }
-
         workList.add(work);
         clearOrderWorkInput(formEl);
-
         // 保存ボタン状態を更新
         formController.setSubmitEnabled(
             formController.canSubmit()
@@ -265,7 +235,6 @@ function clearOrderWorkInput(form) {
         "order-work-price",
         "order-work-quantity"
     ];
-
     names.forEach(name => {
         const el = form.querySelector(`[name="${name}"]`);
         if (el) {

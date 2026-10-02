@@ -119,15 +119,31 @@ public class BaseSqlRepository {
         );
     }
 
-    public Long reactivate(TableMeta meta, Object id, Object version, String editor) {
-        LogSqlProvider logProvider = resolver.resolve(meta.tableName());
-        SqlResult result = SqlBuilder.buildReactivate(
-            meta,
-            id,
-            version,
-            editor,
-            logProvider
-        );
+    public Long reactivate(
+            TableMeta meta,
+            Object id,
+            Object version,
+            String editor
+    ) {
+        LogSqlProvider logProvider =
+            resolver.resolve(meta.tableName());
+
+        if (logProvider == null) {
+            throw new IllegalStateException(
+                "LogSqlProvider が登録されていません: "
+                + meta.tableName()
+            );
+        }
+
+        SqlResult result =
+            SqlBuilder.buildReactivate(
+                meta,
+                id,
+                version,
+                editor,
+                logProvider
+            );
+
         return sqlRepository.insert(
             result.getSql(),
             result.getParams(),

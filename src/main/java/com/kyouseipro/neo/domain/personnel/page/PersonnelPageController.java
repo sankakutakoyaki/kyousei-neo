@@ -13,6 +13,7 @@ import com.kyouseipro.neo.common.enums.code.EmployeeCategory;
 import com.kyouseipro.neo.common.enums.code.Gender;
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.util.EnumUtil;
+import com.kyouseipro.neo.domain.corporation.api.company.CompanyRepository;
 import com.kyouseipro.neo.domain.corporation.api.office.OfficeService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PersonnelPageController {
     private final OfficeService officeService;
+    private final CompanyRepository companyRepository;
 
     /**
 	 * 従業員
@@ -36,12 +38,17 @@ public class PersonnelPageController {
     @GetMapping("/api/employee/init/cache")
     @ResponseBody
     public Map<String, Object> initEmployee() {
+        Long companyId = companyRepository.findOwnCompanyId();
+        if(companyId == null){
+            throw new IllegalStateException("自社会社が登録されていません。");
+        }
         return Map.of(
             "common", Map.of(
                 "state", EnumUtil.toMap(State.class),
                 "employeeCategory", EnumUtil.toMap(EmployeeCategory.class)
             ),
             "page", Map.of(
+                "companyId", companyId,
                 "officeComboList", officeService.findComboByCategory(CompanyCategory.OWN.getCode()),
                 "genderComboList", EnumUtil.toCombo(Gender.class),
                 "bloodTypeComboList", EnumUtil.toCombo(BloodType.class)

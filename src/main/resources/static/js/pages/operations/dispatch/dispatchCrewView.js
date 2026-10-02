@@ -52,7 +52,7 @@ export function renderDispatchCrews(
         initCrewDrop,
         onUnassign,
         onReorder,
-        onAddMember,
+        onEditMembers,
         expandedCrewIds
     } = {}
 ){
@@ -67,7 +67,7 @@ export function renderDispatchCrews(
                 initCrewDrop,
                 onUnassign,
                 onReorder,
-                onAddMember,
+                onEditMembers,
                 expandedCrewIds
             }
         ));
@@ -83,7 +83,7 @@ function createCrewCard(
         initCrewDrop,
         onUnassign,
         onReorder,
-        onAddMember,
+        onEditMembers,
         expandedCrewIds
     } = {}
 ){
@@ -115,24 +115,39 @@ function createCrewCard(
     members.className = "dispatch-crew-members";
 
     if(crew.members.length === 0){
-        const empty = document.createElement("div");
+        const row = document.createElement("div");
+        row.className = "dispatch-crew-member";
+        const empty = document.createElement("span");
         empty.className = "dispatch-member-unassigned";
         empty.textContent = "乗務員未設定";
-        members.appendChild(empty);
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.className = "dispatch-member-edit";
+        editButton.textContent = "編集";
+        editButton.addEventListener("click", async event => {
+            event.stopPropagation();
+            await onEditMembers?.(crew);
+        });
+        row.append(empty, editButton);
+        members.appendChild(row);
     } else {
-        crew.members.forEach(member => {
-            members.appendChild(createCrewMember(member));
+        crew.members.forEach((member, index) => {
+            const row = createCrewMember(member);
+            // 最後の行だけ編集ボタンを付ける
+            if(index === crew.members.length - 1){
+                const editButton = document.createElement("button");
+                editButton.type = "button";
+                editButton.className = "dispatch-member-edit";
+                editButton.textContent = "編集";
+                editButton.addEventListener("click", async event => {
+                    event.stopPropagation();
+                    await onEditMembers?.(crew);
+                });
+                row.appendChild(editButton);
+            }
+            members.appendChild(row);
         });
     }
-    const addMemberButton = document.createElement("button");
-    addMemberButton.type = "button";
-    addMemberButton.className = "dispatch-member-add";
-    addMemberButton.textContent = "＋ 乗務員";
-    addMemberButton.addEventListener("click", async event => {
-        event.stopPropagation();
-        await onAddMember?.(crew);
-    });
-    members.appendChild(addMemberButton);
 
     const assignmentCount = crew.assignments?.length ?? 0;
     const orders = document.createElement("div");

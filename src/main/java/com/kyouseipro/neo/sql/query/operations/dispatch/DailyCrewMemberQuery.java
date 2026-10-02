@@ -44,4 +44,72 @@ public class DailyCrewMemberQuery {
             )
         );
     }
+
+    public static QueryDefinition dailyCrewMemberExists() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                daily_crew_member_id,
+                daily_crew_id,
+                employee_id,
+                role,
+                display_order,
+                version,
+                state
+
+            FROM daily_crew_members
+
+            WHERE daily_crew_id = ?
+            AND employee_id = ?
+            """,
+            List.of(
+                "dailyCrewId",
+                "employeeId"
+            )
+        );
+    }
+
+    public static QueryDefinition dailyCrewMemberMaxDisplayOrder() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                MAX(display_order) AS max_display_order
+
+            FROM daily_crew_members
+
+            WHERE daily_crew_id = ?
+            AND state = ?
+            """,
+            List.of(
+                "dailyCrewId",
+                "state"
+            )
+        );
+    }
+
+    public static QueryDefinition dailyCrewMemberSaveList() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                daily_crew_member_id,
+                daily_crew_id,
+                employee_id,
+                role,
+                display_order,
+                version,
+                state
+
+            FROM daily_crew_members
+
+            WHERE daily_crew_id = ?
+
+            ORDER BY
+                display_order,
+                daily_crew_member_id
+            """,
+            List.of(
+                "dailyCrewId"
+            )
+        );
+    }
 }

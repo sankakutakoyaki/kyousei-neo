@@ -32,6 +32,9 @@ export function createEmployeePage(config){
                 if(payload.code == null || payload.code === ""){
                     payload.code = 0;
                 }
+                if((payload.companyId == null || Number(payload.companyId) === 0) && config.companyId != null && Number(config.companyId) !== 0){
+                    payload.companyId = config.companyId;
+                }
             }
             if(config.beforeSave){
                 config.beforeSave(payload);
@@ -68,19 +71,18 @@ async function loadWorkCategories(employeeId){
     const members = memberResult.data ?? [];
     const selectedIds = new Set(members.filter(row => Number(row.state) === APP.cache.common.state.INITIAL).map(row => Number(row.employeeWorkCategoryId)));
     categories.forEach(category => {
-            const label = document.createElement("label");
-            const input = document.createElement("input");
-            input.type = "checkbox";
-            input.name = "employee-work-category";
-            input.dataset.submit = "none";
-            input.value = String(category.employeeWorkCategoryId);
-            input.checked = selectedIds.has(Number(category.employeeWorkCategoryId));
-            const text = document.createElement("span");
-            text.textContent = category.name;
-            label.append(input, text);
-            area.append(label);
-        }
-    );
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.name = "employee-work-category";
+        input.dataset.submit = "none";
+        input.value = String(category.employeeWorkCategoryId);
+        input.checked = selectedIds.has(Number(category.employeeWorkCategoryId));
+        const text = document.createElement("span");
+        text.textContent = category.name;
+        label.append(input, text);
+        area.append(label);
+    });
     originalWorkCategoryIds = getSelectedWorkCategoryIds();
 }
 

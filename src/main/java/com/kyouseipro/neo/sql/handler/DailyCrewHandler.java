@@ -15,6 +15,7 @@ import com.kyouseipro.neo.interfaces.sql.QueryHandler;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.Tables;
+import com.kyouseipro.neo.sql.query.operations.dispatch.DailyCrewMemberQuery;
 import com.kyouseipro.neo.sql.query.operations.dispatch.DailyCrewQuery;
 import com.kyouseipro.neo.sql.query.operations.vehicle.VehicleDefaultMemberQuery;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
@@ -33,7 +34,8 @@ public class DailyCrewHandler implements QueryHandler {
     public boolean supports(QueryKind kind) {
         return kind == QueryKind.DAILY_CREW_BULK_CREATE
             || kind == QueryKind.DAILY_CREW_REINITIALIZE
-            || kind == QueryKind.DAILY_CREW_MEMBER_ADD;
+            || kind == QueryKind.DAILY_CREW_MEMBER_ADD
+            || kind == QueryKind.DAILY_CREW_MEMBER_SAVE;
     }
 
     @Override
@@ -43,6 +45,7 @@ public class DailyCrewHandler implements QueryHandler {
             case DAILY_CREW_BULK_CREATE -> executeBulkCreate(req);
             case DAILY_CREW_REINITIALIZE -> executeReinitialize(req);
             case DAILY_CREW_MEMBER_ADD -> executeMemberAdd(req);
+            case DAILY_CREW_MEMBER_SAVE -> executeMemberSave(req);
             default -> throw new IllegalStateException();
         };
     }
@@ -71,7 +74,7 @@ public class DailyCrewHandler implements QueryHandler {
             checkParams.put("officeId", officeId);
             checkParams.put("dispatchCategory", dispatchCategory);
             checkParams.put("vehicleId", vehicleId);
-            checkParams.put("state", 0);
+            checkParams.put("state", State.INITIAL.getCode());
 
             SelectRequest checkReq = new SelectRequest();
             checkReq.setParams(checkParams);
@@ -89,7 +92,7 @@ public class DailyCrewHandler implements QueryHandler {
             row.put("dispatchCategory", dispatchCategory);
             row.put("vehicleId", vehicleId);
             row.put("displayOrder", displayOrder++);
-            row.put("state", 0);
+            row.put("state", State.INITIAL.getCode());
 
             baseRepository.insert(Tables.DAILY_CREW_BY_IDS, row, editor);
             count++;
@@ -110,7 +113,7 @@ public class DailyCrewHandler implements QueryHandler {
                 Map<String, Object> memberParams = new HashMap<>();
                 memberParams.put("vehicleId", vehicleId);
                 memberParams.put("dispatchCategory", dispatchCategory);
-                memberParams.put("state", 0);
+                memberParams.put("state", State.INITIAL.getCode());
 
                 SelectRequest memberReq = new SelectRequest();
                 memberReq.setParams(memberParams);
@@ -125,7 +128,7 @@ public class DailyCrewHandler implements QueryHandler {
                     member.put("employeeId", source.get("employeeId"));
                     member.put("role", source.get("role"));
                     member.put("displayOrder", source.get("displayOrder"));
-                    member.put("state", 0);
+                    member.put("state", State.INITIAL.getCode());
 
                     baseRepository.insert(Tables.DAILY_CREW_MEMBER_BY_IDS, member, editor);
                     memberCount++;
@@ -188,7 +191,7 @@ public class DailyCrewHandler implements QueryHandler {
             Map<String, Object> update = new HashMap<>();
             update.put("dailyCrewMemberId", entry.getKey());
             update.put("version", entry.getValue());
-            update.put("state", 9);
+            update.put("state", State.DELETE.getCode());
             baseRepository.update(Tables.DAILY_CREW_MEMBER_BY_IDS, update, editor);
         }
 
@@ -204,7 +207,7 @@ public class DailyCrewHandler implements QueryHandler {
             Map<String, Object> update = new HashMap<>();
             update.put("dailyCrewId", entry.getKey());
             update.put("version", entry.getValue());
-            update.put("state", 9);
+            update.put("state", State.DELETE.getCode());
             baseRepository.update(Tables.DAILY_CREW_BY_IDS, update, editor);
         }
 
@@ -264,13 +267,13 @@ public class DailyCrewHandler implements QueryHandler {
             checkParams
         );
 
-        List<Map<String, Object>> exists = queryExecutor.select(DailyCrewQuery.dailyCrewMemberExists(), checkReq);
+        List<Map<String, Object>> exists = queryExecutor.select(DailyCrewMemberQuery.dailyCrewMemberExists(), checkReq);
 
         if (!exists.isEmpty()) {
             Map<String, Object> existing =  exists.get(0);
             int state = ((Number) existing.get("state")).intValue();
             // 論理削除済みなら再有効化
-            if (state == 9) {
+            if (state == State.DELETE.getCode()) {
                 Long id = 
                     baseRepository.reactivate(Tables.DAILY_CREW_MEMBER_BY_IDS, existing.get("dailyCrewMemberId"), existing.get("version"), editor
                 );
@@ -282,12 +285,12 @@ public class DailyCrewHandler implements QueryHandler {
         // displayOrder
         Map<String, Object> orderParams = new HashMap<>();
         orderParams.put("dailyCrewId", dailyCrewId);
-        orderParams.put("state", 0);
+        orderParams.put("state", State.INITIAL.getCode());
 
         SelectRequest orderReq = new SelectRequest();
         orderReq.setParams(orderParams);
 
-        List<Map<String, Object>> orderRows = queryExecutor.select(DailyCrewQuery.dailyCrewMemberMaxDisplayOrder(), orderReq);
+        List<Map<String, Object>> orderRows = queryExecutor.select(DailyCrewMemberQuery.dailyCrewMemberMaxDisplayOrder(), orderReq);
         int displayOrder = 1;
         if (!orderRows.isEmpty()) {
             Object value = orderRows.get(0).get("maxDisplayOrder");
@@ -302,9 +305,436 @@ public class DailyCrewHandler implements QueryHandler {
         row.put("employeeId", employeeId);
         row.put("role", role);
         row.put("displayOrder", displayOrder);
-        row.put("state", 0);
+        row.put("state", State.INITIAL.getCode());
 
         Long id = baseRepository.insert(Tables.DAILY_CREW_MEMBER_BY_IDS, row, editor);
         return Map.of("id", id);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object executeMemberSave(
+            SelectRequest req
+    ) {
+
+        Map<String, Object> params =
+            req.getParams();
+
+        String editor =
+            (String) params.getOrDefault(
+                "editor",
+                "system"
+            );
+
+        long dailyCrewId =
+            ((Number) params.get(
+                "dailyCrewId"
+            )).longValue();
+
+        List<Map<String, Object>> members =
+            (List<Map<String, Object>>)
+                params.getOrDefault(
+                    "members",
+                    List.of()
+                );
+
+
+        // =========================================
+        // 現在のDB状態を取得
+        // 削除済みも含む
+        // =========================================
+
+        Map<String, Object> currentParams =
+            new HashMap<>();
+
+        currentParams.put(
+            "dailyCrewId",
+            dailyCrewId
+        );
+
+        SelectRequest currentReq =
+            new SelectRequest();
+
+        currentReq.setParams(
+            currentParams
+        );
+
+        List<Map<String, Object>> currentRows =
+            queryExecutor.select(
+                DailyCrewMemberQuery
+                    .dailyCrewMemberSaveList(),
+                currentReq
+            );
+
+
+        // employeeId → DB行
+        Map<Long, Map<String, Object>>
+            currentByEmployee =
+                new HashMap<>();
+
+        for(
+            Map<String, Object> row
+                : currentRows
+        ){
+            long employeeId =
+                ((Number) row.get(
+                    "employeeId"
+                )).longValue();
+
+            currentByEmployee.put(
+                employeeId,
+                row
+            );
+        }
+
+
+        // =========================================
+        // 画面側の乗務員
+        // =========================================
+
+        Map<Long, Map<String, Object>>
+            selectedByEmployee =
+                new LinkedHashMap<>();
+
+        for(
+            Map<String, Object> member
+                : members
+        ){
+            long employeeId =
+                ((Number) member.get(
+                    "employeeId"
+                )).longValue();
+
+            // 同一社員の重複チェック
+            if(
+                selectedByEmployee
+                    .containsKey(employeeId)
+            ){
+                throw new BusinessException(
+                    "同じ乗務員が重複しています。"
+                );
+            }
+
+            selectedByEmployee.put(
+                employeeId,
+                member
+            );
+        }
+
+
+        // =========================================
+        // 1. フォームから消えた既存乗務員を削除
+        // =========================================
+
+        for(
+            Map<String, Object> current
+                : currentRows
+        ){
+
+            long employeeId =
+                ((Number) current.get(
+                    "employeeId"
+                )).longValue();
+
+            int state =
+                ((Number) current.get(
+                    "state"
+                )).intValue();
+
+            if(
+                state ==
+                State.DELETE.getCode()
+            ){
+                continue;
+            }
+
+            if(
+                selectedByEmployee
+                    .containsKey(employeeId)
+            ){
+                continue;
+            }
+
+            Map<String, Object> update =
+                new HashMap<>();
+
+            update.put(
+                "dailyCrewMemberId",
+                current.get(
+                    "dailyCrewMemberId"
+                )
+            );
+
+            update.put(
+                "version",
+                current.get(
+                    "version"
+                )
+            );
+
+            update.put(
+                "state",
+                State.DELETE.getCode()
+            );
+
+            baseRepository.update(
+                Tables.DAILY_CREW_MEMBER_BY_IDS,
+                update,
+                editor
+            );
+        }
+
+
+        // =========================================
+        // 新規追加時のdisplayOrder
+        // =========================================
+
+        int nextDisplayOrder =
+            currentRows.stream()
+                .filter(
+                    row ->
+                        ((Number) row.get("state"))
+                            .intValue()
+                        != State.DELETE.getCode()
+                )
+                .map(
+                    row ->
+                        (Number) row.get(
+                            "displayOrder"
+                        )
+                )
+                .filter(
+                    value ->
+                        value != null
+                )
+                .mapToInt(
+                    Number::intValue
+                )
+                .max()
+                .orElse(0)
+                + 1;
+
+
+        // =========================================
+        // 2. フォーム側の乗務員を反映
+        // =========================================
+
+        for(
+            Map<String, Object> selected
+                : members
+        ){
+
+            long employeeId =
+                ((Number) selected.get(
+                    "employeeId"
+                )).longValue();
+
+            int role =
+                ((Number) selected.get(
+                    "role"
+                )).intValue();
+
+            Map<String, Object> current =
+                currentByEmployee.get(
+                    employeeId
+                );
+
+
+            // -------------------------------------
+            // 完全な新規
+            // -------------------------------------
+
+            if(current == null){
+
+                Map<String, Object> insert =
+                    new HashMap<>();
+
+                insert.put(
+                    "dailyCrewId",
+                    dailyCrewId
+                );
+
+                insert.put(
+                    "employeeId",
+                    employeeId
+                );
+
+                insert.put(
+                    "role",
+                    role
+                );
+
+                insert.put(
+                    "displayOrder",
+                    nextDisplayOrder++
+                );
+
+                insert.put(
+                    "state",
+                    State.INITIAL.getCode()
+                );
+
+                baseRepository.insert(
+                    Tables.DAILY_CREW_MEMBER_BY_IDS,
+                    insert,
+                    editor
+                );
+
+                continue;
+            }
+
+
+            int state =
+                ((Number) current.get(
+                    "state"
+                )).intValue();
+
+            int currentRole =
+                ((Number) current.get(
+                    "role"
+                )).intValue();
+
+
+            // -------------------------------------
+            // 過去に削除済み → 復活
+            // -------------------------------------
+
+            if(
+                state ==
+                State.DELETE.getCode()
+            ){
+
+                baseRepository.reactivate(
+                    Tables.DAILY_CREW_MEMBER_BY_IDS,
+                    current.get(
+                        "dailyCrewMemberId"
+                    ),
+                    current.get(
+                        "version"
+                    ),
+                    editor
+                );
+
+
+                /*
+                * roleまで変更されている場合だけ、
+                * 復活後のversionを再取得して更新する。
+                */
+                if(
+                    currentRole != role
+                ){
+
+                    Map<String, Object> checkParams =
+                        new HashMap<>();
+
+                    checkParams.put(
+                        "dailyCrewId",
+                        dailyCrewId
+                    );
+
+                    checkParams.put(
+                        "employeeId",
+                        employeeId
+                    );
+
+                    SelectRequest checkReq =
+                        new SelectRequest();
+
+                    checkReq.setParams(
+                        checkParams
+                    );
+
+                    List<Map<String, Object>> refreshed =
+                        queryExecutor.select(
+                            DailyCrewMemberQuery
+                                .dailyCrewMemberExists(),
+                            checkReq
+                        );
+
+                    if(refreshed.isEmpty()){
+                        throw new BusinessException(
+                            "乗務員の再登録に失敗しました。"
+                        );
+                    }
+
+                    Map<String, Object> refreshedRow =
+                        refreshed.get(0);
+
+                    Map<String, Object> update =
+                        new HashMap<>();
+
+                    update.put(
+                        "dailyCrewMemberId",
+                        refreshedRow.get(
+                            "dailyCrewMemberId"
+                        )
+                    );
+
+                    update.put(
+                        "version",
+                        refreshedRow.get(
+                            "version"
+                        )
+                    );
+
+                    update.put(
+                        "role",
+                        role
+                    );
+
+                    baseRepository.update(
+                        Tables
+                            .DAILY_CREW_MEMBER_BY_IDS,
+                        update,
+                        editor
+                    );
+                }
+
+                continue;
+            }
+
+
+            // -------------------------------------
+            // 既存乗務員のrole変更
+            // -------------------------------------
+
+            if(
+                currentRole != role
+            ){
+
+                Map<String, Object> update =
+                    new HashMap<>();
+
+                update.put(
+                    "dailyCrewMemberId",
+                    current.get(
+                        "dailyCrewMemberId"
+                    )
+                );
+
+                update.put(
+                    "version",
+                    current.get(
+                        "version"
+                    )
+                );
+
+                update.put(
+                    "role",
+                    role
+                );
+
+                baseRepository.update(
+                    Tables.DAILY_CREW_MEMBER_BY_IDS,
+                    update,
+                    editor
+                );
+            }
+        }
+
+
+        return Map.of(
+            "count",
+            members.size()
+        );
     }
 }

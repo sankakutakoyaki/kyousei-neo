@@ -22,4 +22,8 @@ export const DailyCrewRepository = {
     async addMember(params) {
         return await RequestClient.request({ queryId: "dailyCrewMemberAdd", params });
     },
+
+    async saveMembers(params){
+        return await RequestClient.request({ queryId: "dailyCrewMemberSave", params });
+    }
 };

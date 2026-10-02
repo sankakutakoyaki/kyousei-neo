@@ -10,19 +10,6 @@
             <!-- 左：車両・担当班 -->
             <section class="dispatch-crew-area">
                 <header class="dispatch-board-header dispatch-crew-header">
-                    <select
-                        id="dispatch-add-vehicle"
-                        class="normal-select">
-                        <option value="">車両を選択</option>
-                    </select>
-
-                    <button
-                        type="button"
-                        class="normal-btn"
-                        data-action="add-daily-crew">
-                        ＋ 車両追加
-                    </button>
-                    <span>車両リスト</span>
                     <div class="img-btn" data-action="reinitialize-crews">
                         <img src="/icons/reload.png">
                     </div>
@@ -49,5 +36,14 @@
                 <div id="dispatch-order-list" class="dispatch-order-list"></div>
             </section>
         </section>
+    </div>
+    <div id="form-dialog-area">
+        <form id="dispatch-member-form" class="form-dialog none">
+            <div class="dialog-main">
+                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '乗務員編集'} })}"></header>
+                <section th:replace="~{fragments/pages/operations/dispatch/form :: form01Fragment()}"></section>
+                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></footer>
+            </div>
+        </form>
     </div>
 </main>

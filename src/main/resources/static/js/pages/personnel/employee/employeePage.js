@@ -33,7 +33,8 @@ export const fulltimeEmployeePage = () =>
         columns: createEmployeeColumns(),
         submitText: "保存",
         cancelText: "キャンセル",
-        category:APP.cache.common.employeeCategory.FULLTIME
+        category: APP.cache.common.employeeCategory.FULLTIME,
+        companyId: APP.cache.page.companyId
     });
 
 export const parttimeEmployeePage = () =>
@@ -46,5 +47,6 @@ export const parttimeEmployeePage = () =>
         columns: createEmployeeColumns(),
         submitText: "保存",
         cancelText: "キャンセル",
-        category: APP.cache.common.employeeCategory.PARTTIME
+        category: APP.cache.common.employeeCategory.PARTTIME,
+        companyId: APP.cache.page.companyId
     });

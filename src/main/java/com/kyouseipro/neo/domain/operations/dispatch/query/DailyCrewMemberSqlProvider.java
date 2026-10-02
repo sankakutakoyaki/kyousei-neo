@@ -24,10 +24,12 @@ public class DailyCrewMemberSqlProvider implements SqlProviderPart {
         map.put(QueryId.DAILY_CREW_MEMBER_DELETE_BY_IDS,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.DAILY_CREW_MEMBER_BY_IDS)
         );
+        // map.put(QueryId.DAILY_CREW_MEMBER_SAVE,
+        //     new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.DAILY_CREW_MEMBER_BY_IDS)
+        // );
         map.put(QueryId.DAILY_CREW_MEMBER_SAVE,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.DAILY_CREW_MEMBER_BY_IDS)
+            new QueryDefinition(QueryType.UPDATE, QueryKind.DAILY_CREW_MEMBER_SAVE, Tables.DAILY_CREW_MEMBER_BY_IDS)
         );
-
         return map;
     }
 }
