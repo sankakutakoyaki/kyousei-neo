@@ -30,32 +30,3 @@ export const formatters = {
         return num.toLocaleString("ja-JP");
     }
 };
-
-// "use strict"
-
-// export const formatters = {
-//     recycle: (v) => {
-//         const raw = String(v ?? "").replace(/\D/g, "");
-//         if(raw.length !== 13){
-//             return raw;
-//         }
-//         return (
-//             raw.slice(0,4) +
-//             "-" +
-//             raw.slice(4,12) +
-//             "-" +
-//             raw.slice(12)
-//         );
-//     },
-
-//     currency: (v) => {
-//         if(v == null || v === "") return "";
-//         const num = Number(
-//             String(v).replace(/,/g, "")
-//         );
-//         if(Number.isNaN(num)){
-//             return v;
-//         }
-//         return num.toLocaleString("ja-JP");
-//     }
-// };

@@ -18,9 +18,8 @@
 }
 
 .table-area {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    overflow: hidden;
+    max-width: 85rem;
+    grid-template-rows: auto 1fr;
 }
 
 /*
@@ -29,15 +28,9 @@
  * 営業所
  * 車番
  * 車種
- * メーカー
- * 型式
- * 初年度登録
+ * 初期担当
+ * 初期助手
  * 車検期限
- * 前輪タイヤ
- * 後輪タイヤ
- * 車高
- * 最大積載量
- * 右端操作欄
  */
 :is(#table-01, #table-header-01) tr {
     grid-template-columns:
@@ -47,12 +40,55 @@
         14rem
         10rem
         8rem
-        8rem
-        8rem
-        9rem
-        10rem
-        10rem
-        7rem
-        9rem
-        2rem;
+        1fr
+        1fr
+}
+
+#form-01 .dialog-content {
+    & .form-row:nth-of-type(3) {
+        display: grid;
+        width: 100%;
+        grid-template-columns: 8rem 6rem 4rem 6rem;
+    }
+    & .form-row:nth-of-type(4) {
+        display: grid;
+        grid-template-columns: auto auto 8rem 2rem 6rem 2rem 1fr;
+        &>.form-parts:nth-of-type(3) {
+            margin-left: 2rem;
+        }
+        &>span:nth-of-type(1),
+        &>span:nth-of-type(2) {
+            align-self: self-end;
+        }
+    }
+    & .form-row:nth-of-type(7) {
+        display: grid;
+        width: 100%;
+        grid-template-columns: 1fr;
+    }
+}
+
+
+#dispatch-setting-dialog .dialog-content>.form-row:first-of-type {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    column-gap: .5rem;
+}
+
+#dispatch-setting-dialog .dialog-content>.form-row:nth-of-type(2) {
+    display: grid;
+    grid-template-columns: auto auto 6rem 15rem auto;
+    column-gap: .5rem;
+    & .normal-btn {
+        height: 2.5rem;
+        align-self: self-end;
+    }
+}
+
+#vehicle-default-member-area {
+    padding: 2rem;
+    & .vehicle-default-member-item>span {
+        font-size: 1.2rem;
+        margin-right: 2rem;
+    }
 }

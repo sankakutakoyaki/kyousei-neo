@@ -35,7 +35,8 @@ public class DailyCrewHandler implements QueryHandler {
         return kind == QueryKind.DAILY_CREW_BULK_CREATE
             || kind == QueryKind.DAILY_CREW_REINITIALIZE
             || kind == QueryKind.DAILY_CREW_MEMBER_ADD
-            || kind == QueryKind.DAILY_CREW_MEMBER_SAVE;
+            || kind == QueryKind.DAILY_CREW_MEMBER_SAVE
+            || kind == QueryKind.DAILY_CREW_DELETE;
     }
 
     @Override
@@ -46,6 +47,7 @@ public class DailyCrewHandler implements QueryHandler {
             case DAILY_CREW_REINITIALIZE -> executeReinitialize(req);
             case DAILY_CREW_MEMBER_ADD -> executeMemberAdd(req);
             case DAILY_CREW_MEMBER_SAVE -> executeMemberSave(req);
+            case DAILY_CREW_DELETE -> executeDelete(req);
             default -> throw new IllegalStateException();
         };
     }
@@ -735,6 +737,231 @@ public class DailyCrewHandler implements QueryHandler {
         return Map.of(
             "count",
             members.size()
+        );
+    }
+    
+    private Object executeDelete(
+            SelectRequest req
+    ) {
+
+        Map<String, Object> params =
+            req.getParams();
+
+        String editor =
+            (String) params.getOrDefault(
+                "editor",
+                "system"
+            );
+
+        long dailyCrewId =
+            ((Number) params.get(
+                "dailyCrewId"
+            )).longValue();
+
+        int state =
+            State.INITIAL.getCode();
+
+
+        // =========================================
+        // 1. 配車済み確認
+        // =========================================
+
+        Map<String, Object> countParams =
+            new HashMap<>();
+
+        countParams.put(
+            "dailyCrewId",
+            dailyCrewId
+        );
+
+        countParams.put(
+            "state",
+            state
+        );
+
+        SelectRequest countReq =
+            new SelectRequest();
+
+        countReq.setParams(
+            countParams
+        );
+
+        List<Map<String, Object>> countRows =
+            queryExecutor.select(
+                DailyCrewQuery
+                    .dailyCrewAssignmentCountByCrew(),
+                countReq
+            );
+
+        int assignmentCount =
+            countRows.isEmpty()
+                ? 0
+                : ((Number) countRows
+                    .get(0)
+                    .get("assignmentCount"))
+                    .intValue();
+
+        if(assignmentCount > 0){
+
+            throw new BusinessException(
+                "配車済みの伝票があります。先に配車を解除してください。"
+            );
+        }
+
+
+        // =========================================
+        // 2. 現在の班を取得
+        // =========================================
+
+        Map<String, Object> crewParams =
+            new HashMap<>();
+
+        crewParams.put(
+            "dailyCrewId",
+            dailyCrewId
+        );
+
+        crewParams.put(
+            "state",
+            state
+        );
+
+        SelectRequest crewReq =
+            new SelectRequest();
+
+        crewReq.setParams(
+            crewParams
+        );
+
+        List<Map<String, Object>> crews =
+            queryExecutor.select(
+                DailyCrewQuery.dailyCrewDetail(),
+                crewReq
+            );
+
+        if(crews.isEmpty()){
+
+            throw new BusinessException(
+                "対象の配車班が見つかりません。"
+            );
+        }
+
+        Map<String, Object> crew =
+            crews.get(0);
+
+
+        // =========================================
+        // 3. 現在の乗務員を取得
+        //    削除済みも取得されるQuery
+        // =========================================
+
+        Map<String, Object> memberParams =
+            new HashMap<>();
+
+        memberParams.put(
+            "dailyCrewId",
+            dailyCrewId
+        );
+
+        SelectRequest memberReq =
+            new SelectRequest();
+
+        memberReq.setParams(
+            memberParams
+        );
+
+        List<Map<String, Object>> members =
+            queryExecutor.select(
+                DailyCrewMemberQuery
+                    .dailyCrewMemberSaveList(),
+                memberReq
+            );
+
+
+        // =========================================
+        // 4. 班員を論理削除
+        // =========================================
+
+        for(
+            Map<String, Object> member
+                : members
+        ){
+
+            int memberState =
+                ((Number) member.get("state"))
+                    .intValue();
+
+            if(
+                memberState ==
+                State.DELETE.getCode()
+            ){
+                continue;
+            }
+
+            Map<String, Object> update =
+                new HashMap<>();
+
+            update.put(
+                "dailyCrewMemberId",
+                member.get(
+                    "dailyCrewMemberId"
+                )
+            );
+
+            update.put(
+                "version",
+                member.get(
+                    "version"
+                )
+            );
+
+            update.put(
+                "state",
+                State.DELETE.getCode()
+            );
+
+            baseRepository.update(
+                Tables.DAILY_CREW_MEMBER_BY_IDS,
+                update,
+                editor
+            );
+        }
+
+
+        // =========================================
+        // 5. 班を論理削除
+        // =========================================
+
+        Map<String, Object> update =
+            new HashMap<>();
+
+        update.put(
+            "dailyCrewId",
+            dailyCrewId
+        );
+
+        update.put(
+            "version",
+            crew.get(
+                "version"
+            )
+        );
+
+        update.put(
+            "state",
+            State.DELETE.getCode()
+        );
+
+        baseRepository.update(
+            Tables.DAILY_CREW_BY_IDS,
+            update,
+            editor
+        );
+
+
+        return Map.of(
+            "count",
+            1
         );
     }
 }

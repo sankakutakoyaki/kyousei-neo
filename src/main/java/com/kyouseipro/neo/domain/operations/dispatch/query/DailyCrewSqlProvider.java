@@ -36,6 +36,9 @@ public class DailyCrewSqlProvider implements SqlProviderPart {
         map.put(QueryId.DAILY_CREW_REINITIALIZE,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DAILY_CREW_REINITIALIZE, Tables.DAILY_CREW_BY_IDS)
         );
+        map.put(QueryId.DAILY_CREW_DELETE,
+            new QueryDefinition(QueryType.UPDATE, QueryKind.DAILY_CREW_DELETE, Tables.DAILY_CREW_BY_IDS)
+        );
         map.put(QueryId.DAILY_CREW_MEMBER_ADD,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DAILY_CREW_MEMBER_ADD, Tables.DAILY_CREW_MEMBER_BY_IDS)
         );

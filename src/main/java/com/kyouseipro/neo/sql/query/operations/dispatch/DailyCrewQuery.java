@@ -237,23 +237,31 @@ public class DailyCrewQuery {
 
             INNER JOIN employee_office_members eom
                 ON eom.employee_id = e.employee_id
-            AND eom.office_id = ?
-            AND eom.state = ?
+                AND eom.office_id = ?
+                AND eom.state = ?
 
             INNER JOIN employee_shifts es
                 ON es.employee_id = e.employee_id
-            AND es.work_date = ?
-            AND es.shift_type = ?
-            AND es.state = ?
+                AND es.work_date = ?
+                AND es.shift_type = ?
+                AND es.state = ?
 
             WHERE e.state = ?
 
             AND NOT EXISTS (
                 SELECT 1
+
                 FROM daily_crew_members dcm
-                WHERE dcm.daily_crew_id = ?
-                    AND dcm.employee_id = e.employee_id
+
+                INNER JOIN daily_crews dc
+                    ON dc.daily_crew_id = dcm.daily_crew_id
+                    AND dc.state = ?
+
+                WHERE dcm.employee_id = e.employee_id
                     AND dcm.state = ?
+                    AND dc.work_date = ?
+                    AND dc.office_id = ?
+                    AND dc.dispatch_category = ?
             )
 
             ORDER BY
@@ -267,6 +275,28 @@ public class DailyCrewQuery {
                 "shiftType",
                 "state",
                 "state",
+
+                "state",
+                "state",
+                "workDate",
+                "officeId",
+                "dispatchCategory"
+            )
+        );
+    }
+
+    public static QueryDefinition dailyCrewAssignmentCountByCrew() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                COUNT(*) AS assignment_count
+
+            FROM dispatch_assignments
+
+            WHERE daily_crew_id = ?
+            AND state = ?
+            """,
+            List.of(
                 "dailyCrewId",
                 "state"
             )

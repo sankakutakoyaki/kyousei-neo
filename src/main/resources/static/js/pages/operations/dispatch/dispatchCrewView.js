@@ -22,7 +22,6 @@ export function groupDispatchCrews(rows){
                 }
             );
         }
-
         if(row.employeeId){
             map.get(dailyCrewId)
                 .members
@@ -53,6 +52,7 @@ export function renderDispatchCrews(
         onUnassign,
         onReorder,
         onEditMembers,
+        onDeleteCrew,
         expandedCrewIds
     } = {}
 ){
@@ -68,6 +68,7 @@ export function renderDispatchCrews(
                 onUnassign,
                 onReorder,
                 onEditMembers,
+                onDeleteCrew,
                 expandedCrewIds
             }
         ));
@@ -84,6 +85,7 @@ function createCrewCard(
         onUnassign,
         onReorder,
         onEditMembers,
+        onDeleteCrew,
         expandedCrewIds
     } = {}
 ){
@@ -101,7 +103,10 @@ function createCrewCard(
     const name = document.createElement("strong");
     name.textContent = crew.vehicleName;
 
+    const numberArea = document.createElement("div");
+    numberArea.className = "dispatch-crew-number-area button-hover-group";
     const number = document.createElement("span");
+    number.className = "dispatch-crew-number";
     number.textContent = [
         crew.registrationArea,
         crew.registrationClass,
@@ -109,7 +114,20 @@ function createCrewCard(
         crew.registrationNumber
     ].filter(Boolean).join(" ");
 
-    header.append(name, number);
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.className = "button-icon-remove";
+    const delIcon = document.createElement("img");
+    delIcon.src = "/icons/close-s.png";
+    delIcon.alt = "";
+    deleteButton.appendChild(delIcon);
+    deleteButton.title = "この車両を配車ボードから削除";
+    deleteButton.addEventListener("click", async event => {
+        event.stopPropagation();
+        await onDeleteCrew?.(crew);
+    });
+    numberArea.append(number, deleteButton);
+    header.append(name, numberArea);
 
     const members = document.createElement("div");
     members.className = "dispatch-crew-members";
@@ -117,18 +135,23 @@ function createCrewCard(
     if(crew.members.length === 0){
         const row = document.createElement("div");
         row.className = "dispatch-crew-member";
+        const top = document.createElement("span");
         const empty = document.createElement("span");
         empty.className = "dispatch-member-unassigned";
         empty.textContent = "乗務員未設定";
         const editButton = document.createElement("button");
         editButton.type = "button";
-        editButton.className = "dispatch-member-edit";
-        editButton.textContent = "編集";
+        editButton.classList.add("dispatch-member-edit","img-btn");
+        const editIcon = document.createElement("img");
+        editIcon.src = "/icons/edit.png";
+        editIcon.alt = "";
+        editButton.appendChild(editIcon);
+        // editButton.textContent = "編集";
         editButton.addEventListener("click", async event => {
             event.stopPropagation();
             await onEditMembers?.(crew);
         });
-        row.append(empty, editButton);
+        row.append(top, empty, editButton);
         members.appendChild(row);
     } else {
         crew.members.forEach((member, index) => {
@@ -137,8 +160,12 @@ function createCrewCard(
             if(index === crew.members.length - 1){
                 const editButton = document.createElement("button");
                 editButton.type = "button";
-                editButton.className = "dispatch-member-edit";
-                editButton.textContent = "編集";
+                editButton.classList.add("dispatch-member-edit","img-btn");
+                const editIcon = document.createElement("img");
+                editIcon.src = "/icons/edit.png";
+                editIcon.alt = "";
+                editButton.appendChild(editIcon);
+                // editButton.textContent = "編集";
                 editButton.addEventListener("click", async event => {
                     event.stopPropagation();
                     await onEditMembers?.(crew);
@@ -245,132 +272,93 @@ function getShiftStatusText(shiftType){
 /**
  * 班内伝票
  */
-function renderCrewAssignments(
-    area,
-    assignments,
-    {
-        onUnassign,
-        onReorder,
-        dailyCrewId
-    } = {}
-){
+function renderCrewAssignments(area, assignments, {onUnassign, onReorder, dailyCrewId} = {}){
     area.replaceChildren();
-    assignments.forEach(
-        assignment => {
-            const item = document.createElement("div");
-            item.className = "dispatch-assignment-item";
-            item.dataset.dispatchAssignmentId = assignment.dispatchAssignmentId;
-            item.dataset.orderId = assignment.orderId;
-            item.dataset.version = assignment.version;
-            item.draggable = true;
-
-            item.addEventListener("dragstart",
-                event => {
-                    event.stopPropagation();
-                    event.dataTransfer.effectAllowed = "move";
-                    event.dataTransfer.setData(
-                        "application/x-dispatch-assignment",
-                        JSON.stringify({
-                            dispatchAssignmentId: assignment.dispatchAssignmentId,
-                            orderId: assignment.orderId,
-                            sourceDailyCrewId: dailyCrewId
-                        })
-                    );
-                    item.classList.add("dragging");
-                }
-            );
-
-            item.addEventListener("dragend",
-                () => {item.classList.remove("dragging");}
-            );
-
-            item.addEventListener("dragover",
-                event => {
-                    const assignmentData = event.dataTransfer.getData("application/x-dispatch-assignment");
-                    if(!assignmentData){
-                        return;
-                    }
-
-                    const source = JSON.parse(assignmentData);
-                    // 別班の伝票はここでは並べ替えない
-                    if(source.sourceDailyCrewId !== dailyCrewId){
-                        return;
-                    }
-                    event.preventDefault();
-                    item.classList.add("drag-over-order");
-                }
-            );
-
-            item.addEventListener("dragleave",
-                () => {item.classList.remove("drag-over-order");}
-            );
-
-            item.addEventListener("drop",
-                async event => {
-                    const assignmentData = event.dataTransfer.getData("application/x-dispatch-assignment");
-                    if(!assignmentData){
-                        return;
-                    }
-                    const source = JSON.parse(assignmentData);
-
-                    // 同じ班内だけ並べ替え
-                    if(source.sourceDailyCrewId !== dailyCrewId){
-                        return;
-                    }
-
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    item.classList.remove("drag-over-order");
-
-                    const sourceItem = area.querySelector(`[data-dispatch-assignment-id="${source.dispatchAssignmentId}"]`);
-                    if(!sourceItem || sourceItem === item){
-                        return;
-                    }
-
-                    const rect = item.getBoundingClientRect();
-                    const insertAfter = event.clientY > rect.top + rect.height / 2;
-
-                    if(insertAfter){
-                        item.after(sourceItem);
-                    } else {
-                        item.before(sourceItem);
-                    }
-
-                    const items =
-                        [...area.querySelectorAll(".dispatch-assignment-item")]
-                        .map((element, index) => ({
-                            dispatchAssignmentId: Number(element.dataset.dispatchAssignmentId),
-                            visitOrder: index + 1,
-                            version: Number(element.dataset.version)
-                        }));
-
-                    await onReorder?.(items);
-                }
-            );
-
-            const content = document.createElement("div");
-            content.className = "dispatch-assignment-content";
-            const title = document.createElement("strong");
-            title.textContent = assignment.title || "名称未設定";
-            const address = document.createElement("span");
-            address.textContent = assignment.fullAddress || "";
-            content.append(title, address);
-
-            const remove = document.createElement("button");
-            remove.type = "button";
-            remove.className = "dispatch-assignment-remove";
-            remove.textContent = "×";
-            remove.title = "配車解除";
-            remove.addEventListener("click",
-                async event => {
-                    event.stopPropagation();
-                    await onUnassign?.(assignment);
-                }
-            );
-
-            item.append(content, remove);
-            area.appendChild(item);
-        }
-    );
+    assignments.forEach(assignment => {
+        const item = document.createElement("div");
+        item.className = "dispatch-assignment-item";
+        item.dataset.dispatchAssignmentId = assignment.dispatchAssignmentId;
+        item.dataset.orderId = assignment.orderId;
+        item.dataset.version = assignment.version;
+        item.draggable = true;
+        item.addEventListener("dragstart",
+            event => {
+                event.stopPropagation();
+                event.dataTransfer.effectAllowed = "move";
+                event.dataTransfer.setData(
+                    "application/x-dispatch-assignment",
+                    JSON.stringify({
+                        dispatchAssignmentId: assignment.dispatchAssignmentId,
+                        orderId: assignment.orderId,
+                        sourceDailyCrewId: dailyCrewId
+                    })
+                );
+                item.classList.add("dragging");
+            }
+        );
+        item.addEventListener("dragend", () => {item.classList.remove("dragging");});
+        item.addEventListener("dragover", event => {
+            const assignmentData = event.dataTransfer.getData("application/x-dispatch-assignment");
+            if(!assignmentData){
+                return;
+            }
+            const source = JSON.parse(assignmentData);
+            // 別班の伝票はここでは並べ替えない
+            if(source.sourceDailyCrewId !== dailyCrewId){
+                return;
+            }
+            event.preventDefault();
+            item.classList.add("drag-over-order");
+        });
+        item.addEventListener("dragleave", () => {item.classList.remove("drag-over-order");});
+        item.addEventListener("drop", async event => {
+            const assignmentData = event.dataTransfer.getData("application/x-dispatch-assignment");
+            if(!assignmentData){
+                return;
+            }
+            const source = JSON.parse(assignmentData);
+            // 同じ班内だけ並べ替え
+            if(source.sourceDailyCrewId !== dailyCrewId){
+                return;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            item.classList.remove("drag-over-order");
+            const sourceItem = area.querySelector(`[data-dispatch-assignment-id="${source.dispatchAssignmentId}"]`);
+            if(!sourceItem || sourceItem === item){
+                return;
+            }
+            const rect = item.getBoundingClientRect();
+            const insertAfter = event.clientY > rect.top + rect.height / 2;
+            if(insertAfter){
+                item.after(sourceItem);
+            } else {
+                item.before(sourceItem);
+            }
+            const items = [...area.querySelectorAll(".dispatch-assignment-item")].map((element, index) => ({
+                dispatchAssignmentId: Number(element.dataset.dispatchAssignmentId),
+                visitOrder: index + 1,
+                version: Number(element.dataset.version)
+            }));
+            await onReorder?.(items);
+        });
+        const content = document.createElement("div");
+        content.className = "dispatch-assignment-content";
+        const title = document.createElement("strong");
+        title.textContent = assignment.title || "名称未設定";
+        const address = document.createElement("span");
+        address.textContent = assignment.fullAddress || "";
+        content.append(title, address);
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "dispatch-assignment-remove";
+        remove.textContent = "×";
+        remove.title = "配車解除";
+        remove.addEventListener("click", async event => {
+            event.stopPropagation();
+            await onUnassign?.(assignment);
+        });
+        item.append(content, remove);
+        area.appendChild(item);
+    });
 }

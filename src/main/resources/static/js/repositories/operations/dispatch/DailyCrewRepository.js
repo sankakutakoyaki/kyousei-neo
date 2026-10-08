@@ -25,5 +25,9 @@ export const DailyCrewRepository = {
 
     async saveMembers(params){
         return await RequestClient.request({ queryId: "dailyCrewMemberSave", params });
+    },
+
+    async remove(params){
+        return await RequestClient.request({ queryId: "dailyCrewDelete", params });
     }
 };

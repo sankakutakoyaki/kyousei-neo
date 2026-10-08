@@ -24,10 +24,12 @@
 .normal-input.recycle-number {
     width: 12rem;
 }
+
 .normal-input.date-area {
     width: 10rem;
     font-size: 14px;
 }
+
 .normal-input.date-area.icon-del {
     width: 8rem;
 }
@@ -40,6 +42,10 @@
 }
 
 .normal-input[data-number="true"] {
+    text-align: right;
+}
+
+.normal-input[data-format="currency"] {
     text-align: right;
 }
 

@@ -12,6 +12,7 @@ import { UiValidator } from "../core/validate/UiValidator.js";
 import { FormStateBehavior } from "../core/form/FormStateBehavior.js";
 import { initParentChildLink } from "../util/link.js";
 import { setEnterFocus } from "../core/form/components/enterfocus.js";
+import { formatFields } from "../core/behavior/bindFormatter.js";
 
 export class FormController {
     constructor(config){
@@ -136,7 +137,8 @@ export class FormController {
 
         FormModel.clear(form);
         FormModel.fill(form, data);
-        await initParentChildLink(form);
+        formatFields(form);
+        initParentChildLink(form);
 
         // フォームを開いたときは先頭タブ
         const firstTab = form.querySelector(".tab-menu-item");
@@ -328,6 +330,7 @@ export class FormController {
         const form = document.getElementById(this.formId);
         FormModel.fill(form,this.currentEntity ?? {});
 
+        formatFields(form);
         this.resetAdditional?.();
         this.setSubmitEnabled(false);
     }
@@ -335,6 +338,7 @@ export class FormController {
     set(data){
         const form = document.getElementById(this.formId);
         FormModel.fill(form, data);
+        formatFields(form);
     }
 
     hasChanges(){

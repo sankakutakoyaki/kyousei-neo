@@ -87,12 +87,10 @@ export function handleValidationError(error){
     document.querySelectorAll(".error").forEach(el => {
         el.classList.remove("error");
     });
-
     // エラー項目へ付与
     error.fields?.forEach(id => {
         document.getElementById(id)?.classList.add("error");
     });
-
     // 最初へfocus
     if(error.fields?.length){
         requestAnimationFrame(() => {
@@ -107,17 +105,14 @@ function handleInputFormat(e){
     if(!(el instanceof HTMLInputElement)){
         return;
     }
-
     const type = el.dataset.format;
     if(!type){
         return;
     }
-
     const formatter = formatters[type];
     if(!formatter){
         return;
     }
-
     const value = el.value;
     const formatted = formatter(value);
     if(value !== formatted){

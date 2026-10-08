@@ -34,63 +34,21 @@ export const createVehicleColumns = () => [
         default: ""
     },
     {
-        field: "manufacturer",
-        label: "メーカー",
-        sortable: true,
-        default: ""
-    },
-    {
-        field: "modelCode",
-        label: "型式",
-        sortable: true,
-        default: ""
-    },
-    {
-        field: "firstRegistrationYear",
-        label: "初年度登録",
-        sortable: true,
-        render: (item) => {
-            if (!item.firstRegistrationYear) return "";
-
-            const month = item.firstRegistrationMonth
-                ? String(item.firstRegistrationMonth).padStart(2, "0")
-                : "";
-
-            return month
-                ? `${item.firstRegistrationYear}/${month}`
-                : String(item.firstRegistrationYear);
-        }
-    },
-    {
         field: "inspectionExpirationDate",
         label: "車検期限",
         sortable: true,
         default: ""
     },
     {
-        field: "frontTireSize",
-        label: "前輪タイヤ",
-        sortable: true,
-        default: ""
+        field: "defaultDriverNames",
+        label: "初期担当",
+        sortable: false,
+        default: "未設定"
     },
     {
-        field: "rearTireSize",
-        label: "後輪タイヤ",
-        sortable: true,
-        default: ""
-    },
-    {
-        field: "vehicleHeight",
-        label: "車高",
-        sortable: true,
-        default: "",
-        format: (v) => v == null ? "" : `${v} mm`
-    },
-    {
-        field: "maximumLoad",
-        label: "最大積載量",
-        sortable: true,
-        default: "",
-        format: (v) => v == null ? "" : `${v} kg`
+        field: "defaultAssistantNames",
+        label: "初期助手",
+        sortable: false,
+        default: "未設定"
     }
 ];

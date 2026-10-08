@@ -40,61 +40,80 @@
             })}"></th:block>
         </div>
         <!-- 車番 -->
-        <div class="form-parts form-row">
-            <label>車番</label>
-            <div class="flex-area">
-                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                    {
-                        'name': 'registration-area',
-                        'placeholder': '大阪',
-                        'index': 5
-                    }
-                })}"></th:block>
-                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                    {
-                        'name': 'registration-class',
-                        'placeholder': '100',
-                        'index': 6
-                    }
-                })}"></th:block>
-                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                    {
-                        'name': 'registration-kana',
-                        'placeholder': 'あ',
-                        'index': 7
-                    }
-                })}"></th:block>
-                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                    {
-                        'name': 'registration-number',
-                        'placeholder': '1234',
-                        'index': 8
-                    }
-                })}"></th:block>
-            </div>
+        <div class="flex-area form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '車番',
+                    'name': 'registration-area',
+                    'placeholder': '大阪',
+                    'index': 5
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '',
+                    'name': 'registration-class',
+                    'placeholder': '100',
+                    'index': 6
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '',
+                    'name': 'registration-kana',
+                    'placeholder': 'あ',
+                    'index': 7
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '',
+                    'name': 'registration-number',
+                    'placeholder': '1234',
+                    'index': 8
+                }
+            })}"></th:block>
         </div>
 
         <!-- 初年度登録 -->
-        <div class="form-parts form-row">
-            <label>初年度登録</label>
-            <div class="flex-area">
-                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                    {
-                        'name': 'first-registration-year',
-                        'placeholder': '2024',
-                        'inputmode': 'numeric',
-                        'index': 9
-                    }
-                })}"></th:block>
-                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                    {
-                        'name': 'first-registration-month',
-                        'placeholder': '1',
-                        'inputmode': 'numeric',
-                        'index': 10
-                    }
-                })}"></th:block>
-            </div>
+        <!-- 車高・最大積載量 -->
+        <div class="flex-area form-row">
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text': '初年度登録',
+                    'id': 'vehicle-first-registration-year',
+                    'name': 'first-registration-year',
+                    'index': 9
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text': '',
+                    'id': 'vehicle-first-registration-month',
+                    'name': 'first-registration-month',
+                    'index': 10
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '車高',
+                    'name': 'vehicle-height',
+                    'inputmode': 'numeric',
+                    'index': 15,
+                    'format': 'currency'
+                }
+            })}"></th:block>
+            <span>mm</span>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '最大積載量',
+                    'name': 'maximum-load',
+                    'inputmode': 'numeric',
+                    'index': 16,
+                    'format': 'currency'
+                }
+            })}"></th:block>
+            <span>kg</span>
         </div>
         <!-- 車検期限・ミッション -->
         <div class="flex-area form-row">
@@ -134,28 +153,9 @@
                 }
             })}"></th:block>
         </div>
-        <!-- 車高・最大積載量 -->
-        <div class="flex-area form-row">
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                {
-                    'text': '車高(mm)',
-                    'name': 'vehicle-height',
-                    'inputmode': 'numeric',
-                    'index': 15
-                }
-            })}"></th:block>
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                {
-                    'text': '最大積載量(kg)',
-                    'name': 'maximum-load',
-                    'inputmode': 'numeric',
-                    'index': 16
-                }
-            })}"></th:block>
-        </div>
         <!-- 備考 -->
         <div class="form-row">
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+            <th:block th:replace="~{fragments/components/box :: textareaFragment(${
                 {
                     'text': '備考',
                     'name': 'remarks',
@@ -169,6 +169,16 @@
 <th:block th:fragment="dispatchSettingFragment()">
     <div class="dialog-content" data-enterfocus="dispatch-setting-dialog">
         <div class="form-row">
+            <!-- 車両の基本配車区分 -->
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'基本配車区分',
+                    'id':'dispatch-setting-category',
+                    'name':'dispatch-category',
+                    'combo':'dispatchCategoryComboList',
+                    'index':1
+                }
+            })}"></th:block>
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'車両名',
@@ -186,21 +196,15 @@
                 }
             })}"></th:block>
         </div>
-        <!-- 車両の基本配車区分 -->
-        <div class="form-row">
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                {
-                    'text':'基本配車区分',
-                    'id':'dispatch-setting-category',
-                    'name':'dispatch-category',
-                    'combo':'dispatchCategoryComboList',
-                    'index':1
-                }
-            })}"></th:block>
-        </div>
-
-        <!-- 基本乗務員の対象区分 -->
-        <div class="form-row">
+        <div
+            class="form-row"
+            data-resolve="query"
+            data-query-id="employeeResolve"
+            data-param-builder="employeeParams"
+            data-result-first="true"
+            data-name-key="fullName"
+            data-value-key="employeeId">
+            <!-- 基本乗務員の対象区分 -->
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 {
                     'text':'基本乗務員の対象区分',
@@ -210,18 +214,16 @@
                     'index':2
                 }
             })}"></th:block>
-        </div>
-
-        <!-- 担当者 -->
-        <div
-            class="flex-area form-row"
-            data-resolve="query"
-            data-query-id="employeeResolve"
-            data-param-builder="employeeParams"
-            data-result-first="true"
-            data-name-key="fullName"
-            data-value-key="employeeId">
-
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'役割',
+                    'id':'dispatch-member-role',
+                    'name':'role',
+                    'combo':'crewRoleComboList',
+                    'index':5
+                }
+            })}"></th:block>
+            <!-- 担当者 -->
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'社員ID / コード',
@@ -231,13 +233,11 @@
                     'index':3
                 }
             })}"></th:block>
-
             <input
                 type="hidden"
                 id="dispatch-member-employee-id"
                 name="employee-id"
                 data-role="hidden-id">
-
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text':'社員名',
@@ -248,33 +248,8 @@
                     'index':4
                 }
             })}"></th:block>
-
-            <div class="form-row">
-                <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                    {
-                        'text':'役割',
-                        'id':'dispatch-member-role',
-                        'name':'role',
-                        'combo':'crewRoleComboList',
-                        'top':'-----',
-                        'index':5
-                    }
-                })}"></th:block>
-            </div>
-
-            <div class="form-row">
-                <button
-                    type="button"
-                    id="dispatch-member-add-btn">
-                    追加
-                </button>
-            </div>
+            <button class="normal-btn" type="button" id="dispatch-member-add-btn">追加</button>
         </div>
-
-        <div
-            id="vehicle-default-member-area"
-            class="form-row">
-        </div>
-
+        <div id="vehicle-default-member-area" class="form-row"></div>
     </div>
 </th:block>

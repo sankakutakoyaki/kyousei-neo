@@ -10,9 +10,11 @@
             <!-- 左：車両・担当班 -->
             <section class="dispatch-crew-area">
                 <header class="dispatch-board-header dispatch-crew-header">
-                    <div class="img-btn" data-action="reinitialize-crews">
+                    <span>車両リスト</span>
+                    <!-- <div class="img-btn" data-action="reinitialize-crews">
                         <img src="/icons/reload.png">
-                    </div>
+                    </div> -->
+                    <button type="button" class="normal-btn frameless" data-action="reinitialize-crews">初期化</button>
                 </header>
                 <div id="dispatch-crew-list" class="dispatch-crew-list">
                     <div class="dispatch-empty">
@@ -24,9 +26,10 @@
             <section class="dispatch-order-area">
                 <header class="dispatch-board-header dispatch-order-header">
                     <span>伝票リスト</span>
-                    <div class="img-btn" data-action="reset-assignments">
+                    <!-- <div class="img-btn" data-action="reset-assignments">
                         <img src="/icons/reload.png">
-                    </div>
+                    </div> -->
+                    <button type="button" class="normal-btn frameless" data-action="reset-assignments">初期化</button>
                     <select id="dispatch-order-status" class="normal-select" data-action="change-order-status">
                         <option value="unassigned" selected>未配車</option>
                         <option value="assigned">配車済み</option>

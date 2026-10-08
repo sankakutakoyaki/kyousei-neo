@@ -68,11 +68,7 @@ public class RecycleRepository {
         );
     }
 
-    public int updateRecycleDelivery(
-            TableMeta meta,
-            Map<String,Object> req,
-            String editor
-    ){
+    public int updateRecycleDelivery(TableMeta meta, Map<String,Object> req, String editor){
         req.put("editor", editor);
 
         String recycleNumber = String.valueOf(req.get("recycleNumber"));
@@ -97,11 +93,7 @@ public class RecycleRepository {
         );
     }
 
-    public int updateRecycleShipping(
-            TableMeta meta,
-            Map<String,Object> req,
-            String editor
-    ){
+    public int updateRecycleShipping(TableMeta meta, Map<String,Object> req, String editor){
         req.put("editor", editor);
 
         String recycleNumber = String.valueOf(req.get("recycleNumber"));
@@ -129,11 +121,7 @@ public class RecycleRepository {
         );
     }
 
-    public int updateRecycleLoss(
-            TableMeta meta,
-            Map<String,Object> req,
-            String editor
-    ){
+    public int updateRecycleLoss(TableMeta meta, Map<String,Object> req, String editor){
         req.put("editor", editor);
         String recycleNumber = String.valueOf(req.get("recycleNumber"));
         Map<String,Object> recycle = findRecycleByNumber(recycleNumber);
@@ -163,11 +151,7 @@ public class RecycleRepository {
         return list.isEmpty()? null: list.get(0);
     }
 
-    private int updateLoss(
-            TableMeta meta,
-            Map<String,Object> req,
-            String editor
-    ){
+    private int updateLoss(TableMeta meta, Map<String,Object> req, String editor){
         LogSqlProvider logProvider = resolver.resolve(meta.tableName());
         SqlResult result = RecycleSqlBuilder.buildRecycleLossUpdate(meta, req, logProvider);
 
@@ -178,11 +162,7 @@ public class RecycleRepository {
         );
     }
 
-    private int insertLoss(
-            TableMeta meta,
-            Map<String,Object> req,
-            String editor
-    ){
+    private int insertLoss(TableMeta meta, Map<String,Object> req, String editor){
         Map<String,Object> insert = new HashMap<>();
         insert.put("recycleNumber", req.get("recycleNumber"));
         insert.put("lossDate", req.get("lossDate"));

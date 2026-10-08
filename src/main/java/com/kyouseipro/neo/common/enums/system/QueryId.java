@@ -58,6 +58,7 @@ public enum QueryId {
     DAILY_CREW_REINITIALIZE("dailyCrewReinitialize"),
     DAILY_CREW_MEMBER_CANDIDATE_LIST("dailyCrewMemberCandidateList"),
     DAILY_CREW_MEMBER_ADD("dailyCrewMemberAdd"),
+    DAILY_CREW_DELETE("dailyCrewDelete"),
 
     // ===== Dispatch =====
     DISPATCH_ASSIGNMENT_LIST("dispatchAssignmentList"),

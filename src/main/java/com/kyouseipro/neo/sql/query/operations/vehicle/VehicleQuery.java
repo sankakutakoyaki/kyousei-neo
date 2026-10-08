@@ -8,6 +8,39 @@ import com.kyouseipro.neo.common.enums.code.Transmission;
 
 public class VehicleQuery {
 
+    // public static QueryDefinition vehicleList() {
+    //     return QueryDefinition.select(
+    //         """
+    //         SELECT
+    //             v.vehicle_id,
+    //             v.office_id,
+    //             COALESCE(o.name, '') AS office_name,
+    //             v.vehicle_name,
+    //             v.manufacturer,
+    //             v.model_code,
+    //             v.registration_area,
+    //             v.registration_class,
+    //             v.registration_kana,
+    //             v.registration_number,
+    //             v.first_registration_year,
+    //             v.first_registration_month,
+    //             v.inspection_expiration_date,
+    //             v.transmission,
+    //             v.front_tire_size,
+    //             v.rear_tire_size,
+    //             v.vehicle_height,
+    //             v.maximum_load,
+    //             v.version,
+    //             v.state
+    //         FROM vehicles v
+    //         LEFT OUTER JOIN offices o
+    //             ON o.office_id = v.office_id
+    //             AND o.state = ?
+    //         WHERE v.state = ?
+    //         """,
+    //         List.of("state", "state")
+    //     );
+    // }
     public static QueryDefinition vehicleList() {
         return QueryDefinition.select(
             """
@@ -30,15 +63,60 @@ public class VehicleQuery {
                 v.rear_tire_size,
                 v.vehicle_height,
                 v.maximum_load,
+
+                COALESCE(driver_names.names, '') AS default_driver_names,
+                COALESCE(assistant_names.names, '') AS default_assistant_names,
+
                 v.version,
                 v.state
+
             FROM vehicles v
+
             LEFT OUTER JOIN offices o
                 ON o.office_id = v.office_id
                 AND o.state = ?
+
+            OUTER APPLY (
+                SELECT
+                    STRING_AGG(x.full_name, N'・')
+                        WITHIN GROUP (
+                            ORDER BY x.full_name
+                        ) AS names
+                FROM (
+                    SELECT DISTINCT
+                        e.full_name
+                    FROM vehicle_default_members vdm
+                    INNER JOIN employees e
+                        ON e.employee_id = vdm.employee_id
+                        AND e.state = ?
+                    WHERE vdm.vehicle_id = v.vehicle_id
+                        AND vdm.role = 1
+                        AND vdm.state = ?
+                ) x
+            ) driver_names
+
+            OUTER APPLY (
+                SELECT
+                    STRING_AGG(x.full_name, N'・')
+                        WITHIN GROUP (
+                            ORDER BY x.full_name
+                        ) AS names
+                FROM (
+                    SELECT DISTINCT
+                        e.full_name
+                    FROM vehicle_default_members vdm
+                    INNER JOIN employees e
+                        ON e.employee_id = vdm.employee_id
+                        AND e.state = ?
+                    WHERE vdm.vehicle_id = v.vehicle_id
+                        AND vdm.role = 2
+                        AND vdm.state = ?
+                ) x
+            ) assistant_names
+
             WHERE v.state = ?
             """,
-            List.of("state", "state")
+            List.of("state", "state", "state", "state", "state", "state")
         );
     }
 

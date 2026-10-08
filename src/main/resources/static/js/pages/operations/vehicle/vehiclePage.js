@@ -16,6 +16,7 @@ let deletedDefaultMembers = [];
 export async function init() {
     await initCommon();
     await initPageCache("/api/vehicle/init/cache");
+    initFirstRegistrationSelects();
 
     const vehicle = vehiclePage();
     registerController("vehicle", vehicle);
@@ -224,7 +225,7 @@ function createDefaultMemberItem({
     isNew = false
 }) {
     const item = document.createElement("div");
-    item.className = "vehicle-default-member-item";
+    item.className = "vehicle-default-member-item button-hover-group";
     item.dataset.employeeId = employeeId;
     item.dataset.role = role;
     item.dataset.version = version ?? 0;
@@ -241,8 +242,14 @@ function createDefaultMemberItem({
     const removeButton = document.createElement("button");
 
     removeButton.type = "button";
-    removeButton.textContent = "×";
-    removeButton.className = "vehicle-default-member-remove";
+    // removeButton.textContent = "×";
+    // removeButton.className = "vehicle-default-member-remove";
+    removeButton.className = "button-icon-remove";
+    const delIcon = document.createElement("img");
+    delIcon.src = "/icons/close-s.png";
+    delIcon.alt = "";
+    removeButton.appendChild(delIcon);
+    removeButton.title = "この担当者を基本乗務員から削除";
     removeButton.onclick = () => {
         if(item.dataset.vehicleDefaultMemberId && item.dataset.new !== "true"){
             deletedDefaultMembers.push({
@@ -308,4 +315,22 @@ function hasDefaultMemberChanges(){
     const hasNew = area.querySelector('.vehicle-default-member-item[data-new="true"]') != null;
     const hasDeleted = deletedDefaultMembers.length > 0;
     return hasNew || hasDeleted;
+}
+
+function initFirstRegistrationSelects() {
+    const yearSelect = document.getElementById("vehicle-first-registration-year");
+    const monthSelect = document.getElementById("vehicle-first-registration-month");
+    if(yearSelect){
+        const currentYear = new Date().getFullYear();
+        yearSelect.replaceChildren(new Option("年", ""));
+        for(let year = currentYear; year >= 1990; year--){
+            yearSelect.add(new Option(`${year}年`, year));
+        }
+    }
+    if(monthSelect){
+        monthSelect.replaceChildren(new Option("月", ""));
+        for(let month = 1; month <= 12; month++){
+            monthSelect.add(new Option(`${month}月`, month));
+        }
+    }
 }

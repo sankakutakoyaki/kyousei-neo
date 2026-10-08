@@ -23,11 +23,7 @@ public class BaseSqlRepository {
 
     public Long insert(TableMeta meta, Map<String,Object> req, String editor){
         req.put("editor", editor);
-        SqlResult result = buildSql(
-            meta,
-            req,
-            SqlMode.INSERT
-        );
+        SqlResult result = buildSql(meta, req, SqlMode.INSERT);
         return sqlRepository.insert(
             result.getSql(),
             result.getParams(),
@@ -119,31 +115,18 @@ public class BaseSqlRepository {
         );
     }
 
-    public Long reactivate(
-            TableMeta meta,
-            Object id,
-            Object version,
-            String editor
-    ) {
-        LogSqlProvider logProvider =
-            resolver.resolve(meta.tableName());
-
+    public Long reactivate(TableMeta meta, Object id, Object version, String editor) {
+        LogSqlProvider logProvider = resolver.resolve(meta.tableName());
         if (logProvider == null) {
-            throw new IllegalStateException(
-                "LogSqlProvider が登録されていません: "
-                + meta.tableName()
-            );
+            throw new IllegalStateException("LogSqlProvider が登録されていません: " + meta.tableName());
         }
-
-        SqlResult result =
-            SqlBuilder.buildReactivate(
-                meta,
-                id,
-                version,
-                editor,
-                logProvider
-            );
-
+        SqlResult result = SqlBuilder.buildReactivate(
+            meta,
+            id,
+            version,
+            editor,
+            logProvider
+        );
         return sqlRepository.insert(
             result.getSql(),
             result.getParams(),

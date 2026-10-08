@@ -10,20 +10,27 @@
 /* ヘッダー */
 .dispatch-header-grid {
     display: grid;
-    grid-template-columns: auto auto auto 1fr 4rem;
+    grid-template-columns: auto auto auto auto 4rem 1fr;
     gap: .5rem;
     align-items: end;
     padding: .5rem;
+    & button {
+        height: 2.5rem;
+    }
+}
+
+#dispatch-add-vehicle {
+    margin-left: 3rem;
 }
 
 /* 稼働班選択ボタン */
 .dispatch-header-action {
     width: 4rem;
 }
-
+/* 
 .dispatch-header-action .img-btn {
     width: 100%;
-}
+} */
 
 /* 配車ボード */
 .dispatch-board {
@@ -141,16 +148,22 @@
 
 .dispatch-crew-header {
     display: grid;
-    grid-template-columns: 1fr 2.5rem;
+    grid-template-columns: 1fr auto;
     gap: .5rem;
     align-items: center;
+    & button {
+        height: 2.5rem;
+    }
 }
 
 .dispatch-order-header {
     display: grid;
-    grid-template-columns: 1fr 2.5rem auto;
+    grid-template-columns: 1fr auto auto;
     gap: .5rem;
     align-items: center;
+    & button {
+        height: 2.5rem;
+    }
 }
 
 .dispatch-order-card {
@@ -275,10 +288,70 @@
 }
 
 .dispatch-crew-card-header {
-    padding-right: 3rem;
+    padding-right: 1rem;
 }
 
 .dispatch-assignment-item.drag-over-order {
     outline: 2px solid currentColor;
     outline-offset: -2px;
+}
+
+.dispatch-crew-number-area {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.dispatch-crew-delete {
+    border: none;
+    background: transparent;
+    padding: 0 0.2rem;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.dispatch-crew-delete:hover {
+    opacity: 0.6;
+}
+
+.dispatch-member-empty {
+    padding: 0.75rem;
+    text-align: center;
+    color: #888;
+}
+
+#dispatch-member-form-list {
+    min-width: 30rem;
+}
+
+#dispatch-member-add-button {
+    height: 2.5rem;
+}
+
+.dispatch-member-form-row,
+.dispatch-member-add-row {
+    display: grid;
+    grid-template-columns: 12rem auto 2.5rem;
+    column-gap: .5rem;
+}
+
+.dispatch-member-form-row span:first-child {
+    font-size: 1.2rem;
+    align-content: center;
+    margin-left: 1rem;
+} 
+
+.dispatch-member-form-row .normal-btn {
+    height: 2.5rem;
+}
+
+.dispatch-member-divider {
+    border-top: 1px solid var(--br);
+    margin: 1rem 0;
+    width: 100%;
+}
+
+.dispatch-member-edit {
+    width: 3rem;
 }

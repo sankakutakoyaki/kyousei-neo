@@ -40,6 +40,7 @@
                     data-resolve-name=${data['resolveName']},
                     tabindex=${data['index']},
                     disabled=${data['disabled']},
+                    readonly=${data['readonly']},
                     data-trim=${data['trim'] != null ? 'true' : null},
                     data-skip-if-null=${data['skipIfNull'] != null ? 'true' : null},
                     data-zero-to-null=${data['zeroToNull'] != null ? 'true' : null},
@@ -88,7 +89,6 @@
         <label th:if="${data['text']}"
                th:for="${data['id']}"
                th:text="${data['text']}"></label>
-
         <textarea
             class="normal-textarea"
             th:attr="
@@ -109,56 +109,61 @@
 
 <th:block th:fragment="dateRangeFragment(data)">
     <div class="date-range">
-
         <!-- FROM -->
         <div class="form-parts">
             <label th:if="${data['fromText']}"
                    th:text="${data['fromText']}"></label>
-
             <input
                 class="normal-input"
                 type="date"
                 th:attr="
                     id=${data['fromId']},
                     name=${data['fromName']},
-
                     data-action='date-arrow',
                     data-type='date',
                     data-role='start',
                     data-pair=${data['toId']},
-
                     data-trim=true
                 ">
         </div>
-
         <!-- 区切り -->
         <div class="form-parts">
             <label></label>
             <span class="range-separator">〜</span>
         </div>
-
         <!-- TO -->
         <div class="form-parts">
             <label th:if="${data['toText']}"
                    th:text="${data['toText']}"></label>
-
             <input
                 class="normal-input"
                 type="date"
                 th:attr="
                     id=${data['toId']},
                     name=${data['toName']},
-
                     data-action='date-arrow',
                     data-type='date',
                     data-role='end',
                     data-pair=${data['fromId']},
-
                     data-trim=true
                 ">
         </div>
-
     </div>
+</th:block>
+
+<th:block th:fragment="hiddenBoxFragment(data)">
+    <input
+        type="hidden"
+        data-role="hidden-id"
+        th:attr="
+            id=${data['id']},
+            name=${data['name']},
+            value=${data['value']},
+            data-key=${data['key']},
+            data-submit=${data['submit']},
+            data-skip-if-null=${data['skipIfNull'] != null ? 'true' : null},
+            data-zero-to-null=${data['zeroToNull'] != null ? 'true' : null}
+        ">
 </th:block>
 
 <!-- <th:block th:fragment="dateRangeFragment(data)">
