@@ -7,6 +7,7 @@ import { EmployeeShiftRepository } from "../../../repositories/operations/shift/
 import { DialogService } from "../../../core/ui/dialog/DialogService.js";
 import { getMonthRange, getShiftMark } from "./employeeShiftUtil.js";
 import { appendEmployeeRow, renderMonthHeader, updateRowSummary } from "./employeeShiftTable.js";
+import { initLoginOffice } from "../../../util/office.js";
 
 const changedShifts = new Map();
 let loadedEmployees = [];
@@ -19,6 +20,7 @@ export async function init(){
 
     const controller = {key: "employeeShift"};
     initCombo(controller);
+    initLoginOffice();
     initMonth();
     renderMonthHeader(document.getElementById("shift-month")?.value);
 
@@ -63,6 +65,11 @@ export async function init(){
     document.getElementById("shift-save-btn")?.addEventListener("click", async () => {
         await saveShifts();
     });
+
+    const officeId = Number(document.getElementById("shift-office")?.value);
+    if(officeId){
+        await loadEmployees(officeId);
+    }
 }
 
 async function loadEmployees(officeId){
@@ -84,18 +91,20 @@ async function loadEmployees(officeId){
     }
 
     const [employeeResult, shiftResult] = await Promise.all([
-            EmployeeShiftRepository.findEmployees({
-                state: APP.cache.common.state.INITIAL,
-                officeId,
-                ownCompanyCategory: APP.cache.common.companyCategory.OWN
-            }),
-            EmployeeShiftRepository.findMonthList({
-                fromDate: range.fromDate,
-                toDate: range.toDate,
-                officeId,
-                state: APP.cache.common.state.INITIAL
-            })
-        ]);
+        EmployeeShiftRepository.findEmployees({
+            state: APP.cache.common.state.INITIAL,
+            officeId,
+            ownCompanyCategory: APP.cache.common.companyCategory.OWN,
+            fulltimeCategory: APP.cache.common.employeeCategory.FULLTIME,
+            parttimeCategory: APP.cache.common.employeeCategory.PARTTIME
+        }),
+        EmployeeShiftRepository.findMonthList({
+            fromDate: range.fromDate,
+            toDate: range.toDate,
+            officeId,
+            state: APP.cache.common.state.INITIAL
+        })
+    ]);
     const employees = employeeResult.data ?? [];
     const shifts = shiftResult.data ?? [];
     loadedEmployees = employees;

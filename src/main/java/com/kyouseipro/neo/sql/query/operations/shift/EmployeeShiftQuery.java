@@ -153,7 +153,6 @@ public class EmployeeShiftQuery {
      * シフト入力対象の従業員一覧
      */
     public static QueryDefinition employeeShiftEmployeeList() {
-
         return QueryDefinition.select(
             """
             SELECT
@@ -162,6 +161,10 @@ public class EmployeeShiftQuery {
                 e.full_name,
                 e.office_id,
                 e.category AS employee_category,
+
+                e.employee_position_id,
+                COALESCE(ep.position_name, '') AS position_name,
+                ep.display_order AS position_display_order,
 
                 c.company_id,
                 c.name AS company_name,
@@ -179,16 +182,20 @@ public class EmployeeShiftQuery {
 
             INNER JOIN employee_office_members eom
                 ON eom.employee_id = e.employee_id
-            AND eom.office_id = ?
-            AND eom.state = ?
+                AND eom.office_id = ?
+                AND eom.state = ?
 
             LEFT JOIN companies c
                 ON c.company_id = e.company_id
-            AND c.state = ?
+                AND c.state = ?
+
+            LEFT JOIN employee_positions ep
+                ON ep.employee_position_id = e.employee_position_id
+                AND ep.state = ?
 
             LEFT JOIN employee_work_category_members m
                 ON m.employee_id = e.employee_id
-            AND m.state = ?
+                AND m.state = ?
 
             WHERE e.state = ?
 
@@ -198,27 +205,81 @@ public class EmployeeShiftQuery {
                 e.full_name,
                 e.office_id,
                 e.category,
+                e.employee_position_id,
+                ep.position_name,
+                ep.display_order,
                 c.company_id,
                 c.name,
                 c.category
 
-            ORDER BY
-                CASE
-                    WHEN c.category = ? THEN 0
-                    ELSE 1
-                END,
-                c.name,
-                e.category,
-                e.full_name,
-                e.employee_id
+                ORDER BY
+                    /* 社員 → アルバイト → 協力会社 */
+                    CASE
+                        WHEN c.category = ?
+                            AND e.category = ? THEN 0
+                        WHEN c.category = ?
+                            AND e.category = ? THEN 1
+                        ELSE 2
+                    END,
+
+                    /* 部長～係長を先に */
+                    CASE
+                        WHEN ep.display_order < 50 THEN 0
+                        ELSE 1
+                    END,
+
+                    /* 部長 → 次長 → 課長 → 係長 */
+                    CASE
+                        WHEN ep.display_order < 50
+                        THEN ep.display_order
+                        ELSE 9999
+                    END,
+
+                    /* 主任以下だけ 配送 → 工事 → 事務 */
+                    CASE
+                        WHEN ep.display_order >= 50
+                            OR e.employee_position_id IS NULL
+                        THEN
+                            CASE
+                                WHEN MAX(CASE
+                                    WHEN m.employee_work_category_id = 1
+                                    THEN 1 ELSE 0
+                                END) = 1 THEN 1
+
+                                WHEN MAX(CASE
+                                    WHEN m.employee_work_category_id = 2
+                                    THEN 1 ELSE 0
+                                END) = 1 THEN 2
+
+                                WHEN MAX(CASE
+                                    WHEN m.employee_work_category_id = 3
+                                    THEN 1 ELSE 0
+                                END) = 1 THEN 3
+
+                                ELSE 9
+                            END
+                        ELSE 0
+                    END,
+
+                    /* 配送等の中では主任 → 役職なし */
+                    COALESCE(ep.display_order, 9999),
+
+                    c.name,
+                    e.full_name,
+                    e.employee_id
             """,
             List.of(
                 "officeId",
-                "state",
-                "state",
-                "state",
-                "state",
-                "ownCompanyCategory"
+                "state",                 // eom
+                "state",                 // company
+                "state",                 // position
+                "state",                 // work category member
+                "state",                 // employee
+
+                "ownCompanyCategory",
+                "fulltimeCategory",
+                "ownCompanyCategory",
+                "parttimeCategory"
             )
         );
     }

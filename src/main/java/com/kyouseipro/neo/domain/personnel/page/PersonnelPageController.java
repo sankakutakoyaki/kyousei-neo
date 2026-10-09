@@ -15,6 +15,7 @@ import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.util.EnumUtil;
 import com.kyouseipro.neo.domain.corporation.api.company.CompanyRepository;
 import com.kyouseipro.neo.domain.corporation.api.office.OfficeService;
+import com.kyouseipro.neo.domain.personnel.position.EmployeePositionRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class PersonnelPageController {
     private final OfficeService officeService;
     private final CompanyRepository companyRepository;
+    private final EmployeePositionRepository employeePositionRepository;
 
     /**
 	 * 従業員
@@ -50,6 +52,7 @@ public class PersonnelPageController {
             "page", Map.of(
                 "companyId", companyId,
                 "officeComboList", officeService.findComboByCategory(CompanyCategory.OWN.getCode()),
+                "employeePositionComboList", employeePositionRepository.findCombo(),
                 "genderComboList", EnumUtil.toCombo(Gender.class),
                 "bloodTypeComboList", EnumUtil.toCombo(BloodType.class)
             )

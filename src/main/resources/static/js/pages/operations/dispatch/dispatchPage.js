@@ -15,6 +15,7 @@ import { initCrewDrop } from "./dispatchDragDrop.js";
 import { DialogService } from "../../../core/ui/dialog/DialogService.js";
 import { createCrewMemberForm } from "./dispatchCrewMemberForm.js";
 import { createDispatchVehicle } from "./dispatchVehicle.js";
+import { initLoginOffice } from "../../../util/office.js";
 
 let dispatchOrders = [];
 let dispatchLoadPromise = Promise.resolve();
@@ -32,7 +33,7 @@ export async function init() {
     crewMemberForm = createCrewMemberForm(dispatch, {afterSave: loadDispatchBoard});
     dispatchVehicle = createDispatchVehicle({onChanged: loadDispatchBoard});
     
-    setInitialOffice();
+    initLoginOffice();
     await loadDispatchBoard({ensureCrews: true});
 }
 
@@ -53,16 +54,6 @@ function dispatchPage() {
             initConditions();
         }
     });
-}
-
-function setInitialOffice(){
-    const office = document.getElementById("dispatch-office");
-    if(!office) return;
-
-    const loginOfficeId = APP.cache.page?.loginOfficeId;
-    if(!loginOfficeId) return;
-
-    office.value = String(loginOfficeId);
 }
 
 /**

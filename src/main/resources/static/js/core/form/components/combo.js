@@ -50,13 +50,7 @@ export function init(area, config) {
 //         area.addEventListener("change", onChange);
 //     }
 // }
-export function createComboBox({
-    area,
-    items,
-    text = null,
-    emptyOption = false,
-    onChange = null
-}) {
+export function createComboBox({area, items, text = null, emptyOption = false, onChange = null}) {
     if (!area) return;
 
     area.replaceChildren();

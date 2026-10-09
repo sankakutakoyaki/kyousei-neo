@@ -3,15 +3,18 @@ package com.kyouseipro.neo.domain.management;
 import java.util.Map;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.common.enums.code.CompanyCategory;
+import com.kyouseipro.neo.common.enums.code.EmployeeCategory;
 import com.kyouseipro.neo.common.enums.code.ShiftType;
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.util.EnumUtil;
 import com.kyouseipro.neo.domain.corporation.api.office.OfficeService;
+import com.kyouseipro.neo.domain.corporation.api.office.OwnOfficeContextService;
 import com.kyouseipro.neo.domain.personnel.employee.EmployeeWorkCategoryService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class EmployeeShiftPageController {
 
     private final OfficeService officeService;
+    private final OwnOfficeContextService ownOfficeContextService;
     private final EmployeeWorkCategoryService employeeWorkCategoryService;
 
     /**
@@ -37,16 +41,19 @@ public class EmployeeShiftPageController {
      */
     @GetMapping("/api/employeeshift/init/cache")
     @ResponseBody
-    public Map<String, Object> initEmployeeShift() {
+    public Map<String, Object> initEmployeeShift(Authentication authentication) {
+        Integer loginOfficeId = ownOfficeContextService.getOfficeId(authentication);
         return Map.of(
             "common", Map.of(
                 "state", EnumUtil.toMap(State.class),
-                "companyCategory", EnumUtil.toMap(CompanyCategory.class)
+                "companyCategory", EnumUtil.toMap(CompanyCategory.class),
+                "employeeCategory", EnumUtil.toMap(EmployeeCategory.class)
             ),
             "page", Map.of(
                 "officeComboList", officeService.findComboByCategory(CompanyCategory.OWN.getCode()),
                 "shiftTypeComboList", EnumUtil.toCombo(ShiftType.class),
-                "employeeWorkCategoryComboList", employeeWorkCategoryService.findCombo())
+                "employeeWorkCategoryComboList", employeeWorkCategoryService.findCombo(),
+                "loginOfficeId", loginOfficeId != null ? loginOfficeId: "")
         );
     }
 }
