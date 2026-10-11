@@ -122,10 +122,8 @@ function createCrewCard(
     delIcon.alt = "";
     deleteButton.appendChild(delIcon);
     deleteButton.title = "この車両を配車ボードから削除";
-    deleteButton.addEventListener("click", async event => {
-        event.stopPropagation();
-        await onDeleteCrew?.(crew);
-    });
+    deleteButton.dataset.action = "delete-daily-crew";
+    deleteButton._crew = crew;
     numberArea.append(number, deleteButton);
     header.append(name, numberArea);
 
@@ -146,11 +144,8 @@ function createCrewCard(
         editIcon.src = "/icons/edit.png";
         editIcon.alt = "";
         editButton.appendChild(editIcon);
-        // editButton.textContent = "編集";
-        editButton.addEventListener("click", async event => {
-            event.stopPropagation();
-            await onEditMembers?.(crew);
-        });
+        editButton.dataset.action = "edit-crew-members";
+        editButton._crew = crew;
         row.append(top, empty, editButton);
         members.appendChild(row);
     } else {
@@ -165,11 +160,8 @@ function createCrewCard(
                 editIcon.src = "/icons/edit.png";
                 editIcon.alt = "";
                 editButton.appendChild(editIcon);
-                // editButton.textContent = "編集";
-                editButton.addEventListener("click", async event => {
-                    event.stopPropagation();
-                    await onEditMembers?.(crew);
-                });
+                editButton.dataset.action = "edit-crew-members";
+                editButton._crew = crew;
                 row.appendChild(editButton);
             }
             members.appendChild(row);
@@ -354,10 +346,8 @@ function renderCrewAssignments(area, assignments, {onUnassign, onReorder, dailyC
         remove.className = "dispatch-assignment-remove";
         remove.textContent = "×";
         remove.title = "配車解除";
-        remove.addEventListener("click", async event => {
-            event.stopPropagation();
-            await onUnassign?.(assignment);
-        });
+        remove.dataset.action = "unassign-order";
+        remove._assignment = assignment;
         item.append(content, remove);
         area.appendChild(item);
     });

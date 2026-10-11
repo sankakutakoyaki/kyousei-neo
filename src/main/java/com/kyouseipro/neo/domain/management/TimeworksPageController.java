@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kyouseipro.neo.common.enums.code.CompanyCategory;
 import com.kyouseipro.neo.domain.corporation.api.office.OfficeService;
+import com.kyouseipro.neo.domain.corporation.api.office.OwnOfficeContextService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TimeworksPageController {
     private final OfficeService officeService;
+    private final OwnOfficeContextService ownOfficeContextService;
 
     /** 勤怠打刻画面を返す。 */
     @GetMapping("/timeworks")
@@ -29,21 +31,49 @@ public class TimeworksPageController {
     @ResponseBody
     @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
     public Map<String, Object> initTimeworks(Authentication authentication) {
+
         boolean canManage = authentication.getAuthorities().stream()
             .anyMatch(authority -> List.of(
-                "APPROLE_admin", "APPROLE_master", "APPROLE_leader"
+                "APPROLE_admin",
+                "APPROLE_master",
+                "APPROLE_leader"
             ).contains(authority.getAuthority()));
+
         boolean personalMode = authentication.getAuthorities().stream()
-            .anyMatch(authority -> List.of("APPROLE_user", "APPROLE_staff")
-                .contains(authority.getAuthority()));
+            .anyMatch(authority -> List.of(
+                "APPROLE_user",
+                "APPROLE_staff"
+            ).contains(authority.getAuthority()));
+
+        Integer loginOfficeId =
+            ownOfficeContextService.getOfficeId(authentication);
+
         return Map.of(
             "common", Map.of(),
             "page", Map.of(
                 "canManage", canManage,
                 "personalMode", personalMode,
-                "officeComboList", canManage
-                    ? officeService.findComboByCategory(CompanyCategory.OWN.getCode())
-                    : List.of()
+
+                "officeComboList",
+                    canManage
+                        ? officeService.findComboByCategory(
+                            CompanyCategory.OWN.getCode()
+                        )
+                        : List.of(),
+                "closingTypeComboList", List.of(
+                        Map.of(
+                            "value", "FIFTEENTH",
+                            "label", "15日締め"
+                        ),
+                        Map.of(
+                            "value", "MONTH_END",
+                            "label", "月末締め"
+                        )
+                    ),
+                "loginOfficeId",
+                    loginOfficeId != null
+                        ? loginOfficeId
+                        : ""
             )
         );
     }

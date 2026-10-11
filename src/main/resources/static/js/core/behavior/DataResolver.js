@@ -6,13 +6,8 @@ import { normalizeValue, getOptions } from "./valueNormalizer.js";
 import { parsers } from "./parsers.js";
 
 const paramBuilders = {
-    makerParams: () => ({
-        state: APP.cache.common.state.INITIAL
-    }),
-    employeeParams: (id) => ({
-        state: APP.cache.common.state.INITIAL,
-        identifier: id
-    })
+    makerParams: () => ({state: APP.cache.common.state.INITIAL}),
+    employeeParams: (id) => ({state: APP.cache.common.state.INITIAL, identifier: id})
 };
 
 export const DataResolver = {
@@ -22,20 +17,30 @@ export const DataResolver = {
             const type = group.dataset.resolve;
             const idInput = group.querySelector("[data-resolve-id]");
             const nameField = group.querySelector("[data-resolve-name]");
-
             if (!idInput) return;
-
             /* ID → Resolve */
-            idInput.addEventListener("blur", async () => {
-                this.resolve(group, type);
+            idInput.addEventListener("blur", async () => {this.resolve(group, type);});
+            idInput.addEventListener("input",() => {
+                group._resolvedData = null;
+                delete idInput.dataset.lastId;
+                if(nameField){
+                    this.clear(nameField);
+                }
             });
-
+            /* Enter → Resolve */
+            if(group.dataset.resolveEnter === "true"){
+                idInput.addEventListener("keydown", async event => {
+                    if(event.key !== "Enter"){return;}
+                    if(event.isComposing){return;}
+                    event.preventDefault();
+                    await this.resolve(group, type);
+                });
+            }
             /* Name(select) → ID */
             if (nameField?.tagName === "SELECT") {
                 nameField.addEventListener("change", () => {
                     const value = nameField.value;
-                    updateField(idInput, Number(value) === 0 ? "": value
-                    );
+                    updateField(idInput, Number(value) === 0 ? "": value);
                 });
             }
         });
@@ -50,35 +55,19 @@ export const DataResolver = {
         // 空ならクリア
         if (!id) {
             delete idInput.dataset.lastId;
-            // this.clear(nameField);
-            if (nameField) {
-                this.clear(nameField);
-            }
+            if (nameField) {this.clear(nameField);}
             return;
         }
-
         idInput.dataset.lastId = id;
-
         // SELECTはここで処理
         if (nameField?.tagName === "SELECT") {
             const found = this.resolveSelect(nameField, id);
-            if (!found) {
-                idInput.value = "";
-            }
+            if (!found) {idInput.value = "";}
             return;
         }
-
         // それ以外はresolverへ
         const resolver = resolvers[type] || resolvers.default;
-
-        await resolver.resolve({
-            group,
-            type,
-            id,
-            idInput,
-            nameField,
-            clear: this.clear
-        });
+        await resolver.resolve({group, type, id, idInput, nameField, clear: this.clear});
     },
 
     resolveSelect(select, id) {
@@ -91,9 +80,7 @@ export const DataResolver = {
         updateField(select, "");
         return false;
     },
-    clear(field) {
-        updateField(field, "");
-    }
+    clear(field) {updateField(field, "");}
 };
 
 function focusEnd(input) {
@@ -128,37 +115,21 @@ export function resolveSubmitValue(el, value){
     const validateType = el.dataset.validate;
     if(validateType){
         const parser = parsers[validateType];
-        if(parser){
-            v = parser(v);
-        }
+        if(parser){v = parser(v);}
     }
     // ★ 共通normalize
-    return normalizeValue(
-        v,
-        getOptions(el)
-    );
+    return normalizeValue(v, getOptions(el));
 }
 
 const defaultResolver = {
-    async resolve({
-        type,
-        id,
-        nameField,
-        idInput,
-        group,
-        clear
-    }) {
+    async resolve({type, id, nameField, idInput, group, clear}) {
         try {
             const res = await api.get(`/api/${type}/${id}`);
             const data = res?.data;
             if (!data || !data.data) {
                 clear(nameField);
-                // hidden clear
-                const hidden =
-                    group?.querySelector("[data-role='hidden-id']");
-                if(hidden){
-                    hidden.value = "";
-                }
+                const hidden = group?.querySelector("[data-role='hidden-id']");
+                if(hidden){hidden.value = "";}
                 requestAnimationFrame(() => {
                     idInput.focus();
                     idInput.select();
@@ -170,11 +141,8 @@ const defaultResolver = {
             // hidden value
             const valueKey = group?.dataset.valueKey;
             if(valueKey){
-                const hidden =
-                    group.querySelector("[data-role='hidden-id']");
-                if(hidden){
-                    hidden.value = data[valueKey] ?? "";
-                }
+                const hidden = group.querySelector("[data-role='hidden-id']");
+                if(hidden){hidden.value = data[valueKey] ?? "";}
             }
         } catch (e) {
             console.error(e);
@@ -192,28 +160,18 @@ const queryResolver = {
         const cacheKey = queryId + ":" + JSON.stringify(params);
         try {
             if (!this.cacheMap[cacheKey]) {
-                const res = await api.request({
-                    queryId,
-                    params,
-                    showProcessing: false
-                });
+                const res = await api.request({queryId, params, showProcessing: false});
                 this.cacheMap[cacheKey] = res?.data || [];
             }
-
             const list = this.cacheMap[cacheKey];
             const idKey = group.dataset.idKey || "id";
             const nameKey = group.dataset.nameKey || "name";
-            const found = group.dataset.resultFirst === "true"
-                    ? list[0]
-                    : list.find(x => String(x[idKey]) === String(id));
-
+            const found = group.dataset.resultFirst === "true" ? list[0]: list.find(x => String(x[idKey]) === String(id));
             if (!found) {
                 clear(nameField);
                 // hiddenも消す
                 const hidden = group.querySelector("[data-role='hidden-id']");
-                if(hidden){
-                    hidden.value = "";
-                }
+                if(hidden){hidden.value = "";}
                 requestAnimationFrame(() => {
                     idInput.focus();
                     idInput.select();
@@ -226,13 +184,52 @@ const queryResolver = {
             const valueKey = group.dataset.valueKey;
             if(valueKey){
                 const hidden = group.querySelector("[data-role='hidden-id']");
-                if(hidden){
-                    hidden.value = found?.[valueKey] ?? "";
-                }
+                if(hidden){hidden.value = found?.[valueKey] ?? "";}
             }
         } catch (e) {
             console.error(e);
             clear(nameField);
+        }
+    }
+};
+
+const apiResolver = {
+    async resolve({group, id, idInput, nameField, clear}) {
+        const url = group.dataset.resolveUrl;
+        const paramKey = group.dataset.paramKey || "value";
+        const nameKey = group.dataset.nameKey || "name";
+        if(!url){
+            console.warn("resolve url is not defined", group);
+            return;
+        }
+        try {
+            const query = new URLSearchParams({[paramKey]: id});
+            const res = await api.get(`${url}?${query.toString()}`);
+            const data = res?.data;
+            if(!data){
+                group._resolvedData = null;
+                if(nameField){clear(nameField);}
+                requestAnimationFrame(() => {
+                    idInput.focus();
+                    idInput.select();
+                });
+                return;
+            }
+            // 解決結果全体を保持
+            group._resolvedData = data;
+            // 表示名
+            if(nameField){nameField.value = data[nameKey] ?? "";}
+            // 解決完了を通知
+            group.dispatchEvent(new CustomEvent("resolved", {bubbles: true, detail: {data}}));
+        } catch(error){
+            console.error(error);
+            group._resolvedData = null;
+            delete idInput.dataset.lastId;
+            if(nameField){clear(nameField);}
+            requestAnimationFrame(() => {
+                idInput.focus();
+                idInput.select();
+            });
         }
     }
 };
@@ -244,7 +241,6 @@ const postalResolver = {
     async resolve({ id, idInput, group }) {
         const res = await api.post("/api/address/get/postalcode", { value: id });
         const data = res?.data;
-
         const postalInput = idInput;
         const addressInput = group.querySelector('[name="full-address"]');
         // データなし
@@ -261,10 +257,7 @@ const postalResolver = {
         postalInput.value = address.postalCode ?? postalInput.value;
         // 住所
         if (addressInput) {
-            const full = address.fullAddress
-                ?? (address.prefecture || "") +
-                   (address.city || "") +
-                   (address.town || "");
+            const full = address.fullAddress ?? (address.prefecture || "") + (address.city || "") + (address.town || "");
             addressInput.value = full;
             focusEnd(addressInput);
         }
@@ -282,50 +275,25 @@ const itemResolver = {
             const itemMaker = panel?.querySelector('[name="item-maker"]');
             const itemModel = panel?.querySelector('[name="item-model"]');
             const itemQuantity = panel?.querySelector('[name="item-quantity"]');
-
             // データなし
             if (!data) {
                 // 商品情報をクリア
-                if (itemName) {
-                    itemName.value = "";
-                }
-
-                if (itemMaker) {
-                    itemMaker.value = "";
-                }
-
-                if (itemModel) {
-                    itemModel.value = "";
-                }
-
-                if (itemQuantity) {
-                    itemQuantity.value = "";
-                }
-
+                if (itemName) {itemName.value = "";}
+                if (itemMaker) {itemMaker.value = "";}
+                if (itemModel) {itemModel.value = "";}
+                if (itemQuantity) {itemQuantity.value = "";}
                 // JANコードもクリア
                 idInput.value = "";
-
                 requestAnimationFrame(() => {
                     idInput.focus();
                     idInput.select();
                 });
-
                 return;
             }
-
             // 商品情報セット
-            if (itemName) {
-                itemName.value = data.itemName ?? "";
-            }
-
-            if (itemMaker) {
-                itemMaker.value = data.itemMaker ?? "";
-            }
-
-            if (itemModel) {
-                itemModel.value = data.itemModel ?? "";
-            }
-
+            if (itemName) {itemName.value = data.itemName ?? "";}
+            if (itemMaker) {itemMaker.value = data.itemMaker ?? "";}
+            if (itemModel) {itemModel.value = data.itemModel ?? "";}
             // 商品情報取得成功 → 数量へ
             if (itemQuantity) {
                 itemQuantity.focus();
@@ -351,22 +319,12 @@ const workResolver = {
             const workName = panel?.querySelector('[name="order-work-name"]');
             const workPrice = panel?.querySelector('[name="order-work-price"]');
             const workQuantity = panel?.querySelector('[name="order-work-quantity"]');
-
             // データなし
             if (!data) {
                 // 作業情報をクリア
-                if (workName) {
-                    workName.value = "";
-                }
-
-                if (workPrice) {
-                    workPrice.value = "";
-                }
-
-                if (workQuantity) {
-                    workQuantity.value = "";
-                }
-
+                if (workName) {workName.value = "";}
+                if (workPrice) {workPrice.value = "";}
+                if (workQuantity) {workQuantity.value = "";}
                 // 作業コードもクリア
                 idInput.value = "";
                 requestAnimationFrame(() => {
@@ -375,16 +333,9 @@ const workResolver = {
                 });
                 return;
             }
-
             // 作業情報セット
-            if (workName) {
-                workName.value = data.workName ?? "";
-            }
-
-            if (workPrice) {
-                workPrice.value = data.workPrice ?? "";
-            }
-
+            if (workName) {workName.value = data.workName ?? "";}
+            if (workPrice) {workPrice.value = data.workPrice ?? "";}
             // 作業情報取得成功 → 数量へ
             if (workQuantity) {
                 workQuantity.focus();
@@ -406,5 +357,6 @@ const resolvers = {
     item: itemResolver,
     work: workResolver,
     query: queryResolver,
+    api: apiResolver,
     default: defaultResolver
 };

@@ -137,20 +137,12 @@
 .timework-management h2 { margin-top: 0; }
 
 .management-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: .75rem;
-}
-
-.management-toolbar label { display: grid; gap: .3rem; }
-.management-toolbar :is(input, select) {
-    min-width: 10rem;
-    min-height: 2.4rem;
-    padding: 0 .5rem;
-    border: 1px solid var(--line);
-    border-radius: .3rem;
-    background: var(--white);
+    display: grid;
+    column-gap: .5rem;
+    grid-template-columns: auto auto auto minmax(12rem, auto) 5rem 1fr;
+    &>.img-btn {
+        margin-left: 2rem;
+    }
 }
 
 .management-period { margin: 1rem 0; color: #555; }
@@ -172,6 +164,7 @@
         minmax(8rem, .8fr)
         4rem;
 }
+
 .management-table :is(tbody) tr {
     height: 3rem;
 }

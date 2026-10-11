@@ -2,7 +2,6 @@
 
 import { initCommon } from "../../../bootstrap/initPage.js";
 import { initPageCache } from "../../../bootstrap/initPageCache.js";
-import { getToday } from "../../../util/time.js";
 import { registerController } from "../../../application/controllerRegistry.js";
 import { PageController } from "../../../application/PageController.js";
 import { DailyCrewRepository } from "../../../repositories/operations/dispatch/DailyCrewRepository.js";
@@ -13,9 +12,13 @@ import { groupDispatchCrews, renderDispatchCrews } from "./dispatchCrewView.js";
 import { renderDispatchOrders } from "./dispatchOrderView.js";
 import { initCrewDrop } from "./dispatchDragDrop.js";
 import { DialogService } from "../../../core/ui/dialog/DialogService.js";
-import { createCrewMemberForm } from "./dispatchCrewMemberForm.js";
 import { createDispatchVehicle } from "./dispatchVehicle.js";
-import { initLoginOffice } from "../../../util/office.js";
+import {
+    createCrewMemberForm,
+    addCrewMember,
+    removeCrewMember,
+    crewRoleChanged
+} from "./dispatchCrewMemberForm.js";
 
 let dispatchOrders = [];
 let dispatchLoadPromise = Promise.resolve();
@@ -33,7 +36,6 @@ export async function init() {
     crewMemberForm = createCrewMemberForm(dispatch, {afterSave: loadDispatchBoard});
     dispatchVehicle = createDispatchVehicle({onChanged: loadDispatchBoard});
     
-    initLoginOffice();
     await loadDispatchBoard({ensureCrews: true});
 }
 
@@ -43,38 +45,50 @@ function dispatchPage() {
         autoLoad: false,
         components: { combo: true },
         actions: {
+            "reload-board": async () => {await loadDispatchBoard({ensureCrews: true});},
             "select-active-crews": async (controller) => {await openActiveCrewDialog(controller);},
             "change-order-status": async () => {renderOrderList();},
             "reinitialize-crews": async () => {await reinitializeCrews();},
             "reset-assignments": async () => {await resetAssignments();},
             "add-daily-crew": async () => {await dispatchVehicle?.add();},
+            "add-crew-member": () => addCrewMember(),
+            "remove-crew-member": (controller, button) => {removeCrewMember(button);},
+            "crew-role-change": () => crewRoleChanged(),
+            "delete-daily-crew": async (controller, button) => {
+                const crew = button._crew;
+                if (!crew) return;
+
+                if ((crew.assignments?.length ?? 0) > 0) {
+                    DialogService.error("配車済みの伝票があります。先に配車を解除してください。");
+                    return;
+                }
+
+                const confirmed = await DialogService.confirm(
+                    `${crew.vehicleName ?? "この車両"}を配車ボードから削除しますか？`
+                );
+                if (!confirmed) return;
+
+                await DailyCrewRepository.remove({dailyCrewId: crew.dailyCrewId});
+                await loadDispatchBoard();
+            },
+
+            "edit-crew-members": async (controller, button) => {
+                if (button._crew) await crewMemberForm?.open(button._crew);
+            },
+
+            "unassign-order": async (controller, button) => {
+                const assignment = button._assignment;
+                if (!assignment) return;
+
+                await DispatchAssignmentRepository.deleteByIds([
+                    assignment.dispatchAssignmentId
+                ]);
+                await loadDispatchBoard();
+            }
         },
         onInit: (controller) => {
             controller.state.filters = {officeId: "", dispatchCategory: ""};
-            initConditions();
         }
-    });
-}
-
-/**
- * 初期条件
- */
-function initConditions() {
-    const workDate = document.getElementById("dispatch-work-date");
-    if(workDate && !workDate.value){
-        workDate.value = getToday();
-    }
-    const targets = [
-        "dispatch-work-date",
-        "dispatch-office",
-        "dispatch-category"
-    ];
-    targets.forEach(id => {
-        const element = document.getElementById(id);
-        if(!element) return;
-        element.addEventListener("change", async () => {
-            await loadDispatchBoard({ensureCrews: true});
-        });
     });
 }
 

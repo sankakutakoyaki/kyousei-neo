@@ -1,9 +1,8 @@
 <th:block th:fragment="searchBoxFragment(searchId)">
     <!-- 検索 -->
     <div class="search-box">
-        <input th:id="${searchId}" type="search" data-action="keywordSearch" placeholder="検索">
+        <input th:id="${searchId}" type="search" data-event="input" data-action="keywordSearch" placeholder="検索">
         <img title="検索" src="/icons/search.png">
-        
     </div>
 </th:block>
 

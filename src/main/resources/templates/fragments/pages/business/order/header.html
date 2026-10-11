@@ -11,7 +11,17 @@
             )}"></th:block>
         </div>
         <div>
-            <label class="form-parts">担当営業所<select id="order-own-office" class="normal-select"></select></label>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'担当営業所',
+                    'id':'order-own-office',
+                    'name':'own-office-id',
+                    'combo':'ownOfficeComboList',
+                    'top':'すべて',
+                    'loginOffice':true,
+                    'action':'search'
+                }}
+            )}"></th:block>
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
                 { 
                     'text': '荷主',

@@ -8,11 +8,6 @@ export const TimeworksRepository = {
         return res.data ?? [];
     },
 
-    async findEmployee(identifier) {
-        const res = await api.get(`/api/timeworks/employee?identifier=${encodeURIComponent(identifier)}`);
-        return res.data;
-    },
-
     async findSelf() {
         const res = await api.get("/api/timeworks/self");
         return res.data;

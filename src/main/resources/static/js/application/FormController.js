@@ -13,6 +13,7 @@ import { FormStateBehavior } from "../core/form/FormStateBehavior.js";
 import { initParentChildLink } from "../util/link.js";
 import { setEnterFocus } from "../core/form/components/enterfocus.js";
 import { formatFields } from "../core/behavior/bindFormatter.js";
+import { PageCacheService } from "../services/cache/PageCacheService.js";
 
 export class FormController {
     constructor(config){
@@ -69,23 +70,15 @@ export class FormController {
         this.saveBehavior =
             new SaveBehavior({
                 beforeSave: async (payload, context) => {
-                    if(this.beforeSave){
-                        await this.beforeSave(payload, context.form);
-                    }
+                    if(this.beforeSave){await this.beforeSave(payload, context.form);}
                 },
-                validateBusiness: async (payload) => {
-                    await this.runBusinessValidation(payload);
-                },
-                confirmSave: async (payload) => {
-                    return await this.confirmSave(payload);
-                },
+                validateBusiness: async (payload) => {await this.runBusinessValidation(payload);},
+                confirmSave: async (payload) => {return await this.confirmSave(payload);},
                 executeSave: async (payload) => {
                     if(!this.saveHandler) return;
                     const res = await this.saveHandler(payload);
                     if(this.showSuccessDialog){
-                        DialogService.info(
-                            this.isBulkMode() ? "一括更新しました": "保存しました"
-                        );
+                        DialogService.info(this.isBulkMode() ? "一括更新しました": "保存しました");
                     }
                     if(this.closeOnSave){
                         DialogService.close(this.formId);
@@ -94,30 +87,24 @@ export class FormController {
                     return {response: res, id: res?.data, count: res?.count};
                 },
                 afterSave: async (result) => {
-                    if(this.afterSave){
-                        await this.afterSave(result.id ?? this.currentEntity?.[this.key]);
-                    }
+                    if(this.afterSave){await this.afterSave(result.id ?? this.currentEntity?.[this.key]);}
                 }
             });
     }
 
     async open(dataOrId = {}) {
         let data = dataOrId ?? {};
-
         if (typeof dataOrId !== "object") {
             if (!this.repository?.find) return;
-
             const params = this.buildParams ? this.buildParams(dataOrId): { id: dataOrId };
             data = await this.repository.find(params);
         }
-
         const isCreate = !data?.[this.idKey];
         if (isCreate && isMobileReadOnly(this.controller?.key)) return;
         if (isCreate && (this.config.inheritFilters?.(data) ?? true)) {
             const filters = this.controller.state?.filters || {};
             Object.entries(filters).forEach(([key, value]) => {
                 if (value == null || value === "") return;
-
                 const kebab = convertKey(key, "camel", "kebab");
                 const el = document.querySelector(
                     `#${this.formId} [name="${kebab}"],
@@ -125,58 +112,41 @@ export class FormController {
                     #${this.formId} [data-key="${key}"]`
                 );
                 if (!el) return;
-
                 if (data[key] == null || data[key] === "") {
                     data[key] = value;
                 }
             });
         }
-
         this.currentEntity = structuredClone(data);
         const form = document.getElementById(this.formId);
-
         FormModel.clear(form);
         FormModel.fill(form, data);
+        applyFormDefaults(form);
         formatFields(form);
         initParentChildLink(form);
-
         // フォームを開いたときは先頭タブ
         const firstTab = form.querySelector(".tab-menu-item");
         const tabPanels = form.querySelectorAll(".tab-panel");
         if (firstTab) {
-            form.querySelectorAll(".tab-menu-item").forEach(tab => {
-                tab.classList.remove("is-active");
-            });
+            form.querySelectorAll(".tab-menu-item").forEach(tab => {tab.classList.remove("is-active");});
             firstTab.classList.add("is-active");
         }
-
         if (tabPanels.length > 0) {
-            tabPanels.forEach(panel => {
-                panel.classList.remove("is-show");
-            });
-
+            tabPanels.forEach(panel => {panel.classList.remove("is-show");});
             const firstTabId = firstTab?.dataset.tab;
             if (firstTabId) {
                 form.querySelector(`#${firstTabId}`)?.classList.add("is-show");
             }
         }
-
         if (form.dataset.bulk === "true") {
-            form.querySelectorAll("select").forEach(select => {
-                select.selectedIndex = -1;
-            });
+            form.querySelectorAll("select").forEach(select => {select.selectedIndex = -1;});
         }
-
         if (!this._eventsInitialized) {
             this.initEvents();
             this._eventsInitialized = true;
         }
-
         // フォームと関連データの初期化
-        if (this.onOpen) {
-            await this.onOpen(data, this);
-        }
-
+        if (this.onOpen) {await this.onOpen(data, this);}
         openFormDialog({
             dialogId: this.formId,
             controller: this.controller,
@@ -190,11 +160,8 @@ export class FormController {
                 DialogService.close(this.formId);
                 this.config.onClose?.(this);
             },
-            onReset: () => {
-                this.resetForm();
-            }
+            onReset: () => {this.resetForm();}
         });
-
         refreshMobileReadOnly();
         // 動的に開いたフォームにもEnterフォーカスを設定
         setEnterFocus();
@@ -202,9 +169,7 @@ export class FormController {
         this.setSubmitEnabled(this.canSubmit());
         // 初期フォーカス
         if (this.initialFocusSelector) {
-            requestAnimationFrame(() => {
-                form.querySelector(this.initialFocusSelector)?.focus();
-            });
+            requestAnimationFrame(() => {form.querySelector(this.initialFocusSelector)?.focus();});
         }
     }
 
@@ -228,7 +193,6 @@ export class FormController {
     preparePayload(form){
         this.clearErrors();
         UiValidator.validate(form);
-
         let payload = FormPayloadBuilder.build({
             form,
             currentEntity: this.currentEntity,
@@ -236,32 +200,20 @@ export class FormController {
             isBulkMode: this.isBulkMode(),
             getTargetIds: (payload) => this.getTargetIds(payload)
         });
-        
         const additionalChanged = this.hasAdditionalChanges?.() ?? false;
-
         // フォーム変更なし＋追加データ変更なし
         if(payload == null && !additionalChanged){
             DialogService.error("変更がありません");
             return null;
         }
         // フォーム変更なしでも明細変更があれば保存可能
-        if(payload == null){
-            payload = {};
-        }
+        if(payload == null){payload = {};}
         // 編集時はIDを必ず保持
-        if(this.currentEntity?.[this.idKey]){
-            payload[this.idKey] = this.currentEntity[this.idKey];
-        }
+        if(this.currentEntity?.[this.idKey]){payload[this.idKey] = this.currentEntity[this.idKey];}
         // 楽観ロック用
-        if(this.currentEntity?.version != null){
-            payload.
-            version = this.currentEntity.version;
-        }
+        if(this.currentEntity?.version != null){payload. version = this.currentEntity.version;}
         // 追加データ
-        if(this.buildAdditionalPayload){
-            Object.assign(payload, this.buildAdditionalPayload());
-        }
-
+        if(this.buildAdditionalPayload){Object.assign(payload, this.buildAdditionalPayload());}
         if(this.isBulkMode() && payload.ids?.length === 0){
             DialogService.error("選択してください");
             return null;
@@ -270,9 +222,7 @@ export class FormController {
     }
 
     async runBusinessValidation(payload){
-        if(!this.validateBusiness){
-            return;
-        }
+        if(!this.validateBusiness){return;}
         await this.validateBusiness(payload);
     }
 
@@ -288,35 +238,22 @@ export class FormController {
 
     handleError(e) {
         DialogService.error(e.message || "エラーが発生しました");
-
         const form = document.getElementById(this.formId);
         if(!form) return;
         // 単数・複数両対応
-        const fields = [
-            ...(e.field ? [e.field] : []),
-            ...(e.fields ?? [])
-        ];
-
+        const fields = [...(e.field ? [e.field] : []), ...(e.fields ?? [])];
         fields.forEach((field, index) => {
-            const el =
-                form.querySelector(`[name="${field}"]`) ||
-                form.querySelector(`#${field}`);
+            const el = form.querySelector(`[name="${field}"]`) || form.querySelector(`#${field}`);
             if (!el) return;
             el.classList.add("error");
             // 最初だけfocus
-            if(index === 0){
-                requestAnimationFrame(() => {
-                    el.focus();
-                });
-            }
+            if(index === 0){requestAnimationFrame(() => {el.focus();});}
         });
     }
 
     clearErrors() {
         const form = document.getElementById(this.formId);
-        form?.querySelectorAll(".error").forEach(el => {
-            el.classList.remove("error");
-        });
+        form?.querySelectorAll(".error").forEach(el => {el.classList.remove("error");});
     }
 
     clear(){
@@ -326,10 +263,8 @@ export class FormController {
 
     resetForm(){
         this.clearErrors();
-
         const form = document.getElementById(this.formId);
         FormModel.fill(form,this.currentEntity ?? {});
-
         formatFields(form);
         this.resetAdditional?.();
         this.setSubmitEnabled(false);
@@ -343,7 +278,6 @@ export class FormController {
 
     hasChanges(){
         const form = document.getElementById(this.formId);
-
         return FormStateBehavior.hasChanges({
             form,
             currentEntity: this.currentEntity,
@@ -354,7 +288,6 @@ export class FormController {
     hasValidInput(){
         const form = document.getElementById(this.formId);
         if(!form) return false;
-
         return FormStateBehavior.hasValidInput(form, this.validInputSelector);
     }
 
@@ -364,7 +297,6 @@ export class FormController {
             const enabled = this.canSubmit();
             this.setSubmitEnabled(enabled);
         };
-
         form.addEventListener("input", update);
         form.addEventListener("change", update);
     }
@@ -373,7 +305,6 @@ export class FormController {
         if (isMobileReadOnly(this.controller?.key)) return false;
         const formChanged = this.hasChanges();
         const additionalChanged = this.hasAdditionalChanges?.() ?? false;
-
         if(!this.currentEntity || !this.currentEntity[this.idKey]){
             return this.hasValidInput() || additionalChanged;
         }
@@ -383,10 +314,8 @@ export class FormController {
     setSubmitEnabled(enabled){
         const form = document.getElementById(this.formId);
         if(!form) return;
-
         const btn = form.querySelector('[name="submitBtn"]');
         if(!btn) return;
-
         btn.disabled = !enabled;
         btn.classList.toggle("disabled", !enabled);
     }
@@ -405,9 +334,7 @@ export class FormController {
     }
 
     getTargetIds(payload){
-        if(!this.isBulkMode()){
-            return [payload[this.idKey]];
-        }
+        if(!this.isBulkMode()){return [payload[this.idKey]];}
         return this.controller?.getSelectedIds?.() ?? [];
     }
 
@@ -418,4 +345,16 @@ export class FormController {
             el.classList.toggle("edit-mode", editable);
         });
     }
+}
+
+function applyFormDefaults(form){
+    form?.querySelectorAll("[data-login-office]").forEach(select => {
+        // 編集データが入っている場合はそのまま
+        if(select.value && select.value !== "0"){return;}
+        const loginOfficeId = PageCacheService.get("loginOfficeId");
+        if(!loginOfficeId){return;}
+        const value = String(loginOfficeId);
+        const exists = Array.from(select.options).some(option => String(option.value) === value);
+        if(exists){select.value = value;}
+    });
 }

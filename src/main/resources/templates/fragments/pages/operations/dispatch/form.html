@@ -15,7 +15,7 @@
                     <option value="1">担当</option>
                     <option value="2">助手</option>
                 </select>
-                <button type="button" id="dispatch-member-add-button" class="normal-btn">追加</button>
+                <button type="button" id="dispatch-member-add-button" class="normal-btn" data-action="add-crew-member">追加</button>
             </div>
         </div>
     </div>
@@ -23,12 +23,11 @@
     <template id="dispatch-member-row-template">
         <div class="dispatch-member-form-row" data-member-row>
             <span data-field="employeeName"></span>
-            <select class="normal-select" data-field="role">
+            <select class="normal-select" data-field="role" data-action="crew-role-change">
                 <option value="1">担当</option>
                 <option value="2">助手</option>
             </select>
-            <!-- <button type="button" class="normal-btn" data-member-remove>削除</button> -->
-            <button type="button" class="img-btn" data-member-remove title="削除">
+            <button type="button" class="img-btn" data-member-remove title="削除" data-action="remove-crew-member">
                 <img src="/icons/close.png" alt="削除">
             </button>
         </div>

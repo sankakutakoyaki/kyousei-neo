@@ -238,6 +238,8 @@ export class PageController {
 
     updateActionButtons(){
         document.querySelectorAll("[data-action]").forEach(el => {
+            if(el.dataset.actionManaged === "false"){return;}
+            
             const controller = resolveController(el);
             if(controller !== this) return;
 

@@ -1,23 +1,51 @@
 <header th:fragment="header01Fragment()"
         id="header-01"
         class="page-input-header dispatch-header-grid">
-    <div class="form-parts">
-        <label for="dispatch-work-date">日付</label>
-        <input id="dispatch-work-date" type="date" class="normal-input">
-    </div>
-    <div class="form-parts">
-        <label for="dispatch-office">営業所</label>
-        <select id="dispatch-office" class="normal-select" data-combo="officeComboList" data-top="-----" data-login-office="true"></select>
-    </div>
-    <div class="form-parts">
-        <label for="dispatch-category">区分</label>
-        <select id="dispatch-category" class="normal-select" data-combo="dispatchCategoryComboList"></select>
-    </div>
-    <select
-        id="dispatch-add-vehicle"
-        class="normal-select">
+
+    <th:block th:replace="~{
+        fragments/components/box
+        :: inputBoxFragment(${
+            {
+                'text':'日付',
+                'id':'dispatch-work-date',
+                'name':'work-date',
+                'type':'date',
+                'default':'today',
+                'action':'reload-board'
+            }
+        })
+    }"></th:block>
+    <th:block th:replace="~{
+        fragments/components/box
+        :: selectBoxFragment(${
+            {
+                'text':'営業所',
+                'id':'dispatch-office',
+                'name':'office-id',
+                'combo':'officeComboList',
+                'top':'-----',
+                'loginOffice':true,
+                'action':'reload-board'
+            }
+        })
+    }"></th:block>
+    <th:block th:replace="~{
+        fragments/components/box
+        :: selectBoxFragment(${
+            {
+                'text':'区分',
+                'id':'dispatch-category',
+                'name':'dispatch-category',
+                'combo':'dispatchCategoryComboList',
+                'action':'reload-board'
+            }
+        })
+    }"></th:block>
+
+    <select id="dispatch-add-vehicle" class="normal-select">
         <option value="">車両を選択</option>
     </select>
+
     <div class="form-parts">
         <label></label>
         <button type="button" class="normal-btn" data-action="add-daily-crew">追加</button>

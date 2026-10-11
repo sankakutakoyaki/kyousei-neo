@@ -4,6 +4,7 @@ import { FormController } from "../../../application/FormController.js";
 import { DailyCrewRepository } from "../../../repositories/operations/dispatch/DailyCrewRepository.js";
 
 let crewMemberInitialState = {members: [], candidates: []};
+let crewMemberForm = null;
 
 /**
  * 乗務員編集フォーム
@@ -53,7 +54,7 @@ export function createCrewMemberForm(controller, { afterSave } = {}) {
         // 保存後
         afterSave: async () => {await afterSave?.();}
     });
-    initCrewMemberFormEvents(form);
+    crewMemberForm = form;
     return form;
 }
 
@@ -127,78 +128,13 @@ function appendCrewMemberRow(formController, {dailyCrewMemberId = "", employeeId
     row.dataset.dailyCrewMemberId = dailyCrewMemberId ?? "";
     row.dataset.employeeId = employeeId;
     const roleSelect = row.querySelector('[data-field="role"]');
-    if(roleSelect){
-        roleSelect.value = String(role);
-        roleSelect.addEventListener("change", () => {
-            formController.updateSubmitState();
-        });
-    }
+    if(roleSelect){roleSelect.value = String(role);}
     const name = row.querySelector('[data-field="employeeName"]');
     if(name){
         name.textContent = employeeName ?? "";
     }
     list.appendChild(fragment);
     updateMemberEmptyState();
-}
-
-/**
- * 乗務員編集イベント
- */
-function initCrewMemberFormEvents(formController) {
-    const addButton = document.getElementById("dispatch-member-add-button");
-    const list = document.getElementById("dispatch-member-current-list");
-    if(addButton){
-        addButton.addEventListener("click", () => {
-            const candidateSelect = document.getElementById("dispatch-member-candidate");
-            const roleSelect = document.getElementById("dispatch-member-add-role");
-            if(!candidateSelect?.value || !roleSelect?.value){
-                return;
-            }
-            const option = candidateSelect.selectedOptions[0];
-            const employeeId = Number(candidateSelect.value);
-            const employeeName = option?.textContent ?? "";
-            appendCrewMemberRow(
-                formController,
-                {
-                    employeeId,
-                    employeeName,
-                    role: Number(roleSelect.value)
-                }
-            );
-            // 重複追加防止
-            option?.remove();
-            updateCandidateState();
-            formController.updateSubmitState();
-        });
-    }
-    if(list){
-        list.addEventListener("click", event => {
-            const button = event.target.closest("[data-member-remove]");
-            if(!button){
-                return;
-            }
-            const row = button.closest("[data-member-row]");
-            if(!row){
-                return;
-            }
-            const employeeId = Number(row.dataset.employeeId);
-            const employeeName = row.querySelector('[data-field="employeeName"]')?.textContent ?? "";
-            row.remove();
-            updateMemberEmptyState();
-            // 削除した人を候補へ戻す
-            const candidateSelect = document.getElementById("dispatch-member-candidate");
-            if(candidateSelect && employeeId){
-                // 「追加可能な担当者はいません」のダミーOptionを削除
-                [...candidateSelect.options].filter(option => option.value === "").forEach(option => option.remove());
-                const exists = [...candidateSelect.options].some(option => Number(option.value) === employeeId);
-                if(!exists){
-                    candidateSelect.add(new Option(employeeName, employeeId));
-                }
-                updateCandidateState();
-            }
-            formController.updateSubmitState();
-        });
-    }
 }
 
 /**
@@ -300,4 +236,55 @@ function updateCandidateState() {
     if(addButton){
         addButton.disabled = false;
     }
+}
+
+export function addCrewMember() {
+    const candidate = document.getElementById("dispatch-member-candidate");
+    const role = document.getElementById("dispatch-member-add-role");
+    if (!candidate?.value || !role?.value || !crewMemberForm) return;
+
+    const option = candidate.selectedOptions[0];
+
+    appendCrewMemberRow(crewMemberForm, {
+        employeeId: Number(candidate.value),
+        employeeName: option?.textContent ?? "",
+        role: Number(role.value)
+    });
+
+    option?.remove();
+    updateCandidateState();
+    crewMemberForm.updateSubmitState();
+}
+
+export function removeCrewMember(button) {
+    if (!crewMemberForm) return;
+
+    const row = button.closest("[data-member-row]");
+    if (!row) return;
+
+    const employeeId = Number(row.dataset.employeeId);
+    const employeeName = row.querySelector('[data-field="employeeName"]')?.textContent ?? "";
+
+    row.remove();
+    updateMemberEmptyState();
+
+    const candidate = document.getElementById("dispatch-member-candidate");
+
+    if (candidate && employeeId) {
+        [...candidate.options]
+            .filter(option => option.value === "")
+            .forEach(option => option.remove());
+
+        const exists = [...candidate.options]
+            .some(option => Number(option.value) === employeeId);
+
+        if (!exists) candidate.add(new Option(employeeName, employeeId));
+        updateCandidateState();
+    }
+
+    crewMemberForm.updateSubmitState();
+}
+
+export function crewRoleChanged() {
+    crewMemberForm?.updateSubmitState();
 }

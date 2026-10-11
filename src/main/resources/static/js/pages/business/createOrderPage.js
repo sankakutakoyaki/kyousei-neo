@@ -1,6 +1,5 @@
 "use strict";
 
-import {loadOwnOffices,fillOwnOffices} from '../operations/ownOffice.js';
 import { isMobileReadOnly } from "../../core/access/mobileReadOnly.js";
 
 import { createCrudPage } from "../../core/page/createCrudPage.js";
@@ -9,7 +8,6 @@ import { FormController } from "../../application/FormController.js";
 import { createOrderItemFormListController } from "./order/orderItemList.js";
 import { createOrderWorkFormListController } from "./order/orderWorkList.js";
 import { DialogService } from "../../core/ui/dialog/DialogService.js";
-import { loadPage } from "../../core/dom/loadPage.js";
 import { AttachmentManager } from "../../components/attachment/AttachmentManager.js";
 
 export function createOrderPage(config){
@@ -28,7 +26,6 @@ export function createOrderPage(config){
         defaultFormName: config.defaultFormName,
         components: config.components,
         onInit: config.onInit,
-        actions: config.actions,
         conditions: config.conditions,
         tableId: config.tableId,
         footerId: config.footerId,
@@ -48,12 +45,28 @@ export function createOrderPage(config){
             [config.defaultFormName ?? "detail"]:
                 defaultForms[config.defaultFormName ?? "detail"]
         },
-        onDeleted: config.onDeleted
+        onDeleted: config.onDeleted,
+        actions: {
+            ...config.actions,
+            "add-order-item": async (controller) => {
+                const form = controller.getActiveForm();
+                if(!form) return;
+                const formEl = document.getElementById(form.formId);
+                if(!formEl || !form.itemList) return;
+                addOrderItem(form, formEl, form.itemList);
+            },
+            "add-order-work": async (controller) => {
+                const form = controller.getActiveForm();
+                if(!form) return;
+                const formEl = document.getElementById(form.formId);
+                if(!formEl || !form.workList) return;
+                addOrderWork(form, formEl, form.workList);
+            }
+        },
     });
 }
 
 const createOrderForm = (controller, options = {}) => {
-
     const itemList = createOrderItemFormListController();
     const workList = createOrderWorkFormListController();
     let attachmentManager;
@@ -77,24 +90,13 @@ const createOrderForm = (controller, options = {}) => {
             let items = data?.items ?? [];
             let works = data?.works ?? [];
             if (data?.orderId) {
-                items = await OrderRepository.findItems({
-                    state: APP.cache.common.state.INITIAL,
-                    orderId: data.orderId
-                });
-                works = await OrderRepository.findWorks({
-                    state: APP.cache.common.state.INITIAL,
-                    orderId: data.orderId
-                });
+                items = await OrderRepository.findItems({state: APP.cache.common.state.INITIAL, orderId: data.orderId});
+                works = await OrderRepository.findWorks({state: APP.cache.common.state.INITIAL, orderId: data.orderId});
             }
             itemList.init(items, form);
             workList.init(works, form);
             const formEl = document.getElementById(form.formId);
-            const officeSelect=formEl.querySelector('#order-own-office-edit');
-            if(officeSelect) {
-                const context=APP.cache.page.ownOfficeContext ?? await loadOwnOffices();
-                const value=data?.orderId ? (data.ownOfficeId??'0') : (data.ownOfficeId??document.getElementById('order-own-office')?.value??context.defaultOfficeId);
-                fillOwnOffices(officeSelect,context,{unassigned:true,all:false,value:value||context.defaultOfficeId||'0'});
-            }
+
             const title = formEl.querySelector(".dialog-header > span");
             if (title) title.textContent = isMobileReadOnly(controller.key) ? "受注詳細（閲覧）" : "受注編集";
             const source = formEl.querySelector("[data-ocr-source]");
@@ -108,9 +110,6 @@ const createOrderForm = (controller, options = {}) => {
 
             attachmentManager ??= new AttachmentManager(formEl?.querySelector("[data-attachment-manager]"));
             await attachmentManager.open(data?.orderId);
-
-            initOrderItemInput(form, formEl, itemList);
-            initOrderWorkInput(form, formEl, workList);
         },
         buildAdditionalPayload: () => ({
             ...(form.currentEntity?.ocrLogId ? {ocrLogId: form.currentEntity.ocrLogId} : {}),
@@ -134,112 +133,62 @@ const createOrderForm = (controller, options = {}) => {
         }
     });
     form.itemList = itemList;
+    form.workList = workList;
     return form;
 };
 
-function initOrderItemInput(formController, formEl, itemList) {
-    if (!formEl) return;
+function getValue(form, name) {
+    return form.querySelector(`[name="${name}"]`)?.value?.trim() ?? "";
+}
 
-    const addButton = formEl.querySelector("#add-item-btn");
-    if (!addButton) return;
-
-    // JANコード入力
-    const janInput = formEl.querySelector('[name="jan-code"]');
-    if (janInput && janInput.dataset.initialized !== "true") {
-        janInput.dataset.initialized = "true";
-
-        janInput.addEventListener("input", () => {
-            janInput.value = janInput.value
-                .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
-                .replace(/[^0-9]/g, "");
-        });
-    }
-    // 登録ボタン
-    if (addButton.dataset.initialized === "true") {
-        return;
-    }
-    addButton.dataset.initialized = "true";
-    addButton.addEventListener("click", () => {
-        const quantity = formEl.querySelector('[name="item-quantity"]')?.value?.trim();
-        const item = {
-            janCode: formEl.querySelector('[name="jan-code"]')?.value?.trim() ?? "",
-            itemName: formEl.querySelector('[name="item-name"]')?.value?.trim() ?? "",
-            itemMaker: formEl.querySelector('[name="item-maker"]')?.value?.trim() ?? "",
-            itemModel: formEl.querySelector('[name="item-model"]')?.value?.trim() ?? "",
-            itemQuantity: quantity ? Number(quantity) : 1
-        };
-        if (!item.itemModel) {
-            DialogService.error("型番を入力してください");
-            return;
-        }
-        itemList.add(item);
-        clearOrderItemInput(formEl);
-        // 保存ボタン状態を更新
-        formController.setSubmitEnabled(formController.canSubmit());
+function clearInputs(form, names, focusName) {
+    names.forEach(name => {
+        const el = form.querySelector(`[name="${name}"]`);
+        if(el){el.value = "";}
     });
+    form.querySelector(`[name="${focusName}"]`)?.focus();
 }
 
 function clearOrderItemInput(form) {
-    const names = [
-        "jan-code",
-        "item-name",
-        "item-maker",
-        "item-model",
-        "item-quantity"
-    ];
-    names.forEach(name => {
-        const el = form.querySelector(`[name="${name}"]`);
-        if (el) {
-            el.value = "";
-        }
-    });
-    form.querySelector('[name="jan-code"]')?.focus();
-}
-
-function initOrderWorkInput(formController, formEl, workList) {
-    if (!formEl) return;
-
-    const addButton = formEl.querySelector("#add-work-btn");
-    if (!addButton) return;
-    if (addButton.dataset.initialized === "true") {
-        return;
-    }
-    addButton.dataset.initialized = "true";
-    addButton.addEventListener("click", () => {
-        const price = formEl.querySelector('[name="order-work-price"]')?.value?.trim();
-        const quantity = formEl.querySelector('[name="order-work-quantity"]')?.value?.trim();
-        const work = {
-            orderWorkCode: formEl.querySelector('[name="order-work-code"]')?.value?.trim() ?? "",
-            orderWorkName: formEl.querySelector('[name="order-work-name"]')?.value?.trim() ?? "",
-            orderWorkPrice: price ? Number(price) : 0,
-            orderWorkQuantity: quantity ? Number(quantity) : 1
-        };
-        // 作業名 必須
-        if (!work.orderWorkName) {
-            DialogService.error("作業名を入力してください");
-            return;
-        }
-        workList.add(work);
-        clearOrderWorkInput(formEl);
-        // 保存ボタン状態を更新
-        formController.setSubmitEnabled(
-            formController.canSubmit()
-        );
-    });
+    clearInputs(form, ["jan-code", "item-name", "item-maker", "item-model", "item-quantity"], "jan-code");
 }
 
 function clearOrderWorkInput(form) {
-    const names = [
-        "order-work-code",
-        "order-work-name",
-        "order-work-price",
-        "order-work-quantity"
-    ];
-    names.forEach(name => {
-        const el = form.querySelector(`[name="${name}"]`);
-        if (el) {
-            el.value = "";
-        }
-    });
-    form.querySelector('[name="order-work-code"]')?.focus();
+    clearInputs(form, ["order-work-code", "order-work-name", "order-work-price", "order-work-quantity"], "order-work-code");
+}
+
+function addOrderItem(formController, formEl, itemList) {
+    const quantity = getValue(formEl, "item-quantity");
+    const item = {
+        janCode: getValue(formEl, "jan-code"),
+        itemMaker: getValue(formEl, "item-maker"),
+        itemName: getValue(formEl, "item-name"),
+        itemModel: getValue(formEl, "item-model"),
+        itemQuantity: quantity ? Number(quantity) : 1
+    };
+    if(!item.itemName){
+        DialogService.error("商品名を入力してください");
+        return;
+    }
+    itemList.add(item);
+    clearOrderItemInput(formEl);
+    formController.updateSubmitState();
+}
+
+function addOrderWork(formController, formEl, workList) {
+    const price = getValue(formEl, "order-work-price");
+    const quantity = getValue(formEl, "order-work-quantity");
+    const work = {
+        orderWorkCode: getValue(formEl, "order-work-code"),
+        orderWorkName: getValue(formEl, "order-work-name"),
+        orderWorkPrice: price ? Number(price) : 0,
+        orderWorkQuantity: quantity ? Number(quantity) : 1
+    };
+    if(!work.orderWorkName){
+        DialogService.error("作業名を入力してください");
+        return;
+    }
+    workList.add(work);
+    clearOrderWorkInput(formEl);
+    formController.updateSubmitState();
 }

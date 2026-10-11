@@ -7,7 +7,6 @@ import { EmployeeShiftRepository } from "../../../repositories/operations/shift/
 import { DialogService } from "../../../core/ui/dialog/DialogService.js";
 import { getMonthRange, getShiftMark } from "./employeeShiftUtil.js";
 import { appendEmployeeRow, renderMonthHeader, updateRowSummary } from "./employeeShiftTable.js";
-import { initLoginOffice } from "../../../util/office.js";
 
 const changedShifts = new Map();
 let loadedEmployees = [];
@@ -20,7 +19,6 @@ export async function init(){
 
     const controller = {key: "employeeShift"};
     initCombo(controller);
-    initLoginOffice();
     initMonth();
     renderMonthHeader(document.getElementById("shift-month")?.value);
 

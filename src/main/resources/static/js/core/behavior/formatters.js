@@ -19,7 +19,7 @@ export const formatters = {
             raw.slice(0, 4) + "-" + raw.slice(4, 12) + "-" + raw.slice(12)
         );
     },
-
+    // 金額
     currency: (v) => {
         if(v == null || v === "") return "";
 
