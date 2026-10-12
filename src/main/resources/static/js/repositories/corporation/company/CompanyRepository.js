@@ -1,5 +1,6 @@
 "use strict";
 
+import { api } from "../../../core/api/apiService.js";
 import { RequestClient } from "../../../core/api/RequestClient.js";
 
 export const CompanyRepository = {
@@ -25,8 +26,11 @@ export const CompanyRepository = {
         return await RequestClient.request({queryId, params});
     },
 
-    async fetchCombo(){
-        const res = await RequestClient.request({queryId: "companyCombo"});
+    async fetchCombo(scope = "client"){
+        if(scope !== "client" && scope !== "partner"){
+            throw new Error(`未対応の会社コンボ種別: ${scope}`);
+        }
+        const res = await api.get(`/api/company/${scope}/combo`);
         return res.data ?? [];
     }
 };

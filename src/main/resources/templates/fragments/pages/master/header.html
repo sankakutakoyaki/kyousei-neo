@@ -1,14 +1,14 @@
-<th:block th:fragment="header01Fragment()">
-    <div id="header-01" class="flex-area page-input-header">
+<th:block th:fragment="headerFragment(suffix)">
+    <div th:id="${'header-' + suffix}" class="flex-area page-input-header">
         <div>
-            <th:block th:replace="~{fragments/table/header :: searchBoxFragment('search-box-01')}"></th:block>
+            <th:block th:replace="~{fragments/table/header :: searchBoxFragment(${'search-box-' + suffix})}"></th:block>
             <th:block th:replace="~{fragments/table/header :: kebabBtnsFragment(${
                 {
-                    'add': 'add-btn-01',
-                    'form': 'form-01',
-                    'delete': 'delete-btn-01',
-                    'download': 'download-btn-01',
-                    'reload': 'reload-btn-01'
+                    'add': 'add-btn-' + suffix,
+                    'form': 'form-' + suffix,
+                    'delete': 'delete-btn-' + suffix,
+                    'download': 'download-btn-' + suffix,
+                    'reload': 'reload-btn-' + suffix
                 }}
             )}"></th:block>
         </div>

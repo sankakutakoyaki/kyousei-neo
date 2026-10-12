@@ -104,11 +104,12 @@ test('normalizes full-width quantities and comma-separated prices without changi
 
 test('unchanged blank postal code keeps the OCR address; clearing a previously resolved code still clears it', async () => {
     const source = readFileSync(new URL('../../main/resources/static/js/core/behavior/DataResolver.js', import.meta.url), 'utf8');
-    const method = source.slice(source.indexOf('    async resolve(group, type) {'), source.indexOf('    resolveSelect(select, id) {')).trim().replace(/,$/, '');
-    const resolver = vm.runInNewContext(`({${method}, clear(field) { field.value = ''; }})`);
+    const context = vm.createContext({updateField: (field, value) => {field.value = value;}});
+    vm.runInContext(source.replace(/^import .*;\n/gm, '').replace(/export /g, '') + '\nglobalThis.resolver = DataResolver;', context);
+    const resolver = context.resolver;
     const input = {value: '', dataset: {lastId: ''}};
     const address = {value: 'OCRの住所'};
-    const group = {querySelector: selector => selector === '[data-resolve-id]' ? input : address};
+    const group = {querySelector: selector => selector === '[data-resolve-id]' ? input : selector === "[data-role='hidden-id']" ? null : address};
     await resolver.resolve(group, 'postal');
     assert.equal(address.value, 'OCRの住所');
     input.dataset.lastId = '1234567';

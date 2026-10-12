@@ -25,9 +25,9 @@ export class SaveBehavior {
         }
         if(!this.executeSave) return null;
 
-        const result = await this.executeSave(payload);
+        const result = await this.executeSave(payload, context);
         if(this.afterSave){
-            await this.afterSave(result, payload);
+            await this.afterSave(result, payload, context);
         }
         return result;
     }

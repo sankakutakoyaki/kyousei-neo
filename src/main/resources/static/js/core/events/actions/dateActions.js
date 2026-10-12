@@ -1,8 +1,7 @@
 "use strict"
 
-import { getBaseDate } from "../../../util/date.js";
+import { getBaseDate, formatDate } from "../../../util/date.js";
 import { calculateRange } from "../../../util/dateRange.js";
-import { formatDate } from "../../../util/date.js";
 
 export function handleDateMove(event, el){
     const type = el.dataset.type;
@@ -29,7 +28,7 @@ export function handleDateArrowMove(event, el){
     // Shiftなしはブラウザ標準動作
     if(!event.shiftKey) return;
 
-    let current = el.value ? new Date(el.value): new Date();
+    let current = getBaseDate(el);
     // Shift + 左右 → 日移動
     if(event.key === "ArrowRight"){
         current.setDate(current.getDate() + 1);
@@ -48,7 +47,7 @@ export function handleDateArrowMove(event, el){
         return;
     }
     event.preventDefault();
-    el.value = current.toISOString().slice(0, 10);
+    el.value = formatDate(current);
     adjustPair(el);
 }
 

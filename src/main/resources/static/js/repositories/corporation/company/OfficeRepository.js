@@ -1,5 +1,6 @@
 "use strict";
 
+import { api } from "../../../core/api/apiService.js";
 import { RequestClient } from "../../../core/api/RequestClient.js";
 
 export const OfficeRepository = {
@@ -26,7 +27,7 @@ export const OfficeRepository = {
     },
 
     async fetchCombo(){
-        const res = await RequestClient.request({queryId:"officeCombo"});
+        const res = await api.get("/api/office/client/combo");
         return res.data ?? [];
     }
 };

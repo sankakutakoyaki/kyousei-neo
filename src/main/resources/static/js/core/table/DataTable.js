@@ -13,6 +13,9 @@ const defaultModel = {
 
 export class DataTable {
     constructor(config){
+        this.disposed = false;
+        this.fetchRequest = 0;
+        this.eventAbort = new AbortController();
         this.tableId = config.tableId;
         this.columns = config.columns;
         this.idKey = config.idKey;
@@ -21,7 +24,6 @@ export class DataTable {
         this.checkable = config.checkable;
         this.rowClass = config.rowClass;
         this.onRendered = config.onRendered;
-        this.fetchRevision = 0;
         this.onRowClick = config.onRowClick;
         this.onDoubleClick = config.onDoubleClick;
         this.currentRowId = null;
@@ -57,6 +59,16 @@ export class DataTable {
         this.initOutsideClick();
     }
 
+    listen(target, type, handler){
+        target?.addEventListener(type, handler, {signal: this.eventAbort.signal});
+    }
+
+    dispose(){
+        this.disposed = true;
+        this.fetchRequest++;
+        this.eventAbort.abort();
+    }
+
     // 状態操作
     setData(list){
         this.model.setOrigin(list);
@@ -69,18 +81,22 @@ export class DataTable {
     }
 
     async fetch(){
+        if(this.disposed) return false;
         if(!this.repository) return;
 
-        const revision=++this.fetchRevision;
         const params = this.buildParams
             ? this.buildParams(this.controller)
             : {};
-        let data;
-        try {data = await this.repository.search(params);}
-        catch(error){if(revision!==this.fetchRevision)return false;throw error;}
-        if(revision!==this.fetchRevision)return false;
-        this.model.setOrigin(data ?? []);
-        return true;
+        const requestId = ++this.fetchRequest;
+        try {
+            const data = await this.repository.search(params);
+            if(this.disposed || requestId !== this.fetchRequest) return false;
+            this.model.setOrigin(data ?? []);
+            return true;
+        } catch(error) {
+            if(this.disposed || requestId !== this.fetchRequest) return false;
+            throw error;
+        }
     }
 
     async deleteByIds(ids){
@@ -101,6 +117,7 @@ export class DataTable {
     }
 
     reload(){
+        if(this.disposed) return;
         this.model.compute(this.controller.state);
         this.render();
     }
@@ -131,6 +148,7 @@ export class DataTable {
     }
 
     render(){
+        if(this.disposed || !this.tableEl?.isConnected) return;
         renderTable(
             this.tableEl,
             {
@@ -204,7 +222,7 @@ export class DataTable {
         });
 
         // 行クリック
-        this.tableEl.addEventListener("click",(e)=>{
+        this.listen(this.tableEl, "click",(e)=>{
             // checkbox判定
             const chk = e.target.closest('input[name="chk-box"]');
             if(chk){
@@ -230,7 +248,7 @@ export class DataTable {
             }
         });
         // ダブルクリック
-        this.tableEl.addEventListener("dblclick",(e)=>{
+        this.listen(this.tableEl, "dblclick",(e)=>{
             const row = e.target.closest("[data-id]");
             if(!row) return;
 
@@ -249,7 +267,7 @@ export class DataTable {
 
         let loading = false;
 
-        wrapper.addEventListener("scroll", () => {
+        this.listen(wrapper, "scroll", () => {
             if(loading) return;
 
             const nearBottom =
@@ -268,7 +286,7 @@ export class DataTable {
     }
 
     initOutsideClick(){
-        document.addEventListener("click", (e) => {
+        this.listen(document, "click", (e) => {
             const table = this.tableEl.closest(".normal-table");
             if(table?.contains(e.target)) return;
             this.clearCurrentRow();

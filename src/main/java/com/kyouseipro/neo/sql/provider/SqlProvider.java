@@ -1,6 +1,5 @@
 package com.kyouseipro.neo.sql.provider;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,12 +11,10 @@ import com.kyouseipro.neo.sql.model.QueryDefinition;
 
 @Component
 public class SqlProvider {
-    private final Map<QueryId, QueryDefinition> map = new HashMap<>();
+    private final Map<QueryId, QueryDefinition> map;
 
     public SqlProvider(List<SqlProviderPart> parts) {
-        for (SqlProviderPart part : parts) {
-            map.putAll(part.provide());
-        }
+        map = QueryRegistrations.collect(parts, SqlProviderPart::provide);
     }
 
     public QueryDefinition get(String queryId) {
@@ -26,7 +23,7 @@ public class SqlProvider {
     }
 
     public QueryDefinition get(QueryId id) {
-        QueryDefinition def = map.get(id);
+        QueryDefinition def = id == null ? null : map.get(id);
         if (def == null) {
             throw new IllegalArgumentException("未定義のqueryId: " + id);
         }

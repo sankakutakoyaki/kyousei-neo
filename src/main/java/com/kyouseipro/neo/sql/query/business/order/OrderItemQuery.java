@@ -33,7 +33,7 @@ public class OrderItemQuery {
                 o.remarks
             FROM order_items o
             WHERE o.state = ?
-            AND o.order_id IN (:ids)
+            AND o.order_item_id IN (:ids)
         """;
 
         List<String> params = List.of("state", "ids");

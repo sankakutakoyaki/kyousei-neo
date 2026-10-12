@@ -1,8 +1,11 @@
 "use strict"
 
+import { DataResolver } from "../../behavior/DataResolver.js";
+
 export function clearFormExceptSkipped(form){
     if(!form) return;
 
+    DataResolver.reset(form);
     // checkboxで指定された保持対象
     const skipTargets = new Set(
         [...form.querySelectorAll("[data-skip-target]")]
@@ -33,6 +36,7 @@ export function clearFormExceptSkipped(form){
         }
         field.value = "";
     }
+    DataResolver.reset(form);
     form.dispatchEvent(
         new Event("input", { bubbles: true })
     );

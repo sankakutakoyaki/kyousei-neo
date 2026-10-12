@@ -5,6 +5,12 @@ import { createCrudPage } from "./createCrudPage.js";
 export function createMasterPage(config){
     return createCrudPage({
         key: config.key,
+        autoLoad: config.autoLoad,
+        onInit: config.onInit,
+        onRendered: config.onRendered,
+        rowClass: config.rowClass,
+        canSave: config.canSave,
+        defaultFormName: config.defaultFormName,
         components: config.components,
         tableId: config.tableId,
         footerId: config.footerId,
@@ -33,9 +39,9 @@ export function createMasterPage(config){
         buildAdditionalPayload: config.buildAdditionalPayload,
         hasAdditionalChanges: config.hasAdditionalChanges,
         resetAdditional: config.resetAdditional,
-        beforeSave: (payload, form) => {
+        beforeSave: async (payload, form) => {
             if(config.beforeSave){
-                config.beforeSave(payload, form);
+                await config.beforeSave(payload, form);
             }
             if(config.category && config.insertCategory){
                 const id = payload[config.idKey];
@@ -52,9 +58,9 @@ export function createMasterPage(config){
         },
         onDeleted: config.onDeleted,
         onOpen: config.onOpen,
-        buildDetailParams: (id) => ({
+        buildDetailParams: config.buildDetailParams ?? ((id) => ({
             state: APP.cache.common.state.INITIAL,
             [config.idKey]: id
-        })
+        }))
     });
 }

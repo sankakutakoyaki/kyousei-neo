@@ -1,8 +1,8 @@
 "use strict"
 
 import { convertKey } from "../../util/keyCaseConverter.js";
-import { normalizeValue, getOptions, normalize } from "../behavior/valueNormalizer.js";
-import { resolveSubmitValue } from "../behavior/DataResolver.js";
+import { normalize } from "../behavior/valueNormalizer.js";
+import { DataResolver, resolveSubmitValue } from "../behavior/DataResolver.js";
 import { formatters } from "../behavior/formatters.js";
 
 export const FormModel = {
@@ -48,6 +48,7 @@ export const FormModel = {
     },
     // fill
     fill(form, data = {}){
+        DataResolver.reset(form);
         Object.entries(data).forEach(([key, value]) => {
             const kebab = convertKey(key, "camel", "kebab");
             // data-key優先
@@ -111,6 +112,7 @@ export const FormModel = {
                 }
             }
         });
+        DataResolver.reset(form);
     },
 
     // save
@@ -154,6 +156,7 @@ export const FormModel = {
     //     });
     // }
 clear(form){
+    DataResolver.reset(form);
     [...form.elements].forEach(el => {
         if(!el.name) return;
 
@@ -167,6 +170,7 @@ clear(form){
             el.value = "";
         }
     });
+    DataResolver.reset(form);
 }
 };
 

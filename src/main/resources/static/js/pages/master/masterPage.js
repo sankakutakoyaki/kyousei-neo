@@ -3,11 +3,9 @@
 import { initCommon } from "../../bootstrap/initPage.js";
 import { initPageCache } from "../../bootstrap/initPageCache.js";
 import { registerController } from "../../application/controllerRegistry.js";
-import { filterFactory } from "../../util/filterFactory.js";
 import { ItemMasterRepository } from "../../repositories/master/item/itemMasterRepository.js";
 import { WorkMasterRepository } from "../../repositories/master/work/workMasterRepository.js";
 import { createItemMasterColumns, createWorkMasterColumns } from "./columns.js";
-import { getController } from "../../application/controllerRegistry.js";
 import { createMasterPage } from "../../core/page/createMasterPage.js";
 
 export async function init() {
@@ -36,6 +34,7 @@ export const itemMasterPage = () =>
         idKey: "itemMasterId",
         repository: ItemMasterRepository,
         saveHandler: ItemMasterRepository.save,
+        actions: {reload: controller => controller.refresh()},
         columns: createItemMasterColumns(),
         submitText: "保存",
         cancelText: "キャンセル",
@@ -54,6 +53,7 @@ export const workMasterPage = () =>
         idKey: "workMasterId",
         repository: WorkMasterRepository,
         saveHandler: WorkMasterRepository.save,
+        actions: {reload: controller => controller.refresh()},
         columns: createWorkMasterColumns(),
         submitText: "保存",
         cancelText: "キャンセル",

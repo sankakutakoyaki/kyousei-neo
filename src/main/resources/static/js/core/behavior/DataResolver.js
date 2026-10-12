@@ -5,89 +5,145 @@ import { api } from "../api/apiService.js";
 import { normalizeValue, getOptions } from "./valueNormalizer.js";
 import { parsers } from "./parsers.js";
 
+import { DialogService } from "../ui/dialog/DialogService.js";
+
 const paramBuilders = {
     makerParams: () => ({state: APP.cache.common.state.INITIAL}),
-    employeeParams: (id) => ({state: APP.cache.common.state.INITIAL, identifier: id})
+    employeeParams: identifier => ({state: APP.cache.common.state.INITIAL, identifier})
 };
+const initializedInputs = new WeakSet();
+const inputStates = new WeakMap();
+const queryCaches = new WeakMap();
+
+function invalidate(input) {
+    const state = inputStates.get(input);
+    if (state) { state.request++; state.pending = null; }
+}
+function groupsIn(area) {
+    return [...(area.matches?.("[data-resolve]") ? [area] : []), ...area.querySelectorAll("[data-resolve]")];
+}
 
 export const DataResolver = {
     init(area = document) {
-        const groups = area.querySelectorAll("[data-resolve]");
-        groups.forEach(group => {
-            const type = group.dataset.resolve;
+        groupsIn(area).forEach(group => {
             const idInput = group.querySelector("[data-resolve-id]");
             const nameField = group.querySelector("[data-resolve-name]");
-            if (!idInput) return;
-            /* ID → Resolve */
-            idInput.addEventListener("blur", async () => {this.resolve(group, type);});
-            idInput.addEventListener("input",() => {
-                group._resolvedData = null;
+            if (!idInput || initializedInputs.has(idInput)) return;
+            initializedInputs.add(idInput);
+            if (idInput.dataset.lastId == null && !idInput.value?.trim()) idInput.dataset.lastId = "";
+            idInput.addEventListener("input", () => {
+                invalidate(idInput);
                 delete idInput.dataset.lastId;
-                if(nameField){
-                    this.clear(nameField);
+                group._resolvedData = null;
+                if(group.dataset.resolve === "api") {
+                    if(nameField) this.clear(nameField);
+                    group.dispatchEvent(new CustomEvent("resolved", {bubbles: true, detail: {data: null}}));
                 }
             });
-            /* Enter → Resolve */
-            if(group.dataset.resolveEnter === "true"){
-                idInput.addEventListener("keydown", async event => {
-                    if(event.key !== "Enter"){return;}
-                    if(event.isComposing){return;}
+            idInput.addEventListener("change", () => invalidate(idInput));
+            idInput.addEventListener("blur", () => this.resolve(group, group.dataset.resolve));
+            if(group.dataset.resolveEnter === "true") {
+                idInput.addEventListener("keydown", event => {
+                    if(event.key !== "Enter" || event.isComposing || event.repeat) return;
                     event.preventDefault();
-                    await this.resolve(group, type);
+                    this.resolve(group, group.dataset.resolve);
                 });
             }
-            /* Name(select) → ID */
             if (nameField?.tagName === "SELECT") {
                 nameField.addEventListener("change", () => {
-                    const value = nameField.value;
-                    updateField(idInput, Number(value) === 0 ? "": value);
+                    invalidate(idInput);
+                    updateField(idInput, Number(nameField.value) === 0 ? "" : nameField.value);
+                    idInput.dataset.lastId = idInput.value.trim();
                 });
             }
+        });
+    },
+
+    reset(area) {
+        groupsIn(area).forEach(group => {
+            const input = group.querySelector("[data-resolve-id]");
+            if (!input) return;
+            invalidate(input);
+            group._resolvedData = null;
+            input.dataset.lastId = input.value.trim();
+            delete input.dataset.resolving;
+            queryCaches.delete(group);
         });
     },
 
     async resolve(group, type) {
         const idInput = group.querySelector("[data-resolve-id]");
         const nameField = group.querySelector("[data-resolve-name]");
+        if (!idInput || group.isConnected === false) return false;
         const id = idInput.value.trim();
-        // 未変更の空欄では、OCRや手入力済みの住所を消さない。
-        if (idInput.dataset.lastId === id) return;
-        // 空ならクリア
+        let state = inputStates.get(idInput);
+        if (!state) { state = {request: 0, pending: null}; inputStates.set(idInput, state); }
+        if (state.pending?.id === id) return state.pending.promise;
+        if (idInput.dataset.lastId === id) return true;
+        const request = ++state.request;
+        const canApply = () => state.request === request && group.isConnected !== false
+            && idInput.isConnected !== false && group.querySelector("[data-resolve-id]") === idInput
+            && idInput.value.trim() === id
+            && !group.closest?.("form")?.classList?.contains("none");
         if (!id) {
-            delete idInput.dataset.lastId;
-            if (nameField) {this.clear(nameField);}
-            return;
+            group._resolvedData = null;
+            if (nameField) this.clear(nameField);
+            this.clear(group.querySelector("[data-role='hidden-id']"));
+            idInput.dataset.lastId = "";
+            return false;
         }
-        idInput.dataset.lastId = id;
-        // SELECTはここで処理
         if (nameField?.tagName === "SELECT") {
             const found = this.resolveSelect(nameField, id);
-            if (!found) {idInput.value = "";}
-            return;
+            if (found) idInput.dataset.lastId = id;
+            else { idInput.value = ""; delete idInput.dataset.lastId; }
+            return found;
         }
-        // それ以外はresolverへ
         const resolver = resolvers[type] || resolvers.default;
-        await resolver.resolve({group, type, id, idInput, nameField, clear: this.clear});
+        if (type === "query") this.clear(group.querySelector("[data-role='hidden-id']"));
+        const promise = (async () => {
+            try {
+                const found = await resolver.resolve({group, type, id, idInput, nameField, canApply});
+                if (found && canApply()) idInput.dataset.lastId = idInput.value.trim();
+                // Postal lookup may normalize the code before returning.
+                else if (found && state.request === request && group.isConnected !== false) {
+                    idInput.dataset.lastId = idInput.value.trim();
+                }
+                return found;
+            } catch (error) {
+                if (canApply()) {
+                    group._resolvedData = null;
+                    if (type === "query" || !resolvers[type]) applyName({group, nameField}, null);
+                    DialogService.error(error.message || "入力値の取得に失敗しました。再度確認してください。");
+                }
+                return false;
+            } finally {
+                if (state.pending?.request === request) state.pending = null;
+            }
+        })();
+        state.pending = {id, request, promise};
+        return promise;
     },
 
     resolveSelect(select, id) {
-        for (const option of select.options) {
-            if (option.value === id) {
-                updateField(select, id);
-                return true;
-            }
-        }
-        updateField(select, "");
-        return false;
+        const found = [...select.options].some(option => option.value === id);
+        updateField(select, found ? id : "");
+        return found;
     },
-    clear(field) {updateField(field, "");}
+    clear(field) { if (field) updateField(field, ""); }
 };
 
+function focusForRetry(input, canApply) {
+    requestAnimationFrame(() => { if (canApply()) { input.focus(); input.select(); } });
+}
+function applyName({group, nameField}, data) {
+    if (nameField) updateField(nameField, data?.[group.dataset.nameKey || "name"] ?? "");
+    const hidden = group.querySelector("[data-role='hidden-id']");
+    if (hidden) updateField(hidden, data?.[group.dataset.valueKey] ?? "");
+}
 function focusEnd(input) {
     if (!input) return;
     input.focus();
-    const len = input.value.length;
-    input.setSelectionRange(len, len);
+    input.setSelectionRange(input.value.length, input.value.length);
 }
 
 export function resolveSubmitValue(el, value){
@@ -115,248 +171,120 @@ export function resolveSubmitValue(el, value){
     const validateType = el.dataset.validate;
     if(validateType){
         const parser = parsers[validateType];
-        if(parser){v = parser(v);}
+        if(parser){
+            v = parser(v);
+        }
     }
     // ★ 共通normalize
-    return normalizeValue(v, getOptions(el));
+    return normalizeValue(
+        v,
+        getOptions(el)
+    );
 }
 
 const defaultResolver = {
-    async resolve({type, id, nameField, idInput, group, clear}) {
-        try {
-            const res = await api.get(`/api/${type}/${id}`);
-            const data = res?.data;
-            if (!data || !data.data) {
-                clear(nameField);
-                const hidden = group?.querySelector("[data-role='hidden-id']");
-                if(hidden){hidden.value = "";}
-                requestAnimationFrame(() => {
-                    idInput.focus();
-                    idInput.select();
-                });
-                return;
-            }
-            // name
-            nameField.value = data.name ?? "";
-            // hidden value
-            const valueKey = group?.dataset.valueKey;
-            if(valueKey){
-                const hidden = group.querySelector("[data-role='hidden-id']");
-                if(hidden){hidden.value = data[valueKey] ?? "";}
-            }
-        } catch (e) {
-            console.error(e);
-            clear(nameField);
-        }
+    async resolve(context) {
+        const {type, id, idInput, canApply} = context;
+        const res = await api.get(`/api/${type}/${encodeURIComponent(id)}`);
+        if (!canApply()) return false;
+        const data = Array.isArray(res?.data) ? res.data[0] : res?.data;
+        applyName(context, data);
+        if (!data) { focusForRetry(idInput, canApply); return false; }
+        return true;
     }
 };
 
+async function queryList(group, queryId, params) {
+    const key = queryId + ":" + JSON.stringify(params);
+    let entry = queryCaches.get(group);
+    if (!entry || entry.key !== key) {
+        entry = {key};
+        entry.promise = api.request({queryId, params, showProcessing: false}).then(res => {
+            if (!Array.isArray(res?.data)) throw new Error("取得結果の形式が不正です");
+            return res.data;
+        }).catch(error => {
+            if (queryCaches.get(group) === entry) queryCaches.delete(group);
+            throw error;
+        });
+        queryCaches.set(group, entry);
+    }
+    return entry.promise;
+}
 const queryResolver = {
-    cacheMap: {},
-    async resolve({ group, id, idInput, nameField, clear }) {
-        const queryId = group.dataset.queryId;
-        const builderName = group.dataset.paramBuilder;
-        const params = builderName && paramBuilders[builderName] ? paramBuilders[builderName](id): {};
-        const cacheKey = queryId + ":" + JSON.stringify(params);
-        try {
-            if (!this.cacheMap[cacheKey]) {
-                const res = await api.request({queryId, params, showProcessing: false});
-                this.cacheMap[cacheKey] = res?.data || [];
-            }
-            const list = this.cacheMap[cacheKey];
-            const idKey = group.dataset.idKey || "id";
-            const nameKey = group.dataset.nameKey || "name";
-            const found = group.dataset.resultFirst === "true" ? list[0]: list.find(x => String(x[idKey]) === String(id));
-            if (!found) {
-                clear(nameField);
-                // hiddenも消す
-                const hidden = group.querySelector("[data-role='hidden-id']");
-                if(hidden){hidden.value = "";}
-                requestAnimationFrame(() => {
-                    idInput.focus();
-                    idInput.select();
-                });
-                return;
-            }
-            // 表示名
-            nameField.value = found?.[nameKey] ?? "";
-            // ★ 追加部分
-            const valueKey = group.dataset.valueKey;
-            if(valueKey){
-                const hidden = group.querySelector("[data-role='hidden-id']");
-                if(hidden){hidden.value = found?.[valueKey] ?? "";}
-            }
-        } catch (e) {
-            console.error(e);
-            clear(nameField);
-        }
+    async resolve(context) {
+        const {group, id, idInput, canApply} = context;
+        const builder = paramBuilders[group.dataset.paramBuilder];
+        const list = await queryList(group, group.dataset.queryId, builder ? builder() : {});
+        if (!canApply()) return false;
+        const found = list.find(item => String(item[group.dataset.idKey || "id"]) === id);
+        applyName(context, found);
+        if (!found) { queryCaches.delete(group); focusForRetry(idInput, canApply); return false; }
+        return true;
     }
 };
-
-const apiResolver = {
-    async resolve({group, id, idInput, nameField, clear}) {
-        const url = group.dataset.resolveUrl;
-        const paramKey = group.dataset.paramKey || "value";
-        const nameKey = group.dataset.nameKey || "name";
-        if(!url){
-            console.warn("resolve url is not defined", group);
-            return;
-        }
-        try {
-            const query = new URLSearchParams({[paramKey]: id});
-            const res = await api.get(`${url}?${query.toString()}`);
-            const data = res?.data;
-            if(!data){
-                group._resolvedData = null;
-                if(nameField){clear(nameField);}
-                requestAnimationFrame(() => {
-                    idInput.focus();
-                    idInput.select();
-                });
-                return;
-            }
-            // 解決結果全体を保持
-            group._resolvedData = data;
-            // 表示名
-            if(nameField){nameField.value = data[nameKey] ?? "";}
-            // 解決完了を通知
-            group.dispatchEvent(new CustomEvent("resolved", {bubbles: true, detail: {data}}));
-        } catch(error){
-            console.error(error);
-            group._resolvedData = null;
-            delete idInput.dataset.lastId;
-            if(nameField){clear(nameField);}
-            requestAnimationFrame(() => {
-                idInput.focus();
-                idInput.select();
-            });
-        }
-    }
-};
-
-/**
- * 郵便番号検索
- */
 const postalResolver = {
-    async resolve({ id, idInput, group }) {
-        const res = await api.post("/api/address/get/postalcode", { value: id });
-        const data = res?.data;
-        const postalInput = idInput;
+    async resolve({id, idInput, group, canApply}) {
+        const res = await api.post("/api/address/get/postalcode", {value: id});
+        if (!canApply()) return false;
+        const address = Array.isArray(res?.data) ? res.data[0] : res?.data;
+        if (!address) { idInput.focus(); return false; }
         const addressInput = group.querySelector('[name="full-address"]');
-        // データなし
-        if (!data || (Array.isArray(data) && data.length === 0)) {
-            postalInput.value = "";
-            postalInput.focus();
-            return;
-        }
-        // APIが配列 or 単体どちらでも対応
-        const address = Array.isArray(data) ? data[0] : data;
-        // データあり
-        postalInput.dataset.resolving = "true";
-        // 郵便番号
-        postalInput.value = address.postalCode ?? postalInput.value;
-        // 住所
+        idInput.value = address.postalCode ?? idInput.value;
         if (addressInput) {
-            const full = address.fullAddress ?? (address.prefecture || "") + (address.city || "") + (address.town || "");
-            addressInput.value = full;
+            updateField(addressInput, address.fullAddress ?? (address.prefecture || "") + (address.city || "") + (address.town || ""));
             focusEnd(addressInput);
         }
-        delete postalInput.dataset.resolving;
+        return true;
     }
 };
 
-const itemResolver = {
-    async resolve({ id, idInput, group }) {
-        try {
-            const res = await api.post("/api/item/get/jancode", { value: id });
-            const data = res?.data;
-            const panel = group.closest(".tab-panel");
-            const itemName = panel?.querySelector('[name="item-name"]');
-            const itemMaker = panel?.querySelector('[name="item-maker"]');
-            const itemModel = panel?.querySelector('[name="item-model"]');
-            const itemQuantity = panel?.querySelector('[name="item-quantity"]');
-            // データなし
-            if (!data) {
-                // 商品情報をクリア
-                if (itemName) {itemName.value = "";}
-                if (itemMaker) {itemMaker.value = "";}
-                if (itemModel) {itemModel.value = "";}
-                if (itemQuantity) {itemQuantity.value = "";}
-                // JANコードもクリア
-                idInput.value = "";
-                requestAnimationFrame(() => {
-                    idInput.focus();
-                    idInput.select();
-                });
-                return;
-            }
-            // 商品情報セット
-            if (itemName) {itemName.value = data.itemName ?? "";}
-            if (itemMaker) {itemMaker.value = data.itemMaker ?? "";}
-            if (itemModel) {itemModel.value = data.itemModel ?? "";}
-            // 商品情報取得成功 → 数量へ
-            if (itemQuantity) {
-                itemQuantity.focus();
-                itemQuantity.select();
-            }
-        } catch (e) {
-            console.error(e);
-            idInput.value = "";
-            requestAnimationFrame(() => {
-                idInput.focus();
-                idInput.select();
-            });
-        }
+async function resolveProduct(context, type) {
+    const {group, id, idInput, canApply} = context;
+    const res = type === "item" ? await api.post("/api/item/get/jancode", {value: id}) : null;
+    const list = type === "work" ? await queryList(group, "workMasterList", {state: APP.cache.common.state.INITIAL}) : null;
+    if (!canApply()) return false;
+    const data = type === "work" ? list.find(work => String(work.workCode) === id)
+        : Array.isArray(res?.data) ? res.data[0] : res?.data;
+    const scope = group.closest?.("form") ?? group.closest?.(".tab-panel") ?? group;
+    const fields = type === "item"
+        ? {"item-name": "itemName", "item-maker": "itemMaker", "item-model": "itemModel"}
+        : {"order-work-name": "workName", "order-work-price": "workPrice"};
+    for (const [name, key] of Object.entries(fields)) {
+        const field = scope.querySelector(`[name="${name}"]`);
+        if (field) updateField(field, data?.[key] ?? "");
     }
-};
-
-const workResolver = {
-    async resolve({ id, idInput, group }) {
-        try {
-            const res = await api.post("/api/work/get/workcode", { value: id });
-            const data = res?.data;
-            const panel = group.closest(".tab-panel");
-            const workName = panel?.querySelector('[name="order-work-name"]');
-            const workPrice = panel?.querySelector('[name="order-work-price"]');
-            const workQuantity = panel?.querySelector('[name="order-work-quantity"]');
-            // データなし
-            if (!data) {
-                // 作業情報をクリア
-                if (workName) {workName.value = "";}
-                if (workPrice) {workPrice.value = "";}
-                if (workQuantity) {workQuantity.value = "";}
-                // 作業コードもクリア
-                idInput.value = "";
-                requestAnimationFrame(() => {
-                    idInput.focus();
-                    idInput.select();
-                });
-                return;
-            }
-            // 作業情報セット
-            if (workName) {workName.value = data.workName ?? "";}
-            if (workPrice) {workPrice.value = data.workPrice ?? "";}
-            // 作業情報取得成功 → 数量へ
-            if (workQuantity) {
-                workQuantity.focus();
-                workQuantity.select();
-            }
-        } catch (e) {
-            console.error(e);
-            idInput.value = "";
-            requestAnimationFrame(() => {
-                idInput.focus();
-                idInput.select();
-            });
-        }
+    const quantity = scope.querySelector(type === "item" ? '[name="item-quantity"]' : '[name="order-work-quantity"]');
+    if (!data) {
+        if (type === "work") queryCaches.delete(group);
+        DataResolver.clear(quantity);
+        focusForRetry(idInput, canApply);
+        return false;
+    }
+    quantity?.focus(); quantity?.select();
+    return true;
+}
+const apiResolver = {
+    async resolve(context) {
+        const {group, id, idInput, nameField, canApply} = context;
+        const url = group.dataset.resolveUrl;
+        if(!url) throw new Error("入力値の取得先が設定されていません。");
+        const query = new URLSearchParams({[group.dataset.paramKey || "value"]: id});
+        const res = await api.get(`${url}?${query}`);
+        if(!canApply()) return false;
+        const data = res?.data;
+        group._resolvedData = data ?? null;
+        if(nameField) nameField.value = data?.[group.dataset.nameKey || "name"] ?? "";
+        group.dispatchEvent(new CustomEvent("resolved", {bubbles: true, detail: {data: data ?? null}}));
+        if(!data) requestAnimationFrame(() => {if(canApply()) {idInput.focus(); idInput.select();}});
+        return Boolean(data);
     }
 };
 
 const resolvers = {
-    postal: postalResolver,
-    item: itemResolver,
-    work: workResolver,
-    query: queryResolver,
     api: apiResolver,
+    postal: postalResolver,
+    item: {resolve: context => resolveProduct(context, "item")},
+    work: {resolve: context => resolveProduct(context, "work")},
+    query: queryResolver,
     default: defaultResolver
 };

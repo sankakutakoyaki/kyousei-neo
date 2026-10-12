@@ -24,6 +24,6 @@ export const CompanyService = {
     },
 
     async fetchCombo(){
-        return await CompanyRepository.fetchCombo("companyCombo");
+        return await CompanyRepository.fetchCombo("partner");
     }
 };

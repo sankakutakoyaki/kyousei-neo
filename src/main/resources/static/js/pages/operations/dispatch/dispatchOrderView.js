@@ -1,5 +1,7 @@
 "use strict"
 
+import { cloneTemplate } from "../../../core/dom/cloneTemplate.js";
+
 /**
  * 伝票一覧描画
  */
@@ -44,10 +46,8 @@ export function renderDispatchOrders(orders, status, {onDragStart, onDragEnd} = 
  * 伝票カード
  */
 function createDispatchOrderCard(order, {onDragStart, onDragEnd} = {}){
-    const card = document.createElement("div");
-    card.className = "dispatch-order-card";
+    const card = cloneTemplate("dispatch-order-card-template");
     card.dataset.orderId = order.orderId;
-    card.draggable = true;
     card.addEventListener(
         "dragstart",
         event => {
@@ -65,30 +65,12 @@ function createDispatchOrderCard(order, {onDragStart, onDragEnd} = {}){
         }
     );
 
-    const header = document.createElement("div");
-    header.className = "dispatch-order-card-header";
-
-    const title = document.createElement("strong");
-    title.textContent = order.title || "名称未設定";
-
-    const time = document.createElement("span");
-    time.textContent = order.visitTime || "";
-
-    header.append(title, time);
-
-    const address = document.createElement("div");
-    address.className = "dispatch-order-address";
-    address.textContent = order.fullAddress || "";
-
-    card.append(header, address);
-
-    if(order.assignmentCount > 0){
-        const assigned = document.createElement("div");
-        assigned.className = "dispatch-order-assigned";
-
-        assigned.textContent = `配車済み ${order.assignmentCount}班`;
-        card.appendChild(assigned);
-    }
+    card.querySelector('[data-field="title"]').textContent = order.title || "名称未設定";
+    card.querySelector('[data-field="visitTime"]').textContent = order.visitTime || "";
+    card.querySelector('[data-field="fullAddress"]').textContent = order.fullAddress || "";
+    const assigned = card.querySelector(".dispatch-order-assigned");
+    if(order.assignmentCount > 0) assigned.textContent = `配車済み ${order.assignmentCount}班`;
+    else assigned.remove();
 
     return card;
 }

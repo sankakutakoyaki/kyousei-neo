@@ -46,6 +46,8 @@ export class FormController {
         if(!key) throw new Error("key is required");
 
         this.formId = formId;
+        this.openRequest = 0;
+        this.disposed = false;
         this.key = key;
         this.idKey = idKey;
         this.repository = repository;
@@ -74,9 +76,10 @@ export class FormController {
                 },
                 validateBusiness: async (payload) => {await this.runBusinessValidation(payload);},
                 confirmSave: async (payload) => {return await this.confirmSave(payload);},
-                executeSave: async (payload) => {
-                    if(!this.saveHandler) return;
+                executeSave: async (payload, context) => {
+                    if(!this.saveHandler || !context.canApply()) return {skipped: true};
                     const res = await this.saveHandler(payload);
+                    if(!context.canApply()) return {response: res, id: res?.data, count: res?.count};
                     if(this.showSuccessDialog){
                         DialogService.info(this.isBulkMode() ? "一括更新しました": "保存しました");
                     }
@@ -86,19 +89,26 @@ export class FormController {
                     this.controller.setBulkMode(false);
                     return {response: res, id: res?.data, count: res?.count};
                 },
-                afterSave: async (result) => {
-                    if(this.afterSave){await this.afterSave(result.id ?? this.currentEntity?.[this.key]);}
+                afterSave: async (result, payload, context) => {
+                    if(context.canApply() && !result?.skipped && this.afterSave){await this.afterSave(result.id ?? this.currentEntity?.[this.key]);}
                 }
             });
     }
 
     async open(dataOrId = {}) {
+        if(this.disposed || this._saving) return;
+        const request = ++this.openRequest;
+        const form = document.getElementById(this.formId);
+        if(!form) return;
+        const canApply = () => !this.disposed && request === this.openRequest
+            && form.isConnected && document.getElementById(this.formId) === form;
         let data = dataOrId ?? {};
         if (typeof dataOrId !== "object") {
             if (!this.repository?.find) return;
             const params = this.buildParams ? this.buildParams(dataOrId): { id: dataOrId };
             data = await this.repository.find(params);
         }
+        if(!canApply()) return;
         const isCreate = !data?.[this.idKey];
         if (isCreate && isMobileReadOnly(this.controller?.key)) return;
         if (isCreate && (this.config.inheritFilters?.(data) ?? true)) {
@@ -118,7 +128,6 @@ export class FormController {
             });
         }
         this.currentEntity = structuredClone(data);
-        const form = document.getElementById(this.formId);
         FormModel.clear(form);
         FormModel.fill(form, data);
         applyFormDefaults(form);
@@ -146,7 +155,8 @@ export class FormController {
             this._eventsInitialized = true;
         }
         // フォームと関連データの初期化
-        if (this.onOpen) {await this.onOpen(data, this);}
+        if (this.onOpen) {await this.onOpen(data, this, canApply);}
+        if(!canApply()) return;
         openFormDialog({
             dialogId: this.formId,
             controller: this.controller,
@@ -158,6 +168,7 @@ export class FormController {
             onClose: () => {
                 if (this._saving) return;
                 DialogService.close(this.formId);
+                this.openRequest++;
                 this.config.onClose?.(this);
             },
             onReset: () => {this.resetForm();}
@@ -169,19 +180,22 @@ export class FormController {
         this.setSubmitEnabled(this.canSubmit());
         // 初期フォーカス
         if (this.initialFocusSelector) {
-            requestAnimationFrame(() => {form.querySelector(this.initialFocusSelector)?.focus();});
+            requestAnimationFrame(() => {if(canApply()) form.querySelector(this.initialFocusSelector)?.focus();});
         }
     }
 
     async save(form){
         if (isMobileReadOnly(this.controller?.key)) return;
-        if(this._saving) return;
+        if(this.disposed || !form?.isConnected || this._saving) return;
         this._saving = true;
 
         try {
             const payload = this.preparePayload(form);
             if(!payload) return;
-            return await this.saveBehavior.save(payload, { form });
+            const request = this.openRequest;
+            return await this.saveBehavior.save(payload, {form,
+                canApply: () => !this.disposed && request === this.openRequest
+                    && form.isConnected && document.getElementById(this.formId) === form});
         } catch(e){
             console.error(e.stack); 
             this.handleError(e);
@@ -239,7 +253,7 @@ export class FormController {
     handleError(e) {
         DialogService.error(e.message || "エラーが発生しました");
         const form = document.getElementById(this.formId);
-        if(!form) return;
+        if(this.disposed || !form) return;
         // 単数・複数両対応
         const fields = [...(e.field ? [e.field] : []), ...(e.fields ?? [])];
         fields.forEach((field, index) => {
@@ -297,8 +311,17 @@ export class FormController {
             const enabled = this.canSubmit();
             this.setSubmitEnabled(enabled);
         };
+        this.formEventElement = form;
+        this.formUpdateHandler = update;
         form.addEventListener("input", update);
         form.addEventListener("change", update);
+    }
+
+    dispose(){
+        this.disposed = true;
+        this.openRequest++;
+        this.formEventElement?.removeEventListener("input", this.formUpdateHandler);
+        this.formEventElement?.removeEventListener("change", this.formUpdateHandler);
     }
 
     canSubmit(){

@@ -1,0 +1,47 @@
+<th:block th:fragment="cardsFragment()">
+    <template id="dispatch-crew-card-template">
+        <div class="dispatch-crew-card" data-action="toggle-crew-orders">
+            <div class="dispatch-crew-card-header">
+                <strong data-field="vehicleName"></strong>
+                <div class="dispatch-crew-number-area button-hover-group">
+                    <span class="dispatch-crew-number" data-field="registration"></span>
+                    <button type="button" class="button-icon-remove" title="この車両を配車ボードから削除"
+                            data-action="delete-daily-crew" data-action-lock="true">
+                        <img src="/icons/close-s.png" alt="削除">
+                    </button>
+                </div>
+            </div>
+            <div class="dispatch-crew-members"></div>
+            <div class="dispatch-assignment-list"></div>
+            <span class="dispatch-assignment-badge"></span>
+        </div>
+    </template>
+    <template id="dispatch-crew-member-template">
+        <div class="dispatch-crew-member">
+            <span class="dispatch-member-role" data-field="role"></span>
+            <span data-field="employeeName"></span>
+            <span class="dispatch-member-warning"></span>
+            <button type="button" class="dispatch-member-edit img-btn" title="乗務員編集" data-action="edit-crew-members">
+                <img src="/icons/edit.png" alt="編集">
+            </button>
+        </div>
+    </template>
+    <template id="dispatch-assignment-template">
+        <div class="dispatch-assignment-item" draggable="true">
+            <div class="dispatch-assignment-content">
+                <strong data-field="title"></strong><span data-field="fullAddress"></span>
+            </div>
+            <button type="button" class="dispatch-assignment-remove" title="配車解除"
+                    data-action="unassign-order" data-action-lock="true">×</button>
+        </div>
+    </template>
+    <template id="dispatch-order-card-template">
+        <div class="dispatch-order-card" draggable="true">
+            <div class="dispatch-order-card-header">
+                <strong data-field="title"></strong><span data-field="visitTime"></span>
+            </div>
+            <div class="dispatch-order-address" data-field="fullAddress"></div>
+            <div class="dispatch-order-assigned"></div>
+        </div>
+    </template>
+</th:block>

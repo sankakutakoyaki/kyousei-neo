@@ -8,7 +8,7 @@ import { resolveController } from "../core/events/controllerResolver.js";
 import { openMsgDialog, closeMsgDialog, openConfirmDialog } from "../core/ui/dialog/dialogCore.js";
 
 const defaultPageConditions = {
-    Edit: (c) => c.hasSelection(),
+    edit: (c) => c.hasSelection(),
     singleEdit: (c) => c.hasCurrentRow(),
     bulkEdit: (c) => c.hasSelection(),
     delete: (c) => c.hasSelection(),
@@ -31,7 +31,7 @@ const defaultActions = {
     create: (c) => c.openForm("detail", null, { bulkMode:false }),
     keywordSearch: (c, el) => {c.setKeyword(el.value); c.reload();},
     filter: smartFilterHandler,
-    Edit: async (c) => {const ids = c.getSelectedIds();
+    edit: async (c) => {const ids = c.getSelectedIds();
         if(!c.ensureSelection(ids)){return;}
         await c.openForm("detail", c.getSelectedId(), { bulkMode:false });
     },
@@ -61,9 +61,11 @@ export class PageController {
         this.config = Object.freeze(config);
         this.key = config.key;
         this.state = {};
+        this.actionLocks = new WeakSet();
         this.dataTable = null;
         this.forms = {};
         this.components = {};
+        this.actionPointerEvents = new WeakMap();
         this.pageActions = config.actions || {};
         this.pageConditions = config.conditions || {};
     }
@@ -124,21 +126,21 @@ export class PageController {
     }
 
     initButtonAutoUpdate(){
-        document.addEventListener("input", e => {
-            const controller =  resolveController(e.target);
-            // 自分の画面以外は無視
-            if(controller !== this){
-                return;
-            }
-            this.updateButtons();
-        });
-        document.addEventListener("change", e => {
-            const controller = resolveController(e.target);
-            if(controller !== this){
-                return;
-            }
-            this.updateButtons();
-        });
+        if(this.buttonUpdateHandler) return;
+        this.buttonUpdateHandler = e => {
+            if(resolveController(e.target) === this) this.updateButtons();
+        };
+        document.addEventListener("input", this.buttonUpdateHandler);
+        document.addEventListener("change", this.buttonUpdateHandler);
+    }
+
+    dispose(){
+        Object.values(this.forms).forEach(form => form.dispose?.());
+        this.dataTable?.dispose?.();
+        if(!this.buttonUpdateHandler) return;
+        document.removeEventListener("input", this.buttonUpdateHandler);
+        document.removeEventListener("change", this.buttonUpdateHandler);
+        this.buttonUpdateHandler = null;
     }
 
     // 検索
@@ -223,11 +225,11 @@ export class PageController {
     }
 
     // ボタンの状態判定
-    isEnabled(action, btn){
-        const fn = this.pageConditions[action];
-        if(!fn) return true;
-
-        return fn(this, btn);
+    isEnabled(actions, el){
+        return (actions?.split(/\s+/).filter(Boolean) ?? []).every(action => {
+            const condition = this.pageConditions[action];
+            return !condition || Boolean(condition(this, el));
+        });
     }
 
     // ボタン制御関数
@@ -243,15 +245,19 @@ export class PageController {
             const controller = resolveController(el);
             if(controller !== this) return;
 
-            const action = el.dataset.action;
-            const enabled = this.isEnabled(action, el);
+            const actions = el.dataset.action?.split(/\s+/).filter(Boolean) ?? [];
+            // Elements without conditions retain HTML/component-managed state.
+            if(!actions.some(action => this.pageConditions[action])) return;
+            if(!this.actionPointerEvents.has(el)) this.actionPointerEvents.set(el, el.style.pointerEvents);
+            const enabled = this.isEnabled(el.dataset.action, el);
 
             if("disabled" in el){
                 el.disabled = !enabled;
             }
 
             el.classList.toggle("disabled", !enabled);
-            el.style.pointerEvents = enabled ? "auto" : "none";
+            el.setAttribute("aria-disabled", String(!enabled));
+            el.style.pointerEvents = enabled ? this.actionPointerEvents.get(el) : "none";
         });
     }
 
@@ -346,7 +352,11 @@ export class PageController {
         if(!fn){
             return;
         }
-        return await fn(this, payload);
+        const lock = payload?.dataset?.actionLock === "true";
+        if(lock && this.actionLocks.has(payload)) return;
+        if(lock) this.actionLocks.add(payload);
+        try {return await fn(this, payload);}
+        finally {if(lock) this.actionLocks.delete(payload);}
     }
 
     getFilter(key){

@@ -5,7 +5,7 @@ import { initMobileReadOnly } from "./core/access/mobileReadOnly.js";
 import { loadPage } from "./core/dom/loadPage.js";
 import { initHamburger } from "./core/ui/menu/hamburger.js";
 import { closeHamburger } from "./core/ui/menu/hamburger.js";
-import { initPushSubscription } from "./core/push/subscription.js";
+import { DialogService } from "./core/ui/dialog/DialogService.js";
 
 window.APP = {
     security: {
@@ -33,10 +33,9 @@ export function initApp() {
         if (!item) return;
 
         const path = item.dataset.path || item.dataset.link;
-        if (APP.currentPage === path) return;
         const target = item.dataset.target || "body";
 
-        loadPage(path, target);
+        loadPage(path, target).catch(error => DialogService.error(error.message));
         closeHamburger();
     });
 }

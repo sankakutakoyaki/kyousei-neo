@@ -22,6 +22,6 @@ export const WorkMasterRepository = {
     },
 
     async download(params) {
-        return await RequestClient.request({queryId: "workmMasterCsv", params});
+        return await RequestClient.request({queryId: "workMasterCsv", params});
     }
 };

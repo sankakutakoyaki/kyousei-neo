@@ -4,10 +4,17 @@ import { DailyCrewRepository } from "../../../repositories/operations/dispatch/D
 import { VehicleDefaultMemberRepository } from "../../../repositories/operations/vehicle/VehicleDefaultMemberRepository.js";
 import { DialogService } from "../../../core/ui/dialog/DialogService.js";
 
-export function createDispatchVehicle({onChanged} = {}) {
+import { getDispatchConditions as readConditions } from "./dispatchConditions.js";
+
+export function createDispatchVehicle({session, onChanged} = {}) {
+    let candidateRequest = 0;
+    let adding = false;
+    const getDispatchConditions = () => readConditions(session.root);
     return {
         async loadCandidates() {
-            const select = document.getElementById("dispatch-add-vehicle");
+            if(!session.isActive()) return;
+            const request = ++candidateRequest;
+            const select = session.byId("dispatch-add-vehicle");
             if(!select){return;}
             select.replaceChildren();
 
@@ -26,15 +33,19 @@ export function createDispatchVehicle({onChanged} = {}) {
                 dispatchCategory: conditions.dispatchCategory,
                 state: APP.cache.common.state.INITIAL
             });
+            if(!session.isActive() || request !== candidateRequest
+                || JSON.stringify(conditions) !== JSON.stringify(getDispatchConditions())) return;
             const rows = result.data ?? [];
             rows.forEach(vehicle => {select.add(new Option(buildVehicleLabel(vehicle), vehicle.vehicleId));});
             select.disabled = rows.length === 0;
         },
 
         async add() {
+            if(adding || !session.isActive()) return;
             const conditions = getDispatchConditions();
-            const vehicleId = Number(document.getElementById("dispatch-add-vehicle")?.value || 0);
+            const vehicleId = Number(session.byId("dispatch-add-vehicle")?.value || 0);
             if(!conditions.workDate || !conditions.officeId || !conditions.dispatchCategory || !vehicleId){return;}
+            adding = true;
             try {
                 await DailyCrewRepository.bulkCreate({
                     workDate: conditions.workDate,
@@ -47,16 +58,8 @@ export function createDispatchVehicle({onChanged} = {}) {
                 await onChanged?.();
             } catch(error) {
                 DialogService.error(error.message ?? "車両の追加に失敗しました。");
-            }
+            } finally {adding = false;}
         }
-    };
-}
-
-function getDispatchConditions(){
-    return {
-        workDate: document.getElementById("dispatch-work-date")?.value ?? "",
-        officeId: Number(document.getElementById("dispatch-office")?.value || 0),
-        dispatchCategory: Number(document.getElementById("dispatch-category")?.value || 0)
     };
 }
 
