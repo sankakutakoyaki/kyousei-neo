@@ -224,7 +224,19 @@ export function createManagement(session) {
         const nextDay = row.querySelector('[name="endNextDay"]');
         const isEnd = input.name === "editEndTime";
         const total = hours * 60 + minutes + (isEnd && nextDay?.checked ? 1440: 0);
-        const updated = Math.max(0, Math.min(isEnd ? 2879: 1439, total + delta));
+        let updated;
+        if (delta === 15) {
+            // 次の15分単位へ移動
+            updated = Math.floor(total / 15) * 15 + 15;
+        } else if (delta === -15) {
+            // 前の15分単位へ移動
+            updated = Math.ceil(total / 15) * 15 - 15;
+        } else {
+            // 上下キーは従来どおり1分ずつ
+            updated = total + delta;
+        }
+        // 既存の時刻範囲を維持
+        updated = Math.max(0,  Math.min(isEnd ? 2879 : 1439, updated));
         if(updated === total){return;}
 
         const clockMinutes = updated % 1440;

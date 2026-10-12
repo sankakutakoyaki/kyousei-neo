@@ -155,105 +155,63 @@
 
 
         <!-- 出退勤管理 -->
-        <div class="tab-panel"
-             id="tab-02"
-             data-tab-content="timeworks-tabs"
-             data-controller="timeworks"
-             sec:authorize="hasAnyAuthority(
-                'APPROLE_admin',
-                'APPROLE_master',
-                'APPROLE_leader'
-             )">
-
-            <section class="timework-management"
-                     aria-labelledby="management-title">
-
-                <h2 id="management-title">
-                    出退勤管理
-                </h2>
-
-
+        <div class="tab-panel" id="tab-02" data-tab-content="timeworks-tabs" data-controller="timeworks"
+            sec:authorize="hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader')">
+            <section class="timework-management" aria-labelledby="management-title">
+                <h2 id="management-title">出退勤管理</h2>
                 <div class="management-toolbar">
-
-                    <th:block th:replace="~{
-                        fragments/components/box
-                        :: inputBoxFragment(${
-                            {
-                                'text':'対象月',
-                                'id':'management-month',
-                                'name':'management-month',
-                                'type':'month',
-                                'default':'current-month',
-                                'action':'search-management'
-                            }
-                        })
-                    }">
+                    <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                        {
+                            'text':'対象月',
+                            'id':'management-month',
+                            'name':'management-month',
+                            'type':'month',
+                            'default':'current-month',
+                            'action':'search-management'
+                        }
+                    })}">
                     </th:block>
-
-
-                    <th:block th:replace="~{
-                        fragments/components/box
-                        :: selectBoxFragment(${
-                            {
-                                'text':'締め日',
-                                'id':'management-closing-type',
-                                'name':'management-closing-type',
-                                'combo':'closingTypeComboList',
-                                'action':'search-management'
-                            }
-                        })
-                    }">
+                    <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                        {
+                            'text':'締め日',
+                            'id':'management-closing-type',
+                            'name':'management-closing-type',
+                            'combo':'closingTypeComboList',
+                            'action':'search-management'
+                        }
+                    })}">
                     </th:block>
-
-
-                    <th:block th:replace="~{
-                        fragments/components/box
-                        :: selectBoxFragment(${
-                            {
-                                'text':'営業所',
-                                'id':'management-office',
-                                'name':'office-id',
-                                'combo':'officeComboList',
-                                'top':'すべて',
-                                'loginOffice':true,
-                                'action':'load-management-employees'
-                            }
-                        })
-                    }">
+                    <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                        {
+                            'text':'営業所',
+                            'id':'management-office',
+                            'name':'office-id',
+                            'combo':'officeComboList',
+                            'top':'すべて',
+                            'loginOffice':true,
+                            'action':'load-management-employees'
+                        }
+                    })}">
                     </th:block>
-
-
-                    <th:block th:replace="~{
-                        fragments/components/box
-                        :: selectBoxFragment(${
-                            {
-                                'text':'従業員',
-                                'id':'management-employee',
-                                'name':'employee-id',
-                                'top':'すべて',
-                                'action':'search-management'
-                            }
-                        })
-                    }">
+                    <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                        {
+                            'text':'従業員',
+                            'id':'management-employee',
+                            'name':'employee-id',
+                            'top':'すべて',
+                            'action':'search-management'
+                        }
+                    })}">
                     </th:block>
-
-                    <div class="img-btn"
-                        data-action="download">
-                        <img src="/icons/download.png">
-                        <span>取得</span>
+                    <div class="img-btn" data-action="download">
+                        <img src="/icons/download.png"><span>取得</span>
                     </div>
                 </div>
 
-
-                <p id="management-period"
-                   class="management-period">
-                </p>
-
+                <p id="management-period" class="management-period"></p>
 
                 <div class="management-table-wrapper">
-
                     <table class="management-table normal-table">
-
                         <thead>
                             <tr name="table-header">
                                 <th>勤務日</th>
@@ -267,20 +225,25 @@
                                 <th>翌日</th>
                             </tr>
                         </thead>
-
-                        <tbody
-                            id="management-list"
-                            class="scroll-area">
+                        <tbody id="management-list" class="scroll-area">
                         </tbody>
-
                     </table>
+                    <template id="timeworks-management-row-template">
+                        <tr name="data-row">
+                            <td data-field="workDate"></td>
+                            <td data-field="employeeId"></td>
+                            <td data-field="fullName"></td>
+                            <td data-field="officeName"></td>
 
+                            <td class="management-original-time" data-field="originalStartTime"></td>
+                            <td><div class="management-time-input"><input type="time" name="editStartTime" title="←／→：15分、↑／↓：1分ずつ変更"></div></td>
+                            <td class="management-original-time" data-field="originalEndTime"></td>
+                            <td><div class="management-time-input"><input type="time" name="editEndTime" title="←／→：15分、↑／↓：1分ずつ変更"></div></td>
+                            <td class="next-day-cell"><input type="checkbox" name="endNextDay" aria-label="翌日退勤"></td>
+                        </tr>
+                    </template>
                 </div>
-
             </section>
-
         </div>
-
     </div>
-
 </main>

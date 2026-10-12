@@ -2,6 +2,7 @@
 
 import { formatDate } from "../../../util/time.js";
 import { toggleScrollbar } from "../../../core/table/tableRender.js";
+import { cloneTemplate } from "../../../core/dom/cloneTemplate.js";
 
 export function renderManagementPeriod({ targetMonth, closingType }) {
     if (!targetMonth) return;
@@ -28,79 +29,70 @@ export function renderManagementList(items) {
     const body = document.getElementById("management-list");
     if (!body) return;
 
-    body.replaceChildren();
+    const fragment = document.createDocumentFragment();
 
     items.forEach(item => {
-        const row = document.createElement("tr");
-        row.setAttribute("name", "data-row");
-        row.dataset.timeworkId = item.timeworkId;
-        row.dataset.version = item.version;
-        row.dataset.workDate = item.workDate;
-        row.dataset.timeworkEditId = item.timeworkEditId ?? "";
-
-        appendTextCell(row, item.workDate);
-        appendTextCell(row, item.employeeId);
-        appendTextCell(row, item.fullName);
-        appendTextCell(row, item.officeName || "-----");
-
-        appendOriginalTimeCell(row, item.originalStartTime, item.workDate);
-        appendTimeCell(row, "editStartTime", item.editStartTime || item.originalStartTime);
-        appendOriginalTimeCell(row, item.originalEndTime, item.workDate);
-        appendTimeCell(row, "editEndTime", item.editEndTime || item.originalEndTime);
-        appendNextDayCell(row, item.editEndTime || item.originalEndTime, item.workDate);
-
-        body.appendChild(row);
+        fragment.appendChild(createManagementRow(item));
     });
+
+    body.replaceChildren(fragment);
 
     window.requestAnimationFrame(() => toggleScrollbar(body));
 }
 
-function appendTextCell(row, value) {
-    const cell = document.createElement("td");
-    cell.textContent = value ?? "";
-    row.appendChild(cell);
+function createManagementRow(item) {
+    const row = cloneTemplate("timeworks-management-row-template");
+
+    row.dataset.timeworkId = item.timeworkId;
+    row.dataset.version = item.version;
+    row.dataset.workDate = item.workDate;
+    row.dataset.timeworkEditId = item.timeworkEditId ?? "";
+
+    setText(row, "workDate", item.workDate);
+    setText(row, "employeeId", item.employeeId);
+    setText(row, "fullName", item.fullName);
+    setText(row, "officeName", item.officeName || "-----");
+
+    setText(
+        row,
+        "originalStartTime",
+        formatOriginalTime(item.originalStartTime, item.workDate)
+    );
+
+    setText(
+        row,
+        "originalEndTime",
+        formatOriginalTime(item.originalEndTime, item.workDate)
+    );
+
+    const start = item.editStartTime || item.originalStartTime;
+    const end = item.editEndTime || item.originalEndTime;
+
+    row.querySelector('[name="editStartTime"]').value =
+        start ? start.slice(11, 16) : "";
+
+    row.querySelector('[name="editEndTime"]').value =
+        end ? end.slice(11, 16) : "";
+
+    row.querySelector('[name="endNextDay"]').checked =
+        Boolean(
+            end &&
+            item.workDate &&
+            end.slice(0, 10) > item.workDate
+        );
+
+    return row;
 }
 
-function appendOriginalTimeCell(row, value, workDate) {
-    const cell = document.createElement("td");
-    cell.className = "management-original-time";
-
-    if (!value) {
-        cell.textContent = "-----";
-    } else {
-        const nextDay = value.slice(0, 10) > workDate;
-        cell.textContent = `${nextDay ? "翌日 " : ""}${value.slice(11, 16)}`;
-    }
-
-    row.appendChild(cell);
+function setText(row, field, value) {
+    const element = row.querySelector(`[data-field="${field}"]`);
+    if (element) element.textContent = value ?? "";
 }
 
-function appendTimeCell(row, name, value) {
-    const cell = document.createElement("td");
-    const area = document.createElement("div");
-    const input = document.createElement("input");
+function formatOriginalTime(value, workDate) {
+    if (!value) return "-----";
 
-    area.className = "management-time-input";
-    input.type = "time";
-    input.title = "←／→：15分、↑／↓：1分ずつ変更";
-    input.name = name;
-    input.value = value ? value.slice(11, 16) : "";
+    const nextDay = value.slice(0, 10) > workDate;
 
-    area.appendChild(input);
-    cell.appendChild(area);
-    row.appendChild(cell);
-}
-
-function appendNextDayCell(row, value, workDate) {
-    const cell = document.createElement("td");
-    const checkbox = document.createElement("input");
-
-    cell.className = "next-day-cell";
-    checkbox.type = "checkbox";
-    checkbox.name = "endNextDay";
-    checkbox.checked = Boolean(value && workDate && value.slice(0, 10) > workDate);
-    checkbox.setAttribute("aria-label", "翌日退勤");
-
-    cell.appendChild(checkbox);
-    row.appendChild(cell);
+    return `${nextDay ? "翌日 " : ""}${value.slice(11, 16)}`;
 }
