@@ -192,23 +192,24 @@ function createDispatchPage(session) {
             {
                 expandedCrewIds,
                 isActive: session.isActive,
-                initCrewDrop: card => {
-                    initCrewDrop(
-                        card,
-                        {
-                            session,
-                            onAssigned: async ({dailyCrewId}) => {
-                                expandedCrewIds.add(dailyCrewId);
-                                await loadDispatchBoard();
-                            }
+                initCrewDrop: card => {initCrewDrop(
+                    card,
+                    {
+                        session,
+                        onAssigned: async ({dailyCrewId}) => {expandedCrewIds.add(dailyCrewId); await loadDispatchBoard();}
+                    }
+                );},
+                onReorder: async (dailyCrewId, items) => {
+                    if (!session.isActive()) return;
+                    try {
+                        await DispatchAssignmentRepository.reorder(dailyCrewId, items);
+                    } catch (error) {
+                        if (session.isActive()) {
+                            await loadDispatchBoard().catch(() => {});
                         }
-                    );
-                },
-                onReorder: async items => {
-                    if(!session.isActive()) return;
-                    try {await DispatchAssignmentRepository.reorder(items);}
-                    catch(error) {await loadDispatchBoard().catch(() => {}); throw error;}
-                    await loadDispatchBoard();
+                        throw error;
+                    }
+                    if (session.isActive()) {await loadDispatchBoard();}
                 }
             }
         );

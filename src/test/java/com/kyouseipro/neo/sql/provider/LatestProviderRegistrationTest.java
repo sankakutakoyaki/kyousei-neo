@@ -57,7 +57,7 @@ class LatestProviderRegistrationTest {
     @Test void latestHandlerKindsHaveUniqueOwners() throws Exception {
         var provider = new QueryHandlerProvider(List.<QueryHandler>of(
             instance("com.kyouseipro.neo.sql.handler.DailyCrewHandler"),
-            instance("com.kyouseipro.neo.sql.handler.DispathAssignmentHandler"),
+            instance("com.kyouseipro.neo.sql.handler.DispatchAssignmentHandler"),
             instance("com.kyouseipro.neo.sql.handler.EmployeeHandler"),
             instance("com.kyouseipro.neo.sql.handler.EmployeeShiftHandler"),
             instance("com.kyouseipro.neo.sql.handler.OrderHandler"),

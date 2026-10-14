@@ -97,4 +97,49 @@ public class DispatchAssignmentQuery {
             )
         );
     }
+
+    public static QueryDefinition dispatchAssignmentListByOrderId() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                da.dispatch_assignment_id,
+                da.order_id,
+                da.daily_crew_id,
+                da.version,
+
+                dc.work_date,
+                dc.office_id,
+                dc.dispatch_category,
+
+                v.vehicle_name,
+                v.registration_area,
+                v.registration_class,
+                v.registration_kana,
+                v.registration_number
+
+            FROM dispatch_assignments da
+
+            INNER JOIN daily_crews dc
+                ON dc.daily_crew_id = da.daily_crew_id
+                AND dc.state = ?
+
+            LEFT OUTER JOIN vehicles v
+                ON v.vehicle_id = dc.vehicle_id
+                AND v.state = ?
+
+            WHERE da.state = ?
+            AND da.order_id = ?
+
+            ORDER BY
+                dc.work_date,
+                da.dispatch_assignment_id
+            """,
+            List.of(
+                "state",
+                "state",
+                "state",
+                "orderId"
+            )
+        );
+    }
 }

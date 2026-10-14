@@ -251,7 +251,7 @@ function renderCrewAssignments(area, assignments, {onReorder, dailyCrewId, isAct
                     version: Number(element.dataset.version)
                 }));
                 area.dataset.reordering = "true";
-                await onReorder?.(items);
+                await onReorder?.(dailyCrewId, items);
             } catch(error) {
                 DialogService.error(error.message || "配車順の更新に失敗しました。再読み込みしてください。");
             } finally {delete area.dataset.reordering;}

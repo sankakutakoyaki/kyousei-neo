@@ -8,6 +8,10 @@ export const DispatchAssignmentRepository = {
         return await RequestClient.request({ queryId: "dispatchAssignmentList", params });
     },
 
+    async findByOrderId(orderId) {
+        return await RequestClient.request({ queryId: "dispatchAssignmentListByOrderId", params: {orderId, state: APP.cache.common.state.INITIAL} });
+    },
+
     async save(params) {
         return await RequestClient.request({ queryId: "dispatchAssignmentSave", params });
     },
@@ -20,11 +24,19 @@ export const DispatchAssignmentRepository = {
         return await RequestClient.request({ queryId: "dispatchAssignmentNextVisitOrder", params});
     },
 
-    async reorder(items) {
-        return await RequestClient.request({ queryId: "dispatchAssignmentReorder", params: { items }});
+    async reorder(dailyCrewId, items) {
+        return await RequestClient.request({ queryId: "dispatchAssignmentReorder", params: {dailyCrewId, items} });
     },
 
     async reset(params) {
         return await RequestClient.request({ queryId: "dispatchAssignmentReset", params });
+    },
+
+    async create(params) {
+        return await RequestClient.request({ queryId: "dispatchAssignmentCreate", params });
+    },
+
+    async move(params) {
+        return await RequestClient.request({ queryId: "dispatchAssignmentMove", params });
     },
 };

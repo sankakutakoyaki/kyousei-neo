@@ -21,6 +21,7 @@ public class DispatchAssignmentSqlProvider implements SqlProviderPart {
         Map<QueryId, QueryDefinition> map = new HashMap<>();
 
         map.put(QueryId.DISPATCH_ASSIGNMENT_LIST, DispatchAssignmentQuery.dispatchAssignmentList());
+        map.put(QueryId.DISPATCH_ASSIGNMENT_LIST_BY_ORDER_ID, DispatchAssignmentQuery.dispatchAssignmentListByOrderId());
         map.put(QueryId.DISPATCH_ASSIGNMENT_NEXT_VISIT_ORDER, DispatchAssignmentQuery.dispatchAssignmentNextVisitOrder());
         map.put(QueryId.DISPATCH_ASSIGNMENT_REORDER,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DISPATCH_ASSIGNMENT_REORDER, Tables.DISPATCH_ASSIGNMENT_BY_IDS)
@@ -33,6 +34,13 @@ public class DispatchAssignmentSqlProvider implements SqlProviderPart {
         );
         map.put(QueryId.DISPATCH_ASSIGNMENT_RESET,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DISPATCH_ASSIGNMENT_RESET, Tables.DISPATCH_ASSIGNMENT_BY_IDS)
+        );
+        map.put(QueryId.DISPATCH_ASSIGNMENT_CREATE,
+            new QueryDefinition(QueryType.UPDATE, QueryKind.DISPATCH_ASSIGNMENT_CREATE, Tables.DISPATCH_ASSIGNMENT_BY_IDS)
+        );
+
+        map.put(QueryId.DISPATCH_ASSIGNMENT_MOVE,
+            new QueryDefinition(QueryType.UPDATE, QueryKind.DISPATCH_ASSIGNMENT_MOVE, Tables.DISPATCH_ASSIGNMENT_BY_IDS)
         );
 
         return map;
