@@ -38,9 +38,11 @@ public class DispatchAssignmentSqlProvider implements SqlProviderPart {
         map.put(QueryId.DISPATCH_ASSIGNMENT_CREATE,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DISPATCH_ASSIGNMENT_CREATE, Tables.DISPATCH_ASSIGNMENT_BY_IDS)
         );
-
         map.put(QueryId.DISPATCH_ASSIGNMENT_MOVE,
             new QueryDefinition(QueryType.UPDATE, QueryKind.DISPATCH_ASSIGNMENT_MOVE, Tables.DISPATCH_ASSIGNMENT_BY_IDS)
+        );
+        map.put(QueryId.DISPATCH_ASSIGNMENT_REMOVE,
+            new QueryDefinition(QueryType.UPDATE, QueryKind.DISPATCH_ASSIGNMENT_REMOVE, Tables.DISPATCH_ASSIGNMENT_BY_IDS)
         );
 
         return map;

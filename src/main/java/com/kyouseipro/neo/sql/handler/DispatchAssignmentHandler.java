@@ -32,7 +32,8 @@ public class DispatchAssignmentHandler implements QueryHandler {
         return kind == QueryKind.DISPATCH_ASSIGNMENT_CREATE
             || kind == QueryKind.DISPATCH_ASSIGNMENT_MOVE
             || kind == QueryKind.DISPATCH_ASSIGNMENT_REORDER
-            || kind == QueryKind.DISPATCH_ASSIGNMENT_RESET;
+            || kind == QueryKind.DISPATCH_ASSIGNMENT_RESET
+            || kind == QueryKind.DISPATCH_ASSIGNMENT_REMOVE;
     }
 
     @Override
@@ -43,6 +44,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
             case DISPATCH_ASSIGNMENT_MOVE -> executeMove(req);
             case DISPATCH_ASSIGNMENT_REORDER -> executeAssignmentReorder(req);
             case DISPATCH_ASSIGNMENT_RESET -> executeReset(req);
+            case DISPATCH_ASSIGNMENT_REMOVE -> executeRemove(req);
             default -> throw new IllegalStateException();
         };
     }
@@ -206,14 +208,19 @@ public class DispatchAssignmentHandler implements QueryHandler {
         String workDate = String.valueOf(params.get("workDate"));
         int officeId = ((Number) params.get("officeId")).intValue();
         int dispatchCategory = ((Number) params.get("dispatchCategory")).intValue();
-
+        // ① 対象となる班を取得
+        List<Map<String, Object>> crews = findResetCrews(workDate, officeId, dispatchCategory);
+        // ② 班IDの昇順でロック
+        for (Map<String, Object> crew : crews) {
+            int dailyCrewId = ((Number) crew.get("dailyCrewId")).intValue();
+            lockCrew(dailyCrewId);
+        }
         // 対象の配車割当を取得
         Map<String, Object> findParams = new HashMap<>();
         findParams.put("state", 0);
         findParams.put("workDate", workDate);
         findParams.put("officeId", officeId);
         findParams.put("dispatchCategory", dispatchCategory);
-
         SelectRequest findReq = new SelectRequest();
         findReq.setParams(findParams);
         List<Map<String, Object>> rows = queryExecutor.select(DispatchAssignmentQuery.dispatchAssignmentResetList(), findReq);
@@ -227,6 +234,64 @@ public class DispatchAssignmentHandler implements QueryHandler {
             baseRepository.update(Tables.DISPATCH_ASSIGNMENT_BY_IDS, update, editor);
             count++;
         }
+        return Map.of("count", count);
+    }
+
+    private List<Map<String, Object>> findResetCrews(String workDate, int officeId, int dispatchCategory) {
+        QueryDefinition query = QueryDefinition.select(
+            """
+            SELECT daily_crew_id
+            FROM daily_crews
+            WHERE work_date = ?
+            AND office_id = ?
+            AND dispatch_category = ?
+            AND state = ?
+            ORDER BY daily_crew_id
+            """,
+            List.of(
+                "workDate",
+                "officeId",
+                "dispatchCategory",
+                "state"
+            )
+        );
+        return queryExecutor.select(
+            query,
+            selectParams(Map.of(
+                "workDate", workDate,
+                "officeId", officeId,
+                "dispatchCategory", dispatchCategory,
+                "state", 0
+            ))
+        );
+    }
+
+    private Object executeRemove(SelectRequest req) {
+        Map<String, Object> params = req.getParams();
+        int assignmentId = ((Number) params.get("dispatchAssignmentId")).intValue();
+        int version = ((Number) params.get("version")).intValue();
+        String editor = (String) params.getOrDefault("editor", "system");
+        // ① 現在の所属班を取得
+        Map<String, Object> assignment = findAssignment(assignmentId);
+        int dailyCrewId = ((Number) assignment.get("dailyCrewId")).intValue();
+        // ② 所属班をロック
+        lockCrew(dailyCrewId);
+        // ③ ロック取得後に最新状態を確認
+        Map<String, Object> current = findAssignment(assignmentId);
+        int currentCrewId = ((Number) current.get("dailyCrewId")).intValue();
+        int currentVersion = ((Number) current.get("version")).intValue();
+        if (currentCrewId != dailyCrewId || currentVersion != version) {
+            throw new BusinessException(
+                "他の担当者によって配車情報が変更されています。"
+                + "再読み込みしてください。"
+            );
+        }
+        // ④ version付き論理削除
+        Map<String, Object> update = new HashMap<>();
+        update.put("dispatchAssignmentId", assignmentId);
+        update.put("version", version);
+        update.put("state", 9);
+        int count = baseRepository.update(Tables.DISPATCH_ASSIGNMENT_BY_IDS, update, editor);
         return Map.of("count", count);
     }
 

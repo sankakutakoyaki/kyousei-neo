@@ -85,15 +85,23 @@ function createDispatchPage(session) {
                 "edit-crew-members": async (controller, button) => {
                     if (button._crew) await crewMemberForm?.open(button._crew);
                 },
-
                 "unassign-order": async (controller, button) => {
                     const assignment = button._assignment;
-                    if (!assignment) return;
-
-                    await DispatchAssignmentRepository.deleteByIds([
-                        assignment.dispatchAssignmentId
-                    ]);
-                    await loadDispatchBoard();
+                    if (!assignment || !session.isActive()) return;
+                    try {
+                        await DispatchAssignmentRepository.remove({
+                            dispatchAssignmentId: assignment.dispatchAssignmentId,
+                            version: assignment.version
+                        });
+                    } catch (error) {
+                        if (session.isActive()) {
+                            await loadDispatchBoard().catch(() => {});
+                        }
+                        throw error;
+                    }
+                    if (session.isActive()) {
+                        await loadDispatchBoard();
+                    }
                 }
             },
             onInit: (controller) => {

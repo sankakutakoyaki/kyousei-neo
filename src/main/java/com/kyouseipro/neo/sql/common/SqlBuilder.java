@@ -13,19 +13,10 @@ import com.kyouseipro.neo.sql.model.TableMeta;
 
 public class SqlBuilder {
     public static String toSnake(String camel) {
-        return camel
-                .replaceAll("([a-z])([A-Z]+)", "$1_$2")
-                .toLowerCase();
+        return camel.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
     }
 
-    public static SqlResult buildSqlWithLog(
-            String table,
-            Map<String, Object> req,
-            SqlMode mode,
-            String idKey,
-            String versionKey,
-            LogSqlProvider logProvider
-    ) {
+    public static SqlResult buildSqlWithLog(String table, Map<String, Object> req, SqlMode mode, String idKey, String versionKey, LogSqlProvider logProvider) {
         StringBuilder sql = new StringBuilder();
         List<Object> params = new ArrayList<>();
         List<String> sets = new ArrayList<>();
@@ -85,8 +76,8 @@ public class SqlBuilder {
         params.addAll(logProvider.buildLogParams(req, action));
         // ★snakeに変換
         sql.append("""
-            SELECT %s FROM %s;
-        """.formatted(toSnake(idKey), tableVar));
+                    SELECT %s FROM %s;
+                """.formatted(toSnake(idKey), tableVar));
 
         return new SqlResult(sql.toString(), params);
     }
@@ -95,8 +86,7 @@ public class SqlBuilder {
             TableMeta meta,
             List<T> ids,
             String editor,
-            LogSqlProvider logProvider
-    ){
+            LogSqlProvider logProvider) {
         if (ids == null || ids.isEmpty()) {
             throw new IllegalArgumentException("削除対象が指定されていません");
         }
@@ -127,8 +117,7 @@ public class SqlBuilder {
             List<T> ids,
             Map<String, Object> req,
             String editor,
-            LogSqlProvider logProvider
-    ){
+            LogSqlProvider logProvider) {
         if (ids == null || ids.isEmpty()) {
             throw new IllegalArgumentException("更新対象が指定されていません");
         }
@@ -141,10 +130,7 @@ public class SqlBuilder {
         // SET句（diffのみ）
         for (Map.Entry<String, Object> entry : req.entrySet()) {
             String key = entry.getKey();
-            if (key.equals(meta.idColumn())
-                || key.equals(meta.versionColumn())
-                || key.equals("editor")
-                || key.equals("ids")) continue;
+            if (key.equals(meta.idColumn()) || key.equals(meta.versionColumn()) || key.equals("editor") || key.equals("ids")) continue;
             sets.add(toSnake(key) + " = ?");
             params.add(entry.getValue());
         }
@@ -176,45 +162,30 @@ public class SqlBuilder {
 
         // 戻り値
         sql.append("""
-            SELECT COUNT(*) FROM %s;
-        """.formatted(tableVar));
+                    SELECT COUNT(*) FROM %s;
+                """.formatted(tableVar));
 
         return new SqlResult(sql.toString(), params);
     }
 
     // ログなし
-    public static SqlResult buildSqlNoLog(
-            String table,
-            Map<String, Object> req,
-            SqlMode mode,
-            String idKey,
-            String versionKey
-    ) {
+    public static SqlResult buildSqlNoLog(String table, Map<String, Object> req, SqlMode mode, String idKey, String versionKey) {
         StringBuilder sql = new StringBuilder();
         List<Object> params = new ArrayList<>();
 
         if (mode == SqlMode.INSERT) {
-
             List<String> columns = new ArrayList<>();
             List<String> values = new ArrayList<>();
-
             for (Map.Entry<String, Object> entry : req.entrySet()) {
-
                 String key = entry.getKey();
-
-                if (key.equals(idKey) || key.equals("editor")) {
-                    continue;
-                }
-
+                if (key.equals(idKey) || key.equals("editor")) {continue; }
                 columns.add(toSnake(key));
                 values.add("?");
                 params.add(entry.getValue());
             }
-
             if (columns.isEmpty()) {
                 throw new IllegalArgumentException("登録項目がありません");
             }
-
             sql.append("INSERT INTO ")
                 .append(table)
                 .append(" (")
@@ -227,126 +198,76 @@ public class SqlBuilder {
                 .append(String.join(", ", values))
                 .append(");");
         } else {
-
             List<String> sets = new ArrayList<>();
-
             for (Map.Entry<String, Object> entry : req.entrySet()) {
-
                 String key = entry.getKey();
-
-                if (key.equals(idKey)
-                        || key.equals(versionKey)
-                        || key.equals("editor")) {
-                    continue;
-                }
-
+                if (key.equals(idKey) || key.equals(versionKey) || key.equals("editor")) {continue;}
                 sets.add(toSnake(key) + " = ?");
                 params.add(entry.getValue());
             }
-
             if (sets.isEmpty()) {
                 throw new IllegalArgumentException("更新項目がありません");
             }
-
             if (mode == SqlMode.DELETE) {
                 sets.add("state = ?");
                 params.add(State.DELETE.getCode());
             }
-
             sets.add("version = version + 1");
             sets.add("update_date = SYSDATETIME()");
-
             sql.append("UPDATE ")
-            .append(table)
-            .append(" SET ")
-            .append(String.join(", ", sets));
-
+                .append(table)
+                .append(" SET ")
+                .append(String.join(", ", sets));
             sql.append(" WHERE ")
-            .append(toSnake(idKey))
-            .append(" = ?");
-
-            params.add(req.get(idKey));
-
-            if (versionKey != null && !versionKey.isBlank()) {
-                sql.append(" AND ")
-                .append(toSnake(versionKey))
+                .append(toSnake(idKey))
                 .append(" = ?");
-
+            params.add(req.get(idKey));
+            if (versionKey != null && !versionKey.isBlank()) {
+                sql.append(" AND ").append(toSnake(versionKey)).append(" = ?");
                 params.add(req.get(versionKey));
             }
-
             sql.append(" AND NOT(state = ?);");
-
             params.add(State.DELETE.getCode());
         }
-
-        return new SqlResult(
-            sql.toString(),
-            params
-        );
+        return new SqlResult(sql.toString(), params);
     }
 
-    public static <T> SqlResult buildDeleteByIdsNoLog(
-            TableMeta meta,
-            List<T> ids
-    ) {
+    public static <T> SqlResult buildDeleteByIdsNoLog(TableMeta meta, List<T> ids) {
         if (ids == null || ids.isEmpty()) {
-            throw new IllegalArgumentException(
-                "削除対象が指定されていません"
-            );
+            throw new IllegalArgumentException("削除対象が指定されていません");
         }
 
         StringBuilder sql = new StringBuilder();
         List<Object> params = new ArrayList<>();
-
-        String placeholders =
-            SqlUtil.placeholders(ids.size());
-
+        String placeholders = SqlUtil.placeholders(ids.size());
         sql.append("UPDATE ")
-        .append(meta.tableName())
-        .append(" SET ")
-        .append(meta.stateColumn())
-        .append(" = ?, ")
-        .append("version = version + 1, ")
-        .append("update_date = SYSDATETIME() ");
+            .append(meta.tableName())
+            .append(" SET ")
+            .append(meta.stateColumn())
+            .append(" = ?, ")
+            .append("version = version + 1, ")
+            .append("update_date = SYSDATETIME() ");
 
         params.add(State.DELETE.getCode());
-
         sql.append("WHERE ")
-        .append(toSnake(meta.idColumn()))
-        .append(" IN (")
-        .append(placeholders)
-        .append(") ");
-
+            .append(toSnake(meta.idColumn()))
+            .append(" IN (")
+            .append(placeholders)
+            .append(") ");
         params.addAll(ids);
-
         sql.append("AND NOT(")
-        .append(meta.stateColumn())
-        .append(" = ?);");
-
+            .append(meta.stateColumn())
+            .append(" = ?);");
         params.add(State.DELETE.getCode());
-
-        return new SqlResult(
-            sql.toString(),
-            params
-        );
+        return new SqlResult(sql.toString(), params);
     }
 
-    public static <T> SqlResult buildUpdateByIdsNoLog(
-            TableMeta meta,
-            List<T> ids,
-            Map<String, Object> req
-    ) {
+    public static <T> SqlResult buildUpdateByIdsNoLog(TableMeta meta, List<T> ids, Map<String, Object> req) {
         if (ids == null || ids.isEmpty()) {
-            throw new IllegalArgumentException(
-                "更新対象が指定されていません"
-            );
+            throw new IllegalArgumentException("更新対象が指定されていません");
         }
-
         if (req == null || req.isEmpty()) {
-            throw new IllegalArgumentException(
-                "更新項目がありません"
-            );
+            throw new IllegalArgumentException("更新項目がありません");
         }
 
         StringBuilder sql = new StringBuilder();
@@ -354,51 +275,33 @@ public class SqlBuilder {
         List<String> sets = new ArrayList<>();
 
         for (Map.Entry<String, Object> entry : req.entrySet()) {
-
             String key = entry.getKey();
-
-            if (key.equals(meta.idColumn())
-                    || key.equals(meta.versionColumn())
-                    || key.equals("editor")
-                    || key.equals("ids")) {
+            if (key.equals(meta.idColumn()) || key.equals(meta.versionColumn()) || key.equals("editor") || key.equals("ids")) {
                 continue;
             }
-
             sets.add(toSnake(key) + " = ?");
             params.add(entry.getValue());
         }
-
         if (sets.isEmpty()) {
-            throw new IllegalArgumentException(
-                "更新項目がありません"
-            );
+            throw new IllegalArgumentException("更新項目がありません");
         }
-
         sets.add("version = version + 1");
         sets.add("update_date = SYSDATETIME()");
-
         sql.append("UPDATE ")
-        .append(meta.tableName())
-        .append(" SET ")
-        .append(String.join(", ", sets));
-
-        String placeholders =
-            SqlUtil.placeholders(ids.size());
-
+            .append(meta.tableName())
+            .append(" SET ")
+            .append(String.join(", ", sets));
+        String placeholders = SqlUtil.placeholders(ids.size());
         sql.append(" WHERE ")
-        .append(toSnake(meta.idColumn()))
-        .append(" IN (")
-        .append(placeholders)
-        .append(")");
-
+            .append(toSnake(meta.idColumn()))
+            .append(" IN (")
+            .append(placeholders)
+            .append(")");
         params.addAll(ids);
-
         sql.append(" AND NOT(")
-        .append(meta.stateColumn())
-        .append(" = ?);");
-
+            .append(meta.stateColumn())
+            .append(" = ?);");
         params.add(State.DELETE.getCode());
-
         return new SqlResult(sql.toString(), params);
     }
 
@@ -407,57 +310,55 @@ public class SqlBuilder {
         StringBuilder sql = new StringBuilder();
         List<Object> params = new ArrayList<>();
         /*
-        * OUTPUT受け取り用
-        */
+         * OUTPUT受け取り用
+         */
         sql.append(logProvider.buildLogTable(tableVar));
         /*
-        * state=9 → state=0
-        */
+         * state=9 → state=0
+         */
         sql.append("UPDATE ")
-        .append(meta.tableName())
-        .append(" SET ")
-        .append(meta.stateColumn())
-        .append(" = ?, ")
-        .append(meta.versionColumn())
-        .append(" = ")
-        .append(meta.versionColumn())
-        .append(" + 1, ")
-        .append("update_date = SYSDATETIME() ");
+            .append(meta.tableName())
+            .append(" SET ")
+            .append(meta.stateColumn())
+            .append(" = ?, ")
+            .append(meta.versionColumn())
+            .append(" = ")
+            .append(meta.versionColumn())
+            .append(" + 1, ")
+            .append("update_date = SYSDATETIME() ");
         sql.append(logProvider.buildOutput())
-        .append(" INTO ")
-        .append(tableVar)
-        .append(" ");
+            .append(" INTO ")
+            .append(tableVar)
+            .append(" ");
         sql.append("WHERE ")
-        .append(toSnake(meta.idColumn()))
-        .append(" = ? ")
-        .append("AND ")
-        .append(toSnake(meta.versionColumn()))
-        .append(" = ? ")
-        .append("AND ")
-        .append(meta.stateColumn())
-        .append(" = ?; ");
+            .append(toSnake(meta.idColumn()))
+            .append(" = ? ")
+            .append("AND ")
+            .append(toSnake(meta.versionColumn()))
+            .append(" = ? ")
+            .append("AND ")
+            .append(meta.stateColumn())
+            .append(" = ?; ");
         params.add(State.INITIAL.getCode());
         params.add(id);
         params.add(version);
         params.add(State.DELETE.getCode());
         /*
-        * ログ
-        */
+         * ログ
+         */
         String action = "UPDATE";
         sql.append(logProvider.buildInsertLog(tableVar, action));
-        Map<String,Object> context = new HashMap<>();
+        Map<String, Object> context = new HashMap<>();
         context.put("editor", editor);
         params.addAll(logProvider.buildLogParams(context, action));
         /*
-        * 更新されたIDを返す
-        */
+         * 更新されたIDを返す
+         */
         sql.append(
-            """
-            SELECT %s
-            FROM %s;
-            """.formatted(toSnake(meta.idColumn()), tableVar)
-        );
-
+                """
+                SELECT %s
+                FROM %s;
+                """.formatted(toSnake(meta.idColumn()), tableVar));
         return new SqlResult(sql.toString(), params);
     }
 }

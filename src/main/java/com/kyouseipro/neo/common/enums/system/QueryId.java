@@ -72,6 +72,7 @@ public enum QueryId {
     DISPATCH_ASSIGNMENT_RESET("dispatchAssignmentReset"),
     DISPATCH_ASSIGNMENT_CREATE("dispatchAssignmentCreate"),
     DISPATCH_ASSIGNMENT_MOVE("dispatchAssignmentMove"),
+    DISPATCH_ASSIGNMENT_REMOVE("dispatchAssignmentRemove"),
 
     // ===== Shift =====
     EMPLOYEE_SHIFT_DETAIL("employeeShiftDetail"),
