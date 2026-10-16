@@ -12,6 +12,11 @@ import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
 import com.kyouseipro.neo.sql.service.SqlColumnValidator;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 class DispatchAssignmentSaveTest {
     private SelectRequest move() {
         var request = new SelectRequest();
@@ -26,19 +31,23 @@ class DispatchAssignmentSaveTest {
     }
     @Test void moveUsesOneVersionedUpdateAndKeepsTheAssignmentIdentity() {
         var base = mock(BaseSqlRepository.class);
-        when(base.update(eq(Tables.DISPATCH_ASSIGNMENT_BY_IDS),anyMap(),eq("system"))).thenReturn(1);
+        when(base.update(any(), anyMap(), eq("test@example.com"))).thenReturn(1);
         assertEquals(Map.of("data",12,"count",1),controller(base).request(move()));
-        verify(base).update(eq(Tables.DISPATCH_ASSIGNMENT_BY_IDS),argThat(row ->
-            row.get("dispatchAssignmentId").equals(12) && row.get("version").equals(3)
-            && row.get("dailyCrewId").equals(8) && row.get("visitOrder").equals(4)
-            && !row.containsKey("orderId") && !row.containsKey("remarks")),eq("system"));
+        verify(base).update(eq(Tables.DISPATCH_ASSIGNMENT_BY_IDS), argThat(row ->
+            row.get("dispatchAssignmentId").equals(12)
+            && row.get("version").equals(3)
+            && row.get("dailyCrewId").equals(8)
+            && row.get("visitOrder").equals(4)
+            && !row.containsKey("orderId")
+            && !row.containsKey("remarks")
+        ), eq("test@example.com"));
         verifyNoMoreInteractions(base);
     }
     @Test void staleVersionFailureDoesNotFallBackToInsertOrDelete() {
         var base = mock(BaseSqlRepository.class);
         when(base.update(any(),anyMap(),anyString())).thenThrow(new IllegalStateException("stale version"));
         assertThrows(IllegalStateException.class,() -> controller(base).request(move()));
-        verify(base).update(eq(Tables.DISPATCH_ASSIGNMENT_BY_IDS),anyMap(),eq("system"));
+        verify(base).update(any(),anyMap(),eq("test@example.com"));
         verifyNoMoreInteractions(base);
     }
     @Test void itemCsvFiltersByTheSelectedItemIds() {
@@ -46,5 +55,19 @@ class DispatchAssignmentSaveTest {
         assertTrue(definition.getSql().contains("o.order_item_id IN (:ids)"));
         assertFalse(definition.getSql().contains("o.order_id IN (:ids)"));
     }
+    @BeforeEach
+    void setUpAuthentication() {
+        SecurityContextHolder.getContext().setAuthentication(
+            new UsernamePasswordAuthenticationToken(
+                "test@example.com",
+                null,
+                List.of()
+            )
+        );
+    }
 
+    @AfterEach
+    void clearAuthentication() {
+        SecurityContextHolder.clearContext();
+    }
 }
