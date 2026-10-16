@@ -3,7 +3,10 @@ package com.kyouseipro.neo.sql.common;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.system.SqlMode;
@@ -12,8 +15,28 @@ import com.kyouseipro.neo.sql.model.SqlResult;
 import com.kyouseipro.neo.sql.model.TableMeta;
 
 public class SqlBuilder {
+    private static final Pattern COLUMN_NAME_PATTERN = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_]*");
+
     public static String toSnake(String camel) {
-        return camel.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
+        if (camel == null || !COLUMN_NAME_PATTERN.matcher(camel).matches()) {
+            throw new IllegalArgumentException("不正な項目名です: " + camel);
+        }
+        return camel.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase(Locale.ROOT);
+    }
+
+    private static final Set<String> SYSTEM_COLUMNS = Set.of("create_date", "update_date", "created_at", "updated_at");
+
+    public static void validateSystemColumns(Map<String, Object> params, SqlMode mode) {
+        for (String key : params.keySet()) {
+            String column = toSnake(key);
+
+            if (SYSTEM_COLUMNS.contains(column)) {
+                throw new IllegalArgumentException("変更できない管理項目です: " + key);
+            }
+            if (mode == SqlMode.UPDATE && column.equals("state")) {
+                throw new IllegalArgumentException("通常更新ではstateを変更できません");
+            }
+        }
     }
 
     public static SqlResult buildSqlWithLog(String table, Map<String, Object> req, SqlMode mode, String idKey, String versionKey, LogSqlProvider logProvider) {

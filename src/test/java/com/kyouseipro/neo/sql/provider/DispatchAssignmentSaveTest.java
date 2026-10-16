@@ -10,6 +10,7 @@ import com.kyouseipro.neo.domain.operations.dispatch.query.DispatchAssignmentSql
 import com.kyouseipro.neo.sql.controller.QueryController;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
+import com.kyouseipro.neo.sql.service.SqlColumnValidator;
 
 class DispatchAssignmentSaveTest {
     private SelectRequest move() {
@@ -19,8 +20,9 @@ class DispatchAssignmentSaveTest {
         return request;
     }
     private QueryController controller(BaseSqlRepository base) {
+        SqlColumnValidator columnValidator = mock(SqlColumnValidator.class);
         return new QueryController(new SqlProvider(List.of(new DispatchAssignmentSqlProvider())),
-            null,null,base,null,new QueryBuilderProvider(List.of()),new QueryHandlerProvider(List.of()));
+            null,null,base,null,new QueryBuilderProvider(List.of()),new QueryHandlerProvider(List.of()), columnValidator);
     }
     @Test void moveUsesOneVersionedUpdateAndKeepsTheAssignmentIdentity() {
         var base = mock(BaseSqlRepository.class);

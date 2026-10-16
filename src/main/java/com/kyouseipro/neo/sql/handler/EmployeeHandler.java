@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.system.QueryId;
 import com.kyouseipro.neo.common.enums.system.QueryKind;
 import com.kyouseipro.neo.interfaces.sql.QueryHandler;
@@ -103,7 +104,7 @@ public class EmployeeHandler implements QueryHandler {
                 Map<String,Object> update = new HashMap<>();
                 update.put("employeeWorkCategoryMemberId", row.get("employeeWorkCategoryMemberId"));
                 update.put("version", row.get("version"));
-                update.put("state", 9);
+                update.put("state", State.DELETE.getCode());
                 baseRepository.update(Tables.EMPLOYEE_WORK_CATEGORY_MEMBER_BY_IDS, update, editor);
                 continue;
             }
@@ -116,7 +117,7 @@ public class EmployeeHandler implements QueryHandler {
             Map<String,Object> insert = new HashMap<>();
             insert.put("employeeId", employeeId);
             insert.put("employeeWorkCategoryId", categoryId);
-            insert.put("state", 0);
+            insert.put("state", State.INITIAL.getCode());
             baseRepository.insert(Tables.EMPLOYEE_WORK_CATEGORY_MEMBER_BY_IDS, insert, editor);
         }
     }
@@ -157,7 +158,7 @@ public class EmployeeHandler implements QueryHandler {
                 Map<String,Object> update = new HashMap<>();
                 update.put("employeeOfficeMemberId", row.get("employeeOfficeMemberId"));
                 update.put("version", row.get("version"));
-                update.put("state", 9);
+                update.put("state", State.DELETE.getCode());
                 baseRepository.update(Tables.EMPLOYEE_OFFICE_MEMBER_BY_IDS, update, editor);
                 continue;
             }
@@ -172,7 +173,7 @@ public class EmployeeHandler implements QueryHandler {
             Map<String,Object> insert = new HashMap<>();
             insert.put("employeeId", employeeId);
             insert.put("officeId", officeId);
-            insert.put("state", 0);
+            insert.put("state", State.INITIAL.getCode());
             baseRepository.insert(Tables.EMPLOYEE_OFFICE_MEMBER_BY_IDS, insert, editor);
         }
     }

@@ -76,6 +76,7 @@ const createOrderForm = (controller, options = {}) => {
         formId: options.formId,
         key: "orderId",
         idKey: "orderId",
+        trackInitialState: true,
         submitText: options.submitText,
         cancelText: options.cancelText,
         repository: OrderRepository,

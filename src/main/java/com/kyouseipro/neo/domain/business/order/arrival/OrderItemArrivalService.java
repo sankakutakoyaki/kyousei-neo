@@ -116,7 +116,7 @@ public class OrderItemArrivalService {
         if (data.containsKey("expectedArrivalDate")) data.put("expectedArrivalDate", date(data.get("expectedArrivalDate"), true));
         if (id == 0) {
             data.put("itemQuantity", quantity(data.getOrDefault("itemQuantity", 1)));
-            data.put("orderId", 0); data.put("state", 0); data.put("arrivalDate", null);
+            data.put("orderId", 0); data.put("state", State.INITIAL.getCode()); data.put("arrivalDate", null);
             return base.insert(Tables.ORDER_ITEM_BY_IDS, data, editor());
         }
         var item = lock(id);

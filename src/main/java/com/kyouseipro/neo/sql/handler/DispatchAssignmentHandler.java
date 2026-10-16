@@ -9,6 +9,7 @@ import java.util.Set;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.system.QueryKind;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.interfaces.sql.QueryHandler;
@@ -64,7 +65,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
         insert.put("dailyCrewId", dailyCrewId);
         insert.put("visitOrder", visitOrder);
         insert.put("remarks", params.getOrDefault("remarks", ""));
-        insert.put("state", 0);
+        insert.put("state", State.INITIAL.getCode());
         Long id = baseRepository.insert(Tables.DISPATCH_ASSIGNMENT_BY_IDS, insert, editor);
         return Map.of("data", id, "count", 1);
     }
@@ -118,7 +119,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
         );
         List<Map<String, Object>> rows = queryExecutor.select(
             query,
-            selectParams(Map.of("dailyCrewId", dailyCrewId, "state", 0))
+            selectParams(Map.of("dailyCrewId", dailyCrewId, "state", State.INITIAL.getCode()))
         );
         if (rows.isEmpty()) {
             throw new BusinessException("対象の班が存在しません。再読み込みしてください。");
@@ -127,7 +128,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
 
     private Map<String, Object> findAssignment(int assignmentId) {
         SelectRequest req = new SelectRequest();
-        req.setParams(Map.of("dispatchAssignmentId", assignmentId, "state", 0));
+        req.setParams(Map.of("dispatchAssignmentId", assignmentId, "state", State.INITIAL.getCode()));
         QueryDefinition query = QueryDefinition.select(
             """
             SELECT
@@ -158,7 +159,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
         lockCrew(dailyCrewId);
         // ② DBに登録されている配車割当を取得
         SelectRequest listReq = new SelectRequest();
-        listReq.setParams(Map.of("dailyCrewId", dailyCrewId, "state", 0));
+        listReq.setParams(Map.of("dailyCrewId", dailyCrewId, "state", State.INITIAL.getCode()));
         QueryDefinition listQuery = QueryDefinition.select(
             """
             SELECT dispatch_assignment_id
@@ -217,7 +218,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
         }
         // 対象の配車割当を取得
         Map<String, Object> findParams = new HashMap<>();
-        findParams.put("state", 0);
+        findParams.put("state", State.INITIAL.getCode());
         findParams.put("workDate", workDate);
         findParams.put("officeId", officeId);
         findParams.put("dispatchCategory", dispatchCategory);
@@ -230,7 +231,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
             Map<String, Object> update = new HashMap<>();
             update.put("dispatchAssignmentId", row.get("dispatchAssignmentId"));
             update.put("version", row.get("version"));
-            update.put("state", 9);
+            update.put("state", State.DELETE.getCode());
             baseRepository.update(Tables.DISPATCH_ASSIGNMENT_BY_IDS, update, editor);
             count++;
         }
@@ -261,7 +262,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
                 "workDate", workDate,
                 "officeId", officeId,
                 "dispatchCategory", dispatchCategory,
-                "state", 0
+                "state", State.INITIAL.getCode()
             ))
         );
     }
@@ -290,7 +291,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
         Map<String, Object> update = new HashMap<>();
         update.put("dispatchAssignmentId", assignmentId);
         update.put("version", version);
-        update.put("state", 9);
+        update.put("state", State.DELETE.getCode());
         int count = baseRepository.update(Tables.DISPATCH_ASSIGNMENT_BY_IDS, update, editor);
         return Map.of("count", count);
     }
@@ -298,7 +299,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
     private int getNextVisitOrder(int dailyCrewId) {
         List<Map<String, Object>> rows = queryExecutor.select(
             DispatchAssignmentQuery.dispatchAssignmentNextVisitOrder(),
-            selectParams(Map.of("dailyCrewId", dailyCrewId, "state", 0))
+            selectParams(Map.of("dailyCrewId", dailyCrewId, "state", State.INITIAL.getCode()))
         );
         return ((Number) rows.get(0).get("nextVisitOrder")).intValue();
     }

@@ -1,10 +1,12 @@
 package com.kyouseipro.neo.sql.provider;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Component;
 
 import com.kyouseipro.neo.interfaces.sql.LogSqlProvider;
+import com.kyouseipro.neo.sql.service.SqlTableMetadataService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -12,16 +14,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LogSqlProviderResolver {
 
-    private final Map<String, LogSqlProvider> providers;
+    private final SqlTableMetadataService metadataService;
+    private final Map<String, LogSqlProvider> genericCache = new ConcurrentHashMap<>();
 
     public LogSqlProvider resolve(String tableName) {
-
-        // 完全一致
-        if (providers.containsKey(tableName)) {
-            return providers.get(tableName);
+        if (!metadataService.hasLogTable(tableName)) {
+            return null;
         }
 
-        // fallback
-        return providers.get("default");
+        return genericCache.computeIfAbsent(
+            tableName,
+            name -> new GenericLogSqlProvider(name, metadataService)
+        );
     }
 }

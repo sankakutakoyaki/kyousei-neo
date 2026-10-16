@@ -131,7 +131,7 @@ public class VehicleDefaultMemberHandler implements QueryHandler {
             Map<String, Object> row = new LinkedHashMap<>();
             row.put("vehicleId", vehicleId);
             row.put("dispatchCategory", dispatchCategory);
-            row.put("state", 0);
+            row.put("state", State.INITIAL.getCode());
             baseRepository.insert(Tables.VEHICLE_DISPATCH_CATEGORY_BY_IDS, row, editor);
             return 1;
         }

@@ -55,7 +55,8 @@ export const clientCompanyPage = () =>
             filters: {category: filterFactory.equals("category")}
         },
         validateBusiness: async (payload) => {
-            if(!payload.category){
+            const category = payload.category ?? document.querySelector('#form-01 [name="category"]')?.value;
+            if(category == null || String(category).trim() === ""){
                 throw {
                     message: "分類を選択してください",
                     fields: ["category"]
@@ -63,6 +64,7 @@ export const clientCompanyPage = () =>
             }
         },
         afterSave: refreshClientChildren
+
     });
 
 export const clientOfficePage = () =>
@@ -104,10 +106,7 @@ export const clientStaffPage = () =>
             }
         },
         validateBusiness: async (payload) => {
-            if(
-                payload.companyId !== undefined &&
-                Number(payload.companyId) === 0
-            ){
+            if(payload.companyId !== undefined && Number(payload.companyId) === 0){
                 throw {
                     message: "会社を選択してください",
                     fields: ["company-id"]

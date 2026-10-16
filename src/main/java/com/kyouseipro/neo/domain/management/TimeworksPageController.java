@@ -22,14 +22,14 @@ public class TimeworksPageController {
 
     /** 勤怠打刻画面を返す。 */
     @GetMapping("/timeworks")
-    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
     public String getTimeworks() {
         return "fragments/pages/management/timeworks/content :: content";
     }
 
     @GetMapping("/api/timeworks/init/cache")
     @ResponseBody
-    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user')")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
     public Map<String, Object> initTimeworks(Authentication authentication) {
 
         boolean canManage = authentication.getAuthorities().stream()

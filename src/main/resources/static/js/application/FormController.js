@@ -40,6 +40,7 @@ export class FormController {
             submitText = "はい",
             cancelText = "いいえ",
             initialFocusSelector = null,
+            trackInitialState = false,
         } = config;
 
         if(!formId) throw new Error("formId is required");
@@ -60,6 +61,8 @@ export class FormController {
         this.closeOnSave = closeOnSave;
         this.showSuccessDialog = showSuccessDialog;
         this.currentEntity = null;
+        this.trackInitialState = trackInitialState;
+        this.initialFormEntity = null;
         this.buildAdditionalPayload = buildAdditionalPayload;
         this.hasAdditionalChanges = hasAdditionalChanges;
         this.resetAdditional = resetAdditional;
@@ -157,6 +160,8 @@ export class FormController {
         // フォームと関連データの初期化
         if (this.onOpen) {await this.onOpen(data, this, canApply);}
         if(!canApply()) return;
+        // 初期表示完了後のフォーム状態を変更検知用に記録
+        this.initialFormEntity = this.trackInitialState ? FormModel.toEntity(form, this.currentEntity): null;
         openFormDialog({
             dialogId: this.formId,
             controller: this.controller,
@@ -294,7 +299,7 @@ export class FormController {
         const form = document.getElementById(this.formId);
         return FormStateBehavior.hasChanges({
             form,
-            currentEntity: this.currentEntity,
+            currentEntity: this.initialFormEntity ?? this.currentEntity,
             selector: this.changeTargetSelector
         });
     }
@@ -325,12 +330,15 @@ export class FormController {
     }
 
     canSubmit(){
-        if (isMobileReadOnly(this.controller?.key)) return false;
+        if(isMobileReadOnly(this.controller?.key)) return false;
+
         const formChanged = this.hasChanges();
         const additionalChanged = this.hasAdditionalChanges?.() ?? false;
-        if(!this.currentEntity || !this.currentEntity[this.idKey]){
-            return this.hasValidInput() || additionalChanged;
+
+        if(!this.currentEntity?.[this.idKey]){
+            return (formChanged && this.hasValidInput()) || additionalChanged;
         }
+
         return formChanged || additionalChanged;
     }
 

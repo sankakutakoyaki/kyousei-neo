@@ -14,6 +14,12 @@
             </form>
             <div id="answer-area"></div>
         </section>
+        <nav class="shortcut-grid" aria-label="管理メニュー">
+            <button type="button" class="shortcut-card" sec:authorize="hasAnyAuthority('APPROLE_office')"
+                data-link="/timeworks" data-target="body">
+                <img th:src="@{/icons/clock2.png}" alt=""><span>勤怠</span>
+            </button>
+        </nav>
     </main>
 </body>
 

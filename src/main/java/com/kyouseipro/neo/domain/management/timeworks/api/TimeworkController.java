@@ -38,7 +38,7 @@ public class TimeworkController {
     private final TimeworkService service;
 
     @GetMapping("/employee")
-    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader')")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_office')")
     public SimpleResponse<TimeworkStatus> employee(@RequestParam String identifier) {
         return SimpleResponse.ok(service.findEmployee(identifier));
     }
@@ -49,13 +49,13 @@ public class TimeworkController {
     }
 
     @GetMapping("/list")
-    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader')")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_office')")
     public SimpleResponse<List<TimeworkListItem>> list() {
         return SimpleResponse.ok(service.findTodayList());
     }
 
     @PostMapping("/stamp")
-    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader')")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_office')")
     public SimpleResponse<TimeworkStatus> stamp(Authentication authentication, @RequestBody StampRequest request) {
         TimeworkStatus status = service.stamp(authentication, request.employeeId(), request.stampType());
         String message = "START".equalsIgnoreCase(request.stampType())

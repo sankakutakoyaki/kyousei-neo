@@ -8,12 +8,15 @@ export const FormStateBehavior = {
         const target = selector ? form.querySelector(selector): form;
         if(!target) return false;
 
-        const elements = target.querySelectorAll("[name]");
+        const elements = target.querySelectorAll("input[name], select[name], textarea[name]");
         for(const el of elements){
-            if(el.dataset.submit === "none"){continue;}
-            const name = el.name;
-            const key = el.dataset.key || convertKey(name, "kebab", "camel");
+            if(el.dataset.submit === "none") continue;
 
+            const name = el.getAttribute("name");
+            if(!name) continue;
+
+            // const key = el.dataset.key || convertKey(name, "kebab", "camel");
+            const key = convertKey(el.dataset.key || name, "kebab", "camel");
             let v;
             if(el.type === "checkbox"){
                 v = el.checked;
@@ -30,32 +33,22 @@ export const FormStateBehavior = {
         }
         return false;
     },
+
     hasValidInput(form, selector = null){
         if(!form) return false;
 
-        if(selector){
-            const el = form.querySelector(selector);
-            if(!el || el.disabled) {
-                return false;
-            }
+        const target = selector ? form.querySelector(selector) : form;
+        if(!target) return false;
 
-            if(el.type === "checkbox" || el.type === "radio"){
-                return el.checked;
-            }
+        const elements = target.matches("input, select, textarea")
+            ? [target]
+            : target.querySelectorAll("input[name], select[name], textarea[name]");
 
-            const value = normalizeValue(el.value, getOptions(el));
-            return (value != null && String(value).trim() !== "");
-        }
-
-        const elements = form.querySelectorAll("[name]");
         for(const el of elements){
-            if(el.dataset.submit === "none"){continue;}
-            if(el.disabled) continue;
+            if(el.dataset.submit === "none" || el.disabled) continue;
 
             if(el.type === "checkbox" || el.type === "radio"){
-                if(el.checked){
-                    return true;
-                }
+                if(el.checked) return true;
                 continue;
             }
 

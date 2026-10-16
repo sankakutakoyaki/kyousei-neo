@@ -106,37 +106,10 @@
     height: 2.5rem;
 }
 
-/* #form-01 {
-    width: 50rem;
-    height: 80%;
-    & >.dialog-main {
-        overflow: hidden;
-        height: 100%;
-        grid-template-rows: auto minmax(0, 1fr) auto;
-        & >.dialog-content {
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            overflow: hidden;
-            & >[data-ocr-source] {
-                flex: 0 0 auto;
-                margin: .5rem 1rem;
-                overflow-wrap: anywhere;
-            }
-            & >.tab-area {
-                flex: 1 1 0;
-                height: auto;
-                min-height: 0;
-                grid-template-rows: auto minmax(0, 1fr);
-                overflow: hidden;
-            }
-        }
-    }
-} */
-
-#form-01 {
+/* #form-01 #tab11 {
     & .dialog-content>.tab-area>.tab-panel {
         width: 50rem;
+        min-height: 90%;
         padding: 2rem 1rem;
         overflow: auto;
         & >.form-row {
@@ -148,15 +121,30 @@
             grid-template-columns: auto 1fr;
         }
         & >.form-row:nth-of-type(2) {
-            grid-template-columns: auto 1fr;
+            grid-template-columns: 1fr;
         }
         & >.form-row:nth-of-type(3) {
             grid-template-columns: 70% 30%;
         }
+        & >.form-row:nth-of-type(4) {
+            grid-template-columns: 1fr;
+        }        
+        & >.form-row:nth-of-type(5) {
+            grid-template-columns: auto 1fr 15rem;
+        }
+        & >.form-row:nth-of-type(6) {
+            grid-template-columns: 1fr;
+        }
+        & >.form-row:nth-of-type(7) {
+            grid-template-columns: 8rem 1fr;
+        }
+        & >.form-row:nth-of-type(8) {
+            grid-template-columns: 1fr;
+        }
     }
-}
+} */
 
-#form-03 {
+/* #form-03 {
     & .dialog-content {
         width: 30rem;
         & >.form-row {
@@ -206,44 +194,60 @@
             grid-template-columns: 1fr;
         }
     }
+} */
+
+#form-01 {
+    height: 85%;
+    width: 50rem;
+    & .dialog-main {
+        height: 100%;
+        & .tab-area {
+            overflow: hidden;
+        }
+    }
+}
+
+#form-01 .tab-panel {
+    padding: 2rem 1rem;
+    overflow: auto;
+    row-gap: .5rem;
+    & .form-row {
+        display: grid;
+        gap: .3rem;
+        width: 100%;
+    }
 }
 
 #tab-11 {
-    grid-template-rows: repeat(6, auto) 1fr;
-    row-gap: 1rem;
+    grid-template-rows: auto 1fr;
     & >.form-row:nth-of-type(1) {
-        grid-template-columns: 1fr;
-        &>.form-parts:nth-child(1) {
-            grid-template-columns: 1fr;
-        }
-        &>div:nth-child(2) {
-            display: grid;
-            gap: .3rem;
-            grid-template-columns: 1fr 12rem;
-        }
+        grid-template-columns: auto 1fr;
     }
     & >.form-row:nth-of-type(2) {
         grid-template-columns: 1fr;
     }
     & >.form-row:nth-of-type(3) {
-        grid-template-columns: 12rem 1fr 15rem;
+        grid-template-columns: 70% 30%;
     }
     & >.form-row:nth-of-type(4) {
         grid-template-columns: 1fr;
-    }
+    }        
     & >.form-row:nth-of-type(5) {
-        grid-template-columns: 8rem 1fr;
+        grid-template-columns: auto 1fr 15rem;
     }
     & >.form-row:nth-of-type(6) {
+        grid-template-columns: 1fr;
+    }
+    & >.form-row:nth-of-type(7) {
+        grid-template-columns: 8rem 1fr;
+    }
+    & >.form-row:nth-of-type(8) {
         grid-template-columns: 1fr;
     }
 }
 
 #tab-12 {
-    /* display: grid; */
     grid-template-rows: auto auto 1fr;
-    row-gap: 1rem;
-    /* padding: 1rem; */
     & >.form-row:nth-of-type(1) {
         grid-template-columns: 11rem 1fr 6rem;
     }
@@ -258,8 +262,6 @@
 
 #tab-13 {
     grid-template-rows: auto auto 1fr;
-    row-gap: 1rem;
-    /* padding: 1rem; */
     & >.form-row:nth-of-type(1) {
         grid-template-columns: 15rem 1fr;
     }

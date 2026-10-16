@@ -43,11 +43,12 @@ test('two dispatch page instances do not share pending board requests',async()=>
     const load=first.page.loadBoard();await flush();first.page.dispose();const second=dispatchHarness();await second.page.loadBoard();
     assert.equal(second.renders.length,2);req.resolve({data:[]});await load;assert.equal(first.renders.length,0);
 });
-test('assignment move sends one versioned update without insert/delete',async()=>{
-    const writes=[];const c=vm.createContext({DispatchAssignmentRepository:{findNextVisitOrder:async()=>({data:[{nextVisitOrder:4}]}),save:async x=>writes.push(x),deleteByIds:()=>assert.fail('delete must not run')},APP:{cache:{common:{state:{INITIAL:0}}}}});
+test('assignment move sends one versioned update without insert/delete', async () => {
+    const writes = [];
+    const c = vm.createContext({DispatchAssignmentRepository: {move: async payload => writes.push(payload),create: () => assert.fail('create must not run'),save: () => assert.fail('save must not run'),deleteByIds: () => assert.fail('delete must not run')}});
     vm.runInContext(source('pages/operations/dispatch/dispatchDragDrop.js'),c);
-    await c.moveOrderToCrew({dispatchAssignmentId:12,version:3},8);
-    assert.deepEqual(JSON.parse(JSON.stringify(writes)),[{dispatchAssignmentId:12,version:3,dailyCrewId:8,visitOrder:4}]);
+    await c.moveOrderToCrew({ dispatchAssignmentId: 12, version: 3 },8);
+    assert.deepEqual(JSON.parse(JSON.stringify(writes)),[{dispatchAssignmentId: 12,version: 3,dailyCrewId: 8}]);
 });
 test('assignment move refuses a payload missing its optimistic version',async()=>{
     const c=vm.createContext({});vm.runInContext(source('pages/operations/dispatch/dispatchDragDrop.js'),c);

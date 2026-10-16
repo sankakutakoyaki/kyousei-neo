@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.system.QueryKind;
 import com.kyouseipro.neo.interfaces.sql.QueryHandler;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
@@ -66,7 +67,7 @@ public class EmployeeShiftHandler implements QueryHandler {
             row.put("workDate", source.get("workDate"));
             row.put("officeId", source.get("officeId"));
             row.put("shiftType", source.get("shiftType"));
-            row.put("state", 0);
+            row.put("state", State.INITIAL.getCode());
             baseRepository.insert(Tables.EMPLOYEE_SHIFT_BY_IDS, row, editor);
 
             return;
