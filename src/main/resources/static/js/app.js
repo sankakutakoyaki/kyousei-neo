@@ -1,7 +1,7 @@
 "use strict"
 
 import { initMobileReadOnly } from "./core/access/mobileReadOnly.js";
-
+import { initSessionKeepAlive } from "./core/security/sessionKeepAlive.js";
 import { loadPage } from "./core/dom/loadPage.js";
 import { initHamburger } from "./core/ui/menu/hamburger.js";
 import { closeHamburger } from "./core/ui/menu/hamburger.js";
@@ -28,6 +28,9 @@ export function initApp() {
     initMobileReadOnly();
     initHamburger();
     
+    // 営業所アカウントの場合だけセッション維持を開始
+    initSessionKeepAlive();
+
     document.addEventListener("click", (e) => {
         const item = e.target.closest(".hamburger-item") || e.target.closest("[data-link]");
         if (!item) return;

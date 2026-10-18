@@ -284,8 +284,11 @@ async function api(url, options = {}) {
     });
 
     if (!response.ok) {
-        const message = await response.text();
-        throw new Error(`APIエラー (${response.status}): ${message}`);
+        const result = await response.json().catch(() => null);
+        const message = result?.message
+            || `通信エラーが発生しました。(${response.status})`;
+
+        throw new Error(message);
     }
 
     return response.json();

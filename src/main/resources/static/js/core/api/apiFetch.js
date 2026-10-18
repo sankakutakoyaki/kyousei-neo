@@ -52,6 +52,17 @@ export async function apiFetch(url, {
             signal: controller.signal
         });
 
+        if (response.status === 401) {
+            window.location.replace("/");
+            throw new Error("ログインの有効期限が切れました。");
+        }
+
+        const contentType = response.headers.get("content-type") || "";
+        if (response.redirected && response.url.includes("/login")) {
+            window.location.replace("/");
+            throw new Error("ログインの有効期限が切れました。");
+        }
+
         if (allow404 && response.status === 404) {
             return null;
         }
