@@ -22,6 +22,7 @@ import com.kyouseipro.neo.common.enums.system.SqlMode;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.interfaces.sql.QueryBuilder;
 import com.kyouseipro.neo.security.OfficeAccessService;
+import com.kyouseipro.neo.security.OrderAccessService;
 import com.kyouseipro.neo.security.QueryAuthorizationService;
 import com.kyouseipro.neo.sql.common.QueryParamBinder;
 import com.kyouseipro.neo.sql.common.SqlBuilder;
@@ -52,18 +53,24 @@ public class QueryController {
     private final SqlColumnValidator columnValidator;
     private final OfficeAccessService officeAccessService;
     private final QueryAuthorizationService queryAuthorizationService;
+    private final OrderAccessService orderAccessService;
 
     @PostMapping("/query")
     public Object request(@RequestBody SelectRequest req) {
         QueryId queryId = QueryId.from(req.getQueryId());
         // クライアントのMapをコピーし、サーバー側の条件を設定する
         Map<String, Object> params = new HashMap<>(req.getParams() != null ? req.getParams() : Map.of());
-        // サーバー専用パラメータはクライアントから受け取らない
+        // サーバー専用のアクセス条件は、クライアントから受け取らない
         params.remove("allowedOfficeId");
-        if (queryId == QueryId.ORDER_LIST) {
+        params.remove("accessScope");
+        params.remove("accessOfficeId");
+        params.remove("accessEmployeeId");
+        if (queryId == QueryId.ORDER_LIST || queryId == QueryId.ORDER_DETAIL) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Integer allowedOfficeId = officeAccessService.getRestrictedOfficeId(authentication);
-            params.put("allowedOfficeId", allowedOfficeId);
+            var access = orderAccessService.getAccessCondition(authentication);
+            params.put("accessScope", access.scope());
+            params.put("accessOfficeId", access.officeId());
+            params.put("accessEmployeeId", access.employeeId());
         }
         req.setParams(params);
         QueryBuilder builder = queryBuilderProvider.get(queryId);

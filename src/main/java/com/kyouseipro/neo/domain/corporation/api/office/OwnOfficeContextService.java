@@ -77,4 +77,30 @@ public class OwnOfficeContextService {
         Object value = rows.get(0).get("officeId");
         return value instanceof Number number ? number.intValue() : null;
     }
+
+    /**
+     * ログインユーザーの従業員IDを取得
+     * 営業所共用アカウントは対象外
+     */
+    public Long getEmployeeId(Authentication authentication) {
+        boolean isOffice = authentication.getAuthorities().stream()
+            .anyMatch(a -> "APPROLE_office".equals(a.getAuthority()));
+
+        if (isOffice) return null;
+
+        String account = getAccount(authentication);
+
+        var rows = sql.selectMap("""
+            SELECT employee_id
+            FROM employees
+            WHERE state = ?
+            AND account = ?
+            """,
+            List.of(State.INITIAL.getCode(), account));
+
+        if (rows.size() != 1) return null;
+
+        Object value = rows.get(0).get("employeeId");
+        return value instanceof Number number ? number.longValue() : null;
+    }
 }

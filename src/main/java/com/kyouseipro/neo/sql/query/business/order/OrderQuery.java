@@ -7,43 +7,129 @@ import com.kyouseipro.neo.sql.model.CsvColumn;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 
 public class OrderQuery {
+    private static final String ACCESS_CONDITION = """
+        AND (
+            ? = 'ALL'
+            OR (
+                ? IN ('OWN', 'OWN_ASSIGNED')
+                AND o.own_office_id = ?
+            )
+            OR (
+                ? IN ('ASSIGNED', 'OWN_ASSIGNED')
+                AND EXISTS (
+                    SELECT 1
+                    FROM dispatch_assignments da
+                    JOIN daily_crews dc
+                        ON dc.daily_crew_id = da.daily_crew_id
+                    JOIN daily_crew_members dcm
+                        ON dcm.daily_crew_id = dc.daily_crew_id
+                    WHERE da.order_id = o.order_id
+                    AND dcm.employee_id = ?
+                    AND da.state = 0
+                    AND dc.state = 0
+                    AND dcm.state = 0
+                )
+            )
+        )
+        """;
+    private static final List<String> ACCESS_PARAMS = List.of(
+        "accessScope",
+        "accessScope",
+        "accessOfficeId",
+        "accessScope",
+        "accessEmployeeId"
+    );
+
     public static QueryDefinition orderList(OrderCategory category) {
         String column = category.getColumn();
-        String sql = """
-            SELECT o.order_id, o.request_number, o.visit_date, o.visit_time, o.title, o.full_address, o.remarks,
-                c.name as prime_constractor_name, co.name as prime_constractor_office_name, s.full_name as staff_name,
-                o.own_office_id, o.version, o.state
-            FROM orders o
-            LEFT OUTER JOIN companies c ON c.company_id = o.prime_constractor_id AND c.state = ?
-            LEFT OUTER JOIN offices co ON co.office_id = o.prime_constractor_office_id AND co.state = ?
-            LEFT OUTER JOIN staffs s ON s.staff_id = o.staff_id AND s.state = ?
-            WHERE (o.state = ? OR o.state = ?) AND ((o.%s >= ? AND o.%s < ?) OR o.%s IS NULL) AND (? IS NULL OR o.own_office_id=? OR (?=0 AND o.own_office_id IS NULL)) AND (? IS NULL OR o.own_office_id = ?)
-            """.formatted(column, column, column);
 
-        return QueryDefinition.select(
-            sql,
-            List.of("state", "state", "state", "state", "compState", "dateFrom", "dateTo", "ownOfficeId", "ownOfficeId", "ownOfficeId", "allowedOfficeId", "allowedOfficeId")
-        );
+        String sql = """
+            SELECT
+                o.order_id,
+                o.request_number,
+                o.visit_date,
+                o.visit_time,
+                o.title,
+                o.full_address,
+                o.remarks,
+                c.name AS prime_constractor_name,
+                co.name AS prime_constractor_office_name,
+                s.full_name AS staff_name,
+                o.own_office_id,
+                o.version,
+                o.state
+            FROM orders o
+            LEFT OUTER JOIN companies c
+                ON c.company_id = o.prime_constractor_id
+                AND c.state = ?
+            LEFT OUTER JOIN offices co
+                ON co.office_id = o.prime_constractor_office_id
+                AND co.state = ?
+            LEFT OUTER JOIN staffs s
+                ON s.staff_id = o.staff_id
+                AND s.state = ?
+            WHERE (o.state = ? OR o.state = ?)
+            AND (
+                (o.%s >= ? AND o.%s < ?)
+                OR o.%s IS NULL
+            )
+            AND (
+                ? IS NULL
+                OR o.own_office_id = ?
+                OR (? = 0 AND o.own_office_id IS NULL)
+            )
+            """.formatted(column, column, column)
+            + ACCESS_CONDITION;
+
+        List<String> params = new java.util.ArrayList<>(List.of(
+            "state",
+            "state",
+            "state",
+            "state",
+            "compState",
+            "dateFrom",
+            "dateTo",
+            "ownOfficeId",
+            "ownOfficeId",
+            "ownOfficeId"
+        ));
+
+        params.addAll(ACCESS_PARAMS);
+
+        return QueryDefinition.select(sql, params);
     }
 
     public static QueryDefinition orderDetail() {
-        return QueryDefinition.select(
-            """
-            SELECT o.order_id, o.request_number, o.visit_date, o.visit_time,
-                o.title, o.postal_code, o.full_address, o.contact_information,
-                o.remarks, o.prime_constractor_id,
-                o.prime_constractor_office_id, o.staff_id,
-                o.own_office_id, o.version, o.state
+        String sql = """
+            SELECT
+                o.order_id,
+                o.request_number,
+                o.visit_date,
+                o.visit_time,
+                o.title,
+                o.postal_code,
+                o.full_address,
+                o.contact_information,
+                o.remarks,
+                o.prime_constractor_id,
+                o.prime_constractor_office_id,
+                o.staff_id,
+                o.own_office_id,
+                o.version,
+                o.state
             FROM orders o
             WHERE o.state = ?
             AND o.order_id = ?
-            AND (? IS NULL OR o.own_office_id = ?)
-            """,
-            List.of(
-                "state", "orderId",
-                "allowedOfficeId", "allowedOfficeId"
-            )
-        );
+            """ + ACCESS_CONDITION;
+
+        List<String> params = new java.util.ArrayList<>(List.of(
+            "state",
+            "orderId"
+        ));
+
+        params.addAll(ACCESS_PARAMS);
+
+        return QueryDefinition.select(sql, params);
     }
 
     public static QueryDefinition orderCsv() {

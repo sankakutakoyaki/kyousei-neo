@@ -1,0 +1,45 @@
+<main th:fragment="content"
+      class="normal-body myorder-page"
+      data-page="/js/pages/business/myorder/myOrderPage.js"
+      data-css="/css/pages/business/myorder.css">
+
+    <div class="myorder-container" data-controller="myOrders">
+
+        <header class="myorder-header">
+            <h2>担当伝票一覧</h2>
+
+            <div class="myorder-date-nav">
+                <button type="button"
+                        class="normal-btn"
+                        data-action="previous-date">
+                    ◀
+                </button>
+
+                <input type="date"
+                       id="myorder-date"
+                       aria-label="表示日付">
+
+                <button type="button"
+                        class="normal-btn"
+                        data-action="next-date">
+                    ▶
+                </button>
+
+                <button type="button"
+                        class="normal-btn"
+                        data-action="today">
+                    今日
+                </button>
+            </div>
+        </header>
+
+        <div class="myorder-summary">
+            <span id="myorder-count">0件</span>
+        </div>
+
+        <div id="myorder-list" aria-live="polite">
+            <p class="myorder-empty">読み込み中...</p>
+        </div>
+
+    </div>
+</main>
