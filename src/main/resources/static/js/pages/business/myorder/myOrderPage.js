@@ -3,6 +3,7 @@
 import { initCommon } from "../../../bootstrap/initPage.js";
 import { registerController } from "../../../application/controllerRegistry.js";
 import { getToday } from "../../../util/time.js";
+import { FormController } from "../../../application/FormController.js";
 
 export async function init() {
     await initCommon();
@@ -21,12 +22,21 @@ class MyOrderPageController {
         this.list = this.root.querySelector("#myorder-list");
         this.count = this.root.querySelector("#myorder-count");
         this.requestId = 0;
+        this.detailForm = new FormController({
+            formId: "myorder-form",
+            key: "orderId",
+            idKey: "orderId",
+            controller: this,
+            submitText: "保存",
+            cancelText: "閉じる"
+        });
     }
     init() {
         this.dateInput.value = getToday();
         this.root.addEventListener("click", async (event) => {
             const button = event.target.closest("button[data-action]");
             if (!button || !this.root.contains(button)) return;
+
             switch (button.dataset.action) {
                 case "previous-date":
                     await this.moveDate(-1);
@@ -41,6 +51,16 @@ class MyOrderPageController {
             }
         });
         this.dateInput.addEventListener("change", () => this.refresh());
+        // 担当伝票の詳細表示
+        this.list.addEventListener("click", async (event) => {
+            const button = event.target.closest("[data-myorder-detail]");
+            if (!button) return;
+
+            const orderId = Number(button.dataset.myorderDetail);
+            if (!Number.isSafeInteger(orderId) || orderId <= 0) return;
+
+            await this.openDetail(orderId);
+        });
     }
 
     async moveDate(days) {
@@ -146,7 +166,19 @@ class MyOrderPageController {
         remarks.textContent = order.remarks || "";
 
         card.append(top, title, address);
-        if (order.remarks) {card.appendChild(remarks);}
+
+        if (order.remarks) {
+            card.appendChild(remarks);
+        }
+
+        const detailButton = document.createElement("button");
+        detailButton.type = "button";
+        detailButton.className = "normal-btn";
+        detailButton.textContent = "詳細を見る";
+        detailButton.dataset.myorderDetail = order.orderId;
+
+        card.appendChild(detailButton);
+
         return card;
     }
 
@@ -155,5 +187,29 @@ class MyOrderPageController {
         p.className = "myorder-empty";
         p.textContent = text;
         return p;
+    }
+
+    async openDetail(orderId) {
+        try {
+            const response = await fetch(`/api/my-orders/${orderId}`, {
+                credentials: "same-origin"
+            });
+
+            if (!response.ok) {
+                throw new Error(`伝票の取得に失敗しました。HTTP ${response.status}`);
+            }
+
+            const order = await response.json();
+
+            if (!this.root.isConnected) return;
+
+            await this.detailForm.open(order, {
+                readOnly: true
+            });
+
+        } catch (error) {
+            console.error(error);
+            alert(error.message || "伝票を取得できませんでした。");
+        }
     }
 }

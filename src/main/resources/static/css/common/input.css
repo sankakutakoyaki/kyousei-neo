@@ -209,9 +209,34 @@ input[type="time"]::-webkit-date-and-time-value {
     -webkit-appearance: none;
 }
 
-/******************************************************************************************************* 時刻ボックス */
+/******************************************************************************************************* 閲覧専用モード */
 
-/* .zero-time {
-    background-color: pink;
-    color: var(--br);
-} */
+.readonly-mode .normal-input,
+.readonly-mode .normal-textarea,
+.readonly-mode .normal-select {
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+    outline: none;
+    padding: .25rem 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: inherit;
+}
+
+.readonly-mode .normal-select {
+    background-image: none;
+    padding-right: 0;
+    opacity: 1;
+    -webkit-text-fill-color: currentColor;
+}
+
+.readonly-mode .normal-textarea {
+    resize: none;
+    line-height: 1.6;
+}
+
+.readonly-mode .form-parts label {
+    font-size: .8rem;
+    color: #666;
+}

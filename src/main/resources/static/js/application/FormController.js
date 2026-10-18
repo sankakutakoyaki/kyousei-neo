@@ -61,6 +61,8 @@ export class FormController {
         this.closeOnSave = closeOnSave;
         this.showSuccessDialog = showSuccessDialog;
         this.currentEntity = null;
+        this.readOnly = false;
+        this.readOnlyElements = new Map();
         this.trackInitialState = trackInitialState;
         this.initialFormEntity = null;
         this.buildAdditionalPayload = buildAdditionalPayload;
@@ -98,11 +100,14 @@ export class FormController {
             });
     }
 
-    async open(dataOrId = {}) {
+    async open(dataOrId = {}, options = {}) {
         if(this.disposed || this._saving) return;
         const request = ++this.openRequest;
         const form = document.getElementById(this.formId);
         if(!form) return;
+        // 前回の閲覧専用状態を解除
+        this.restoreReadOnly();
+        this.readOnly = options.readOnly === true;
         const canApply = () => !this.disposed && request === this.openRequest
             && form.isConnected && document.getElementById(this.formId) === form;
         let data = dataOrId ?? {};
@@ -162,11 +167,13 @@ export class FormController {
         if(!canApply()) return;
         // 初期表示完了後のフォーム状態を変更検知用に記録
         this.initialFormEntity = this.trackInitialState ? FormModel.toEntity(form, this.currentEntity): null;
+        this.applyReadOnly(form);
         openFormDialog({
             dialogId: this.formId,
             controller: this.controller,
             submitText: this.submitText,
             cancelText: isMobileReadOnly(this.controller?.key) ? "閉じる" : this.cancelText,
+            readOnly: this.readOnly,
             onSubmit: async (form) => {
                 await this.save(form);
             },
@@ -174,6 +181,7 @@ export class FormController {
                 if (this._saving) return;
                 DialogService.close(this.formId);
                 this.openRequest++;
+                this.readOnly = false;
                 this.config.onClose?.(this);
             },
             onReset: () => {this.resetForm();}
@@ -190,7 +198,7 @@ export class FormController {
     }
 
     async save(form){
-        if (isMobileReadOnly(this.controller?.key)) return;
+        if(this.readOnly || isMobileReadOnly(this.controller?.key)) return;
         if(this.disposed || !form?.isConnected || this._saving) return;
         this._saving = true;
 
@@ -330,7 +338,7 @@ export class FormController {
     }
 
     canSubmit(){
-        if(isMobileReadOnly(this.controller?.key)) return false;
+        if(this.readOnly || isMobileReadOnly(this.controller?.key)) return false;
 
         const formChanged = this.hasChanges();
         const additionalChanged = this.hasAdditionalChanges?.() ?? false;
@@ -375,6 +383,37 @@ export class FormController {
             el.classList.toggle("readonly-view", !editable);
             el.classList.toggle("edit-mode", editable);
         });
+    }
+
+    applyReadOnly(form) {
+        if (!this.readOnly) return;
+
+        form.querySelectorAll("input, select, textarea").forEach(el => {
+            // hiddenフィールドは対象外
+            if (el.type === "hidden") return;
+            // 元の状態を保存
+            this.readOnlyElements.set(el, {disabled: el.disabled, readOnly: el.readOnly});
+            if (el instanceof HTMLInputElement &&
+                ["text", "number", "date", "datetime-local", "time",
+                "email", "tel", "url", "search"].includes(el.type)) {
+                el.readOnly = true;
+            } else if (el instanceof HTMLTextAreaElement) {
+                el.readOnly = true;
+            } else {
+                el.disabled = true;
+            }
+        });
+        form.classList?.add("readonly-mode");
+    }
+
+    restoreReadOnly() {
+        for (const [el, state] of this.readOnlyElements) {
+            el.disabled = state.disabled;
+            el.readOnly = state.readOnly;
+        }
+        this.readOnlyElements.clear();
+        const form = document.getElementById(this.formId);
+        form?.classList?.remove("readonly-mode");
     }
 }
 

@@ -15,7 +15,8 @@ export function openFormDialog(options = {}) {
         onClose = async () => closeFormDialog(dialogId),
         onReset,
         submitText = "はい",
-        cancelText = "いいえ"
+        cancelText = "いいえ",
+        readOnly = false
     } = options;
 
     const form = document.getElementById(dialogId);
@@ -32,7 +33,11 @@ export function openFormDialog(options = {}) {
     const el = area.querySelector('[autofocus]');
     if (el) el.focus();
 
-    setFooterButtons(form, true, onSubmit, onClose, {submitText, cancelText});
+    setFooterButtons(form, true, onSubmit, onClose, {
+        submitText,
+        cancelText: readOnly ? "閉じる" : cancelText,
+        readOnly
+    });
 
     setInertState(true);
     resetEnterFocus();
@@ -229,7 +234,8 @@ function setFooterButtons(
     closeCallback,
     {
         submitText = "はい",
-        cancelText = "いいえ"
+        cancelText = "いいえ",
+        readOnly = false
     } = {}
 ) {
     const submitBtn = dialog.querySelector('[name="submitBtn"]');
@@ -249,13 +255,16 @@ function setFooterButtons(
     };
 
     if (isConfirm) {
-        submitBtn.onclick = onSubmit;
+        submitBtn.onclick = readOnly ? null : onSubmit;
+        submitBtn.style.display = readOnly ? "none" : "";
+
         cancelBtn.onclick = onClose;
         cancelBtn.style.display = "";
         cancelBtn.textContent = cancelText;
         cancelBtn.classList.add("frameless");
     } else {
         submitBtn.onclick = onClose;
+        submitBtn.hidden = false;
         cancelBtn.style.display = "none";
     }
 
@@ -263,5 +272,9 @@ function setFooterButtons(
 
     submitBtn.dataset.scope = "form";
     submitBtn.textContent = submitText;
-    submitBtn.focus();
+    if (readOnly) {
+        cancelBtn.focus();
+    } else {
+        submitBtn.focus();
+    }
 }

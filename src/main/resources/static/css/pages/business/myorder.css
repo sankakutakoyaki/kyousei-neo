@@ -1,11 +1,15 @@
+@charset "UTF-8";
+
+/******************************************************************************************************* 担当伝票一覧 */
+
 .myorder-page {
     overflow-y: auto;
 }
 
 .myorder-container {
-    max-width: 900px;
+    max-width: 56.25rem;
     margin: 0 auto;
-    padding: 16px;
+    padding: 1rem;
 }
 
 .myorder-header {
@@ -13,56 +17,60 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: .75rem;
+    margin-bottom: 1rem;
 }
 
 .myorder-header h2 {
     margin: 0;
-    font-size: 20px;
+    font-size: 1.25rem;
 }
 
 .myorder-date-nav {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: .5rem;
 }
 
 .myorder-date-nav input {
     min-width: 0;
-    padding: 8px;
+    padding: .5rem;
 }
 
 .myorder-summary {
-    margin-bottom: 12px;
+    margin-bottom: .75rem;
     font-weight: 600;
 }
 
+/******************************************************************************************************* 車両 */
+
 .myorder-crew {
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
 }
 
 .myorder-crew-header {
-    padding: 10px 14px;
+    padding: .625rem .875rem;
     background: #e9edf2;
-    border-radius: 6px;
+    border-radius: .375rem;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: .625rem;
 }
+
+/******************************************************************************************************* 伝票カード */
 
 .myorder-card {
     background: #fff;
     border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 14px;
-    margin-bottom: 10px;
+    border-radius: .5rem;
+    padding: .875rem;
+    margin-bottom: .625rem;
 }
 
 .myorder-card-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: .625rem;
 }
 
 .myorder-number {
@@ -72,37 +80,75 @@
 
 .myorder-time {
     color: #666;
-    font-size: 13px;
+    font-size: .8125rem;
 }
 
 .myorder-title {
-    font-size: 17px;
+    font-size: 1.0625rem;
     font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: .5rem;
 }
 
 .myorder-address {
-    font-size: 14px;
+    font-size: .875rem;
     line-height: 1.6;
 }
 
 .myorder-remarks {
-    margin-top: 10px;
-    padding: 8px 10px;
+    margin-top: .625rem;
+    padding: .5rem .625rem;
     background: #fff8e8;
-    border-radius: 4px;
-    font-size: 13px;
+    border-radius: .25rem;
+    font-size: .8125rem;
+}
+
+.myorder-card button {
+    margin-top: .75rem;
 }
 
 .myorder-empty {
-    padding: 30px 10px;
+    padding: 1.875rem .625rem;
     text-align: center;
     color: #777;
 }
 
-@media (max-width: 600px) {
+/******************************************************************************************************* 担当伝票詳細フォーム */
+
+#myorder-form .dialog-main {
+    width: min(90vw, 40.625rem);
+    max-width: 40.625rem;
+}
+
+#myorder-form .dialog-content {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+#myorder-form .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: .75rem;
+}
+
+#myorder-form .form-parts {
+    flex: 1;
+    min-width: 0;
+}
+
+#myorder-form .form-parts input,
+#myorder-form .form-parts textarea {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+/******************************************************************************************************* スマートフォン */
+
+@media (max-width: 40rem) {
+
     .myorder-container {
-        padding: 10px;
+        padding: .625rem;
     }
 
     .myorder-header {
@@ -110,12 +156,12 @@
     }
 
     .myorder-header h2 {
-        margin-bottom: 12px;
+        margin-bottom: .75rem;
     }
 
     .myorder-date-nav {
         justify-content: space-between;
-        gap: 5px;
+        gap: .3125rem;
     }
 
     .myorder-date-nav input {
@@ -124,6 +170,14 @@
     }
 
     .myorder-card {
-        padding: 12px;
+        padding: .75rem;
+    }
+
+    #myorder-form .dialog-content {
+        padding: .625rem;
+    }
+
+    #myorder-form .form-row {
+        flex-direction: column;
     }
 }
