@@ -26,6 +26,11 @@ export async function init() {
         await initPageCache("/api/dispatch/init/cache", {isActive: session.isActive});
         if(!session.isActive()) return;
         page.init();
+        const office = session.root.querySelector("#dispatch-office");
+        const orderOffice = session.root.querySelector("#dispatch-order-office");
+        if(office && orderOffice) {
+            orderOffice.value = office.value;
+        }
         await page.loadBoard({ensureCrews: true});
     } catch(error) {
         page.dispose();
@@ -56,8 +61,9 @@ function createDispatchPage(session) {
                     if(collapsed) expandedCrewIds.delete(id);
                     else expandedCrewIds.add(id);
                 },
-                "reload-board": async () => {await loadDispatchBoard({ensureCrews: true});},
+                "reload-board": async () => {syncOrderOffice(); await loadDispatchBoard({ensureCrews: true});},
                 "change-order-status": async () => {renderOrderList();},
+                "change-order-office": async () => {await loadDispatchBoard();},
                 "reinitialize-crews": async () => {await reinitializeCrews();},
                 "reset-assignments": async () => {await resetAssignments();},
                 "add-daily-crew": async () => {await dispatchVehicle?.add();},
@@ -81,7 +87,6 @@ function createDispatchPage(session) {
                     await DailyCrewRepository.remove({dailyCrewId: crew.dailyCrewId});
                     await loadDispatchBoard();
                 },
-
                 "edit-crew-members": async (controller, button) => {
                     if (button._crew) await crewMemberForm?.open(button._crew);
                 },
@@ -94,14 +99,10 @@ function createDispatchPage(session) {
                             version: assignment.version
                         });
                     } catch (error) {
-                        if (session.isActive()) {
-                            await loadDispatchBoard().catch(() => {});
-                        }
+                        if (session.isActive()) {await loadDispatchBoard().catch(() => {});}
                         throw error;
                     }
-                    if (session.isActive()) {
-                        await loadDispatchBoard();
-                    }
+                    if (session.isActive()) {await loadDispatchBoard();}
                 }
             },
             onInit: (controller) => {
@@ -223,10 +224,10 @@ function createDispatchPage(session) {
         );
     }
 
-    async function loadDispatchOrders({workDate, officeId, dispatchCategory}) {
+    async function loadDispatchOrders({workDate, orderOfficeId, dispatchCategory}) {
         const result = await DispatchOrderRepository.findList({
             workDate,
-            officeId,
+            officeId: orderOfficeId,
             dispatchCategory,
             state: APP.cache.common.state.INITIAL
         });
@@ -284,5 +285,13 @@ function createDispatchPage(session) {
         } catch(error) {
             DialogService.error(error.message ?? "配車解除に失敗しました。");
         }
+    }
+
+    function syncOrderOffice() {
+        const office = session.root.querySelector("#dispatch-office");
+        const orderOffice = session.root.querySelector("#dispatch-order-office");
+        if (!office || !orderOffice) return;
+
+        orderOffice.value = office.value;
     }
 }

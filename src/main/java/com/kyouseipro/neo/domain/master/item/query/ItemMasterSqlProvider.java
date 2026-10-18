@@ -20,15 +20,17 @@ public class ItemMasterSqlProvider implements SqlProviderPart {
     public Map<QueryId, QueryDefinition> provide() {
         Map<QueryId, QueryDefinition> map = new HashMap<>();
 
-        // ===== ItemMaster =====
         map.put(QueryId.ITEM_MASTER_DETAIL, ItemMasterQuery.itemMasterDetail());
         map.put(QueryId.ITEM_MASTER_LIST, ItemMasterQuery.itemMasterList());
         map.put(QueryId.ITEM_MASTER_FIND_BY_JAN_CODE, ItemMasterQuery.findByJanCode());
         map.put(QueryId.ITEM_MASTER_CSV, ItemMasterQuery.itemMasterCsv());
-        map.put(QueryId.ITEM_MASTER_DELETE_BY_IDS,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.ITEM_MASTER_BY_IDS));
-        map.put(QueryId.ITEM_MASTER_SAVE,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.ITEM_MASTER_BY_IDS));
+        map.put(QueryId.ITEM_MASTER_DELETE_BY_IDS, new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.ITEM_MASTER_BY_IDS));
+        map.put(QueryId.ITEM_MASTER_SAVE, new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.ITEM_MASTER_BY_IDS));
+        // 参照権限
+        map.get(QueryId.ITEM_MASTER_LIST).setPermissionTable("item_masters");
+        map.get(QueryId.ITEM_MASTER_DETAIL).setPermissionTable("item_masters");
+        map.get(QueryId.ITEM_MASTER_CSV).setPermissionTable("item_masters");
+        map.get(QueryId.ITEM_MASTER_FIND_BY_JAN_CODE).setPermissionTable("item_masters");
 
         return map;
     }

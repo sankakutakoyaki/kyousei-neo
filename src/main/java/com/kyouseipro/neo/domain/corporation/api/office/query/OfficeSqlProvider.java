@@ -24,13 +24,15 @@ public class OfficeSqlProvider implements SqlProviderPart {
         map.put(QueryId.OFFICE_DETAIL, OfficeQuery.officeDetail());
         map.put(QueryId.OFFICE_LIST, OfficeQuery.officeList());
         map.put(QueryId.OFFICE_CSV, OfficeQuery.officeCsv());
-        map.put(QueryId.OFFICE_DELETE_BY_IDS,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.OFFICE_BY_IDS));
-        map.put(QueryId.OFFICE_SAVE,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.OFFICE_BY_IDS));
-
+        map.put(QueryId.OFFICE_DELETE_BY_IDS, new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.OFFICE_BY_IDS));
+        map.put(QueryId.OFFICE_SAVE, new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.OFFICE_BY_IDS));
         // ===== Client =====
         map.put(QueryId.CLIENT_OFFICE_LIST, OfficeQuery.clientOfficeList());
+        // ===== 参照権限 =====
+        map.get(QueryId.OFFICE_DETAIL).setPermissionTable("offices");
+        map.get(QueryId.OFFICE_LIST).setPermissionTable("offices");
+        map.get(QueryId.OFFICE_CSV).setPermissionTable("offices");
+        map.get(QueryId.CLIENT_OFFICE_LIST).setPermissionTable("offices");
 
         return map;
     }

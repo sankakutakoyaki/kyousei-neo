@@ -20,18 +20,25 @@ public class EmployeeSqlProvider implements SqlProviderPart {
     public Map<QueryId, QueryDefinition> provide() {
         Map<QueryId, QueryDefinition> map = new HashMap<>();
 
-        // ===== Employee =====
         map.put(QueryId.EMPLOYEE_DETAIL, EmployeeQuery.employeeDetail());
         map.put(QueryId.EMPLOYEE_LIST, EmployeeQuery.employeeList());
         map.put(QueryId.EMPLOYEE_CSV, EmployeeQuery.employeeCsv());
-        map.put(QueryId.EMPLOYEE_DELETE_BY_IDS,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.EMPLOYEE_BY_IDS));
-        map.put(QueryId.EMPLOYEE_SAVE,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.EMPLOYEE_SAVE, Tables.EMPLOYEE_BY_IDS));
+        map.put(QueryId.EMPLOYEE_DELETE_BY_IDS, new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.EMPLOYEE_BY_IDS));
+        map.put(QueryId.EMPLOYEE_SAVE, new QueryDefinition(QueryType.UPDATE, QueryKind.EMPLOYEE_SAVE, Tables.EMPLOYEE_BY_IDS));
         map.put(QueryId.EMPLOYEE_RESOLVE, EmployeeQuery.employeeResolve());
         map.put(QueryId.EMPLOYEE_WORK_CATEGORY_LIST, EmployeeQuery.employeeWorkCategoryList());
         map.put(QueryId.EMPLOYEE_WORK_CATEGORY_MEMBER_LIST, EmployeeQuery.employeeWorkCategoryMemberList());
         map.put(QueryId.EMPLOYEE_OFFICE_MEMBER_LIST, EmployeeQuery.employeeOfficeMemberList());
+        // ===== 参照権限 =====
+        map.get(QueryId.EMPLOYEE_DETAIL).setPermissionTable("employees");
+        map.get(QueryId.EMPLOYEE_LIST).setPermissionTable("employees");
+        map.get(QueryId.EMPLOYEE_CSV).setPermissionTable("employees");
+        map.get(QueryId.EMPLOYEE_RESOLVE).setPermissionTable("employees");
+        map.get(QueryId.EMPLOYEE_WORK_CATEGORY_LIST).setPermissionTable("employees");
+        map.get(QueryId.EMPLOYEE_WORK_CATEGORY_MEMBER_LIST).setPermissionTable("employees");
+        map.get(QueryId.EMPLOYEE_OFFICE_MEMBER_LIST).setPermissionTable("employees");
+        // ===== 業務操作権限 =====
+        map.get(QueryId.EMPLOYEE_SAVE).setPermissionOperation("employee.save");
 
         return map;
     }

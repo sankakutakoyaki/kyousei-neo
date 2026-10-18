@@ -19,12 +19,17 @@ import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.system.QueryId;
 import com.kyouseipro.neo.common.enums.system.QueryKind;
 import com.kyouseipro.neo.common.exception.BusinessException;
+import com.kyouseipro.neo.domain.business.order.query.OrderQueryBuilderProvider;
 import com.kyouseipro.neo.domain.corporation.api.company.query.CompanySqlProvider;
 import com.kyouseipro.neo.interfaces.sql.QueryHandler;
+import com.kyouseipro.neo.security.OfficeAccessService;
+import com.kyouseipro.neo.security.QueryAuthorizationService;
+import com.kyouseipro.neo.sql.common.QueryParamBinder;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.*;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
+import com.kyouseipro.neo.sql.repository.SqlRepository;
 import com.kyouseipro.neo.sql.service.SqlColumnValidator;
 
 class QueryControllerTest {
@@ -49,7 +54,9 @@ class QueryControllerTest {
             null, null, baseRepository, null,
             new QueryBuilderProvider(List.of()),
             new QueryHandlerProvider(List.of()),
-            columnValidator
+            columnValidator,
+            mock(OfficeAccessService.class),
+            allowedAuthorization()
         );
     }
 
@@ -214,7 +221,9 @@ class QueryControllerTest {
             null, null, baseRepository, null,
             new QueryBuilderProvider(List.of()),
             handlerProvider,
-            mock(SqlColumnValidator.class)
+            mock(SqlColumnValidator.class),
+            mock(OfficeAccessService.class),
+            allowedAuthorization()
         );
 
         SelectRequest req = new SelectRequest();
@@ -232,5 +241,195 @@ class QueryControllerTest {
             expectedEditor,
             captor.getValue().getParams().get("editor")
         );
+    }
+
+    @Test
+    void orderListUsesServerOfficeId() {
+        OfficeAccessService officeAccessService = mock(OfficeAccessService.class);
+        SqlRepository sqlRepository = mock(SqlRepository.class);
+        QueryParamBinder paramBinder = mock(QueryParamBinder.class);
+
+        when(officeAccessService.getRestrictedOfficeId(any())).thenReturn(1001);
+
+        var orderController = new QueryController(
+            new SqlProvider(List.of()),
+            paramBinder,
+            sqlRepository,
+            baseRepository,
+            null,
+            new QueryBuilderProvider(List.of(new OrderQueryBuilderProvider())),
+            new QueryHandlerProvider(List.of()),
+            mock(SqlColumnValidator.class),
+            officeAccessService,
+            allowedAuthorization()
+        );
+
+        SelectRequest req = new SelectRequest();
+        req.setQueryId("orderList");
+        req.setParams(new java.util.HashMap<>(Map.of(
+            "category", 1,
+            "allowedOfficeId", 1002
+        )));
+
+        orderController.request(req);
+
+        assertEquals(1001, req.getParams().get("allowedOfficeId"));
+        verify(officeAccessService).getRestrictedOfficeId(any());
+    }
+
+    @Test
+    void orderListAllowsMasterAllOffices() {
+        OfficeAccessService officeAccessService = mock(OfficeAccessService.class);
+        when(officeAccessService.getRestrictedOfficeId(any())).thenReturn(null);
+
+        var orderController = new QueryController(
+            new SqlProvider(List.of()),
+            mock(QueryParamBinder.class),
+            mock(SqlRepository.class),
+            baseRepository,
+            null,
+            new QueryBuilderProvider(List.of(new OrderQueryBuilderProvider())),
+            new QueryHandlerProvider(List.of()),
+            mock(SqlColumnValidator.class),
+            officeAccessService,
+            allowedAuthorization()
+        );
+
+        SelectRequest req = new SelectRequest();
+        req.setQueryId("orderList");
+        req.setParams(new java.util.HashMap<>(Map.of(
+            "category", 1,
+            "allowedOfficeId", 1002
+        )));
+
+        orderController.request(req);
+
+        assertTrue(req.getParams().containsKey("allowedOfficeId"));
+        assertNull(req.getParams().get("allowedOfficeId"));
+        verify(officeAccessService).getRestrictedOfficeId(any());
+    }
+
+    @Test
+    void orderListRejectsUnknownOffice() {
+        OfficeAccessService officeAccessService = mock(OfficeAccessService.class);
+
+        when(officeAccessService.getRestrictedOfficeId(any()))
+            .thenThrow(new org.springframework.security.access.AccessDeniedException(
+                "所属営業所を確認できません。"
+            ));
+
+        var orderController = new QueryController(
+            new SqlProvider(List.of()),
+            mock(QueryParamBinder.class),
+            mock(SqlRepository.class),
+            baseRepository,
+            null,
+            new QueryBuilderProvider(List.of(new OrderQueryBuilderProvider())),
+            new QueryHandlerProvider(List.of()),
+            mock(SqlColumnValidator.class),
+            officeAccessService,
+            allowedAuthorization()
+        );
+
+        SelectRequest req = new SelectRequest();
+        req.setQueryId("orderList");
+        req.setParams(Map.of("category", 1));
+
+        assertThrows(
+            org.springframework.security.access.AccessDeniedException.class,
+            () -> orderController.request(req)
+        );
+    }
+
+    @Test
+    void orderListBindsServerOfficeId() {
+        OfficeAccessService officeAccessService = mock(OfficeAccessService.class);
+        SqlRepository sqlRepository = mock(SqlRepository.class);
+
+        when(officeAccessService.getRestrictedOfficeId(any())).thenReturn(1001);
+
+        var orderController = new QueryController(
+            new SqlProvider(List.of()),
+            new QueryParamBinder(),
+            sqlRepository,
+            baseRepository,
+            null,
+            new QueryBuilderProvider(List.of(new OrderQueryBuilderProvider())),
+            new QueryHandlerProvider(List.of()),
+            mock(SqlColumnValidator.class),
+            officeAccessService,
+            allowedAuthorization()
+        );
+
+        SelectRequest req = new SelectRequest();
+        req.setQueryId("orderList");
+        Map<String, Object> params = new java.util.HashMap<>();
+        params.put("category", 1);
+        params.put("state", State.INITIAL.getCode());
+        params.put("compState", State.DELETE.getCode());
+        params.put("dateFrom", "2026-10-01");
+        params.put("dateTo", "2026-11-01");
+        params.put("ownOfficeId", null);
+        params.put("allowedOfficeId", 1002);
+
+        req.setParams(params);
+
+        orderController.request(req);
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<Object>> captor = ArgumentCaptor.forClass(List.class);
+
+        verify(sqlRepository).selectMap(anyString(), captor.capture());
+
+        List<Object> boundParams = captor.getValue();
+        assertEquals(1001, boundParams.get(boundParams.size() - 2));
+        assertEquals(1001, boundParams.get(boundParams.size() - 1));
+    }
+
+    private QueryAuthorizationService allowedAuthorization() {
+        QueryAuthorizationService service =
+            mock(QueryAuthorizationService.class);
+
+        when(service.isAllowed(any(), any(), any()))
+            .thenReturn(true);
+
+        return service;
+    }
+
+    @Test
+    void deniedPermissionDoesNotExecuteHandler() {
+        QueryHandler handler = mock(QueryHandler.class);
+        QueryHandlerProvider handlerProvider = mock(QueryHandlerProvider.class);
+        SqlProvider sqlProvider = mock(SqlProvider.class);
+
+        QueryDefinition def = mock(QueryDefinition.class);
+        when(def.getKind()).thenReturn(QueryKind.ORDER_SAVE);
+        when(sqlProvider.get(any(QueryId.class))).thenReturn(def);
+
+        QueryAuthorizationService authorizationService =
+            mock(QueryAuthorizationService.class);
+
+        QueryController target = new QueryController(
+            sqlProvider,
+            null, null, baseRepository, null,
+            new QueryBuilderProvider(List.of()),
+            handlerProvider,
+            mock(SqlColumnValidator.class),
+            mock(OfficeAccessService.class),
+            authorizationService
+        );
+
+        SelectRequest req = new SelectRequest();
+        req.setQueryId("orderSave");
+        req.setParams(Map.of("orderId", 1004));
+
+        assertThrows(
+            org.springframework.security.access.AccessDeniedException.class,
+            () -> target.request(req)
+        );
+
+        verify(authorizationService).isAllowed(any(), eq(def), eq(req));
+        verifyNoInteractions(handler, baseRepository);
+        verify(handlerProvider, never()).get(any());
     }
 }

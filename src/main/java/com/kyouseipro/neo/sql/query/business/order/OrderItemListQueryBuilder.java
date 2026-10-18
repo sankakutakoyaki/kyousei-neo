@@ -65,10 +65,12 @@ public class OrderItemListQueryBuilder implements QueryBuilder {
 
         sql.append(" ORDER BY oi.order_item_id");
 
-        return QueryDefinition.select(
+        QueryDefinition def = QueryDefinition.select(
             sql.toString(),
             paramOrder
         );
+        def.setPermissionTable("order_items");
+        return def;
     }
 
     private void addLikeCondition(

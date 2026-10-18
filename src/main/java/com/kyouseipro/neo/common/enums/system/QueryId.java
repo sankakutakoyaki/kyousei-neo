@@ -126,8 +126,6 @@ public enum QueryId {
     RECYCLE_PRICE_DELETE_BY_IDS("recyclePriceDeleteByIds"),
     RECYCLE_PRICE_SAVE("recyclePriceSave"),
 
-    // ===== WorkSkill =====
-
     // ===== RecycleItem =====
     RECYCLE_ITEM_LIST("recycleItemList"),
 
@@ -158,7 +156,6 @@ public enum QueryId {
     ORDER_WORK_LIST("orderWorkList"),
     ORDER_WORK_CSV("orderWorkCsv"),
     ORDER_WORK_DELETE_BY_IDS("orderWorkDeleteByIds"),
-    ORDER_WORK_SAVE("orderWorkSave"),
 
     // ===== Master =====
     WORK_MASTER_DETAIL("workMasterDetail"),

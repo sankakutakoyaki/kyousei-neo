@@ -17,6 +17,9 @@ public class QueryDefinition {
     private QueryKind kind;
     private TableMeta tableMeta;
 
+    private String permissionTable;
+    private String permissionOperation;
+
     private List<CsvColumn> csvColumns;
 
     private QueryDefinition(String sql, List<String> paramOrder, QueryType type) {

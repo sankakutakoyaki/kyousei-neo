@@ -23,7 +23,7 @@ public class OwnOfficeContextController {
 
 
     @GetMapping("/api/own-offices/context")
-    @PreAuthorize("hasAnyAuthority('APPROLE_admin','APPROLE_master','APPROLE_leader','APPROLE_staff','APPROLE_user')")
+    @PreAuthorize("hasAnyAuthority('APPROLE_admin','APPROLE_master','APPROLE_leader','APPROLE_staff','APPROLE_user','APPROLE_office')")
     public Map<String, Object> context(Authentication authentication) {
         List<ComboDto> offices = officeService.findComboByCategory(CompanyCategory.OWN.getCode());
         Integer officeId = ownOfficeContextService.getOfficeId(authentication);

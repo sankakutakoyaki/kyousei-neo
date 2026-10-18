@@ -42,4 +42,13 @@ public class IndexPageController {
 	public String getOperations() {
 		return "fragments/pages/index/operations";
 	}
+
+	/**
+	 * 設定
+	 */
+	@GetMapping("/setting")
+	@PreAuthorize("hasAnyAuthority('APPROLE_admin', 'APPROLE_master', 'APPROLE_leader', 'APPROLE_staff', 'APPROLE_user', 'APPROLE_office')")
+	public String getSetting() {
+		return "fragments/pages/index/setting";
+	}
 }

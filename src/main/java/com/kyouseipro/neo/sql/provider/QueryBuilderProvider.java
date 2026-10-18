@@ -20,4 +20,8 @@ public class QueryBuilderProvider {
     public QueryBuilder get(QueryId id){
         return id == null ? null : builders.get(id);
     }
+
+    public Map<QueryId, QueryBuilder> getBuilders() {
+        return Map.copyOf(builders);
+    }
 }

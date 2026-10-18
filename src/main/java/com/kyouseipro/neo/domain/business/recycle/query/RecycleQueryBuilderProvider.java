@@ -22,7 +22,9 @@ public class RecycleQueryBuilderProvider implements QueryBuilderPart {
         map.put(QueryId.RECYCLE_LIST, req -> {
             Integer categoryInt = toInteger(req.getParams().get("category"));
             RecycleCategory category = categoryInt == null ? null: EnumUtil.of(RecycleCategory.class, categoryInt);
-            return RecycleQuery.recycleList(category);
+            var def = RecycleQuery.recycleList(category);
+            def.setPermissionTable("recycles");
+            return def;
         });
         return map;
     }

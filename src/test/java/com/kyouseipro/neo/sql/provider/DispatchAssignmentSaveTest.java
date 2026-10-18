@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import com.kyouseipro.neo.domain.operations.dispatch.query.DispatchAssignmentSqlProvider;
+import com.kyouseipro.neo.security.OfficeAccessService;
+import com.kyouseipro.neo.security.QueryAuthorizationService;
 import com.kyouseipro.neo.sql.controller.QueryController;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
@@ -26,8 +28,12 @@ class DispatchAssignmentSaveTest {
     }
     private QueryController controller(BaseSqlRepository base) {
         SqlColumnValidator columnValidator = mock(SqlColumnValidator.class);
+
+        QueryAuthorizationService authorizationService = mock(QueryAuthorizationService.class);
+        when(authorizationService.isAllowed(any(), any(), any())).thenReturn(true);
+
         return new QueryController(new SqlProvider(List.of(new DispatchAssignmentSqlProvider())),
-            null,null,base,null,new QueryBuilderProvider(List.of()),new QueryHandlerProvider(List.of()), columnValidator);
+            null,null,base,null,new QueryBuilderProvider(List.of()),new QueryHandlerProvider(List.of()), columnValidator, mock(OfficeAccessService.class),authorizationService);
     }
     @Test void moveUsesOneVersionedUpdateAndKeepsTheAssignmentIdentity() {
         var base = mock(BaseSqlRepository.class);

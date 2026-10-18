@@ -23,7 +23,9 @@ public class OrderQueryBuilderProvider implements QueryBuilderPart {
             req.getParams().put("ownOfficeId",toInteger(req.getParams().get("ownOfficeId")));
             Integer categoryInt = toInteger(req.getParams().get("category"));
             OrderCategory category = categoryInt == null ? null: EnumUtil.of(OrderCategory.class, categoryInt);
-            return OrderQuery.orderList(category);
+            var def = OrderQuery.orderList(category);
+            def.setPermissionTable("orders");
+            return def;
         });
         return map;
     }

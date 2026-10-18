@@ -11,9 +11,6 @@
             <section class="dispatch-crew-area">
                 <header class="dispatch-board-header dispatch-crew-header">
                     <span>車両リスト</span>
-                    <!-- <div class="img-btn" data-action="reinitialize-crews" data-action-lock="true">
-                        <img src="/icons/reload.png">
-                    </div> -->
                     <button type="button" class="normal-btn frameless" data-action="reinitialize-crews" data-action-lock="true">初期化</button>
                 </header>
                 <div id="dispatch-crew-list" class="dispatch-crew-list">
@@ -26,15 +23,23 @@
             <section class="dispatch-order-area">
                 <header class="dispatch-board-header dispatch-order-header">
                     <span>伝票リスト</span>
-                    <!-- <div class="img-btn" data-action="reset-assignments" data-action-lock="true">
-                        <img src="/icons/reload.png">
-                    </div> -->
-                    <button type="button" class="normal-btn frameless" data-action="reset-assignments" data-action-lock="true">初期化</button>
+                    <th:block th:replace="~{
+                        fragments/components/box :: selectBoxFragment(${
+                            {
+                                'id':'dispatch-order-office',
+                                'name':'order-office-id',
+                                'combo':'officeComboList',
+                                'top':'-----',
+                                'action':'change-order-office'
+                            }
+                        })
+                    }"></th:block>
                     <select id="dispatch-order-status" class="normal-select" data-action="change-order-status">
                         <option value="unassigned" selected>未配車</option>
                         <option value="assigned">配車済み</option>
                         <option value="all">すべて</option>
                     </select>
+                    <button type="button" class="normal-btn frameless" data-action="reset-assignments" data-action-lock="true">初期化</button>
                 </header>
                 <div id="dispatch-order-list" class="dispatch-order-list"></div>
             </section>

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +21,8 @@ import com.kyouseipro.neo.common.enums.system.QueryType;
 import com.kyouseipro.neo.common.enums.system.SqlMode;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.interfaces.sql.QueryBuilder;
+import com.kyouseipro.neo.security.OfficeAccessService;
+import com.kyouseipro.neo.security.QueryAuthorizationService;
 import com.kyouseipro.neo.sql.common.QueryParamBinder;
 import com.kyouseipro.neo.sql.common.SqlBuilder;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
@@ -47,10 +50,22 @@ public class QueryController {
     private final QueryBuilderProvider queryBuilderProvider;
     private final QueryHandlerProvider handlerProvider;
     private final SqlColumnValidator columnValidator;
+    private final OfficeAccessService officeAccessService;
+    private final QueryAuthorizationService queryAuthorizationService;
 
     @PostMapping("/query")
     public Object request(@RequestBody SelectRequest req) {
         QueryId queryId = QueryId.from(req.getQueryId());
+        // クライアントのMapをコピーし、サーバー側の条件を設定する
+        Map<String, Object> params = new HashMap<>(req.getParams() != null ? req.getParams() : Map.of());
+        // サーバー専用パラメータはクライアントから受け取らない
+        params.remove("allowedOfficeId");
+        if (queryId == QueryId.ORDER_LIST) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Integer allowedOfficeId = officeAccessService.getRestrictedOfficeId(authentication);
+            params.put("allowedOfficeId", allowedOfficeId);
+        }
+        req.setParams(params);
         QueryBuilder builder = queryBuilderProvider.get(queryId);
         QueryDefinition def;
 
@@ -60,6 +75,10 @@ public class QueryController {
             def = sqlProvider.get(queryId);
         }
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!queryAuthorizationService.isAllowed(authentication, def, req)) {
+            throw new AccessDeniedException("この操作を実行する権限がありません。");
+        }
         return switch (def.getKind()) {
             case SQL -> executeSql(def, req);
             case SAVE -> executeSave(def, req);

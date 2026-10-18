@@ -29,4 +29,8 @@ public class SqlProvider {
         }
         return def;
     }
+
+    public Map<QueryId, QueryDefinition> getDefinitions() {
+        return Map.copyOf(map);
+    }
 }

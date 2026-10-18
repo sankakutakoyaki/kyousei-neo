@@ -18,48 +18,24 @@ public class EmployeeShiftSqlProvider implements SqlProviderPart {
 
     @Override
     public Map<QueryId, QueryDefinition> provide() {
-
         Map<QueryId, QueryDefinition> map = new HashMap<>();
 
-        map.put(
-            QueryId.EMPLOYEE_SHIFT_DETAIL,
-            EmployeeShiftQuery.employeeShiftDetail()
-        );
-        
-        map.put(
-            QueryId.EMPLOYEE_SHIFT_LIST,
-            EmployeeShiftQuery.employeeShiftList()
-        );
-
-        map.put(
-            QueryId.EMPLOYEE_SHIFT_MONTH_LIST,
-            EmployeeShiftQuery.employeeShiftMonthList()
-        );
-
-        map.put(
-            QueryId.EMPLOYEE_SHIFT_EMPLOYEE_LIST,
-            EmployeeShiftQuery.employeeShiftEmployeeList()
-        );
-
-        map.put(
-            QueryId.EMPLOYEE_SHIFT_WORKING_LIST,
-            EmployeeShiftQuery.employeeShiftWorkingList()
-        );
-
-        map.put(
-            QueryId.EMPLOYEE_SHIFT_DELETE_BY_IDS,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.EMPLOYEE_SHIFT_BY_IDS)
-        );
-
-        map.put(
-            QueryId.EMPLOYEE_SHIFT_SAVE,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.EMPLOYEE_SHIFT_BY_IDS)
-        );
-    
-        map.put(
-            QueryId.EMPLOYEE_SHIFT_BATCH_SAVE,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.EMPLOYEE_SHIFT_BATCH_SAVE, Tables.EMPLOYEE_SHIFT_BY_IDS)
-        );
+        map.put(QueryId.EMPLOYEE_SHIFT_DETAIL, EmployeeShiftQuery.employeeShiftDetail());
+        map.put(QueryId.EMPLOYEE_SHIFT_LIST, EmployeeShiftQuery.employeeShiftList());
+        map.put(QueryId.EMPLOYEE_SHIFT_MONTH_LIST, EmployeeShiftQuery.employeeShiftMonthList());
+        map.put(QueryId.EMPLOYEE_SHIFT_EMPLOYEE_LIST, EmployeeShiftQuery.employeeShiftEmployeeList());
+        map.put(QueryId.EMPLOYEE_SHIFT_WORKING_LIST, EmployeeShiftQuery.employeeShiftWorkingList());
+        map.put(QueryId.EMPLOYEE_SHIFT_DELETE_BY_IDS, new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.EMPLOYEE_SHIFT_BY_IDS));
+        map.put(QueryId.EMPLOYEE_SHIFT_SAVE, new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.EMPLOYEE_SHIFT_BY_IDS));
+        map.put(QueryId.EMPLOYEE_SHIFT_BATCH_SAVE, new QueryDefinition(QueryType.UPDATE, QueryKind.EMPLOYEE_SHIFT_BATCH_SAVE, Tables.EMPLOYEE_SHIFT_BY_IDS));
+        // ===== 参照権限 =====
+        map.get(QueryId.EMPLOYEE_SHIFT_DETAIL).setPermissionTable(Tables.EMPLOYEE_SHIFT_BY_IDS.tableName());
+        map.get(QueryId.EMPLOYEE_SHIFT_LIST).setPermissionTable(Tables.EMPLOYEE_SHIFT_BY_IDS.tableName());
+        map.get(QueryId.EMPLOYEE_SHIFT_MONTH_LIST).setPermissionTable(Tables.EMPLOYEE_SHIFT_BY_IDS.tableName());
+        map.get(QueryId.EMPLOYEE_SHIFT_EMPLOYEE_LIST).setPermissionTable(Tables.EMPLOYEE_SHIFT_BY_IDS.tableName());
+        map.get(QueryId.EMPLOYEE_SHIFT_WORKING_LIST).setPermissionTable(Tables.EMPLOYEE_SHIFT_BY_IDS.tableName());
+        // ===== 業務操作権限 =====
+        map.get(QueryId.EMPLOYEE_SHIFT_BATCH_SAVE).setPermissionOperation("employee.shift.batch.save");
 
         return map;
     }

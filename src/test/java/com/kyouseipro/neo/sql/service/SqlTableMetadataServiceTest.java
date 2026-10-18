@@ -197,6 +197,32 @@ class SqlTableMetadataServiceTest {
         verifyNoInteractions(queryExecutor);
     }
 
+    @Test
+    void clearLogSchemaCacheRemovesCachedColumns() {
+        when(queryExecutor.select(any(), any())).thenReturn(List.of(
+            Map.of(
+                "columnName", "employee_id",
+                "dataType", "bigint",
+                "maxLength", 8,
+                "numericPrecision", 19,
+                "numericScale", 0,
+                "isNullable", false,
+                "isIdentity", true,
+                "isComputed", false
+            )
+        ));
+
+        service.getColumns("employees");
+        service.getColumns("employees");
+
+        verify(queryExecutor, times(1)).select(any(), any());
+
+        service.clearLogSchemaCache("employees");
+        service.getColumns("employees");
+
+        verify(queryExecutor, times(2)).select(any(), any());
+    }
+
     private Map<String, Object> logColumn(String name, String type, int maxLength) {
         return Map.of(
             "columnName", name,

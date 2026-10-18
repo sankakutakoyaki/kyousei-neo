@@ -24,10 +24,12 @@ public class StaffSqlProvider implements SqlProviderPart {
         map.put(QueryId.STAFF_DETAIL, StaffQuery.staffDetail());
         map.put(QueryId.STAFF_LIST, StaffQuery.staffList());
         map.put(QueryId.STAFF_CSV, StaffQuery.staffCsv());
-        map.put(QueryId.STAFF_DELETE_BY_IDS,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.STAFF_BY_IDS));
-        map.put(QueryId.STAFF_SAVE,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.STAFF_BY_IDS));
+        map.put(QueryId.STAFF_DELETE_BY_IDS, new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.STAFF_BY_IDS));
+        map.put(QueryId.STAFF_SAVE, new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.STAFF_BY_IDS));
+        // ===== 参照権限 =====
+        map.get(QueryId.STAFF_DETAIL).setPermissionTable(Tables.STAFF_BY_IDS.tableName());
+        map.get(QueryId.STAFF_LIST).setPermissionTable(Tables.STAFF_BY_IDS.tableName());
+        map.get(QueryId.STAFF_CSV).setPermissionTable(Tables.STAFF_BY_IDS.tableName());
 
         return map;
     }

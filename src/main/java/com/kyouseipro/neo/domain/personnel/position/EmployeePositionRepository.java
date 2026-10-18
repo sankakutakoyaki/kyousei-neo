@@ -32,5 +32,5 @@ public class EmployeePositionRepository {
                 State.INITIAL.getCode()
             )
         );
-}
+    }
 }

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/with-sidebar}">
+
+<body>
+    <div layout:fragment="sidebar-content">
+        <div th:replace="~{fragments/common/menu :: settingFragment}"></div>
+    </div>
+    <main class="normal-body shortcut-page" layout:fragment="content">
+        <h1>登録</h1>
+        <nav class="shortcut-grid" aria-label="設定メニュー">
+            <button type="button" class="shortcut-card" sec:authorize="!hasAnyAuthority('APPROLE_office')" data-link="/setting" data-target="body">
+                <img th:src="@{/icons/setting.png}" alt=""><span>設定</span>
+            </button>
+        </nav>
+        <div id="form-dialog-area"></div>
+        <div id="dialog-area"></div>
+    </main>
+</body>
+
+</html>

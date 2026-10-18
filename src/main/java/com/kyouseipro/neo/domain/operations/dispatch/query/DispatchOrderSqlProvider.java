@@ -16,11 +16,14 @@ public class DispatchOrderSqlProvider implements SqlProviderPart {
 
     @Override
     public Map<QueryId, QueryDefinition> provide() {
-
         Map<QueryId, QueryDefinition> map = new HashMap<>();
 
         map.put(QueryId.DISPATCH_ORDER_LIST, DispatchOrderQuery.dispatchOrderList());
         map.put(QueryId.DISPATCH_EMPLOYEE_CANDIDATE_LIST, DispatchEmployeeQuery.dispatchEmployeeCandidateList());
+        // ===== 参照権限 =====
+        map.get(QueryId.DISPATCH_ORDER_LIST).setPermissionTable("orders");
+        map.get(QueryId.DISPATCH_EMPLOYEE_CANDIDATE_LIST).setPermissionTable("employees");
+
         return map;
     }
 }

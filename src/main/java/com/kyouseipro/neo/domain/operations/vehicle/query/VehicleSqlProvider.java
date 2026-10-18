@@ -23,12 +23,12 @@ public class VehicleSqlProvider implements SqlProviderPart {
         map.put(QueryId.VEHICLE_DETAIL, VehicleQuery.vehicleDetail());
         map.put(QueryId.VEHICLE_LIST, VehicleQuery.vehicleList());
         map.put(QueryId.VEHICLE_CSV, VehicleQuery.vehicleCsv());
-        map.put(QueryId.VEHICLE_DELETE_BY_IDS,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.VEHICLE_BY_IDS)
-        );
-        map.put(QueryId.VEHICLE_SAVE,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.VEHICLE_BY_IDS)
-        );
+        map.put(QueryId.VEHICLE_DELETE_BY_IDS, new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.VEHICLE_BY_IDS));
+        map.put(QueryId.VEHICLE_SAVE, new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.VEHICLE_BY_IDS));
+        // ===== 参照権限 =====
+        map.get(QueryId.VEHICLE_DETAIL).setPermissionTable(Tables.VEHICLE_BY_IDS.tableName());
+        map.get(QueryId.VEHICLE_LIST).setPermissionTable(Tables.VEHICLE_BY_IDS.tableName());
+        map.get(QueryId.VEHICLE_CSV).setPermissionTable(Tables.VEHICLE_BY_IDS.tableName());
 
         return map;
     }

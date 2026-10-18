@@ -36,31 +36,45 @@ public class OwnOfficeContextService {
 
     /**
      * ログインユーザーの所属営業所IDを取得
+     * 個人アカウント：employees
+     * 営業所共用アカウント：office_accounts
      *
-     * 複数または未登録の場合は null
+     * 未登録・複数登録の場合は null
      */
     public Integer getOfficeId(Authentication authentication) {
         String account = getAccount(authentication);
-        var rows = sql.selectMap(
-                """
-                SELECT DISTINCT
-                    office_id
+
+        // 営業所共用アカウント
+        boolean isOffice = authentication.getAuthorities().stream()
+                .anyMatch(a -> "APPROLE_office".equals(a.getAuthority()));
+
+        if (isOffice) {
+            var rows = sql.selectMap("""
+                    SELECT office_id
+                    FROM office_accounts
+                    WHERE state = ?
+                    AND account = ?
+                    """,
+                    List.of(State.INITIAL.getCode(), account));
+
+            if (rows.size() != 1) return null;
+
+            Object value = rows.get(0).get("officeId");
+            return value instanceof Number number ? number.intValue() : null;
+        }
+
+        // 個人アカウント（既存処理）
+        var rows = sql.selectMap("""
+                SELECT DISTINCT office_id
                 FROM employees
                 WHERE state = ?
-                  AND account = ?
+                AND account = ?
                 """,
-                List.of(State.INITIAL.getCode(), account)
-            );
+                List.of(State.INITIAL.getCode(), account));
 
-        if(rows.size() != 1){
-            return null;
-        }
+        if (rows.size() != 1) return null;
 
         Object value = rows.get(0).get("officeId");
-        if(value == null){
-            return null;
-        }
-
-        return ((Number) value).intValue();
+        return value instanceof Number number ? number.intValue() : null;
     }
 }

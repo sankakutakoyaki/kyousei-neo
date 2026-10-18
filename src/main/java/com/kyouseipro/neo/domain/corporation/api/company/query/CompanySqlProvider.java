@@ -24,13 +24,15 @@ public class CompanySqlProvider implements SqlProviderPart {
         map.put(QueryId.COMPANY_DETAIL, CompanyQuery.companyDetail());
         map.put(QueryId.COMPANY_LIST, CompanyQuery.companyList());
         map.put(QueryId.COMPANY_CSV, CompanyQuery.companyCsv());
-        map.put(QueryId.COMPANY_DELETE_BY_IDS,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.COMPANY_BY_IDS));
-        map.put(QueryId.COMPANY_SAVE,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.COMPANY_BY_IDS));
-
+        map.put(QueryId.COMPANY_DELETE_BY_IDS,  new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.COMPANY_BY_IDS));
+        map.put(QueryId.COMPANY_SAVE, new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.COMPANY_BY_IDS));
         // ===== Client =====
         map.put(QueryId.CLIENT_LIST, CompanyQuery.clientList());
+        // ===== 参照権限 =====
+        map.get(QueryId.COMPANY_DETAIL).setPermissionTable("companies");
+        map.get(QueryId.COMPANY_LIST).setPermissionTable("companies");
+        map.get(QueryId.COMPANY_CSV).setPermissionTable("companies");
+        map.get(QueryId.CLIENT_LIST).setPermissionTable("companies");
 
         return map;
     }

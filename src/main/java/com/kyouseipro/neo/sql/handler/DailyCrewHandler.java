@@ -314,39 +314,15 @@ public class DailyCrewHandler implements QueryHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private Object executeMemberSave(
-            SelectRequest req
-    ) {
+    private Object executeMemberSave(SelectRequest req) {
+        Map<String, Object> params = req.getParams();
+        String editor = (String) params.getOrDefault("editor", "system");
+        long dailyCrewId = ((Number) params.get("dailyCrewId")).longValue();
+        List<Map<String, Object>> members = (List<Map<String, Object>>) params.getOrDefault("members", List.of());
 
-        Map<String, Object> params =
-            req.getParams();
-
-        String editor =
-            (String) params.getOrDefault(
-                "editor",
-                "system"
-            );
-
-        long dailyCrewId =
-            ((Number) params.get(
-                "dailyCrewId"
-            )).longValue();
-
-        List<Map<String, Object>> members =
-            (List<Map<String, Object>>)
-                params.getOrDefault(
-                    "members",
-                    List.of()
-                );
-
-
-        // =========================================
         // 現在のDB状態を取得
         // 削除済みも含む
-        // =========================================
-
-        Map<String, Object> currentParams =
-            new HashMap<>();
+        Map<String, Object> currentParams = new HashMap<>();
 
         currentParams.put(
             "dailyCrewId",

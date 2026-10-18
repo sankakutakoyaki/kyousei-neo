@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.kyouseipro.neo.common.enums.system.QueryKind;
 import com.kyouseipro.neo.domain.business.recycle.repository.RecycleRepository;
@@ -43,6 +44,7 @@ public class RecycleHandler implements QueryHandler {
     }
 
     @Override
+    @Transactional
     public Object execute(QueryDefinition def, SelectRequest req) {
         return switch(def.getKind()) {
             case RECYCLE_DELIVERY_SAVE -> executeDelivery(def, req);

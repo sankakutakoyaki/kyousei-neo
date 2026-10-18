@@ -13,10 +13,6 @@ export const OrderWorkRepository = {
         return res.data?.[0] ?? null;
     },
 
-    async save(params){
-        return await RequestClient.request({queryId: "orderWorkSave", params});
-    },
-
     async remove(params){
         return await RequestClient.request({queryId: "orderWorkDeleteByIds", params});
     },

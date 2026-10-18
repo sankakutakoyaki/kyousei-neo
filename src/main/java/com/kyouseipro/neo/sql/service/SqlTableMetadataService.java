@@ -196,4 +196,39 @@ public class SqlTableMetadataService {
 
         return number.intValue() > 0;
     }
+
+    public void clearCache(String tableName) {
+        if (tableName == null || !tableName.matches("[A-Za-z_][A-Za-z0-9_]*")) {
+            throw new IllegalArgumentException("不正なテーブル名です: " + tableName);
+        }
+
+        cache.remove(tableName);
+        logTableCache.remove(tableName);
+    }
+
+    public void clearLogSchemaCache(String tableName) {
+        clearCache(tableName);
+        clearCache(tableName + "_log");
+    }
+
+    public List<String> getTablesWithLog() {
+        QueryDefinition def = QueryDefinition.select("""
+            SELECT t.name AS table_name
+            FROM sys.tables t
+            JOIN sys.schemas s ON s.schema_id = t.schema_id
+            JOIN sys.tables lt
+                ON lt.schema_id = t.schema_id
+                AND lt.name = t.name + '_log'
+            WHERE s.name = ?
+            AND t.name NOT LIKE '%[_]log'
+            ORDER BY t.name
+            """, List.of("schemaName"));
+
+        SelectRequest req = new SelectRequest();
+        req.setParams(Map.of("schemaName", "dbo"));
+
+        return queryExecutor.select(def, req).stream()
+            .map(row -> (String) row.get("tableName"))
+            .toList();
+    }
 }

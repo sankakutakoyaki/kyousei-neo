@@ -1,0 +1,84 @@
+<main th:fragment="content"
+      id="permission-page"
+      class="normal-body"
+      data-controller="permission"
+      data-page="/js/pages/security/permissionPage.js"
+      data-css="/css/pages/setting/permission.css">
+    <div class="permission-page">
+
+        <header class="page-input-header">
+            <h2>権限管理</h2>
+
+            <div class="form-parts">
+                <label for="permission-role">ロール</label>
+                <select id="permission-role"
+                        class="normal-select"
+                        data-action="change-permission-role">
+                    <option value="">選択してください</option>
+                </select>
+            </div>
+
+            <div class="form-parts">
+                <label for="permission-scope">データアクセス範囲</label>
+                <select id="permission-scope" class="normal-select">
+                    <option value="ALL">全営業所</option>
+                    <option value="OWN">所属営業所</option>
+                    <option value="ASSIGNED">本人の担当データ</option>
+                    <option value="OWN_ASSIGNED">所属営業所＋担当データ</option>
+                </select>
+            </div>
+        </header>
+
+        <section class="permission-section">
+            <h3>テーブル権限</h3>
+
+            <table class="permission-table">
+                <thead>
+                    <tr>
+                        <th>テーブル</th>
+                        <th>参照</th>
+                        <th>追加</th>
+                        <th>更新</th>
+                        <th>削除</th>
+                    </tr>
+                </thead>
+                <tbody id="permission-table-list"></tbody>
+            </table>
+        </section>
+
+        <section class="permission-section">
+            <h3>操作権限</h3>
+
+            <div id="permission-operation-list"></div>
+        </section>
+
+        <footer class="page-footer">
+            <button type="button"
+                    id="permission-save"
+                    class="normal-btn ok"
+                    data-action="save-permissions"
+                    disabled>
+                保存
+            </button>
+        </footer>
+
+    </div>
+
+    <template id="permission-table-row-template">
+        <tr>
+            <td data-field="tableName"></td>
+            <td><input type="checkbox" data-field="canSelect"></td>
+            <td><input type="checkbox" data-field="canInsert"></td>
+            <td><input type="checkbox" data-field="canUpdate"></td>
+            <td><input type="checkbox" data-field="canDelete"></td>
+        </tr>
+    </template>
+
+    <template id="permission-operation-row-template">
+        <label class="form-parts">
+            <input type="checkbox" data-field="allowed">
+            <span data-field="operationCode"></span>
+        </label>
+    </template>
+
+</main>

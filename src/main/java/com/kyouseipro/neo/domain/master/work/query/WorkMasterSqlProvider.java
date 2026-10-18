@@ -20,14 +20,15 @@ public class WorkMasterSqlProvider implements SqlProviderPart {
     public Map<QueryId, QueryDefinition> provide() {
         Map<QueryId, QueryDefinition> map = new HashMap<>();
 
-        // ===== WorkMaster =====
         map.put(QueryId.WORK_MASTER_DETAIL, WorkMasterQuery.workMasterDetail());
         map.put(QueryId.WORK_MASTER_LIST, WorkMasterQuery.workMasterList());
         map.put(QueryId.WORK_MASTER_CSV, WorkMasterQuery.workMasterCsv());
-        map.put(QueryId.WORK_MASTER_DELETE_BY_IDS,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.WORK_MASTER_BY_IDS));
-        map.put(QueryId.WORK_MASTER_SAVE,
-            new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.WORK_MASTER_BY_IDS));
+        map.put(QueryId.WORK_MASTER_DELETE_BY_IDS, new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.WORK_MASTER_BY_IDS));
+        map.put(QueryId.WORK_MASTER_SAVE, new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.WORK_MASTER_BY_IDS));
+        // =参照権限
+        map.get(QueryId.WORK_MASTER_LIST).setPermissionTable("work_masters");
+        map.get(QueryId.WORK_MASTER_DETAIL).setPermissionTable("work_masters");
+        map.get(QueryId.WORK_MASTER_CSV).setPermissionTable("work_masters");
 
         return map;
     }

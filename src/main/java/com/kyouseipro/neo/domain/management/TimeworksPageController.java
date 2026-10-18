@@ -53,27 +53,12 @@ public class TimeworksPageController {
             "page", Map.of(
                 "canManage", canManage,
                 "personalMode", personalMode,
-
-                "officeComboList",
-                    canManage
-                        ? officeService.findComboByCategory(
-                            CompanyCategory.OWN.getCode()
-                        )
-                        : List.of(),
+                "officeComboList", canManage ? officeService.findComboByCategory(CompanyCategory.OWN.getCode()): List.of(),
                 "closingTypeComboList", List.of(
-                        Map.of(
-                            "value", "FIFTEENTH",
-                            "label", "15日締め"
-                        ),
-                        Map.of(
-                            "value", "MONTH_END",
-                            "label", "月末締め"
-                        )
+                        Map.of("value", "FIFTEENTH", "label", "15日締め"),
+                        Map.of("value", "MONTH_END", "label", "月末締め")
                     ),
-                "loginOfficeId",
-                    loginOfficeId != null
-                        ? loginOfficeId
-                        : ""
+                "loginOfficeId", loginOfficeId != null ? loginOfficeId: ""
             )
         );
     }
