@@ -186,28 +186,22 @@ export function closeMsgDialog(dialogId = "msg-dialog") {
  * ボタンを使用不可にする
  * @param {*} state 
  */
+/**
+ * 背景画面の操作を禁止・解除する
+ * @param {boolean} state
+ */
 export function setInertState(state) {
-    const header = document.querySelector('.normal-header');
-    if (header != null) {
-        header.inert = state;
-    }
+    const header = document.querySelector(".normal-header");
+    const aside = document.querySelector(".normal-sidebar");
 
-    const aside = document.querySelector('.normal-sidebar');
-    if (aside != null) {
-        aside.inert = state;
-    }
+    if (header) header.inert = state;
+    if (aside) aside.inert = state;
 
-    const tab = document.querySelector('.tab-area');
-    if (tab != null) {
-        tab.inert = state;
-    }
+    document.querySelectorAll(".tab-area, .table-area").forEach(el => {
+        // ダイアログ内は操作禁止の対象外
+        if (el.closest("#form-dialog-area, #msg-dialog-area")) return;
 
-    document.querySelectorAll('.table-area').forEach(table => {
-        // ダイアログ内のテーブルは操作可能にする
-        if (table.closest('#form-dialog-area') || table.closest('#msg-dialog-area')) {
-            return;
-        }
-        table.inert = state;
+        el.inert = state;
     });
 }
 

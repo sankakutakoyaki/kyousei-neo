@@ -28,8 +28,12 @@
 
 .myorder-date-nav {
     display: flex;
-    align-items: center;
-    gap: .5rem;
+    /* align-items: center; */
+    /* gap: .5rem; */
+    &>.img-btn {
+        max-width: 3rem;
+        margin: 0;
+    }
 }
 
 .myorder-date-nav input {
@@ -114,33 +118,56 @@
 
 /******************************************************************************************************* 担当伝票詳細フォーム */
 
+#myorder-form {
+    height: 80%;
+}
+
 #myorder-form .dialog-main {
-    width: min(90vw, 40.625rem);
-    max-width: 40.625rem;
+    width: min(90vw, 45rem);
+    max-width: 45rem;
+    height: 100%;
 }
 
 #myorder-form .dialog-content {
-    max-height: 70vh;
+    /* max-height: 70vh; */
     overflow-y: auto;
-    padding: 1rem;
+    padding: 2rem;
 }
 
-#myorder-form .form-row {
+/* #myorder-form .form-row {
     display: flex;
     gap: 1rem;
     margin-bottom: .75rem;
-}
+} */
 
-#myorder-form .form-parts {
+/* #myorder-form .form-parts {
     flex: 1;
     min-width: 0;
-}
+} */
 
 #myorder-form .form-parts input,
 #myorder-form .form-parts textarea {
-    width: 100%;
+    /* width: 100%;
     max-width: none;
-    box-sizing: border-box;
+    box-sizing: border-box; */
+    margin-left: .5rem;
+}
+
+#myorder-form .tab-panel,
+#myorder-form .tab-area {
+    overflow: auto;
+}
+
+#myorder-form .tab-panel {
+    margin-top: 2rem;
+}
+
+#myorder-basic {
+    grid-template-rows: repeat(4, 5rem) auto 1fr;
+    &>.form-row:nth-of-type(3) {
+        display: grid;
+        grid-template-columns: auto 1fr 12rem;
+    }
 }
 
 /******************************************************************************************************* スマートフォン */
@@ -180,4 +207,35 @@
     #myorder-form .form-row {
         flex-direction: column;
     }
+}
+
+/******************************************************************************************************* 商品・作業明細 */
+
+.myorder-detail-list {
+    padding: 1rem 0;
+}
+
+.myorder-detail-card {
+    padding: .875rem;
+    margin-bottom: .75rem;
+    border: 1px solid var(--br);
+    border-radius: .375rem;
+}
+
+.myorder-detail-card-title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    margin-bottom: .5rem;
+}
+
+.myorder-detail-card-quantity {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.myorder-detail-card-extra {
+    font-size: .875rem;
+    line-height: 1.6;
+    margin-top: .25rem;
+    overflow-wrap: anywhere;
 }

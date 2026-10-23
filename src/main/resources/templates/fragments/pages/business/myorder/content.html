@@ -4,129 +4,100 @@
       data-css="/css/pages/business/myorder.css">
 
     <div class="myorder-container" data-controller="myOrders">
-
         <header class="myorder-header">
             <h2>担当伝票一覧</h2>
-
             <div class="myorder-date-nav">
-                <button type="button"
-                        class="normal-btn"
-                        data-action="previous-date">
-                    ◀
-                </button>
-
-                <input type="date"
-                       id="myorder-date"
-                       aria-label="表示日付">
-
-                <button type="button"
-                        class="normal-btn"
-                        data-action="next-date">
-                    ▶
-                </button>
-
-                <button type="button"
-                        class="normal-btn"
-                        data-action="today">
-                    今日
-                </button>
+                <button type="button" class="img-btn" data-action="previous-date"><img src="/icons/prev.png" alt=""></button>
+                <input type="date" class="normal-input frameless" id="myorder-date" aria-label="表示日付">
+                <button type="button" class="img-btn" data-action="next-date"><img src="/icons/next.png" alt=""></button>
+                <button type="button" class="normal-btn" data-action="today">今日</button>
             </div>
         </header>
-
-        <div class="myorder-summary">
-            <span id="myorder-count">0件</span>
-        </div>
-
+        <div class="myorder-summary"><span id="myorder-count">0件</span></div>
         <div id="myorder-list" aria-live="polite">
             <p class="myorder-empty">読み込み中...</p>
         </div>
-
     </div>
     <div id="form-dialog-area">
-        <form id="myorder-form"
-            class="form-dialog none"
-            data-controller="myOrders"
-            data-key="order-id">
-
+        <form id="myorder-form" class="form-dialog none" data-controller="myOrders" data-key="order-id">
             <div class="dialog-main">
-
                 <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title':'担当伝票詳細'} })}"></header>
-
                 <section class="dialog-content myorder-detail">
-
-                    <!-- お客様名 -->
-                    <div class="form-row">
-                        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                            {
-                                'text':'お客様名',
-                                'name':'title'
-                            }}
-                        )}"></th:block>
+                    <div class="tab-area">
+                        <ul class="tab-menu">
+                            <li class="tab-menu-item is-active" data-action="tab" data-group="myorder-detail-tabs" data-tab="myorder-basic">基本</li>
+                            <li class="tab-menu-item" data-action="tab" data-group="myorder-detail-tabs" data-tab="myorder-items">商品</li>
+                            <li class="tab-menu-item" data-action="tab" data-group="myorder-detail-tabs" data-tab="myorder-works">作業</li>
+                        </ul>
+                        <div class="tab-panel is-show" id="myorder-basic" data-tab-content="myorder-detail-tabs">
+                            <!-- お客様名 -->
+                            <div class="form-row">
+                                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                                    {
+                                        'text':'お客様名',
+                                        'name':'title'
+                                    }}
+                                )}"></th:block>
+                            </div>
+                            <!-- 受注番号 -->
+                            <div class="form-row">
+                                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                                    {
+                                        'text':'受注番号',
+                                        'name':'request-number'
+                                    }}
+                                )}"></th:block>
+                            </div>
+                            <!-- 訪問日・訪問時間 -->
+                            <div class="form-row flex-area">
+                                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                                    {
+                                        'text':'訪問日',
+                                        'name':'visit-date',
+                                        'type':'date'
+                                    }}
+                                )}"></th:block>
+                                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                                    {
+                                        'text':'訪問時間',
+                                        'name':'visit-time'
+                                    }}
+                                )}"></th:block>
+                                <!-- 電話番号 -->
+                                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                                    {
+                                        'text':'電話番号',
+                                        'name':'contact-information',
+                                        'type':'phone'
+                                    }}
+                                )}"></th:block>
+                            </div>
+                            <!-- 住所 -->
+                            <div class="form-row">
+                                <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                                    {
+                                        'text':'住所',
+                                        'name':'full-address'
+                                    }}
+                                )}"></th:block>
+                            </div>
+                            <!-- 備考 -->
+                            <div class="form-row">
+                                <th:block th:replace="~{fragments/components/box :: textareaFragment(${
+                                    {
+                                        'text':'備考',
+                                        'name':'remarks'
+                                    }}
+                                )}"></th:block>
+                            </div>
+                        </div>
+                        <!-- 商品 -->
+                        <div class="tab-panel" id="myorder-items" data-tab-content="myorder-detail-tabs"> <div id="myorder-item-list" class="myorder-detail-list"></div></div>
+                        <!-- 作業 -->
+                        <div class="tab-panel" id="myorder-works" data-tab-content="myorder-detail-tabs"><div id="myorder-work-list" class="myorder-detail-list"></div></div>
                     </div>
-
-                    <!-- 受注番号 -->
-                    <div class="form-row">
-                        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                            {
-                                'text':'受注番号',
-                                'name':'request-number'
-                            }}
-                        )}"></th:block>
-                    </div>
-
-                    <!-- 訪問日・訪問時間 -->
-                    <div class="form-row">
-                        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                            {
-                                'text':'訪問日',
-                                'name':'visit-date',
-                                'type':'date'
-                            }}
-                        )}"></th:block>
-
-                        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                            {
-                                'text':'訪問時間',
-                                'name':'visit-time'
-                            }}
-                        )}"></th:block>
-                    </div>
-
-                    <!-- 電話番号 -->
-                    <div class="form-row">
-                        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                            {
-                                'text':'電話番号',
-                                'name':'contact-information',
-                                'type':'phone'
-                            }}
-                        )}"></th:block>
-                    </div>
-
-                    <!-- 住所 -->
-                    <div class="form-row">
-                        <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                            {
-                                'text':'住所',
-                                'name':'full-address'
-                            }}
-                        )}"></th:block>
-                    </div>
-
-                    <!-- 備考 -->
-                    <div class="form-row">
-                        <th:block th:replace="~{fragments/components/box :: textareaFragment(${
-                            {
-                                'text':'備考',
-                                'name':'remarks'
-                            }}
-                        )}"></th:block>
-                    </div>
-
                 </section>
-
                 <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId':'myorder-form-footer'} })}"></footer>
-
             </div>
         </form>
     </div>

@@ -153,4 +153,85 @@ public class MyOrderController {
 
         return rows.get(0);
     }
+
+    @GetMapping("/{orderId}/lines")
+    public Map<String, Object> lines(
+            Authentication authentication,
+            @PathVariable Long orderId) {
+
+        Long employeeId = ownOfficeContextService.getEmployeeId(authentication);
+        if (employeeId == null || employeeId <= 0) {
+            throw new AccessDeniedException("従業員情報を確認できません。");
+        }
+
+        String accessSql = """
+            AND EXISTS (
+                SELECT 1
+                FROM orders o
+                JOIN dispatch_assignments da
+                    ON da.order_id = o.order_id
+                AND da.state = ?
+                JOIN daily_crews dc
+                    ON dc.daily_crew_id = da.daily_crew_id
+                AND dc.state = ?
+                JOIN daily_crew_members dcm
+                    ON dcm.daily_crew_id = dc.daily_crew_id
+                AND dcm.state = ?
+                WHERE o.order_id = ?
+                AND o.state <> ?
+                AND dcm.employee_id = ?
+            )
+            """;
+
+        List<Object> accessParams = List.of(
+            State.INITIAL.getCode(),
+            State.INITIAL.getCode(),
+            State.INITIAL.getCode(),
+            orderId,
+            State.DELETE.getCode(),
+            employeeId
+        );
+
+        List<Object> params = new java.util.ArrayList<>();
+        params.add(State.INITIAL.getCode());
+        params.add(orderId);
+        params.addAll(accessParams);
+
+        List<Map<String, Object>> items = repository.selectMap("""
+            SELECT
+                oi.order_item_id,
+                oi.order_id,
+                oi.jan_code,
+                oi.item_maker,
+                oi.item_name,
+                oi.item_model,
+                oi.item_quantity,
+                oi.remarks
+            FROM order_items oi
+            WHERE oi.state = ?
+            AND oi.order_id = ?
+            """ + accessSql + """
+            ORDER BY oi.order_item_id
+            """, params);
+
+        List<Map<String, Object>> works = repository.selectMap("""
+            SELECT
+                ow.order_work_id,
+                ow.order_id,
+                ow.order_work_code,
+                ow.order_work_name,
+                ow.order_work_quantity,
+                ow.remarks
+            FROM order_works ow
+            WHERE ow.state = ?
+            AND ow.order_id = ?
+            """ + accessSql + """
+            ORDER BY ow.order_work_id
+            """, params);
+
+        return Map.of(
+            "items", items,
+            "works", works
+        );
+    }
 }

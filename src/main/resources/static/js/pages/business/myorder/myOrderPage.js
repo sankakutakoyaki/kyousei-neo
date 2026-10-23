@@ -31,34 +31,15 @@ class MyOrderPageController {
             cancelText: "閉じる"
         });
     }
+
     init() {
         this.dateInput.value = getToday();
-        this.root.addEventListener("click", async (event) => {
-            const button = event.target.closest("button[data-action]");
-            if (!button || !this.root.contains(button)) return;
-
-            switch (button.dataset.action) {
-                case "previous-date":
-                    await this.moveDate(-1);
-                    break;
-                case "next-date":
-                    await this.moveDate(1);
-                    break;
-                case "today":
-                    this.dateInput.value = getToday();
-                    await this.refresh();
-                    break;
-            }
-        });
         this.dateInput.addEventListener("change", () => this.refresh());
-        // 担当伝票の詳細表示
         this.list.addEventListener("click", async (event) => {
             const button = event.target.closest("[data-myorder-detail]");
             if (!button) return;
-
             const orderId = Number(button.dataset.myorderDetail);
             if (!Number.isSafeInteger(orderId) || orderId <= 0) return;
-
             await this.openDetail(orderId);
         });
     }
@@ -191,17 +172,27 @@ class MyOrderPageController {
 
     async openDetail(orderId) {
         try {
-            const response = await fetch(`/api/my-orders/${orderId}`, {
-                credentials: "same-origin"
-            });
+            const [detailResponse, linesResponse] = await Promise.all([
+                fetch(`/api/my-orders/${orderId}`, {
+                    credentials: "same-origin"
+                }),
+                fetch(`/api/my-orders/${orderId}/lines`, {
+                    credentials: "same-origin"
+                })
+            ]);
 
-            if (!response.ok) {
-                throw new Error(`伝票の取得に失敗しました。HTTP ${response.status}`);
+            if (!detailResponse.ok || !linesResponse.ok) {
+                throw new Error("担当伝票の取得に失敗しました。");
             }
 
-            const order = await response.json();
+            const [order, lines] = await Promise.all([
+                detailResponse.json(),
+                linesResponse.json()
+            ]);
 
             if (!this.root.isConnected) return;
+
+            this.renderDetailLines(lines);
 
             await this.detailForm.open(order, {
                 readOnly: true
@@ -209,7 +200,80 @@ class MyOrderPageController {
 
         } catch (error) {
             console.error(error);
-            alert(error.message || "伝票を取得できませんでした。");
+            alert(error.message || "担当伝票を取得できませんでした。");
+        }
+    }
+
+    async executeAction(action, el) {
+        switch (action) {
+            case "previous-date":
+                await this.moveDate(-1);
+                break;
+            case "next-date":
+                await this.moveDate(1);
+                break;
+            case "today":
+                this.dateInput.value = getToday();
+                await this.refresh();
+                break;
+        }
+    }
+
+    renderDetailLines(lines) {
+        const itemList = document.getElementById("myorder-item-list");
+        const workList = document.getElementById("myorder-work-list");
+        if (!itemList || !workList) return;
+
+        this.renderLineList(
+            itemList,
+            lines.items ?? [],
+            "itemName",
+            "itemQuantity",
+            ["itemMaker", "itemModel", "janCode", "remarks"]
+        );
+
+        this.renderLineList(
+            workList,
+            lines.works ?? [],
+            "orderWorkName",
+            "orderWorkQuantity",
+            ["orderWorkCode", "remarks"]
+        );
+    }
+
+    renderLineList(container, rows, nameKey, quantityKey, extraKeys) {
+        container.replaceChildren();
+
+        if (rows.length === 0) {
+            container.appendChild(this.message("登録されていません。"));
+            return;
+        }
+
+        for (const row of rows) {
+            const card = document.createElement("div");
+            card.className = "myorder-detail-card";
+
+            const title = document.createElement("div");
+            title.className = "myorder-detail-card-title";
+            title.textContent = row[nameKey] || "名称未設定";
+
+            const quantity = document.createElement("div");
+            quantity.className = "myorder-detail-card-quantity";
+            quantity.textContent = `数量：${row[quantityKey] ?? "-"}`;
+
+            card.append(title, quantity);
+
+            for (const key of extraKeys) {
+                const value = row[key];
+                if (value == null || value === "") continue;
+
+                const line = document.createElement("div");
+                line.className = "myorder-detail-card-extra";
+                line.textContent = String(value);
+                card.appendChild(line);
+            }
+
+            container.appendChild(card);
         }
     }
 }
