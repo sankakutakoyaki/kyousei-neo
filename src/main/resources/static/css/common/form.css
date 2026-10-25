@@ -37,6 +37,65 @@
     margin-bottom: .3rem;
     height: 1rem;
 }
+
+/* .form-parts a>img {
+    width: 2rem;
+} */
+
+/* 電話・地図リンク付き入力欄 */
+/* .form-parts:has(.input-link-btn) {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: .5rem;
+}
+
+.form-parts:has(.input-link-btn) label {
+    grid-column: 1 / -1;
+}
+
+.form-parts:has(.input-link-btn) input {
+    min-width: 0;
+}
+
+.input-link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.input-link-btn img {
+    width: 1.5rem;
+    height: 1.5rem;
+    object-fit: contain;
+} */
+/* リンク付き入力欄 */
+.form-parts:has(.input-link-btn) {
+    position: relative;
+}
+
+/* 編集モードではリンクを無効化 */
+.form-parts .input-link-btn {
+    display: none;
+}
+
+/* 閲覧モード */
+.readonly-mode .form-parts:has(.input-link-btn) input {
+    color: #1976d2;
+    text-decoration: underline;
+    pointer-events: none;
+    cursor: pointer;
+}
+
+/* 入力値の上に透明なリンク領域を配置 */
+.readonly-mode .form-parts .input-link-btn {
+    display: block;
+    position: absolute;
+    inset: 1.3rem 0 0;
+    z-index: 1;
+    cursor: pointer;
+}
+
 @media screen and (max-width: 560px) {
     .form-parts label {
         margin-bottom: 0;
