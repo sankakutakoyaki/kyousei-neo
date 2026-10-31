@@ -41,7 +41,7 @@ test('retry keeps request ID for the same payload and creates a new one for chan
     const h=harness({post:async()=>{throw new Error('timeout');}});await h.dialog.open(100,12,'COMPLETED');
     await h.dialog.save();await h.dialog.save();
     assert.equal(h.calls[1].options.data.requestId,h.calls[2].options.data.requestId);
-    h.dialog.reason.value='補足';await h.dialog.save();
+    h.dialog.type.value='POSTPONED';h.dialog.updateFields();h.dialog.reason.value='補足';await h.dialog.save();
     assert.notEqual(h.calls[2].options.data.requestId,h.calls[3].options.data.requestId);
     assert.equal(h.saved,0);assert.equal(h.dialog.submit.disabled,false);
 });
@@ -52,4 +52,20 @@ test('a switched or closed detail does not open an old response and save blocks 
     const saving=s.dialog.save();await s.dialog.save();assert.equal(s.calls.length,2);
     let prevented=false;s.root.listeners.cancel({preventDefault(){prevented=true;}});assert.equal(prevented,true);
     resolve({});await saving;assert.equal(s.saved,1);
+});
+
+test('initial completion shows confirmation only and correction keeps reason visible',async()=>{
+    const h=harness();await h.dialog.open(100,12,'COMPLETED');
+    assert.equal(h.dialog.typeField.hidden,true);
+    assert.equal(h.dialog.reasonField.hidden,true);
+    assert.equal(h.dialog.hint.hidden,true);
+    assert.equal(h.dialog.confirmation.hidden,false);
+    h.dialog.reason.value='hidden stale value';await h.dialog.save();
+    assert.equal(h.calls[1].options.data.reason,'');
+    const c=harness({snapshot:{workResultId:9,resultVersion:1,resultType:'COMPLETED'}});
+    await c.dialog.open(100,12,'COMPLETED');
+    assert.equal(c.dialog.typeField.hidden,false);
+    assert.equal(c.dialog.reasonField.hidden,false);
+    assert.equal(c.dialog.confirmation.hidden,true);
+    assert.equal(c.dialog.reason.required,true);
 });

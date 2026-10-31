@@ -1,5 +1,8 @@
 <th:block th:fragment="footerFragment(data)">
     <footer th:id="${data.footerId}" class="dialog-footer">
+        <th:block th:if="${data['leadingContent'] != null}">
+            <th:block th:replace="${data['leadingContent']}"></th:block>
+        </th:block>
         <button class="normal-btn frameless" type="button" name="cancelBtn" 
             th:attr="data-action=${data[cancelAction]}" th:text="${data['cancelText']}"></button>
         <button class="normal-btn ok" type="button" name="submitBtn" tabindex="999" 

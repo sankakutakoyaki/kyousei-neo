@@ -9,6 +9,10 @@ export class WorkResultDialog {
         this.onSaved = onSaved;
         this.type = root.querySelector("[data-result-type]");
         this.reason = root.querySelector("[data-result-reason]");
+        this.typeField = root.querySelector("[data-result-type-field]");
+        this.reasonField = root.querySelector("[data-result-reason-field]");
+        this.confirmation = root.querySelector("[data-result-confirmation]");
+        this.hint = root.querySelector("[data-result-hint]");
         this.status = root.querySelector("[data-result-status]");
         this.submit = root.querySelector("[data-result-submit]");
         this.cancel = root.querySelector("[data-result-cancel]");
@@ -30,6 +34,7 @@ export class WorkResultDialog {
             this.url = url;
             this.snapshot = response.data;
             this.type.value = type;
+            this.confirmCompletion = !this.snapshot.workResultId && type === "COMPLETED";
             this.reason.value = "";
             this.signature = null;
             this.status.textContent = this.snapshot.workResultId
@@ -37,18 +42,23 @@ export class WorkResultDialog {
                 : `訪問日：${this.snapshot.workDate}。この訪問の作業結果を報告します。`;
             this.root.showModal();
             this.updateFields();
-            this.type.focus();
+            (this.confirmCompletion ? this.submit : this.type).focus();
         } finally {this.opening = false;}
     }
     updateFields() {
         this.reason.required = !!this.snapshot?.workResultId || this.type.value !== "COMPLETED";
+        this.typeField.hidden = this.confirmCompletion;
+        this.reasonField.hidden = !this.reason.required;
+        this.hint.hidden = !this.reason.required;
+        this.confirmation.hidden = this.reason.required;
+        this.submit.textContent = this.reason.required ? "報告を保存" : "完了を報告";
     }
     async save() {
         if (this.saving || !this.root.open) return;
         const payload = {
             assignmentVersion: this.snapshot.assignmentVersion,
             resultVersion: this.snapshot.resultVersion ?? null,
-            resultType: this.type.value, reason: this.reason.value.trim(), workDate: this.snapshot.workDate
+            resultType: this.type.value, reason: this.reason.required ? this.reason.value.trim() : "", workDate: this.snapshot.workDate
         };
         if (this.reason.required && !payload.reason) {this.status.textContent = "理由を入力してください。";return;}
         const signature = JSON.stringify(payload);

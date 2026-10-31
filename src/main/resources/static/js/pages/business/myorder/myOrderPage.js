@@ -34,9 +34,9 @@ class MyOrderPageController {
         });
         this.assignments = [];
         this.resultDialog = new WorkResultDialog(document.getElementById("myorder-result-dialog"), async () => {
-            const assignment = this.currentAssignment;
+            DialogService.close("myorder-form");
+            this.currentAssignment = null;
             await this.refresh();
-            if (assignment && !this.detailForm.isHidden()) await this.openDetail(assignment.orderId, assignment.dispatchAssignmentId);
         });
         this.orderIds = [];
         this.currentIndex = -1;
@@ -173,6 +173,7 @@ class MyOrderPageController {
 
         const result = document.createElement("span");
         result.className = "myorder-result-badge";
+        result.dataset.resultType = Object.hasOwn(workResultLabels, order.resultType) ? order.resultType : "UNREPORTED";
         result.textContent = workResultLabels[order.resultType] ?? "未報告";
         top.append(orderNumber, result, visitTime);
 
