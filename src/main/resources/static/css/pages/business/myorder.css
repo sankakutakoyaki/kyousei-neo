@@ -344,3 +344,19 @@
     text-align: center;
     font-weight: bold;
 }
+.myorder-result-badge { font-size: .8125rem; padding: .15rem .4rem; border-radius: .25rem; background: #eef2f5; }
+.myorder-card-top { flex-wrap: wrap; }
+.myorder-card-top .myorder-time { margin-left: auto; }
+.myorder-detail-toolbar { display: grid; gap: .75rem; }
+.myorder-result-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.myorder-result-actions > span { flex-basis: 100%; }
+.myorder-result-actions > button { min-height: 2.75rem; margin: 0; }
+.work-result-dialog { padding: 0; width: min(38rem, calc(100% - 2rem)); max-height: 85dvh; border: .0625rem solid #ddd; border-radius: .5rem; }
+.work-result-dialog::backdrop { background: rgb(0 0 0 / .45); }
+.work-result-dialog > .dialog-main { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; max-height: 85dvh; margin: 0; }
+.work-result-dialog .dialog-content { min-height: 0; justify-items: stretch; padding: 1.25rem; }
+.work-result-dialog label { display: grid; gap: .4rem; }
+.work-result-dialog label[hidden] { display: none; }
+.work-result-dialog .normal-input { width: 100%; min-width: 0; box-sizing: border-box; }
+.work-result-dialog p { margin: 0; overflow-wrap: anywhere; }
+.work-result-dialog button { min-height: 2.75rem; }

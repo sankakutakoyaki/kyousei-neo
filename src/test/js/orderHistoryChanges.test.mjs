@@ -62,3 +62,13 @@ test('dispatch missing or duplicate logs are not compared and no-op reorder is s
     assert.deepEqual(result.changes, []);
     assert.match(result.message, /配車先・訪問順に変更はありません/);
 });
+
+test('work reports and corrections compare result reason and visit date without inferring order changes', () => {
+    const first=orderHistoryChanges({eventType:'POSTPONED',afterResultCount:1,afterResultType:'POSTPONED',afterResultReason:'お客様都合',afterResultWorkDate:'2026-10-31'});
+    assert.deepEqual(first.changes.map(c=>c.label),['作業結果','理由・備考','訪問日']);
+    assert.equal(first.changes[0].after,'日延');
+    const correction=orderHistoryChanges({eventType:'WORK_RESULT_CORRECTED',beforeResultCount:1,afterResultCount:1,
+        beforeResultType:'DELIVERY_FAILED',afterResultType:'COMPLETED',beforeResultReason:'搬入できず',afterResultReason:'誤報告を訂正'});
+    assert.equal(correction.changes[0].before,'搬入不可');assert.equal(correction.changes[0].after,'完了');
+    assert.match(orderHistoryChanges({eventType:'WORK_COMPLETED'}).message,/確認できません/);
+});

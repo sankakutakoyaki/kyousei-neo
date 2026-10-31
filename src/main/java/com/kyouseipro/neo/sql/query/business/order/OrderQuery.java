@@ -136,7 +136,7 @@ public class OrderQuery {
         String sql = """
             WITH history_page AS (
                 SELECT TOP (100) h.order_history_id, h.order_id, h.order_version,
-                    h.event_type, h.editor, h.occurred_at, h.dispatch_assignment_id, h.dispatch_version
+                    h.event_type, h.editor, h.occurred_at, h.dispatch_assignment_id, h.dispatch_version, h.work_result_id, h.work_result_version
                 FROM dbo.order_histories h
                 JOIN dbo.orders o ON o.order_id = h.order_id
                 WHERE o.state = ? AND o.order_id = ?
@@ -159,21 +159,26 @@ public class OrderQuery {
                 dispatch_before.daily_crew_id AS before_daily_crew_id,
                 dispatch_after.daily_crew_id AS after_daily_crew_id,
                 dispatch_before.visit_order AS before_visit_order,
-                dispatch_after.visit_order AS after_visit_order
+                dispatch_after.visit_order AS after_visit_order,
+                result_before.snapshot_count AS before_result_count,
+                result_after.snapshot_count AS after_result_count,
+                result_before.result_type AS before_result_type, result_after.result_type AS after_result_type,
+                result_before.reason AS before_result_reason, result_after.reason AS after_result_reason,
+                result_before.work_date AS before_result_work_date, result_after.work_date AS after_result_work_date
             FROM history_page h
             OUTER APPLY (
                 SELECT TOP (1) COUNT(*) OVER () AS snapshot_count,
                     request_number, title, postal_code, full_address, CONVERT(char(10), visit_date, 23) AS visit_date, visit_time, contact_information, remarks
                 FROM dbo.orders_log
                 WHERE order_id = h.order_id AND version = h.order_version - 1
-                    AND h.dispatch_assignment_id IS NULL
+                    AND h.dispatch_assignment_id IS NULL AND h.work_result_id IS NULL
             ) previous
             OUTER APPLY (
                 SELECT TOP (1) COUNT(*) OVER () AS snapshot_count,
                     request_number, title, postal_code, full_address, CONVERT(char(10), visit_date, 23) AS visit_date, visit_time, contact_information, remarks
                 FROM dbo.orders_log
                 WHERE order_id = h.order_id AND version = h.order_version
-                    AND h.dispatch_assignment_id IS NULL
+                    AND h.dispatch_assignment_id IS NULL AND h.work_result_id IS NULL
             ) current_log
             OUTER APPLY (
                 SELECT TOP (1) COUNT(*) OVER () AS snapshot_count, daily_crew_id, visit_order
@@ -187,6 +192,20 @@ public class OrderQuery {
                 WHERE dispatch_assignment_id = h.dispatch_assignment_id AND order_id = h.order_id
                     AND version = h.dispatch_version
             ) dispatch_after
+            OUTER APPLY (
+                SELECT TOP (1) COUNT(*) OVER () AS snapshot_count, wr.result_type, wr.reason,
+                    CONVERT(char(10), wr.work_date, 23) AS work_date
+                FROM dbo.order_work_results_log wr
+                JOIN dbo.dispatch_assignments da ON da.dispatch_assignment_id=wr.dispatch_assignment_id
+                WHERE wr.work_result_id=h.work_result_id AND wr.version=h.work_result_version-1 AND da.order_id=h.order_id
+            ) result_before
+            OUTER APPLY (
+                SELECT TOP (1) COUNT(*) OVER () AS snapshot_count, wr.result_type, wr.reason,
+                    CONVERT(char(10), wr.work_date, 23) AS work_date
+                FROM dbo.order_work_results_log wr
+                JOIN dbo.dispatch_assignments da ON da.dispatch_assignment_id=wr.dispatch_assignment_id
+                WHERE wr.work_result_id=h.work_result_id AND wr.version=h.work_result_version AND da.order_id=h.order_id
+            ) result_after
             ORDER BY h.order_history_id DESC
             """;
         List<String> params = new java.util.ArrayList<>(List.of(

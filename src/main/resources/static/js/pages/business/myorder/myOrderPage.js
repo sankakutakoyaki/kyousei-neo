@@ -3,6 +3,8 @@
 import { initCommon } from "../../../bootstrap/initPage.js";
 import { registerController } from "../../../application/controllerRegistry.js";
 import { getToday } from "../../../util/time.js";
+import { WorkResultDialog, workResultLabels } from "../../../components/order/WorkResultDialog.js";
+import { DialogService } from "../../../core/ui/dialog/DialogService.js";
 import { FormController } from "../../../application/FormController.js";
 
 export async function init() {
@@ -30,6 +32,12 @@ class MyOrderPageController {
             submitText: "保存",
             cancelText: "閉じる"
         });
+        this.assignments = [];
+        this.resultDialog = new WorkResultDialog(document.getElementById("myorder-result-dialog"), async () => {
+            const assignment = this.currentAssignment;
+            await this.refresh();
+            if (assignment && !this.detailForm.isHidden()) await this.openDetail(assignment.orderId, assignment.dispatchAssignmentId);
+        });
         this.orderIds = [];
         this.currentIndex = -1;
         this.detailLoading = false;
@@ -44,7 +52,7 @@ class MyOrderPageController {
             if (!button) return;
             const orderId = Number(button.dataset.myorderDetail);
             if (!Number.isSafeInteger(orderId) || orderId <= 0) return;
-            await this.openDetail(orderId);
+            await this.openDetail(orderId, Number(button.dataset.assignmentId));
         });
         const form = document.getElementById("myorder-form");
 
@@ -110,7 +118,9 @@ class MyOrderPageController {
     }
     render(orders) {
         this.list.replaceChildren();
-        this.count.textContent = `${orders.length}件`;
+        const pending = orders.filter(order => !workResultLabels[order.resultType]).length;
+        this.count.textContent = `${orders.length}件（未報告 ${pending}件）`;
+        this.assignments = orders;
         this.orderIds = orders.map(order => order.orderId);
 
         if (orders.length === 0) {
@@ -161,7 +171,10 @@ class MyOrderPageController {
         visitTime.className = "myorder-time";
         visitTime.textContent = order.visitTime || "時間未設定";
 
-        top.append(orderNumber, visitTime);
+        const result = document.createElement("span");
+        result.className = "myorder-result-badge";
+        result.textContent = workResultLabels[order.resultType] ?? "未報告";
+        top.append(orderNumber, result, visitTime);
 
         const title = document.createElement("div");
         title.className = "myorder-title";
@@ -186,6 +199,7 @@ class MyOrderPageController {
         detailButton.className = "normal-btn";
         detailButton.textContent = "詳細";
         detailButton.dataset.myorderDetail = order.orderId;
+        detailButton.dataset.assignmentId = order.dispatchAssignmentId;
 
         card.appendChild(detailButton);
 
@@ -199,8 +213,11 @@ class MyOrderPageController {
         return p;
     }
 
-    async openDetail(orderId) {
+    async openDetail(orderId, assignmentId) {
         if (this.detailLoading) return;
+        const assignment = this.assignments.find(row => Number(row.orderId) === Number(orderId)
+            && Number(row.dispatchAssignmentId) === Number(assignmentId));
+        if (!assignment) return;
         this.detailLoading = true;
         this.updateDetailNav();
 
@@ -222,7 +239,10 @@ class MyOrderPageController {
             } else {
                 this.detailForm.updateData(order);
             }
-            this.currentIndex = this.orderIds.findIndex(id => Number(id) === Number(orderId));
+            this.currentAssignment = assignment;
+            this.currentIndex = this.assignments.findIndex(row => Number(row.dispatchAssignmentId) === Number(assignmentId));
+            const status = document.querySelector("[data-myorder-result-status]");
+            if (status) status.textContent = `作業結果：${workResultLabels[assignment.resultType] ?? "未報告"}`;
         } catch (error) {
             console.error(error);
             alert(error.message || "担当伝票を取得できませんでした。");
@@ -234,6 +254,15 @@ class MyOrderPageController {
 
     async executeAction(action, el) {
         switch (action) {
+            case "report-work-result": {
+                const assignment = this.currentAssignment;
+                if (!assignment || this.detailLoading) return;
+                try {
+                    await this.resultDialog.open(assignment.orderId, assignment.dispatchAssignmentId, el.dataset.resultType,
+                        () => this.root.isConnected && this.currentAssignment === assignment && !this.detailForm.isHidden());
+                } catch (error) {DialogService.error(error.message || "作業結果を取得できませんでした。");}
+                break;
+            }
             case "previous-date":
                 await this.moveDate(-1);
                 break;
@@ -331,6 +360,7 @@ class MyOrderPageController {
         const index = this.currentIndex + offset;
         if (index < 0 || index >= this.orderIds.length) return;
 
-        await this.openDetail(this.orderIds[index]);
+        const assignment = this.assignments[index];
+        await this.openDetail(assignment.orderId, assignment.dispatchAssignmentId);
     }
 }

@@ -103,3 +103,11 @@ test('operations mobile editing requires management flag and stays scoped to ope
     assert.throws(() => assertMobileWriteAllowed('/api/query', 'POST', {queryId:'orderSave'}), /閲覧/);
     delete globalThis.document;
 });
+
+test('mobile permits only the assigned visit result POST endpoint and keeps general edits blocked', () => {
+    globalThis.window = {matchMedia: () => ({matches: true})};
+    assert.doesNotThrow(() => assertMobileWriteAllowed('/api/my-orders/100/assignments/12/result','POST',{}));
+    for (const [url,method] of [['/api/my-orders/100','POST'],['/api/my-orders/100/assignments/12/result','DELETE'],['/api/my-orders/100/assignments/12/result/other','POST']])
+        assert.throws(() => assertMobileWriteAllowed(url,method,{}), /閲覧/);
+    assert.throws(() => assertMobileWriteAllowed('/api/query','POST',{queryId:'orderSave'}), /閲覧/);
+});

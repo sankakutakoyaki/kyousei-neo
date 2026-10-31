@@ -11,6 +11,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import com.kyouseipro.neo.domain.operations.dispatch.result.WorkResultService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,6 +34,7 @@ public class MyOrderController {
 
     private final SqlRepository repository;
     private final OwnOfficeContextService ownOfficeContextService;
+    private final WorkResultService workResults;
 
     @GetMapping
     public List<Map<String, Object>> find(
@@ -54,6 +58,7 @@ public class MyOrderController {
                 dc.dispatch_category,
                 da.dispatch_assignment_id,
                 da.visit_order,
+                wr.result_type,
                 o.order_id,
                 o.own_office_id,
                 o.request_number,
@@ -71,6 +76,7 @@ public class MyOrderController {
                AND da.state = ?
             JOIN orders o
                 ON o.order_id = da.order_id
+            LEFT JOIN dbo.order_work_results wr ON wr.dispatch_assignment_id=da.dispatch_assignment_id AND wr.work_date=dc.work_date AND wr.state=0
             WHERE dcm.employee_id = ?
               AND dcm.state = ?
               AND dc.work_date = ?
@@ -233,5 +239,16 @@ public class MyOrderController {
             "items", items,
             "works", works
         );
+    }
+
+    @GetMapping("/{orderId}/assignments/{assignmentId}/result")
+    public Map<String,Object> result(Authentication auth, @PathVariable long orderId, @PathVariable long assignmentId) {
+        return workResults.detail(auth, orderId, assignmentId);
+    }
+
+    @PostMapping("/{orderId}/assignments/{assignmentId}/result")
+    public Map<String,Object> report(Authentication auth, @PathVariable long orderId, @PathVariable long assignmentId,
+            @RequestBody WorkResultService.Request req) {
+        return workResults.save(auth, orderId, assignmentId, req);
     }
 }

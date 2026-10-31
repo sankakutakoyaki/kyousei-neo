@@ -19,9 +19,10 @@ export function isWriteRequest(url, method, data) {
     if (/^(GET|HEAD|OPTIONS)$/i.test(method)) return false;
     const path = String(url).split("?")[0];
     if (path === "/api/query") return !/(Detail|List|Csv|ListByItemModel|FindByJanCode)$/.test(data?.queryId ?? "");
-    return /^\/api\/(attachments|order|timeworks)(\/|$)/.test(path);
+    return /^\/api\/(attachments|order|timeworks|my-orders)(\/|$)/.test(path);
 }
 export function assertMobileWriteAllowed(url, method, data) {
+    if (method.toUpperCase() === "POST" && /^\/api\/my-orders\/[1-9]\d*\/assignments\/[1-9]\d*\/result$/.test(String(url).split("?")[0])) return;
     if (isOperationsEditor() && ((String(url).split("?")[0] === "/api/query" && ["operationSave","operationDispatchSave"].includes(data?.queryId)) || String(url).startsWith("/api/attachments/"))) return;
     if (String(url).split("?")[0] === "/api/query" && data?.queryId === "dispatchSave" && isDispatchManager()) return;
     if (String(url).split("?")[0] === "/api/timeworks/stamp/self" && method.toUpperCase() === "POST"

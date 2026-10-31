@@ -37,4 +37,21 @@ public class OrderHistoryRepository {
             WHERE da.dispatch_assignment_id = ?
             """, List.of(event.name(), editor, assignmentId), "配車履歴を記録できませんでした。");
     }
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void recordWorkResult(long id, boolean correction, String editor) {
+        repository.updateRequired("""
+            INSERT INTO dbo.order_histories
+                (order_id, order_version, event_type, editor, work_result_id, work_result_version)
+            SELECT da.order_id, o.version,
+                CASE WHEN ?=1 THEN 'WORK_RESULT_CORRECTED'
+                     WHEN wr.result_type='COMPLETED' THEN 'WORK_COMPLETED'
+                     WHEN wr.result_type='DELIVERY_FAILED' THEN 'DELIVERY_FAILED' ELSE 'POSTPONED' END,
+                ?, wr.work_result_id, wr.version
+            FROM dbo.order_work_results wr
+            JOIN dbo.dispatch_assignments da ON da.dispatch_assignment_id=wr.dispatch_assignment_id
+            JOIN dbo.orders o ON o.order_id=da.order_id
+            WHERE wr.work_result_id=?
+            """, List.of(correction ? 1 : 0, editor, id), "作業結果の履歴を記録できませんでした。");
+    }
 }

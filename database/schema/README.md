@@ -64,3 +64,14 @@ Orderでは `parent_type = 'ORDER'`、`parent_id = order_id` として利用し�
 
 `20260916_add_vehicle_own_office.sql` をアプリ停止・バックアップ後に適用してください。
 車両本体・変更ログに営業所を追加します。既存車両の営業所は未設定で保持します。
+
+## 伝票履歴・担当伝票の作業結果
+
+アプリ更新前に次の順で適用する。既存の受注・配車・履歴は保持する。
+
+1. `20261031_create_order_histories.sql`
+2. `20261031_add_order_dispatch_histories.sql`
+3. `20261031_create_order_work_results.sql`
+
+作業結果は配車割当単位で保存し、訂正前の値は `order_work_results_log`、業務イベントは `order_histories` へ記録する。
+完了・搬入不可・日延は担当者の結果報告であり、受注全体の完了状態、訪問日、配車の自動変更は行わない。

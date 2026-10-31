@@ -8,6 +8,7 @@ const fields = [
 ];
 
 export function orderHistoryChanges(row) {
+    if (["WORK_COMPLETED", "DELIVERY_FAILED", "POSTPONED", "WORK_RESULT_CORRECTED"].includes(row.eventType)) return workResultChanges(row);
     if (["DISPATCH_CREATED", "DISPATCH_MOVED", "DISPATCH_REMOVED", "DISPATCH_RESET", "DISPATCH_REORDERED"].includes(row.eventType)) {
         return dispatchChanges(row);
     }
@@ -37,4 +38,19 @@ function dispatchChanges(row) {
         if (before !== after) changes.push({label, before, after});
     }
     return {changes, message: changes.length ? "" : "配車先・訪問順に変更はありません。"};
+}
+
+function workResultChanges(row) {
+    const corrected = row.eventType === "WORK_RESULT_CORRECTED";
+    if (Number(row.afterResultCount) !== 1 || (corrected && Number(row.beforeResultCount) !== 1))
+        return {changes: [], message: "作業結果の記録が揃っていないため、内容を確認できません。"};
+    const labels = {COMPLETED: "完了", DELIVERY_FAILED: "搬入不可", POSTPONED: "日延"};
+    const changes = [];
+    for (const [key, label] of [["ResultType", "作業結果"], ["ResultReason", "理由・備考"], ["ResultWorkDate", "訪問日"]]) {
+        let before = corrected ? String(row[`before${key}`] ?? "") : "";
+        let after = String(row[`after${key}`] ?? "");
+        if (key === "ResultType") {before = labels[before] ?? before; after = labels[after] ?? after;}
+        if (before !== after) changes.push({label, before, after});
+    }
+    return {changes, message: changes.length ? "" : "作業結果を報告しました。"};
 }
