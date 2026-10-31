@@ -3,7 +3,14 @@
 import { OrderRepository } from "../../repositories/business/order/OrderRepository.js";
 import { formatDate } from "../../util/time.js";
 
-const eventLabels = {ORDER_CREATED: "受注を登録", ORDER_SAVED: "受注を保存"};
+import { orderHistoryChanges } from "./orderHistoryChanges.js";
+
+const eventLabels = {
+    ORDER_CREATED: "受注を登録", ORDER_SAVED: "受注を保存",
+    DISPATCH_CREATED: "配車を登録", DISPATCH_MOVED: "配車を移動",
+    DISPATCH_REMOVED: "配車を解除", DISPATCH_RESET: "配車を一括解除",
+    DISPATCH_REORDERED: "訪問順を保存"
+};
 
 export class OrderHistoryList {
     constructor(root, tab) {
@@ -103,6 +110,30 @@ export class OrderHistoryList {
         const editor = document.createElement("span");
         editor.textContent = `操作者：${row.editor || "不明"}`;
         item.append(title, time, editor);
+        const {changes, message} = orderHistoryChanges(row);
+        if (message) {
+            const note = document.createElement("p");
+            note.textContent = message;
+            item.append(note);
+        }
+        if (changes.length) {
+            const list = document.createElement("dl");
+            list.className = "order-history-changes";
+            for (const change of changes) {
+                const group = document.createElement("div");
+                const label = document.createElement("dt");
+                label.textContent = change.label;
+                const values = document.createElement("dd");
+                const before = document.createElement("span");
+                const after = document.createElement("span");
+                before.textContent = `変更前：${change.before || "（未設定）"}`;
+                after.textContent = `変更後：${change.after || "（未設定）"}`;
+                values.append(before, after);
+                group.append(label, values);
+                list.append(group);
+            }
+            item.append(list);
+        }
         return item;
     }
 }

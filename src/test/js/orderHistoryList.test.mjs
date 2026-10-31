@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
+import {orderHistoryChanges} from '../../main/resources/static/js/components/order/orderHistoryChanges.js';
 
 const source = readFileSync(new URL('../../main/resources/static/js/components/order/OrderHistoryList.js', import.meta.url), 'utf8')
     .replace(/^import .*;\n/gm, '').replace('export class OrderHistoryList', 'class OrderHistoryList');
@@ -26,6 +27,7 @@ function harness(find = async () => []) {
         return elements.get(selector);
     };
     const context = vm.createContext({
+        orderHistoryChanges,
         document: {createElement: () => new Element()},
         APP: {cache: {common: {state: {INITIAL: 0}}}},
         OrderRepository: {findHistories: params => {calls.push({...params}); return find(params);}},
@@ -148,4 +150,27 @@ test('keyboard activates the history tab without submitting the edit form', asyn
     assert.equal(h.calls.length, 1);
     h.tab.listeners.keydown({key: 'ArrowRight', preventDefault() {assert.fail('unrelated key');}});
     assert.equal(h.calls.length, 1);
+});
+
+test('changed values are displayed as plain text with explicit before and after labels', async () => {
+    const h = harness(async () => [{...row(1), beforeSnapshotCount: 1, afterSnapshotCount: 1,
+        beforeFullAddress: '<script>alert(1)</script>', afterFullAddress: null}]);
+    h.view.open(12); await h.view.load();
+    const list = h.view.list.children[0].children[3];
+    assert.equal(list.className, 'order-history-changes');
+    const [label, values] = list.children[0].children;
+    assert.equal(label.textContent, '住所');
+    assert.equal(values.children[0].textContent, '変更前：<script>alert(1)</script>');
+    assert.equal(values.children[1].textContent, '変更後：（未設定）');
+});
+
+test('dispatch events have distinct labels and use the existing before-after rendering', async () => {
+    const events = ['DISPATCH_CREATED', 'DISPATCH_MOVED', 'DISPATCH_REMOVED', 'DISPATCH_RESET', 'DISPATCH_REORDERED'];
+    const h = harness(async () => events.map((eventType, index) => ({...row(10 - index), eventType,
+        beforeDispatchCount: 1, afterDispatchCount: 1, beforeDailyCrewId: 5, afterDailyCrewId: 8,
+        beforeVisitOrder: 1, afterVisitOrder: 2})));
+    h.view.open(12); await h.view.load();
+    assert.deepEqual(h.view.list.children.map(li => li.children[0].textContent),
+        ['配車を登録', '配車を移動', '配車を解除', '配車を一括解除', '訪問順を保存']);
+    assert.equal(h.view.list.children[1].children[3].className, 'order-history-changes');
 });

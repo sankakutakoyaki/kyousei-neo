@@ -430,3 +430,7 @@ main[data-page$="/productPage.js"] .arrival-status-row > [data-action="arrival-i
     overflow-y: auto;
     align-content: start;
 }
+.order-history-changes { display: grid; gap: .75rem; margin: .5rem 0 0; }
+.order-history-changes dt { font-weight: 600; }
+.order-history-changes dd { display: grid; gap: .25rem; margin: .25rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.order-history li > p { margin: .25rem 0 0; }

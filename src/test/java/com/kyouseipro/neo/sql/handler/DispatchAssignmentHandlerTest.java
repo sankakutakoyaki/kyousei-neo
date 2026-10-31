@@ -20,18 +20,22 @@ import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.Tables;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
 import com.kyouseipro.neo.sql.service.QueryExecutor;
+import com.kyouseipro.neo.domain.business.order.history.OrderHistoryRepository;
+import com.kyouseipro.neo.domain.business.order.history.OrderHistoryRepository.DispatchEvent;
 
 class DispatchAssignmentHandlerTest {
 
     private BaseSqlRepository baseRepository;
     private QueryExecutor queryExecutor;
     private DispatchAssignmentHandler handler;
+    private OrderHistoryRepository history;
 
     @BeforeEach
     void setUp() {
         baseRepository = mock(BaseSqlRepository.class);
         queryExecutor = mock(QueryExecutor.class);
-        handler = new DispatchAssignmentHandler(baseRepository, queryExecutor);
+        history = mock(OrderHistoryRepository.class);
+        handler = new DispatchAssignmentHandler(baseRepository, queryExecutor, history);
     }
 
     private SelectRequest request(Map<String, Object> params) {
@@ -83,6 +87,9 @@ class DispatchAssignmentHandlerTest {
             request(Map.of("orderId", 100, "dailyCrewId", 8, "remarks", "テスト"))
         );
         assertEquals(Map.of("data", 12L, "count", 1), result);
+        var sequence = inOrder(baseRepository, history);
+        sequence.verify(baseRepository).insert(eq(Tables.DISPATCH_ASSIGNMENT_BY_IDS), anyMap(), eq("system"));
+        sequence.verify(history).recordDispatch(12L, DispatchEvent.DISPATCH_CREATED, "system");
         @SuppressWarnings("unchecked")
         ArgumentCaptor<Map<String, Object>> captor = ArgumentCaptor.forClass(Map.class);
         verify(baseRepository).insert(eq(Tables.DISPATCH_ASSIGNMENT_BY_IDS), captor.capture(), eq("system"));
@@ -150,6 +157,7 @@ class DispatchAssignmentHandlerTest {
         assertEquals(8, updated.get("dailyCrewId"));
         assertEquals(4, updated.get("visitOrder"));
 
+        verify(history).recordDispatch(12L, DispatchEvent.DISPATCH_MOVED, "system");
         assertFalse(updated.containsKey("orderId"));
         assertFalse(updated.containsKey("remarks"));
 
@@ -188,6 +196,7 @@ class DispatchAssignmentHandlerTest {
         verify(baseRepository, never()).update(
             any(), anyMap(), anyString()
         );
+        verifyNoInteractions(history);
     }
 
     @Test
@@ -230,6 +239,7 @@ class DispatchAssignmentHandlerTest {
         verify(baseRepository, never()).update(
             any(), anyMap(), anyString()
         );
+        verifyNoInteractions(history);
     }
 
     @Test
@@ -262,6 +272,7 @@ class DispatchAssignmentHandlerTest {
         );
 
         assertEquals(Map.of("count", 1), result);
+        verify(history).recordDispatch(12L, DispatchEvent.DISPATCH_REMOVED, "system");
 
         verify(baseRepository).update(
             eq(Tables.DISPATCH_ASSIGNMENT_BY_IDS),
@@ -317,6 +328,7 @@ class DispatchAssignmentHandlerTest {
         );
 
         assertEquals(Map.of("count", 1), result);
+        verify(history).recordDispatch(12L, DispatchEvent.DISPATCH_RESET, "system");
 
         verify(baseRepository).update(
             eq(Tables.DISPATCH_ASSIGNMENT_BY_IDS),
@@ -327,5 +339,37 @@ class DispatchAssignmentHandlerTest {
             ),
             eq("system")
         );
+    }
+
+    @Test void reorderRecordsEachVersionAfterUpdateAndUsesAuthenticatedEditor() {
+        when(queryExecutor.select(any(), any())).thenAnswer(call -> {
+            QueryDefinition query = call.getArgument(0);
+            if (query.getSql().contains("UPDLOCK")) return rows(Map.of("dailyCrewId", 8));
+            return rows(Map.of("dispatchAssignmentId", 12), Map.of("dispatchAssignmentId", 13));
+        });
+        handler.execute(definition(QueryKind.DISPATCH_ASSIGNMENT_REORDER), request(Map.of(
+            "dailyCrewId", 8, "editor", "employee", "items", List.of(
+                Map.of("dispatchAssignmentId", 12, "version", 3, "visitOrder", 2),
+                Map.of("dispatchAssignmentId", 13, "version", 4, "visitOrder", 1)))));
+        var sequence = inOrder(baseRepository, history);
+        sequence.verify(baseRepository).update(any(), argThat(p -> p.get("version").equals(3)), eq("employee"));
+        sequence.verify(history).recordDispatch(12L, DispatchEvent.DISPATCH_REORDERED, "employee");
+        sequence.verify(baseRepository).update(any(), argThat(p -> p.get("version").equals(4)), eq("employee"));
+        sequence.verify(history).recordDispatch(13L, DispatchEvent.DISPATCH_REORDERED, "employee");
+    }
+
+    @Test void failedAssignmentDoesNotRecordAndHistoryFailureEscapesTransaction() {
+        when(queryExecutor.select(any(), any())).thenAnswer(call -> {
+            QueryDefinition query = call.getArgument(0);
+            if (query.getSql().contains("UPDLOCK")) return rows(Map.of("dailyCrewId", 8));
+            return rows(assignment(8, 3));
+        });
+        when(baseRepository.update(any(), anyMap(), anyString())).thenThrow(new BusinessException("conflict"));
+        var req = request(Map.of("dispatchAssignmentId", 12, "version", 3));
+        assertThrows(BusinessException.class, () -> handler.execute(definition(QueryKind.DISPATCH_ASSIGNMENT_REMOVE), req));
+        verifyNoInteractions(history);
+        doReturn(1).when(baseRepository).update(any(), anyMap(), anyString());
+        doThrow(new BusinessException("history failed")).when(history).recordDispatch(anyLong(), any(), anyString());
+        assertThrows(BusinessException.class, () -> handler.execute(definition(QueryKind.DISPATCH_ASSIGNMENT_REMOVE), req));
     }
 }

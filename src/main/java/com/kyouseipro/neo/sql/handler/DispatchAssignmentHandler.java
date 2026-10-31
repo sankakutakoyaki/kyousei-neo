@@ -13,6 +13,8 @@ import com.kyouseipro.neo.common.enums.code.State;
 import com.kyouseipro.neo.common.enums.system.QueryKind;
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.interfaces.sql.QueryHandler;
+import com.kyouseipro.neo.domain.business.order.history.OrderHistoryRepository;
+import com.kyouseipro.neo.domain.business.order.history.OrderHistoryRepository.DispatchEvent;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.Tables;
@@ -27,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class DispatchAssignmentHandler implements QueryHandler {
     private final BaseSqlRepository baseRepository;
     private final QueryExecutor queryExecutor;
+    private final OrderHistoryRepository orderHistoryRepository;
 
     @Override
     public boolean supports(QueryKind kind) {
@@ -67,6 +70,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
         insert.put("remarks", params.getOrDefault("remarks", ""));
         insert.put("state", State.INITIAL.getCode());
         Long id = baseRepository.insert(Tables.DISPATCH_ASSIGNMENT_BY_IDS, insert, editor);
+        orderHistoryRepository.recordDispatch(id, DispatchEvent.DISPATCH_CREATED, editor);
         return Map.of("data", id, "count", 1);
     }
 
@@ -104,6 +108,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
         update.put("dailyCrewId", targetCrewId);
         update.put("visitOrder", visitOrder);
         int count = baseRepository.update(Tables.DISPATCH_ASSIGNMENT_BY_IDS, update, editor);
+        orderHistoryRepository.recordDispatch(assignmentId, DispatchEvent.DISPATCH_MOVED, editor);
         return Map.of("data", assignmentId, "count", count);
     }
 
@@ -198,6 +203,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
             row.put("visitOrder", ((Number) item.get("visitOrder")).intValue());
             row.put("version", ((Number) item.get("version")).intValue());
             baseRepository.update(Tables.DISPATCH_ASSIGNMENT_BY_IDS, row, editor);
+            orderHistoryRepository.recordDispatch(((Number) row.get("dispatchAssignmentId")).longValue(), DispatchEvent.DISPATCH_REORDERED, editor);
             count++;
         }
         return Map.of("count", count);
@@ -233,6 +239,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
             update.put("version", row.get("version"));
             update.put("state", State.DELETE.getCode());
             baseRepository.update(Tables.DISPATCH_ASSIGNMENT_BY_IDS, update, editor);
+            orderHistoryRepository.recordDispatch(((Number) row.get("dispatchAssignmentId")).longValue(), DispatchEvent.DISPATCH_RESET, editor);
             count++;
         }
         return Map.of("count", count);
@@ -293,6 +300,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
         update.put("version", version);
         update.put("state", State.DELETE.getCode());
         int count = baseRepository.update(Tables.DISPATCH_ASSIGNMENT_BY_IDS, update, editor);
+        orderHistoryRepository.recordDispatch(assignmentId, DispatchEvent.DISPATCH_REMOVED, editor);
         return Map.of("count", count);
     }
 

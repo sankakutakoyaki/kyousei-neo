@@ -134,13 +134,61 @@ public class OrderQuery {
 
     public static QueryDefinition orderHistoryList() {
         String sql = """
-            SELECT TOP (100) h.order_history_id, h.order_id, h.order_version,
-                h.event_type, h.editor, h.occurred_at
-            FROM dbo.order_histories h
-            JOIN dbo.orders o ON o.order_id = h.order_id
-            WHERE o.state = ? AND o.order_id = ?
-                AND (? IS NULL OR h.order_history_id < ?)
-            """ + ACCESS_CONDITION + " ORDER BY h.order_history_id DESC";
+            WITH history_page AS (
+                SELECT TOP (100) h.order_history_id, h.order_id, h.order_version,
+                    h.event_type, h.editor, h.occurred_at, h.dispatch_assignment_id, h.dispatch_version
+                FROM dbo.order_histories h
+                JOIN dbo.orders o ON o.order_id = h.order_id
+                WHERE o.state = ? AND o.order_id = ?
+                    AND (? IS NULL OR h.order_history_id < ?)
+                """ + ACCESS_CONDITION + """
+                ORDER BY h.order_history_id DESC
+            )
+            SELECT h.*, previous.snapshot_count AS before_snapshot_count,
+                current_log.snapshot_count AS after_snapshot_count,
+                previous.request_number AS before_request_number, current_log.request_number AS after_request_number,
+                previous.title AS before_title, current_log.title AS after_title,
+                previous.postal_code AS before_postal_code, current_log.postal_code AS after_postal_code,
+                previous.full_address AS before_full_address, current_log.full_address AS after_full_address,
+                previous.visit_date AS before_visit_date, current_log.visit_date AS after_visit_date,
+                previous.visit_time AS before_visit_time, current_log.visit_time AS after_visit_time,
+                previous.contact_information AS before_contact_information, current_log.contact_information AS after_contact_information,
+                previous.remarks AS before_remarks, current_log.remarks AS after_remarks,
+                dispatch_before.snapshot_count AS before_dispatch_count,
+                dispatch_after.snapshot_count AS after_dispatch_count,
+                dispatch_before.daily_crew_id AS before_daily_crew_id,
+                dispatch_after.daily_crew_id AS after_daily_crew_id,
+                dispatch_before.visit_order AS before_visit_order,
+                dispatch_after.visit_order AS after_visit_order
+            FROM history_page h
+            OUTER APPLY (
+                SELECT TOP (1) COUNT(*) OVER () AS snapshot_count,
+                    request_number, title, postal_code, full_address, CONVERT(char(10), visit_date, 23) AS visit_date, visit_time, contact_information, remarks
+                FROM dbo.orders_log
+                WHERE order_id = h.order_id AND version = h.order_version - 1
+                    AND h.dispatch_assignment_id IS NULL
+            ) previous
+            OUTER APPLY (
+                SELECT TOP (1) COUNT(*) OVER () AS snapshot_count,
+                    request_number, title, postal_code, full_address, CONVERT(char(10), visit_date, 23) AS visit_date, visit_time, contact_information, remarks
+                FROM dbo.orders_log
+                WHERE order_id = h.order_id AND version = h.order_version
+                    AND h.dispatch_assignment_id IS NULL
+            ) current_log
+            OUTER APPLY (
+                SELECT TOP (1) COUNT(*) OVER () AS snapshot_count, daily_crew_id, visit_order
+                FROM dbo.dispatch_assignments_log
+                WHERE dispatch_assignment_id = h.dispatch_assignment_id AND order_id = h.order_id
+                    AND version = h.dispatch_version - 1
+            ) dispatch_before
+            OUTER APPLY (
+                SELECT TOP (1) COUNT(*) OVER () AS snapshot_count, daily_crew_id, visit_order
+                FROM dbo.dispatch_assignments_log
+                WHERE dispatch_assignment_id = h.dispatch_assignment_id AND order_id = h.order_id
+                    AND version = h.dispatch_version
+            ) dispatch_after
+            ORDER BY h.order_history_id DESC
+            """;
         List<String> params = new java.util.ArrayList<>(List.of(
             "state", "orderId", "beforeHistoryId", "beforeHistoryId"));
         params.addAll(ACCESS_PARAMS);

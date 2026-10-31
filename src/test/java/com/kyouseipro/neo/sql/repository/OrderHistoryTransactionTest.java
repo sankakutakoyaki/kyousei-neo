@@ -33,4 +33,25 @@ class OrderHistoryTransactionTest {
         verify(statement).setObject(2, "employee");
         verify(statement).setObject(3, 12L);
     }
+
+    @Test void dispatchHistoryFailureRollsBackAssignmentAndItsLog() throws Exception {
+        var source = mock(DataSource.class);
+        var connection = mock(Connection.class);
+        var statement = mock(PreparedStatement.class);
+        when(source.getConnection()).thenReturn(connection);
+        when(connection.getAutoCommit()).thenReturn(true);
+        when(connection.prepareStatement(anyString())).thenReturn(statement);
+        when(statement.executeUpdate()).thenReturn(1).thenThrow(new SQLException("history failed"));
+        var repository = new SqlRepository(source);
+        var history = new OrderHistoryRepository(repository);
+        assertThrows(RuntimeException.class, () ->
+            new TransactionTemplate(new DataSourceTransactionManager(source)).executeWithoutResult(status -> {
+                repository.update("UPDATE dispatch_assignments; INSERT dispatch_assignments_log", List.of());
+                history.recordDispatch(12L, OrderHistoryRepository.DispatchEvent.DISPATCH_REMOVED, "employee");
+            }));
+        verify(source, times(1)).getConnection();
+        verify(connection).rollback();
+        verify(connection, never()).commit();
+        verify(statement).setObject(1, "DISPATCH_REMOVED");
+    }
 }
