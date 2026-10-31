@@ -8,6 +8,7 @@ import { FormController } from "../../application/FormController.js";
 import { createOrderItemFormListController } from "./order/orderItemList.js";
 import { createOrderWorkFormListController } from "./order/orderWorkList.js";
 import { DialogService } from "../../core/ui/dialog/DialogService.js";
+import { OrderHistoryList } from "../../components/order/OrderHistoryList.js";
 import { AttachmentManager } from "../../components/attachment/AttachmentManager.js";
 
 export function createOrderPage(config){
@@ -70,6 +71,7 @@ const createOrderForm = (controller, options = {}) => {
     const itemList = createOrderItemFormListController();
     const workList = createOrderWorkFormListController();
     let attachmentManager;
+    let historyList;
 
     const form = new FormController({
         controller,
@@ -87,17 +89,21 @@ const createOrderForm = (controller, options = {}) => {
             state: APP.cache.common.state.INITIAL,
             orderId: id
         }),
-        onOpen: async (data) => {
+        onOpen: async (data, currentForm, canApply) => {
+            const formEl = document.getElementById(form.formId);
+            historyList ??= new OrderHistoryList(formEl?.querySelector("[data-order-history]"),
+                formEl?.querySelector("[data-order-history-tab]"));
+            historyList.open(data?.orderId, canApply);
             let items = data?.items ?? [];
             let works = data?.works ?? [];
             if (data?.orderId) {
                 items = await OrderRepository.findItems({state: APP.cache.common.state.INITIAL, orderId: data.orderId});
+                if (!canApply()) return;
                 works = await OrderRepository.findWorks({state: APP.cache.common.state.INITIAL, orderId: data.orderId});
             }
+            if (!canApply()) return;
             itemList.init(items, form);
             workList.init(works, form);
-            const formEl = document.getElementById(form.formId);
-
             const title = formEl.querySelector(".dialog-header > span");
             if (title) title.textContent = isMobileReadOnly(controller.key) ? "受注詳細（閲覧）" : "受注編集";
             const source = formEl.querySelector("[data-ocr-source]");
@@ -127,7 +133,10 @@ const createOrderForm = (controller, options = {}) => {
             itemList.reset();
             workList.reset();
         },
-        onClose: () => form.finishOcrReview?.(),
+        onClose: () => {
+            historyList?.close();
+            form.finishOcrReview?.();
+        },
         afterSave: async (id) => {
             form.finishOcrReview?.(id);
             await controller.refresh(id);

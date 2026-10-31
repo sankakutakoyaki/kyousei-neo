@@ -7,6 +7,7 @@
                 <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="tab-12">商品</li>
                 <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="tab-13">作業</li>
                 <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="tab-14">添付</li>
+                <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="tab-15" data-order-history-tab role="button" tabindex="0" aria-controls="tab-15">履歴</li>
             </ul>
             <div class="tab-panel is-show" id="tab-11" data-tab-content="order-add-tabs">
                 <div class="form-row">
@@ -285,6 +286,18 @@
                 <div class="table-area" data-controller="orderWorkFormList" data-sync-group="order-work-add">
                     <section th:replace="~{fragments/table/body :: normalFragment('table-header-12', 'table-12')}"></section>
                 </div>
+            </div>
+            <div class="tab-panel" id="tab-15" data-tab-content="order-add-tabs">
+                <section class="order-history" data-order-history aria-label="受注の登録・保存履歴">
+                    <div class="order-history-toolbar">
+                        <h3>受注の登録・保存履歴</h3>
+                        <button type="button" class="normal-btn" data-order-history-action="refresh">更新</button>
+                    </div>
+                    <p>受注の登録・保存日時と操作者を、新しい履歴から確認できます。</p>
+                    <p data-order-history-status role="status" aria-live="polite"></p>
+                    <ol data-order-history-list></ol>
+                    <button type="button" class="normal-btn" data-order-history-action="more" hidden>続きを表示</button>
+                </section>
             </div>
             <div class="tab-panel" id="tab-14" data-tab-content="order-add-tabs">
                 <section class="attachment-manager" data-attachment-manager>

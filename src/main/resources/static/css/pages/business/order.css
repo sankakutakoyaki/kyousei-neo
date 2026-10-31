@@ -438,3 +438,13 @@ main[data-page$="/productPage.js"] .arrival-status-row > [data-action="arrival-i
 .arrival-model { font-size: 1.5rem; font-weight: 700; overflow-wrap: anywhere; margin-block: .5rem; }
 .arrival-entry input[name="quantity"] { width: 6rem; text-align: right; margin-right: 2rem; }
 .arrival-history-selection { display: inline-flex; align-items: center; gap: .4rem; }
+
+.order-history { min-width: 0; width: 100%; overflow-wrap: anywhere; }
+.order-history-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.order-history-toolbar h3 { margin: 0; }
+.order-history [data-order-history-list] { list-style: none; margin: 1rem 0; padding: 0; }
+.order-history li { display: grid; gap: .35rem; padding: 1rem 0; border-bottom: .0625rem solid var(--line, #ddd); }
+.order-history li time, .order-history li span { font-size: .9rem; }
+.order-history-error { color: #a02323; }
+.order-history button { min-height: 2.75rem; width: auto; }
+.order-history button[hidden] { display: none; }
