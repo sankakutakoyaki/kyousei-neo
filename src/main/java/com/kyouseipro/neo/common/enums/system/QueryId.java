@@ -131,6 +131,7 @@ public enum QueryId {
 
     // ===== Order =====
     ORDER_DETAIL("orderDetail"),
+    ORDER_HISTORY_LIST("orderHistoryList"),
     ORDER_LIST("orderList"),
     ORDER_CSV("orderCsv"),
     ORDER_DELETE_BY_IDS("orderDeleteByIds"),

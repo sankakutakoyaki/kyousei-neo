@@ -132,6 +132,21 @@ public class OrderQuery {
         return QueryDefinition.select(sql, params);
     }
 
+    public static QueryDefinition orderHistoryList() {
+        String sql = """
+            SELECT TOP (100) h.order_history_id, h.order_id, h.order_version,
+                h.event_type, h.editor, h.occurred_at
+            FROM dbo.order_histories h
+            JOIN dbo.orders o ON o.order_id = h.order_id
+            WHERE o.state = ? AND o.order_id = ?
+                AND (? IS NULL OR h.order_history_id < ?)
+            """ + ACCESS_CONDITION + " ORDER BY h.order_history_id DESC";
+        List<String> params = new java.util.ArrayList<>(List.of(
+            "state", "orderId", "beforeHistoryId", "beforeHistoryId"));
+        params.addAll(ACCESS_PARAMS);
+        return QueryDefinition.select(sql, params);
+    }
+
     public static QueryDefinition orderCsv() {
         String sql = """
             SELECT

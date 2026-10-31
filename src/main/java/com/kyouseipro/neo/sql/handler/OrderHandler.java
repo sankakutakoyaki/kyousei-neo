@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class OrderHandler implements QueryHandler {
 
     private final BaseSqlRepository baseRepository;
+    private final com.kyouseipro.neo.domain.business.order.history.OrderHistoryRepository orderHistoryRepository;
     private final com.kyouseipro.neo.domain.business.order.arrival.OrderItemArrivalService arrivalService;
     private final SqlRepository sqlRepository;
     private final com.kyouseipro.neo.domain.business.order.ocr.repository.OrderOcrLogRepository orderOcrLogRepository;
@@ -196,6 +197,7 @@ public class OrderHandler implements QueryHandler {
             orderOcrLogRepository.link(Long.parseLong(params.get("ocrLogId").toString()), orderId, Long.parseLong(params.get("primeConstractorId").toString()));
             orderOcrAttachmentService.attach(Long.parseLong(params.get("ocrLogId").toString()), orderId);
         }
+        orderHistoryRepository.recordSaved(orderId, isNewOrder, editor);
         return Map.of("data", orderId, "count", 1);
     }
 

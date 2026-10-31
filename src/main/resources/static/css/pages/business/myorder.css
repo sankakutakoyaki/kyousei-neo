@@ -275,3 +275,22 @@
         overscroll-behavior: contain;
     }
 }
+
+.myorder-detail-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.myorder-detail-nav .img-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+#myorder-detail-position {
+    min-width: 4rem;
+    text-align: center;
+    font-weight: bold;
+}

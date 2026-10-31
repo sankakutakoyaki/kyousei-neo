@@ -8,7 +8,7 @@
             "mainClass": "com.kyouseipro.neo.NeoApplication",
             "projectName": "neo",
             "args": "--spring.config.additional-location=file:/Users/makoto/config/ --spring.profiles.active=dev",
-            "envFile": "${workspaceFolder}/.env" 
+            "envFile": "${workspaceFolder}/.env.local"
         }
     ]
 }

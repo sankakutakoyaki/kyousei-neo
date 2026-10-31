@@ -303,6 +303,20 @@ export class FormController {
         formatFields(form);
     }
 
+    updateData(data) {
+        const form = document.getElementById(this.formId);
+        if (!form || this.disposed || this._saving) return;
+
+        this.currentEntity = structuredClone(data);
+        FormModel.clear(form);
+        FormModel.fill(form, data);
+        formatFields(form);
+        initParentChildLink(form);
+
+        this.initialFormEntity = this.trackInitialState ? FormModel.toEntity(form, this.currentEntity): null;
+        this.setSubmitEnabled(this.canSubmit());
+    }
+
     hasChanges(){
         const form = document.getElementById(this.formId);
         return FormStateBehavior.hasChanges({

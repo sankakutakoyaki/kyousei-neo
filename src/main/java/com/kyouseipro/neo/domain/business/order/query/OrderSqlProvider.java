@@ -25,6 +25,7 @@ public class OrderSqlProvider implements SqlProviderPart {
 
         // ===== Order =====
         map.put(QueryId.ORDER_DETAIL, OrderQuery.orderDetail());
+        map.put(QueryId.ORDER_HISTORY_LIST, OrderQuery.orderHistoryList());
         map.put(QueryId.ORDER_CSV, OrderQuery.orderCsv());
         map.put(QueryId.ORDER_DELETE_BY_IDS, new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.ORDER_BY_IDS));
         map.put(QueryId.ORDER_SAVE, new QueryDefinition(QueryType.UPDATE, QueryKind.ORDER_SAVE, Tables.ORDER_BY_IDS));
@@ -54,6 +55,7 @@ public class OrderSqlProvider implements SqlProviderPart {
         map.get(QueryId.ORDER_ITEM_ARRIVAL_CANCEL).setPermissionOperation("order.item.arrival.cancel");
         // 参照権限
         map.get(QueryId.ORDER_DETAIL).setPermissionTable("orders");
+        map.get(QueryId.ORDER_HISTORY_LIST).setPermissionTable("orders");
         map.get(QueryId.ORDER_CSV).setPermissionTable("orders");
         map.get(QueryId.ORDER_ITEM_DETAIL).setPermissionTable("order_items");
         map.get(QueryId.ORDER_ITEM_FORM_LIST).setPermissionTable("order_items");

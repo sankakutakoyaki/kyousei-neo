@@ -30,6 +30,10 @@ class MyOrderPageController {
             submitText: "保存",
             cancelText: "閉じる"
         });
+        this.orderIds = [];
+        this.currentIndex = -1;
+        this.detailLoading = false;
+        this.touchStart = null;
     }
 
     init() {
@@ -41,6 +45,30 @@ class MyOrderPageController {
             const orderId = Number(button.dataset.myorderDetail);
             if (!Number.isSafeInteger(orderId) || orderId <= 0) return;
             await this.openDetail(orderId);
+        });
+        const form = document.getElementById("myorder-form");
+
+        form?.addEventListener("touchstart", event => {
+            if (event.touches.length !== 1) return;
+            const touch = event.touches[0];
+            this.touchStart = { x: touch.clientX, y: touch.clientY };
+        }, { passive: true });
+
+        form?.addEventListener("touchend", event => {
+            if (!this.touchStart || this.detailLoading) return;
+            const touch = event.changedTouches[0];
+            if (!touch) return;
+
+            const dx = touch.clientX - this.touchStart.x;
+            const dy = touch.clientY - this.touchStart.y;
+            this.touchStart = null;
+
+            if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+            this.moveOrder(dx < 0 ? 1 : -1);
+        }, { passive: true });
+
+        form?.addEventListener("touchcancel", () => {
+            this.touchStart = null;
         });
     }
 
@@ -83,6 +111,7 @@ class MyOrderPageController {
     render(orders) {
         this.list.replaceChildren();
         this.count.textContent = `${orders.length}件`;
+        this.orderIds = orders.map(order => order.orderId);
 
         if (orders.length === 0) {
             this.list.appendChild(this.message("この日の担当伝票はありません。"));
@@ -171,36 +200,35 @@ class MyOrderPageController {
     }
 
     async openDetail(orderId) {
+        if (this.detailLoading) return;
+        this.detailLoading = true;
+        this.updateDetailNav();
+
         try {
             const [detailResponse, linesResponse] = await Promise.all([
-                fetch(`/api/my-orders/${orderId}`, {
-                    credentials: "same-origin"
-                }),
-                fetch(`/api/my-orders/${orderId}/lines`, {
-                    credentials: "same-origin"
-                })
+                fetch(`/api/my-orders/${orderId}`, { credentials: "same-origin" }),
+                fetch(`/api/my-orders/${orderId}/lines`, { credentials: "same-origin" })
             ]);
-
             if (!detailResponse.ok || !linesResponse.ok) {
                 throw new Error("担当伝票の取得に失敗しました。");
             }
-
-            const [order, lines] = await Promise.all([
-                detailResponse.json(),
-                linesResponse.json()
-            ]);
+            const [order, lines] = await Promise.all([detailResponse.json(), linesResponse.json()]);
 
             if (!this.root.isConnected) return;
-
             this.renderDetailLines(lines);
 
-            await this.detailForm.open(order, {
-                readOnly: true
-            });
-
+            if (this.detailForm.isHidden()) {
+                await this.detailForm.open(order, { readOnly: true });
+            } else {
+                this.detailForm.updateData(order);
+            }
+            this.currentIndex = this.orderIds.findIndex(id => Number(id) === Number(orderId));
         } catch (error) {
             console.error(error);
             alert(error.message || "担当伝票を取得できませんでした。");
+        } finally {
+            this.detailLoading = false;
+            this.updateDetailNav();
         }
     }
 
@@ -215,6 +243,12 @@ class MyOrderPageController {
             case "today":
                 this.dateInput.value = getToday();
                 await this.refresh();
+                break;
+            case "previous-order":
+                await this.moveOrder(-1);
+                break;
+            case "next-order":
+                await this.moveOrder(1);
                 break;
         }
     }
@@ -275,5 +309,28 @@ class MyOrderPageController {
 
             container.appendChild(card);
         }
+    }
+    
+    updateDetailNav() {
+        const form = document.getElementById("myorder-form");
+        const position = form?.querySelector("#myorder-detail-position");
+        const previous = form?.querySelector('[data-action="previous-order"]');
+        const next = form?.querySelector('[data-action="next-order"]');
+        if (!position || !previous || !next) return;
+
+        position.textContent = `${this.currentIndex + 1} / ${this.orderIds.length}`;
+        previous.disabled = this.detailLoading || this.currentIndex <= 0;
+        next.disabled = this.detailLoading ||
+            this.currentIndex < 0 ||
+            this.currentIndex >= this.orderIds.length - 1;
+    }
+
+    async moveOrder(offset) {
+        if (this.detailLoading) return;
+
+        const index = this.currentIndex + offset;
+        if (index < 0 || index >= this.orderIds.length) return;
+
+        await this.openDetail(this.orderIds[index]);
     }
 }

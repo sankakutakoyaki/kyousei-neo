@@ -250,6 +250,40 @@ class QueryControllerTest {
     }
 
     @Test
+    void historyUsesServerScopeAndExistingReadPermission() {
+        var access = mock(OrderAccessService.class);
+        when(access.getAccessCondition(any())).thenReturn(new OrderAccessService.AccessCondition("ASSIGNED", null, 22L));
+        var repository = mock(SqlRepository.class);
+        var authorization = allowedAuthorization();
+        var provider = new com.kyouseipro.neo.domain.business.order.query.OrderSqlProvider();
+        var historyController = new QueryController(new SqlProvider(List.of(provider)),
+            new QueryParamBinder(), repository, baseRepository, null,
+            new QueryBuilderProvider(List.of()), new QueryHandlerProvider(List.of()),
+            mock(SqlColumnValidator.class), mock(OfficeAccessService.class), authorization, access);
+        var req = new SelectRequest();
+        req.setQueryId("orderHistoryList");
+        var params = new java.util.HashMap<String, Object>();
+        params.put("orderId", 12L);
+        params.put("state", 0);
+        params.put("beforeHistoryId", null);
+        params.put("accessScope", "ALL");
+        params.put("accessEmployeeId", 999L);
+        req.setParams(params);
+        historyController.request(req);
+        assertEquals("ASSIGNED", req.getParams().get("accessScope"));
+        assertEquals(22L, req.getParams().get("accessEmployeeId"));
+        assertNull(req.getParams().get("accessOfficeId"));
+        var def = provider.provide().get(QueryId.ORDER_HISTORY_LIST);
+        assertEquals("orders", def.getPermissionTable());
+        assertTrue(def.getSql().contains("dcm.employee_id = ?"));
+        assertTrue(def.getSql().contains("TOP (100)"));
+        assertEquals(def.getParamOrder().size(), def.getSql().chars().filter(c -> c == '?').count());
+        when(authorization.isAllowed(any(), any(), any())).thenReturn(false);
+        assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> historyController.request(req));
+        verify(repository, times(1)).selectMap(anyString(), anyList());
+    }
+
+    @Test
     void orderListUsesServerOfficeId() {
         OrderAccessService orderAccessService = mock(OrderAccessService.class);
         when(orderAccessService.getAccessCondition(any()))

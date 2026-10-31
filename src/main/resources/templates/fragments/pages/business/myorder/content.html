@@ -23,6 +23,11 @@
             <div class="dialog-main">
                 <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title':'担当伝票詳細'} })}"></header>
                 <section class="dialog-content myorder-detail">
+                <div class="myorder-detail-nav">
+                    <button type="button" class="img-btn" data-action="previous-order" aria-label="前の伝票"><img src="/icons/prev.png" alt=""></button>
+                    <span id="myorder-detail-position">1 / 1</span>
+                    <button type="button" class="img-btn" data-action="next-order" aria-label="次の伝票"><img src="/icons/next.png" alt=""></button>
+                </div>
                     <div class="tab-area">
                         <ul class="tab-menu">
                             <li class="tab-menu-item is-active" data-action="tab" data-group="myorder-detail-tabs" data-tab="myorder-basic">基本</li>

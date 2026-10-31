@@ -2,11 +2,21 @@
 
 /******************************************************************************************************* 基本のボタン */
 
-button:disabled,
-button:disabled:hover {
-  background-color: #ccc;   /* 無効時の色 */
-  color: #666;
-  cursor: default;      /* カーソルも無効っぽく */
+button:disabled:not(.img-btn),
+button:disabled:not(.img-btn):hover {
+    background-color: #ccc;
+    color: #666;
+    cursor: default;
+}
+
+button.img-btn:disabled,
+button.img-btn:disabled:hover {
+    opacity: 0.3;
+    cursor: default;
+}
+
+button.img-btn:disabled:hover>img {
+    background-color: transparent;
 }
 
 .normal-btn {

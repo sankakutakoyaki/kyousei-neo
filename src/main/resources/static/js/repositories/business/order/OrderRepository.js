@@ -13,6 +13,11 @@ export const OrderRepository = {
         return res.data?.[0] ?? null;
     },
 
+    async findHistories(params){
+        const res = await RequestClient.request({queryId: "orderHistoryList", params: {beforeHistoryId: null, ...params}});
+        return res.data ?? [];
+    },
+
     async save(params){
         return await RequestClient.request({queryId: "orderSave", params});
     },

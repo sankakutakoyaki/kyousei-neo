@@ -65,7 +65,7 @@ public class QueryController {
         params.remove("accessScope");
         params.remove("accessOfficeId");
         params.remove("accessEmployeeId");
-        if (queryId == QueryId.ORDER_LIST || queryId == QueryId.ORDER_DETAIL) {
+        if (queryId == QueryId.ORDER_LIST || queryId == QueryId.ORDER_DETAIL || queryId == QueryId.ORDER_HISTORY_LIST) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             var access = orderAccessService.getAccessCondition(authentication);
             params.put("accessScope", access.scope());
