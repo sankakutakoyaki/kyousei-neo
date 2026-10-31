@@ -3,13 +3,28 @@
 /******************************************************************************************************* 担当伝票一覧 */
 
 .myorder-page {
-    overflow-y: auto;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .myorder-container {
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    width: 100%;
+    height: 100%;
+    min-height: 0;
     max-width: 56.25rem;
     margin: 0 auto;
     padding: 1rem;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+#myorder-list {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
 }
 
 .myorder-header {
@@ -53,6 +68,9 @@
 }
 
 .myorder-crew-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
     padding: .625rem .875rem;
     background: #e9edf2;
     border-radius: .375rem;
@@ -63,18 +81,24 @@
 /******************************************************************************************************* 伝票カード */
 
 .myorder-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: .3rem .75rem;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: .5rem;
-    padding: .875rem;
+    padding: .75rem;
     margin-bottom: .625rem;
 }
 
 .myorder-card-top {
+    grid-column: 1 / -1;
+    grid-row: 1;
     display: flex;
+    gap: .75rem;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: .625rem;
+    margin-bottom: 0;
 }
 
 .myorder-number {
@@ -88,26 +112,43 @@
 }
 
 .myorder-title {
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
+    overflow-wrap: anywhere;
     font-size: 1.0625rem;
     font-weight: 700;
-    margin-bottom: .5rem;
+    margin-bottom: 0;
 }
 
 .myorder-address {
+    grid-column: 1;
+    grid-row: 3;
+    min-width: 0;
+    overflow-wrap: anywhere;
     font-size: .875rem;
     line-height: 1.6;
 }
 
 .myorder-remarks {
-    margin-top: .625rem;
+    grid-column: 1 / -1;
+    grid-row: 4;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    margin-top: .2rem;
     padding: .5rem .625rem;
     background: #fff8e8;
     border-radius: .25rem;
     font-size: .8125rem;
 }
 
-.myorder-card button {
-    margin-top: .75rem;
+.myorder-card > button {
+    grid-column: 2;
+    grid-row: 2 / 4;
+    align-self: center;
+    min-height: 2.75rem;
+    margin: 0;
+    padding: .5rem .75rem;
 }
 
 .myorder-empty {
@@ -126,11 +167,15 @@
     width: min(90vw, 45rem);
     max-width: 45rem;
     height: 100%;
+    min-height: 0;
+    grid-template-rows: auto minmax(0, 1fr) auto;
 }
 
 #myorder-form .dialog-content {
-    /* max-height: 70vh; */
-    overflow-y: auto;
+    min-height: 0;
+    overflow: hidden;
+    grid-template-rows: auto minmax(0, 1fr);
+    justify-items: stretch;
     padding: 2rem;
 }
 
@@ -153,13 +198,19 @@
     margin-left: .5rem;
 }
 
-#myorder-form .tab-panel,
 #myorder-form .tab-area {
-    overflow-y: auto;
-    overflow-x: hidden;
+    height: auto;
+    min-height: 0;
+    overflow: hidden;
+    grid-template-rows: auto minmax(0, 1fr);
 }
 
 #myorder-form .tab-panel {
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    align-content: start;
+    overscroll-behavior: contain;
     margin-top: 2rem;
 }
 
@@ -270,9 +321,8 @@
 
     #myorder-form .dialog-content {
         min-height: 0;
-        overflow-y: auto;
+        overflow: hidden;
         padding: 1rem;
-        overscroll-behavior: contain;
     }
 }
 

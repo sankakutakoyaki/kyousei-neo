@@ -184,7 +184,7 @@ class MyOrderPageController {
         const detailButton = document.createElement("button");
         detailButton.type = "button";
         detailButton.className = "normal-btn";
-        detailButton.textContent = "詳細を見る";
+        detailButton.textContent = "詳細";
         detailButton.dataset.myorderDetail = order.orderId;
 
         card.appendChild(detailButton);
