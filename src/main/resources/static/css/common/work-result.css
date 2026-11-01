@@ -5,3 +5,8 @@
 .work-result-badge[data-result-type="COMPLETED"] { color: #176035; background: #def3e5; }
 .work-result-badge[data-result-type="DELIVERY_FAILED"] { color: #992929; background: #fde4e4; }
 .work-result-badge[data-result-type="POSTPONED"] { color: #205a91; background: #e1effc; }
+
+.work-result-badge[data-result-type="NEEDS_ACTION"] { color: #8a4300; background: #fff0bd; }
+.work-result-badge[data-result-type="CANCELLED"] { color: #555; background: #e5e7eb; }
+
+.work-result-badge[data-result-type="ABSENT"] { color: #65398a; background: #efe5f7; }

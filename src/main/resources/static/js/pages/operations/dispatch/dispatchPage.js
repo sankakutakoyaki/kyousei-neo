@@ -250,7 +250,10 @@ function createDispatchPage(session) {
     function renderOrderList(){
         if(!session.isActive()) return;
         const status = document.getElementById("dispatch-order-status")?.value ?? "unassigned";
-        renderDispatchOrders(dispatchOrders, status);
+        const conditions=getDispatchConditions();
+        renderDispatchOrders(dispatchOrders, status, {
+            emptyMessage: hasDispatchConditions(conditions) ? null : "日付・営業所・区分を選択してください。"
+        });
     }
 
     async function reinitializeCrews() {

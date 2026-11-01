@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
+import com.kyouseipro.neo.common.enums.code.*;
+import com.kyouseipro.neo.common.enums.util.EnumUtil;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ public class WorkResultService {
     private final BaseSqlRepository base;
     private final OwnOfficeContextService officeContext;
     private final OrderHistoryRepository histories;
+    private final com.kyouseipro.neo.domain.business.order.outcome.OrderOutcomeService outcomes;
+    private final com.kyouseipro.neo.security.OrderScopeGuard orderGuard;
     public static final TableMeta TABLE = new TableMeta("order_work_results", "workResultId", "state", "version");
     public record Request(Integer assignmentVersion, Integer resultVersion, String resultType,
                           String reason, LocalDate workDate, UUID requestId) {}
@@ -47,7 +51,11 @@ public class WorkResultService {
         return id;
     }
     private Map<String,Object> assigned(long orderId, long assignmentId, long employeeId) {
-        var rows = sql.selectMap(DETAIL_SQL, List.of(orderId, assignmentId, employeeId));
+        return assigned(orderId,assignmentId,employeeId,false);
+    }
+    private Map<String,Object> assigned(long orderId, long assignmentId, Long employeeId, boolean office) {
+        var rows = sql.selectMap(office ? DETAIL_SQL.substring(0,DETAIL_SQL.indexOf("AND EXISTS")) : DETAIL_SQL,
+            office ? List.of(orderId,assignmentId) : List.of(orderId,assignmentId,employeeId));
         if (rows.isEmpty()) throw new AccessDeniedException("担当外または解除済みの伝票です。開き直してください。");
         return rows.get(0);
     }
@@ -58,12 +66,21 @@ public class WorkResultService {
 
     @Transactional
     public Map<String,Object> save(Authentication auth, long orderId, long assignmentId, Request req) {
-        long employeeId = employee(auth);
-        if (req == null || req.requestId() == null || !Set.of("COMPLETED", "DELIVERY_FAILED", "POSTPONED").contains(req.resultType() == null ? "" : req.resultType()))
+        return saveCore(auth,orderId,assignmentId,req,false,null);
+    }
+    @Transactional
+    public Map<String,Object> saveOffice(Authentication auth,long orderId,long assignmentId,Request req,Integer orderVersion) {
+        orderGuard.require(auth,orderId,true);
+        return saveCore(auth,orderId,assignmentId,req,true,orderVersion);
+    }
+    private Map<String,Object> saveCore(Authentication auth,long orderId,long assignmentId,Request req,boolean office,Integer orderVersion) {
+        Long employeeId = office ? officeContext.getEmployeeId(auth) : Long.valueOf(employee(auth));
+        var result=req==null?null:EnumUtil.byName(WorkResultType.class,req.resultType());
+        if (req == null || req.requestId() == null || result==null || !result.isReportable())
             throw new BusinessException("作業結果を選択して開き直してください。");
         String reason = req.reason() == null ? "" : req.reason().trim();
         if (reason.length()>1000) throw new BusinessException("理由・備考は1000文字以内で入力してください。");
-        var initial = assigned(orderId, assignmentId, employeeId);
+        var initial = assigned(orderId, assignmentId, employeeId,office);
         Object crewId = initial.get("dailyCrewId");
         // 複数班の同時報告でも、班→割当の順序を揃える。
         SortedSet<Long> crewIds = new TreeSet<>();
@@ -80,7 +97,7 @@ public class WorkResultService {
         }
         // 同じ受注への配車追加も、結果保存中は待機させる。
         sql.selectMap("SELECT dispatch_assignment_id FROM dbo.dispatch_assignments WITH (UPDLOCK,HOLDLOCK) WHERE order_id=? AND state=0 ORDER BY dispatch_assignment_id", List.of(orderId));
-        var current = assigned(orderId, assignmentId, employeeId);
+        var current = assigned(orderId, assignmentId, employeeId,office);
         if (!Objects.equals(crewId, current.get("dailyCrewId"))) throw new BusinessException("配車が変更されています。開き直してください。");
         if (req.workDate() == null || !req.workDate().toString().equals(current.get("workDate").toString()))
             throw new BusinessException("訪問日が変更されています。開き直してください。");
@@ -96,10 +113,10 @@ public class WorkResultService {
         }
         if (!Objects.equals(current.get("assignmentVersion"), req.assignmentVersion()))
             throw new BusinessException("配車が更新されています。開き直してください。");
-        boolean correction = current.get("workResultId") != null;
+        boolean correction = current.get("workResultId") != null && !"ABSENT".equals(current.get("resultType"));
         if (!Objects.equals(current.get("resultVersion"), req.resultVersion()))
             throw new BusinessException("作業結果が更新されています。開き直してください。");
-        if ((correction || !"COMPLETED".equals(req.resultType())) && reason.isBlank())
+        if ((correction || !result.isConfirmationOnly()) && reason.isBlank())
             throw new BusinessException(correction ? "訂正理由を入力してください。" : "理由を入力してください。");
         String editor = officeContext.getAccount(auth);
         if (editor == null || editor.isBlank()) throw new AccessDeniedException("ログイン情報を確認してください。");
@@ -126,10 +143,11 @@ public class WorkResultService {
             UUID peerRequest = UUID.nameUUIDFromBytes((req.requestId() + ":" + peerId).getBytes(StandardCharsets.UTF_8));
             persist(peerId, peer, req, reason, employeeId, editor, peerRequest);
         }
-        return assigned(orderId, assignmentId, employeeId);
+        outcomes.record(orderId,orderVersion,req.resultType(),reason,null,req.workDate(),req.requestId(),editor);
+        return assigned(orderId, assignmentId, employeeId,office);
     }
     private long persist(long assignmentId, Map<String,Object> current, Request req, String reason,
-                         long employeeId, String editor, UUID requestId) {
+                         Long employeeId, String editor, UUID requestId) {
         Map<String,Object> data = new LinkedHashMap<>();
         data.put("resultType", req.resultType()); data.put("reason", reason);
         data.put("resultEmployeeId", employeeId); data.put("requestId", requestId.toString());

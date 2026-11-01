@@ -1,7 +1,7 @@
 "use strict";
 import { apiFetch } from "../../core/api/apiFetch.js";
 
-export const workResultLabels = {COMPLETED: "完了", DELIVERY_FAILED: "搬入不可", POSTPONED: "日延"};
+import { workResultLabel, isSimpleWorkResult } from "./orderEnums.js";
 
 export class WorkResultDialog {
     constructor(root, onSaved) {
@@ -34,24 +34,26 @@ export class WorkResultDialog {
             this.url = url;
             this.snapshot = response.data;
             this.type.value = type;
-            this.confirmCompletion = !this.snapshot.workResultId && type === "COMPLETED";
+            this.correction = !!this.snapshot.workResultId && this.snapshot.resultType !== "ABSENT";
+            this.confirmOnly = !this.correction && isSimpleWorkResult(type);
             this.reason.value = "";
             this.signature = null;
-            this.status.textContent = this.snapshot.workResultId
-                ? `訪問日：${this.snapshot.workDate}。現在の結果：${workResultLabels[this.snapshot.resultType] ?? "未報告"}。${this.snapshot.reason || ""} 訂正理由を入力してください。`
+            this.status.textContent = this.correction
+                ? `訪問日：${this.snapshot.workDate}。現在の結果：${workResultLabel(this.snapshot.resultType || "UNREPORTED")}。${this.snapshot.reason || ""} 訂正理由を入力してください。`
                 : `訪問日：${this.snapshot.workDate}。この訪問の作業結果を報告します。`;
             this.root.showModal();
             this.updateFields();
-            (this.confirmCompletion ? this.submit : this.type).focus();
+            (this.confirmOnly ? this.submit : this.type).focus();
         } finally {this.opening = false;}
     }
     updateFields() {
-        this.reason.required = !!this.snapshot?.workResultId || this.type.value !== "COMPLETED";
-        this.typeField.hidden = this.confirmCompletion;
+        this.reason.required = !!this.correction || !isSimpleWorkResult(this.type.value);
+        this.typeField.hidden = this.confirmOnly;
         this.reasonField.hidden = !this.reason.required;
         this.hint.hidden = !this.reason.required;
         this.confirmation.hidden = this.reason.required;
-        this.submit.textContent = this.reason.required ? "報告を保存" : "完了を報告";
+        this.submit.textContent = this.reason.required ? "報告を保存" : this.type.value === "ABSENT" ? "不在を記録" : "完了を報告";
+        this.confirmation.textContent = this.type.value === "ABSENT" ? "不在として訪問したことを記録しますか？記録時刻も保存されます。" : "作業を完了として報告しますか？";
     }
     async save() {
         if (this.saving || !this.root.open) return;

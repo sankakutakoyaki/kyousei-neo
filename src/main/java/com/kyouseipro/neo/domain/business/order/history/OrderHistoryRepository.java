@@ -46,7 +46,8 @@ public class OrderHistoryRepository {
             SELECT da.order_id, o.version,
                 CASE WHEN ?=1 THEN 'WORK_RESULT_CORRECTED'
                      WHEN wr.result_type='COMPLETED' THEN 'WORK_COMPLETED'
-                     WHEN wr.result_type='DELIVERY_FAILED' THEN 'DELIVERY_FAILED' ELSE 'POSTPONED' END,
+                     WHEN wr.result_type='DELIVERY_FAILED' THEN 'DELIVERY_FAILED'
+                     WHEN wr.result_type='ABSENT' THEN 'ABSENT' ELSE 'POSTPONED' END,
                 ?, wr.work_result_id, wr.version
             FROM dbo.order_work_results wr
             JOIN dbo.dispatch_assignments da ON da.dispatch_assignment_id=wr.dispatch_assignment_id

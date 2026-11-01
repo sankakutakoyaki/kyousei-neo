@@ -7,8 +7,10 @@
                 <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="tab-12">商品</li>
                 <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="tab-13">作業</li>
                 <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="tab-14">添付</li>
+                <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="order-edit-photos">写真</li>
                 <li class="tab-menu-item" data-action="tab" data-group="order-add-tabs" data-tab="tab-15" data-order-history-tab role="button" tabindex="0" aria-controls="tab-15">履歴</li>
             </ul>
+            <div class="tab-panel" id="order-edit-photos" data-tab-content="order-add-tabs"><th:block th:replace="~{fragments/components/orderPhotos :: panel(true)}"></th:block></div>
             <div class="tab-panel is-show" id="tab-11" data-tab-content="order-add-tabs">
                 <div class="scroll-area">
                     <div class="form-row">
@@ -23,6 +25,19 @@
                                 'loginOffice':true
                             }}
                         )}"></th:block>
+                        <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                            {
+                                'text':'配車区分',
+                                'id':'order-dispatch-category-edit',
+                                'name':'dispatch-category',
+                                'combo':'dispatchCategoryComboList',
+                                'key':'dispatch-category'
+                            }}
+                        )}"></th:block>
+                        <div class="form-parts order-assignees-detail">
+                            <label>配送・工事担当者（訪問日）</label>
+                            <span data-order-assignees>未配車</span>
+                        </div>
                     </div>
                     <!-- 会社名 -->
                     <div class="form-row" data-resolve="client" >

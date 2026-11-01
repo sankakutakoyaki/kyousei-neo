@@ -6,7 +6,7 @@ import { cloneTemplate } from "../../../core/dom/cloneTemplate.js";
 /**
  * 伝票一覧描画
  */
-export function renderDispatchOrders(orders, status, {onDragStart, onDragEnd} = {}){
+export function renderDispatchOrders(orders, status, {onDragStart, onDragEnd, emptyMessage} = {}){
     const area = document.getElementById("dispatch-order-list");
     if(!area) return;
     area.replaceChildren();
@@ -26,7 +26,9 @@ export function renderDispatchOrders(orders, status, {onDragStart, onDragEnd} = 
         const empty = document.createElement("div");
         empty.className = "dispatch-empty";
 
-        if(status === "assigned"){
+        if(emptyMessage){
+            empty.textContent = emptyMessage;
+        } else if(status === "assigned"){
             empty.textContent = "配車済み伝票はありません";
         } else if(status === "all"){
             empty.textContent = "伝票はありません";

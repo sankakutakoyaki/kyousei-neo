@@ -111,3 +111,10 @@ test('mobile permits only the assigned visit result POST endpoint and keeps gene
         assert.throws(() => assertMobileWriteAllowed(url,method,{}), /閲覧/);
     assert.throws(() => assertMobileWriteAllowed('/api/query','POST',{queryId:'orderSave'}), /閲覧/);
 });
+
+test('photo uploads are the only added mobile write route',()=>{
+    globalThis.window={matchMedia:()=>({matches:true})};globalThis.document={querySelector:()=>null};
+    assert.doesNotThrow(()=>assertMobileWriteAllowed('/api/order-photos/12','POST',{}));
+    assert.throws(()=>assertMobileWriteAllowed('/api/order-outcomes/12','POST',{}),/閲覧/);
+    assert.throws(()=>assertMobileWriteAllowed('/api/attachments/ORDER/12/groups','POST',{}),/閲覧/);
+});

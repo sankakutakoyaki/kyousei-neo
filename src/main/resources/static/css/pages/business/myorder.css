@@ -449,3 +449,6 @@
 #myorder-form-footer>[name="cancelBtn"] {
     margin-left: auto;
 }
+#myorder-photos { min-height: 0; overflow: hidden; }
+
+.myorder-result-badge[data-result-type="ABSENT"] { color: #65398a; background: #efe5f7; }

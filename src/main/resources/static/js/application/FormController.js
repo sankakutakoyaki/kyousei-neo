@@ -404,7 +404,7 @@ export class FormController {
 
         form.querySelectorAll("input, select, textarea").forEach(el => {
             // hiddenフィールドは対象外
-            if (el.type === "hidden") return;
+            if (el.type === "hidden" || el.dataset?.photoInput !== undefined) return;
             // 元の状態を保存
             this.readOnlyElements.set(el, {disabled: el.disabled, readOnly: el.readOnly});
             if (el instanceof HTMLInputElement &&

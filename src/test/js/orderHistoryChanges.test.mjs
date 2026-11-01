@@ -1,3 +1,6 @@
+import {installOrderEnumCache} from './fixtures/orderEnumCache.mjs';
+import {orderEnumLabel,workResultLabel,orderStatusLabel,photoCategoryLabel,isSimpleWorkResult} from '../../main/resources/static/js/components/order/orderEnums.js';
+installOrderEnumCache();
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {orderHistoryChanges} from '../../main/resources/static/js/components/order/orderHistoryChanges.js';

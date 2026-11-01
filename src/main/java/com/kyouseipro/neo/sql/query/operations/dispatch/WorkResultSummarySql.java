@@ -10,6 +10,7 @@ public final class WorkResultSummarySql {
                 COUNT(CASE WHEN wr.result_type = 'COMPLETED' THEN 1 END) AS completed_count,
                 COUNT(CASE WHEN wr.result_type = 'DELIVERY_FAILED' THEN 1 END) AS failed_count,
                 COUNT(CASE WHEN wr.result_type = 'POSTPONED' THEN 1 END) AS postponed_count,
+                COUNT(CASE WHEN wr.result_type = 'ABSENT' THEN 1 END) AS absent_count,
                 COUNT(CASE WHEN wr.work_result_id IS NULL THEN 1 END) AS unreported_count
             FROM dbo.dispatch_assignments result_assignment
             INNER JOIN dbo.daily_crews result_crew

@@ -1,7 +1,7 @@
 <th:block th:fragment="buttons">
     <div class="myorder-result-actions">
-        <button type="button" class="normal-btn frameless" data-action="report-work-result" data-result-type="COMPLETED">完了</button>
-        <button type="button" class="normal-btn frameless" data-action="report-work-result" data-result-type="DELIVERY_FAILED">搬入不可</button>
-        <button type="button" class="normal-btn frameless" data-action="report-work-result" data-result-type="POSTPONED">日延</button>
+        <button th:each="type : ${T(com.kyouseipro.neo.common.enums.code.WorkResultType).values()}" th:if="${type.reportable}"
+                type="button" class="normal-btn frameless" data-action="report-work-result"
+                th:attr="data-result-type=${type.name()}" th:text="${type.label}"></button>
     </div>
 </th:block>

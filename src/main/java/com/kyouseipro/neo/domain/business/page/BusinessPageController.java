@@ -48,12 +48,14 @@ public class BusinessPageController {
     @ResponseBody
     public Map<String, Object> initOrder(Authentication authentication) {
         Integer loginOfficeId = ownOfficeContextService.getOfficeId(authentication);
+        var common=new java.util.LinkedHashMap<String,Object>(com.kyouseipro.neo.domain.business.order.query.OrderEnumCache.common());
+        common.put("state",EnumUtil.toMap(State.class));
         return Map.of(
-            "common", Map.of(
-                "state", EnumUtil.toMap(State.class)
-            ),
+            "common", common,
             "page", Map.of(
                 "categoryComboList", EnumUtil.toCombo(OrderCategory.class),
+                "dispatchCategoryComboList", EnumUtil.toCombo(com.kyouseipro.neo.common.enums.code.DispatchCategory.class),
+                "orderStatusComboList", EnumUtil.toNameCombo(com.kyouseipro.neo.common.enums.code.OrderStatusFilter.class),
                 "arrivalStateComboList", EnumUtil.toCombo(ArrivalState.class),
                 "clientComboList", companyService.findComboByCategory(ClientCategory.SHIPPER.getCode()),
                 "officeComboList", officeService.findComboClientAll(),

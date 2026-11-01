@@ -6,7 +6,7 @@ import { formatDate } from "../../util/time.js";
 import { orderHistoryChanges } from "./orderHistoryChanges.js";
 
 const eventLabels = {
-    ORDER_CREATED: "受注を登録", ORDER_SAVED: "受注を保存",
+    ABSENT: "訪問時に不在", ORDER_CREATED: "受注を登録", ORDER_SAVED: "受注を保存",
     DISPATCH_CREATED: "配車を登録", DISPATCH_MOVED: "配車を移動",
     DISPATCH_REMOVED: "配車を解除", DISPATCH_RESET: "配車を一括解除",
     DISPATCH_REORDERED: "訪問順を保存", WORK_COMPLETED: "作業完了を報告",

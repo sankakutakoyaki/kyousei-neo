@@ -11,7 +11,7 @@
     }
     &>div:nth-of-type(2) {
         display: grid;
-        grid-template-columns: auto minmax(auto, 1fr) 1fr;
+        grid-template-columns: auto auto minmax(0, 1fr) auto;
         column-gap: .5rem;
         margin-left: 1rem;
     }
@@ -59,7 +59,18 @@
 }
 
 :is(#table-01, #table-header-01) tr {
-    grid-template-columns: 3rem 12rem 10rem 25rem minmax(12rem, 1fr) 14rem 2rem;
+    grid-template-columns: 3rem 9rem 9rem 16rem minmax(12rem, 1fr) 14rem 12rem 2rem;
+}
+
+/* 明細と同じスクロールバー用の余白をヘッダーにも確保する。 */
+@media screen and (min-width: 561px) {
+    .order-main-table #table-header-01 {
+        overflow: hidden;
+        scrollbar-gutter: stable;
+    }
+    .order-main-table .normal-table.has-scrollbar #table-header-01 tr {
+        padding-right: 2rem;
+    }
 }
 
 :is(#table-02, #table-header-02) tr {
@@ -439,4 +450,13 @@ main[data-page$="/productPage.js"] .arrival-status-row > [data-action="arrival-i
 @media screen and (max-width: 560px) {
     #table-01 td[data-field="workResult"] { order: 3; }
     #table-01 td[data-field="workResult"]::before { content: "作業結果（訪問日当日）"; }
+}
+
+#order-photo-gallery, #order-edit-photos { min-height: 0; overflow: hidden; }
+
+.order-assignees-detail { grid-column: 1 / -1; }
+.order-assignees-detail > span { white-space: normal; overflow-wrap: anywhere; }
+@media screen and (max-width: 560px) {
+    #table-01 td[data-field="assignedEmployeeNames"] { order: 3; }
+    #table-01 td[data-field="assignedEmployeeNames"]::before { content: "配送・工事担当者"; }
 }

@@ -1,3 +1,6 @@
+import {installOrderEnumCache} from './fixtures/orderEnumCache.mjs';
+import {orderEnumLabel,workResultLabel,orderStatusLabel,photoCategoryLabel,isSimpleWorkResult} from '../../main/resources/static/js/components/order/orderEnums.js';
+installOrderEnumCache();
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -16,7 +19,7 @@ function harness({snapshot={},post=async()=>({})}={}) {
     const root=new Element(), nodes=new Map(), calls=[];
     root.querySelector=key=>{if(!nodes.has(key))nodes.set(key,new Element());return nodes.get(key);};
     let serial=0,saved=0;
-    const context=vm.createContext({crypto:{randomUUID:()=>`request-${++serial}`},
+    const context=vm.createContext({workResultLabel,isSimpleWorkResult,crypto:{randomUUID:()=>`request-${++serial}`},
         apiFetch:async(url,options)=>{calls.push({url,options});return options.method==='GET'?{data:{assignmentVersion:3,resultVersion:null,workDate:'2026-10-31',...snapshot}}:post(url,options);}});
     vm.runInContext(code+'\nglobalThis.create=(root,cb)=>new WorkResultDialog(root,cb);',context);
     return {root,dialog:context.create(root,async()=>saved++),calls,get saved(){return saved;}};
@@ -68,4 +71,12 @@ test('initial completion shows confirmation only and correction keeps reason vis
     assert.equal(c.dialog.reasonField.hidden,false);
     assert.equal(c.dialog.confirmation.hidden,true);
     assert.equal(c.dialog.reason.required,true);
+});
+
+test('absence is a simple confirmation and completion after absence needs no correction reason',async()=>{
+    const h=harness();await h.dialog.open(100,12,'ABSENT');
+    assert.equal(h.dialog.reason.required,false);assert.match(h.dialog.submit.textContent,/不在/);await h.dialog.save();
+    assert.equal(h.calls[1].options.data.resultType,'ABSENT');assert.equal('reportedAt' in h.calls[1].options.data,false);
+    const c=harness({snapshot:{workResultId:9,resultVersion:1,resultType:'ABSENT'}});
+    await c.dialog.open(100,12,'COMPLETED');assert.equal(c.dialog.reason.required,false);assert.equal(c.dialog.typeField.hidden,true);
 });

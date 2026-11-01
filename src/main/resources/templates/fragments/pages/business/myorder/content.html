@@ -36,6 +36,7 @@
                             <li class="tab-menu-item is-active" data-action="tab" data-group="myorder-detail-tabs" data-tab="myorder-basic">基本</li>
                             <li class="tab-menu-item" data-action="tab" data-group="myorder-detail-tabs" data-tab="myorder-items">商品</li>
                             <li class="tab-menu-item" data-action="tab" data-group="myorder-detail-tabs" data-tab="myorder-works">作業</li>
+                            <li class="tab-menu-item" data-action="tab" data-group="myorder-detail-tabs" data-tab="myorder-photos">写真・添付</li>
                         </ul>
                         <div class="tab-panel is-show" id="myorder-basic" data-tab-content="myorder-detail-tabs">
                             <!-- お客様名 -->
@@ -105,6 +106,7 @@
                         </div>
                         <!-- 商品 -->
                         <div class="tab-panel" id="myorder-items" data-tab-content="myorder-detail-tabs"> <div id="myorder-item-list" class="myorder-detail-list"></div></div>
+                        <div class="tab-panel" id="myorder-photos" data-tab-content="myorder-detail-tabs"><th:block th:replace="~{fragments/components/orderPhotos :: panel(true)}"></th:block></div>
                         <!-- 作業 -->
                         <div class="tab-panel" id="myorder-works" data-tab-content="myorder-detail-tabs"><div id="myorder-work-list" class="myorder-detail-list"></div></div>
                     </div>
@@ -121,9 +123,7 @@
                 <p>同じ伝票・作業日の全班に反映します。</p>
                 <p data-result-confirmation hidden>作業を完了として報告しますか？</p>
                 <label data-result-type-field>作業結果<select class="normal-input" data-result-type required>
-                    <option value="COMPLETED">完了</option>
-                    <option value="DELIVERY_FAILED">搬入不可</option>
-                    <option value="POSTPONED">日延</option>
+                    <option th:each="type : ${T(com.kyouseipro.neo.common.enums.code.WorkResultType).values()}" th:if="${type.reportable}" th:value="${type.name()}" th:text="${type.label}"></option>
                 </select></label>
                 <label data-result-reason-field>理由・備考（訂正時は訂正理由）<textarea class="normal-input" data-result-reason maxlength="1000" rows="3"></textarea></label>
                 <p data-result-hint>希望日などを聞けた場合は理由・備考に記入してください。訪問日・再配車は事務側で調整します。</p>

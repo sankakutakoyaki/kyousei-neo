@@ -9,6 +9,9 @@ import { createOrderItemFormListController } from "./order/orderItemList.js";
 import { createOrderWorkFormListController } from "./order/orderWorkList.js";
 import { DialogService } from "../../core/ui/dialog/DialogService.js";
 import { OrderHistoryList } from "../../components/order/OrderHistoryList.js";
+import { orderAssigneesText } from "../../components/order/orderAssignees.js";
+import { OrderPhotoPanel } from "../../components/order/OrderPhotoPanel.js";
+import { OrderOutcomeDialog } from "../../components/order/OrderOutcomeDialog.js";
 import { AttachmentManager } from "../../components/attachment/AttachmentManager.js";
 
 export function createOrderPage(config){
@@ -53,6 +56,22 @@ export function createOrderPage(config){
                 const form = controller.getActiveForm();
                 if(!form) return;
                 const formEl = document.getElementById(form.formId);
+            const assignees=formEl.querySelector("[data-order-assignees]");
+            if(assignees)assignees.textContent=orderAssigneesText(data);
+            const photoRoot=formEl.querySelector("[data-order-photo-panel]");
+            if(photoRoot){photos ??= new OrderPhotoPanel(photoRoot);await photos.open(data?.orderId,data?.visitDate || data?.lastWorkDate || "");}
+            if(!canApply())return;
+            const outcomeButton=formEl.querySelector("[data-order-outcome-open]");
+            if(outcomeButton){
+                outcomeButton.hidden=!data?.orderId || isMobileReadOnly(controller.key);
+                if(!outcomeDialog){
+                    outcomeDialog=new OrderOutcomeDialog(document.querySelector("[data-order-outcome-dialog]"),async()=>{DialogService.close(form.formId);await controller.refresh();});
+                    outcomeButton.addEventListener("click",()=>{
+                        if(form.hasChanges() || itemList.hasChanges() || workList.hasChanges()){DialogService.info("編集中の内容を保存するか、受注詳細を開き直してから操作してください。");return;}
+                        void outcomeDialog.open(form.currentEntity);
+                    });
+                }
+            }
                 if(!formEl || !form.itemList) return;
                 addOrderItem(form, formEl, form.itemList);
             },
@@ -72,6 +91,8 @@ const createOrderForm = (controller, options = {}) => {
     const workList = createOrderWorkFormListController();
     let attachmentManager;
     let historyList;
+    let photos;
+    let outcomeDialog;
 
     const form = new FormController({
         controller,
@@ -135,6 +156,7 @@ const createOrderForm = (controller, options = {}) => {
         },
         onClose: () => {
             historyList?.close();
+            photos?.close();
             form.finishOcrReview?.();
         },
         afterSave: async (id) => {

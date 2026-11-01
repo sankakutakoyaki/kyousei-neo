@@ -29,12 +29,18 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/my-orders")
-@PreAuthorize("hasAuthority('APPROLE_user')")
+@PreAuthorize("isAuthenticated()")
 public class MyOrderController {
 
     private final SqlRepository repository;
     private final OwnOfficeContextService ownOfficeContextService;
     private final WorkResultService workResults;
+
+    @GetMapping("/init/cache")
+    public Map<String,Object> initCache() {
+        return Map.of("common",com.kyouseipro.neo.domain.business.order.query.OrderEnumCache.common(),
+            "page",com.kyouseipro.neo.domain.business.order.query.OrderEnumCache.page());
+    }
 
     @GetMapping
     public List<Map<String, Object>> find(
@@ -58,7 +64,7 @@ public class MyOrderController {
                 dc.dispatch_category,
                 da.dispatch_assignment_id,
                 da.visit_order,
-                wr.result_type,
+                wr.result_type,CONVERT(char(19),wr.update_date,120) AS outcome_reported_at,
                 o.order_id,
                 o.own_office_id,
                 o.request_number,
@@ -77,7 +83,7 @@ public class MyOrderController {
             JOIN orders o
                 ON o.order_id = da.order_id
             LEFT JOIN dbo.order_work_results wr ON wr.dispatch_assignment_id=da.dispatch_assignment_id AND wr.work_date=dc.work_date AND wr.state=0
-            WHERE dcm.employee_id = ?
+            WHERE o.order_status <> 'CANCELLED' AND dcm.employee_id = ?
               AND dcm.state = ?
               AND dc.work_date = ?
               AND o.state <> ?

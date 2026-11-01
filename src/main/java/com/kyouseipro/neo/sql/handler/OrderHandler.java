@@ -134,6 +134,14 @@ public class OrderHandler implements QueryHandler {
             }
         }
 
+        if (!isNewOrder && "orders".equals(def.getTableMeta().tableName()) && orderParams.get("visitDate") != null && !orderParams.get("visitDate").toString().isBlank()) {
+            var statusRows=sqlRepository.selectMap("SELECT order_status,visit_date FROM dbo.orders WHERE order_id=?",List.of(orderId));
+            if(!statusRows.isEmpty()) {
+                var current=statusRows.get(0);
+                if("NEEDS_ACTION".equals(current.get("orderStatus")) || ("ABSENT".equals(current.get("orderStatus"))
+                    && !java.util.Objects.toString(current.get("visitDate"),"").equals(orderParams.get("visitDate").toString())))orderParams.put("orderStatus","ACTIVE");
+            }
+        }
         if (isNewOrder) {
             // 新規受注
             orderId = baseRepository.insert(def.getTableMeta(), orderParams, editor);

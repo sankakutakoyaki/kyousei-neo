@@ -31,6 +31,7 @@ public class DispatchOrderQuery {
                 MAX(result_summary.completed_count) AS completed_count,
                 MAX(result_summary.failed_count) AS failed_count,
                 MAX(result_summary.postponed_count) AS postponed_count,
+                MAX(result_summary.absent_count) AS absent_count,
                 MAX(result_summary.unreported_count) AS unreported_count
 
             FROM orders o
@@ -38,9 +39,11 @@ public class DispatchOrderQuery {
             LEFT JOIN dispatch_assignments da
                 ON da.order_id = o.order_id
                 AND da.state = ?
+                AND EXISTS (SELECT 1 FROM daily_crews assigned_crew WHERE assigned_crew.daily_crew_id=da.daily_crew_id
+                    AND assigned_crew.work_date=o.visit_date AND assigned_crew.state=0)
 
             %s
-            WHERE o.visit_date = ?
+            WHERE o.order_status <> 'CANCELLED' AND o.visit_date = ?
             AND o.own_office_id = ?
             AND o.dispatch_category = ?
             AND o.state = ?

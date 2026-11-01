@@ -1,5 +1,6 @@
 "use strict"
 
+import { OrderPhotoPanel } from "../../../components/order/OrderPhotoPanel.js";
 import { initCommon } from "../../../bootstrap/initPage.js";
 import { initPageCache } from "../../../bootstrap/initPageCache.js";
 import { createOrderListColumns } from "./columns.js";
@@ -22,6 +23,8 @@ export async function init() {
     // PDF取込
     initOrderPdfImport();
     initParentChildLink();    
+    const gallery = new OrderPhotoPanel(document.querySelector("#order-photo-gallery [data-order-photo-panel]"));
+    document.querySelector('[data-tab="order-photo-gallery"]').addEventListener("click",()=>void gallery.open());
 }
 
 export const orderListPage = () =>
@@ -57,6 +60,7 @@ export const orderListPage = () =>
                 compState: APP.cache.common.state.COMPLETE,
                 ownOfficeId: document.getElementById("order-own-office")?.value || null,
                 category: cate,
+                orderStatusFilter: document.getElementById("order-status-filter")?.value || "INCOMPLETE",
                 primeConstractorId: primeConstractorId,
                 primeConstractorOfficeId: primeConstractorOfficeId,
                 dateFrom: from,

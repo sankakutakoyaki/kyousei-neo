@@ -49,6 +49,15 @@
                     'linkDefault': 'empty'
                 }}
             )}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text':'対応状況',
+                    'id':'order-status-filter',
+                    'name':'order-status-filter',
+                    'combo':'orderStatusComboList',
+                    'key':'order-status-filter'
+                }}
+            )}"></th:block>
         </div>
         <div>
             <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${

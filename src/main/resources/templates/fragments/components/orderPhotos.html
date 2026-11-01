@@ -1,0 +1,41 @@
+<th:block th:fragment="panel(upload)">
+    <section class="order-photo-panel" data-order-photo-panel>
+        <div class="order-photo-filters">
+            <label>写真分類<select class="normal-input" data-photo-category data-photo-input data-submit="none">
+                <option value="">すべて</option><option th:each="category : ${T(com.kyouseipro.neo.common.enums.code.PhotoCategory).values()}" th:value="${category.name()}" th:text="${category.label}"></option>
+            </select></label>
+            <label data-photo-global>受注ID<input class="normal-input" type="number" min="1" data-photo-order data-photo-input data-submit="none"></label>
+            <label>対象訪問日・開始<input class="normal-input" type="date" data-photo-from data-photo-input data-submit="none"></label>
+            <label>終了<input class="normal-input" type="date" data-photo-to data-photo-input data-submit="none"></label>
+            <button type="button" class="normal-btn" data-photo-search>検索</button>
+        </div>
+        <div th:if="${upload}" class="order-photo-upload" data-photo-upload>
+            <label>保存先の対象訪問日<input type="date" class="normal-input" data-photo-day data-photo-input data-submit="none"></label>
+            <button type="button" class="normal-btn frameless" data-photo-shoot>撮影</button>
+            <button type="button" class="normal-btn frameless" data-photo-select>写真を選択</button>
+            <button type="button" class="normal-btn" data-photo-retry hidden>未保存の写真を再送</button>
+            <button type="button" class="normal-btn frameless" data-photo-discard hidden>未保存の写真を破棄</button>
+            <p>写真分類と対象訪問日を指定してから撮影・選択してください。保存完了の表示をご確認ください。</p>
+            <input type="file" accept="image/jpeg,image/png,image/gif" multiple hidden data-photo-files data-photo-input data-submit="none">
+            <input type="file" accept="image/jpeg,image/png" capture="environment" hidden data-photo-camera data-photo-input data-submit="none">
+        </div>
+        <p data-photo-status role="status" aria-live="polite"></p>
+        <div class="order-photo-grid" data-photo-grid></div>
+        <button type="button" class="normal-btn" data-photo-more hidden>続きを表示</button>
+        <template data-photo-card>
+            <article class="order-photo-card">
+                <button type="button" class="order-photo-preview"><img loading="lazy" alt=""></button>
+                <strong data-photo-name></strong><span data-photo-context></span><small data-photo-meta></small>
+            </article>
+        </template>
+        <dialog class="order-photo-viewer" data-photo-viewer aria-label="写真を拡大">
+            <div class="order-photo-viewer-toolbar">
+                <button type="button" class="normal-btn frameless" data-photo-prev>前へ</button>
+                <button type="button" class="normal-btn frameless" data-photo-next>次へ</button>
+                <a class="normal-btn" data-photo-original target="_blank" rel="noopener">原本を開く</a>
+                <button type="button" class="normal-btn frameless" data-photo-close>閉じる</button>
+            </div>
+            <img alt="" data-photo-large><p data-photo-caption></p>
+        </dialog>
+    </section>
+</th:block>

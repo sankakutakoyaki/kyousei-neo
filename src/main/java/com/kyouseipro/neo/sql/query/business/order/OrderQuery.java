@@ -8,7 +8,7 @@ import com.kyouseipro.neo.sql.query.operations.dispatch.WorkResultSummarySql;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 
 public class OrderQuery {
-    private static final String ACCESS_CONDITION = """
+    public static final String ACCESS_CONDITION = """
         AND (
             ? = 'ALL'
             OR (
@@ -33,7 +33,7 @@ public class OrderQuery {
             )
         )
         """;
-    private static final List<String> ACCESS_PARAMS = List.of(
+    public static final List<String> ACCESS_PARAMS = List.of(
         "accessScope",
         "accessScope",
         "accessOfficeId",
@@ -57,11 +57,15 @@ public class OrderQuery {
                 co.name AS prime_constractor_office_name,
                 s.full_name AS staff_name,
                 o.own_office_id,
+                order_people.assigned_employee_names,order_crews.assigned_crew_count,
+                CONVERT(char(10),COALESCE(o.visit_date,o.last_work_date),23) AS assigned_work_date,
                 o.version,
                 o.state,
+                result_filter.filter_status AS order_status,o.outcome_type,o.outcome_reason,o.cancel_reason,o.last_work_date,CONVERT(char(19),o.outcome_reported_at,120) AS outcome_reported_at,
                 result_summary.completed_count,
                 result_summary.failed_count,
                 result_summary.postponed_count,
+                result_summary.absent_count,
                 result_summary.unreported_count
             FROM orders o
             LEFT OUTER JOIN companies c
@@ -75,16 +79,24 @@ public class OrderQuery {
                 AND s.state = ?
             %s
             WHERE (o.state = ? OR o.state = ?)
+            AND (COALESCE(?, 'INCOMPLETE') = 'ALL' OR result_filter.filter_status = ? OR (COALESCE(?, 'INCOMPLETE') IN ('INCOMPLETE','NORMAL') AND result_filter.filter_status NOT IN ('COMPLETED','CANCELLED')))
             AND (
                 (o.%s >= ? AND o.%s < ?)
-                OR o.%s IS NULL
+                OR o.%s IS NULL OR o.order_status = 'NEEDS_ACTION'
             )
             AND (
                 ? IS NULL
                 OR o.own_office_id = ?
                 OR (? = 0 AND o.own_office_id IS NULL)
             )
-            """.formatted(WorkResultSummarySql.JOIN, column, column, column)
+            """.formatted(WorkResultSummarySql.JOIN + OrderAssigneeSql.JOIN + """
+            CROSS APPLY (SELECT CASE
+                WHEN o.order_status='CANCELLED' THEN 'CANCELLED'
+                WHEN o.order_status='COMPLETED' OR o.state=2 OR (o.order_status='ACTIVE'
+                    AND result_summary.completed_count>0 AND result_summary.failed_count=0
+                    AND result_summary.postponed_count=0 AND result_summary.unreported_count=0 AND result_summary.absent_count=0) THEN 'COMPLETED'
+                ELSE o.order_status END AS filter_status) result_filter
+            """, column, column, column)
             + ACCESS_CONDITION;
 
         List<String> params = new java.util.ArrayList<>(List.of(
@@ -93,6 +105,7 @@ public class OrderQuery {
             "state",
             "state",
             "compState",
+            "orderStatusFilter", "orderStatusFilter", "orderStatusFilter",
             "dateFrom",
             "dateTo",
             "ownOfficeId",
@@ -121,9 +134,14 @@ public class OrderQuery {
                 o.prime_constractor_office_id,
                 o.staff_id,
                 o.own_office_id,
+                order_people.assigned_employee_names,order_crews.assigned_crew_count,
+                CONVERT(char(10),COALESCE(o.visit_date,o.last_work_date),23) AS assigned_work_date,
+                o.dispatch_category,
                 o.version,
-                o.state
+                o.state,
+                o.order_status,o.outcome_type,o.outcome_reason,o.cancel_reason,o.last_work_date,CONVERT(char(19),o.outcome_reported_at,120) AS outcome_reported_at
             FROM orders o
+            """ + OrderAssigneeSql.JOIN + """
             WHERE o.state = ?
             AND o.order_id = ?
             """ + ACCESS_CONDITION;
@@ -160,6 +178,12 @@ public class OrderQuery {
                 previous.visit_time AS before_visit_time, current_log.visit_time AS after_visit_time,
                 previous.contact_information AS before_contact_information, current_log.contact_information AS after_contact_information,
                 previous.remarks AS before_remarks, current_log.remarks AS after_remarks,
+                previous.order_status AS before_order_status,current_log.order_status AS after_order_status,
+                previous.outcome_type AS before_outcome_type,current_log.outcome_type AS after_outcome_type,
+                previous.outcome_reason AS before_outcome_reason,current_log.outcome_reason AS after_outcome_reason,
+                previous.cancel_reason AS before_cancel_reason,current_log.cancel_reason AS after_cancel_reason,
+                previous.dispatch_category AS before_dispatch_category,current_log.dispatch_category AS after_dispatch_category,
+                previous.outcome_reported_at AS before_outcome_reported_at,current_log.outcome_reported_at AS after_outcome_reported_at,
                 dispatch_before.snapshot_count AS before_dispatch_count,
                 dispatch_after.snapshot_count AS after_dispatch_count,
                 dispatch_before.daily_crew_id AS before_daily_crew_id,
@@ -174,14 +198,14 @@ public class OrderQuery {
             FROM history_page h
             OUTER APPLY (
                 SELECT TOP (1) COUNT(*) OVER () AS snapshot_count,
-                    request_number, title, postal_code, full_address, CONVERT(char(10), visit_date, 23) AS visit_date, visit_time, contact_information, remarks
+                    request_number, title, postal_code, full_address, CONVERT(char(10), visit_date, 23) AS visit_date, visit_time, contact_information, remarks, dispatch_category, order_status, outcome_type, outcome_reason, cancel_reason, CONVERT(char(19),outcome_reported_at,120) AS outcome_reported_at
                 FROM dbo.orders_log
                 WHERE order_id = h.order_id AND version = h.order_version - 1
                     AND h.dispatch_assignment_id IS NULL AND h.work_result_id IS NULL
             ) previous
             OUTER APPLY (
                 SELECT TOP (1) COUNT(*) OVER () AS snapshot_count,
-                    request_number, title, postal_code, full_address, CONVERT(char(10), visit_date, 23) AS visit_date, visit_time, contact_information, remarks
+                    request_number, title, postal_code, full_address, CONVERT(char(10), visit_date, 23) AS visit_date, visit_time, contact_information, remarks, dispatch_category, order_status, outcome_type, outcome_reason, cancel_reason, CONVERT(char(19),outcome_reported_at,120) AS outcome_reported_at
                 FROM dbo.orders_log
                 WHERE order_id = h.order_id AND version = h.order_version
                     AND h.dispatch_assignment_id IS NULL AND h.work_result_id IS NULL

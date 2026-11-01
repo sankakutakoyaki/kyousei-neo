@@ -27,7 +27,7 @@ public class DispatchAssignmentQuery {
                 o.contact_information,
                 o.own_office_id,
                 wr.result_type,
-                wr.reason AS result_reason
+                wr.reason AS result_reason,CONVERT(char(19),wr.update_date,120) AS result_reported_at
 
             FROM dispatch_assignments da
 
@@ -41,7 +41,7 @@ public class DispatchAssignmentQuery {
                 ON wr.dispatch_assignment_id = da.dispatch_assignment_id
                 AND wr.work_date = result_crew.work_date AND wr.state = 0
 
-            WHERE da.state = ?
+            WHERE o.order_status <> 'CANCELLED' AND da.state = ?
               AND da.daily_crew_id = ?
 
             ORDER BY

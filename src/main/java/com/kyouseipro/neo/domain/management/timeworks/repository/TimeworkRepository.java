@@ -137,11 +137,8 @@ public class TimeworkRepository {
                 ORDER BY timework_edit_id DESC
             ) te
             WHERE t.state = ?
-              AND (
-                  CAST(t.start_time AS DATE) = ?
-                  OR CAST(t.end_time AS DATE) = ?
-                  OR (t.end_time IS NULL AND t.start_time >= DATEADD(HOUR, -24, SYSDATETIME()))
-              )
+              AND t.start_time >= ?
+              AND t.start_time < ?
             """);
         if (officeId != null) sql.append(" AND e.office_id = ?");
         if (employeeId != null) sql.append(" AND t.employee_id = ?");
@@ -153,8 +150,8 @@ public class TimeworkRepository {
             ps.setInt(index++, State.INITIAL.getCode());
             ps.setInt(index++, State.INITIAL.getCode());
             ps.setInt(index++, State.INITIAL.getCode());
-            ps.setObject(index++, workDate);
-            ps.setObject(index++, workDate);
+            ps.setTimestamp(index++, Timestamp.valueOf(workDate.atStartOfDay()));
+            ps.setTimestamp(index++, Timestamp.valueOf(workDate.plusDays(1).atStartOfDay()));
             if (officeId != null) ps.setLong(index++, officeId);
             if (employeeId != null) ps.setLong(index, employeeId);
         }, rs -> {

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MyOrderPageController {
 
     @GetMapping("/my-orders")
-    @PreAuthorize("hasAuthority('APPROLE_user')")
+    @PreAuthorize("isAuthenticated()")
     public String getMyOrders() {
         return "fragments/pages/business/myorder/content :: content";
     }

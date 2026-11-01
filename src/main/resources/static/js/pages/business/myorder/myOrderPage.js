@@ -3,12 +3,17 @@
 import { initCommon } from "../../../bootstrap/initPage.js";
 import { registerController } from "../../../application/controllerRegistry.js";
 import { getToday } from "../../../util/time.js";
-import { WorkResultDialog, workResultLabels } from "../../../components/order/WorkResultDialog.js";
+import { OrderPhotoPanel } from "../../../components/order/OrderPhotoPanel.js";
+import { absenceLabel } from "../../../components/order/workResultSummary.js";
+import { workResultLabel, isReportableWorkResult } from "../../../components/order/orderEnums.js";
+import { initPageCache } from "../../../bootstrap/initPageCache.js";
+import { WorkResultDialog } from "../../../components/order/WorkResultDialog.js";
 import { DialogService } from "../../../core/ui/dialog/DialogService.js";
 import { FormController } from "../../../application/FormController.js";
 
 export async function init() {
     await initCommon();
+    await initPageCache("/api/my-orders/init/cache");
 
     const controller = new MyOrderPageController();
     registerController("myOrders", controller);
@@ -32,6 +37,7 @@ class MyOrderPageController {
             submitText: "保存",
             cancelText: "閉じる"
         });
+        this.photos = new OrderPhotoPanel(document.querySelector("#myorder-photos [data-order-photo-panel]"));
         this.assignments = [];
         this.resultDialog = new WorkResultDialog(document.getElementById("myorder-result-dialog"), async () => {
             DialogService.close("myorder-form");
@@ -118,8 +124,8 @@ class MyOrderPageController {
     }
     render(orders) {
         this.list.replaceChildren();
-        const pending = orders.filter(order => !workResultLabels[order.resultType]).length;
-        this.count.textContent = `${orders.length}件（未報告 ${pending}件）`;
+        const pending = orders.filter(order => !isReportableWorkResult(order.resultType)).length;
+        this.count.textContent = `${orders.length}件（${workResultLabel("UNREPORTED")} ${pending}件）`;
         this.assignments = orders;
         this.orderIds = orders.map(order => order.orderId);
 
@@ -173,8 +179,8 @@ class MyOrderPageController {
 
         const result = document.createElement("span");
         result.className = "myorder-result-badge";
-        result.dataset.resultType = Object.hasOwn(workResultLabels, order.resultType) ? order.resultType : "UNREPORTED";
-        result.textContent = workResultLabels[order.resultType] ?? "未報告";
+        result.dataset.resultType = isReportableWorkResult(order.resultType) ? order.resultType : "UNREPORTED";
+        result.textContent = order.resultType === "ABSENT" ? absenceLabel(order.outcomeReportedAt) : workResultLabel(order.resultType || "UNREPORTED");
         top.append(orderNumber, result, visitTime);
 
         const title = document.createElement("div");
@@ -240,10 +246,11 @@ class MyOrderPageController {
             } else {
                 this.detailForm.updateData(order);
             }
+            await this.photos.open(orderId,assignment.workDate || order.visitDate || this.dateInput.value);
             this.currentAssignment = assignment;
             this.currentIndex = this.assignments.findIndex(row => Number(row.dispatchAssignmentId) === Number(assignmentId));
             const status = document.querySelector("[data-myorder-result-status]");
-            if (status) status.textContent = `作業結果：${workResultLabels[assignment.resultType] ?? "未報告"}`;
+            if (status) status.textContent = `作業結果：${workResultLabel(assignment.resultType || "UNREPORTED")}`;
         } catch (error) {
             console.error(error);
             alert(error.message || "担当伝票を取得できませんでした。");

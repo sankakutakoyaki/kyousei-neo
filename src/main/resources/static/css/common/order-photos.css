@@ -1,0 +1,31 @@
+@charset "UTF-8";
+.order-photo-panel { display: grid; grid-template-rows: auto auto auto minmax(0, 1fr) auto; min-height: 0; gap: .75rem; height: 100%; }
+.order-photo-filters, .order-photo-upload { display: flex; flex-wrap: wrap; align-items: end; gap: .5rem; }
+.order-photo-filters label, .order-photo-upload label { display: grid; gap: .25rem; }
+.order-photo-upload p { width: 100%; margin: 0; }
+.order-photo-panel [hidden] { display: none !important; }
+.order-photo-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(14rem,1fr)); align-content: start; gap: 1rem; min-height: 0; overflow: auto; }
+.order-photo-card { display: grid; gap: .4rem; align-content: start; padding: .5rem; border: .0625rem solid #ddd; border-radius: .5rem; overflow-wrap: anywhere; }
+.order-photo-preview { border: 0; background: #f2f4f6; padding: 0; width: 100%; height: 12rem; cursor: pointer; }
+.order-photo-preview img { width: 100%; height: 100%; object-fit: contain; }
+.order-photo-viewer { padding: 1rem; max-width: 95vw; max-height: 95dvh; border: 0; border-radius: .5rem; }
+.order-photo-viewer::backdrop { background: rgb(0 0 0 / .7); }
+.order-photo-viewer-toolbar { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .5rem; }
+.order-photo-viewer > img { display: block; max-width: 85vw; max-height: 75dvh; object-fit: contain; margin: auto; }
+.order-outcome-dialog { width: min(38rem,95vw); max-height: 90dvh; padding: 1.5rem; border: 0; border-radius: .5rem; }
+.order-outcome-dialog::backdrop { background: rgb(0 0 0 / .45); }
+.order-outcome-dialog form, .order-outcome-dialog label { display: grid; gap: .75rem; }
+.order-outcome-dialog [hidden] { display: none !important; }
+.order-outcome-dialog footer { display: flex; justify-content: end; gap: .5rem; }
+.order-outcome-dialog :is(input,select,textarea) { width: 100%; }
+#form-footer-01 [data-order-outcome-open] { margin-right: auto; }
+@media (max-width:560px) { .order-photo-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .order-photo-preview { height: 10rem; } }
+
+.order-photo-panel > .order-photo-filters { grid-row: 1; }
+.order-photo-panel > .order-photo-upload { grid-row: 2; }
+.order-photo-panel > [data-photo-status] { grid-row: 3; margin: 0; }
+.order-photo-panel > .order-photo-grid { grid-row: 4; }
+.order-photo-panel > [data-photo-more] { grid-row: 5; }
+
+.readonly-mode [data-order-photo-panel] .normal-input { border: .0625rem solid #bbb; border-radius: .25rem; background: white; padding: .5rem; min-height: 2.75rem; font-size: 1rem; font-weight: normal; }
+.readonly-mode [data-order-photo-panel] select { appearance: auto; }

@@ -20,7 +20,7 @@ class WorkResultServiceTest {
     final BaseSqlRepository base=mock(BaseSqlRepository.class);
     final OwnOfficeContextService context=mock(OwnOfficeContextService.class);
     final OrderHistoryRepository history=mock(OrderHistoryRepository.class);
-    final WorkResultService service=new WorkResultService(sql,base,context,history);
+    final WorkResultService service=new WorkResultService(sql,base,context,history,mock(com.kyouseipro.neo.domain.business.order.outcome.OrderOutcomeService.class),mock(com.kyouseipro.neo.security.OrderScopeGuard.class));
     final UsernamePasswordAuthenticationToken auth=new UsernamePasswordAuthenticationToken(
         "employee","unused",List.of(new SimpleGrantedAuthority("APPROLE_user")));
     Map<String,Object> row;
@@ -49,6 +49,11 @@ class WorkResultServiceTest {
         sequence.verify(base).insert(eq(WorkResultService.TABLE),argThat(p -> p.get("resultEmployeeId").equals(42L)
             && p.get("dispatchAssignmentId").equals(12L) && !p.containsKey("orderId")),eq("employee"));
         sequence.verify(history).recordWorkResult(90L,false,"employee");
+    }
+    @Test void officeSharedAccountKeepsActualEditorWithoutInventingEmployee() {
+        when(context.getEmployeeId(auth)).thenReturn(null);
+        service.saveOffice(auth,100,12,req("COMPLETED","",null,null),3);
+        verify(base).insert(eq(WorkResultService.TABLE),argThat(p->p.containsKey("resultEmployeeId") && p.get("resultEmployeeId")==null),eq("employee"));
     }
     @Test void completionReflectsSameDayPeersWithCommonLogsAndOneBusinessHistory() {
         peers=List.of(Map.of("dispatchAssignmentId",12L,"dailyCrewId",8L),
@@ -79,6 +84,13 @@ class WorkResultServiceTest {
         peers=List.of(Map.of("dispatchAssignmentId",13L,"dailyCrewId",99L));
         assertThrows(BusinessException.class,()->service.save(auth,100,12,req("COMPLETED","",null,null)));
         verifyNoInteractions(base,history);
+    }
+    @Test void repeatedAbsenceAndLaterCompletionAreNormalVisitsNotCorrections() {
+        row.put("workResultId",90L);row.put("resultVersion",1);row.put("resultType","ABSENT");
+        service.save(auth,100,12,req("ABSENT","",null,1));
+        service.save(auth,100,12,req("COMPLETED","",null,1));
+        verify(history,times(2)).recordWorkResult(90L,false,"employee");
+        verify(base,times(2)).update(eq(WorkResultService.TABLE),anyMap(),eq("employee"));
     }
     @Test void failureAndPostponementRequireReasonsAndValidateDate() {
         for(String type:List.of("DELIVERY_FAILED","POSTPONED"))

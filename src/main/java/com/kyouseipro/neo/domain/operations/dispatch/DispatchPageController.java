@@ -34,10 +34,10 @@ public class DispatchPageController {
     @ResponseBody
     public Map<String, Object> initDispatch(Authentication authentication) {
         Integer loginOfficeId = ownOfficeContextService.getOfficeId(authentication);
+        var common=new java.util.LinkedHashMap<String,Object>(com.kyouseipro.neo.domain.business.order.query.OrderEnumCache.common());
+        common.put("state",EnumUtil.toMap(State.class));
         return Map.of(
-            "common", Map.of(
-                "state", EnumUtil.toMap(State.class)
-            ),
+            "common", common,
             "page", Map.of(
                 "officeComboList", officeService.findComboByCategory(CompanyCategory.OWN.getCode()),
                 "dispatchCategoryComboList", EnumUtil.toCombo(DispatchCategory.class),

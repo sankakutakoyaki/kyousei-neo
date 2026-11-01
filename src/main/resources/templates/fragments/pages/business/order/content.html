@@ -2,6 +2,7 @@
     <div class="tab-area">
         <ul class="tab-menu">
             <li class="tab-menu-item is-active" data-action="tab" data-group="order-tabs" data-tab="tab-01">一覧</li>
+            <li class="tab-menu-item" data-action="tab" data-group="order-tabs" data-tab="order-photo-gallery">写真一覧</li>
         </ul>
         <div class="tab-panel is-show order-list-layout" id="tab-01" data-tab-content="order-tabs">
             <div class="table-area order-main-table" data-controller="orderList" data-sync-group="order">
@@ -14,14 +15,17 @@
                 <footer th:replace="~{fragments/table/footer :: datetimeFragment('footer-01')}"></footer>
             </div>
         </div>
+        <div class="tab-panel" id="order-photo-gallery" data-tab-content="order-tabs"><th:block th:replace="~{fragments/components/orderPhotos :: panel(false)}"></th:block></div>
     </div>
     <div id="form-dialog-area">
         <form id="form-01" class="form-dialog none" data-controller="orderList" data-sync-group="order" data-key="order-id" data-enterfocus="formー01">
-            <div class="dialog-main">
+            <div class="dialog-main" th:with="outcomeActions=~{fragments/pages/business/order/content :: outcomeActions}">
                 <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '編集'} })}"></header>
                 <section th:replace="~{fragments/pages/business/order/form :: form01Fragment()}"></section>
-                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01' } })}"></footer>
+                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ { 'footerId':'form-footer-01', 'leadingContent':outcomeActions } })}"></footer>
             </div>
         </form>
     </div>
+    <th:block th:replace="~{fragments/pages/business/order/outcomeDialog :: dialog}"></th:block>
 </main>
+<th:block th:fragment="outcomeActions"><button type="button" class="normal-btn frameless" data-order-outcome-open hidden>結果・キャンセル</button></th:block>

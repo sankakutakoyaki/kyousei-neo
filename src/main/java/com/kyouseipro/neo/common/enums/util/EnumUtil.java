@@ -35,4 +35,19 @@ public class EnumUtil {
                 BaseEnum::getCode
             ));
     }
+    /** 文字列で保存する既存の項目はEnum名を値とする。数値の既存APIは変更しない。 */
+    public static <E extends Enum<E> & BaseEnum> List<Map<String,String>> toNameCombo(Class<E> type) {
+        return Arrays.stream(type.getEnumConstants()).map(e->Map.of("value",e.name(),"label",e.getLabel())).toList();
+    }
+    public static <E extends Enum<E> & BaseEnum> Map<String,String> toNameLabels(Class<E> type) {
+        return Arrays.stream(type.getEnumConstants()).collect(Collectors.toMap(Enum::name,BaseEnum::getLabel));
+    }
+    public static <E extends Enum<E> & BaseEnum> Map<String,String> toCodeLabels(Class<E> type) {
+        return Arrays.stream(type.getEnumConstants()).collect(Collectors.toMap(e->Integer.toString(e.getCode()),BaseEnum::getLabel));
+    }
+    public static <E extends Enum<E> & BaseEnum> E byName(Class<E> type,String name) {
+        if(name==null)return null;
+        try{return Enum.valueOf(type,name);}catch(IllegalArgumentException e){return null;}
+    }
+
 }

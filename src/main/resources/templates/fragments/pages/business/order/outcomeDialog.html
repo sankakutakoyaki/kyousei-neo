@@ -1,0 +1,20 @@
+<th:block th:fragment="dialog">
+    <dialog class="order-outcome-dialog" data-order-outcome-dialog aria-labelledby="order-outcome-title">
+        <form method="dialog">
+            <header><strong id="order-outcome-title">受注の結果・キャンセル</strong></header>
+            <p data-outcome-summary></p>
+            <p>結果は同じ伝票・作業日の全班に反映します。搬入不可・日延は訪問日未定・要対応になります。</p>
+            <label>処理<select class="normal-input" data-outcome-type required>
+                <option th:each="type : ${T(com.kyouseipro.neo.common.enums.code.WorkResultType).values()}" th:if="${type.reportable}" th:value="${type.name()}" th:text="${type.label}"></option><option th:value="${T(com.kyouseipro.neo.common.enums.code.OrderStatus).CANCELLED.name()}" th:text="${T(com.kyouseipro.neo.common.enums.code.OrderStatus).CANCELLED.label}"></option>
+            </select></label>
+            <label data-outcome-day-field>対象作業日<input class="normal-input" type="date" data-outcome-day required></label>
+            <label data-outcome-cancel-field hidden>キャンセル理由<select class="normal-input" data-outcome-cancel>
+                <option value="">選択してください</option><option th:each="reason : ${T(com.kyouseipro.neo.common.enums.code.OrderCancelReason).values()}" th:value="${reason.name()}" th:text="${reason.label}"></option>
+            </select></label>
+            <label data-outcome-reason-field>理由・備考（訂正時は訂正理由）<textarea class="normal-input" rows="3" maxlength="1000" data-outcome-reason></textarea></label>
+            <p data-outcome-confirm>作業を完了として報告しますか？</p>
+            <p data-outcome-status role="status" aria-live="polite"></p>
+            <footer><button type="button" class="normal-btn frameless" data-outcome-close>戻る</button><button type="submit" class="normal-btn frameless">確定する</button></footer>
+        </form>
+    </dialog>
+</th:block>

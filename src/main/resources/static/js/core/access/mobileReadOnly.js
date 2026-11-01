@@ -19,9 +19,10 @@ export function isWriteRequest(url, method, data) {
     if (/^(GET|HEAD|OPTIONS)$/i.test(method)) return false;
     const path = String(url).split("?")[0];
     if (path === "/api/query") return !/(Detail|List|Csv|ListByItemModel|FindByJanCode)$/.test(data?.queryId ?? "");
-    return /^\/api\/(attachments|order|timeworks|my-orders)(\/|$)/.test(path);
+    return /^\/api\/(attachments|order|order-outcomes|order-photos|timeworks|my-orders)(\/|$)/.test(path);
 }
 export function assertMobileWriteAllowed(url, method, data) {
+    if (method.toUpperCase() === "POST" && /^\/api\/order-photos\/[1-9]\d*$/.test(String(url).split("?")[0])) return;
     if (method.toUpperCase() === "POST" && /^\/api\/my-orders\/[1-9]\d*\/assignments\/[1-9]\d*\/result$/.test(String(url).split("?")[0])) return;
     if (isOperationsEditor() && ((String(url).split("?")[0] === "/api/query" && ["operationSave","operationDispatchSave"].includes(data?.queryId)) || String(url).startsWith("/api/attachments/"))) return;
     if (String(url).split("?")[0] === "/api/query" && data?.queryId === "dispatchSave" && isDispatchManager()) return;
@@ -36,6 +37,7 @@ export function refreshMobileReadOnly() {
     const mobile = isMobileDevice();
     document.documentElement.classList.toggle("mobile-read-only", mobile && !document.querySelector?.('main[data-page$="/recyclePage.js"]') && !isDispatchManager() && !isOperationsEditor());
     document.querySelectorAll('#form-dialog-area input, #form-dialog-area select, #form-dialog-area textarea, .normal-table input:not([type="checkbox"]), .normal-table select, .normal-table textarea, [name="editStartTime"], [name="editEndTime"], [name="endNextDay"]').forEach(el => {
+        if(el.dataset?.photoInput !== undefined)return;
         if (mobile && !isRecycleScope(el) && !(isDispatchScope(el) && isDispatchManager()) && !(isOperationsScope(el) && isOperationsEditor())) {
             if (!previousDisabled.has(el)) previousDisabled.set(el, el.disabled);
             el.disabled = true;

@@ -72,6 +72,7 @@ public class QueryController {
             params.put("accessOfficeId", access.officeId());
             params.put("accessEmployeeId", access.employeeId());
         }
+        if(queryId == QueryId.ORDER_LIST)params.putIfAbsent("orderStatusFilter","INCOMPLETE");
         req.setParams(params);
         QueryBuilder builder = queryBuilderProvider.get(queryId);
         QueryDefinition def;
