@@ -1,5 +1,6 @@
 "use strict"
 
+import { renderAssignmentResult } from "../../../components/order/workResultSummary.js";
 import { cloneTemplate } from "../../../core/dom/cloneTemplate.js";
 import { DialogService } from "../../../core/ui/dialog/DialogService.js";
 
@@ -258,6 +259,7 @@ function renderCrewAssignments(area, assignments, {onReorder, dailyCrewId, isAct
         });
         item.querySelector('[data-field="title"]').textContent = assignment.title || "名称未設定";
         item.querySelector('[data-field="fullAddress"]').textContent = assignment.fullAddress || "";
+        renderAssignmentResult(item.querySelector('[data-field="workResult"]'), assignment);
         item.querySelector('[data-action="unassign-order"]')._assignment = assignment;
         area.appendChild(item);
     });

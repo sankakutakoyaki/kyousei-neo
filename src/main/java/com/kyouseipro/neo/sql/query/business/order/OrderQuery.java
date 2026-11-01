@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.kyouseipro.neo.common.enums.code.OrderCategory;
 import com.kyouseipro.neo.sql.model.CsvColumn;
+import com.kyouseipro.neo.sql.query.operations.dispatch.WorkResultSummarySql;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 
 public class OrderQuery {
@@ -57,7 +58,11 @@ public class OrderQuery {
                 s.full_name AS staff_name,
                 o.own_office_id,
                 o.version,
-                o.state
+                o.state,
+                result_summary.completed_count,
+                result_summary.failed_count,
+                result_summary.postponed_count,
+                result_summary.unreported_count
             FROM orders o
             LEFT OUTER JOIN companies c
                 ON c.company_id = o.prime_constractor_id
@@ -68,6 +73,7 @@ public class OrderQuery {
             LEFT OUTER JOIN staffs s
                 ON s.staff_id = o.staff_id
                 AND s.state = ?
+            %s
             WHERE (o.state = ? OR o.state = ?)
             AND (
                 (o.%s >= ? AND o.%s < ?)
@@ -78,7 +84,7 @@ public class OrderQuery {
                 OR o.own_office_id = ?
                 OR (? = 0 AND o.own_office_id IS NULL)
             )
-            """.formatted(column, column, column)
+            """.formatted(WorkResultSummarySql.JOIN, column, column, column)
             + ACCESS_CONDITION;
 
         List<String> params = new java.util.ArrayList<>(List.of(

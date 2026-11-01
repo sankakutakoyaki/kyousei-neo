@@ -1,5 +1,6 @@
 "use strict"
 
+import { renderWorkResultSummary } from "../../../components/order/workResultSummary.js";
 import { cloneTemplate } from "../../../core/dom/cloneTemplate.js";
 
 /**
@@ -68,6 +69,7 @@ function createDispatchOrderCard(order, {onDragStart, onDragEnd} = {}){
     card.querySelector('[data-field="title"]').textContent = order.title || "名称未設定";
     card.querySelector('[data-field="visitTime"]').textContent = order.visitTime || "";
     card.querySelector('[data-field="fullAddress"]').textContent = order.fullAddress || "";
+    renderWorkResultSummary(card.querySelector('[data-field="workResult"]'), order);
     const assigned = card.querySelector(".dispatch-order-assigned");
     if(order.assignmentCount > 0) assigned.textContent = `配車済み ${order.assignmentCount}班`;
     else assigned.remove();

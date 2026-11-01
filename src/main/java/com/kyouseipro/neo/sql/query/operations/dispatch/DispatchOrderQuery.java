@@ -27,7 +27,11 @@ public class DispatchOrderQuery {
                 o.version,
                 o.state,
 
-                COUNT(da.dispatch_assignment_id) AS assignment_count
+                COUNT(da.dispatch_assignment_id) AS assignment_count,
+                MAX(result_summary.completed_count) AS completed_count,
+                MAX(result_summary.failed_count) AS failed_count,
+                MAX(result_summary.postponed_count) AS postponed_count,
+                MAX(result_summary.unreported_count) AS unreported_count
 
             FROM orders o
 
@@ -35,6 +39,7 @@ public class DispatchOrderQuery {
                 ON da.order_id = o.order_id
                 AND da.state = ?
 
+            %s
             WHERE o.visit_date = ?
             AND o.own_office_id = ?
             AND o.dispatch_category = ?
@@ -62,7 +67,7 @@ public class DispatchOrderQuery {
                 END,
                 o.visit_time,
                 o.order_id
-            """,
+            """.formatted(WorkResultSummarySql.JOIN),
             List.of(
                 "state",
                 "workDate",

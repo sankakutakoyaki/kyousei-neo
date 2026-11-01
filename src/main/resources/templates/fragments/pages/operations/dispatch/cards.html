@@ -30,6 +30,7 @@
         <div class="dispatch-assignment-item" draggable="true">
             <div class="dispatch-assignment-content">
                 <strong data-field="title"></strong><span data-field="fullAddress"></span>
+                <span class="work-result-badge" data-field="workResult"></span>
             </div>
             <button type="button" class="dispatch-assignment-remove" title="配車解除"
                     data-action="unassign-order" data-action-lock="true">×</button>
@@ -42,6 +43,7 @@
             </div>
             <div class="dispatch-order-address" data-field="fullAddress"></div>
             <div class="dispatch-order-assigned"></div>
+            <div data-field="workResult" aria-label="訪問日当日の作業結果"></div>
         </div>
     </template>
 </th:block>

@@ -25,13 +25,21 @@ public class DispatchAssignmentQuery {
                 o.postal_code,
                 o.full_address,
                 o.contact_information,
-                o.own_office_id
+                o.own_office_id,
+                wr.result_type,
+                wr.reason AS result_reason
 
             FROM dispatch_assignments da
 
             LEFT OUTER JOIN orders o
                 ON o.order_id = da.order_id
                 AND o.state = ?
+
+            LEFT JOIN daily_crews result_crew
+                ON result_crew.daily_crew_id = da.daily_crew_id AND result_crew.state = 0
+            LEFT JOIN dbo.order_work_results wr
+                ON wr.dispatch_assignment_id = da.dispatch_assignment_id
+                AND wr.work_date = result_crew.work_date AND wr.state = 0
 
             WHERE da.state = ?
               AND da.daily_crew_id = ?

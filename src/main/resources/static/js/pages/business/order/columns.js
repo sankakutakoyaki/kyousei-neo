@@ -1,4 +1,5 @@
 "use strict";
+import { workResultSummaryHtml } from "../../../components/order/workResultSummary.js";
 const escapeHtml = value => String(value ?? "-----").replace(/[&<>"']/g, char => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"}[char]));
 
 export const createOrderListColumns = (controller) => [
@@ -37,6 +38,11 @@ export const createOrderListColumns = (controller) => [
             <span>${escapeHtml(item.fullAddress)}</span><br>
             <span>${escapeHtml(item.title)}</span>
         `
+    },
+    {
+        field: "workResult",
+        label: "作業結果（訪問日当日）",
+        render: item => workResultSummaryHtml(item) || "—"
     },
     {
         field: "mobileAction",

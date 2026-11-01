@@ -25,6 +25,7 @@ class WorkResultServiceTest {
         "employee","unused",List.of(new SimpleGrantedAuthority("APPROLE_user")));
     Map<String,Object> row;
     List<Map<String,Object>> duplicates=List.of();
+    List<Map<String,Object>> peers=List.of();
     @BeforeEach void setup() {
         row=new HashMap<>();row.put("dailyCrewId",8);row.put("assignmentVersion",3);
         row.put("workDate", "2026-10-31");row.put("workResultId",null);row.put("resultVersion",null);
@@ -32,6 +33,7 @@ class WorkResultServiceTest {
         when(context.getAccount(auth)).thenReturn("employee");
         when(sql.selectMap(anyString(), anyList())).thenAnswer(call -> {
             String query=call.getArgument(0);
+            if(query.contains("wr.version AS result_version, wr.result_type")) return peers;
             if(query.contains("AS assignment_version")) return List.of(new HashMap<>(row));
             if(query.contains("FROM dbo.order_work_results_log")) return duplicates;
             return List.of(Map.of("dailyCrewId",8));
@@ -48,6 +50,36 @@ class WorkResultServiceTest {
             && p.get("dispatchAssignmentId").equals(12L) && !p.containsKey("orderId")),eq("employee"));
         sequence.verify(history).recordWorkResult(90L,false,"employee");
     }
+    @Test void completionReflectsSameDayPeersWithCommonLogsAndOneBusinessHistory() {
+        peers=List.of(Map.of("dispatchAssignmentId",12L,"dailyCrewId",8L),
+            Map.of("dispatchAssignmentId",13L,"dailyCrewId",8L),
+            Map.of("dispatchAssignmentId",14L,"dailyCrewId",8L,"workResultId",91L,"resultVersion",2,"resultType","POSTPONED"),
+            Map.of("dispatchAssignmentId",15L,"dailyCrewId",8L,"workResultId",92L,"resultVersion",1,"resultType","COMPLETED"));
+        service.save(auth,100,12,req("COMPLETED","",null,null));
+        verify(base,times(2)).insert(eq(WorkResultService.TABLE),anyMap(),eq("employee"));
+        verify(base).insert(eq(WorkResultService.TABLE),argThat(p->Long.valueOf(13).equals(p.get("dispatchAssignmentId"))
+            && p.get("resultEmployeeId").equals(42L) && p.get("workDate").toString().equals("2026-10-31")),eq("employee"));
+        verify(base).update(eq(WorkResultService.TABLE),argThat(p->p.get("workResultId").equals(91L)
+            && p.get("version").equals(2) && p.get("resultType").equals("COMPLETED")),eq("employee"));
+        verify(history).recordWorkResult(90L,false,"employee");
+        verifyNoMoreInteractions(history);
+    }
+    @Test void failurePostponementAndCorrectionsReflectEveryPeer() {
+        peers=List.of(Map.of("dispatchAssignmentId",13L,"dailyCrewId",8L,"workResultId",91L,"resultVersion",2,"resultType","COMPLETED"));
+        for (String type : List.of("DELIVERY_FAILED", "POSTPONED")) {
+            clearInvocations(base,history);
+            service.save(auth,100,12,req(type,"伝票全体の結果を訂正",null,null));
+            verify(base).update(eq(WorkResultService.TABLE),argThat(p->p.get("resultType").equals(type)
+                && p.get("reason").equals("伝票全体の結果を訂正") && p.get("workResultId").equals(91L)),eq("employee"));
+            verify(history).recordWorkResult(90L,false,"employee");
+            verifyNoMoreInteractions(history);
+        }
+    }
+    @Test void completionRejectsAnUnlockedNewCrewBeforeAnyWrite() {
+        peers=List.of(Map.of("dispatchAssignmentId",13L,"dailyCrewId",99L));
+        assertThrows(BusinessException.class,()->service.save(auth,100,12,req("COMPLETED","",null,null)));
+        verifyNoInteractions(base,history);
+    }
     @Test void failureAndPostponementRequireReasonsAndValidateDate() {
         for(String type:List.of("DELIVERY_FAILED","POSTPONED"))
             assertThrows(BusinessException.class,()->service.save(auth,100,12,req(type," ",null,null)));
@@ -55,7 +87,7 @@ class WorkResultServiceTest {
         assertThrows(BusinessException.class,()->service.save(auth,100,12,req("COMPLETED","補足",LocalDate.of(2026,11,1),null)));
         verifyNoInteractions(base,history);
     }
-    @Test void postponementOnlySavesReportWithNoOrderOrDispatchUpdate() {
+    @Test void postponementDoesNotChangeOrderDateOrDispatch() {
         service.save(auth,100,12,req("POSTPONED","希望日は事務側で調整",null,null));
         verify(base).insert(eq(WorkResultService.TABLE),argThat(p->p.get("workDate").toString().equals("2026-10-31") && !p.containsKey("nextVisitDate")),anyString());
         verifyNoMoreInteractions(base);

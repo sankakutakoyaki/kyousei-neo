@@ -59,7 +59,7 @@
 }
 
 :is(#table-01, #table-header-01) tr {
-    grid-template-columns: 3rem 12rem 10rem 25rem 1fr 2rem;
+    grid-template-columns: 3rem 12rem 10rem 25rem minmax(12rem, 1fr) 14rem 2rem;
 }
 
 :is(#table-02, #table-header-02) tr {
@@ -434,3 +434,9 @@ main[data-page$="/productPage.js"] .arrival-status-row > [data-action="arrival-i
 .order-history-changes dt { font-weight: 600; }
 .order-history-changes dd { display: grid; gap: .25rem; margin: .25rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 .order-history li > p { margin: .25rem 0 0; }
+
+#table-01 td[data-field="workResult"] { white-space: normal; }
+@media screen and (max-width: 560px) {
+    #table-01 td[data-field="workResult"] { order: 3; }
+    #table-01 td[data-field="workResult"]::before { content: "作業結果（訪問日当日）"; }
+}

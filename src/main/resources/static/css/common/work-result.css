@@ -1,0 +1,7 @@
+@charset "UTF-8";
+
+.work-result-badge { display: inline-block; width: fit-content; font-size: .8125rem; padding: .15rem .4rem; border-radius: .25rem; }
+.work-result-badge[data-result-type="UNREPORTED"] { color: #5c4500; background: #fff0bd; }
+.work-result-badge[data-result-type="COMPLETED"] { color: #176035; background: #def3e5; }
+.work-result-badge[data-result-type="DELIVERY_FAILED"] { color: #992929; background: #fde4e4; }
+.work-result-badge[data-result-type="POSTPONED"] { color: #205a91; background: #e1effc; }
