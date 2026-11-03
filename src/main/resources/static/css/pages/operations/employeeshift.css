@@ -1,10 +1,13 @@
 @charset "UTF-8";
 
 .shift-month-table {
+    display: table;
     width: max-content;
     min-width: 100%;
+    height: auto;
     table-layout: fixed;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
 .shift-month-table tr {
@@ -18,9 +21,12 @@
 }
 
 .shift-month-table .shift-employee-column {
+    position: sticky;
+    left: 0;
+    z-index: 2;
     width: 12rem;
-    /* min-width: 12rem;
-    max-width: 12rem; */
+    min-width: 12rem;
+    background-color: white;
     text-align: left;
     white-space: nowrap;
 }
@@ -31,11 +37,6 @@
 
 .shift-month-table th:not(.shift-employee-column, .shift-company-header, .shift-summary-header),
 .shift-month-table td:not(.shift-summary-cell) {
-/* .shift-month-table th:not(.shift-employee-column):not(.shift-company-header),
-.shift-month-table td { */
-    /* width: 32px;
-    min-width: 32px;
-    max-width: 32px; */
     width: 2.5rem;
     padding: 1px;
     text-align: center;
@@ -60,8 +61,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    /* width: 30px;
-    height: 28px; */
     width: 2rem;
     height: 2rem;
     margin: 0 auto;
@@ -120,9 +119,6 @@
 
 .shift-month-table th.shift-summary-header,
 .shift-month-table td.shift-summary-cell {
-    /* width: 48px;
-    min-width: 48px;
-    max-width: 48px; */
     width: 3.2rem;
     padding: 0;
     text-align: center;
@@ -149,7 +145,7 @@
 #employee-shift-page {
     height: 100%;
     display: grid;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto auto minmax(0, 1fr);
     min-height: 0;
     padding-bottom: 2rem;
 }
@@ -160,18 +156,132 @@
     overflow: auto;
 }
 
-.shift-company-row {
-    display: block !important;
-    height: auto !important;
-    padding: .5rem 0 !important;
+.shift-month-table .shift-company-row {
+    display: table-row !important;
+    height: 0 !important;
+    padding: 0 !important;
     background: transparent !important;
 }
 
-.shift-company-row th {
-    display: block;
-    font-weight: bold;
+.shift-month-table .shift-company-row th {
+    display: table-cell;
+    height: 0;
+    padding: 0;
+    border-bottom: 1px solid #aaa;
 }
 
 #shift-table-body tr {
     height: 2.5rem;
+}
+
+.shift-month-table thead {
+    display: table-header-group;
+}
+
+.shift-month-table tbody.scroll-area {
+    display: table-row-group;
+    overflow: visible;
+    scrollbar-gutter: auto;
+}
+
+/* 日付ヘッダーを固定し、スクロール中の行を隠す */
+.shift-month-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background-color: var(--white);
+    box-shadow: 0 1px 0 #aaa;
+}
+
+/* 土日・祝日の背景色を維持 */
+.shift-month-table thead th.sunday {
+    background-color: #fff0f0;
+}
+
+.shift-month-table thead th.saturday {
+    background-color: #f0f5ff;
+}
+
+/* 左上の空白セルを最前面に固定 */
+.shift-month-table thead tr > th.shift-employee-column {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    background-color: var(--white);
+}
+
+/* スマホ版シフト画面 */
+@media screen and (max-width: 560px) {
+
+    /* 全日出勤・全クリアボタンを非表示 */
+    #employee-shift-page .shift-row-btn {
+        display: none;
+    }
+
+    /* 保存ボタンを非表示 */
+    #employee-shift-page #shift-save-btn {
+        display: none;
+    }
+
+    /* スマホではシフトを変更できないように見せる */
+    #employee-shift-page .shift-cell {
+        cursor: default;
+    }
+
+    /* スマホでは月間の集計欄を非表示 */
+    #employee-shift-page .shift-summary-header,
+    #employee-shift-page .shift-summary-cell {
+        display: none;
+    }
+
+    /* スマホでは横スクロールを禁止 */
+    #employee-shift-page > .table-wrapper {
+        overflow-x: hidden;
+    }
+
+    /* 従業員名の列幅を調整 */
+    #employee-shift-page .shift-employee-column {
+        width: 7rem;
+        min-width: 7rem;
+        max-width: 7rem;
+    }
+}
+
+/* 週表示の対象外となる日付列を非表示 */
+#employee-shift-page .shift-month-table [data-date][hidden] {
+    display: none !important;
+}
+
+/* スマホ用の週移動 */
+.shift-week-navigation {
+    display: none;
+}
+
+@media screen and (max-width: 560px) {
+    .shift-week-navigation {
+        display: grid;
+        grid-template-columns: 2rem minmax(0, 1fr) 2rem;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.5rem;
+        box-sizing: border-box;
+    }
+
+    .shift-week-navigation button {
+        width: 2rem;
+        height: 2rem;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+        background: white;
+        cursor: pointer;
+    }
+
+    #shift-week-period {
+        min-width: 0;
+        text-align: center;
+        font-weight: bold;
+        white-space: nowrap;
+    }
 }
