@@ -7,6 +7,9 @@ import { EmployeeShiftRepository } from "../../../repositories/operations/shift/
 import { DialogService } from "../../../core/ui/dialog/DialogService.js";
 import { appendEmployeeRow, renderMonthHeader, updateRowSummary } from "./employeeShiftTable.js";
 import { createDateString, getDateList, getMonthRange, getShiftMark, getWeekRange } from "./employeeShiftUtil.js";
+import { PageController } from "../../../application/PageController.js";
+import { FormController } from "../../../application/FormController.js";
+import { registerController } from "../../../application/controllerRegistry.js";
 
 const changedShifts = new Map();
 let loadedEmployees = [];
@@ -103,8 +106,39 @@ export async function init(){
     await initCommon();
     await initPageCache("/api/employeeshift/init/cache");
 
-    const controller = {key: "employeeShift"};
-    initCombo(controller);
+    // シフト画面のコントローラー
+    const controller = new PageController({
+        key: "employeeShift",
+        components: {combo: true},
+        forms: {
+            support: {
+                create: controller => new FormController({
+                    controller,
+                    formId: "shift-support-form",
+                    key: "employeeShiftId",
+                    idKey: "employeeShiftId",
+                    submitText: "保存",
+                    cancelText: "キャンセル",
+                    onOpen: async () => {
+                        await loadSupportEmployees();
+                    },
+                    validateBusiness: validateSupportShift,
+                    saveHandler: saveSupportShift,
+                    afterSave: async () => {
+                        const officeId = Number(document.getElementById("shift-office")?.value);
+                        await loadEmployees(officeId);
+                    }
+                })
+            }
+        },
+        actions: {
+            "open-special-shift": controller => controller.openForm("support")
+        }
+    });
+    registerController("employeeShift", controller);
+    controller.init();
+    // 応援登録フォームの所属営業所変更
+    document.getElementById("support-office")?.addEventListener("change", loadSupportEmployees);
     initMonth();
     const initialMonth = document.getElementById("shift-month")?.value;
     loadedHolidays = await loadHolidays(initialMonth);
@@ -216,9 +250,26 @@ async function loadEmployeeList(officeId){
         return false;
     }
 
+    // PCは月間、スマホは表示週の期間を指定
+    const monthValue = document.getElementById("shift-month")?.value;
+    const isMobile = mobileQuery.matches;
+    const range = isMobile
+        ? getWeekRange(monthValue, currentWeekIndex)
+        : getMonthRange(monthValue);
+
+    // スマホの週終了日は翌日に変換（SQLの終了日は含まない）
+    let toDate = range?.toDate;
+    if(isMobile && toDate){
+        const end = new Date(`${toDate}T00:00:00`);
+        end.setDate(end.getDate() + 1);
+        toDate = createDateString(end.getFullYear(), end.getMonth() + 1, end.getDate());
+    }
+
     const result = await EmployeeShiftRepository.findEmployees({
         state: APP.cache.common.state.INITIAL,
         officeId,
+        fromDate: range?.fromDate,
+        toDate,
         ownCompanyCategory: APP.cache.common.companyCategory.OWN,
         fulltimeCategory: APP.cache.common.employeeCategory.FULLTIME,
         parttimeCategory: APP.cache.common.employeeCategory.PARTTIME
@@ -287,14 +338,8 @@ async function loadEmployees(officeId){
     const isMobile = mobileQuery.matches;
 
     if(isMobile){
-        // スマホでは従業員一覧を取得してから週間シフトを取得
+        // スマホでは週間データと従業員一覧をまとめて更新
         monthRequestId++;
-
-        const updated = await loadEmployeeList(officeId);
-        if(!updated){
-            return;
-        }
-
         await applyMobileWeek();
     }else{
         // PCでは従業員一覧と月間シフトを並行取得
@@ -407,6 +452,10 @@ function changeShiftType(button){
     if(mobileQuery.matches){
         return;
     }
+    // 応援勤務は通常のシフト表から変更できない
+    if(button.dataset.support === "true"){
+        return;
+    }
 
     const current = Number(button.dataset.shiftType);
 
@@ -490,7 +539,7 @@ function setRowShift(tr, shiftType){
     buttons.forEach(button => {
         const current = Number(button.dataset.shiftType);
         // 有給などの専用登録区分は一括変更しない
-        if(current > 2 || current === shiftType){
+        if(current > 2 || current === shiftType || button.dataset.support === "true"){
             return;
         }
         button.dataset.shiftType = String(shiftType);
@@ -635,10 +684,11 @@ function renderEmployees(){
             holidays,
             dates,
             onShiftChange: changeShiftType,
-            onRowToggle: toggleRowShift
+            onRowToggle: toggleRowShift,
+            selectedOfficeId: Number(document.getElementById("shift-office")?.value),
         });
     });
-    
+
     // 未保存の変更を再描画後に復元
     restoreChangedShifts();
 
@@ -672,9 +722,16 @@ async function applyMobileWeek(){
     if(isMobile){
         // PC側で進行中の月間データ取得を無効化
         monthRequestId++;
-        // スマホでは週間データを取得
-        const updated = await loadMobileWeekData();
-        if(!updated){
+
+        const officeId = Number(document.getElementById("shift-office")?.value);
+
+        // 週移動時に応援者一覧と週間シフトを両方更新
+        const [employeesUpdated, shiftsUpdated] = await Promise.all([
+            loadEmployeeList(officeId),
+            loadMobileWeekData()
+        ]);
+
+        if(!employeesUpdated || !shiftsUpdated){
             return;
         }
     }else{
@@ -782,4 +839,168 @@ function initMobileWeekSwipe(){
         // 左フリックで翌週、右フリックで前週
         moveMobileWeek(diffX < 0 ? 1 : -1);
     }, {passive: true});
+}
+
+/**
+ * 応援登録フォームの従業員候補を更新する
+ */
+async function loadSupportEmployees(){
+    const officeId = Number(document.getElementById("support-office")?.value);
+    const select = document.getElementById("support-employee");
+    if(!select) return;
+
+    select.replaceChildren(new Option("-----", ""));
+
+    if(!officeId) return;
+
+    const result = await EmployeeShiftRepository.findEmployees({
+        state: APP.cache.common.state.INITIAL,
+        officeId,
+        ownCompanyCategory: APP.cache.common.companyCategory.OWN,
+        fulltimeCategory: APP.cache.common.employeeCategory.FULLTIME,
+        parttimeCategory: APP.cache.common.employeeCategory.PARTTIME
+    });
+
+    // 通信中に営業所が変更されていたら古い結果を破棄
+    if(Number(document.getElementById("support-office")?.value) !== officeId) return;
+
+    (result.data ?? []).forEach(employee => {
+        select.add(new Option(employee.fullName, employee.employeeId));
+    });
+}
+
+/**
+ * 応援勤務の入力チェック
+ */
+async function validateSupportShift(payload){
+    const employeeId = Number(payload.employeeId);
+    const officeId = Number(payload.officeId);
+    const targetOfficeId = Number(payload.targetOfficeId);
+    const fromDate = payload.dateFrom;
+    const toDate = payload.dateTo || fromDate;
+
+    if(!employeeId || !officeId || !targetOfficeId){
+        throw new Error("所属営業所・従業員・応援先営業所を選択してください。");
+    }
+    if(!fromDate){
+        throw new Error("開始日を入力してください。");
+    }
+    if(fromDate > toDate){
+        throw new Error("終了日は開始日以降を指定してください。");
+    }
+    if(officeId === targetOfficeId){
+        throw new Error("所属営業所と応援先営業所は異なる営業所を指定してください。");
+    }
+
+    // 対象期間の翌日を検索終了日にする
+    const end = new Date(`${toDate}T00:00:00`);
+    end.setDate(end.getDate() + 1);
+    const exclusiveToDate = createDateString(
+        end.getFullYear(), end.getMonth() + 1, end.getDate()
+    );
+
+    // 対象従業員の既存シフトを取得
+    const result = await EmployeeShiftRepository.findPeriodList({
+        employeeId,
+        fromDate,
+        toDate: exclusiveToDate,
+        state: APP.cache.common.state.INITIAL
+    });
+
+    const shifts = result.data ?? [];
+
+    // 有給など、専用管理の勤務区分がある場合は登録を禁止
+    const protectedShifts = shifts.filter(shift => Number(shift.shiftType) >= 3);
+    if(protectedShifts.length > 0){
+        throw new Error("対象期間に有給などの登録があります。勤務登録はできません。");
+    }
+
+    // 公休・既存の応援勤務を確認
+    const conflicts = shifts.filter(shift =>
+        Number(shift.shiftType) === 2 ||
+        (Number(shift.shiftType) === 1 &&
+        Number(shift.officeId) !== officeId &&
+        Number(shift.officeId) !== targetOfficeId)
+    );
+
+    if(conflicts.length > 0){
+        const confirmed = await DialogService.confirm(
+            `${conflicts.length}件の既存勤務があります。\n応援勤務に変更しますか？`
+        );
+        if(!confirmed){
+            throw new Error("登録をキャンセルしました。");
+        }
+    }
+}
+
+/**
+ * 応援勤務を期間一括登録する
+ */
+async function saveSupportShift(payload){
+    const employeeId = Number(payload.employeeId);
+    const officeId = Number(payload.targetOfficeId);
+    // 終了日が未入力の場合は1日だけ登録
+    const fromDate = payload.dateFrom;
+    const toDate = payload.dateTo || fromDate;
+
+    // 終了日の翌日（SQLは終了日を含まない）
+    const end = new Date(`${toDate}T00:00:00`);
+    end.setDate(end.getDate() + 1);
+    const exclusiveToDate = createDateString(
+        end.getFullYear(), end.getMonth() + 1, end.getDate()
+    );
+
+    // 保存直前の既存シフトを取得
+    const result = await EmployeeShiftRepository.findPeriodList({
+        employeeId,
+        fromDate,
+        toDate: exclusiveToDate,
+        state: APP.cache.common.state.INITIAL
+    });
+
+    const existing = new Map(
+        (result.data ?? []).map(row => [row.workDate, row])
+    );
+
+    const dates = getDateList(fromDate, toDate);
+    const rows = [];
+
+    for(const workDate of dates){
+        const current = existing.get(workDate);
+
+        // 有給などの専用登録区分は変更しない
+        if(current && Number(current.shiftType) >= 3){
+            throw new Error(`${workDate} は有給などが登録されているため変更できません。`);
+        }
+
+        // すでに同じ応援先で出勤している場合は変更不要
+        if(current &&
+            Number(current.shiftType) === 1 &&
+            Number(current.officeId) === officeId){
+            continue;
+        }
+
+        const row = {
+            employeeId,
+            workDate,
+            officeId,
+            shiftType: 1,
+            state: APP.cache.common.state.INITIAL
+        };
+
+        // 既存シフトはIDとversionを付けて更新
+        if(current){
+            row.employeeShiftId = current.employeeShiftId;
+            row.version = current.version;
+        }
+
+        rows.push(row);
+    }
+
+    if(rows.length === 0){
+        throw new Error("登録する変更がありません。");
+    }
+
+    // 既存の一括保存処理を利用
+    return await EmployeeShiftRepository.batchSave({rows});
 }

@@ -43,9 +43,6 @@
 
 .myorder-date-nav {
     display: flex;
-
-    /* align-items: center; */
-    /* gap: .5rem; */
     &>.img-btn {
         max-width: 3rem;
         margin: 0;
@@ -346,16 +343,19 @@
     color: #5c4500;
     background: #fff0bd;
 }
+
 /* 完了 */
 .myorder-result-badge[data-result-type="COMPLETED"] {
     color: #176035;
     background: #def3e5;
 }
+
 /* 搬入不可 */
 .myorder-result-badge[data-result-type="DELIVERY_FAILED"] {
     color: #992929;
     background: #fde4e4;
 }
+
 /* 日延 */
 .myorder-result-badge[data-result-type="POSTPONED"] {
     color: #205a91;
@@ -449,6 +449,13 @@
 #myorder-form-footer>[name="cancelBtn"] {
     margin-left: auto;
 }
-#myorder-photos { min-height: 0; overflow: hidden; }
 
-.myorder-result-badge[data-result-type="ABSENT"] { color: #65398a; background: #efe5f7; }
+#myorder-photos {
+    min-height: 0;
+    overflow: hidden;
+}
+
+.myorder-result-badge[data-result-type="ABSENT"] {
+    color: #65398a;
+    background: #efe5f7;
+}

@@ -76,6 +76,7 @@ public class EmployeeShiftHandler implements QueryHandler {
         Map<String, Object> row = new HashMap<>();
         row.put("employeeShiftId", idValue);
         row.put("version", source.get("version"));
+        row.put("officeId", source.get("officeId"));
         row.put("shiftType", source.get("shiftType"));
         row.put("state", source.get("state"));
         baseRepository.update(Tables.EMPLOYEE_SHIFT_BY_IDS, row, editor);

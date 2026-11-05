@@ -240,11 +240,26 @@
         overflow-x: hidden;
     }
 
-    /* 従業員名の列幅を調整 */
+    /* スマホの名前列は幅を維持し、文字のはみ出しを防ぐ */
     #employee-shift-page .shift-employee-column {
         width: 7rem;
         min-width: 7rem;
         max-width: 7rem;
+        overflow: hidden;
+    }
+
+    /* 名前の左右余白を減らす */
+    #employee-shift-page .shift-employee-inner {
+        min-width: 0;
+        padding: 0 0.25rem;
+    }
+
+    /* 長い名前は列幅内に収める */
+    #employee-shift-page .shift-employee-inner > span {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }
 
@@ -261,21 +276,12 @@
 @media screen and (max-width: 560px) {
     .shift-week-navigation {
         display: grid;
-        grid-template-columns: 2rem minmax(0, 1fr) 2rem;
+        grid-template-columns: 3rem minmax(0, 1fr) 3rem;
         align-items: center;
         gap: 0.5rem;
         width: 100%;
         padding: 0.5rem;
         box-sizing: border-box;
-    }
-
-    .shift-week-navigation button {
-        width: 2rem;
-        height: 2rem;
-        border: 1px solid #ccc;
-        border-radius: 0.25rem;
-        background: white;
-        cursor: pointer;
     }
 
     #shift-week-period {
@@ -284,4 +290,49 @@
         font-weight: bold;
         white-space: nowrap;
     }
+
+    /* 横方向の引っ張り・揺れを抑制 */
+    #employee-shift-page{
+        overscroll-behavior-x: none;
+    }
+
+    /* 縦スクロールを許可し、横方向は週移動操作に使用 */
+    #employee-shift-page > .table-wrapper{
+        touch-action: pan-y;
+        overscroll-behavior-x: none;
+    }
+}
+
+/* iPhone Safariの月選択欄の表示調整 */
+#shift-month{
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+#shift-month::-webkit-date-and-time-value{
+    min-height: 1lh;
+    text-align: left;
+}
+
+/* 応援勤務は編集できないため指マークを表示しない */
+#employee-shift-page .shift-cell[data-support="true"] {
+    cursor: default;
+}
+
+/* 名前部分だけを省略し、応援マークは常に表示する */
+.shift-employee-inner > span:first-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 名前が長い場合に文字サイズを自動調整するための設定 */
+#employee-shift-page .shift-employee-inner > span:first-child {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }

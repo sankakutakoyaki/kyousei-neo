@@ -23,6 +23,7 @@ public class EmployeeShiftSqlProvider implements SqlProviderPart {
         map.put(QueryId.EMPLOYEE_SHIFT_DETAIL, EmployeeShiftQuery.employeeShiftDetail());
         map.put(QueryId.EMPLOYEE_SHIFT_LIST, EmployeeShiftQuery.employeeShiftList());
         map.put(QueryId.EMPLOYEE_SHIFT_MONTH_LIST, EmployeeShiftQuery.employeeShiftMonthList());
+        map.put(QueryId.EMPLOYEE_SHIFT_PERIOD_LIST, EmployeeShiftQuery.employeeShiftPeriodList());
         map.put(QueryId.EMPLOYEE_SHIFT_EMPLOYEE_LIST, EmployeeShiftQuery.employeeShiftEmployeeList());
         map.put(QueryId.EMPLOYEE_SHIFT_WORKING_LIST, EmployeeShiftQuery.employeeShiftWorkingList());
         map.put(QueryId.EMPLOYEE_SHIFT_DELETE_BY_IDS, new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.EMPLOYEE_SHIFT_BY_IDS));
@@ -32,6 +33,7 @@ public class EmployeeShiftSqlProvider implements SqlProviderPart {
         map.get(QueryId.EMPLOYEE_SHIFT_DETAIL).setPermissionTable(Tables.EMPLOYEE_SHIFT_BY_IDS.tableName());
         map.get(QueryId.EMPLOYEE_SHIFT_LIST).setPermissionTable(Tables.EMPLOYEE_SHIFT_BY_IDS.tableName());
         map.get(QueryId.EMPLOYEE_SHIFT_MONTH_LIST).setPermissionTable(Tables.EMPLOYEE_SHIFT_BY_IDS.tableName());
+        map.get(QueryId.EMPLOYEE_SHIFT_PERIOD_LIST).setPermissionTable(Tables.EMPLOYEE_SHIFT_BY_IDS.tableName());
         map.get(QueryId.EMPLOYEE_SHIFT_EMPLOYEE_LIST).setPermissionTable(Tables.EMPLOYEE_SHIFT_BY_IDS.tableName());
         map.get(QueryId.EMPLOYEE_SHIFT_WORKING_LIST).setPermissionTable(Tables.EMPLOYEE_SHIFT_BY_IDS.tableName());
         // ===== 業務操作権限 =====

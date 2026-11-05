@@ -44,15 +44,25 @@
                 </th:block>
                 <div class="form-parts">
                     <label></label>
+                    <button
+                        type="button"
+                        class="normal-btn"
+                        id="shift-special-btn"
+                        data-action="open-special-shift">
+                        勤務登録
+                    </button>
+                </div>
+                <div class="form-parts">
+                    <label></label>
                     <button type="button" class="normal-btn" id="shift-save-btn" disabled>保存</button>
                 </div>
             </div>
         </header>
         <!-- スマホ用の週移動 -->
         <div id="shift-week-navigation" class="shift-week-navigation">
-            <button type="button" data-action="previous-week" aria-label="前の週">‹</button>
+            <button type="button" class="img-btn" data-action="previous-week" aria-label="前の週"><img src="/icons/prev.png"></button>
             <span id="shift-week-period"></span>
-            <button type="button" data-action="next-week" aria-label="次の週">›</button>
+            <button type="button" class="img-btn" data-action="next-week" aria-label="次の週"><img src="/icons/next.png"></button>
         </div>
         <div class="table-wrapper">
             <table class="normal-table shift-month-table">
@@ -60,5 +70,17 @@
                 <tbody id="shift-table-body" class="scroll-area"></tbody>
             </table>
         </div>
+    </div>
+    <!-- 応援勤務登録 -->
+    <div id="form-dialog-area">
+        <form id="shift-support-form"
+            class="form-dialog none"
+            data-controller="employeeShift">
+            <div class="dialog-main">
+                <header th:replace="~{fragments/dialog/header :: headerFragment(${ {'title': '勤務登録'} })}"></header>
+                <section th:replace="~{fragments/pages/management/employeeshift/form :: supportFormFragment()}"></section>
+                <footer th:replace="~{fragments/dialog/footer :: footerFragment(${ {'footerId': 'shift-support-footer'} })}"></footer>
+            </div>
+        </form>
     </div>
 </main>

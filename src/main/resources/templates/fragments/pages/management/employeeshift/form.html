@@ -1,0 +1,75 @@
+<th:block th:fragment="supportFormFragment()">
+    <div class="dialog-content" data-enterfocus="shift-support-form">
+        <!-- 所属営業所・従業員 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text': '所属営業所',
+                    'id': 'support-office',
+                    'name': 'office-id',
+                    'combo': 'officeComboList',
+                    'top': '-----',
+                    'loginOffice': true,
+                    'index': 1
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text': '従業員',
+                    'id': 'support-employee',
+                    'name': 'employee-id',
+                    'top': '-----',
+                    'index': 2
+                }
+            })}"></th:block>
+        </div>
+
+        <!-- 応援期間 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '開始日',
+                    'id': 'support-date-from',
+                    'name': 'date-from',
+                    'type': 'date',
+                    'index': 3
+                }
+            })}"></th:block>
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '終了日（省略可）',
+                    'id': 'support-date-to',
+                    'name': 'date-to',
+                    'type': 'date',
+                    'index': 4
+                }
+            })}"></th:block>
+        </div>
+
+        <!-- 応援先営業所 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text': '応援先営業所',
+                    'id': 'support-target-office',
+                    'name': 'target-office-id',
+                    'combo': 'officeComboList',
+                    'top': '-----',
+                    'index': 5
+                }
+            })}"></th:block>
+        </div>
+
+        <!-- 備考 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '備考',
+                    'id': 'support-remarks',
+                    'name': 'remarks',
+                    'index': 6
+                }
+            })}"></th:block>
+        </div>
+    </div>
+</th:block>

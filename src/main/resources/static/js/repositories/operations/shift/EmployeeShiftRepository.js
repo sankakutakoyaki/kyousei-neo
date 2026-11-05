@@ -12,6 +12,14 @@ export const EmployeeShiftRepository = {
         return await RequestClient.request({ queryId: "employeeShiftMonthList", params });
     },
 
+    /**
+     * 応援勤務登録用の既存シフト取得
+     * 従業員IDと対象期間で検索する
+     */
+    async findPeriodList(params){
+        return await RequestClient.request({ queryId: "employeeShiftPeriodList", params });
+    },
+
     async findWorkingList(params) {
         return await RequestClient.request({ queryId: "employeeShiftWorkingList", params });
     },

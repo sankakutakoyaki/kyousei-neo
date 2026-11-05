@@ -15,8 +15,8 @@
     align-content: center;
 }
 
- /* ダイアログが重なった時の処理 */
-#form-dialog-area.dialog:has(+ #msg-dialog-area.dialog) {
+/* メッセージダイアログが開いている間はフォーム側の背景を透明にする */
+body:has(#msg-dialog-area.dialog) #form-dialog-area.dialog {
     background-color: transparent;
 }
 

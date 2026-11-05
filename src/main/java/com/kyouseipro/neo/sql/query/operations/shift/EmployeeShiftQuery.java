@@ -180,11 +180,6 @@ public class EmployeeShiftQuery {
 
             FROM employees e
 
-            INNER JOIN employee_office_members eom
-                ON eom.employee_id = e.employee_id
-                AND eom.office_id = ?
-                AND eom.state = ?
-
             LEFT JOIN companies c
                 ON c.company_id = e.company_id
                 AND c.state = ?
@@ -198,6 +193,23 @@ public class EmployeeShiftQuery {
                 AND m.state = ?
 
             WHERE e.state = ?
+                AND (
+                    -- 所属営業所の従業員
+                    e.office_id = ?
+
+                    -- 対象期間中に応援に来る従業員
+                    OR EXISTS (
+                        SELECT 1
+                        FROM employee_shifts s
+                        WHERE s.employee_id = e.employee_id
+                            AND s.office_id = ?
+                            AND s.office_id <> e.office_id
+                            AND s.work_date >= ?
+                            AND s.work_date < ?
+                            AND s.shift_type = 1
+                            AND s.state = ?
+                    )
+                )
 
             GROUP BY
                 e.employee_id,
@@ -269,13 +281,15 @@ public class EmployeeShiftQuery {
                     e.employee_id
             """,
             List.of(
-                "officeId",
-                "state",                 // eom
-                "state",                 // company
-                "state",                 // position
-                "state",                 // work category member
-                "state",                 // employee
-
+                "state", // company
+                "state", // position
+                "state", // work category member
+                "state", // employee
+                "officeId", // 所属営業所
+                "officeId", // 応援先営業所
+                "fromDate", // 応援開始日
+                "toDate", // 応援終了日（含まない）
+                "state", // 応援シフト
                 "ownCompanyCategory",
                 "fulltimeCategory",
                 "ownCompanyCategory",
@@ -286,6 +300,7 @@ public class EmployeeShiftQuery {
 
     /**
      * 月間シフト一覧
+     * 所属社員の全シフトと、対象営業所への応援勤務を取得する
      */
     public static QueryDefinition employeeShiftMonthList() {
         return QueryDefinition.select(
@@ -304,22 +319,62 @@ public class EmployeeShiftQuery {
 
             FROM employee_shifts es
 
-            INNER JOIN employee_office_members eom
-                ON eom.employee_id = es.employee_id
-            AND eom.office_id = ?
-            AND eom.state = ?
+            INNER JOIN employees e
+                ON e.employee_id = es.employee_id
+                AND e.state = ?
 
             WHERE es.work_date >= ?
-            AND es.work_date < ?
-            AND es.state = ?
+                AND es.work_date < ?
+                AND es.state = ?
+                AND (
+                    -- 所属社員の全シフト
+                    e.office_id = ?
+
+                    -- 対象営業所への応援勤務
+                    OR (
+                        es.office_id = ?
+                        AND es.shift_type = 1
+                    )
+                )
 
             ORDER BY
                 es.employee_id,
                 es.work_date
             """,
             List.of(
-                "officeId",
-                "state",
+                "state",    // employee
+                "fromDate",
+                "toDate",
+                "state",    // shift
+                "officeId", // 所属営業所
+                "officeId"  // 応援先営業所
+            )
+        );
+    }
+
+    /**
+     * 応援勤務登録用の既存シフト一覧
+     * 従業員と期間で検索し、勤務先営業所では絞り込まない
+     */
+    public static QueryDefinition employeeShiftPeriodList() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                employee_shift_id,
+                work_date,
+                employee_id,
+                office_id,
+                shift_type,
+                version
+            FROM employee_shifts
+            WHERE employee_id = ?
+            AND work_date >= ?
+            AND work_date < ?
+            AND state = ?
+            ORDER BY work_date
+            """,
+            List.of(
+                "employeeId",
                 "fromDate",
                 "toDate",
                 "state"

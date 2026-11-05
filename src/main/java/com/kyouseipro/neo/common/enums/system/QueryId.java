@@ -82,6 +82,7 @@ public enum QueryId {
     EMPLOYEE_SHIFT_SAVE("employeeShiftSave"),
     EMPLOYEE_SHIFT_EMPLOYEE_LIST("employeeShiftEmployeeList"),
     EMPLOYEE_SHIFT_MONTH_LIST("employeeShiftMonthList"),
+    EMPLOYEE_SHIFT_PERIOD_LIST("employeeShiftPeriodList"),
     EMPLOYEE_SHIFT_BATCH_SAVE("employeeShiftBatchSave"),
 
     // ===== Client =====
