@@ -26,6 +26,8 @@ public enum QueryKind {
     DISPATCH_ASSIGNMENT_REMOVE,
 
     VEHICLE_DEFAULT_MEMBER_SAVE,
+    // 車両情報・基本配車区分・基本乗務員の一括保存
+    VEHICLE_SETTINGS_SAVE,
 
     EMPLOYEE_SAVE,
     EMPLOYEE_SHIFT,

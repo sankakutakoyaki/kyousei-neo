@@ -223,6 +223,10 @@ public class DailyCrewQuery {
         );
     }
 
+    /**
+     * 乗務員候補一覧
+     * シフトに登録された実際の勤務先営業所から候補を取得する
+     */
     public static QueryDefinition dailyCrewMemberCandidateList() {
         return QueryDefinition.select(
             """
@@ -235,14 +239,10 @@ public class DailyCrewQuery {
 
             FROM employees e
 
-            INNER JOIN employee_office_members eom
-                ON eom.employee_id = e.employee_id
-                AND eom.office_id = ?
-                AND eom.state = ?
-
             INNER JOIN employee_shifts es
                 ON es.employee_id = e.employee_id
                 AND es.work_date = ?
+                AND es.office_id = ?
                 AND es.shift_type = ?
                 AND es.state = ?
 
@@ -250,7 +250,6 @@ public class DailyCrewQuery {
 
             AND NOT EXISTS (
                 SELECT 1
-
                 FROM daily_crew_members dcm
 
                 INNER JOIN daily_crews dc
@@ -269,9 +268,8 @@ public class DailyCrewQuery {
                 e.employee_id
             """,
             List.of(
-                "officeId",
-                "state",
                 "workDate",
+                "officeId",
                 "shiftType",
                 "state",
                 "state",

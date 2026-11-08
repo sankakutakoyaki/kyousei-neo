@@ -35,6 +35,8 @@ public enum QueryId {
     VEHICLE_CSV("vehicleCsv"),
     VEHICLE_DELETE_BY_IDS("vehicleDeleteByIds"),
     VEHICLE_SAVE("vehicleSave"),
+    // 車両情報・基本配車区分・基本乗務員の一括保存
+    VEHICLE_SETTINGS_SAVE("vehicleSettingsSave"),
     VEHICLE_DEFAULT_MEMBER_LIST("vehicleDefaultMemberList"),
     VEHICLE_DEFAULT_MEMBER_SAVE("vehicleDefaultMemberSave"),
     VEHICLE_DEFAULT_MEMBER_DELETE_BY_IDS("vehicleDefaultMemberDeleteByIds"),

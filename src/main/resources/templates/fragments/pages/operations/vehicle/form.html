@@ -163,6 +163,66 @@
                 }
             })}"></th:block>
         </div>
+        <!-- 基本配車設定：車両登録フォームへ統合 -->
+        <div class="form-row">
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text': '基本配車区分',
+                    'id': 'vehicle-dispatch-category',
+                    'combo': 'dispatchCategoryComboList',
+                    'index': 18
+                }
+            })}"></th:block>
+        </div>
+
+        <!-- 基本乗務員 -->
+        <div class="form-row"
+            data-resolve="query"
+            data-query-id="employeeResolve"
+            data-param-builder="employeeParams"
+            data-result-first="true"
+            data-name-key="fullName"
+            data-value-key="employeeId">
+
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text': '役割',
+                    'id': 'vehicle-member-role',
+                    'combo': 'crewRoleComboList',
+                    'index': 19
+                }
+            })}"></th:block>
+
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '社員ID / コード',
+                    'id': 'vehicle-member-code',
+                    'resolveId': true,
+                    'index': 20
+                }
+            })}"></th:block>
+
+            <input type="hidden"
+                id="vehicle-member-employee-id"
+                data-role="hidden-id">
+
+            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
+                {
+                    'text': '社員名',
+                    'id': 'vehicle-member-name',
+                    'resolveName': true,
+                    'readonly': true,
+                    'index': 21
+                }
+            })}"></th:block>
+
+            <button type="button"
+                    id="vehicle-member-add-btn"
+                    class="normal-btn">追加</button>
+        </div>
+
+        <!-- 登録済み基本乗務員一覧 -->
+        <div id="vehicle-form-member-area" class="form-row"></div>
     </div>
 </th:block>
 

@@ -25,10 +25,15 @@ public class VehicleSqlProvider implements SqlProviderPart {
         map.put(QueryId.VEHICLE_CSV, VehicleQuery.vehicleCsv());
         map.put(QueryId.VEHICLE_DELETE_BY_IDS, new QueryDefinition(QueryType.UPDATE, QueryKind.DELETE_BY_IDS, Tables.VEHICLE_BY_IDS));
         map.put(QueryId.VEHICLE_SAVE, new QueryDefinition(QueryType.UPDATE, QueryKind.SAVE, Tables.VEHICLE_BY_IDS));
+        // 車両情報・基本配車区分・基本乗務員の一括保存
+        map.put(QueryId.VEHICLE_SETTINGS_SAVE, new QueryDefinition(QueryType.UPDATE, QueryKind.VEHICLE_SETTINGS_SAVE, Tables.VEHICLE_BY_IDS)
+);
         // ===== 参照権限 =====
         map.get(QueryId.VEHICLE_DETAIL).setPermissionTable(Tables.VEHICLE_BY_IDS.tableName());
         map.get(QueryId.VEHICLE_LIST).setPermissionTable(Tables.VEHICLE_BY_IDS.tableName());
         map.get(QueryId.VEHICLE_CSV).setPermissionTable(Tables.VEHICLE_BY_IDS.tableName());
+        // 車両情報・基本配車区分・基本乗務員の統合保存権限
+        map.get(QueryId.VEHICLE_SETTINGS_SAVE).setPermissionOperation("vehicle.settings.save");
 
         return map;
     }

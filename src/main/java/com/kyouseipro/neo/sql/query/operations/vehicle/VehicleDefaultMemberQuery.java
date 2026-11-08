@@ -155,14 +155,10 @@ public class VehicleDefaultMemberQuery {
                 ON e.employee_id = vdm.employee_id
                 AND e.state = ?
 
-            INNER JOIN employee_office_members eom
-                ON eom.employee_id = e.employee_id
-                AND eom.office_id = ?
-                AND eom.state = ?
-
             INNER JOIN employee_shifts es
                 ON es.employee_id = vdm.employee_id
                 AND es.work_date = ?
+                AND es.office_id = ?
                 AND es.shift_type = ?
                 AND es.state = ?
 
@@ -184,10 +180,8 @@ public class VehicleDefaultMemberQuery {
 
                 "state",
 
-                "officeId",
-                "state",
-
                 "workDate",
+                "officeId",
                 "shiftType",
                 "state",
 
@@ -197,6 +191,10 @@ public class VehicleDefaultMemberQuery {
         );
     }
 
+    /**
+     * 配車画面の車両候補一覧
+     * 基本配車区分に関係なく選択可能。同日の同一区分への重複登録は除外する。
+     */
     public static QueryDefinition vehicleDispatchCandidateList() {
         return QueryDefinition.select(
             """
@@ -212,31 +210,25 @@ public class VehicleDefaultMemberQuery {
 
             FROM vehicles v
 
-            INNER JOIN vehicle_dispatch_categories vdc
-                ON vdc.vehicle_id = v.vehicle_id
-            AND vdc.dispatch_category = ?
-            AND vdc.state = ?
-
             WHERE v.office_id = ?
-            AND v.state = ?
+                AND v.state = ?
 
-            AND NOT EXISTS (
-                SELECT 1
-                FROM daily_crews dc
-                WHERE dc.vehicle_id = v.vehicle_id
-                    AND dc.work_date = ?
-                    AND dc.office_id = ?
-                    AND dc.dispatch_category = ?
-                    AND dc.state = ?
-            )
+                -- 同日・同一区分ですでに配車されている車両は除外
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM daily_crews dc
+                    WHERE dc.vehicle_id = v.vehicle_id
+                        AND dc.work_date = ?
+                        AND dc.office_id = ?
+                        AND dc.dispatch_category = ?
+                        AND dc.state = ?
+                )
 
             ORDER BY
                 v.vehicle_name,
                 v.vehicle_id
             """,
             List.of(
-                "dispatchCategory",
-                "state",
                 "officeId",
                 "state",
                 "workDate",

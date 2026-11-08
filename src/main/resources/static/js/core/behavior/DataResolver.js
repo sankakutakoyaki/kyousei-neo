@@ -214,9 +214,13 @@ const queryResolver = {
     async resolve(context) {
         const {group, id, idInput, canApply} = context;
         const builder = paramBuilders[group.dataset.paramBuilder];
-        const list = await queryList(group, group.dataset.queryId, builder ? builder() : {});
+        // 入力されたコードをパラメータ生成関数へ渡す
+        const list = await queryList(group, group.dataset.queryId, builder ? builder(id) : {});
         if (!canApply()) return false;
-        const found = list.find(item => String(item[group.dataset.idKey || "id"]) === id);
+        // 先頭結果を採用する指定があれば、IDによる再検索を省略
+        const found = group.dataset.resultFirst === "true"
+            ? list[0]
+            : list.find(item => String(item[group.dataset.idKey || "id"]) === id);
         applyName(context, found);
         if (!found) { queryCaches.delete(group); focusForRetry(idInput, canApply); return false; }
         return true;

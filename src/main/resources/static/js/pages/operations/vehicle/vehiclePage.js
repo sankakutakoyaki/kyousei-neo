@@ -12,12 +12,20 @@ import { VehicleDefaultMemberRepository } from "../../../repositories/operations
 import { DialogService } from "../../../core/ui/dialog/DialogService.js";
 
 let deletedDefaultMembers = [];
+// 車両登録フォーム専用の基本乗務員削除情報
+let deletedVehicleFormMembers = [];
+// 車両フォームを開いた時点の基本配車区分
+let initialVehicleDispatchCategory = 0;
 
 export async function init() {
     await initCommon();
     await initPageCache("/api/vehicle/init/cache");
     initFirstRegistrationSelects();
-
+    // 車両フォームで基本乗務員を追加したら保存ボタンを更新
+    document.getElementById("vehicle-member-add-btn")?.addEventListener("click", () => {
+        addDefaultMemberDraft("vehicle");
+        getController("vehicle")?.getActiveForm()?.updateSubmitState();
+    });
     const vehicle = vehiclePage();
     registerController("vehicle", vehicle);
     vehicle.init();
@@ -27,15 +35,20 @@ export async function init() {
 export const vehiclePage = () =>
     createMasterPage({
         key: "vehicle",
+        // 統合保存Handlerが完成するまで追加データの送信を停止
+        // buildAdditionalPayload: buildVehicleSettingsPayload,
+        hasAdditionalChanges: hasVehicleSettingsChanges,
+        // 車両登録フォームを開いた際に基本配車設定を読み込む
+        onOpen: async data => {
+            await loadVehicleDispatchSettings(data);
+        },
         tableId: "table-01",
         footerId: "footer-01",
         formId: "form-01",
         idKey: "vehicleId",
         repository: VehicleRepository,
         columns: createVehicleColumns(),
-        components: {
-            combo: true
-        },
+        components: {combo: true},
         forms: {
             dispatchSetting: { 
                 create: (controller) =>
@@ -95,16 +108,15 @@ export const vehiclePage = () =>
                                     await loadDefaultMembers(data.vehicleId, nextCategory);
                                     formController.updateSubmitState();
                                 };
-
-                            const addButton = document.getElementById("dispatch-member-add-btn");
-                            if(addButton && addButton.dataset.initialized !== "true"){
-                                addButton.dataset.initialized = "true";
-                                addButton.addEventListener("click", () => {
-                                    addDefaultMemberDraft();
-                                    formController.updateSubmitState();
-                                });
-                            }
-                            formController.updateSubmitState();
+                                const addButton = document.getElementById("dispatch-member-add-btn");
+                                if(addButton && addButton.dataset.initialized !== "true"){
+                                    addButton.dataset.initialized = "true";
+                                    addButton.addEventListener("click", () => {
+                                        addDefaultMemberDraft();
+                                        formController.updateSubmitState();
+                                    });
+                                }
+                                formController.updateSubmitState();
                         },
                         buildAdditionalPayload: () => buildDefaultMemberPayload(controller.getActiveForm()?.currentEntity?.vehicleId),
                         hasAdditionalChanges: () => hasDefaultMemberChanges(),
@@ -137,8 +149,11 @@ export const vehiclePage = () =>
         }
     });
 
-async function loadDefaultMembers(vehicleId, dispatchCategory){
-    const area = document.getElementById("vehicle-default-member-area");
+/**
+ * 基本乗務員一覧を取得して指定エリアに表示する
+ */
+async function loadDefaultMembers(vehicleId, dispatchCategory, areaId = "vehicle-default-member-area"){
+    const area = document.getElementById(areaId);
     if(!area){
         return;
     }
@@ -167,53 +182,90 @@ async function loadDefaultMembers(vehicleId, dispatchCategory){
             employeeName: row.employeeName ?? "",
             role: row.role,
             version: row.version,
-            isNew: false
+            isNew: false,
+            formType: areaId === "vehicle-form-member-area" ? "vehicle" : "dispatch"
         });
         area.appendChild(item);
     });
 }
 
-function addDefaultMemberDraft(){
-    const employeeIdInput = document.getElementById("dispatch-member-employee-id");
-    const employeeNameInput = document.getElementById("dispatch-member-name");
-    const employeeCodeInput = document.getElementById("dispatch-member-code");
-    const roleInput = document.getElementById("dispatch-member-role");
-    const area = document.getElementById("vehicle-default-member-area");
+/**
+ * 車両登録フォームの基本配車設定を読み込む
+ */
+async function loadVehicleDispatchSettings(data){
+    // 前回の変更情報を初期化
+    deletedVehicleFormMembers = [];
+    initialVehicleDispatchCategory = 0;
+
+    const categorySelect = document.getElementById("vehicle-dispatch-category");
+    const area = document.getElementById("vehicle-form-member-area");
+    if(!categorySelect || !area) return;
+
+    categorySelect.value = "";
+    area.replaceChildren();
+
+    const vehicleId = Number(data?.vehicleId || 0);
+    if(!vehicleId) return;
+
+    // 登録済みの基本配車区分を取得
+    const result = await VehicleDefaultMemberRepository.findDispatchCategory({
+        vehicleId,
+        state: APP.cache.common.state.INITIAL
+    });
+
+    const currentCategory = Number(result.data?.[0]?.dispatchCategory || 0);
+    initialVehicleDispatchCategory = currentCategory;
+    categorySelect.value = currentCategory ? String(currentCategory) : "";
+
+    // 登録済みの基本乗務員を表示
+    await loadDefaultMembers(
+        vehicleId,
+        currentCategory,
+        "vehicle-form-member-area"
+    );
+}
+
+/**
+ * 基本乗務員を画面上の一覧に追加する
+ */
+function addDefaultMemberDraft(formType = "dispatch"){
+    const isVehicle = formType === "vehicle";
+    const prefix = isVehicle ? "vehicle-member" : "dispatch-member";
+    const employeeIdInput = document.getElementById(`${prefix}-employee-id`);
+    const employeeNameInput = document.getElementById(`${prefix}-name`);
+    const employeeCodeInput = document.getElementById(`${prefix}-code`);
+    const roleInput = document.getElementById(`${prefix}-role`);
+    const area = document.getElementById(
+        isVehicle ? "vehicle-form-member-area" : "vehicle-default-member-area"
+    );
     if(!employeeIdInput || !employeeNameInput || !roleInput || !area){
         return;
     }
+
     const employeeId = Number(employeeIdInput.value);
     const employeeName = employeeNameInput.value.trim();
     const role = Number(roleInput.value);
     if(!employeeId || !employeeName || !role){
         return;
     }
-    // 同じ社員の二重追加を防止
-    const exists =
-        area.querySelector(
-            `[data-employee-id="${employeeId}"]`
-        );
 
-    if(exists){
+    // 同じ従業員の二重追加を防止
+    if(area.querySelector(`[data-employee-id="${employeeId}"]`)){
         return;
     }
 
-    // 「未設定です」を消す
     area.querySelector(".vehicle-default-member-empty")?.remove();
-    const item = createDefaultMemberItem({employeeId, employeeName, role, isNew: true});
-    area.appendChild(item);
+    area.appendChild(createDefaultMemberItem({employeeId, employeeName, role, isNew: true, formType}));
 
-    // 入力欄クリア
+    // 入力欄を初期化
     employeeIdInput.value = "";
     employeeNameInput.value = "";
-
+    roleInput.value = "";
     if(employeeCodeInput){
         employeeCodeInput.value = "";
         delete employeeCodeInput.dataset.lastId;
         employeeCodeInput.focus();
     }
-
-    roleInput.value = "";
 }
 
 function createDefaultMemberItem({
@@ -222,8 +274,9 @@ function createDefaultMemberItem({
     employeeName,
     role,
     version = 0,
-    isNew = false
-}) {
+    isNew = false,
+    formType = "dispatch"
+}){
     const item = document.createElement("div");
     item.className = "vehicle-default-member-item button-hover-group";
     item.dataset.employeeId = employeeId;
@@ -242,8 +295,6 @@ function createDefaultMemberItem({
     const removeButton = document.createElement("button");
 
     removeButton.type = "button";
-    // removeButton.textContent = "×";
-    // removeButton.className = "vehicle-default-member-remove";
     removeButton.className = "button-icon-remove";
     const delIcon = document.createElement("img");
     delIcon.src = "/icons/close-s.png";
@@ -252,8 +303,12 @@ function createDefaultMemberItem({
     removeButton.title = "この担当者を基本乗務員から削除";
     removeButton.onclick = () => {
         if(item.dataset.vehicleDefaultMemberId && item.dataset.new !== "true"){
-            deletedDefaultMembers.push({
-                vehicleDefaultMemberId: Number( item.dataset.vehicleDefaultMemberId),
+            // フォームごとに削除情報を管理する
+            const deletedMembers = formType === "vehicle"
+                ? deletedVehicleFormMembers
+                : deletedDefaultMembers;
+            deletedMembers.push({
+                vehicleDefaultMemberId: Number(item.dataset.vehicleDefaultMemberId),
                 version: Number(item.dataset.version)
             });
         }
@@ -307,6 +362,30 @@ function buildDefaultMemberPayload(vehicleId){
     };
 }
 
+/**
+ * 車両登録フォームの基本配車設定を保存用データにまとめる
+ */
+function buildVehicleSettingsPayload(){
+    const dispatchCategory = Number(document.getElementById("vehicle-dispatch-category")?.value || 0);
+    const area = document.getElementById("vehicle-form-member-area");
+    const members = [...(area?.querySelectorAll(".vehicle-default-member-item") ?? [])]
+        .map((item, index) => ({
+            vehicleDefaultMemberId: item.dataset.vehicleDefaultMemberId
+                ? Number(item.dataset.vehicleDefaultMemberId) : null,
+            employeeId: Number(item.dataset.employeeId),
+            role: Number(item.dataset.role),
+            displayOrder: index + 1,
+            version: Number(item.dataset.version ?? 0),
+            state: APP.cache.common.state.INITIAL
+        }));
+
+    return {
+        dispatchCategory,
+        members,
+        deletedMembers: [...deletedVehicleFormMembers]
+    };
+}
+
 function hasDefaultMemberChanges(){
     const area = document.getElementById("vehicle-default-member-area");
     if(!area){
@@ -333,4 +412,17 @@ function initFirstRegistrationSelects() {
             monthSelect.add(new Option(`${month}月`, month));
         }
     }
+}
+
+/**
+ * 基本配車設定の変更有無を判定する
+ */
+function hasVehicleSettingsChanges(){
+    const category = Number(document.getElementById("vehicle-dispatch-category")?.value || 0);
+    const area = document.getElementById("vehicle-form-member-area");
+    const hasNew = area?.querySelector('.vehicle-default-member-item[data-new="true"]') != null;
+
+    return category !== initialVehicleDispatchCategory
+        || hasNew
+        || deletedVehicleFormMembers.length > 0;
 }
