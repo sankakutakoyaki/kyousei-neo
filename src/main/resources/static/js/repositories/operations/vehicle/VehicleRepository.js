@@ -19,5 +19,9 @@ export const VehicleRepository = {
     },
     async download(params){
         return await RequestClient.request({queryId: "vehicleCsv", params});
-    }
+    },
+    // 車両情報・基本配車区分・基本乗務員の統合保存
+    async saveSettings(params){
+        return await RequestClient.request({queryId: "vehicleSettingsSave", params});
+    },
 };

@@ -228,7 +228,9 @@ public class SqlBuilder {
                 sets.add(toSnake(key) + " = ?");
                 params.add(entry.getValue());
             }
-            if (sets.isEmpty()) {
+            // 通常更新のみ、更新項目がない場合はエラー
+            // 論理削除では後続処理でstateを設定する
+            if (sets.isEmpty() && mode == SqlMode.UPDATE) {
                 throw new IllegalArgumentException("更新項目がありません");
             }
             if (mode == SqlMode.DELETE) {

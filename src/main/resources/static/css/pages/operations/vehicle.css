@@ -45,13 +45,21 @@
 }
 
 #form-01 .dialog-content {
-    & .form-row:nth-of-type(3) {
+    /* 子要素の内容によってGridの列幅が広がるのを防ぐ */
+    grid-template-columns: minmax(0, 1fr);
+    & .form-row {
         display: grid;
+        column-gap: .5rem;
+    }
+    & .form-row:nth-of-type(2) {
+        width: 100%;
+        grid-template-columns: repeat(3, 1fr);
+    }
+    & .form-row:nth-of-type(3) {
         width: 100%;
         grid-template-columns: 8rem 6rem 4rem 6rem;
     }
     & .form-row:nth-of-type(4) {
-        display: grid;
         grid-template-columns: auto auto 8rem 2rem 6rem 2rem 1fr;
         &>.form-parts:nth-of-type(3) {
             margin-left: 2rem;
@@ -61,34 +69,71 @@
             align-self: self-end;
         }
     }
+    & .form-row:nth-of-type(5) {
+        grid-template-columns: auto auto 1fr;
+    }
+    & .form-row:nth-of-type(6) {
+        grid-template-columns: 12rem 12rem 1fr;
+    }
     & .form-row:nth-of-type(7) {
-        display: grid;
         width: 100%;
+        height: 5rem;
         grid-template-columns: 1fr;
     }
-}
-
-
-#dispatch-setting-dialog .dialog-content>.form-row:first-of-type {
-    display: grid;
-    grid-template-columns: auto auto auto;
-    column-gap: .5rem;
-}
-
-#dispatch-setting-dialog .dialog-content>.form-row:nth-of-type(2) {
-    display: grid;
-    grid-template-columns: auto auto 6rem 15rem auto;
-    column-gap: .5rem;
-    & .normal-btn {
-        height: 2.5rem;
-        align-self: self-end;
+    & .form-row:nth-of-type(9) {
+        margin-top: 2rem;
+        grid-template-columns: 5rem 12rem auto 6rem 1fr;
     }
 }
 
-#vehicle-default-member-area {
-    padding: 2rem;
-    & .vehicle-default-member-item>span {
-        font-size: 1.2rem;
-        margin-right: 2rem;
-    }
+/* 基本乗務員一覧：フォーム幅内で横並び・自動折り返し */
+#form-01 .dialog-content #vehicle-form-member-area {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+/* 基本乗務員カード：内容に応じた幅で横並びに表示 */
+#vehicle-form-member-area .vehicle-default-member-item {
+    display: flex;
+    flex: 0 1 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-width: 0;
+    padding: 0.75rem 1rem;
+    background: #f7f8fa;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+}
+
+.vehicle-member-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.vehicle-member-name {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.vehicle-member-role {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+#vehicle-form-member-area .button-icon-remove {
+    flex-shrink: 0;
+}
+
+/* 車両登録ダイアログ：乗務員数による横幅の拡大を防ぐ */
+#form-01.form-dialog {
+    width: min(90vw, 50rem);
+    max-width: 90vw;
 }

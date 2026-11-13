@@ -100,7 +100,8 @@
                     'name': 'vehicle-height',
                     'inputmode': 'numeric',
                     'index': 15,
-                    'format': 'currency'
+                    'format': 'currency',
+                    'validate': 'number'
                 }
             })}"></th:block>
             <span>mm</span>
@@ -110,7 +111,8 @@
                     'name': 'maximum-load',
                     'inputmode': 'numeric',
                     'index': 16,
-                    'format': 'currency'
+                    'format': 'currency',
+                    'validate': 'number'
                 }
             })}"></th:block>
             <span>kg</span>
@@ -184,21 +186,12 @@
             data-name-key="fullName"
             data-value-key="employeeId">
 
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                {
-                    'text': '役割',
-                    'id': 'vehicle-member-role',
-                    'combo': 'crewRoleComboList',
-                    'index': 19
-                }
-            })}"></th:block>
-
             <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
                 {
                     'text': '社員ID / コード',
                     'id': 'vehicle-member-code',
                     'resolveId': true,
-                    'index': 20
+                    'index': 19
                 }
             })}"></th:block>
 
@@ -212,104 +205,28 @@
                     'id': 'vehicle-member-name',
                     'resolveName': true,
                     'readonly': true,
+                    'index': 20
+                }
+            })}"></th:block>
+
+            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
+                {
+                    'text': '役割',
+                    'id': 'vehicle-member-role',
+                    'combo': 'crewRoleComboList',
                     'index': 21
                 }
             })}"></th:block>
 
-            <button type="button"
-                    id="vehicle-member-add-btn"
-                    class="normal-btn">追加</button>
+            <div class="form-parts">
+                <label></label>
+                <button type="button"
+                        id="vehicle-member-add-btn"
+                        class="normal-btn">追加</button>
+            </div>
         </div>
 
         <!-- 登録済み基本乗務員一覧 -->
         <div id="vehicle-form-member-area" class="form-row"></div>
-    </div>
-</th:block>
-
-<th:block th:fragment="dispatchSettingFragment()">
-    <div class="dialog-content" data-enterfocus="dispatch-setting-dialog">
-        <div class="form-row">
-            <!-- 車両の基本配車区分 -->
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                {
-                    'text':'基本配車区分',
-                    'id':'dispatch-setting-category',
-                    'name':'dispatch-category',
-                    'combo':'dispatchCategoryComboList',
-                    'index':1
-                }
-            })}"></th:block>
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                {
-                    'text':'車両名',
-                    'id':'dispatch-setting-vehicle-name',
-                    'name':'vehicle-name',
-                    'readonly':true
-                }
-            })}"></th:block>
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                {
-                    'text':'車番',
-                    'id':'dispatch-setting-plate-number',
-                    'name':'plate-number',
-                    'readonly':true
-                }
-            })}"></th:block>
-        </div>
-        <div
-            class="form-row"
-            data-resolve="query"
-            data-query-id="employeeResolve"
-            data-param-builder="employeeParams"
-            data-result-first="true"
-            data-name-key="fullName"
-            data-value-key="employeeId">
-            <!-- 基本乗務員の対象区分 -->
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                {
-                    'text':'基本乗務員の対象区分',
-                    'id':'dispatch-member-category',
-                    'name':'member-dispatch-category',
-                    'combo':'dispatchCategoryComboList',
-                    'index':2
-                }
-            })}"></th:block>
-            <th:block th:replace="~{fragments/components/box :: selectBoxFragment(${
-                {
-                    'text':'役割',
-                    'id':'dispatch-member-role',
-                    'name':'role',
-                    'combo':'crewRoleComboList',
-                    'index':5
-                }
-            })}"></th:block>
-            <!-- 担当者 -->
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                {
-                    'text':'社員ID / コード',
-                    'id':'dispatch-member-code',
-                    'name':'employee-code',
-                    'resolveId':true,
-                    'index':3
-                }
-            })}"></th:block>
-            <input
-                type="hidden"
-                id="dispatch-member-employee-id"
-                name="employee-id"
-                data-role="hidden-id">
-            <th:block th:replace="~{fragments/components/box :: inputBoxFragment(${
-                {
-                    'text':'社員名',
-                    'id':'dispatch-member-name',
-                    'name':'employee-name',
-                    'resolveName':true,
-                    'readonly':true,
-                    'index':4
-                }
-            })}"></th:block>
-            <button class="normal-btn" type="button" id="dispatch-member-add-btn">追加</button>
-        </div>
-        <div id="vehicle-default-member-area" class="form-row"></div>
     </div>
 </th:block>
