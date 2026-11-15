@@ -15,7 +15,7 @@ import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
 import com.kyouseipro.neo.sql.repository.SqlRepository;
 
 class VehicleDefaultMemberServiceTest {
-    
+
     @Test
     void 別車両の乗務員は削除できない() {
         BaseSqlRepository baseRepository = mock(BaseSqlRepository.class);
