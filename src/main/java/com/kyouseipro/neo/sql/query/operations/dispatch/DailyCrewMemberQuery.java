@@ -112,4 +112,23 @@ public class DailyCrewMemberQuery {
             )
         );
     }
+
+    // 指定日の配車区分に登録済みの乗務員IDを取得
+    public static QueryDefinition dailyCrewAssignedEmployeeList() {
+        return QueryDefinition.select(
+            """
+            SELECT DISTINCT
+                dcm.employee_id
+            FROM daily_crew_members dcm
+            INNER JOIN daily_crews dc
+                ON dc.daily_crew_id = dcm.daily_crew_id
+            WHERE dc.work_date = ?
+            AND dc.office_id = ?
+            AND dc.dispatch_category = ?
+            AND dc.state = ?
+            AND dcm.state = ?
+            """,
+            List.of("workDate", "officeId", "dispatchCategory", "state", "state")
+        );
+    }
 }
