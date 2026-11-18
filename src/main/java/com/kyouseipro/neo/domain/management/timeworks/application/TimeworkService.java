@@ -6,14 +6,19 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.common.combo.entity.ComboDto;
 import com.kyouseipro.neo.domain.management.timeworks.model.OriginalTimework;
+import com.kyouseipro.neo.domain.management.timeworks.model.SelfStampRequest;
 import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkListItem;
 import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkPeriod;
 import com.kyouseipro.neo.domain.management.timeworks.model.TimeworkStatus;
@@ -25,7 +30,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class TimeworkService {
+    private static final Logger log = LoggerFactory.getLogger(TimeworkService.class);
+
     private final TimeworkRepository repository;
+    private final TimeworkLocationService locationService;
 
     public TimeworkStatus findEmployee(String identifier) {
         String normalized = identifier == null ? "" : identifier.trim();
@@ -41,8 +49,9 @@ public class TimeworkService {
         return status;
     }
 
+    // 打刻画面では、全営業所の当日出勤予定者を取得する
     public List<TimeworkListItem> findTodayList() {
-        return repository.findList(LocalDate.now(), null, null);
+        return repository.findTodayShiftList(LocalDate.now());
     }
 
     public List<TimeworkListItem> findManagementList(
@@ -113,10 +122,53 @@ public class TimeworkService {
         return repository.findTodayByEmployeeId(employeeId, now.toLocalDate());
     }
 
+    /**
+     * 本人打刻を登録し、確定後に位置情報を別トランザクションで保存する。
+     */
     @Transactional
-    public TimeworkStatus stampSelf(Authentication authentication, String stampType) {
+    public TimeworkStatus stampSelf(Authentication authentication, SelfStampRequest request) {
         TimeworkStatus self = findSelf(authentication);
-        return stamp(authentication, self.employeeId(), stampType);
+        TimeworkStatus result = stamp(authentication, self.employeeId(), request.stampType());
+
+        // GPS情報が有効な場合だけ保存を予約する
+        if (hasValidLocation(request) && result.timeworkId() != null) {
+            long timeworkId = result.timeworkId();
+            String type = request.stampType().trim().toUpperCase(Locale.ROOT);
+            String editor = account(authentication);
+
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    try {
+                        locationService.save(
+                            timeworkId, type,
+                            request.latitude(), request.longitude(), request.accuracy(),
+                            request.recordedAt(), editor
+                        );
+                    } catch (Exception error) {
+                        // GPS保存に失敗しても確定済みの勤怠打刻は維持する
+                        log.warn("打刻位置情報の保存に失敗しました。timeworkId={}, type={}",
+                            timeworkId, type, error);
+                    }
+                }
+            });
+        }
+
+        return result;
+    }
+
+    /** GPS情報が正常な場合のみ保存対象とする。 */
+    private boolean hasValidLocation(SelfStampRequest request) {
+        Double latitude = request.latitude();
+        Double longitude = request.longitude();
+        Double accuracy = request.accuracy();
+
+        return latitude != null && Double.isFinite(latitude)
+            && latitude >= -90 && latitude <= 90
+            && longitude != null && Double.isFinite(longitude)
+            && longitude >= -180 && longitude <= 180
+            && accuracy != null && Double.isFinite(accuracy) && accuracy >= 0
+            && request.recordedAt() != null;
     }
 
     private String account(Authentication authentication) {

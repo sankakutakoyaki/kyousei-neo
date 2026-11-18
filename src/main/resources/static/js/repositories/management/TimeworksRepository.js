@@ -17,8 +17,12 @@ export const TimeworksRepository = {
         return api.post("/api/timeworks/stamp", {employeeId, stampType});
     },
 
-    async stampSelf(stampType) {
-        return api.post("/api/timeworks/stamp/self", {stampType});
+    // 本人打刻時に取得できた位置情報を任意で送信する
+    async stampSelf(stampType, location = null) {
+        return api.post("/api/timeworks/stamp/self", {
+            stampType,
+            ...(location ?? {})
+        });
     },
 
     async searchManagement(params) {

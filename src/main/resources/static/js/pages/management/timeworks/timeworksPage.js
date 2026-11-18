@@ -38,6 +38,10 @@ export const timeworksPage = (management, stamp) =>
         idKey: "timeworkId",
         repository: TimeworksRepository,
         columns: createTimeworksListColumns(),
+        // 打刻の有無に応じて行の表示スタイルを切り替える
+        rowClass: item => item.startTime || item.endTime
+            ? "timework-stamped"
+            : "timework-pending",
         components: {combo: true},
         forms: {},
         checkable: false,

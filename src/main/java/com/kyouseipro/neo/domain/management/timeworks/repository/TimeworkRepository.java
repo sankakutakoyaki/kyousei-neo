@@ -336,6 +336,27 @@ public class TimeworkRepository {
             "すでに退勤済みです。画面を再読み込みしてください。");
     }
 
+    /**
+     * 本人打刻時の位置情報を保存する。
+     * 位置情報が取得できなかった場合は登録しない。
+     */
+    public void insertLocation(
+        long timeworkId, String stampType,
+        double latitude, double longitude, double accuracy,
+        LocalDateTime recordedAt, String editor
+    ) {
+        sqlRepository.updateRequired("""
+            INSERT INTO timework_locations (
+                timework_id, stamp_type, latitude, longitude,
+                accuracy, recorded_at, regist_user
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, List.of(
+                timeworkId, stampType, latitude, longitude,
+                accuracy, Timestamp.valueOf(recordedAt), editor
+            ), "打刻位置情報を保存できませんでした。");
+    }
+
     private static LocalDateTime toLocalDateTime(Timestamp value) {
         return value == null ? null : value.toLocalDateTime();
     }
@@ -364,4 +385,67 @@ public class TimeworkRepository {
             startTime == null, startTime != null && endTime == null
         );
     }
+
+    /**
+     * 打刻画面用：全営業所の当日出勤予定者と打刻情報を取得する。
+     * 未打刻者も表示し、勤務先営業所は当日のシフトを優先する。
+     */
+    public List<TimeworkListItem> findTodayShiftList(LocalDate workDate) {
+        String sql = """
+            SELECT
+                COALESCE(t.timework_id, 0) AS timework_id,
+                e.employee_id,
+                e.full_name,
+                es.office_id,
+                COALESCE(o.name, '') AS office_name,
+                es.work_date,
+                COALESCE(te.edit_start_time, t.start_time) AS start_time,
+                COALESCE(te.edit_end_time, t.end_time) AS end_time,
+                COALESCE(t.version, 0) AS version
+            FROM employees e
+            CROSS APPLY (
+                SELECT TOP (1) s.office_id, s.work_date
+                FROM employee_shifts s
+                WHERE s.employee_id = e.employee_id
+                AND s.work_date = ?
+                AND s.shift_type = 1
+                AND s.state = ?
+                ORDER BY s.employee_shift_id DESC
+            ) es
+            LEFT JOIN offices o
+                ON o.office_id = es.office_id
+                AND o.state = ?
+            LEFT JOIN timeworks t
+                ON t.employee_id = e.employee_id
+                AND t.work_date = es.work_date
+                AND t.state = ?
+            OUTER APPLY (
+                SELECT TOP (1) edit_start_time, edit_end_time
+                FROM timework_edits
+                WHERE timework_id = t.timework_id
+                AND state = ?
+                ORDER BY timework_edit_id DESC
+            ) te
+            WHERE e.state = ?
+            ORDER BY es.office_id, e.full_name
+            """;
+
+        return sqlRepository.queryList(sql, (ps, ignored) -> {
+            ps.setObject(1, workDate);
+            for (int i = 2; i <= 6; i++) {
+                ps.setInt(i, State.INITIAL.getCode());
+            }
+        }, rs -> new TimeworkListItem(
+            rs.getLong("timework_id"),
+            rs.getLong("employee_id"),
+            rs.getString("full_name"),
+            rs.getLong("office_id"),
+            rs.getString("office_name"),
+            rs.getObject("work_date", LocalDate.class),
+            toLocalDateTime(rs.getTimestamp("start_time")),
+            toLocalDateTime(rs.getTimestamp("end_time")),
+            rs.getInt("version"),
+            null, null, null, null, null
+        ), null);
+}
 }

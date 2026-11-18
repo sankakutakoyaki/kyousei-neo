@@ -68,7 +68,8 @@ public class TimeworkController {
         Authentication authentication,
         @RequestBody SelfStampRequest request
     ) {
-        TimeworkStatus status = service.stampSelf(authentication, request.stampType());
+        // GPS情報を含む本人打刻リクエストをサービスへ渡す
+        TimeworkStatus status = service.stampSelf(authentication, request);
         String message = "START".equalsIgnoreCase(request.stampType())
             ? "出勤を打刻しました。" : "退勤を打刻しました。";
         return SimpleResponse.ok(message, status);

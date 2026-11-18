@@ -15,9 +15,13 @@ export function createStamp(session, management) {
     let clockTimer = null;
     let statusRequest = 0;
     let stamping = false;
+    let listTimer = null;
+    let refreshingList = false;
+
     session.onDispose(() => {
         statusRequest++;
         window.clearInterval(clockTimer);
+        window.clearInterval(listTimer);
         if(responsiveChangeHandler) mobileMedia.removeEventListener("change", responsiveChangeHandler);
     });
 
@@ -25,6 +29,7 @@ export function createStamp(session, management) {
         rolePersonalMode = APP.cache.page.personalMode === true;
         initClock(controller);
         initResponsiveStampMode(controller);
+        initListRefresh(controller);
     }
 
     async function handleEmployeeResolved(controller, group) {
@@ -54,7 +59,10 @@ export function createStamp(session, management) {
 
         try {
             if (personalMode) {
-                await TimeworksRepository.stampSelf(stampType);
+                // 本人打刻時のみGPSを取得し、失敗しても打刻を継続する
+                const location = await getStampLocation();
+                if (!canApply()) return;
+                await TimeworksRepository.stampSelf(stampType, location);
             } else {
                 await TimeworksRepository.stamp(employee.employeeId, stampType);
             }
@@ -77,6 +85,50 @@ export function createStamp(session, management) {
                 else resetStampForm();
             }
         } finally {stamping = false;}
+    }
+
+    /**
+     * 本人打刻時の位置情報を取得する。
+     * 取得失敗・権限拒否・タイムアウト時はnullを返す。
+     */
+    async function getStampLocation() {
+        if (!navigator.geolocation || !window.isSecureContext) return null;
+
+        const position = await new Promise(resolve => {
+            let completed = false;
+            const finish = value => {
+                if (completed) return;
+                completed = true;
+                window.clearTimeout(timer);
+                resolve(value);
+            };
+
+            // 位置情報の取得を最大5秒で終了する
+            const timer = window.setTimeout(() => finish(null), 5000);
+
+            try {
+                navigator.geolocation.getCurrentPosition(
+                    position => finish(position),
+                    () => finish(null),
+                    {enableHighAccuracy: true, timeout: 5000, maximumAge: 0}
+                );
+            } catch {
+                finish(null);
+            }
+        });
+
+        if (!position) return null;
+
+        // GPS取得日時を日本時間のLocalDateTime形式に変換する
+        const recordedAt = new Date(position.timestamp + 9 * 60 * 60 * 1000)
+            .toISOString().slice(0, 23);
+
+        return {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+            recordedAt
+        };
     }
 
     function initClock(controller) {
@@ -117,6 +169,24 @@ export function createStamp(session, management) {
                 });
             }
         }, 1000);
+    }
+
+    // 打刻一覧を60秒ごとに更新する（画面遷移や多重更新は行わない）
+    function initListRefresh(controller) {
+        window.clearInterval(listTimer);
+        listTimer = window.setInterval(async () => {
+            if (!session.isActive() || isPersonalMode || refreshingList) return;
+            if (!controller.dataTable) return;
+
+            refreshingList = true;
+            try {
+                await controller.dataTable.refresh();
+            } catch (error) {
+                console.warn("勤怠一覧の自動更新に失敗しました", error);
+            } finally {
+                refreshingList = false;
+            }
+        }, 60 * 1000);
     }
 
     function initResponsiveStampMode(controller) {

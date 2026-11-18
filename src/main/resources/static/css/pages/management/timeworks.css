@@ -7,9 +7,10 @@
 
 #table-01 tr {
     height: 2.5rem;
+    border-top: 0;
 }
 
-:is(#table-01, #table-header-01) tr > :is(th, td):is(:nth-child(2), :nth-child(3)) {
+:is(#table-01, #table-header-01) tr> :is(th, td):is(:nth-child(2), :nth-child(3)) {
     text-align: center;
 }
 
@@ -48,7 +49,7 @@
 }
 
 /* テーブル本文だけをスクロール領域にする。 */
-.timeworks-area .table-area > section,
+.timeworks-area .table-area>section,
 .timeworks-area .table-wrapper,
 .timeworks-area .normal-table,
 .timeworks-area .normal-table .scroll-area {
@@ -56,7 +57,7 @@
     min-height: 0;
 }
 
-.timeworks-area .table-area > section,
+.timeworks-area .table-area>section,
 .timeworks-area .table-wrapper {
     display: grid;
     grid-template-rows: minmax(0, 1fr);
@@ -72,7 +73,9 @@
     scrollbar-gutter: stable;
 }
 
-.stamp-area h2 { margin: 0 0 1rem; }
+.stamp-area h2 {
+    margin: 0 0 1rem;
+}
 
 .stamp-clock {
     display: grid;
@@ -83,8 +86,15 @@
     background: #f5f7fa;
 }
 
-#stamp-date { font-size: 1rem; }
-#stamp-time { font-size: 2.4rem; font-weight: 700; letter-spacing: .08em; }
+#stamp-date {
+    font-size: 1rem;
+}
+
+#stamp-time {
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+}
 
 .stamp-employee {
     display: grid;
@@ -103,49 +113,112 @@
     font-size: 1rem;
 }
 
-.stamp-employee input[readonly] { background: #f5f7fa; font-weight: 600; }
+.stamp-employee input[readonly] {
+    background: #f5f7fa;
+    font-weight: 600;
+}
 
-.stamp-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.25rem; }
-.stamp-button { min-height: 3.5rem; font-size: 1.1rem; font-weight: 700; }
-.stamp-button.start:not(:disabled) { background: #1677ff; color: white; }
-.stamp-button.end:not(:disabled) { background: #e05252; color: white; }
-.stamp-note { margin: 1rem 0 0; color: #666; font-size: .8rem; }
+.stamp-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.25rem;
+}
+
+.stamp-button {
+    min-height: 3.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.stamp-button.start:not(:disabled) {
+    background: #1677ff;
+    color: white;
+}
+
+.stamp-button.end:not(:disabled) {
+    background: #e05252;
+    color: white;
+}
+
+.stamp-note {
+    margin: 1rem 0 0;
+    color: #666;
+    font-size: .8rem;
+}
 
 @media (max-width: 64rem) {
-    .timeworks-area { grid-template-columns: 1fr; }
+    .timeworks-area {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 560px) {
-    .timeworks-area { display: block; }
+    .timeworks-area {
+        display: block;
+    }
+
     .timeworks-area .table-area,
     .stamp-desktop-fields,
     .tab-menu [data-tab="tab-02"],
-    #tab-02 { display: none !important; }
-    .stamp-area { max-width: 28rem; margin: 0 auto; }
-    .stamp-actions { margin-top: 1.5rem; }
-    .stamp-button { min-height: 5rem; font-size: 1.35rem; }
+    #tab-02 {
+        display: none !important;
+    }
+
+    .stamp-area {
+        max-width: 28rem;
+        margin: 0 auto;
+    }
+
+    .stamp-actions {
+        margin-top: 1.5rem;
+    }
+
+    .stamp-button {
+        min-height: 5rem;
+        font-size: 1.35rem;
+    }
 }
 
-.personal-timeworks-mode .timeworks-area { display: block; }
+.personal-timeworks-mode .timeworks-area {
+    display: block;
+}
+
 .personal-timeworks-mode .timeworks-area .table-area,
 .personal-timeworks-mode .stamp-desktop-fields,
 .personal-timeworks-mode .tab-menu [data-tab="tab-02"],
-.personal-timeworks-mode #tab-02 { display: none !important; }
-.personal-timeworks-mode .stamp-area { max-width: 28rem; margin: 0 auto; }
+.personal-timeworks-mode #tab-02 {
+    display: none !important;
+}
 
-.timework-management { padding: 2rem; }
-.timework-management h2 { margin-top: 0; }
+.personal-timeworks-mode .stamp-area {
+    max-width: 28rem;
+    margin: 0 auto;
+}
+
+.timework-management {
+    padding: 2rem;
+}
+
+.timework-management h2 {
+    margin-top: 0;
+}
 
 .management-toolbar {
     display: grid;
     column-gap: .5rem;
     grid-template-columns: auto auto auto minmax(12rem, auto) 5rem 1fr;
+
     &>.img-btn {
         margin-left: 2rem;
     }
 }
 
-.management-period { margin: 1rem 0; color: #555; }
+.management-period {
+    margin: 1rem 0;
+    color: #555;
+}
+
 .management-table-wrapper {
     height: calc(100vh - 21rem);
     min-height: 18rem;
@@ -154,22 +227,18 @@
 
 .management-table :is(thead, tbody) tr {
     grid-template-columns:
-        minmax(7rem, .8fr)
-        minmax(6rem, .6fr)
-        minmax(10rem, 1.2fr)
-        minmax(10rem, 1fr)
-        minmax(7rem, .7fr)
-        minmax(8rem, .8fr)
-        minmax(7rem, .7fr)
-        minmax(8rem, .8fr)
-        4rem;
+        minmax(7rem, .8fr) minmax(6rem, .6fr) minmax(10rem, 1.2fr) minmax(10rem, 1fr) minmax(7rem, .7fr) minmax(8rem, .8fr) minmax(7rem, .7fr) minmax(8rem, .8fr) 4rem;
 }
 
 .management-table :is(tbody) tr {
     height: 3rem;
 }
 
-.management-table tbody { display: block; min-height: 0; }
+.management-table tbody {
+    display: block;
+    min-height: 0;
+}
+
 /* 本文と同じスクロールバー領域をヘッダーにも確保する。 */
 .management-table thead {
     display: block;
@@ -181,18 +250,27 @@
 .management-table.normal-table tr[name="table-header"] {
     padding-right: 2rem;
 }
-.management-table tr[name="table-header"] { background: var(--white); }
-.management-table :is(th, td) { text-align: left; }
-.management-table td.management-original-time { color: #888; }
-.management-table tr > :is(th, td):is(
-    :nth-child(5),
+
+.management-table tr[name="table-header"] {
+    background: var(--white);
+}
+
+.management-table :is(th, td) {
+    text-align: left;
+}
+
+.management-table td.management-original-time {
+    color: #888;
+}
+
+.management-table tr> :is(th, td):is( :nth-child(5),
     :nth-child(6),
     :nth-child(7),
     :nth-child(8),
-    :nth-child(9)
-) {
+    :nth-child(9)) {
     text-align: center;
 }
+
 .management-time-input {
     display: grid;
     grid-template-columns: minmax(6.5rem, 1fr);
@@ -220,12 +298,23 @@
     cursor: pointer;
 }
 
-.management-table tr[name="data-row"].is-saving { background: #fff8df; }
-.management-table tr[name="data-row"].is-saved { background: #eaf8ee; }
-.management-table tr[name="data-row"].is-save-error { background: #fff0f0; }
+.management-table tr[name="data-row"].is-saving {
+    background: #fff8df;
+}
+
+.management-table tr[name="data-row"].is-saved {
+    background: #eaf8ee;
+}
+
+.management-table tr[name="data-row"].is-save-error {
+    background: #fff0f0;
+}
 
 /* 本人用の打刻画面では、ボタンの下に登録済み時刻を表示する。 */
-.stamp-records { display: none; }
+.stamp-records {
+    display: none;
+}
+
 .personal-timeworks-mode .stamp-records {
     display: grid;
     gap: .75rem;
@@ -233,8 +322,40 @@
     padding-top: 1rem;
     border-top: 1px solid var(--line);
 }
-.stamp-records > div { display: grid; gap: .25rem; }
-.stamp-records dt { color: #666; font-size: .9rem; }
-.stamp-records dd { margin: 0; font-size: 1.2rem; font-weight: 600; font-variant-numeric: tabular-nums; }
-.personal-timeworks-mode #tab-01 { overflow-y: auto; }
-.personal-timeworks-mode .timeworks-area { height: auto; }
+
+.stamp-records>div {
+    display: grid;
+    gap: .25rem;
+}
+
+.stamp-records dt {
+    color: #666;
+    font-size: .9rem;
+}
+
+.stamp-records dd {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.personal-timeworks-mode #tab-01 {
+    overflow-y: auto;
+}
+
+.personal-timeworks-mode .timeworks-area {
+    height: auto;
+}
+
+/* 未打刻の出勤予定者は薄い文字で表示 */
+#table-01 tr.timework-pending td {
+    color: #999;
+    font-weight: 400;
+}
+
+/* 打刻済みの出勤者は太字で表示 */
+#table-01 tr.timework-stamped td {
+    color: var(--text, #333);
+    font-weight: 700;
+}
