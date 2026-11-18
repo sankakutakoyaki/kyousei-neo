@@ -10,6 +10,10 @@
     border-top: 0;
 }
 
+#table-01 tr[name="data-row"]:last-child {
+    border-bottom: 0;
+}
+
 :is(#table-01, #table-header-01) tr> :is(th, td):is(:nth-child(2), :nth-child(3)) {
     text-align: center;
 }
@@ -30,8 +34,8 @@
 
 .timeworks-area {
     display: grid;
-    grid-template-columns: minmax(18rem, 24rem) minmax(0, 40rem);
-    gap: 2rem;
+    grid-template-columns: minmax(18rem, 24rem) minmax(0, 42rem);
+    gap: 4rem;
     align-items: stretch;
     padding: 2rem;
     height: 100%;
@@ -65,6 +69,8 @@
 
 .timeworks-area .table-wrapper {
     overflow: hidden;
+    padding-bottom: 2rem;
+    margin-top: 0;
 }
 
 .timeworks-area .normal-table .scroll-area {

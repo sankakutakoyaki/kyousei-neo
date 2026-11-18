@@ -35,7 +35,8 @@ export const timeworksPage = (management, stamp) =>
         key: "timeworks",
         tableId: "table-01",
         footerId: "footer-01",
-        idKey: "timeworkId",
+        // 当日の勤怠一覧は社員IDで行を識別する
+        idKey: "employeeId",
         repository: TimeworksRepository,
         columns: createTimeworksListColumns(),
         // 打刻の有無に応じて行の表示スタイルを切り替える
@@ -46,7 +47,8 @@ export const timeworksPage = (management, stamp) =>
         forms: {},
         checkable: false,
         buildParams: () => ({}),
-        onDoubleClick: () => {},
+        // 勤怠一覧のダブルクリックで社員を打刻欄にセットする
+        onDoubleClick: item => stamp.selectEmployeeFromList(item),
         actions: {
             "employee-resolved": stamp.handleEmployeeResolved,
             stamp: stamp.handleStamp,

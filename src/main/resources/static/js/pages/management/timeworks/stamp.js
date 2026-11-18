@@ -4,7 +4,7 @@ import { mobileQuery } from "../../../core/access/mobileReadOnly.js";
 import { TimeworksRepository } from "../../../repositories/management/TimeworksRepository.js";
 import { formatDate } from "../../../util/time.js";
 import { openMsgDialog } from "../../../core/ui/dialog/dialogCore.js";
-
+import { DataResolver } from "../../../core/behavior/DataResolver.js";
 
 export function createStamp(session, management) {
     let selectedEmployee = null;
@@ -30,6 +30,22 @@ export function createStamp(session, management) {
         initClock(controller);
         initResponsiveStampMode(controller);
         initListRefresh(controller);
+    }
+
+    // 勤怠一覧から社員を選択し、既存の社員情報取得処理を実行する
+    async function selectEmployeeFromList(item) {
+        if (!session.isActive() || isPersonalMode || stamping || !item?.employeeId) return;
+
+        const group = session.root.querySelector(".stamp-employee[data-resolve]");
+        const identifier = session.byId("stamp-identifier");
+        if (!group || !identifier) return;
+
+        // 前回の選択を無効化し、新しい社員コードを入力する
+        identifier.value = String(item.employeeId);
+        identifier.dispatchEvent(new Event("input", {bubbles: true}));
+
+        // 氏名と打刻可能状態をAPIから取得する
+        await DataResolver.resolve(group, group.dataset.resolve);
     }
 
     async function handleEmployeeResolved(controller, group) {
@@ -313,5 +329,5 @@ export function createStamp(session, management) {
 
         window.requestAnimationFrame(() => {if(session.isActive()) identifier?.focus();});
     }
-    return {initStamp, handleEmployeeResolved, handleStamp};
+    return {initStamp, handleEmployeeResolved, handleStamp, selectEmployeeFromList};
 }
