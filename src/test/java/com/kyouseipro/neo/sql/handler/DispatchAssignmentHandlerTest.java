@@ -19,6 +19,7 @@ import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.Tables;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
+import com.kyouseipro.neo.sql.service.DispatchScopeLock;
 import com.kyouseipro.neo.sql.service.QueryExecutor;
 import com.kyouseipro.neo.domain.business.order.history.OrderHistoryRepository;
 import com.kyouseipro.neo.domain.business.order.history.OrderHistoryRepository.DispatchEvent;
@@ -29,13 +30,19 @@ class DispatchAssignmentHandlerTest {
     private QueryExecutor queryExecutor;
     private DispatchAssignmentHandler handler;
     private OrderHistoryRepository history;
+    private DispatchScopeLock dispatchScopeLock;
 
     @BeforeEach
     void setUp() {
         baseRepository = mock(BaseSqlRepository.class);
         queryExecutor = mock(QueryExecutor.class);
         history = mock(OrderHistoryRepository.class);
-        handler = new DispatchAssignmentHandler(baseRepository, queryExecutor, history);
+
+        // 共通ロックはモック化し、単体テストではDB接続しない
+        dispatchScopeLock = mock(DispatchScopeLock.class);
+        handler = new DispatchAssignmentHandler(
+            baseRepository, queryExecutor, history, dispatchScopeLock
+        );
     }
 
     private SelectRequest request(Map<String, Object> params) {
@@ -339,6 +346,31 @@ class DispatchAssignmentHandlerTest {
             ),
             eq("system")
         );
+
+        // 共通ロック → 班一覧取得 → 班ロック → 配車割当取得の順序を確認
+        var sequence = inOrder(dispatchScopeLock, queryExecutor);
+
+        sequence.verify(dispatchScopeLock).lock("2026-10-12", 1, 1);
+
+        // 対象班一覧を取得
+        sequence.verify(queryExecutor).select(
+            argThat(q -> q.getSql().contains("FROM daily_crews")
+                && q.getSql().contains("ORDER BY daily_crew_id")),
+            any(SelectRequest.class)
+        );
+
+        // 対象班をロック
+        sequence.verify(queryExecutor).select(
+            argThat(q -> q.getSql().contains("UPDLOCK")
+                && q.getSql().contains("HOLDLOCK")),
+            any(SelectRequest.class)
+        );
+
+        // ロック取得後に配車割当を取得
+        sequence.verify(queryExecutor).select(
+            argThat(q -> q.getSql().contains("FROM dispatch_assignments")),
+            any(SelectRequest.class)
+        );
     }
 
     @Test void reorderRecordsEachVersionAfterUpdateAndUsesAuthenticatedEditor() {
@@ -371,5 +403,85 @@ class DispatchAssignmentHandlerTest {
         doReturn(1).when(baseRepository).update(any(), anyMap(), anyString());
         doThrow(new BusinessException("history failed")).when(history).recordDispatch(anyLong(), any(), anyString());
         assertThrows(BusinessException.class, () -> handler.execute(definition(QueryKind.DISPATCH_ASSIGNMENT_REMOVE), req));
+    }
+
+    @Test
+    void createRejectsDuplicateAssignment() {
+        when(queryExecutor.select(any(), any())).thenAnswer(invocation -> {
+            QueryDefinition query = invocation.getArgument(0);
+
+            // 対象班のロック
+            if (query.getSql().contains("UPDLOCK")) {
+                return rows(Map.of("dailyCrewId", 8));
+            }
+
+            // 伝票100はすでに班8に登録されている
+            if (query.getSql().contains("FROM dispatch_assignments da")) {
+                return rows(Map.of("dailyCrewId", 8));
+            }
+
+            return List.of();
+        });
+
+        // 同じ伝票・同じ班への登録は拒否する
+        BusinessException error = assertThrows(BusinessException.class, () ->
+            handler.execute(
+                definition(QueryKind.DISPATCH_ASSIGNMENT_CREATE),
+                request(Map.of("orderId", 100, "dailyCrewId", 8))
+            )
+        );
+
+        assertEquals(
+            "この伝票はすでに同じ班に配車されています。再読み込みしてください。",
+            error.getMessage()
+        );
+
+        // 重複時にはINSERTも履歴登録も実行しない
+        verifyNoInteractions(baseRepository, history);
+    }
+
+    @Test
+    void createAllowsSameOrderInDifferentCrew() {
+        when(queryExecutor.select(any(), any())).thenAnswer(invocation -> {
+            QueryDefinition query = invocation.getArgument(0);
+
+            // 登録先の班8をロック
+            if (query.getSql().contains("UPDLOCK")) {
+                return rows(Map.of("dailyCrewId", 8));
+            }
+
+            // 同じ伝票100は、別の班5に登録済み
+            if (query.getSql().contains("FROM dispatch_assignments da")) {
+                return rows(Map.of("dailyCrewId", 5));
+            }
+
+            // 班8の次の訪問順序
+            return rows(Map.of("nextVisitOrder", 4));
+        });
+
+        when(baseRepository.insert(
+            eq(Tables.DISPATCH_ASSIGNMENT_BY_IDS), anyMap(), eq("system")
+        )).thenReturn(12L);
+
+        Object result = handler.execute(
+            definition(QueryKind.DISPATCH_ASSIGNMENT_CREATE),
+            request(Map.of("orderId", 100, "dailyCrewId", 8))
+        );
+
+        // 別の班への配車は許可する
+        assertEquals(Map.of("data", 12L, "count", 1), result);
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Map<String, Object>> captor = ArgumentCaptor.forClass(Map.class);
+
+        verify(baseRepository).insert(
+            eq(Tables.DISPATCH_ASSIGNMENT_BY_IDS), captor.capture(), eq("system")
+        );
+
+        assertEquals(100, captor.getValue().get("orderId"));
+        assertEquals(8, captor.getValue().get("dailyCrewId"));
+        assertEquals(4, captor.getValue().get("visitOrder"));
+
+        verify(history).recordDispatch(12L, DispatchEvent.DISPATCH_CREATED, "system");
     }
 }

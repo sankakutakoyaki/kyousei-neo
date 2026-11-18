@@ -38,12 +38,19 @@
     </template>
     <template id="dispatch-order-card-template">
         <div class="dispatch-order-card" draggable="true">
+            <!-- 件名と住所を横並びに表示 -->
             <div class="dispatch-order-card-header">
-                <strong data-field="title"></strong><span data-field="visitTime"></span>
+                <strong data-field="title"></strong>
+                <span class="dispatch-order-address" data-field="fullAddress"></span>
+                <span data-field="visitTime"></span>
             </div>
-            <div class="dispatch-order-address" data-field="fullAddress"></div>
-            <div class="dispatch-order-assigned"></div>
-            <div data-field="workResult" aria-label="訪問日当日の作業結果"></div>
+            <!-- 荷主名を表示 -->
+            <div class="dispatch-order-contractor" data-field="primeConstractorName"></div>
+            <!-- 作業結果と配車先を横並びに表示 -->
+            <div class="dispatch-order-status-row">
+                <div data-field="workResult" aria-label="訪問日当日の作業結果"></div>
+                <div class="dispatch-order-assigned"></div>
+            </div>
         </div>
     </template>
 </th:block>

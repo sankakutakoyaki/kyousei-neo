@@ -20,6 +20,7 @@ import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.Tables;
 import com.kyouseipro.neo.sql.query.operations.dispatch.DispatchAssignmentQuery;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
+import com.kyouseipro.neo.sql.service.DispatchScopeLock;
 import com.kyouseipro.neo.sql.service.QueryExecutor;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class DispatchAssignmentHandler implements QueryHandler {
     private final BaseSqlRepository baseRepository;
     private final QueryExecutor queryExecutor;
     private final OrderHistoryRepository orderHistoryRepository;
+    private final DispatchScopeLock dispatchScopeLock;
 
     @Override
     public boolean supports(QueryKind kind) {
@@ -60,6 +62,20 @@ public class DispatchAssignmentHandler implements QueryHandler {
         String editor = (String) params.getOrDefault("editor", "system");
         // ① 対象班をロック
         lockCrew(dailyCrewId);
+        // 同じ伝票が対象班に登録済みなら重複を防止
+        SelectRequest checkReq = selectParams(Map.of(
+            "orderId", orderId,
+            "state", State.INITIAL.getCode()
+        ));
+        List<Map<String, Object>> assignments = queryExecutor.select(
+            DispatchAssignmentQuery.dispatchAssignmentListByOrderId(), checkReq
+        );
+        boolean duplicate = assignments.stream().anyMatch(row ->
+            ((Number) row.get("dailyCrewId")).intValue() == dailyCrewId
+        );
+        if (duplicate) {
+            throw new BusinessException("この伝票はすでに同じ班に配車されています。再読み込みしてください。");
+        }
         // ② 班内の次の訪問順序を取得
         int visitOrder = getNextVisitOrder(dailyCrewId);
         // ③ 配車割当を登録
@@ -215,6 +231,8 @@ public class DispatchAssignmentHandler implements QueryHandler {
         String workDate = String.valueOf(params.get("workDate"));
         int officeId = ((Number) params.get("officeId")).intValue();
         int dispatchCategory = ((Number) params.get("dispatchCategory")).intValue();
+        // 班の追加・再初期化と競合しないよう、対象範囲を先にロック
+        dispatchScopeLock.lock(workDate, officeId, dispatchCategory);
         // ① 対象となる班を取得
         List<Map<String, Object>> crews = findResetCrews(workDate, officeId, dispatchCategory);
         // ② 班IDの昇順でロック

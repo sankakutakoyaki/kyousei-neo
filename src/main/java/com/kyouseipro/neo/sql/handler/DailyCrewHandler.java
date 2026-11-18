@@ -21,6 +21,7 @@ import com.kyouseipro.neo.sql.query.operations.dispatch.DailyCrewMemberQuery;
 import com.kyouseipro.neo.sql.query.operations.dispatch.DailyCrewQuery;
 import com.kyouseipro.neo.sql.query.operations.vehicle.VehicleDefaultMemberQuery;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
+import com.kyouseipro.neo.sql.service.DispatchScopeLock;
 import com.kyouseipro.neo.sql.service.QueryExecutor;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class DailyCrewHandler implements QueryHandler {
 
     private final BaseSqlRepository baseRepository;
     private final QueryExecutor queryExecutor;
+    private final DispatchScopeLock dispatchScopeLock;
 
     @Override
     public boolean supports(QueryKind kind) {
@@ -44,7 +46,20 @@ public class DailyCrewHandler implements QueryHandler {
     @Override
     @Transactional
     public Object execute(QueryDefinition def, SelectRequest req) {
-        return switch (def.getKind()) {
+        QueryKind kind = def.getKind();
+
+        // 班の一括作成・再初期化では、対象範囲を先にロックする
+        if (kind == QueryKind.DAILY_CREW_BULK_CREATE
+                || kind == QueryKind.DAILY_CREW_REINITIALIZE) {
+            Map<String, Object> params = req.getParams();
+            dispatchScopeLock.lock(
+                String.valueOf(params.get("workDate")),
+                ((Number) params.get("officeId")).intValue(),
+                ((Number) params.get("dispatchCategory")).intValue()
+            );
+        }
+
+        return switch (kind) {
             case DAILY_CREW_BULK_CREATE -> executeBulkCreate(req);
             case DAILY_CREW_REINITIALIZE -> executeReinitialize(req);
             case DAILY_CREW_MEMBER_ADD -> executeMemberAdd(req);
@@ -193,6 +208,50 @@ public class DailyCrewHandler implements QueryHandler {
         int dispatchCategory = ((Number) params.get("dispatchCategory")).intValue();
         int state = State.INITIAL.getCode();
 
+        /* 再初期化前に既存班をID昇順でロックし、同時配車を防止 */
+        QueryDefinition crewQuery = QueryDefinition.select(
+            """
+            SELECT daily_crew_id
+            FROM daily_crews
+            WHERE work_date = ?
+            AND office_id = ?
+            AND dispatch_category = ?
+            AND state = ?
+            ORDER BY daily_crew_id
+            """,
+            List.of("workDate", "officeId", "dispatchCategory", "state")
+        );
+
+        SelectRequest lockReq = new SelectRequest();
+        lockReq.setParams(Map.of(
+            "workDate", workDate,
+            "officeId", officeId,
+            "dispatchCategory", dispatchCategory,
+            "state", state
+        ));
+
+        List<Map<String, Object>> targetCrews = queryExecutor.select(crewQuery, lockReq);
+
+        for (Map<String, Object> row : targetCrews) {
+            long dailyCrewId = ((Number) row.get("dailyCrewId")).longValue();
+
+            QueryDefinition lockQuery = QueryDefinition.select(
+                """
+                SELECT daily_crew_id
+                FROM daily_crews WITH (UPDLOCK, HOLDLOCK)
+                WHERE daily_crew_id = ? AND state = ?
+                """,
+                List.of("dailyCrewId", "state")
+            );
+
+            SelectRequest crewLockReq = new SelectRequest();
+            crewLockReq.setParams(Map.of("dailyCrewId", dailyCrewId, "state", state));
+
+            if (queryExecutor.select(lockQuery, crewLockReq).isEmpty()) {
+                throw new BusinessException("配車班が変更されています。再読み込みしてください。");
+            }
+        }
+
         // 1. 配車済みチェック
         Map<String, Object> countParams = new HashMap<>();
         countParams.put("state", state);
@@ -215,7 +274,8 @@ public class DailyCrewHandler implements QueryHandler {
         boardParams.put("state", state);
         SelectRequest boardReq = new SelectRequest();
         boardReq.setParams(boardParams);
-        List<Map<String, Object>> rows = queryExecutor.select(DailyCrewQuery.dailyCrewBoardList(), boardReq);
+        // 再初期化専用SQLで、車両マスターの状態に依存せず班と乗務員を取得
+        List<Map<String, Object>> rows = queryExecutor.select(DailyCrewQuery.dailyCrewReinitializeList(), boardReq);
 
         // 3. daily_crew_members を論理削除
         Map<Long, Integer> memberVersions = new LinkedHashMap<>();
@@ -517,6 +577,24 @@ public class DailyCrewHandler implements QueryHandler {
         String editor = (String) params.getOrDefault("editor", "system");
         long dailyCrewId = ((Number) params.get("dailyCrewId")).longValue();
         int state = State.INITIAL.getCode();
+        // 配車済み確認より前に対象班をロックし、同時配車との競合を防止
+        QueryDefinition lockQuery = QueryDefinition.select(
+            """
+            SELECT daily_crew_id
+            FROM daily_crews WITH (UPDLOCK, HOLDLOCK)
+            WHERE daily_crew_id = ?
+            AND state = ?
+            """,
+            List.of("dailyCrewId", "state")
+        );
+
+        SelectRequest lockReq = new SelectRequest();
+        lockReq.setParams(Map.of("dailyCrewId", dailyCrewId, "state", state));
+
+        List<Map<String, Object>> locked = queryExecutor.select(lockQuery, lockReq);
+        if (locked.isEmpty()) {
+            throw new BusinessException("対象の配車班が見つかりません。再読み込みしてください。");
+        }
 
         // =========================================
         // 1. 配車済み確認

@@ -13,19 +13,23 @@ import java.util.HashMap;
 import org.junit.jupiter.api.Test;
 
 import com.kyouseipro.neo.common.enums.system.QueryKind;
+import com.kyouseipro.neo.common.exception.BusinessException;
 import com.kyouseipro.neo.sql.model.QueryDefinition;
 import com.kyouseipro.neo.sql.model.SelectRequest;
 import com.kyouseipro.neo.sql.provider.Tables;
 import com.kyouseipro.neo.sql.repository.BaseSqlRepository;
+import com.kyouseipro.neo.sql.service.DispatchScopeLock;
 import com.kyouseipro.neo.sql.service.QueryExecutor;
 
 class DailyCrewHandlerTest {
+
+    DispatchScopeLock dispatchScopeLock = mock(DispatchScopeLock.class);
 
     @Test
     void 一括作成では出勤中の基本乗務員だけを登録する() {
         BaseSqlRepository baseRepository = mock(BaseSqlRepository.class);
         QueryExecutor queryExecutor = mock(QueryExecutor.class);
-        DailyCrewHandler handler = new DailyCrewHandler(baseRepository, queryExecutor);
+        DailyCrewHandler handler = new DailyCrewHandler(baseRepository, queryExecutor, dispatchScopeLock);
 
         // 車両100の担当50・助手70は出勤、車両200の乗務員80は対象外
         List<Map<String, Object>> workingMembers = List.of(
@@ -98,7 +102,7 @@ class DailyCrewHandlerTest {
     void 手動追加では基本乗務員をコピーしない() {
         BaseSqlRepository baseRepository = mock(BaseSqlRepository.class);
         QueryExecutor queryExecutor = mock(QueryExecutor.class);
-        DailyCrewHandler handler = new DailyCrewHandler(baseRepository, queryExecutor);
+        DailyCrewHandler handler = new DailyCrewHandler(baseRepository, queryExecutor, dispatchScopeLock);
 
         final boolean[] crewCreated = {false};
 
@@ -142,7 +146,7 @@ class DailyCrewHandlerTest {
     void 既存の配車班は再作成しない() {
         BaseSqlRepository baseRepository = mock(BaseSqlRepository.class);
         QueryExecutor queryExecutor = mock(QueryExecutor.class);
-        DailyCrewHandler handler = new DailyCrewHandler(baseRepository, queryExecutor);
+        DailyCrewHandler handler = new DailyCrewHandler(baseRepository, queryExecutor, dispatchScopeLock);
 
         // すでに班500が登録されている
         when(queryExecutor.select(any(QueryDefinition.class), any(SelectRequest.class)))
@@ -178,7 +182,7 @@ class DailyCrewHandlerTest {
     void 登録済み乗務員がいる車両は自動作成しない() {
         BaseSqlRepository baseRepository = mock(BaseSqlRepository.class);
         QueryExecutor queryExecutor = mock(QueryExecutor.class);
-        DailyCrewHandler handler = new DailyCrewHandler(baseRepository, queryExecutor);
+        DailyCrewHandler handler = new DailyCrewHandler(baseRepository, queryExecutor, dispatchScopeLock);
 
         // 車両100の基本乗務員は50・70、社員50は既存班に登録済み
         when(queryExecutor.select(any(QueryDefinition.class), any(SelectRequest.class)))
@@ -222,7 +226,7 @@ class DailyCrewHandlerTest {
     void 同じ一括処理内で乗務員が重複する車両は作成しない() {
         BaseSqlRepository baseRepository = mock(BaseSqlRepository.class);
         QueryExecutor queryExecutor = mock(QueryExecutor.class);
-        DailyCrewHandler handler = new DailyCrewHandler(baseRepository, queryExecutor);
+        DailyCrewHandler handler = new DailyCrewHandler(baseRepository, queryExecutor, dispatchScopeLock);
         final boolean[] crewCreated = {false};
 
         // 車両100と200に、同じ社員50が基本乗務員として設定されている
@@ -277,5 +281,117 @@ class DailyCrewHandlerTest {
         verify(baseRepository, times(1)).insert(
             eq(Tables.DAILY_CREW_MEMBER_BY_IDS), anyMap(), eq("test")
         );
+    }
+
+    @Test
+    void 配車済みの班はロック後に削除を拒否する() {
+        BaseSqlRepository baseRepository = mock(BaseSqlRepository.class);
+        QueryExecutor queryExecutor = mock(QueryExecutor.class);
+        DailyCrewHandler handler = new DailyCrewHandler(baseRepository, queryExecutor, dispatchScopeLock);
+
+        when(queryExecutor.select(any(QueryDefinition.class), any(SelectRequest.class)))
+            .thenAnswer(invocation -> {
+                QueryDefinition query = invocation.getArgument(0);
+                String sql = query.getSql();
+
+                // 対象班のロック
+                if (sql.contains("UPDLOCK") && sql.contains("HOLDLOCK")) {
+                    return List.of(Map.of("dailyCrewId", 8));
+                }
+
+                // 配車済み伝票が1件ある
+                if (sql.contains("assignment_count") && sql.contains("dispatch_assignments")) {
+                    return List.of(Map.of("assignmentCount", 1));
+                }
+
+                return List.of();
+            });
+
+        QueryDefinition definition = mock(QueryDefinition.class);
+        when(definition.getKind()).thenReturn(QueryKind.DAILY_CREW_DELETE);
+
+        SelectRequest request = new SelectRequest();
+        request.setParams(Map.of("dailyCrewId", 8, "editor", "test"));
+
+        BusinessException error = assertThrows(BusinessException.class,
+            () -> handler.execute(definition, request));
+
+        assertEquals("配車済みの伝票があります。先に配車を解除してください。", error.getMessage());
+
+        // ロック取得 → 配車済み件数確認の順序を検証
+        var sequence = inOrder(queryExecutor);
+        sequence.verify(queryExecutor).select(
+            argThat(query -> query.getSql().contains("UPDLOCK")),
+            any(SelectRequest.class)
+        );
+        sequence.verify(queryExecutor).select(
+            argThat(query -> query.getSql().contains("assignment_count")),
+            any(SelectRequest.class)
+        );
+
+        // 削除が拒否された場合、DBを変更しない
+        verifyNoInteractions(baseRepository);
+    }
+
+    @Test
+    void 再初期化では班をロックしてから配車済みを確認する() {
+        BaseSqlRepository baseRepository = mock(BaseSqlRepository.class);
+        QueryExecutor queryExecutor = mock(QueryExecutor.class);
+        DailyCrewHandler handler = new DailyCrewHandler(baseRepository, queryExecutor, dispatchScopeLock);
+
+        when(queryExecutor.select(any(QueryDefinition.class), any(SelectRequest.class)))
+            .thenAnswer(invocation -> {
+                QueryDefinition query = invocation.getArgument(0);
+                String sql = query.getSql();
+
+                // 対象班一覧を取得
+                if (sql.contains("FROM daily_crews") && sql.contains("ORDER BY daily_crew_id")) {
+                    return List.of(Map.of("dailyCrewId", 8));
+                }
+                // 対象班のロック取得
+                if (sql.contains("UPDLOCK") && sql.contains("HOLDLOCK")) {
+                    return List.of(Map.of("dailyCrewId", 8));
+                }
+                // 配車済み伝票が1件存在
+                if (sql.contains("assignment_count") && sql.contains("dispatch_assignments")) {
+                    return List.of(Map.of("assignmentCount", 1));
+                }
+                return List.of();
+            });
+
+        QueryDefinition definition = mock(QueryDefinition.class);
+        when(definition.getKind()).thenReturn(QueryKind.DAILY_CREW_REINITIALIZE);
+
+        SelectRequest request = new SelectRequest();
+        request.setParams(Map.of(
+            "workDate", "2026-11-18",
+            "officeId", 1,
+            "dispatchCategory", 1,
+            "editor", "test"
+        ));
+
+        BusinessException error = assertThrows(BusinessException.class,
+            () -> handler.execute(definition, request));
+
+        assertEquals("すでに配車されているため再初期化できません。", error.getMessage());
+
+        // 共通ロック → 対象班取得 → 班ロック → 配車済み確認の順序を検証
+        var sequence = inOrder(dispatchScopeLock, queryExecutor);
+        sequence.verify(dispatchScopeLock).lock("2026-11-18", 1, 1);
+        sequence.verify(queryExecutor).select(
+            argThat(q -> q.getSql().contains("ORDER BY daily_crew_id")),
+            any(SelectRequest.class)
+        );
+        sequence.verify(queryExecutor).select(
+            argThat(q -> q.getSql().contains("UPDLOCK") && q.getSql().contains("HOLDLOCK")),
+            any(SelectRequest.class)
+        );
+        sequence.verify(queryExecutor).select(
+            argThat(q -> q.getSql().contains("assignment_count")),
+            any(SelectRequest.class)
+        );
+
+        // 配車済みの場合は班・乗務員を変更しない
+        verifyNoInteractions(baseRepository);
     }
 }

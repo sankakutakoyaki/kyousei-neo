@@ -40,6 +40,8 @@
     --shadow: grey;
     --line: #ddd;
 
+    --dispatch-order-bg: rgb(232, 232, 232);
+
 }
 
 .highlight {

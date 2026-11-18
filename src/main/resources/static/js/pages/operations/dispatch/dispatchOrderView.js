@@ -71,10 +71,20 @@ function createDispatchOrderCard(order, {onDragStart, onDragEnd} = {}){
     card.querySelector('[data-field="title"]').textContent = order.title || "名称未設定";
     card.querySelector('[data-field="visitTime"]').textContent = order.visitTime || "";
     card.querySelector('[data-field="fullAddress"]').textContent = order.fullAddress || "";
+    // 荷主名を表示（未設定なら非表示）
+    const contractor = card.querySelector('[data-field="primeConstractorName"]');
+    contractor.textContent = order.primeConstractorName || "";
+    contractor.hidden = !order.primeConstractorName;
     renderWorkResultSummary(card.querySelector('[data-field="workResult"]'), order);
     const assigned = card.querySelector(".dispatch-order-assigned");
-    if(order.assignmentCount > 0) assigned.textContent = `配車済み ${order.assignmentCount}班`;
-    else assigned.remove();
+    // 配車先の営業所名と班数を表示
+    if (order.assignmentCount > 0) {
+        assigned.textContent = order.assignedOffices
+            ? `配車済み：${order.assignedOffices}`
+            : `配車済み ${order.assignmentCount}班`;
+    } else {
+        assigned.remove();
+    }
 
     return card;
 }

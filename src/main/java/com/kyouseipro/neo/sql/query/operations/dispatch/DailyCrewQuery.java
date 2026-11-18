@@ -300,4 +300,27 @@ public class DailyCrewQuery {
             )
         );
     }
+
+    // 再初期化用：車両マスターの状態に依存せず、班と乗務員を取得
+    public static QueryDefinition dailyCrewReinitializeList() {
+        return QueryDefinition.select(
+            """
+            SELECT
+                dc.daily_crew_id,
+                dc.version AS daily_crew_version,
+                dcm.daily_crew_member_id,
+                dcm.version AS member_version
+            FROM daily_crews dc
+            LEFT JOIN daily_crew_members dcm
+                ON dcm.daily_crew_id = dc.daily_crew_id
+                AND dcm.state = ?
+            WHERE dc.work_date = ?
+            AND dc.office_id = ?
+            AND dc.dispatch_category = ?
+            AND dc.state = ?
+            ORDER BY dc.daily_crew_id, dcm.daily_crew_member_id
+            """,
+            List.of("state", "workDate", "officeId", "dispatchCategory", "state")
+        );
+    }
 }
